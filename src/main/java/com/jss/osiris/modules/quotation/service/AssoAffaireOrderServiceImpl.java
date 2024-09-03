@@ -633,6 +633,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaireSearch.getFormaliteGuichetUniqueStatus() != null)
             formaliteGuichetUniqueStatusCode = affaireSearch.getFormaliteGuichetUniqueStatus().getCode();
 
+        String formaliteInfogreffeStatusCode = "0";
+        if (affaireSearch.getFormaliteInfogreffeStatusCode() != null)
+            formaliteInfogreffeStatusCode = affaireSearch.getFormaliteInfogreffeStatusCode();
+
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
@@ -649,6 +653,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
                         .getId(),
                 formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT).getId(),
-                commercialId, formaliteGuichetUniqueStatusCode);
+                commercialId, formaliteGuichetUniqueStatusCode, formaliteInfogreffeStatusCode);
     }
 }

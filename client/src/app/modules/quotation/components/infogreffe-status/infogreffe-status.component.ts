@@ -1,8 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe';
-import { EvenementInfogreffe } from '../../model/infogreffe/EvenementInfogreffe';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
-import { formatDateFrance } from 'src/app/libs/FormatHelper';
+import { EvenementInfogreffe } from '../../model/infogreffe/EvenementInfogreffe';
+import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe';
 
 @Component({
   selector: 'infogreffe-status',
@@ -12,7 +11,6 @@ import { formatDateFrance } from 'src/app/libs/FormatHelper';
 export class InfogreffeStatusComponent implements OnInit {
 
   @Input() formalitesInfogreffe: FormaliteInfogreffe[] | undefined;
-  dictionnary = new Map<string, string>(Object.entries(Dictionnary));
   constructor() { }
 
   ngOnInit() {
@@ -38,8 +36,9 @@ export class InfogreffeStatusComponent implements OnInit {
   }
 
   getFieldLabel(fieldName: string) {
-    if (this.dictionnary.get(fieldName))
-      return this.dictionnary.get(fieldName);
+    let dictionnary = Dictionnary as any;
+    if (dictionnary[fieldName])
+      return dictionnary[fieldName];
     return fieldName;
   }
 

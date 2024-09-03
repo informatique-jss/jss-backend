@@ -1,11 +1,14 @@
 package com.jss.osiris.modules.quotation.model.infoGreffe;
 
+import com.jss.osiris.libs.search.model.IndexedField;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
 public class IdentifiantFormalite {
     @Id
+    @IndexedField
     private Integer formaliteNumero;
     private String formaliteType;
     private String emetteurCodePart;

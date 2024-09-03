@@ -12,7 +12,12 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 
 public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<AssoAffaireOrder, Integer> {
 
-        @Query(nativeQuery = true, value = "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end   as affaireLabel,"
+        @Query(nativeQuery = true, value = "with efi as (select id_formalite_infogreffe , code_etat from ( " +
+                        "select id_formalite_infogreffe , sum(1) over(partition by id_formalite_infogreffe order by created_date desc) as n, code_etat  "
+                        +
+                        "from evenement_infogreffe ei where code_etat is not null and length(trim(code_etat))>0) where n = 1) "
+                        +
+                        "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end   as affaireLabel,"
                         +
                         " ci.label ||' - '|| a.address || ' - ' || a.postal_Code as affaireAddress," +
                         "  coalesce(case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end,"
@@ -55,6 +60,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " left join formalite fo on fo.id = p.id_formalite" +
                         " left join formalite_guichet_unique fgu on fgu.id_formalite = fo.id" +
                         " left join formalite_status fs on fs.id = fo.id_formalite_status" +
+                        " left join formalite_infogreffe fi on fi.id_formalite = fo.id" +
+                        " left join efi on efi.id_formalite_infogreffe = fi.id" +
                         " left join domiciliation dom on dom.id = p.id_domiciliation" +
                         " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
                         " left join simple_provision sp on sp.id = p.id_simple_provision" +
@@ -86,6 +93,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " and ( :commercialId = 0 or t2.id_commercial=:commercialId) " +
                         " and ( :formaliteGuichetUniqueStatusCode = '0' or fgu.id_status=:formaliteGuichetUniqueStatusCode) "
                         +
+                        " and ( :formaliteInfogreffeStatusCode = '0' or efi.code_etat=:formaliteInfogreffeStatusCode) "
+                        +
                         " and ( COALESCE(:assignedTo) =0 or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
                         +
@@ -110,5 +119,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         @Param("simpleProvisionStatusWaitingAttachmentId") Integer simpleProvisionStatusWaitingAttachmentId,
                         @Param("formaliteStatusWaitingAttachmentId") Integer formaliteStatusWaitingAttachmentId,
                         @Param("commercialId") Integer commercialId,
-                        @Param("formaliteGuichetUniqueStatusCode") String formaliteGuichetUniqueStatusCode);
+                        @Param("formaliteGuichetUniqueStatusCode") String formaliteGuichetUniqueStatusCode,
+                        @Param("formaliteInfogreffeStatusCode") String formaliteInfogreffeStatusCode);
 }

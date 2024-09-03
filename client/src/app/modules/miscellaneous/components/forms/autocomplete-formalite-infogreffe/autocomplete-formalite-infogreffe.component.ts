@@ -35,7 +35,7 @@ export class AutocompleteInfogreffeFormaliteComponent extends GenericAutocomplet
 
   displayLabel(object: FormaliteInfogreffe): string {
     if (object && object.identifiantFormalite.formaliteType)
-      return object.identifiantFormalite.formaliteType + " " + object.identifiantFormalite.formaliteNumero;
+      return object.referenceTechnique + " - " + object.identifiantFormalite.formaliteType + " - " + object.identifiantFormalite.formaliteNumero;
     return "";
   }
 }

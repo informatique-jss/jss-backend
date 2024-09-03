@@ -67,10 +67,13 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.infoGreffe.EvenementInfogreffe;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.ServiceService;
+import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -162,6 +165,7 @@ public class MailHelper {
 
     @Autowired
     ServiceService serviceService;
+    FormaliteInfogreffeService formaliteInfogreffeService;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -1368,6 +1372,20 @@ public class MailHelper {
                 }
                 if (liasseList.size() > 0)
                     label += " / liasse(s) GU " + String.join(", ", liasseList);
+            }
+            if (provision.getFormalite() != null && provision.getFormalite().getFormalitesInfogreffe() != null) {
+                ArrayList<String> liasseList = new ArrayList<String>();
+                for (FormaliteInfogreffe formaliteInfogreffe : provision.getFormalite()
+                        .getFormalitesInfogreffe()) {
+                    EvenementInfogreffe evenementInfogreffe = formaliteInfogreffeService
+                            .getLastEvenementInfogreffe(formaliteInfogreffe, true);
+                    if (evenementInfogreffe != null && (evenementInfogreffe.getCodeEtat().equals("ENVOYE_AU_GRF")
+                            || evenementInfogreffe.getCodeEtat().equals("RECU_PAR_LE_GRF"))) {
+                        liasseList.add(formaliteInfogreffe.getReferenceTechnique());
+                    }
+                }
+                if (liasseList.size() > 0)
+                    label += " / liasse(s) Infogreffe " + String.join(", ", liasseList);
             }
             provisionDetails.add(label);
         }
