@@ -469,7 +469,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                             "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
                                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée");
 
-                    customerOrderCommentService.tagGroupCustomerOrderComment(customerOrderComment,
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());
                     return;
                 }

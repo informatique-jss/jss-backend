@@ -15,6 +15,6 @@ public interface CustomerOrderCommentService {
 
     public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment);
 
-    public CustomerOrderComment tagGroupCustomerOrderComment(CustomerOrderComment customerOrderComment,
+    public CustomerOrderComment tagActiveDirectoryGroupOnCustomerOrderComment(CustomerOrderComment customerOrderComment,
             ActiveDirectoryGroup activeDirectoryGroup);
 }

@@ -548,7 +548,7 @@ public class PaymentServiceImpl implements PaymentService {
                         "Nouveau paiement n°" + newPayment.getId() + " de " + newPayment.getPaymentAmount()
                                 + " € placé sur la commande");
 
-                customerOrderCommentService.tagGroupCustomerOrderComment(customerOrderComment,
+                customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                         constantService.getActiveDirectoryGroupFacturation());
             }
             accountingRecordGenerationService.generateAccountingRecordsForSaleOnCustomerOrderDeposit(
@@ -959,7 +959,7 @@ public class PaymentServiceImpl implements PaymentService {
                             "Nouveau paiement n°" + payment.getId() + " de " + payment.getPaymentAmount()
                                     + " € placé sur la facture n°" + invoice.getId());
 
-                    customerOrderCommentService.tagGroupCustomerOrderComment(customerOrderComment,
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFacturation());
                 }
                 Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);

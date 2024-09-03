@@ -403,7 +403,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                             .getLabel()
                                     + ")");
 
-                    customerOrderCommentService.tagGroupCustomerOrderComment(customerOrderComment,
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());
 
                 } else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
@@ -417,7 +417,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                     .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                             "Formalité GU n°" + originalFormalite.getLiasseNumber() + " validée");
 
-                    customerOrderCommentService.tagGroupCustomerOrderComment(customerOrderComment,
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());
                 }
                 formaliteService.addOrUpdateFormalite(originalFormalite.getFormalite());

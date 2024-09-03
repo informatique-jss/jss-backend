@@ -856,15 +856,17 @@
           <tr>
             <td>
               <select-active-directory-group [(model)]="constant.activeDirectoryGroupFacturation"
-                label="Groupe Facturation" [form]="constantForm" propertyName="activeDirectoryGroupFacturation"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-active-directory-group>
+                label="Groupe Active Directory - Facturation" [form]="constantForm"
+                propertyName="activeDirectoryGroupFacturation" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-active-directory-group>
             </td>
           </tr>
           <tr>
             <td>
               <select-active-directory-group [(model)]="constant.activeDirectoryGroupFormalites"
-                label="Groupe Formalites" [form]="constantForm" propertyName="activeDirectoryGroupFormalites"
-                [isMandatory]=" true" [isDisabled]="!editMode"></select-active-directory-group>
+                label="Groupe Active Directory - Formalites" [form]="constantForm"
+                propertyName="activeDirectoryGroupFormalites" [isMandatory]=" true"
+                [isDisabled]="!editMode"></select-active-directory-group>
             </td>
           </tr>
           <tr>

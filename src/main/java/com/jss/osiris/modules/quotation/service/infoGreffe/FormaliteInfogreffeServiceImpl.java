@@ -220,7 +220,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                                 .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                         "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée");
 
-                customerOrderCommentService.tagGroupCustomerOrderComment(customerOrderComment,
+                customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                         constantService.getActiveDirectoryGroupFormalites());
             }
             if (lastEvent.getCodeEtat()
@@ -232,7 +232,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                                 .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
                         "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " validée");
 
-                customerOrderCommentService.tagGroupCustomerOrderComment(customerOrderComment,
+                customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                         constantService.getActiveDirectoryGroupFormalites());
             }
             formaliteService.addOrUpdateFormalite(formaliteInfogreffe.getFormalite());
