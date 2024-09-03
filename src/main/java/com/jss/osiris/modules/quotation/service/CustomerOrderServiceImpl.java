@@ -377,7 +377,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         boolean checkAllProvisionEnded = false;
 
         // Determine if deposit is mandatory or not
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+        if ((customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+                || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
                 && (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
                         || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))) {
             Float remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
@@ -418,7 +419,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             resetDeboursInvoiceItems(customerOrder);
             // Confirm deposit taken into account or customer order starting and only if not
             // from to billed
-            if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
+            if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)
+                    && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)) {
                 if (customerOrder.getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);

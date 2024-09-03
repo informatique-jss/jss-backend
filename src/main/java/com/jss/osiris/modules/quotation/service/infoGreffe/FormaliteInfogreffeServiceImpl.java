@@ -218,7 +218,10 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                 CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                         formaliteInfogreffe.getFormalite()
                                 .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                        "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée");
+                        "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée par "
+                                + (formaliteInfogreffe.getGreffeDestinataire() != null
+                                        ? formaliteInfogreffe.getGreffeDestinataire().getNom()
+                                        : ""));
 
                 customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                         constantService.getActiveDirectoryGroupFormalites());
@@ -230,7 +233,10 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                 CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                         formaliteInfogreffe.getFormalite()
                                 .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                        "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " validée");
+                        "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " validée par "
+                                + (formaliteInfogreffe.getGreffeDestinataire() != null
+                                        ? formaliteInfogreffe.getGreffeDestinataire().getNom()
+                                        : ""));
 
                 customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                         constantService.getActiveDirectoryGroupFormalites());
@@ -290,7 +296,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
             return constantService.getAttachmentTypeProviderInvoice();
         if (documentAssocieInfogreffe.getTypeDocument()
                 .equals(DocumentAssocieInfogreffe.INFOGREFFE_ATTACHMENT_KBIS))
-            return constantService.getAttachmentTypeKbis();
+            return constantService.getAttachmentTypeKbisUpdated();
         if (documentAssocieInfogreffe.getTypeDocument()
                 .equals(DocumentAssocieInfogreffe.INFOGREFFE_ATTACHMENT_RBE_COPIE))
             return constantService.getAttachmentTypeRbe();

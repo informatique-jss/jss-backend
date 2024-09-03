@@ -15,7 +15,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
         @Query(nativeQuery = true, value = "with efi as (select id_formalite_infogreffe , code_etat from ( " +
                         "select id_formalite_infogreffe , sum(1) over(partition by id_formalite_infogreffe order by created_date desc) as n, code_etat  "
                         +
-                        "from evenement_infogreffe ei where code_etat is not null and length(trim(code_etat))>0) where n = 1) "
+                        "from evenement_infogreffe ei where code_etat is not null and length(trim(code_etat))>0) t where n = 1) "
                         +
                         "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end   as affaireLabel,"
                         +

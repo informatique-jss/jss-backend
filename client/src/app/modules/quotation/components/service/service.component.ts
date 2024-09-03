@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
@@ -15,7 +16,6 @@ import { Service } from '../../model/Service';
 import { ServiceType } from '../../model/ServiceType';
 import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
 import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
-import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 
 @Component({
   selector: 'service',
@@ -57,7 +57,11 @@ export class ServiceComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.service && this.service) {
       if (this.service.assoServiceDocuments && this.service.assoServiceDocuments.length > 0)
-        this.service.assoServiceDocuments.sort((a: AssoServiceDocument, b: AssoServiceDocument) => a.typeDocument.label.localeCompare(b.typeDocument.label));
+        this.service.assoServiceDocuments.sort((a: AssoServiceDocument, b: AssoServiceDocument) => {
+          let aLabel = ((a.isMandatory) ? "0" : "1") + a.typeDocument.label;
+          let bLabel = ((b.isMandatory) ? "0" : "1") + b.typeDocument.label;
+          return aLabel.localeCompare(bLabel)
+        });
     }
   }
 

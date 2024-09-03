@@ -146,180 +146,126 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(FormaliteGuichetUnique inFormaliteGuichetUnique,
+    public FormaliteGuichetUnique refreshFormaliteGuichetUnique(FormaliteGuichetUnique savedFormaliteGuichetUnique,
             Formalite formalite, boolean generateInvoices)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        if (inFormaliteGuichetUnique == null)
-            throw new OsirisValidationException("inFormaliteGuichetUnique");
+        if (savedFormaliteGuichetUnique == null)
+            throw new OsirisValidationException("savedFormaliteGuichetUnique");
 
         if (formalite != null && formalite.getId() != null)
             formalite = formaliteService.getFormalite(formalite.getId());
-        FormaliteGuichetUnique formaliteGuichetUnique;
-        List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems = new ArrayList<FormaliteStatusHistoryItem>();
-        boolean formalityHasNewStatus = false;
 
-        if (inFormaliteGuichetUnique.getIsAnnualAccounts() != null && inFormaliteGuichetUnique.getIsAnnualAccounts()) {
-            formaliteGuichetUnique = guichetUniqueDelegateService
-                    .getAnnualAccountById(inFormaliteGuichetUnique.getId());
-            formaliteStatusHistoryItems = guichetUniqueDelegateService
-                    .getAnnualAccountStatusHistoriesById(inFormaliteGuichetUnique.getId());
-        } else if (inFormaliteGuichetUnique.getIsActeDeposit() != null && inFormaliteGuichetUnique.getIsActeDeposit()) {
-            formaliteGuichetUnique = guichetUniqueDelegateService
-                    .getActeDepositById(inFormaliteGuichetUnique.getId());
-            formaliteStatusHistoryItems = guichetUniqueDelegateService
-                    .getActeDepositStatusHistoriesById(inFormaliteGuichetUnique.getId());
+        List<FormaliteStatusHistoryItem> apiFormaliteStatusHistoryItems = new ArrayList<FormaliteStatusHistoryItem>();
+        FormaliteGuichetUnique apiFormaliteGuichetUnique = null;
+
+        // Fetch API version
+        if (savedFormaliteGuichetUnique.getIsAnnualAccounts() != null
+                && savedFormaliteGuichetUnique.getIsAnnualAccounts()) {
+            apiFormaliteGuichetUnique = guichetUniqueDelegateService
+                    .getAnnualAccountById(savedFormaliteGuichetUnique.getId());
+            apiFormaliteStatusHistoryItems = guichetUniqueDelegateService
+                    .getAnnualAccountStatusHistoriesById(savedFormaliteGuichetUnique.getId());
+        } else if (savedFormaliteGuichetUnique.getIsActeDeposit() != null
+                && savedFormaliteGuichetUnique.getIsActeDeposit()) {
+            apiFormaliteGuichetUnique = guichetUniqueDelegateService
+                    .getActeDepositById(savedFormaliteGuichetUnique.getId());
+            apiFormaliteStatusHistoryItems = guichetUniqueDelegateService
+                    .getActeDepositStatusHistoriesById(savedFormaliteGuichetUnique.getId());
         } else {
-            formaliteGuichetUnique = guichetUniqueDelegateService.getFormalityById(inFormaliteGuichetUnique.getId());
-            formaliteStatusHistoryItems = guichetUniqueDelegateService
-                    .getFormalityStatusHistoriesById(inFormaliteGuichetUnique.getId());
+            apiFormaliteGuichetUnique = guichetUniqueDelegateService
+                    .getFormalityById(savedFormaliteGuichetUnique.getId());
+            apiFormaliteStatusHistoryItems = guichetUniqueDelegateService
+                    .getFormalityStatusHistoriesById(savedFormaliteGuichetUnique.getId());
         }
 
-        if (formaliteGuichetUnique.getValidationsRequests() != null)
-            for (ValidationRequest validationRequest : formaliteGuichetUnique.getValidationsRequests()) {
+        if (apiFormaliteGuichetUnique.getValidationsRequests() != null)
+            for (ValidationRequest validationRequest : apiFormaliteGuichetUnique.getValidationsRequests()) {
                 if (validationRequest.getPartnerCenter() != null)
                     partnerCenterRepository.save(validationRequest.getPartnerCenter());
             }
 
-        // if (formaliteGuichetUnique.getFormaliteStatusHistoryItems() != null)
-        // for (FormaliteStatusHistoryItem statusHistoryItem : formaliteGuichetUnique
-        // .getFormaliteStatusHistoryItems()) {
-        // if (statusHistoryItem.getPartnerCenter() != null)
-        // partnerCenterRepository.save(statusHistoryItem.getPartnerCenter());
-        // }
+        boolean formalityHasNewStatus = false;
 
-        FormaliteGuichetUnique originalFormalite = getFormaliteGuichetUnique(inFormaliteGuichetUnique.getId());
+        if (formalite == null) {
+            return addOrUpdateFormaliteGuichetUnique(apiFormaliteGuichetUnique);
+        } else if (formalite.getProvision() != null && formalite.getProvision().size() > 0) {
+            // Content field
+            savedFormaliteGuichetUnique.setContent(apiFormaliteGuichetUnique.getContent());
 
-        if (formalite != null && formalite.getId() != null) {
-            if (originalFormalite == null) {
-                // Save only if cart > €
-                ArrayList<Cart> carts = new ArrayList<Cart>();
-                if (formaliteGuichetUnique.getCarts() != null)
-                    for (Cart cart : formaliteGuichetUnique.getCarts())
-                        if (cart.getTotal() != 0) {
-                            carts.add(cart);
+            // Status field
+            if (!savedFormaliteGuichetUnique.getStatus().getCode()
+                    .equals(apiFormaliteGuichetUnique.getStatus().getCode())) {
+                savedFormaliteGuichetUnique.setStatus(apiFormaliteGuichetUnique.getStatus());
+                savedFormaliteGuichetUnique.setIsAuthorizedToSign(false);
+                formalityHasNewStatus = true;
+                addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+            }
+
+            // Cart field
+            if (apiFormaliteGuichetUnique.getCarts() != null && apiFormaliteGuichetUnique.getCarts().size() > 0) {
+                if (savedFormaliteGuichetUnique.getCarts() == null
+                        || savedFormaliteGuichetUnique.getCarts().size() == 0) {
+                    savedFormaliteGuichetUnique.setCarts(new ArrayList<Cart>());
+                    for (Cart currentCart : apiFormaliteGuichetUnique.getCarts()) {
+                        // Save only if cart > €
+                        if (currentCart.getTotal() != 0) {
+                            currentCart.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+                            if (currentCart.getCartRates() != null)
+                                for (CartRate cartRate : currentCart.getCartRates())
+                                    cartRate.setCart(currentCart);
+                            savedFormaliteGuichetUnique.getCarts().add(currentCart);
                         }
-
-                formaliteGuichetUnique.setCarts(carts);
-                originalFormalite = addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
-                if (originalFormalite.getCarts() != null)
-                    for (Cart cart : originalFormalite.getCarts()) {
-                        if (cart.getInvoice() == null && cart.getTotal() != 0)
-                            if (cart.getStatus().equals(cartStatusPayed)) {
-                                cart.setInvoice(generateInvoiceFromCart(cart, formalite.getProvision().get(0)));
-                            } else if (cart.getStatus().equals(cartStatusRefund)) {
-                                cart.setInvoice((generateCreditNoteFromCart(cart, formalite.getProvision().get(0))));
-                            }
-                        cart.setFormaliteGuichetUnique(originalFormalite);
                     }
-            } else if (originalFormalite != null) {
-                // update only wanted field
-                // Status field
-                if (!originalFormalite.getStatus().getCode().equals(formaliteGuichetUnique.getStatus().getCode())) {
-                    originalFormalite.setStatus(formaliteGuichetUnique.getStatus());
-                    originalFormalite.setIsAuthorizedToSign(false);
-                    formalityHasNewStatus = true;
-                    addOrUpdateFormaliteGuichetUnique(originalFormalite);
-
-                    if (originalFormalite.getFormalite() != null) {
-                        notificationService.notifyGuichetUniqueFormaliteStatus(
-                                originalFormalite.getFormalite().getProvision().get(0), originalFormalite);
-                    }
-                }
-
-                // Cart field
-                if (formaliteGuichetUnique.getCarts() != null && formaliteGuichetUnique.getCarts().size() > 0) {
-                    if (originalFormalite.getCarts() == null || originalFormalite.getCarts().size() == 0) {
-                        originalFormalite.setCarts(new ArrayList<Cart>());
-                        for (Cart currentCart : formaliteGuichetUnique.getCarts()) {
-                            // Save only if cart > €
-                            if (currentCart.getTotal() != 0) {
-                                currentCart.setFormaliteGuichetUnique(originalFormalite);
-                                if (currentCart.getCartRates() != null)
-                                    for (CartRate cartRate : currentCart.getCartRates())
-                                        cartRate.setCart(currentCart);
-                                originalFormalite.getCarts().add(currentCart);
+                } else {
+                    for (Cart currentCart : apiFormaliteGuichetUnique.getCarts()) {
+                        boolean found = false;
+                        for (Cart originalCart : savedFormaliteGuichetUnique.getCarts()) {
+                            if (originalCart.getId().equals(currentCart.getId())) {
+                                if (!originalCart.getStatus().equals(currentCart.getStatus()))
+                                    originalCart.setStatus(currentCart.getStatus());
+                                found = true;
                             }
                         }
-                    } else {
-                        ArrayList<Cart> cartsToReplace = new ArrayList<Cart>();
-                        for (Cart currentCart : formaliteGuichetUnique.getCarts()) {
-                            boolean found = false;
-                            for (Cart originalCart : originalFormalite.getCarts()) {
-                                if (originalCart.getId().equals(currentCart.getId())) {
-                                    if (!originalCart.getStatus().equals(currentCart.getStatus())
-                                            && originalCart.getInvoice() == null)
-                                        cartsToReplace.add(currentCart);
-                                    found = true;
-                                }
-                            }
-                            if (!found) {
-                                currentCart.setFormaliteGuichetUnique(originalFormalite);
-                                if (currentCart.getCartRates() != null)
-                                    for (CartRate cartRate : currentCart.getCartRates())
-                                        cartRate.setCart(currentCart);
-                                originalFormalite.getCarts().add(currentCart);
-                                currentCart.setFormaliteGuichetUnique(originalFormalite);
-                            }
+                        if (!found && currentCart.getTotal() != 0) {
+                            currentCart.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+                            if (currentCart.getCartRates() != null)
+                                for (CartRate cartRate : currentCart.getCartRates())
+                                    cartRate.setCart(currentCart);
+                            savedFormaliteGuichetUnique.getCarts().add(currentCart);
                         }
-
-                        if (cartsToReplace != null) {
-                            ArrayList<Cart> finalCarts = new ArrayList<Cart>();
-                            boolean found = false;
-                            for (Cart cart : originalFormalite.getCarts()) {
-                                for (Cart cartToReplace : cartsToReplace) {
-                                    if (cart.getId().equals(cartToReplace.getId()))
-                                        found = true;
-                                }
-                                if (!found)
-                                    finalCarts.add(cart);
-                            }
-                            finalCarts.addAll(cartsToReplace);
-                            originalFormalite.setCarts(finalCarts);
-                            for (Cart cart : originalFormalite.getCarts())
-                                cart.setFormaliteGuichetUnique(originalFormalite);
-                        }
-
-                        originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
-
-                        if (generateInvoices)
-                            for (Cart currentCart : originalFormalite.getCarts()) {
-                                if (currentCart.getInvoice() == null
-                                        && currentCart.getFormaliteGuichetUnique().getFormalite() != null
-                                        && currentCart.getFormaliteGuichetUnique().getFormalite()
-                                                .getProvision() != null) {
-                                    if (currentCart.getTotal() != 0)
-                                        if (currentCart.getStatus().equals(cartStatusPayed)) {
-                                            currentCart.setInvoice(generateInvoiceFromCart(currentCart,
-                                                    currentCart.getFormaliteGuichetUnique().getFormalite()
-                                                            .getProvision()
-                                                            .get(0)));
-                                        } else if (currentCart.getStatus().equals(cartStatusRefund)) {
-                                            currentCart.setInvoice((generateCreditNoteFromCart(currentCart,
-                                                    currentCart.getFormaliteGuichetUnique().getFormalite()
-                                                            .getProvision()
-                                                            .get(0))));
-                                        }
-                                }
-                            }
                     }
                 }
 
-                // Content field
-                originalFormalite.setContent(formaliteGuichetUnique.getContent());
+                savedFormaliteGuichetUnique = addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+
+                if (generateInvoices) {
+                    for (Cart currentCart : savedFormaliteGuichetUnique.getCarts()) {
+                        if (currentCart.getInvoice() == null) {
+                            if (currentCart.getStatus().equals(cartStatusPayed)) {
+                                currentCart.setInvoice(
+                                        generateInvoiceFromCart(currentCart, formalite.getProvision().get(0)));
+                            } else if (currentCart.getStatus().equals(cartStatusRefund)) {
+                                currentCart.setInvoice(
+                                        (generateCreditNoteFromCart(currentCart, formalite.getProvision().get(0))));
+                            }
+                        }
+                    }
+                    savedFormaliteGuichetUnique = addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+                }
             }
 
             // Download attachments
-            originalFormalite.getContent().setPiecesJointes(getAttachmentOfFormaliteGuichetUnique(originalFormalite));
-            if (originalFormalite.getContent().getPiecesJointes() != null
-                    && originalFormalite.getContent().getPiecesJointes().size() > 0)
-                for (PiecesJointe piecesJointe : originalFormalite.getContent().getPiecesJointes())
-                    piecesJointe.setContent(originalFormalite.getContent());
+            savedFormaliteGuichetUnique.getContent()
+                    .setPiecesJointes(getAttachmentOfFormaliteGuichetUnique(savedFormaliteGuichetUnique));
+            if (savedFormaliteGuichetUnique.getContent().getPiecesJointes() != null
+                    && savedFormaliteGuichetUnique.getContent().getPiecesJointes().size() > 0)
+                for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getContent().getPiecesJointes())
+                    piecesJointe.setContent(savedFormaliteGuichetUnique.getContent());
 
-            originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
-            List<Provision> provisions = formaliteService.getFormalite(formalite.getId()).getProvision();
+            savedFormaliteGuichetUnique = addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
 
-            if (provisions != null && originalFormalite.getContent().getPiecesJointes() != null
-                    && originalFormalite.getContent().getPiecesJointes().size() > 0) {
+            if (savedFormaliteGuichetUnique.getContent().getPiecesJointes() != null
+                    && savedFormaliteGuichetUnique.getContent().getPiecesJointes().size() > 0) {
                 List<TypeDocument> typeDocuments = typeDocumentService.getTypeDocument();
                 List<String> typeDocumentsToDownload = new ArrayList<String>();
                 if (typeDocuments != null)
@@ -329,128 +275,131 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             typeDocumentsToDownload.add(typeDocument.getCode());
 
                 if (typeDocumentsToDownload.size() > 0) {
-                    for (PiecesJointe piecesJointe : originalFormalite.getContent().getPiecesJointes())
+                    for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getContent().getPiecesJointes())
                         if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode())) {
-                            downloadPieceJointeOnProvision(provisions.get(0), piecesJointe);
+                            downloadPieceJointeOnProvision(formalite.getProvision().get(0), piecesJointe);
                         }
                 }
             }
-        }
 
-        if (originalFormalite != null) {
-            originalFormalite = addOrUpdateFormaliteGuichetUnique(originalFormalite);
             // validationsRequests field
-            originalFormalite.setValidationsRequests(formaliteGuichetUnique.getValidationsRequests());
-            if (originalFormalite.getValidationsRequests() != null)
-                for (ValidationRequest validationRequest : originalFormalite.getValidationsRequests())
-                    validationRequest.setFormaliteGuichetUnique(originalFormalite);
+            savedFormaliteGuichetUnique.setValidationsRequests(apiFormaliteGuichetUnique.getValidationsRequests());
+            if (savedFormaliteGuichetUnique.getValidationsRequests() != null)
+                for (ValidationRequest validationRequest : savedFormaliteGuichetUnique.getValidationsRequests())
+                    validationRequest.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
 
             // update status history items
-            originalFormalite.setFormaliteStatusHistoryItems(formaliteStatusHistoryItems);
-            for (FormaliteStatusHistoryItem formaliteStatusHistoryItem : originalFormalite
+            savedFormaliteGuichetUnique.setFormaliteStatusHistoryItems(apiFormaliteStatusHistoryItems);
+            for (FormaliteStatusHistoryItem formaliteStatusHistoryItem : savedFormaliteGuichetUnique
                     .getFormaliteStatusHistoryItems())
-                formaliteStatusHistoryItem.setFormaliteGuichetUnique(originalFormalite);
+                formaliteStatusHistoryItem.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
 
-            addOrUpdateFormaliteGuichetUnique(originalFormalite);
+            savedFormaliteGuichetUnique = addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
 
             // Update provision waiting AC field
-            if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATION_PENDING)
-                    && originalFormalite.getFormalite() != null
-                    && originalFormalite.getValidationsRequests() != null) {
-                for (ValidationRequest validationRequest : originalFormalite.getValidationsRequests()) {
-                    if (validationRequest.getStatus().getCode().equals(ValidationsRequestStatus.MSA_ACCEPTATION_PENDING)
-                            || validationRequest.getStatus().getCode()
-                                    .equals(ValidationsRequestStatus.VALIDATION_PENDING)) {
-                        List<CompetentAuthority> competentAuthorities = competentAuthorityService
-                                .getCompetentAuthorityByInpiReference(validationRequest.getPartnerCenter().getCode());
-
-                        // Try with partner label
-                        if ((competentAuthorities == null || competentAuthorities.size() == 0)
-                                && validationRequest.getPartner() != null) {
-                            competentAuthorities = competentAuthorityService
+            if (formalityHasNewStatus) {
+                if (savedFormaliteGuichetUnique.getStatus().getCode()
+                        .equals(FormaliteGuichetUniqueStatus.VALIDATION_PENDING)
+                        && savedFormaliteGuichetUnique.getValidationsRequests() != null) {
+                    for (ValidationRequest validationRequest : savedFormaliteGuichetUnique.getValidationsRequests()) {
+                        if (validationRequest.getStatus().getCode()
+                                .equals(ValidationsRequestStatus.MSA_ACCEPTATION_PENDING)
+                                || validationRequest.getStatus().getCode()
+                                        .equals(ValidationsRequestStatus.VALIDATION_PENDING)) {
+                            List<CompetentAuthority> competentAuthorities = competentAuthorityService
                                     .getCompetentAuthorityByInpiReference(
-                                            validationRequest.getPartner().getLibelleCourt());
-                        }
-                        if (competentAuthorities != null && competentAuthorities.size() == 1) {
-                            originalFormalite.getFormalite().setWaitedCompetentAuthority(competentAuthorities.get(0));
-                            formaliteService.addOrUpdateFormalite(originalFormalite.getFormalite());
-                            break;
+                                            validationRequest.getPartnerCenter().getCode());
+
+                            // Try with partner label
+                            if ((competentAuthorities == null || competentAuthorities.size() == 0)
+                                    && validationRequest.getPartner() != null) {
+                                competentAuthorities = competentAuthorityService
+                                        .getCompetentAuthorityByInpiReference(
+                                                validationRequest.getPartner().getLibelleCourt());
+                            }
+                            if (competentAuthorities != null && competentAuthorities.size() == 1) {
+                                savedFormaliteGuichetUnique.getFormalite()
+                                        .setWaitedCompetentAuthority(competentAuthorities.get(0));
+                                formaliteService.addOrUpdateFormalite(savedFormaliteGuichetUnique.getFormalite());
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            // Update formalite status based on GU status
-            if (formalityHasNewStatus && originalFormalite.getFormalite() != null) {
-                if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING)
-                        || originalFormalite.getStatus().getCode()
+                // Update formalite status based on GU status
+                if (savedFormaliteGuichetUnique.getStatus().getCode()
+                        .equals(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING)
+                        || savedFormaliteGuichetUnique.getStatus().getCode()
                                 .equals(FormaliteGuichetUniqueStatus.ERROR_INSEE_EXISTS_PM)
-                        || originalFormalite.getStatus().getCode()
+                        || savedFormaliteGuichetUnique.getStatus().getCode()
                                 .equals(FormaliteGuichetUniqueStatus.ERROR_INSEE_EXISTS_PP)
-                        || originalFormalite.getStatus().getCode()
+                        || savedFormaliteGuichetUnique.getStatus().getCode()
                                 .equals(FormaliteGuichetUniqueStatus.ERROR_DECLARATION_INSEE)
-                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.ERROR)
-                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.EXPIRED)
-                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.REJECTED)) {
-                    originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
+                        || savedFormaliteGuichetUnique.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.ERROR)
+                        || savedFormaliteGuichetUnique.getStatus().getCode()
+                                .equals(FormaliteGuichetUniqueStatus.EXPIRED)
+                        || savedFormaliteGuichetUnique.getStatus().getCode()
+                                .equals(FormaliteGuichetUniqueStatus.REJECTED)) {
+                    savedFormaliteGuichetUnique.getFormalite().setFormaliteStatus(formaliteStatusService
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                            originalFormalite.getFormalite()
+                            savedFormaliteGuichetUnique.getFormalite()
                                     .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "Formalité GU n°" + originalFormalite.getLiasseNumber() + " rejetée ("
+                            "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " rejetée ("
                                     + formaliteGuichetUniqueStatusService
-                                            .getFormaliteGuichetUniqueStatus(originalFormalite.getStatus().getCode())
+                                            .getFormaliteGuichetUniqueStatus(
+                                                    savedFormaliteGuichetUnique.getStatus().getCode())
                                             .getLabel()
                                     + ")");
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());
 
-                } else if (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
-                        || originalFormalite.getStatus().getCode()
+                } else if (savedFormaliteGuichetUnique.getStatus().getCode()
+                        .equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
+                        || savedFormaliteGuichetUnique.getStatus().getCode()
                                 .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER)
-                        || originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.VALIDATED)) {
-                    originalFormalite.getFormalite().setFormaliteStatus(formaliteStatusService
+                        || savedFormaliteGuichetUnique.getStatus().getCode()
+                                .equals(FormaliteGuichetUniqueStatus.VALIDATED)) {
+                    savedFormaliteGuichetUnique.getFormalite().setFormaliteStatus(formaliteStatusService
                             .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                            originalFormalite.getFormalite()
+                            savedFormaliteGuichetUnique.getFormalite()
                                     .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "Formalité GU n°" + originalFormalite.getLiasseNumber() + " validée");
+                            "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " validée");
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());
                 }
-                formaliteService.addOrUpdateFormalite(originalFormalite.getFormalite());
+                formaliteService.addOrUpdateFormalite(savedFormaliteGuichetUnique.getFormalite());
             }
 
-            if (formalite != null) {
-                originalFormalite.setFormalite(formalite);
-                addOrUpdateFormaliteGuichetUnique(originalFormalite);
-            }
+            savedFormaliteGuichetUnique.setFormalite(formalite);
+            addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+
+            if ((savedFormaliteGuichetUnique.getStatus().getCode()
+                    .equals(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING)
+                    || savedFormaliteGuichetUnique.getStatus().getCode()
+                            .equals(FormaliteGuichetUniqueStatus.AMENDMENT_SIGNATURE_PENDING)
+                            && savedFormaliteGuichetUnique.getIsAuthorizedToSign() != null
+                            && savedFormaliteGuichetUnique.getIsAuthorizedToSign()))
+                batchService.declareNewBatch(Batch.SIGN_FORMALITE_GUICHET_UNIQUE, savedFormaliteGuichetUnique.getId());
+
+            if (formalite != null && savedFormaliteGuichetUnique != null && (Arrays
+                    .asList(FormaliteGuichetUniqueStatus.PAYMENT_PENDING,
+                            FormaliteGuichetUniqueStatus.PAYMENT_VALIDATION_PENDING,
+                            FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING,
+                            FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_VALIDATION_PENDING)
+                    .contains(savedFormaliteGuichetUnique.getStatus().getCode())
+                    || savedFormaliteGuichetUnique.getStatus().getCode()
+                            .equals(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING)
+                            && savedFormaliteGuichetUnique.getIsAuthorizedToSign() != null
+                            && savedFormaliteGuichetUnique.getIsAuthorizedToSign()))
+                batchService.declareNewBatch(Batch.PAY_FORMALITE_GUICHET_UNIQUE, savedFormaliteGuichetUnique.getId());
         }
+        return savedFormaliteGuichetUnique;
 
-        if (formalite != null && originalFormalite != null
-                && (originalFormalite.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING)
-                        || originalFormalite.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.AMENDMENT_SIGNATURE_PENDING)
-                                && originalFormalite.getIsAuthorizedToSign() != null
-                                && originalFormalite.getIsAuthorizedToSign()))
-            batchService.declareNewBatch(Batch.SIGN_FORMALITE_GUICHET_UNIQUE, originalFormalite.getId());
-
-        if (formalite != null && originalFormalite != null
-                && (Arrays
-                        .asList(FormaliteGuichetUniqueStatus.PAYMENT_PENDING,
-                                FormaliteGuichetUniqueStatus.PAYMENT_VALIDATION_PENDING,
-                                FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING,
-                                FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_VALIDATION_PENDING)
-                        .contains(originalFormalite.getStatus().getCode())
-                        || originalFormalite.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING)
-                                && originalFormalite.getIsAuthorizedToSign() != null
-                                && originalFormalite.getIsAuthorizedToSign()))
-            batchService.declareNewBatch(Batch.PAY_FORMALITE_GUICHET_UNIQUE, originalFormalite.getId());
-
-        return originalFormalite;
     }
 
     private List<PiecesJointe> getAttachmentOfFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique)
