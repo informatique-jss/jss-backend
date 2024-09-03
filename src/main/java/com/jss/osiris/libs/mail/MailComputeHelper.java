@@ -180,6 +180,7 @@ public class MailComputeHelper {
                         && quotationDocument.getMailsClient().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsClient());
                     mailComputeResult.setMailToClientOrigin("mails indiqués dans la commande");
+                    hasAlreadyAddMails = true;
                 }
                 if (hasAlreadyAddMails && !quotationDocument.getAddToClientMailList()) {
                     // do nothing
