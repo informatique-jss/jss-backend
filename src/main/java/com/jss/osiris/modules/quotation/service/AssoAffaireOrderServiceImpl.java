@@ -297,7 +297,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         for (FormaliteInfogreffe formaliteInfogreffe : formalite
                                 .getFormalitesInfogreffe()) {
                             formaliteInfogreffe.setFormalite(formalite);
-                            formaliteInfogreffeService.addOrUpdFormaliteInfogreffe(formaliteInfogreffe);
+                            formaliteInfogreffeService.addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
                             batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL,
                                     formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
                         }

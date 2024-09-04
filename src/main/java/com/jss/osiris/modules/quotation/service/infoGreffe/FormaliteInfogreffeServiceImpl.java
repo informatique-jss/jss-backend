@@ -64,7 +64,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
     CustomerOrderCommentService customerOrderCommentService;
 
     @Override
-    public FormaliteInfogreffe addOrUpdFormaliteInfogreffe(FormaliteInfogreffe formaliteInfogreffe) {
+    public FormaliteInfogreffe addOrUpdateFormaliteInfogreffe(FormaliteInfogreffe formaliteInfogreffe) {
         if (formaliteInfogreffe.getEvenements() != null && formaliteInfogreffe.getEvenements().size() > 0)
             for (EvenementInfogreffe evenementInfogreffe : formaliteInfogreffe.getEvenements()) {
                 evenementInfogreffe.setFormaliteInfogreffe(formaliteInfogreffe);
@@ -98,7 +98,12 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                         && formaliteInfogreffe.getEntreprise().getSiren() == null)
                     formaliteInfogreffe.setEntreprise(null);
 
-                addOrUpdFormaliteInfogreffe(formaliteInfogreffe);
+                // Save only if new one
+                FormaliteInfogreffe currentFormaliteInfogreffe = getFormaliteInfogreffe(
+                        formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
+
+                if (currentFormaliteInfogreffe == null)
+                    addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
                 if (!isRefreshOnlyToday || formaliteInfogreffe.getEvenements() == null
                         || formaliteInfogreffe.getEvenements() != null
                                 && formaliteInfogreffe.getEvenements().size() > 0
@@ -115,6 +120,12 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
             throws OsirisException {
         FormaliteInfogreffe formaliteInfogreffeDetail = infogreffeDelegateService
                 .getInfogreffeFormalite(formaliteInfogreffe);
+
+        // Determine if status changed
+        String currentStatus = getLastEvenementInfogreffe(formaliteInfogreffe, true).getCodeEtat();
+        String newStatus = getLastEvenementInfogreffe(formaliteInfogreffeDetail, true).getCodeEtat();
+        Boolean hasChangedStatus = !currentStatus.equals(newStatus);
+
         setInfogreffeFormaliteEvenementDate(formaliteInfogreffeDetail);
         setInfogreffeFormaliteEvenementCodeEtat(formaliteInfogreffeDetail);
 
@@ -122,13 +133,15 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                 && formaliteInfogreffe.getEntreprise().getSiren() == null)
             formaliteInfogreffe.setEntreprise(null);
         formaliteInfogreffeDetail.setFormalite(formaliteInfogreffe.getFormalite());
-        addOrUpdFormaliteInfogreffe(formaliteInfogreffeDetail);
+        addOrUpdateFormaliteInfogreffe(formaliteInfogreffeDetail);
 
         formaliteInfogreffe = getFormaliteInfogreffe(
                 formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
-        refreshWaitedCompetentAuthorithy(formaliteInfogreffe);
 
-        refreshFormaliteStatusFromInfogreffeStatus(formaliteInfogreffe);
+        if (hasChangedStatus) {
+            refreshWaitedCompetentAuthorithy(formaliteInfogreffe);
+            refreshFormaliteStatusFromInfogreffeStatus(formaliteInfogreffe);
+        }
 
         if (formaliteInfogreffe.getFormalite() != null) {
             if (formaliteInfogreffe.getEvenements() != null

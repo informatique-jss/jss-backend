@@ -12,7 +12,7 @@ public interface FormaliteInfogreffeService {
 
     public void refreshFormaliteInfogreffeDetail(FormaliteInfogreffe formaliteInfogreffe) throws OsirisException;
 
-    public FormaliteInfogreffe addOrUpdFormaliteInfogreffe(FormaliteInfogreffe formaliteInfogreffe);
+    public FormaliteInfogreffe addOrUpdateFormaliteInfogreffe(FormaliteInfogreffe formaliteInfogreffe);
 
     public FormaliteInfogreffe getFormaliteInfogreffe(Integer formaliteNumero);
 
