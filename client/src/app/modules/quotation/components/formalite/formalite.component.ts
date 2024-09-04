@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Subject } from 'rxjs';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
+import { Dictionnary } from 'src/app/libs/Dictionnary';
 import { instanceOfCustomerOrder, instanceOfFormaliteGuichetUnique } from 'src/app/libs/TypeHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -17,6 +18,7 @@ import { Formalite } from '../../model/Formalite';
 import { FormaliteDialogChoose } from '../../model/FormaliteDialogChoose';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
 import { FormaliteGuichetUnique } from '../../model/guichet-unique/FormaliteGuichetUnique';
+import { EvenementInfogreffe } from '../../model/infogreffe/EvenementInfogreffe';
 import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
@@ -77,7 +79,7 @@ export class FormaliteComponent implements OnInit {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "competentAuthorityServiceProvider", fieldName: "competentAuthorityServiceProvider", label: "Fournisseur de service", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return this.competentAuthorityInfogreffe.label; return this.competentAuthorityInpi.label; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
     this.displayedColumns.push({ id: "referenceProvider", fieldName: "referenceProvider", label: "Référence fournisseur", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return element.identifiantFormalite.formaliteNumero; return element.liasseNumber } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
-    this.displayedColumns.push({ id: "formaliteStatus", fieldName: "formaliteStatus", label: "Statut de la formalité", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; return element.status.label; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
+    this.displayedColumns.push({ id: "formaliteStatus", fieldName: "formaliteStatus", label: "Statut de la formalité", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ((this.getLastEvenementOfFormaliteInfogreffe(element)) != null ? this.getFieldLabel(this.getLastEvenementOfFormaliteInfogreffe(element)!.codeEtat) : ""); return element.status.label; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
     this.displayedColumns.push({ id: "isAuthorizedToSign", fieldName: "isAuthorizedToSign", label: "Autorisé à signer/payer", valueFonction: (element: FormaliteGuichetUnique | FormaliteInfogreffe) => { if (instanceOfFormaliteInfogreffe(element)) return ""; if (!instanceOfFormaliteInfogreffe(element) && element.isAuthorizedToSign) return "Oui"; return "Non"; } } as unknown as SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
     this.tableAction.push({
@@ -122,6 +124,24 @@ export class FormaliteComponent implements OnInit {
     } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
     this.setFormaliteTableData();
+  }
+
+  getLastEvenementOfFormaliteInfogreffe(formaliteInfogreffe: FormaliteInfogreffe): EvenementInfogreffe | null {
+    if (formaliteInfogreffe && formaliteInfogreffe.evenements) {
+      formaliteInfogreffe.evenements.sort((a: EvenementInfogreffe, b: EvenementInfogreffe) => {
+        if (new Date(a.createdDate).getTime() == new Date(b.createdDate).getTime()) return 0;
+        return new Date(a.createdDate).getTime() > new Date(b.createdDate).getTime() ? 1 : -1;
+      });
+      return formaliteInfogreffe.evenements[0];
+    }
+    return null;
+  }
+
+  getFieldLabel(fieldName: string) {
+    let dictionnary = Dictionnary as any;
+    if (dictionnary[fieldName])
+      return dictionnary[fieldName];
+    return fieldName;
   }
 
   setFormaliteTableData() {
