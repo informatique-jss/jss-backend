@@ -290,7 +290,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
             return constantService.getAttachmentTypeProviderInvoice();
         if (documentAssocieInfogreffe.getTypeDocument()
                 .equals(DocumentAssocieInfogreffe.INFOGREFFE_ATTACHMENT_KBIS))
-            return constantService.getAttachmentTypeKbis();
+            return constantService.getAttachmentTypeKbisUpdated();
         if (documentAssocieInfogreffe.getTypeDocument()
                 .equals(DocumentAssocieInfogreffe.INFOGREFFE_ATTACHMENT_RBE_COPIE))
             return constantService.getAttachmentTypeRbe();
