@@ -1,12 +1,21 @@
 <h1 *ngIf="service" mat-dialog-title>Demande des pièces manquantes - {{getServiceLabel(service)}}</h1>
 <div mat-dialog-content
-  *ngIf="service && service.assoServiceDocuments && service.assoServiceDocuments.length>0 || selectedAssoServiceDocument">
+  *ngIf="service && service.assoServiceDocuments && service.assoServiceDocuments.length>0 || selectedAssoServiceDocument || selectedAssoServiceFieldType">
   <p *ngIf="editMode">Choisissez ci-dessous la liste des pièces jointes à envoyer :</p>
   <table class="full-width" *ngIf="editMode">
     <tr>
       <td>
         <sort-table class="margin-bottom" (onRowClick)="selectAssoServiceDocument($event)" [columns]="displayedColumns"
-          [noPaddingBottom]="true" [noMaxHeight]="true" [values]="tableValues" tableName="Documents du service"
+          [noPaddingBottom]="true" [noMaxHeight]="true" [values]="tableAssoServiceDocuments"
+          tableName="Documents du service" [refreshTable]="refreshTable.asObservable()">
+        </sort-table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <sort-table class="margin-bottom" (onRowClick)="selectAssoServiceFieldType($event)"
+          [columns]="displayedFieldTypes" [noPaddingBottom]="true" [noMaxHeight]="true"
+          [values]="tableAssoServiceFieldTypes" tableName="Types de champs du service"
           [refreshTable]="refreshTable.asObservable()">
         </sort-table>
       </td>
@@ -22,7 +31,7 @@
         </td>
         <td colspan="3">
           <generic-textarea [(model)]="assoServiceDocument.formalisteComment" label="Commentaire du formaliste"
-            [form]="attachmentTypeForm" [propertyName]="'formalisteComment'+index" [isMandatory]="false"
+            [form]="attachmentTypeForm" [propertyName]="'formalisteCommentAttachment'+index" [isMandatory]="false"
             [isDisabled]="!editMode" [numberOfLines]="3"></generic-textarea>
         </td>
         <td style="width: 80px;">
@@ -30,6 +39,31 @@
             matTooltip="Supprimer de la sélection"><mat-icon style="margin : 0" class="pointer">
               delete</mat-icon></button>
         </td>
+      </tr>
+      <tr *ngFor="let assoServiceDocument of selectedAssoServiceDocument; let index = index">
+      </tr>
+    </table>
+  </div>
+  <p>Champs demandés : </p>
+  <div *ngIf="selectedAssoServiceFieldType && selectedAssoServiceFieldType.length>0">
+    <table class="full-width">
+      <tr *ngFor="let assoServiceFieldType of selectedAssoServiceFieldType; let index = index">
+        <td style="width: 300px;">
+          {{assoServiceFieldType.serviceFieldType.label}}
+          {{assoServiceFieldType.isMandatory? " - Obligatoire":""}}
+        </td>
+        <td colspan="3">
+          <generic-textarea [(model)]="assoServiceFieldType.formalisteComment" label="Commentaire du formaliste"
+            [form]="attachmentTypeForm" [propertyName]="'formalisteCommentFieldType'+index" [isMandatory]="false"
+            [isDisabled]="!editMode" [numberOfLines]="3"></generic-textarea>
+        </td>
+        <td style="width: 80px;">
+          <button mat-raised-button color="accent" (click)="deleteAssoServiceFieldType(index)" *ngIf="editMode"
+            matTooltip="Supprimer de la sélection"><mat-icon style="margin : 0" class="pointer">
+              delete</mat-icon></button>
+        </td>
+      </tr>
+      <tr *ngFor="let assoServiceFieldType of selectedAssoServiceFieldType; let index = index">
       </tr>
     </table>
   </div>
@@ -54,8 +88,9 @@
   *ngIf="(!service || !service.assoServiceDocuments || service.assoServiceDocuments.length==0) && !selectedAssoServiceDocument">
   <p>Aucun type de document attendu sur ce service</p>
 </div>
+
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="closeDialog()" *ngIf="editMode">Annuler</button>
   <button mat-raised-button color="accent" (click)="closeDialog()" *ngIf="!editMode">Fermer</button>
-  <button mat-raised-button color="warn" *ngIf=" editMode" (click)="generateMail()">Valider</button>
+  <button mat-raised-button color="warn" *ngIf="editMode" (click)="generateMail()">Valider</button>
 </div>

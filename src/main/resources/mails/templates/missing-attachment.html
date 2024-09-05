@@ -146,8 +146,14 @@
                                                                 style="padding-left:10px;padding-right:10px;text-align:center;width:100%;">
                                                                 <h1
                                                                     style="margin: 0; white-space: nowrap;color: rgb(35, 61, 86); direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: normal; line-height: 24px; text-align: center; margin-top: 0; margin-bottom: 0;">
-                                                                    <strong><span>Demande de pièces
-                                                                            manquantes</span></strong>
+                                                                    <strong><span
+                                                                            th:if="${assoServiceDocuments!=null}">Demande
+                                                                            de pièces
+                                                                            manquantes</span>
+                                                                        <span
+                                                                            th:if="${assoServiceDocuments==null} and ${assoServiceFieldTypes!=null}">Demande
+                                                                            d'informations manquantes</span>
+                                                                    </strong>
                                                                 </h1>
                                                             </td>
                                                         </tr>
@@ -188,7 +194,7 @@
                                                     </table>
                                                     <table class="text_block block-3" width="100%" border="0"
                                                         cellpadding="0" cellspacing="0" role="presentation"
-                                                        th-if="${referenceLabel!=null}"
+                                                        th:if="${referenceLabel!=null}"
                                                         style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
                                                         <tr>
                                                             <td
@@ -224,15 +230,23 @@
                                                             <td
                                                                 style="padding-left:10px;padding-right:10px;width:100%;">
                                                                 <p>Bonjour <span th:text="${customerName}"></span>,</p>
-                                                                <p>Dans l'objectif de poursuivre rapidement le
+                                                                <p th:if="${assoServiceDocuments!=null}">
+                                                                    Dans l'objectif
+                                                                    de poursuivre rapidement le
                                                                     traitement de votre commande, pourriez-vous nous
                                                                     transmettre les pièces suivantes ?</p>
+                                                                <p
+                                                                    th:if="${assoServiceDocuments==null} and ${assoServiceFieldTypes!=null}">
+                                                                    Dans l'objectif
+                                                                    de poursuivre rapidement le
+                                                                    traitement de votre commande, pourriez-vous nous
+                                                                    transmettre les informations suivantes ?</p>
                                                                 <p th:if="${isLastReminder}"><strong>Merci de nous
                                                                         confirmer la poursuite de votre commande. Sans
                                                                         retour de votre part sous 8 jours nous
                                                                         l'abandonnerons.</strong></p>
                                                                 <ul>
-                                                                    <li
+                                                                    <li th:if="${assoServiceDocuments!=null}"
                                                                         th:each="assoServiceDocument : ${assoServiceDocuments}">
                                                                         <span
                                                                             th:text="${assoServiceDocument.typeDocument.label}"></span>
@@ -242,6 +256,23 @@
                                                                             th:if="${assoServiceDocument.formalisteComment!=null}">
                                                                             - <span
                                                                                 th:text="${assoServiceDocument.formalisteComment}"></span></span>
+                                                                    </li>
+                                                                </ul>
+                                                                <p
+                                                                    th:if="${assoServiceDocuments!=null} and ${assoServiceFieldTypes!=null}">
+                                                                    De la même façon, pourriez-vous nous fournir les
+                                                                    informations suivantes : </p>
+                                                                <ul>
+                                                                    <li th:if="${assoServiceFieldTypes!=null}"
+                                                                        th:each="assoServiceFieldType : ${assoServiceFieldTypes}">
+                                                                        <span
+                                                                            th:text="${assoServiceFieldType.serviceFieldType.label}"></span>
+                                                                        <span
+                                                                            th:if="${assoServiceFieldType.isMandatory==false}">(facultatif)</span>
+                                                                        <span
+                                                                            th:if="${assoServiceFieldType.formalisteComment!=null}">
+                                                                            - <span
+                                                                                th:text="${assoServiceFieldType.formalisteComment}"></span></span>
                                                                     </li>
                                                                 </ul>
                                                             </td>

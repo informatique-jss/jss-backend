@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.repository.AssoServiceFieldTypeRepository;
 
@@ -13,6 +14,9 @@ public class AssoServiceFieldTypeServiceImpl implements AssoServiceFieldTypeServ
 
     @Autowired
     AssoServiceFieldTypeRepository assoServiceFieldTypeRepository;
+
+    @Autowired
+    MissingAttachmentQueryService missingAttachmentQueryService;
 
     @Override
     public AssoServiceFieldType getAssoServiceFieldType(Integer id) {
@@ -24,7 +28,9 @@ public class AssoServiceFieldTypeServiceImpl implements AssoServiceFieldTypeServ
 
     @Override
     @org.springframework.transaction.annotation.Transactional(rollbackFor = Exception.class)
-    public AssoServiceFieldType addOrUpdateServiceFieldType(AssoServiceFieldType assoServiceFieldType) {
+    public AssoServiceFieldType addOrUpdateServiceFieldType(AssoServiceFieldType assoServiceFieldType)
+            throws OsirisException {
+        missingAttachmentQueryService.checkCompleteAttachmentAndFieldListAndComment(null, assoServiceFieldType, null);
         return assoServiceFieldTypeRepository.save(assoServiceFieldType);
     }
 }

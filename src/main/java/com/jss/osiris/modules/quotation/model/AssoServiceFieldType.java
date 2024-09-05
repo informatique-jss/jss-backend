@@ -53,6 +53,9 @@ public class AssoServiceFieldType implements Serializable, IId {
 
     private Boolean isMandatory;
 
+    @Column(columnDefinition = "TEXT")
+    private String formalisteComment;
+
     public Integer getId() {
         return id;
     }
@@ -123,6 +126,14 @@ public class AssoServiceFieldType implements Serializable, IId {
 
     public void setSelectValue(ServiceTypeFieldTypePossibleValue selectValue) {
         this.selectValue = selectValue;
+    }
+
+    public String getFormalisteComment() {
+        return formalisteComment;
+    }
+
+    public void setFormalisteComment(String formalisteComment) {
+        this.formalisteComment = formalisteComment;
     }
 
 }

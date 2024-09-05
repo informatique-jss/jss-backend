@@ -1,10 +1,10 @@
 import { ServiceFieldType } from "./ServiceFieldType";
 import { ServiceTypeFieldTypePossibleValue } from "./ServiceTypeFieldTypePossibleValue";
-import { ServiceType } from "./ServiceType";
+import { Service } from "./Service";
 
 export interface AssoServiceFieldType {
   id: number;
-  service: ServiceType;
+  service: Service;
   serviceFieldType: ServiceFieldType;
   stringValue: string;
   integerValue: number;
@@ -12,4 +12,5 @@ export interface AssoServiceFieldType {
   selectValue: ServiceTypeFieldTypePossibleValue;
   textAreaValue: string;
   isMandatory: boolean;
+  formalisteComment: string;
 }
