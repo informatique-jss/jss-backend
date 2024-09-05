@@ -64,9 +64,9 @@ public class MailComputeHelper {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
     }
 
-    public MailComputeResult computeMailForDepositConfirmation(IQuotation quotation)
+    public MailComputeResult computeMailForDepositRequest(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
     }
 
     public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation)

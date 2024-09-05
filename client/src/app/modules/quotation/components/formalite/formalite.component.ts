@@ -130,7 +130,7 @@ export class FormaliteComponent implements OnInit {
     if (formaliteInfogreffe && formaliteInfogreffe.evenements) {
       formaliteInfogreffe.evenements.sort((a: EvenementInfogreffe, b: EvenementInfogreffe) => {
         if (new Date(a.createdDate).getTime() == new Date(b.createdDate).getTime()) return 0;
-        return new Date(a.createdDate).getTime() > new Date(b.createdDate).getTime() ? 1 : -1;
+        return new Date(a.createdDate).getTime() > new Date(b.createdDate).getTime() ? -1 : 1;
       });
       return formaliteInfogreffe.evenements[0];
     }

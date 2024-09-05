@@ -11,13 +11,13 @@
               {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
             </td>
           </tr>
-          <ng-container *ngFor="let service of asso.services">
+          <ng-container *ngFor="let service of asso.services ">
+            <tr *ngIf="service  ">
+              <td class="affaire " colspan="2">
+                <strong>{{getServiceLabel(service)}}</strong>
+              </td>
+            </tr>
             <ng-container *ngFor="let provision of service.provisions">
-              <tr *ngIf="service ">
-                <td class="affaire " colspan="2">
-                  <strong>{{getServiceLabel(service)}}</strong>
-                </td>
-              </tr>
               <tr *ngIf="provision.provisionType">
                 <td class="affaire " colspan="2">
                   {{provision.provisionType.label}}

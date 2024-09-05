@@ -706,7 +706,7 @@ public class MailHelper {
         mail.setCustomerOrder(customerOrder);
 
         MailComputeResult mailComputeResult = mailComputeHelper
-                .computeMailForCustomerOrderCreationConfirmation(customerOrder);
+                .computeMailForDepositRequest(customerOrder);
 
         mail.setHeaderPicture("images/mails/waiting-deposit.png");
 
@@ -1253,7 +1253,10 @@ public class MailHelper {
         if (query.getComment() != null)
             mail.setExplaination(query.getComment().replaceAll("\r?\n", "<br/>"));
 
-        mail.setReplyTo(query.getService().getAssoAffaireOrder().getAssignedTo());
+        Employee sendToEmployee = employeeService.getCurrentEmployee();
+        if (sendToEmployee == null)
+            sendToEmployee = query.getService().getAssoAffaireOrder().getAssignedTo();
+        mail.setReplyTo(sendToEmployee);
         mail.setSendToMe(query.getSendToMe());
         mail.setMailComputeResult(mailComputeHelper.computeMailForGenericDigitalDocument(customerOrder));
         mail.setIsLastReminder(isLastReminder);

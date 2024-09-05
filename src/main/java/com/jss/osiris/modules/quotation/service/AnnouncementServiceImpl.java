@@ -473,7 +473,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 try {
                     provision.setAttachments(
                             attachmentService.addAttachment(new FileInputStream(wordFile),
-                                    provision.getId(),null,
+                                    provision.getId(), null,
                                     Provision.class.getSimpleName(), constantService.getAttachmentTypeAnnouncement(),
                                     "announcement_" + announcement.getId()
                                             + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now())

@@ -128,6 +128,15 @@ export class ServiceComponent implements OnInit {
     this.uploadAttachmentService.downloadAttachment(attachment);
   }
 
+  downloadAllFiles() {
+    if (this.service)
+      if (this.service.assoServiceDocuments && this.service.assoServiceDocuments.length > 0)
+        for (let assoServiceDocument of this.service.assoServiceDocuments)
+          if (assoServiceDocument.attachments)
+            for (let attachment of assoServiceDocument.attachments)
+              this.uploadAttachmentService.downloadAttachment(attachment);
+  }
+
   addNewDocumentType(service: Service) {
     const dialogRef = this.selectedDocumentTypeDialog.open(SelectDocumentTypeDialogComponent, {
       maxWidth: "400px",
