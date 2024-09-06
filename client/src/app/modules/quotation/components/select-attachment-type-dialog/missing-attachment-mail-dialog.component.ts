@@ -78,15 +78,6 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
       if (this.editMode)
         this.missingAttachmentQuery.id = undefined;
       this.selectedAssoServiceDocument = this.missingAttachmentQuery.assoServiceDocument;
-    }
-
-    if (this.service && this.selectedAssoServiceFieldType.length == 0 && this.service.missingAttachmentQueries && this.service.missingAttachmentQueries.length > 0) {
-      this.service.missingAttachmentQueries.sort((a: MissingAttachmentQuery, b: MissingAttachmentQuery) => {
-        return new Date(b.createdDateTime!).getTime() - new Date(a.createdDateTime!).getTime();
-      })
-      this.missingAttachmentQuery = this.service.missingAttachmentQueries[0];
-      if (this.editMode)
-        this.missingAttachmentQuery.id = undefined;
       this.selectedAssoServiceFieldType = this.missingAttachmentQuery.assoServiceFieldType;
     }
 
