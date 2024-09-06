@@ -11,6 +11,8 @@ import { Service } from '../../model/Service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { ServiceService } from '../../services/service.service';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
+import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
 
 @Component({
   selector: 'app-select-attachment-type-dialog',
@@ -21,11 +23,18 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
 
   service: Service | undefined;
   displayedColumns: SortTableColumn<AssoServiceDocument>[] = [];
+  displayedFieldTypes: SortTableColumn<AssoServiceFieldType>[] = [];
   selectedAssoServiceDocument: AssoServiceDocument[] = [];
-  tableValues: AssoServiceDocument[] = [];
+  selectedAssoServiceFieldType: AssoServiceFieldType[] = [];
+  tableAssoServiceDocuments: AssoServiceDocument[] = [];
+  tableAssoServiceFieldTypes: AssoServiceFieldType[] = [];
   missingAttachmentQuery: MissingAttachmentQuery = {} as MissingAttachmentQuery;
   editMode: boolean = true;
-
+  SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
+  SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
+  SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
+  SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
+  SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
@@ -46,8 +55,12 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "typeDocument", fieldName: "typeDocument.label", label: "Type de document" } as SortTableColumn<AssoServiceDocument>);
     this.displayedColumns.push({ id: "typeAttachment", fieldName: "typeDocument.attachmentType.label", label: "Type de PJ" } as SortTableColumn<AssoServiceDocument>);
-    this.displayedColumns.push({ id: "isMandatory", fieldName: "isMandatory", label: "Obligataoire ?", valueFonction: (element: AssoServiceDocument, column: SortTableColumn<AssoServiceDocument>) => { return element.isMandatory ? "Oui" : "Non" } } as SortTableColumn<AssoServiceDocument>);
+    this.displayedColumns.push({ id: "isMandatory", fieldName: "isMandatory", label: "Obligatoire ?", valueFonction: (element: AssoServiceDocument, column: SortTableColumn<AssoServiceDocument>) => { return element.isMandatory ? "Oui" : "Non" } } as SortTableColumn<AssoServiceDocument>);
     this.displayedColumns.push({ id: "existingFiles", fieldName: "existingFiles", label: "Fichiers", valueFonction: (element: AssoServiceDocument, column: SortTableColumn<AssoServiceDocument>) => { return element.attachments ? element.attachments.map(attachment => attachment.uploadedFile.filename).join(" / ") : "" } } as SortTableColumn<AssoServiceDocument>);
+
+    this.displayedFieldTypes.push({ id: "serviceFieldTypeLabel", fieldName: "serviceFieldType.label", label: "Type de champ" } as SortTableColumn<AssoServiceFieldType>);
+    this.displayedFieldTypes.push({ id: "serviceFieldTypeDataType", fieldName: "serviceFieldType.dataType", label: "Type de donnée" } as SortTableColumn<AssoServiceFieldType>);
+    this.displayedFieldTypes.push({ id: "isMandatory", fieldName: "isMandatory", label: "Obligatoire ?", valueFonction: (element: AssoServiceFieldType, column: SortTableColumn<AssoServiceFieldType>) => { return element.isMandatory ? "Oui" : "Non" } } as SortTableColumn<AssoServiceFieldType>);
     this.setTableValues();
   }
   ngOnChanges(changes: SimpleChanges) {
@@ -65,16 +78,19 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
       if (this.editMode)
         this.missingAttachmentQuery.id = undefined;
       this.selectedAssoServiceDocument = this.missingAttachmentQuery.assoServiceDocument;
+      this.selectedAssoServiceFieldType = this.missingAttachmentQuery.assoServiceFieldType;
     }
 
     // display specific one
     if (this.missingAttachmentQuery && this.missingAttachmentQuery.id) {
       this.selectedAssoServiceDocument = this.missingAttachmentQuery.assoServiceDocument;
+      this.selectedAssoServiceFieldType = this.missingAttachmentQuery.assoServiceFieldType;
       if (this.editMode)
         this.missingAttachmentQuery.id = undefined;
     }
 
-    this.tableValues = this.getAssoServiceDocument();
+    this.tableAssoServiceFieldTypes = this.getAssoServiceFieldType();
+    this.tableAssoServiceDocuments = this.getAssoServiceDocument();
     this.refreshTable.next();
   }
 
@@ -93,8 +109,25 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
     this.setTableValues();
   }
 
+  selectAssoServiceFieldType(assoServiceFieldType: AssoServiceFieldType) {
+    if (!this.editMode)
+      return;
+
+    if (this.selectedAssoServiceFieldType)
+      for (let att of this.selectedAssoServiceFieldType)
+        if (att.id == assoServiceFieldType.id)
+          return;
+    this.selectedAssoServiceFieldType.push(assoServiceFieldType);
+    this.setTableValues();
+  }
+
   deleteAssoServiceDocument(index: number) {
     this.selectedAssoServiceDocument.splice(index, 1);
+    this.setTableValues();
+  }
+
+  deleteAssoServiceFieldType(index: number) {
+    this.selectedAssoServiceFieldType.splice(index, 1);
     this.setTableValues();
   }
 
@@ -121,13 +154,40 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
     return [];
   }
 
+  getAssoServiceFieldType() {
+    if (this.service) {
+      let assos = [];
+      if (!this.selectedAssoServiceFieldType)
+        return this.service.assoServiceFieldTypes;
+      else if (this.service.assoServiceFieldTypes) {
+        for (let serviceAssoFieldType of this.service.assoServiceFieldTypes) {
+          let found = false;
+          for (let selectedAssoFieldType of this.selectedAssoServiceFieldType) {
+            if (selectedAssoFieldType.serviceFieldType.code == serviceAssoFieldType.serviceFieldType.code) {
+              found = true;
+              break;
+            }
+          }
+          if (!found)
+            assos.push(serviceAssoFieldType);
+        }
+        return assos;
+      }
+    }
+    return [];
+  }
+
+
   getFormStatus(): boolean {
     return this.attachmentTypeForm.valid;
   }
 
   generateMail() {
-    if (this.attachmentTypeForm.valid && this.selectedAssoServiceDocument.length > 0 && this.editMode) {
-      this.missingAttachmentQuery.assoServiceDocument = this.selectedAssoServiceDocument;
+    if (this.attachmentTypeForm.valid && (this.selectedAssoServiceDocument.length > 0 || this.selectedAssoServiceFieldType.length > 0) && this.editMode) {
+      if (this.selectedAssoServiceDocument.length > 0)
+        this.missingAttachmentQuery.assoServiceDocument = this.selectedAssoServiceDocument;
+      if (this.selectedAssoServiceFieldType.length > 0)
+        this.missingAttachmentQuery.assoServiceFieldType = this.selectedAssoServiceFieldType;
       this.dialogRef.close(this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery).subscribe(response => this.closeDialog()));
     }
   }

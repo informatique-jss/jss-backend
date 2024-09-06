@@ -244,6 +244,23 @@
                                                                                 th:text="${assoServiceDocument.formalisteComment}"></span></span>
                                                                     </li>
                                                                 </ul>
+                                                                <p
+                                                                    th:if="${assoServiceDocuments!=null} and ${assoServiceFieldTypes!=null}">
+                                                                    De la même façon, pourriez-vous nous fournir les
+                                                                    informations suivantes : </p>
+                                                                <ul>
+                                                                    <li th:if="${assoServiceFieldTypes!=null}"
+                                                                        th:each="assoServiceFieldType : ${assoServiceFieldTypes}">
+                                                                        <span
+                                                                            th:text="${assoServiceFieldType.serviceFieldType.label}"></span>
+                                                                        <span
+                                                                            th:if="${assoServiceFieldType.isMandatory==false}">(facultatif)</span>
+                                                                        <span
+                                                                            th:if="${assoServiceFieldType.formalisteComment!=null}">
+                                                                            - <span
+                                                                                th:text="${assoServiceFieldType.formalisteComment}"></span></span>
+                                                                    </li>
+                                                                </ul>
                                                             </td>
                                                         </tr>
                                                     </table>

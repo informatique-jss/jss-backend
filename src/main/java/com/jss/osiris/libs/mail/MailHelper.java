@@ -60,6 +60,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
@@ -491,10 +492,24 @@ public class MailHelper {
             setQuotationPrice(quotation, ctx);
 
         if (mail.getMissingAttachmentQuery() != null) {
-            for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
-                if (asso.getFormalisteComment() != null)
-                    asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
-            ctx.setVariable("assoServiceDocuments", mail.getMissingAttachmentQuery().getAssoServiceDocument());
+            if (mail.getMissingAttachmentQuery().getAssoServiceDocument() != null
+                    && mail.getMissingAttachmentQuery().getAssoServiceDocument().size() > 0) {
+                for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
+                    if (asso.getFormalisteComment() != null)
+                        asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
+                ctx.setVariable("assoServiceDocuments", mail.getMissingAttachmentQuery().getAssoServiceDocument());
+            } else
+                ctx.setVariable("assoServiceDocuments", null);
+
+            if (mail.getMissingAttachmentQuery().getAssoServiceFieldType() != null
+                    && mail.getMissingAttachmentQuery().getAssoServiceFieldType().size() > 0) {
+                for (AssoServiceFieldType asso : mail.getMissingAttachmentQuery().getAssoServiceFieldType())
+                    if (asso.getFormalisteComment() != null)
+                        asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
+                ctx.setVariable("assoServiceFieldTypes", mail.getMissingAttachmentQuery().getAssoServiceFieldType());
+            } else
+                ctx.setVariable("assoServiceFieldTypes", null);
+
             ctx.setVariable("serviceLabel",
                     serviceService.getServiceLabel(mail.getMissingAttachmentQuery().getService()));
         }
@@ -1266,7 +1281,9 @@ public class MailHelper {
         }
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        if (mail.getMissingAttachmentQuery() != null) {
+        if (mail.getMissingAttachmentQuery() != null
+                && mail.getMissingAttachmentQuery().getAssoServiceDocument() != null
+                && mail.getMissingAttachmentQuery().getAssoServiceDocument().size() > 0) {
             for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
                 if (asso.getTypeDocument() != null)
                     if (asso.getTypeDocument().getAttachments() != null
