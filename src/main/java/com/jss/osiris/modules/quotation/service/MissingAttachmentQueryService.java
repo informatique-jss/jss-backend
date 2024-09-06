@@ -6,7 +6,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
-import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 
 public interface MissingAttachmentQueryService {
@@ -28,6 +27,7 @@ public interface MissingAttachmentQueryService {
         public MissingAttachmentQuery sendMissingAttachmentQueryImmediatly(MissingAttachmentQuery query)
                         throws OsirisException, OsirisClientMessageException;
 
-        public void checkCompleteAttachmentAndFieldListAndComment(AssoServiceDocument assoServiceDocument,
-                        AssoServiceFieldType assoServiceFieldType, Attachment attachment) throws OsirisException;
+        public void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument,
+                        Attachment attachment)
+                        throws OsirisException;
 }

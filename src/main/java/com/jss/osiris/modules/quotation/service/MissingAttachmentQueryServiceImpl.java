@@ -24,7 +24,6 @@ import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Service;
-import com.jss.osiris.modules.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.repository.MissingAttachmentQueryRepository;
 
@@ -183,92 +182,55 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
     }
 
     @Override
-    public void checkCompleteAttachmentAndFieldListAndComment(AssoServiceDocument assoServiceDocument,
-            AssoServiceFieldType assoServiceFieldType, Attachment attachment) throws OsirisException {
-        if (assoServiceDocument != null) {
-            if (assoServiceDocument.getService().getMissingAttachmentQueries() != null
-                    && assoServiceDocument.getService().getMissingAttachmentQueries().size() > 0) {
-                for (MissingAttachmentQuery missingAttachmentQuery : assoServiceDocument.getService()
-                        .getMissingAttachmentQueries()) {
-                    if (missingAttachmentQuery.getSendToMe() == false) {
-                        for (AssoServiceDocument assoServiceDocumentService : assoServiceDocument.getService()
-                                .getAssoServiceDocuments())
-                            for (AssoServiceDocument assoServiceDocumentMissingQuery : missingAttachmentQuery
-                                    .getAssoServiceDocument()) {
-                                if (assoServiceDocumentService.getTypeDocument().getCode()
-                                        .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode())) {
-                                    if (assoServiceDocumentMissingQuery.getAttachments() != null
-                                            && assoServiceDocumentMissingQuery.getAttachments().size() > 0) {
-                                        boolean isAtLeastOneAttachmentAvailable = false;
-                                        for (Attachment attachmentDocument : assoServiceDocumentMissingQuery
-                                                .getAttachments()) {
-                                            if (!attachmentDocument.getIsDisabled()) {
-                                                isAtLeastOneAttachmentAvailable = true;
-                                                break;
-                                            }
+    public void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument, Attachment attachment)
+            throws OsirisException {
+        if (assoServiceDocument.getService().getMissingAttachmentQueries() != null
+                && assoServiceDocument.getService().getMissingAttachmentQueries().size() > 0) {
+
+            List<MissingAttachmentQuery> missingAttchmentQueries = assoServiceDocument.getService()
+                    .getMissingAttachmentQueries();
+            missingAttchmentQueries.sort(new Comparator<MissingAttachmentQuery>() {
+                @Override
+                public int compare(MissingAttachmentQuery o1, MissingAttachmentQuery o2) {
+                    if (o1 == null && o2 != null)
+                        return 1;
+                    if (o1 != null && o2 == null)
+                        return -1;
+                    return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
+                }
+            });
+
+            for (MissingAttachmentQuery missingAttachmentQuery : assoServiceDocument.getService()
+                    .getMissingAttachmentQueries()) {
+                if (missingAttachmentQuery.getSendToMe() == false) {
+                    for (AssoServiceDocument assoServiceDocumentService : assoServiceDocument.getService()
+                            .getAssoServiceDocuments())
+                        for (AssoServiceDocument assoServiceDocumentMissingQuery : missingAttachmentQuery
+                                .getAssoServiceDocument()) {
+                            if (assoServiceDocumentService.getTypeDocument().getCode()
+                                    .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode())) {
+                                if (assoServiceDocumentMissingQuery.getAttachments() != null
+                                        && assoServiceDocumentMissingQuery.getAttachments().size() > 0) {
+                                    boolean isAtLeastOneAttachmentAvailable = false;
+                                    for (Attachment attachmentDocument : assoServiceDocumentMissingQuery
+                                            .getAttachments()) {
+                                        if (!attachmentDocument.getIsDisabled()) {
+                                            isAtLeastOneAttachmentAvailable = true;
+                                            break;
                                         }
-                                        if (!isAtLeastOneAttachmentAvailable && !attachment.getTypeDocument().getCode()
-                                                .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
-                                            return;
-                                    } else if (!attachment.getTypeDocument().getCode()
+                                    }
+                                    if (!isAtLeastOneAttachmentAvailable && !attachment.getTypeDocument().getCode()
                                             .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
                                         return;
-                                }
+                                } else if (!attachment.getTypeDocument().getCode()
+                                        .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
+                                    return;
                             }
-                    }
+                        }
 
-                    if (missingAttachmentQuery.getAssoServiceFieldType() != null
-                            && missingAttachmentQuery.getAssoServiceFieldType().size() > 0)
-                        for (AssoServiceFieldType assoServiceFieldTypeFromMissingQuery : missingAttachmentQuery
-                                .getAssoServiceFieldType())
-                            for (AssoServiceFieldType assoServiceFieldTypeFromService : assoServiceDocument.getService()
-                                    .getAssoServiceFieldTypes())
-                                if (assoServiceFieldTypeFromService.getServiceFieldType().getCode()
-                                        .equals(assoServiceFieldTypeFromMissingQuery.getServiceFieldType().getCode())) {
-                                    boolean isFieldTypeValueSet = false;
-                                    if (assoServiceFieldTypeFromMissingQuery.getServiceFieldType().getDataType()
-                                            .equals(ServiceFieldType.SERVICE_FIELD_TYPE_INTEGER)) {
-                                        if (assoServiceFieldTypeFromService.getIntegerValue() != null) {
-                                            isFieldTypeValueSet = true;
-                                            break;
-                                        } else
-                                            return;
-                                    }
-                                    if (assoServiceFieldTypeFromMissingQuery.getServiceFieldType().getDataType()
-                                            .equals(ServiceFieldType.SERVICE_FIELD_TYPE_DATE)) {
-                                        if (assoServiceFieldTypeFromService.getDateValue() != null) {
-                                            isFieldTypeValueSet = true;
-                                            break;
-                                        } else
-                                            return;
-                                    }
-                                    if (assoServiceFieldTypeFromMissingQuery.getServiceFieldType().getDataType()
-                                            .equals(ServiceFieldType.SERVICE_FIELD_TYPE_TEXT)) {
-                                        if (assoServiceFieldTypeFromService.getStringValue() != null) {
-                                            isFieldTypeValueSet = true;
-                                            break;
-                                        } else
-                                            return;
-                                    }
-                                    if (assoServiceFieldTypeFromMissingQuery.getServiceFieldType().getDataType()
-                                            .equals(ServiceFieldType.SERVICE_FIELD_TYPE_TEXTAREA)) {
-                                        if (assoServiceFieldTypeFromService.getTextAreaValue() != null) {
-                                            isFieldTypeValueSet = true;
-                                            break;
-                                        } else
-                                            return;
-                                    }
-                                    if (assoServiceFieldTypeFromMissingQuery.getServiceFieldType().getDataType()
-                                            .equals(ServiceFieldType.SERVICE_FIELD_TYPE_SELECT)) {
-                                        if (assoServiceFieldTypeFromService.getSelectValue() != null) {
-                                            isFieldTypeValueSet = true;
-                                            break;
-                                        } else
-                                            return;
-                                    }
-                                    if (!isFieldTypeValueSet)
-                                        return;
-                                }
+                    // After 'break' (==if MissingAttachment Query is completed), then, for the
+                    // service, set all provisions, with status 'waiting for attachments', to
+                    // 'in progress' status
                     if (missingAttachmentQuery.getService().getProvisions() != null
                             && missingAttachmentQuery.getService().getProvisions().size() > 0)
                         for (Provision provision : missingAttachmentQuery.getService().getProvisions()) {
@@ -293,6 +255,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
                                             announcementStatusService.getAnnouncementStatusByCode(
                                                     AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS));
                         }
+
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
                             "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
@@ -300,11 +263,10 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());
+                    return;
                 }
             }
         }
-        if (assoServiceFieldType != null) {
-
-        }
     }
+
 }

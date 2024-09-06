@@ -248,8 +248,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachment.setTypeDocumentAttachment(typeDocumentAttachment);
         } else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
             AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
-            missingAttachmentQueryService.checkCompleteAttachmentAndFieldListAndComment(assoServiceDocument, null,
-                    attachment);
+            missingAttachmentQueryService.checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
             if (assoServiceDocument == null)
                 return new ArrayList<Attachment>();
             attachment.setAssoServiceDocument(assoServiceDocument);
