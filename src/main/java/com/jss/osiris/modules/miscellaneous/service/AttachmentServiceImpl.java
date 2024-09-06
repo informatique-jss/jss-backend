@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -38,32 +37,23 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
 import com.jss.osiris.modules.quotation.model.Affaire;
-import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
-import com.jss.osiris.modules.quotation.model.FormaliteStatus;
-import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
-import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssoServiceDocumentService;
-import com.jss.osiris.modules.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
-import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
+import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
-import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeDocumentService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -137,9 +127,6 @@ public class AttachmentServiceImpl implements AttachmentService {
     NotificationService notificationService;
 
     @Autowired
-    CustomerOrderStatusService customerOrderStatusService;
-
-    @Autowired
     BatchService batchService;
 
     @Autowired
@@ -152,16 +139,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     PdfTools pdfTools;
 
     @Autowired
-    CustomerOrderCommentService customerOrderCommentService;
-
-    @Autowired
-    SimpleProvisionStatusService simpleProvisionStatusService;
-
-    @Autowired
-    FormaliteStatusService formaliteStatusService;
-
-    @Autowired
-    AnnouncementStatusService announcementStatusService;
+    MissingAttachmentQueryService missingAttachmentQueryService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -270,7 +248,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachment.setTypeDocumentAttachment(typeDocumentAttachment);
         } else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
             AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
-            checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
+            missingAttachmentQueryService.checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
             if (assoServiceDocument == null)
                 return new ArrayList<Attachment>();
             attachment.setAssoServiceDocument(assoServiceDocument);
@@ -432,93 +410,6 @@ public class AttachmentServiceImpl implements AttachmentService {
         newAttachment.setAssoServiceDocument(attachment.getAssoServiceDocument());
         newAttachment.setUploadedFile(attachment.getUploadedFile());
         return newAttachment;
-    }
-
-    private void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument, Attachment attachment)
-            throws OsirisException {
-        if (assoServiceDocument.getService().getMissingAttachmentQueries() != null
-                && assoServiceDocument.getService().getMissingAttachmentQueries().size() > 0) {
-
-            List<MissingAttachmentQuery> missingAttchmentQueries = assoServiceDocument.getService()
-                    .getMissingAttachmentQueries();
-            missingAttchmentQueries.sort(new Comparator<MissingAttachmentQuery>() {
-                @Override
-                public int compare(MissingAttachmentQuery o1, MissingAttachmentQuery o2) {
-                    if (o1 == null && o2 != null)
-                        return 1;
-                    if (o1 != null && o2 == null)
-                        return -1;
-                    return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
-                }
-            });
-
-            for (MissingAttachmentQuery missingAttachmentQuery : assoServiceDocument.getService()
-                    .getMissingAttachmentQueries()) {
-                if (missingAttachmentQuery.getSendToMe() == false) {
-                    for (AssoServiceDocument assoServiceDocumentService : assoServiceDocument.getService()
-                            .getAssoServiceDocuments())
-                        for (AssoServiceDocument assoServiceDocumentMissingQuery : missingAttachmentQuery
-                                .getAssoServiceDocument()) {
-                            if (assoServiceDocumentService.getTypeDocument().getCode()
-                                    .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode())) {
-                                if (assoServiceDocumentMissingQuery.getAttachments() != null
-                                        && assoServiceDocumentMissingQuery.getAttachments().size() > 0) {
-                                    boolean isAtLeastOneAttachmentAvailable = false;
-                                    for (Attachment attachmentDocument : assoServiceDocumentMissingQuery
-                                            .getAttachments()) {
-                                        if (!attachmentDocument.getIsDisabled()) {
-                                            isAtLeastOneAttachmentAvailable = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!isAtLeastOneAttachmentAvailable && !attachment.getTypeDocument().getCode()
-                                            .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
-                                        return;
-                                } else if (!attachment.getTypeDocument().getCode()
-                                        .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
-                                    return;
-                            }
-                        }
-
-                    // After 'break' (==if MissingAttachment Query is completed), then, for the
-                    // service, set all provisions, with status 'waiting for attachments', to
-                    // 'in progress' status
-                    if (missingAttachmentQuery.getService().getProvisions() != null
-                            && missingAttachmentQuery.getService().getProvisions().size() > 0)
-                        for (Provision provision : missingAttachmentQuery.getService().getProvisions()) {
-                            if (provision.getSimpleProvision() != null)
-                                if (provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
-                                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT))
-                                    provision.getSimpleProvision().setSimpleProvisionStatus(
-                                            simpleProvisionStatusService.getSimpleProvisionStatusByCode(
-                                                    SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS));
-
-                            if (provision.getFormalite() != null)
-                                if (provision.getFormalite().getFormaliteStatus().getCode()
-                                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT))
-                                    provision.getFormalite().setFormaliteStatus(
-                                            formaliteStatusService
-                                                    .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_IN_PROGRESS));
-
-                            if (provision.getAnnouncement() != null)
-                                if (provision.getAnnouncement().getAnnouncementStatus().getCode()
-                                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT))
-                                    provision.getAnnouncement().setAnnouncementStatus(
-                                            announcementStatusService.getAnnouncementStatusByCode(
-                                                    AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS));
-                        }
-
-                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                            assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
-                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée");
-
-                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
-                            constantService.getActiveDirectoryGroupFormalites());
-                    return;
-                }
-            }
-        }
     }
 
     @Override

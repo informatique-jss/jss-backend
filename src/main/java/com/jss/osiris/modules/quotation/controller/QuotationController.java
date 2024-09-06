@@ -69,6 +69,7 @@ import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
@@ -2250,23 +2251,38 @@ public class QuotationController {
   public ResponseEntity<MissingAttachmentQuery> generateAttachmentTypeMail(@RequestBody MissingAttachmentQuery query)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
-    if (query.getAssoServiceDocument() == null || query.getAssoServiceDocument().size() == 0)
+    if ((query.getAssoServiceDocument() == null || query.getAssoServiceDocument().size() == 0)
+        && (query.getAssoServiceFieldType() == null || query.getAssoServiceFieldType().size() == 0))
       throw new OsirisValidationException("assoServiceDocumentList");
 
-    AssoServiceDocument asso = null;
-    for (AssoServiceDocument assoServiceDocument : query.getAssoServiceDocument()) {
-      asso = assoServiceDocumentService.getAssoServiceDocument(assoServiceDocument.getId());
-      if (asso == null)
-        throw new OsirisValidationException("assoServiceDocument");
-    }
+    AssoServiceDocument assoServiceDocument = null;
+    if (query.getAssoServiceDocument() != null && query.getAssoServiceDocument().size() > 0)
+      for (AssoServiceDocument assoServiceDocumentItem : query.getAssoServiceDocument()) {
+        assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(assoServiceDocumentItem.getId());
+        if (assoServiceDocument == null)
+          throw new OsirisValidationException("assoServiceDocument");
+      }
 
-    if (asso != null) {
-      MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(asso.getService().getAssoAffaireOrder().getCustomerOrder());
-      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-        throw new OsirisValidationException("MailTo");
+    AssoServiceFieldType assoServiceFieldType = null;
+    if (query.getAssoServiceFieldType() != null && query.getAssoServiceFieldType().size() > 0)
+      for (AssoServiceFieldType assoServiceFieldTypeItem : query.getAssoServiceFieldType()) {
+        assoServiceFieldType = assoServiceFieldTypeService.getAssoServiceFieldType(assoServiceFieldTypeItem.getId());
+        if (assoServiceFieldType == null)
+          throw new OsirisValidationException("assoServiceFieldTypeItem");
+      }
 
-    }
+    MailComputeResult mailComputeResult = new MailComputeResult();
+    if (assoServiceDocument != null)
+      mailComputeResult = mailComputeHelper
+          .computeMailForPublicationReceipt(assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder());
+
+    if (assoServiceFieldType != null)
+      mailComputeResult = mailComputeHelper
+          .computeMailForPublicationReceipt(assoServiceFieldType.getService().getAssoAffaireOrder().getCustomerOrder());
+
+    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+      throw new OsirisValidationException("MailTo");
+
     return new ResponseEntity<MissingAttachmentQuery>(
         missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false), HttpStatus.OK);
   }

@@ -35,6 +35,11 @@ public class MissingAttachmentQuery {
     @JsonIgnoreProperties(value = { "service" }, allowSetters = true)
     private List<AssoServiceDocument> assoServiceDocument;
 
+    @ManyToMany
+    @JoinTable(name = "asso_service_field_type_missing_attachment_query", joinColumns = @JoinColumn(name = "id_missing_attchment_query"), inverseJoinColumns = @JoinColumn(name = "id_asso_service_field_type"))
+    @JsonIgnoreProperties(value = { "service" }, allowSetters = true)
+    private List<AssoServiceFieldType> assoServiceFieldType;
+
     private String comment;
     private Boolean sendToMe;
     private Boolean copyToMe;
@@ -124,4 +129,11 @@ public class MissingAttachmentQuery {
         this.thirdCustomerReminderDateTime = thirdCustomerReminderDateTime;
     }
 
+    public List<AssoServiceFieldType> getAssoServiceFieldType() {
+        return assoServiceFieldType;
+    }
+
+    public void setAssoServiceFieldType(List<AssoServiceFieldType> assoServiceFieldType) {
+        this.assoServiceFieldType = assoServiceFieldType;
+    }
 }
