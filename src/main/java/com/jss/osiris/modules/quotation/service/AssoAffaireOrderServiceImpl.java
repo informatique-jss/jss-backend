@@ -368,18 +368,24 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 && formalite.getFormalitesGuichetUnique().size() > 0)
                             for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
                                     .getFormalitesGuichetUnique()) {
-                                formaliteGuichetUnique.setFormalite(formalite);
-                                formaliteGuichetUniqueService
-                                        .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                                if (formaliteGuichetUnique.getFormalite() == null) {
+                                    FormaliteGuichetUnique currentFormaliteGuichetUnique = formaliteGuichetUniqueService
+                                            .getFormaliteGuichetUnique(formaliteGuichetUnique.getId());
+                                    currentFormaliteGuichetUnique.setFormalite(formalite);
+                                    formaliteGuichetUniqueService
+                                            .addOrUpdateFormaliteGuichetUnique(currentFormaliteGuichetUnique);
+                                }
                             }
 
                         if (formalite.getFormalitesInfogreffe() != null
                                 && formalite.getFormalitesInfogreffe().size() > 0)
                             for (FormaliteInfogreffe formaliteInfogreffe : formalite
                                     .getFormalitesInfogreffe()) {
-                                formaliteInfogreffe.setFormalite(formalite);
-                                formaliteInfogreffeService
-                                        .addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                                if (formaliteInfogreffe.getFormalite() == null) {
+                                    formaliteInfogreffe.setFormalite(formalite);
+                                    formaliteInfogreffeService
+                                            .addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                                }
                             }
                     }
 
