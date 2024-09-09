@@ -149,7 +149,7 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " and ( COALESCE(:activeDirectoryGroupId)=0 or exists (select :activeDirectoryGroupId from customer_order_comment com2 "
                         + " join asso_customer_order_comment_active_directory_group asso_grp2 on com2.id = asso_grp2.id_customer_order_comment "
                         + " join active_directory_group grp2 on asso_grp2.id_active_directory_group = grp2.id "
-                        + " where grp2.id =:activeDirectoryGroupId and  co.id= com2.id_customer_order) ) "
+                        + " where grp2.id =:activeDirectoryGroupId and  co.id= com2.id_customer_order and com.id=com2.id) ) "
                         + " and ( :isDisplayOnlyUnread and COALESCE(com.is_read,false)=false or :isDisplayOnlyUnread=false) "
                         + " group by cf.id, cf.label, r.id, r.firstname,origin.label,  r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
                         + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id,t2.id, cf.id, co.description,co.id_assigned_to ")
