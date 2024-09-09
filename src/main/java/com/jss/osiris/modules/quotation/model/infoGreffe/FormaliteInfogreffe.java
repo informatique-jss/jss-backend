@@ -23,6 +23,10 @@ public class FormaliteInfogreffe {
     public static String INFOGREFFE_STATUS_STRICT_REJECT = "REJETE_DEF_GRF";
     public static String INFOGREFFE_STATUS_REJECT = "REJETE_GRF";
     public static String INFOGREFFE_STATUS_VALIDATED = "VALIDE";
+    public static String INFOGREFFE_STATUS_RECOVER = "REPRISE";
+    public static String INFOGREFFE_STATUS_SAVE = "SAUVEGARDE";
+    public static String INFOGREFFE_STATUS_SENDING = "ENVOI_EN_COURS";
+    public static String INFOGREFFE_STATUS_SEND = "ENVOYE_AU_GRF";
 
     @Id
     @JsonProperty("id")

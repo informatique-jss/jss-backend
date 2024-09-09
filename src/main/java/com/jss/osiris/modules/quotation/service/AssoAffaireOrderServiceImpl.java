@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -332,6 +333,37 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 }
                             }
                         }
+                        if (originalFormalite != null
+                                && originalFormalite.getFormalitesInfogreffe() != null
+                                && originalFormalite.getFormalitesInfogreffe().size() > 0) {
+                            for (FormaliteInfogreffe formaliteInfogreffeOrigin : originalFormalite
+                                    .getFormalitesInfogreffe()) {
+                                Boolean found = false;
+                                if (formalite.getFormalitesInfogreffe() != null)
+                                    for (FormaliteInfogreffe formaliteInfogreffe : formalite
+                                            .getFormalitesInfogreffe())
+                                        if (formaliteInfogreffe.getId()
+                                                .equals(formaliteInfogreffeOrigin.getId()))
+                                            found = true;
+                                if (!found)
+                                    formaliteInfogreffeOrigin.setFormalite(null);
+                                formaliteInfogreffeService
+                                        .addOrUpdateFormaliteInfogreffe(formaliteInfogreffeOrigin);
+
+                                if (formalite.getFormaliteStatus().getIsCloseState()) {
+                                    if (formaliteInfogreffeOrigin.getEvenements() != null
+                                            && formaliteInfogreffeOrigin.getEvenements().size() > 0) {
+                                        formaliteInfogreffeOrigin.getEvenements().sort(
+                                                (o1, o2) -> ((LocalDateTime) o1.getCreatedDate())
+                                                        .compareTo((LocalDateTime) (o2.getCreatedDate())));
+                                        if (formaliteInfogreffeOrigin.getEvenements().get(0).getCodeEtat()
+                                                .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED))
+                                            throw new OsirisClientMessageException(
+                                                    "Impossible de terminer la formalité, le dossier Infogreffe n'est pas terminé");
+                                    }
+                                }
+                            }
+                        }
                         if (formalite.getFormalitesGuichetUnique() != null
                                 && formalite.getFormalitesGuichetUnique().size() > 0)
                             for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
@@ -341,6 +373,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                         .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
                             }
 
+                        if (formalite.getFormalitesInfogreffe() != null
+                                && formalite.getFormalitesInfogreffe().size() > 0)
+                            for (FormaliteInfogreffe formaliteInfogreffe : formalite
+                                    .getFormalitesInfogreffe()) {
+                                formaliteInfogreffe.setFormalite(formalite);
+                                formaliteInfogreffeService
+                                        .addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                            }
                     }
 
                     if (formalite.getActeDeposit() != null && formalite.getActeDeposit().getId() == null) {
