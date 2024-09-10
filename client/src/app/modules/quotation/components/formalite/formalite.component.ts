@@ -132,7 +132,6 @@ export class FormaliteComponent implements OnInit {
         if (new Date(a.createdDate).getTime() == new Date(b.createdDate).getTime()) return 0;
         return new Date(a.createdDate).getTime() > new Date(b.createdDate).getTime() ? -1 : 1;
       });
-
       for (let event of formaliteInfogreffe.evenements)
         if (event.codeEtat && event.codeEtat.length > 0)
           return event;
