@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Subject } from 'rxjs';
-import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
+import { EMPTY, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
 import { instanceOfCustomerOrder, instanceOfFormaliteGuichetUnique } from 'src/app/libs/TypeHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -132,6 +132,10 @@ export class FormaliteComponent implements OnInit {
         if (new Date(a.createdDate).getTime() == new Date(b.createdDate).getTime()) return 0;
         return new Date(a.createdDate).getTime() > new Date(b.createdDate).getTime() ? -1 : 1;
       });
+
+      for (let event of formaliteInfogreffe.evenements)
+        if (event.codeEtat && event.codeEtat.length > 0)
+          return event;
       return formaliteInfogreffe.evenements[0];
     }
     return null;
