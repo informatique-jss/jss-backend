@@ -175,7 +175,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
         }
         if (getByCode(Batch.PURGE_BATCH) == null) {
             BatchSettings batchSettings = new BatchSettings();
-            batchSettings.setCode(Batch.PURGE_LOGS);
+            batchSettings.setCode(Batch.PURGE_BATCH);
             batchSettings.setLabel("Purge des batchs");
             batchSettings.setFixedRate(5 * 60 * 1000);
             batchSettings.setQueueSize(1);

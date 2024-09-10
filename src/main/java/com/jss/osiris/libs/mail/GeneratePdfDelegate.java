@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -605,6 +606,13 @@ public class GeneratePdfDelegate {
         final String htmlContent = StringEscapeUtils
                 .unescapeHtml4(mailHelper.emailTemplateEngine().process("invoice-page", ctx));
 
+        try {
+            PrintWriter out = new PrintWriter("C:\\uploads\\html.txt");
+            out.println(htmlContent);
+            out.close();
+        } catch (Exception e) {
+
+        }
         File tempFile;
         OutputStream outputStream;
         try {
