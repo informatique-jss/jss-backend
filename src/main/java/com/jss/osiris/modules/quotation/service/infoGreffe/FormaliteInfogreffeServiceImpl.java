@@ -127,7 +127,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         setInfogreffeFormaliteEvenementCodeEtat(formaliteInfogreffeDetail);
         String currentStatus = getLastEvenementInfogreffe(formaliteInfogreffe, true).getCodeEtat();
         String newStatus = getLastEvenementInfogreffe(formaliteInfogreffeDetail, true).getCodeEtat();
-        Boolean hasChangedStatus = !currentStatus.equals(newStatus);
+        Boolean hasChangedStatus = currentStatus == null || !currentStatus.equals(newStatus);
 
         if (formaliteInfogreffe.getEntreprise() != null
                 && formaliteInfogreffe.getEntreprise().getSiren() == null)
@@ -221,39 +221,43 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
 
             EvenementInfogreffe lastEvent = getLastEvenementInfogreffe(formaliteInfogreffe, true);
 
-            if (lastEvent.getCodeEtat()
-                    .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_REJECT)
-                    || lastEvent.getCodeEtat()
-                            .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_STRICT_REJECT)) {
-                formaliteInfogreffe.getFormalite().setFormaliteStatus(
-                        formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
-                CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                        formaliteInfogreffe.getFormalite()
-                                .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                        "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée par "
-                                + (formaliteInfogreffe.getGreffeDestinataire() != null
-                                        ? formaliteInfogreffe.getGreffeDestinataire().getNom()
-                                        : ""));
+            if (lastEvent != null) {
+                if (lastEvent.getCodeEtat()
+                        .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_REJECT)
+                        || lastEvent.getCodeEtat()
+                                .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_STRICT_REJECT)) {
+                    formaliteInfogreffe.getFormalite().setFormaliteStatus(
+                            formaliteStatusService
+                                    .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
+                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                            formaliteInfogreffe.getFormalite()
+                                    .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                            "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée par "
+                                    + (formaliteInfogreffe.getGreffeDestinataire() != null
+                                            ? formaliteInfogreffe.getGreffeDestinataire().getNom()
+                                            : ""));
 
-                customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
-                        constantService.getActiveDirectoryGroupFormalites());
-            }
-            if (lastEvent.getCodeEtat()
-                    .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED)) {
-                formaliteInfogreffe.getFormalite().setFormaliteStatus(
-                        formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
-                CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                        formaliteInfogreffe.getFormalite()
-                                .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                        "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " validée par "
-                                + (formaliteInfogreffe.getGreffeDestinataire() != null
-                                        ? formaliteInfogreffe.getGreffeDestinataire().getNom()
-                                        : ""));
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                            constantService.getActiveDirectoryGroupFormalites());
+                }
+                if (lastEvent.getCodeEtat()
+                        .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED)) {
+                    formaliteInfogreffe.getFormalite().setFormaliteStatus(
+                            formaliteStatusService
+                                    .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
+                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                            formaliteInfogreffe.getFormalite()
+                                    .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                            "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " validée par "
+                                    + (formaliteInfogreffe.getGreffeDestinataire() != null
+                                            ? formaliteInfogreffe.getGreffeDestinataire().getNom()
+                                            : ""));
 
-                customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
-                        constantService.getActiveDirectoryGroupFormalites());
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                            constantService.getActiveDirectoryGroupFormalites());
+                }
+                formaliteService.addOrUpdateFormalite(formaliteInfogreffe.getFormalite());
             }
-            formaliteService.addOrUpdateFormalite(formaliteInfogreffe.getFormalite());
         }
     }
 

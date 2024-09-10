@@ -176,7 +176,6 @@ public class Attachment implements Serializable, IId {
 	private PiecesJointe piecesJointe;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
 	@JoinColumn(name = "id_document_associe_infogreffe")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private DocumentAssocieInfogreffe documentAssocieInfogreffe;

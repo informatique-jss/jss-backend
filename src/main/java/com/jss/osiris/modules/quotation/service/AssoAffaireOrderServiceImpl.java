@@ -345,10 +345,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                         if (formaliteInfogreffe.getId()
                                                 .equals(formaliteInfogreffeOrigin.getId()))
                                             found = true;
-                                if (!found)
+                                if (!found) {
                                     formaliteInfogreffeOrigin.setFormalite(null);
-                                formaliteInfogreffeService
-                                        .addOrUpdateFormaliteInfogreffe(formaliteInfogreffeOrigin);
+                                    formaliteInfogreffeService
+                                            .addOrUpdateFormaliteInfogreffe(formaliteInfogreffeOrigin);
+                                }
 
                                 if (formalite.getFormaliteStatus().getIsCloseState()) {
                                     if (formaliteInfogreffeOrigin.getEvenements() != null
@@ -368,18 +369,22 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 && formalite.getFormalitesGuichetUnique().size() > 0)
                             for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
                                     .getFormalitesGuichetUnique()) {
-                                formaliteGuichetUnique.setFormalite(formalite);
-                                formaliteGuichetUniqueService
-                                        .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                                if (formaliteGuichetUnique.getFormalite() == null) {
+                                    formaliteGuichetUnique.setFormalite(formalite);
+                                    formaliteGuichetUniqueService
+                                            .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                                }
                             }
 
                         if (formalite.getFormalitesInfogreffe() != null
                                 && formalite.getFormalitesInfogreffe().size() > 0)
                             for (FormaliteInfogreffe formaliteInfogreffe : formalite
                                     .getFormalitesInfogreffe()) {
-                                formaliteInfogreffe.setFormalite(formalite);
-                                formaliteInfogreffeService
-                                        .addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                                if (formaliteInfogreffe.getFormalite() == null) {
+                                    formaliteInfogreffe.setFormalite(formalite);
+                                    formaliteInfogreffeService
+                                            .addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                                }
                             }
                     }
 
