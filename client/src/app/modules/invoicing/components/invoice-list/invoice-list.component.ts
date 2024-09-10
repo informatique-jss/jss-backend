@@ -4,6 +4,7 @@ import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortT
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
@@ -13,6 +14,7 @@ import { InvoiceSearch } from '../../model/InvoiceSearch';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { InvoiceStatus } from '../../model/InvoiceStatus';
 import { InvoiceSearchResultService } from '../../services/invoice.search.result.service';
+import { InvoiceService } from '../../services/invoice.service';
 import { getColumnLink } from '../invoice-tools';
 
 @Component({
@@ -49,6 +51,8 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
     private userPreferenceService: UserPreferenceService,
+    private uploadAttachmentService: UploadAttachmentService,
+    private invoiceService: InvoiceService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -165,5 +169,22 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
   addInvoice(event: any) {
     this.appService.openRoute(event, 'invoicing/add/null', null);
+  }
+
+  downloadAllFiles() {
+    let count = 0;
+    if (this.invoices)
+      for (let invoice of this.invoices) {
+        this.invoiceService.getInvoiceById(invoice.invoiceId).subscribe(completeInvoice => {
+          if (completeInvoice.attachments) {
+            for (let attachement of completeInvoice.attachments) {
+              if (attachement.attachmentType.id == this.constantService.getAttachmentTypeInvoice().id && count < 100) {
+                this.uploadAttachmentService.downloadAttachment(attachement);
+                count++;
+              }
+            }
+          }
+        })
+      }
   }
 }

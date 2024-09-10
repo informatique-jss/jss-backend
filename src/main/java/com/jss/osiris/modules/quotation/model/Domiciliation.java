@@ -112,7 +112,7 @@ public class Domiciliation implements IId {
 	@JoinTable(name = "asso_domiciliation_activity_mail", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> activityMails;
 
-	@Column(length = 60)
+	@Column(length = 600)
 	private String accountingRecordDomiciliation;
 
 	@JsonProperty(value = "isLegalPerson")

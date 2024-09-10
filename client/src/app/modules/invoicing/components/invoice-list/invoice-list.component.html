@@ -46,6 +46,12 @@
           <generic-input [(model)]="invoiceSearch.invoiceId" label="Numéro de facture" [form]="invoiceForm"
             propertyName="invoiceId" [isMandatory]="false"></generic-input>
         </td>
+        <td class="fab-td-button download-button">
+          <button (click)="downloadAllFiles()" mat-mini-fab color="accent" class="add-button"
+            matTooltip="Télécharger toutes les factures">
+            <mat-icon>download</mat-icon>
+          </button>
+        </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchInvoices()" class="add-button">
             <mat-icon>search</mat-icon>

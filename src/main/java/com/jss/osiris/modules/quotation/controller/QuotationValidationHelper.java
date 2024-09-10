@@ -443,7 +443,7 @@ public class QuotationValidationHelper {
                         validationHelper.validateReferential(domiciliation.getCity(), false, "City");
                         validationHelper.validateReferential(domiciliation.getCountry(), false, "Country");
                         validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(),
-                                        false, 60,
+                                        false, 600,
                                         "AccountingRecordDomiciliation");
 
                         if (domiciliation.isLegalPerson()) {
