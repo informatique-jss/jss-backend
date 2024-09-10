@@ -345,10 +345,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                         if (formaliteInfogreffe.getId()
                                                 .equals(formaliteInfogreffeOrigin.getId()))
                                             found = true;
-                                if (!found)
+                                if (!found) {
                                     formaliteInfogreffeOrigin.setFormalite(null);
-                                formaliteInfogreffeService
-                                        .addOrUpdateFormaliteInfogreffe(formaliteInfogreffeOrigin);
+                                    formaliteInfogreffeService
+                                            .addOrUpdateFormaliteInfogreffe(formaliteInfogreffeOrigin);
+                                }
 
                                 if (formalite.getFormaliteStatus().getIsCloseState()) {
                                     if (formaliteInfogreffeOrigin.getEvenements() != null
