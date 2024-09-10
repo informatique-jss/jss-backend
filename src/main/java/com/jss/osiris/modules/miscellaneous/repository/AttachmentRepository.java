@@ -45,6 +45,6 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
         @Query(value = "select a.* from attachment a where id_type_document_attachment =:documentCode", nativeQuery = true)
         List<Attachment> findByTypeDocumentCode(@Param("documentCode") String documentCode);
 
-        @Query(value = "select a.* from attachment a where id_document_associe_infogreffe =:urlTelechargement", nativeQuery = true)
+        @Query(value = "select a.* from attachment a where id_document_associe_infogreffe like concat('%',:urlTelechargement,'%')", nativeQuery = true)
         List<Attachment> findByDocumentAssocieInfogreffe(@Param("urlTelechargement") String urlTelechargement);
 }
