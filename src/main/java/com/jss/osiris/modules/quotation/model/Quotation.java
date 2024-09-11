@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -68,6 +70,7 @@ public class Quotation implements IQuotation {
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
 	private LocalDateTime createdDate;
 
@@ -75,6 +78,8 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_quotation_status")
 	private QuotationStatus quotationStatus;
 
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime lastStatusUpdate;
 
 	@Column(columnDefinition = "TEXT") // TODO : delete when new website
@@ -111,8 +116,16 @@ public class Quotation implements IQuotation {
 	@JsonIgnore // For client-side performance purpose
 	private List<CustomerOrder> customerOrders;
 
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime firstReminderDateTime;
+
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime secondReminderDateTime;
+
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime thirdReminderDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -125,9 +125,10 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         formaliteInfogreffeDetail.setFormalite(formaliteInfogreffe.getFormalite());
         setInfogreffeFormaliteEvenementDate(formaliteInfogreffeDetail);
         setInfogreffeFormaliteEvenementCodeEtat(formaliteInfogreffeDetail);
-        String currentStatus = getLastEvenementInfogreffe(formaliteInfogreffe, true).getCodeEtat();
-        String newStatus = getLastEvenementInfogreffe(formaliteInfogreffeDetail, true).getCodeEtat();
-        Boolean hasChangedStatus = currentStatus == null || !currentStatus.equals(newStatus);
+        EvenementInfogreffe currentStatus = getLastEvenementInfogreffe(formaliteInfogreffe, true);
+        EvenementInfogreffe newStatus = getLastEvenementInfogreffe(formaliteInfogreffeDetail, true);
+        Boolean hasChangedStatus = currentStatus == null
+                || !currentStatus.getCodeEtat().equals(newStatus.getCodeEtat());
 
         if (formaliteInfogreffe.getEntreprise() != null
                 && formaliteInfogreffe.getEntreprise().getSiren() == null)
