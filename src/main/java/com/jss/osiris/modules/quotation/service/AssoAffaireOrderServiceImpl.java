@@ -372,9 +372,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 if (formaliteGuichetUnique.getFormalite() == null) {
                                     FormaliteGuichetUnique currentFormaliteGuichetUnique = formaliteGuichetUniqueService
                                             .getFormaliteGuichetUnique(formaliteGuichetUnique.getId());
-                                    currentFormaliteGuichetUnique.setFormalite(formalite);
-                                    formaliteGuichetUniqueService
-                                            .addOrUpdateFormaliteGuichetUnique(currentFormaliteGuichetUnique);
+                                    if (currentFormaliteGuichetUnique != null) {
+                                        currentFormaliteGuichetUnique.setFormalite(formalite);
+                                        formaliteGuichetUniqueService
+                                                .addOrUpdateFormaliteGuichetUnique(currentFormaliteGuichetUnique);
+                                    } else {
+                                        formaliteGuichetUnique.setFormalite(formalite);
+                                        formaliteGuichetUniqueService
+                                                .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                                    }
                                 }
                             }
 
