@@ -269,6 +269,22 @@ public class AttachmentServiceImpl implements AttachmentService {
 
             // Notify user
             notificationService.notifyAttachmentAddToProvision(provision, attachment);
+
+            // Attached publication flag to service
+            if (attachment.getAttachmentType().getId()
+                    .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
+                if (provision.getService().getAssoServiceDocuments() != null
+                        && provision.getService().getAssoServiceDocuments().size() > 0) {
+                    for (AssoServiceDocument assoServiceDocument : provision.getService().getAssoServiceDocuments()) {
+                        if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
+                                && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
+                                        .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
+                            attachment.setAssoServiceDocument(assoServiceDocument);
+                        }
+                    }
+                }
+            }
+
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)
