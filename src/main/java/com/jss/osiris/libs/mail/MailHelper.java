@@ -1153,76 +1153,8 @@ public class MailHelper {
         }
 
         mail.setAttachments(attachments);
-<<<<<<< HEAD
-
-        mail.setHeaderPicture("images/waiting-deposit-header.png");
-        mail.setTitle("Votre commande est terminée !");
-
-        if (remainingToPay > 0 && !isPaymentTypePrelevement)
-            mail.setSubtitle("Elle n'attend plus que votre paiement.");
-
-        mail.setLabel("Commande n°" + customerOrder.getId());
-
-        String explainationText = "";
-        if (isReminder) {
-            explainationText = "Ceci est un mail de relance automatique concernant le réglement de votre commande n°"
-                    + customerOrder.getId() + " dont vous trouverez la facture ci-jointe.";
-            if (isLastReminder)
-                explainationText += " Sans réglement de votre part dans les 10 jours, nous nous verrons contraints de vous mettre en demeure pour la somme en question.";
-            else
-                explainationText += " Nous vous remercions de bien vouloir procéder à son règlement dans les meilleurs délais.";
-        } else {
-            explainationText = "Nous avons le plaisir de vous confirmer la finalisation de votre commande n°"
-                    + customerOrder.getId();
-        }
-
-        Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
-
-        explainationText += " Cette commande concerne la société "
-                + ((affaire.getDenomination() != null ? affaire.getDenomination()
-                        : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
-                        + (affaire.getAddress() + ", "
-                                + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
-                + ". Vous trouverez en pièces-jointes les éléments suivants : ";
-
-        ArrayList<String> attachementNames = new ArrayList<String>();
-        for (Attachment attachment : attachments)
-            attachementNames
-                    .add(attachment.getAttachmentType().getLabel() + " (" + attachment.getUploadedFile().getFilename()
-                            + ")");
-        mail.setExplainationElements(String.join("forgetThis", attachementNames));
-
-        mail.setExplaination(explainationText);
-
-        if (remainingToPay > 0 && !isPaymentTypePrelevement) {
-
-            mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
-            if (!disableCbLink) {
-                mail.setCbExplanation(
-                        "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
-
-                if (!sendToMe)
-                    mail.setCbLink(
-                            paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
-                                    + mailComputeResult.getRecipientsMailTo().get(0).getMail());
-                else
-                    mail.setCbLink(
-                            paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
-                                    + employeeService.getCurrentEmployee().getMail());
-            }
-
-            mail.setPaymentExplainationWarning(
-                    "Référence à indiquer absolument dans le libellé de votre virement : " + customerOrder.getId());
-
-        }
-
-        mail.setGreetings("En vous remerciant pour votre confiance !");
-
-        mail.setReplyTo(customerOrder.getAssignedTo());
-=======
         mail.setHeaderPicture("images/mails/customer-order-finalization.png");
         mail.setReplyToMail(constantService.getStringAccountingSharedMaiblox());
->>>>>>> develop
         mail.setSendToMe(sendToMe);
         mail.setMailTemplate(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION);
 

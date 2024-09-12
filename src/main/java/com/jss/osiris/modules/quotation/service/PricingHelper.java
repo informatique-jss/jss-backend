@@ -129,16 +129,9 @@ public class PricingHelper {
         return null;
     }
 
-    <<<<<<<HEAD
-
-    public BillingItem getAppliableBillingItem(List<BillingItem> billingItems, IQuotation quotation)
-            throws OsirisException {
-=======
-
     public BillingItem getAppliableBillingItem(BillingType billingType, IQuotation quotation)
             throws OsirisException {
         List<BillingItem> billingItems = billingItemService.getBillingItemByBillingType(billingType);
->>>>>>> develop
         if (billingItems == null)
             throw new OsirisException(null, "No billing items provided");
 

@@ -396,11 +396,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             }
                     }
 
-                    if (formalite.getActeDeposit() != null && formalite.getActeDeposit().getId() == null) {
-                        batchService.declareNewBatch(Batch.DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE,
-                                formalite.getId());
-                    }
-
                     if (formalite.getFormaliteStatus().getIsCloseState()
                             && (formalite.getFormalitesGuichetUnique() == null
                                     || formalite.getFormalitesGuichetUnique().size() == 0)
