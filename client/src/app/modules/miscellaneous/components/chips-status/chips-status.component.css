@@ -28,3 +28,8 @@
   display: flex;
   justify-content: space-around;
 }
+
+.mdc-evolution-chip-set .mdc-evolution-chip {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}

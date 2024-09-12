@@ -17,7 +17,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 
 public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Integer> {
 
@@ -43,6 +43,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " coalesce(pro.label,competent_authority.label, co2.label) as providerLabel, "
                         + " co.id as confrereId, "
                         + " r1.id as responsableId, "
+                        + " coalesce(r1.id_commercial, t.id_commercial) as salesEmployeeId, "
                         + " t.id as tiersId, "
                         + " r1.firstname || ' '||r1.lastname  as responsableLabel,"
                         + " coalesce( t.denomination,t.firstname || ' '||t.lastname )  as tiersLabel,"
@@ -83,10 +84,11 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " and  ( COALESCE(:customerOrderForInboundInvoiceId)=0 or i.id_customer_order_for_inbound_invoice in (:customerOrderForInboundInvoiceId)) "
                         + " and  ( COALESCE(:invoiceId)=0 or i.id in (:invoiceId)) "
                         + " and  ( COALESCE(:customerOrderIds) =0 or t.id in (:customerOrderIds) or r1.id in (:customerOrderIds) or co.id in (:customerOrderIds) or co2.id in (:customerOrderIds) or pro.id in (:customerOrderIds) or competent_authority.id in (:customerOrderIds) ) "
+                        + " and  ( COALESCE(:salesEmployeeId) =0 or t.id_commercial=:salesEmployeeId or r1.id_commercial=:salesEmployeeId ) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
                         + " and (:showToRecover is false or (  i.first_reminder_date_time is not null and  i.second_reminder_date_time  is not null and  i.third_reminder_date_time  is not null and i.id_invoice_status<>:invoicePayedStatusId ) )"
-                        + " group by i.id, ist.label,ist.code,ist.id, pro.label,competent_authority.label,co2.label, c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
+                        + " group by i.id, ist.label,ist.code,ist.id, pro.label,competent_authority.label,co2.label, c.id, co.id, co.label, r1.id, coalesce(r1.id_commercial, t.id_commercial), r1.firstname,t.id, r1.lastname,"
                         + " t.denomination, t.firstname, t.lastname, r1.firstname, r1.lastname, i.billing_label, i.created_date, i.total_price,"
                         + " i.first_reminder_date_time , i.second_reminder_date_time,i.third_reminder_date_time, invoicing_document.is_recipient_affaire, i.due_date ,c.description")
         List<InvoiceSearchResult> findInvoice(@Param("invoiceStatus") List<Integer> invoiceStatus,
@@ -97,6 +99,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         @Param("invoiceId") Integer invoiceId,
                         @Param("customerOrderId") Integer customerOrderId,
                         @Param("customerOrderIds") List<Integer> customerOrderIds,
+                        @Param("salesEmployeeId") Integer salesEmployeeId,
                         @Param("customerOrderForInboundInvoiceId") Integer customerOrderForInboundInvoiceId,
                         @Param("invoicingDocumentTypeId") Integer invoicingDocumentTypeId);
 
@@ -112,7 +115,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         List<Invoice> findByCompetentAuthorityAndManualAccountingDocumentNumberContainingIgnoreCase(
                         CompetentAuthority competentAuthority, String manualDocumentNumber);
 
-        @Query("select i from Invoice i where id_direct_debit_transfert=:id")
+        @Query(value = "select i.* from invoice i where id_direct_debit_transfert=:id", nativeQuery = true)
         Invoice searchInvoicesByIdDirectDebitTransfert(@Param("id") Integer idToFind);
 
         @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null and billingLabelType=:billingLabelType   ")

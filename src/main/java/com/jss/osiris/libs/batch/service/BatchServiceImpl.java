@@ -1,10 +1,8 @@
 package com.jss.osiris.libs.batch.service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -253,10 +251,37 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
 
     @Override
     public List<Batch> searchBatchs(BatchSearch batchSearch) {
-        return batchRepository.searchBatchs(
-                Date.from(batchSearch.getStartDate().atZone(ZoneId.systemDefault()).toInstant()),
-                Date.from(batchSearch.getEndDate().atZone(ZoneId.systemDefault()).toInstant()),
-                batchSearch.getBatchSettings(), batchSearch.getBatchStatus(), batchSearch.getEntityId(),
-                batchSearch.getNodes());
+        if (batchSearch.getEntityId() == null)
+            batchSearch.setEntityId(0);
+
+        ArrayList<Integer> nodeIds = new ArrayList<Integer>();
+        if (batchSearch.getNodes() == null)
+            nodeIds.add(0);
+        else
+            for (Node node : batchSearch.getNodes())
+                nodeIds.add(node.getId());
+
+        ArrayList<Integer> settingsIds = new ArrayList<Integer>();
+        if (batchSearch.getBatchSettings() == null)
+            settingsIds.add(0);
+        else
+            for (BatchSettings setting : batchSearch.getBatchSettings())
+                settingsIds.add(setting.getId());
+
+        ArrayList<Integer> statusIds = new ArrayList<Integer>();
+        if (batchSearch.getBatchStatus() == null)
+            statusIds.add(0);
+        else
+            for (BatchStatus status : batchSearch.getBatchStatus())
+                statusIds.add(status.getId());
+
+        return batchRepository.searchBatchs(batchSearch.getStartDate(), batchSearch.getEndDate(),
+                settingsIds, statusIds, batchSearch.getEntityId(), nodeIds);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void purgeBatch() {
+        batchRepository.deleteAll(batchRepository.findBatchOlderThanMonths(4));
     }
 }

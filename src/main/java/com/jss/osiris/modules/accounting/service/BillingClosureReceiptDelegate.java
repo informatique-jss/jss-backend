@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -40,22 +39,21 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
-import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.service.ConfrereService;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
+import com.jss.osiris.modules.quotation.service.ServiceService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
-@Service
+@org.springframework.stereotype.Service
 public class BillingClosureReceiptDelegate {
 
     @Value("${payment.cb.entry.point}")
@@ -66,9 +64,6 @@ public class BillingClosureReceiptDelegate {
 
     @Autowired
     ResponsableService responsableService;
-
-    @Autowired
-    ConfrereService confrereService;
 
     @Autowired
     DocumentService documentService;
@@ -103,6 +98,9 @@ public class BillingClosureReceiptDelegate {
     @Autowired
     CustomerMailService customerMailService;
 
+    @Autowired
+    ServiceService serviceService;
+
     public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
@@ -111,9 +109,6 @@ public class BillingClosureReceiptDelegate {
 
         if (tier == null)
             tier = responsableService.getResponsable(tiersId);
-
-        if (tier == null)
-            tier = confrereService.getConfrere(tiersId);
 
         Document billingClosureDocument = null;
         if (tier instanceof Responsable)
@@ -214,11 +209,6 @@ public class BillingClosureReceiptDelegate {
                 values.add(new BillingClosureReceiptValue(
                         t.getDenomination() != null ? t.getDenomination()
                                 : (t.getFirstname() + " " + t.getLastname())));
-            } else if (tiersIn instanceof Confrere) {
-                Tiers fakeTiers = new Tiers();
-                fakeTiers.setId(tiersIn.getId());
-                tiersList.add(fakeTiers);
-                values.add(new BillingClosureReceiptValue(((Confrere) tiersIn).getLabel()));
             } else if (tiersIn instanceof Responsable) {
                 Tiers fakeTiers = new Tiers();
                 fakeTiers.setId(tiersIn.getId());
@@ -293,8 +283,9 @@ public class BillingClosureReceiptDelegate {
                     });
 
                     for (ICreatedDate input : allInputs) {
-                        if (input instanceof CustomerOrder)
-                            values.add(getBillingClosureReceiptValueForCustomerOrder((CustomerOrder) input));
+                        // if (input instanceof CustomerOrder)
+                        // values.add(getBillingClosureReceiptValueForCustomerOrder((CustomerOrder)
+                        // input));
                         if (input instanceof Invoice)
                             values.add(getBillingClosureReceiptValueForInvoice((Invoice) input));
                         if (input instanceof Payment) {
@@ -342,11 +333,7 @@ public class BillingClosureReceiptDelegate {
                 for (Object input : allInputs) {
                     if (input instanceof CustomerOrder) {
                         CustomerOrder customerOrder = (CustomerOrder) input;
-                        BillingClosureReceiptValue valueCustomerOrder = getBillingClosureReceiptValueForCustomerOrder(
-                                customerOrder);
-                        values.add(valueCustomerOrder);
                         if (customerOrder.getPayments() != null && customerOrder.getPayments().size() > 0) {
-                            valueCustomerOrder.setDisplayBottomBorder(false);
                             for (Payment payment : customerOrder.getPayments())
                                 if (!payment.getIsCancelled())
                                     values.add(getBillingClosureReceiptValueForDeposit(payment, customerOrder,
@@ -397,11 +384,12 @@ public class BillingClosureReceiptDelegate {
         value.setEventDateString(customerOrder.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         value.setEventDescription(
                 "Commande n°" + customerOrder.getId() + " - " + customerOrder.getCustomerOrderStatus().getLabel()
-                        + "<br/>"
-                        + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll("&",
+                        + "<br/><strong>"
+                        + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll(
+                                "&",
                                 "<![CDATA[&]]>")
-                        + "<br/>"
-                        + String.join("<br/>", getAllProvisionLabelForCustomerOrder(customerOrder)).replaceAll("&",
+                        + "</strong><br/>"
+                        + String.join("<br/>", getAllServiceLabelsForCustomerOrder(customerOrder)).replaceAll("&",
                                 "<![CDATA[&]]>"));
 
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
@@ -424,6 +412,11 @@ public class BillingClosureReceiptDelegate {
         value.setEventDateTime(invoice.getCreatedDate());
         value.setEventDateString(invoice.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         value.setEventDescription("Facture n°" + invoice.getId());
+        if (invoice.getManualPaymentType() != null
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())
+                && invoice.getDirectDebitTransfert() != null)
+            value.setDirectDebitTransfertDateTime(invoice.getDirectDebitTransfert()
+                    .getTransfertDateTime().toLocalDate());
 
         if (invoice.getCustomerOrder() != null) {
             String customerOrderValue = invoice.getCustomerOrder().getId() != null
@@ -431,12 +424,12 @@ public class BillingClosureReceiptDelegate {
                     : "";
             value.setEventDescription(
                     "Facture n°" + invoice.getId() + customerOrderValue
-                            + "<br/>"
+                            + "<br/><strong>"
                             + String.join("<br/>", getAllAffairesLabelForCustomerOrder(invoice.getCustomerOrder()))
                                     .replaceAll("&",
                                             "<![CDATA[&]]>")
-                            + "<br/>"
-                            + String.join("<br/>", getAllProvisionLabelForCustomerOrder(invoice.getCustomerOrder()))
+                            + "</strong><br/>"
+                            + String.join("<br/>", getAllServiceLabelsForCustomerOrder(invoice.getCustomerOrder()))
                                     .replaceAll("&",
                                             "<![CDATA[&]]>"));
 
@@ -459,12 +452,14 @@ public class BillingClosureReceiptDelegate {
         value.setEventDateTime(payment.getPaymentDate());
         value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-        String description = payment.getLabel().replaceAll("&", "<![CDATA[&]]>");
-        if (customerOrder != null) {
-            description += "<br/>"
-                    + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll("&",
-                            "<![CDATA[&]]>");
-        }
+        String description = "Acompte n°" + payment.getId() + " - "
+                + payment.getLabel().replaceAll("&", "<![CDATA[&]]>");
+        // if (customerOrder != null) {
+        // description += "<br/>"
+        // + String.join("<br/>",
+        // getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll("&",
+        // "<![CDATA[&]]>");
+        // }
         value.setEventDescription(description);
 
         return value;
@@ -497,39 +492,50 @@ public class BillingClosureReceiptDelegate {
         return affaires;
     }
 
-    private List<String> getAllProvisionLabelForCustomerOrder(CustomerOrder customerOrder) {
-        ArrayList<String> provisions = new ArrayList<String>();
+    private List<String> getAllServiceLabelsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException {
+        ArrayList<String> serviceLabels = new ArrayList<String>();
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
                 && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
-                if (asso.getProvisions() != null && asso.getProvisions().size() > 0)
-                    for (Provision provision : asso.getProvisions())
-                        provisions
-                                .add(provision.getProvisionFamilyType().getLabel() + " - "
-                                        + provision.getProvisionType().getLabel());
+                for (Service service : asso.getServices())
+                    serviceLabels.add(serviceService.getServiceLabel(service));
+
+                Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+                // Add annual reference if defined
+                if (billingDocument != null && billingDocument.getIsCommandNumberMandatory() != null
+                        && billingDocument.getIsCommandNumberMandatory() && billingDocument.getCommandNumber() != null
+                        && billingDocument.getCommandNumber().length() > 0)
+                    serviceLabels.add("Référence annuelle " + billingDocument.getCommandNumber());
+
+                // Add if defined
+                if (billingDocument != null && billingDocument.getExternalReference() != null
+                        && billingDocument.getExternalReference().length() > 0)
+                    serviceLabels.add("Référence " + billingDocument.getExternalReference());
             }
-        return provisions;
+        return serviceLabels;
     }
 
     private void sendBillingClosureReceiptFile(File billingClosureReceipt, ITiers tiers)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<Attachment> attachments = new ArrayList<Attachment>();
+        Tiers finalTiers = null;
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
             String tiersType = "";
-            if (tiers instanceof Tiers)
+            if (tiers instanceof Tiers) {
                 tiersType = Tiers.class.getSimpleName();
-            if (tiers instanceof Responsable)
+                finalTiers = (Tiers) tiers;
+            } else {
                 tiersType = Responsable.class.getSimpleName();
-            if (tiers instanceof Confrere)
-                tiersType = Confrere.class.getSimpleName();
+                finalTiers = ((Responsable) tiers).getTiers();
+            }
 
             List<Attachment> attachmentsList = attachmentService.addAttachment(
-                    new FileInputStream(billingClosureReceipt), tiers.getId(),
+                    new FileInputStream(billingClosureReceipt), tiers.getId(), null,
                     tiersType, constantService.getAttachmentTypeBillingClosure(),
                     "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null, null);
+                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null, null, null);
 
             for (Attachment attachment : attachmentsList)
                 if (attachment.getUploadedFile().getFilename()
@@ -543,7 +549,7 @@ public class BillingClosureReceiptDelegate {
         }
 
         try {
-            mailHelper.sendBillingClosureToCustomer(attachments, tiers, false);
+            mailHelper.sendBillingClosureToCustomer(attachments, finalTiers, false);
         } catch (Exception e) {
             globalExceptionHandler.persistLog(
                     new OsirisException(e, "Impossible to send billing closure mail for Tiers " + tiers.getId()),

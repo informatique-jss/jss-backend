@@ -448,7 +448,9 @@ public class AccountingExportHelper {
                         Float currentClassDebit = 0f;
                         Float currentClassCredit = 0f;
                         for (AccountingBalance balanceRecord : balanceRecords) {
-                                if (!balanceRecord.getAccountingAccountClassLabel().equals(currentClass)) {
+                                if (!balanceRecord.getAccountingAccountClassLabel().equals(currentClass)
+                                                || (balanceRecords.indexOf(balanceRecord) == balanceRecords.size()
+                                                                - 1)) {
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentColumn = 0;

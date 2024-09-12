@@ -32,7 +32,15 @@
   </a>
   <a mat-list-item routerLink="/order" *ngIf="canViewCustomerOrderModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0}">
-    <mat-icon>shopping_cart</mat-icon> <span>Commande</span>
+    <mat-icon>shopping_cart</mat-icon> <span>Commandes</span>
+  </a>
+  <a mat-list-item routerLink="/recurring-order" *ngIf="canViewCustomerOrderModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/recurring-order' )>=0}">
+    <mat-icon>repeat</mat-icon> <span>Commandes récurrentes</span>
+  </a>
+  <a mat-list-item routerLink="/paper-set" *ngIf="canViewPaperSetModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/paper-set' )>=0}">
+    <mat-icon>history_edu</mat-icon> <span>Gestion des documents</span>
   </a>
   <a mat-list-item routerLink="/affaire" *ngIf="canViewAffaireModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/affaire' )>=0}">
@@ -57,7 +65,7 @@
   <a mat-list-item routerLink="/my-profil" [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/my-profil' )>=0}">
     <mat-icon>manage_accounts</mat-icon> <span>Mon profil</span>
   </a>
-  <a mat-list-item routerLink="/monitoring"
+  <a mat-list-item routerLink="/monitoring" *ngIf="canViewSupervisionModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/monitoring' )>=0}">
     <mat-icon>bar_chart_4_bars</mat-icon> <span>Supervision</span>
   </a>

@@ -1,0 +1,14 @@
+.document-card {
+  width: 350px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+}
+
+.document-upload {
+  width: 285px;
+}
+
+.attachment-cards {
+  display: flex;
+  flex-wrap: wrap;
+}

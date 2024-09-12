@@ -13,7 +13,6 @@ import { LoginService } from './routing/login-dialog/login.service';
 import { AppService } from './services/app.service';
 import { Note } from './services/model/Note';
 import { SearchService } from './services/search.service';
-import { UserNoteService } from './services/user.notes.service';
 import { UserPreferenceService } from './services/user.preference.service';
 
 @Component({
@@ -40,7 +39,6 @@ export class AppComponent {
   constructor(protected appService: AppService,
     public loginDialog: MatDialog,
     private loginService: LoginService,
-    private userNoteService: UserNoteService,
     public confirmationDialog: MatDialog,
     private notificationService: NotificationService,
     private userPreferenceService: UserPreferenceService,
@@ -50,11 +48,9 @@ export class AppComponent {
   groups: string[] = [] as Array<string>;
 
   ngOnInit() {
-    this.userNoteService.restoreUserNotes();
     this.restoreNoteTablePosition();
     this.constantService.initConstant();
     this.sidenavOpenStateSubscription = this.appService.sidenavOpenStateObservable.subscribe(item => this.sidenavOpenState = item);
-    this.userNotesSubscription = this.userNoteService.userNotesEventObservable.subscribe(item => this.userNotes = item)
     this.loggedStateSubscription = this.loginService.loggedStateObservable.subscribe(item => {
       this.loggedIn = item
       if (!this.loggedIn && !this.loginDialogRef) {
@@ -97,41 +93,7 @@ export class AppComponent {
     this.restoreNoteTablePosition();
   }
 
-  deleteAllNotes() {
-    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-      maxWidth: "400px",
-      data: {
-        title: "Supprimer toutes les notes",
-        content: "Êtes-vous sûr de vouloir toutes vos notes ?",
-        closeActionText: "Annuler",
-        validationActionText: "Confirmer"
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult)
-        this.userNoteService.deleteAllNotes();
-    });
-  }
-
-  deleteNote(note: Note) {
-    this.userNoteService.deleteNote(note);
-  }
-
-  upNote(note: Note) {
-    this.userNoteService.upNote(note);
-  }
-
-  downNote(note: Note) {
-    this.userNoteService.downNote(note);
-  }
-
-  displayEditNotes() {
-    this.displayEditNote = !this.displayEditNote;
-  }
-
   openRoute(event: any, link: string) {
     this.appService.openRoute(event, link, null);
   }
-
 }

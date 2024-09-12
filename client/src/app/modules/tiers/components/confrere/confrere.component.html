@@ -113,6 +113,11 @@
                         label="Type d'encaissement de la TVA" [form]="entityForm2" propertyName="vatCollectionType"
                         [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
                     </td>
+                    <td>
+                      <generic-toggle [(model)]="selectedConfrere.isRemindProviderInvoice"
+                        label="Relancer la non réception des factures fournisseurs" [form]="entityForm2"
+                        propertyName="isRemindProviderInvoice" [isDisabled]="!editMode"></generic-toggle>
+                    </td>
                   </tr>
                 </table>
                 <table class="full-width">

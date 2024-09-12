@@ -42,11 +42,18 @@
             </td>
           </tr>
           <tr>
-            <td *ngIf="selectedEntity.isToDownloadOnProvision">
+            <td>
               <select-attachment-type [(model)]="selectedEntity.attachmentType"
                 label="Type de pièce jointe correspondante" [form]="entityForm" propertyName="attachmentType"
                 [isMandatory]="selectedEntity.isToDownloadOnProvision"
                 [isDisabled]="!editMode"></select-attachment-type>
+            </td>
+          </tr>
+          <tr *ngIf="selectedEntity.code">
+            <td>
+              <single-attachment [entity]="selectedEntity" [entityType]="TYPE_DOCUMENT_ATTACHMENT_TYPE.entityType"
+                [editMode]="true" [attachmentTypeToDisplay]="attachmentTypeTemplate"
+                (onUploadedFile)="updateAttachments($event)"></single-attachment>
             </td>
           </tr>
         </table>

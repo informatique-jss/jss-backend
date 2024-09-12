@@ -1,6 +1,10 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,23 +13,24 @@ import java.util.UUID;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
-import com.jss.osiris.libs.DateHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
@@ -44,12 +49,12 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
-import com.jss.osiris.modules.tiers.model.Tiers;
 
-@Service
+@org.springframework.stereotype.Service
 public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
@@ -106,6 +111,12 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     BatchService batchService;
 
+    @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
+
+    @Autowired
+    AttachmentService attachmentService;
+
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
@@ -147,18 +158,14 @@ public class QuotationServiceImpl implements QuotationService {
             quotation.setAssignedTo(
                     getCustomerOrderOfQuotation(quotation).getDefaultCustomerOrderEmployee());
 
-        // Check duplicate
-        // Find first affaire customer order
-        // TODO findDuplicatesForQuotation(quotation);
-
         // Complete provisions
         boolean oneNewProvision = false;
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 assoAffaireOrder.setQuotation(quotation);
                 assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions())
+                for (Service service : assoAffaireOrder.getServices())
+                    for (Provision provision : service.getProvisions())
                         if (provision.getId() == null)
                             oneNewProvision = true;
             }
@@ -197,63 +204,6 @@ public class QuotationServiceImpl implements QuotationService {
         return quotation;
     }
 
-    private void findDuplicatesForQuotation(Quotation quotation) throws OsirisDuplicateException {
-        if (quotation.getId() == null && quotation.getAssoAffaireOrders() != null
-                && quotation.getAssoAffaireOrders().size() > 0) {
-            QuotationSearch orderingSearch = new QuotationSearch();
-            orderingSearch.setAffaires(Arrays.asList(quotation.getAssoAffaireOrders().get(0).getAffaire()));
-            orderingSearch.setCustomerOrders(new ArrayList<Tiers>());
-            if (quotation.getResponsable() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(quotation.getResponsable().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            } else if (quotation.getTiers() != null) {
-                orderingSearch.getCustomerOrders().add(quotation.getTiers());
-            } else if (quotation.getConfrere() != null) {
-                Tiers tiers = new Tiers();
-                tiers.setId(quotation.getConfrere().getId());
-                orderingSearch.getCustomerOrders().add(tiers);
-            }
-            orderingSearch.setStartDate(DateHelper.subtractDaysSkippingWeekends(LocalDateTime.now(), 3));
-            List<QuotationSearchResult> duplicatedCustomerOrders = searchQuotations(orderingSearch);
-            List<Quotation> duplicatedFound = new ArrayList<Quotation>();
-
-            if (duplicatedCustomerOrders != null && duplicatedCustomerOrders.size() > 0) {
-                outerloop: for (QuotationSearchResult potentialQuotationResult : duplicatedCustomerOrders) {
-                    Quotation potentialQuotation = getQuotation(potentialQuotationResult.getQuotationId());
-                    if (!potentialQuotation.getQuotationStatus().getCode().equals(QuotationStatus.ABANDONED)) {
-                        for (AssoAffaireOrder currentAsso : quotation.getAssoAffaireOrders()) {
-                            boolean foundAsso = false;
-                            for (AssoAffaireOrder duplicateAsso : potentialQuotation.getAssoAffaireOrders()) {
-                                if (currentAsso.getAffaire().getId().equals(duplicateAsso.getAffaire().getId())) {
-                                    foundAsso = true;
-                                    for (Provision currentProvision : currentAsso.getProvisions()) {
-                                        boolean foundProvision = false;
-                                        for (Provision duplicateProvision : duplicateAsso.getProvisions()) {
-                                            if (duplicateProvision.getProvisionType().getId()
-                                                    .equals(currentProvision.getProvisionType().getId())) {
-                                                foundProvision = true;
-                                            }
-                                        }
-                                        if (!foundProvision)
-                                            break outerloop;
-                                    }
-                                }
-                            }
-                            if (!foundAsso)
-                                break outerloop;
-                        }
-                        duplicatedFound.add(potentialQuotation);
-                    }
-                }
-
-                if (duplicatedFound.size() > 0) {
-                    throw new OsirisDuplicateException(duplicatedFound.stream().map(Quotation::getId).toList());
-                }
-            }
-        }
-    }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
@@ -273,6 +223,8 @@ public class QuotationServiceImpl implements QuotationService {
             // save to recompute invoice item before sent it to customer
             quotation = this.addOrUpdateQuotation(quotation);
 
+            generateQuotationPdf(quotation);
+
             mailHelper.sendQuotationToCustomer(quotation, false);
             notificationService.notifyQuotationSent(quotation);
         }
@@ -289,6 +241,7 @@ public class QuotationServiceImpl implements QuotationService {
             quotation.getCustomerOrders().add(customerOrder);
             customerOrder.setQuotations(new ArrayList<Quotation>());
             customerOrder.getQuotations().add(quotation);
+            mailHelper.sendCustomerOrderCreationConfirmationOnQuotationValidation(quotation, customerOrder);
         }
 
         // Target REFUSED from SENT TO CUSTOMER : notify user
@@ -299,6 +252,33 @@ public class QuotationServiceImpl implements QuotationService {
         quotation.setLastStatusUpdate(LocalDateTime.now());
         quotation.setQuotationStatus(targetQuotationStatus);
         return this.addOrUpdateQuotation(quotation);
+    }
+
+    public Quotation generateQuotationPdf(Quotation quotation) throws OsirisClientMessageException,
+            OsirisValidationException, OsirisDuplicateException, OsirisException {
+        File quotationPdf = generatePdfDelegate.generateQuotationPdf(quotation);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+        try {
+            List<Attachment> attachments = new ArrayList<Attachment>();
+            if (quotation != null)
+                attachments = attachmentService.addAttachment(new FileInputStream(quotationPdf),
+                        quotation.getId(), null,
+                        Quotation.class.getSimpleName(),
+                        constantService.getAttachmentTypeQuotation(),
+                        "Quotation_" + quotation.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                        false, "Devis n°" + quotation.getId(), null, null, null);
+
+            for (Attachment attachment : attachments)
+                if (attachment.getDescription().contains(quotation.getId() + "")) {
+                    attachment.setQuotation(quotation);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
+        } catch (FileNotFoundException e) {
+            throw new OsirisException(e, "Impossible to read quotation PDF temp file");
+        } finally {
+            quotationPdf.delete();
+        }
+        return quotation;
     }
 
     @Override
@@ -482,21 +462,22 @@ public class QuotationServiceImpl implements QuotationService {
         Float vatTotal = 0f;
 
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
-            for (Provision provision : asso.getProvisions()) {
-                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
-                    if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
-                        if (discountTotal == null)
-                            discountTotal = invoiceItem.getDiscountAmount();
-                        else
-                            discountTotal += invoiceItem.getDiscountAmount();
-                    }
-                    if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                            && invoiceItem.getVatPrice() > 0) {
-                        vatTotal += invoiceItem.getVatPrice();
+            for (Service service : asso.getServices())
+                for (Provision provision : service.getProvisions()) {
+                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
+                        if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
+                            if (discountTotal == null)
+                                discountTotal = invoiceItem.getDiscountAmount();
+                            else
+                                discountTotal += invoiceItem.getDiscountAmount();
+                        }
+                        if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
+                                && invoiceItem.getVatPrice() > 0) {
+                            vatTotal += invoiceItem.getVatPrice();
+                        }
                     }
                 }
-            }
         }
 
         return preTaxPriceTotal - (discountTotal != null ? discountTotal : 0) + vatTotal;
@@ -521,8 +502,8 @@ public class QuotationServiceImpl implements QuotationService {
             boolean isOnlyAnnonceLegal = true;
             if (quotation.getAssoAffaireOrders() != null)
                 loopAsso: for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                    if (asso.getProvisions() != null)
-                        for (Provision provision : asso.getProvisions())
+                    for (Service service : asso.getServices())
+                        for (Provision provision : service.getProvisions())
                             if (provision.getAnnouncement() == null) {
                                 isOnlyAnnonceLegal = false;
                                 break loopAsso;

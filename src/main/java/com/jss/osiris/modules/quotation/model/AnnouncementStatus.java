@@ -3,17 +3,18 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class AnnouncementStatus implements Serializable, IId {
@@ -28,10 +29,12 @@ public class AnnouncementStatus implements Serializable, IId {
 	public static String ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED = "ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED";
 	public static String ANNOUNCEMENT_DONE = "ANNOUNCEMENT_DONE";
 	public static String ANNOUNCEMENT_WAITING_READ_CUSTOMER = "ANNOUNCEMENT_WAITING_READ_CUSTOMER";
+	public static String ANNOUNCEMENT_WAITING_CONFRERE_INVOICE = "ANNOUNCEMENT_WAITING_CONFRERE_INVOICE";
 	public static String ANNOUNCEMENT_PUBLISHED = "ANNOUNCEMENT_PUBLISHED";
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

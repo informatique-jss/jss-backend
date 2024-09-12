@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { VatCollectionType } from '../../../model/VatCollectionType';
 import { VatCollectionTypeService } from '../../../services/vat.collection.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-vat-collection-type',
@@ -14,8 +14,8 @@ export class SelectVatCollectionTypeComponent extends GenericSelectComponent<Vat
 
   types: VatCollectionType[] = [] as Array<VatCollectionType>;
 
-  constructor(private formBuild: UntypedFormBuilder, private vatCollectionTypeService: VatCollectionTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private vatCollectionTypeService: VatCollectionTypeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

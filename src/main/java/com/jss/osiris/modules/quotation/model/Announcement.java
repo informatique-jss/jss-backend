@@ -4,19 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
@@ -26,11 +13,31 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
 @Entity
+@Table(indexes = { @Index(name = "idx_announcement_status", columnList = "id_announcement_status"),
+		@Index(name = "idx_announcement_confrere", columnList = "id_confrere"),
+})
 public class Announcement implements IId, IDocument {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
 	private Integer id;
 
@@ -46,7 +53,6 @@ public class Announcement implements IId, IDocument {
 	@JoinColumn(name = "id_announcement_status")
 	private AnnouncementStatus announcementStatus;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate publicationDate;
 
@@ -80,11 +86,16 @@ public class Announcement implements IId, IDocument {
 	private Boolean isPublicationReciptAlreadySent;
 	private Boolean isPublicationFlagAlreadySent;
 	private Boolean isAnnouncementAlreadySentToConfrere;
+	private Boolean isAnnouncementErratumAlreadySentToConfrere;
 
 	private LocalDateTime firstConfrereSentMailDateTime;
 	private LocalDateTime firstConfrereReminderDateTime;
 	private LocalDateTime secondConfrereReminderDateTime;
 	private LocalDateTime thirdConfrereReminderDateTime;
+
+	private LocalDateTime firstConfrereReminderProviderInvoiceDateTime;
+	private LocalDateTime secondReminderProviderInvoiceDateTime;
+	private LocalDateTime thirdReminderProviderInvoiceDateTime;
 
 	private LocalDateTime firstClientReviewSentMailDateTime;
 	private LocalDateTime firstClientReviewReminderDateTime;
@@ -96,6 +107,8 @@ public class Announcement implements IId, IDocument {
 	private Boolean isComplexAnnouncement;
 
 	private Integer characterNumber;
+
+	private Boolean isBilanPublicationReminderIsSent;
 
 	public Integer getId() {
 		return id;
@@ -311,6 +324,47 @@ public class Announcement implements IId, IDocument {
 
 	public void setCharacterNumber(Integer characterNumber) {
 		this.characterNumber = characterNumber;
+	}
+
+	public LocalDateTime getFirstConfrereReminderProviderInvoiceDateTime() {
+		return firstConfrereReminderProviderInvoiceDateTime;
+	}
+
+	public void setFirstConfrereReminderProviderInvoiceDateTime(
+			LocalDateTime firstConfrereReminderProviderInvoiceDateTime) {
+		this.firstConfrereReminderProviderInvoiceDateTime = firstConfrereReminderProviderInvoiceDateTime;
+	}
+
+	public LocalDateTime getSecondReminderProviderInvoiceDateTime() {
+		return secondReminderProviderInvoiceDateTime;
+	}
+
+	public void setSecondReminderProviderInvoiceDateTime(LocalDateTime secondReminderProviderInvoiceDateTime) {
+		this.secondReminderProviderInvoiceDateTime = secondReminderProviderInvoiceDateTime;
+	}
+
+	public LocalDateTime getThirdReminderProviderInvoiceDateTime() {
+		return thirdReminderProviderInvoiceDateTime;
+	}
+
+	public void setThirdReminderProviderInvoiceDateTime(LocalDateTime thirdReminderProviderInvoiceDateTime) {
+		this.thirdReminderProviderInvoiceDateTime = thirdReminderProviderInvoiceDateTime;
+	}
+
+	public Boolean getIsAnnouncementErratumAlreadySentToConfrere() {
+		return isAnnouncementErratumAlreadySentToConfrere;
+	}
+
+	public void setIsAnnouncementErratumAlreadySentToConfrere(Boolean isAnnouncementErratumAlreadySentToConfrere) {
+		this.isAnnouncementErratumAlreadySentToConfrere = isAnnouncementErratumAlreadySentToConfrere;
+	}
+
+	public Boolean getIsBilanPublicationReminderIsSent() {
+		return isBilanPublicationReminderIsSent;
+	}
+
+	public void setIsBilanPublicationReminderIsSent(Boolean isBilanPublicationReminderIsSent) {
+		this.isBilanPublicationReminderIsSent = isBilanPublicationReminderIsSent;
 	}
 
 }

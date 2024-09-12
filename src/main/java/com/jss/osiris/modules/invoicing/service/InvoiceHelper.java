@@ -13,6 +13,7 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -42,7 +43,7 @@ public class InvoiceHelper {
         return customerOrder;
     }
 
-    public IGenericTiers getCustomerOrder(CustomerOrder inCustomerOrder) throws OsirisException {
+    public IGenericTiers getCustomerOrder(IQuotation inCustomerOrder) throws OsirisException {
         IGenericTiers customerOrder = null;
         if (inCustomerOrder.getTiers() != null)
             customerOrder = inCustomerOrder.getTiers();
@@ -108,7 +109,7 @@ public class InvoiceHelper {
         return vatTotal;
     }
 
-    public InvoiceLabelResult computeInvoiceLabelResult(Document billingDocument, CustomerOrder customerOrder,
+    public InvoiceLabelResult computeInvoiceLabelResult(Document billingDocument, IQuotation customerOrder,
             ITiers orderingCustomer) throws OsirisException {
         InvoiceLabelResult invoiceLabelResult = new InvoiceLabelResult();
         if (billingDocument.getBillingLabelType() == null)

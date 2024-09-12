@@ -7,6 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -32,6 +33,7 @@ import { ReferentialAccountingAccountClassComponent } from '../referentials/refe
 import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
 import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
 import { ReferentialActTypeComponent } from '../referentials/referential-act-type/referential-act-type.component';
+import { ReferentialActiveDirectoryGroupComponent } from '../referentials/referential-active-directory-group/referential-active-directory-group.component';
 import { ReferentialAnnouncementNoticeTemplateComponent } from '../referentials/referential-announcement-notice-template/referential-announcement-notice-template.component';
 import { ReferentialAttachmentTypeComponent } from '../referentials/referential-attachment-type/referential-attachment-type.component';
 import { ReferentialBillingClosureRecipientTypeComponent } from '../referentials/referential-billing-closure-recipient-type/referential-billing-closure-recipient-type.component';
@@ -45,7 +47,11 @@ import { ReferentialCityComponent } from '../referentials/referential-city/refer
 import { ReferentialCivilityComponent } from '../referentials/referential-civility/referential-civility.component';
 import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
 import { ReferentialCompetitorComponent } from '../referentials/referential-competitor/referential-competitor.component';
+import { ReferentialComplainCauseComponent } from '../referentials/referential-complain-cause/referential-complain-cause.component';
+import { ReferentialComplainOriginComponent } from '../referentials/referential-complain-origin/referential-complain-origin.component';
+import { ReferentialComplainProblemComponent } from '../referentials/referential-complain-problem/referential-complain-problem.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
+import { ReferentialCustomerOrderFrequencyComponent } from '../referentials/referential-customer-order-frequency/referential-customer-order-frequency.component';
 import { ReferentialCustomerOrderOriginComponent } from '../referentials/referential-customer-order-origin/referential-customer-order-origin.component';
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
 import { ReferentialDepartmentVatSettingComponent } from '../referentials/referential-department-vat-setting/referential-department-vat-setting.component';
@@ -61,6 +67,7 @@ import { ReferentialLegalFormComponent } from '../referentials/referential-legal
 import { ReferentialMailRedirectionTypeComponent } from '../referentials/referential-mail-redirection-type/referential-mail-redirection-type.component';
 import { ReferentialNoticeTypeFamilyComponent } from '../referentials/referential-notice-type-family/referential-notice-type-family.component';
 import { ReferentialNoticeTypeComponent } from '../referentials/referential-notice-type/referential-notice-type.component';
+import { ReferentialPaperSetTypeComponent } from '../referentials/referential-paper-set/referential-paper-set.component';
 import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referential-payment-deadline-type/referential-payment-deadline-type.component';
 import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
 import { ReferentialPrincipalAccountingAccountComponent } from '../referentials/referential-principal-accounting-account/referential-principal-accounting-account.component';
@@ -70,6 +77,9 @@ import { ReferentialRefundTypeComponent } from '../referentials/referential-refu
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
 import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
+import { ReferentialServiceFamilyGroupComponent } from '../referentials/referential-service-family-group/referential-service-family-group.component';
+import { ReferentialServiceFamilyComponent } from '../referentials/referential-service-family/referential-service-family.component';
+import { ReferentialServiceTypeComponent } from '../referentials/referential-service/referential-service-type.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
 import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
@@ -84,9 +94,7 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
-import { ReferentialComplainProblemComponent } from '../referentials/referential-complain-problem/referential-complain-problem.component';
-import { ReferentialComplainCauseComponent } from '../referentials/referential-complain-cause/referential-complain-cause.component';
-import { ReferentialComplainOriginComponent } from '../referentials/referential-complain-origin/referential-complain-origin.component';
+import { ReferentialServiceFieldTypeComponent } from '../referentials/referential-service-field-type/referential-service-field-type.component';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -124,6 +132,7 @@ const routes: Routes = [
     TiersModule,
     QuotationModule,
     AccountingModule,
+    MatDividerModule,
     InvoicingModule,
   ],
   declarations: [AdministrationComponent,
@@ -188,7 +197,15 @@ const routes: Routes = [
     ReferentialRffFrequencyComponent,
     ReferentialComplainProblemComponent,
     ReferentialComplainCauseComponent,
-    ReferentialComplainOriginComponent
+    ReferentialComplainOriginComponent,
+    ReferentialServiceTypeComponent,
+    ReferentialServiceFamilyComponent,
+    ReferentialServiceFamilyGroupComponent,
+    ReferentialServiceTypeComponent,
+    ReferentialCustomerOrderFrequencyComponent,
+    ReferentialActiveDirectoryGroupComponent,
+    ReferentialPaperSetTypeComponent,
+    ReferentialServiceFieldTypeComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

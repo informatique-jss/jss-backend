@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        @page {
+            size: A4 portrait;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        td {
+            text-align: justify;
+            line-height: 21px;
+            padding: 6px;
+            vertical-align: top;
+        }
+
+        ul {
+            text-align: justify;
+            line-height: 21px;
+        }
+    </style>
+</head>
+
+<body style="background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+    <div>
+        <table>
+            <tr>
+                <td><img width="690px" th:src="@{classpath:/images/invoice-page1-header.png}" src="picture.png" />
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td style="text-align: center;"><strong>CONTRAT DE DOMICILIATION COMMERCIALE JOURNAL SPECIAL DES
+                        SOCIETES</strong></td>
+                <td style="text-align: center;"><strong>BUSINESS ADDRESS SERVICE CONTRACT JOURNAL SPECIAL DES
+                        SOCIETES</strong></td>
+            </tr>
+            <tr>
+                <td style="text-align: center;padding-bottom: 15px;"><strong>Adresse de domiciliation : </strong>8 rue
+                    Saint Augustin – 75002 PARIS</td>
+                <td style="text-align: center;padding-bottom: 15px;"><strong>Business Address: </strong>8 rue
+                    Saint Augustin – 75002 PARIS</td>
+            </tr>
+            <tr>
+                <td><strong>ENTRE LES SOUSSIGNÉS :</strong></td>
+                <td><strong>BY AND BETWEEN:</strong></td>
+            </tr>
+            <tr>
+                <td>La Société de Publications et de Publicité pour les Sociétés, Société par Actions Simplifiées au
+                    capital de
+                    216 000 euros, dont le siège social est à Paris 2ème arrondissement, 8 rue Saint Augustin,
+                    immatriculée au
+                    Registre du Commerce et des Sociétés de PARIS, sous le numéro 552 074 627, représentée par sa
+                    Présidente
+                    Myriam de Montis, et dénommée ci-après <strong>SPPS</strong>, dont le numéro d'agrément est le
+                    n°<strong><span th:text="${jssDomiciliationAgreementNumber}"></span></strong> obtenu le
+                    <span th:text="${jssDomiciliationAgreementDate}"></span> auprès de la Préfecture de Paris ;
+                </td>
+                <td>La Société de Publications et de Publicité pour les Sociétés - Journal Spécial des Sociétés, a
+                    Société par Actions Simplifiée with a capital of 216,000 euros, having its registered office located
+                    8 rue Saint Augustin in Paris 2nd arrondissement, registered with Paris Trade and Companies
+                    Register, under number 552 074 627, represented by its President, Myriam de Montis, and hereinafter
+                    referred to as <strong>SPPS</strong>, whose number
+                    agreement is n°<strong><span th:text="${jssDomiciliationAgreementNumber}"></span></strong> received
+                    on the
+                    <span th:text="${jssDomiciliationAgreementDate}"></span> from Prefecture de Paris ;
+                </td>
+            </tr>
+            <tr>
+                <td>D'UNE PART,</td>
+                <td>ON THE ONE HAND,</td>
+            </tr>
+            <tr>
+                <td>Et la société <strong><span th:text="${affaire.denomination}"></span>, <span
+                            th:text="${affaire.legalForm.labelShort}"></span> <span th:if="${isRegistered}">immatriculée
+                            au RCS de <span th:text="${affaire.competentAuthority.city.label}"></span> sous le numéro
+                            <span th:text="${affaire.siren}"></span></span><span th:if="${!isRegistered}">en cours
+                            d'immatriculation</span></strong></td>
+                <td>And the company <strong><span th:text="${affaire.denomination}"></span>, <span
+                            th:text="${affaire.legalForm.labelShort}"></span> <span th:if="${isRegistered}">registered
+                            in the RCS of <span th:text="${affaire.competentAuthority.city.label}"></span> under the
+                            number
+                            <span th:text="${affaire.siren}"></span></span><span th:if="${!isRegistered}">in the process
+                            of registration</span></strong></td>
+            </tr>
+            <tr th:if="${domiciliation.isLegalPerson==false}">
+                <td>Représentée par <span th:text="${domiciliation.legalGardianCivility.label}"></span> <span
+                        th:text="${domiciliation.legalGardianLastname}"></span> <span
+                        th:text="${domiciliation.legalGardianFirstname}"></span>, agissant en qualité de <span
+                        th:text="${domiciliation.legalGardianJob}"></span>, né le <span
+                        th:text="${domiciliationLegalPersonBirthday}"></span> à <span
+                        th:text="${domiciliation.legalGardianPlaceOfBirth}"></span> et demeurant au <span
+                        th:text="${domiciliation.legalGardianAddress}"></span> <span
+                        th:text="${domiciliation.legalGardianPostalCode}"></span> <span
+                        th:text="${domiciliation.legalGardianCity.label}"></span><span
+                        th:text="${domiciliation.legalGardianCountry.label}"></span></td>
+                <td>Represented by <span th:text="${domiciliation.legalGardianCivility.label}"></span> <span
+                        th:text="${domiciliation.legalGardianLastname}"></span> <span
+                        th:text="${domiciliation.legalGardianFirstname}"></span>, acting as <span
+                        th:text="${legalGardianJobEnglish}"></span>, born on <span
+                        th:text="${domiciliationLegalPersonBirthdayEnglish}"></span> in <span
+                        th:text="${domiciliation.legalGardianPlaceOfBirth}"></span> and living at <span
+                        th:text="${domiciliation.legalGardianAddress}"></span> <span
+                        th:text="${domiciliation.legalGardianPostalCode}"></span> <span
+                        th:text="${domiciliation.legalGardianCity.label}"></span><span
+                        th:text="${domiciliation.legalGardianCountry.label}"></span></td>
+            </tr>
+            <tr>
+                <td>D'AUTRE PART, dénommé(e) ci-après <strong>Le Domicilié,</strong></td>
+                <td>ON THE OTHER HAND, hereinafter referred to as <strong>The Client,</strong></td>
+            </tr>
+            <tr th:if="${domiciliation.isLegalPerson==true}">
+                <td>Représentée par la société <strong><span
+                            th:text="${domiciliation.legalGardianDenomination}"></span>, <span
+                            th:text="${domiciliation.legalGardianLegalForm.labelShort}"></span> domiciliée au <span
+                            th:text="${domiciliation.legalGardianAddress}"></span> <span
+                            th:text="${domiciliation.legalGardianPostalCode}"></span> <span
+                            th:text="${domiciliation.legalGardianCity.label}"></span><span
+                            th:text="${domiciliation.legalGardianCountry.label}"></span> </strong></td>
+                <td>Represented by the company <strong><span
+                            th:text="${domiciliation.legalGardianDenomination}"></span>, <span
+                            th:text="${domiciliation.legalGardianLegalForm.labelShort}"></span> domiciliated at <span
+                            th:text="${domiciliation.legalGardianAddress}"></span> <span
+                            th:text="${domiciliation.legalGardianPostalCode}"></span> <span
+                            th:text="${domiciliation.legalGardianCity.label}"></span><span
+                            th:text="${domiciliation.legalGardianCountry.label}"></span> </strong></td>
+            </tr>
+            <tr th:if="${domiciliation.isLegalPerson==true}">
+                <td><strong>D'AUTRE PART, dénommé(e) ci-après <strong>Le Domicilié,</strong></td>
+                <td><strong>ON THE OTHER HAND, hereinafter referred to as <strong>The Client,</strong></td>
+            </tr>
+            <tr>
+                <td style="text-align: center;padding-bottom: 20px;padding-top: 20px;">IL A ÉTÉ CONVENU ET ARRÊTÉ CE QUI
+                    SUIT :</td>
+                <td style="text-align: center;padding-bottom: 20px;padding-top: 20px;">IT WAS AGREED AS FOLLOWS:</td>
+            </tr>
+            <tr>
+                <td>La société <strong>SPPS</strong> autorise la société <strong><span
+                            th:text="${affaire.denomination}"></span>,
+                        <span th:text="${affaire.legalForm.labelShort}"></span> <span
+                            th:if="${isRegistered}">immatriculée au RCS de <span
+                                th:text="${affaire.competentAuthority.city.label}"></span> sous le numéro
+                            <span th:text="${affaire.siren}"></span></span><span th:if="${!isRegistered}">en cours
+                            d'immatriculation</span></strong>
+                </td>
+                <td>La société <strong>SPPS</strong> authorizes the company <strong><span
+                            th:text="${affaire.denomination}"></span>,
+                        <span th:text="${affaire.legalForm.labelShort}"></span> <span th:if="${isRegistered}">registered
+                            in the RCS of <span th:text="${affaire.competentAuthority.city.label}"></span> under the
+                            number
+                            <span th:text="${affaire.siren}"></span></span><span th:if="${!isRegistered}">in the process
+                            of registration</span></strong>
+                </td>
+            </tr>
+            <tr>
+                <td>Ayant pour activité :
+                </td>
+                <td>Engaged in :
+                </td>
+            </tr>
+            <tr>
+                <td><span th:text="${domiciliation.activityDescription}"></span></td>
+                <td><span th:text="${activityDescriptionEnglish}"></span></td>
+            </tr>
+            <tr>
+                <td>à se domicilier dans ses locaux du <strong>8 rue Saint Augustin, 75002 PARIS</strong></td>
+                <td>to use its offices as its address: <strong>8 rue Saint Augustin, 75002 PARIS</strong></td>
+            </tr>
+            <tr>
+                <td>pour l'accomplissement des formalités légales auprès de l'organisme compétent pour le régime
+                    juridique
+                    de l'entreprise à savoir au Centre de Formalités des Entreprises, au Registre de Commerce et des
+                    Sociétés, au Répertoire des Métiers ou à la Préfecture pour les associations, relatives à la
+                    création et au
+                    fonctionnement de ses activités. L'adresse de domiciliation devra donc devenir le siège social de
+                    l'entreprise.</td>
+                <td>in order to fulfill legal formalities with the competent body for the company’s legal status, namely
+                    the Centre de Formalités des Entreprises, Registre de Commerce et des Sociétés, Répertoire des
+                    Métiers or Préfecture for associations, relating to the creation and operation of its activities.
+                    The business address service shall therefore become the company's registered office.</td>
+            </tr>
+            <tr>
+                <td>Le Domicilié est habilité par la présente convention à recevoir à cette même adresse le courrier qui
+                    lui
+                    est destiné. Il pourra également utiliser cette adresse sur son papier à en-tête ainsi que sur ses
+                    documents
+                    commerciaux.</td>
+                <td>The Client is hereby authorized to receive at the said address the mail addressed to it. It may also
+                    state this address on its letterhead and commercial documents.</td>
+            </tr>
+            <tr>
+                <td>Le Domicilié dégage la société SPPS de toutes responsabilités quant à la transmission du courrier
+                    effectuée par la Poste ou par des entreprises assimilées ainsi que pour tout envoi mal libellé
+                    (adresse incomplète ou illisible, absence de cedex, ou tout autre nom, etc…) reçu à l'intention du
+                    Domicilié.
+                    Etant précisé que l'autorisation que la société SPPS lui accorde ne saurait en aucun cas engager sa
+                    responsabilité, sous quelque forme que ce soit, présente et à venir. </td>
+                <td>The Client shall hold SPPS harmless for mail transfer with La Poste or any similar companies as well
+                    as for any incorrectly worded mail (incomplete or illegible address, absence of cedex, or any other
+                    name, etc...) received for the Client.
+                    It is hereby specified that the authorization granted by SPPS can in no way incur its
+                    responsibility, in any form whatsoever, present and future. </td>
+            </tr>
+            <tr>
+                <td>Le Domicilié ne pourra utiliser la présente domiciliation en cas de création de nouvelles enseignes
+                    et
+                    publications ou pour toutes adjonctions concernant la dénomination sociale de l'entreprise et devra
+                    conclure un nouvel engagement en cas de non-respect des dispositions énoncées ci-dessus.</td>
+                <td>The Client may not use this address in the event of creation of new trade names and publications or
+                    for any additions to the company's name, it shall enter into a new agreement in the event of
+                    non-compliance with the provisions set out above</td>
+            </tr>
+            <tr>
+                <td>La société SPPS ne saurait être tenue en aucune façon responsable du rejet du Domicilié par les
+                    différents organismes administratifs nécessaires à son inscription ou pour tout autre motif et
+                    <strong>ne
+                        procédera donc à aucun remboursement.</strong>
+                </td>
+                <td>SPPS cannot be held responsible in any way whatsoever for the Client’s rejection by the various
+                    administrative bodies necessary for its registration or for any other reason and
+                    <strong>shall therefore not proceed to any refund.</strong>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>I) Durée</strong></td>
+                <td><strong>I) Duration</strong></td>
+            </tr>
+            <tr>
+                <td>Ladite domiciliation commence à courir à partir du <span th:text="${domiciliationStartDate}"></span>
+                    pour une
+                    durée de trois mois,
+                    renouvelable trimestriellement par tacite reconduction.</td>
+                <td>The said direct debit starts to run from <span th:text="${domiciliationStartDateEnglish}"></span>
+                    for a
+                    period of three months, which may be renewed automatically quarterly</td>
+            </tr>
+            <tr>
+                <td>Ce contrat est conclu irrévocablement pour une durée minimum de 3 mois afin de permettre
+                    l'immatriculation de l'entreprise.</td>
+                <td>This contract is irrevocably entered into for a minimum period of 3 months in order to allow the
+                    company to be registered.</td>
+            </tr>
+            <tr>
+                <td>Le Domicilié s'engage à fournir sous 10 jours de sa date d'immatriculation ou de transfert de siège
+                    au
+                    domiciliataire un justificatif émanant du Registre de Commerce et des Sociétés (RCS) ou du Centre de
+                    Formalités des Entreprises (CFE).</td>
+                <td>The Client undertakes to provide within 10 days of its date of registration or transfer of
+                    registered office to the Client a proof from the Registre de Commerce et des Sociétés (RCS) or the
+                    Centre de Formalités des Entreprises (CFE)</td>
+            </tr>
+            <tr>
+                <td><strong>II) Tarifs</strong></td>
+                <td><strong>II) Rates</strong></td>
+            </tr>
+            <tr>
+                <td style="text-decoration: underline;">Option :</td>
+                <td style="text-decoration: underline;">Option :</td>
+            </tr>
+            <tr>
+                <td><span th:text="${domiciliation.domiciliationContractType.label}"></span><span
+                        th:text="${mailDestinationLabel}"></span></td>
+                <td><span th:text="${domiciliation.domiciliationContractType.englishLabel}"></span><span
+                        th:text="${mailDestinationLabelEnglish}"></span></td>
+            </tr>
+            <tr>
+                <td>Le présent engagement est fait moyennant un loyer mensuel de <strong><span
+                            th:text="${monthlyBillingAmount}"></span></strong>
+                    euros Hors Taxes que Le Domicilié s'engage à payer à SPPS trimestriellement et d'avance. Tout
+                    trimestre
+                    civil commencé est dû.</td>
+                <td>This commitment is made in return for a monthly rent of <strong><span
+                            th:text="${monthlyBillingAmount}"></span></strong> euros excluding taxes that the Client
+                    undertakes to pay to SPPS in advance, on a quarterly basis. Any started calendar quarter is due</td>
+            </tr>
+            <tr>
+                <td>Les coûts d’affranchissement des courriers renvoyés en RAR, dans les DOM-TOM et à l’étranger sont
+                    facturés en plus.</td>
+                <td>The costs of postage sent back to RAR, DOM-TOM and abroad are billed additionally</td>
+            </tr>
+            <tr>
+                <td>Le montant de toutes les prestations souscrites par Le Domicilié, seront révisables tous les ans à
+                    la date anniversaire sans qu'il soit besoin d'une notification préalable.</td>
+                <td>The amount of all services subscribed to by the Client will be subject to annual review on the
+                    anniversary date without prior notification</td>
+            </tr>
+            <tr>
+                <td>Lors de l'établissement du présent contrat, il est versé par Le Domicilié une somme égale à 3 mois
+                    de
+                    prestations. Cette somme est destinée à couvrir les frais d'exploitation des 3 derniers mois après
+                    avoir
+                    fourni à SPPS le justificatif de la demande de résiliation (radiation, transfert du siège social,
+                    non
+                    immatriculation). Elle ne peut être considérée comme paiement d'une facture trimestrielle et ne sera
+                    en
+                    aucun cas remboursable. En cas d'augmentation de loyer, cette avance sera réajustée dans les mêmes
+                    proportions pour qu'elle reste toujours égale à la valeur de trois mois de prestation.</td>
+                <td>When this contract is drawn up, the Client pays a sum equal to 3 months' services. This sum is
+                    intended to cover operating costs for the last 3 months after providing SPPS with proof of the
+                    termination request (strike-off, transfer of the registered office, nonregistration). It cannot be
+                    considered as payment of a quarterly invoice and will under no circumstances be refundable. In the
+                    event of a rent increase, this advance will be readjusted in the same proportions so that it always
+                    remains equal to the value of three months' benefit.</td>
+            </tr>
+            <tr>
+                <td>Pour la retransmission de courrier par mail ; Le domicilié autorise expressément SPPS à ouvrir son
+                    courrier, à le numériser et à lui adresser sur un mail défini.
+                </td>
+                <td>For the retransmission of mail by e-mail; the client expressly authorizes SPPS to open its mail, to
+                    scan it and to send it to a specified e-mail address.
+                </td>
+            </tr>
+            <tr>
+                <td>Le domicilié peut louer ponctuellement et à la demande un bureau de réunion qui sera facturé en
+                    plus. Toute demande doit être faite au moins 8 jours à l'avance et en fonction des disponibilités.
+                </td>
+                <td>The Client may rent a meeting office from time to time and on request and it will be invoiced in
+                    addition. All requests shall be made at least 8 days in advance and subject to availability.
+                </td>
+            </tr>
+            <tr>
+                <td><strong>III) Conditions et clauses d'acceptation</strong></td>
+                <td><strong>III) Conditions and acceptance clauses</strong></td>
+            </tr>
+            <tr>
+                <td>Le présent engagement de domiciliation est fait aux conditions prévues par les recommandations
+                    émises par la Chambre de Commerce et d'Industrie de Paris pour l'exercice de la domiciliation
+                    commerciale.</td>
+                <td>This business address service commitment is made under the conditions provided for by the
+                    recommendations issued by the Chambre de Commerce et d’Industrie de Paris for business address
+                    services.</td>
+            </tr>
+            <tr>
+                <td>Le Domicilié doit donner procuration à la société SPPS pour le retrait de lettres recommandées.
+                    Cellesci
+                    seront acheminées par courrier ordinaire. La société SPPS se dégage de toute responsabilité en cas
+                    de
+                    perte ou de transmission tardive de tous courriers.</td>
+                <td>The Client shall grant a power of attorney to SPPS for the collection of registered letters. These
+                    will be transferred by regular mail. SPPS shall not be held liable in the event of loss or late
+                    transmission of any mail.
+                </td>
+            </tr>
+            <tr>
+                <td>Tout changement concernant l'entreprise (adresse, raison sociale, dirigeant, activité, forma
+                    juridique,
+                    etc…), devra être notifié par écrit à la société SPPS par Le Domicilié qui s'engage à fournir tout
+                    nouveau document justificatif dès que ce changement aura été pris en compte par l'organisme
+                    d'immatriculation concerné.</td>
+                <td>Any change regarding the company (address, company name, manager, activity, legal form, etc...),
+                    must be notified in writing to SPPS by the Client who undertakes to provide any new supporting
+                    document as soon as this change has been taken into account by the relevant registration body</td>
+            </tr>
+            <tr>
+                <td>Le Domicilié certifie sur l'honneur l'exactitude des renseignements fournis à la société SPPS et
+                    nécessaires à la conclusion du contrat.</td>
+                <td>The Client shall certify under penalty of perjury the accuracy of the information provided to
+                    SPPSnecessary to execute the contract.</td>
+            </tr>
+            <tr>
+                <td>Le contrat est ferme et définitif à la signature et aucun remboursement partiel ou total ne pourra
+                    être revendiqué par Le Domicilié pour quel que motif que ce soit.</td>
+                <td>The contract becomes firm and final upon signature and the Client may not claim any partial or total
+                    refund for any reason whatsoever.
+                </td>
+            </tr>
+            <tr>
+                <td><strong>IV) Résiliation</strong></td>
+                <td><strong>IV) Termination</strong></td>
+            </tr>
+            <tr>
+                <td>Le présent contrat pourra être dénoncé par l'une des parties avec notification à l'autre par lettre
+                    recommandée avec accusé de réception.</td>
+                <td>This contract may be terminated by one of the parties by notifying the other through registered
+                    letter with acknowledgment of receipt</td>
+            </tr>
+            <tr>
+                <td>Le Domicilié devra obligatoirement joindre à sa lettre recommandée un justificatif délivré par le
+                    Tribunal de Commerce ou par le Répertoire des Métiers (ou par la Préfecture pour les associations)
+                    soit
+                    pour la radiation ou le transfert du siège social, soit la non immatriculation de l'entreprise (pour
+                    les
+                    Autos Entrepreneurs le récépissé de radiation auprès du CFE).</td>
+                <td>The Client must attach to its registered letter a proof issued by the Commercial Court or by the
+                    Répertoire des Métiers (or by the Préfecture for associations) either for the strike-off or transfer
+                    of the registered office, or the non-registration of the company (for Autos Entrepreneurs the
+                    receipt of strike-off with the CFE).</td>
+            </tr>
+            <tr>
+                <td><strong>V) Description des prestations de services</strong></td>
+                <td><strong>V) Description of services provided</strong></td>
+            </tr>
+            <tr>
+                <td>En regard des sommes versées à la conclusion du contrat, la société SPPS s'engage à fournir les
+                    prestations suivantes :</td>
+                <td>With regard to the sums paid upon execution of the contract, SPPS undertakes to provide the
+                    following services:</td>
+            </tr>
+            <tr>
+                <td>
+                    <ul>
+                        <li>Domiciliation commerciale dans les locaux sis : 8 rue Saint Augustin – 75002 PARIS</li>
+                        <li>SPPS met à la disposition du Domicilié à titre onéreux des bureaux permettant une réunion
+                            régulière des organes chargés de la direction, de l'administration ou de la surveillance de
+                            l'entreprise et l'installation des services nécessaires à la tenue, conservation et la
+                            consultation de
+                            leurs registres et documents prescrits par les lois et règlements (Décret N.85.1280 du 5
+                            Décembre 1985, Article 26.1.).</li>
+                        <li>En aucun cas, la location de bureau à titre onéreux ne peut être utilisée par Le Domicilié
+                            pour le
+                            recrutement de personnel. L'ANPE devra diriger les postulants à l'adresse d'activité du
+                            Domicilié et non à l'adresse de son siège social.</li>
+                        <li>La société SPPS peut réceptionner des colis moyennant un loyer mensuel de 10 € HT par mois.
+                            Cependant ceux-ci ne devront pas excéder un poids de 5 kg et des dimensions de 1m x 1m et
+                            devront être retirés dans un délai de 48 h.</li>
+                        <li>Le délai de garde est de 30 jours concernant les courriers simples, et de 15 jours
+                            concernant les
+                            courriers recommandés. Excédant le délai de garde mentionné, ces courriers seront retournés
+                            à
+                            l'expéditeur.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <li>Business address service in the premises located : 8 rue Saint Augustin – 75002 PARIS</li>
+                        <li>SPPS provides the Client with offices for a fee to allow a regular meeting of the bodies
+                            responsible for the management, administration or supervision of the company and the
+                            implementation of the services necessary for the keeping, holding and reviewing of their
+                            registers and documents prescribed by laws and regulations (Decree N.85.1280 of 5 December
+                            1985, Article 26.1.). </li>
+                        <li>The Client may not under any circumstances rent offices for a fee to hire staff. The ANPE
+                            shall direct applicants to the Client's actual address and not to its registered office.
+                        </li>
+                        <li>SPPS may receive parcels for a monthly rent of €10 ex. VAT per month. However, these parcels
+                            must not exceed a weight of 5 kg and dimensions of 1m x 1m and shall be removed within 48
+                            hours.</li>
+                        <li>Ordinary letters shall be held for 30 days and registered letters for 15 days. Beyond the
+                            holding period mentioned, these letters will be returned to the sender.
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>VI) Clauses résolutoires</strong></td>
+                <td><strong>VI) Termination clauses</strong></td>
+            </tr>
+            <tr>
+                <td>A défaut de paiement d'une seule facture et à compter de 30 jours de son échéance ou en cas
+                    d'inexécution d'une des clauses du présent engagement, la société SPPS se réserve le droit de
+                    suspendre la prestation de traitement du courrier, la réexpédition ainsi que la garde. Tout courrier
+                    sera conservé en agence pour une durée de 15 jours. Pour les mêmes conditions de carence relatives
+                    au courrier simple, les objets recommandés, lettres ou autres envois, ne seront plus acceptés et ne
+                    seront qu'avisés. Au-delà de ce délai, la société SPPS s'autorisera le droit de le retourner avec la
+                    mention NPAI sans mise en demeure, ni avertissement préalable. Une indemnité forfaitaire de 15%
+                    sur les sommes dues sera exigée.</td>
+                <td>In the event of non-payment of a single invoice and as from 30 days after its due date or in the
+                    event of non-performance of any of the clauses of this agreement, SPPS reserves the right to suspend
+                    mail handling, forwarding and holding. The mail will be held in the office for a period of 15 days.
+                    For the same conditions of default relating to ordinary mail, registered items, letters or other
+                    mail will no longer be accepted and will only be notified. Beyond this period, SPPS reserves the
+                    right to return it with the label “not deliverable” without formal notice or prior warning. A
+                    flat-rate compensation of 15% on the sums due will be required. </td>
+            </tr>
+            <tr>
+                <td>Le contrat pourra être dénoncé de plein droit par la société SPPS sans notification en respectant un
+                    préavis de 30 jours et la carence du Domicilié sera signalée au Greffe du Tribunal de Commerce ou
+                    au Registre des Métiers (ou à la Préfecture pour les associations) afin de procéder à la radiation
+                    d'office de l'entreprise.</td>
+                <td>The contract may be terminated automatically by SPPS without notice by giving 30 days' notice and
+                    the Client’s failure to act will be notified to the Registrar of the Commercial Court or the
+                    Registre des Métiers (or the Préfecture for associations) in order to have the company automatically
+                    struck off the registry.</td>
+            </tr>
+            <tr>
+                <td>En cas de contestation liée aux présentes, seul le Tribunal de Commerce concerné sera compétent.
+                </td>
+                <td>In the event of any dispute arising hereunder, only the Commercial Court concerned shall have
+                    jurisdiction.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td>This Contract was translated into English for convenience purposes, in the event of any discrepancy
+                    between the original French version and this English version, the French version shall prevail.
+                </td>
+            </tr>
+            <tr>
+                <td>Contrat établi en 2 exemplaires originaux dont un remis au Domicilié</td>
+                <td>Contract drawn up in 2 original copies, one of which must be delivered to the Client.</td>
+            </tr>
+            <tr>
+                <td style="padding-top: 10px;padding-bottom: 10px;">Fait à Paris, le <span
+                        th:text="${currentDate}"></span><br />En deux exemplaires</td>
+                <td style="padding-top: 10px;padding-bottom: 10px;">In Paris, on <span
+                        th:text="${currentDateEnglish}"></span><br />In duplicate</td>
+            </tr>
+            <tr>
+                <td style="padding-bottom: 20px;">Pour la société <strong>SPPS</strong><br /> Myriam de MONTIS</td>
+                <td style="padding-bottom: 20px;">For <strong>SPPS</strong><br /> Myriam de MONTIS</td>
+            </tr>
+            <tr>
+                <td>Le Domicilié <span th:text="${affaire.denomination}"></span><br />Lu et Approuvé</td>
+                <td>The Client <span th:text="${affaire.denomination}"></span><br />Read and Approved</td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

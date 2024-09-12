@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { RolePourEntrepriseService } from 'src/app/modules/miscellaneous/services/guichet-unique/role.pour.entreprise.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { RolePourEntreprise } from '../../../../../quotation/model/guichet-unique/referentials/RolePourEntreprise';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-role-pour-entreprise',
@@ -14,8 +14,8 @@ export class SelectRolePourEntrepriseComponent extends GenericSelectComponent<Ro
 
   types: RolePourEntreprise[] = [] as Array<RolePourEntreprise>;
 
-  constructor(private formBuild: UntypedFormBuilder, private RolePourEntrepriseService: RolePourEntrepriseService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private RolePourEntrepriseService: RolePourEntrepriseService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

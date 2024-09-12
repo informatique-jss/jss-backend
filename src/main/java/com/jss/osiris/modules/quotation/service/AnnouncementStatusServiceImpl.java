@@ -70,6 +70,11 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                                 AggregateStatus.AGGREGATE_STATUS_WAITING);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false,
                                 AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
+
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_INVOICE, "En attente de facture confrère",
+                                "point_of_sale", false, false,
+                                AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
+
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true,
                                 AggregateStatus.AGGREGATE_STATUS_DONE);
 
@@ -111,6 +116,9 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
                                 AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
 
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_INVOICE);
+
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_DONE,
                                 AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_DONE,
@@ -135,6 +143,9 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER,
                                 AnnouncementStatus.ANNOUNCEMENT_NEW);
+
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_INVOICE,
+                                AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
 
         }
 

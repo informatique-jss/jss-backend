@@ -1,12 +1,10 @@
 package com.jss.osiris.modules.invoicing.model;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
-import org.hibernate.query.spi.NativeQueryImplementor;
 
 public class InvoiceKeyGenerator implements IdentifierGenerator {
 
@@ -20,7 +18,7 @@ public class InvoiceKeyGenerator implements IdentifierGenerator {
         } else {
             seqName = "invoice_sequence";
         }
-        NativeQueryImplementor query = session.createNativeQuery("SELECT nextval('" + seqName + "')");
-        return ((BigInteger) query.getSingleResult()).intValue();
+        return ((Long) session.createNativeQuery("SELECT nextval('" + seqName + "')").getSingleResult())
+                .intValue();
     }
 }

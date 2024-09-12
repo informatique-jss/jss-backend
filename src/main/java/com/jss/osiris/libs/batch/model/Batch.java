@@ -2,27 +2,29 @@ package com.jss.osiris.libs.batch.model;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.node.model.Node;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_batch_settings_id", columnList = "id_batch_settings"),
         @Index(name = "idx_batch_settings_status", columnList = "id_batch_status,id_batch_settings") })
 public class Batch implements IId {
     public static String REFRESH_FORMALITE_GUICHET_UNIQUE = "REFRESH_FORMALITE_GUICHET_UNIQUE";
+    public static String REFRESH_FORMALITE_INFOGREFFE = "REFRESH_FORMALITE_INFOGREFFE";
+    public static String REFRESH_FORMALITE_INFOGREFFE_DETAIL = "REFRESH_FORMALITE_INFOGREFFE_DETAIL";
     public static String SIGN_FORMALITE_GUICHET_UNIQUE = "SIGN_FORMALITE_GUICHET_UNIQUE";
     public static String DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE = "DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE";
     public static String PAY_FORMALITE_GUICHET_UNIQUE = "PAY_FORMALITE_GUICHET_UNIQUE";
@@ -30,13 +32,17 @@ public class Batch implements IId {
     public static String ACTIVE_DIRECTORY_USER_UPDATE = "ACTIVE_DIRECTORY_USER_UPDATE";
     public static String PURGE_NOTIFICATION = "PURGE_NOTIFICATION";
     public static String PURGE_LOGS = "PURGE_LOGS";
+    public static String PURGE_BATCH = "PURGE_BATCH";
     public static String CHECK_CENTRAL_PAY_PAYMENT_REQUEST = "CHECK_CENTRAL_PAY_PAYMENT_REQUEST";
     public static String SEND_MAIL = "SEND_MAIL";
     public static String SEND_REMINDER_FOR_QUOTATION = "SEND_REMINDER_FOR_QUOTATION";
     public static String SEND_REMINDER_FOR_CUSTOMER_ORDER_DEPOSITS = "SEND_REMINDER_FOR_CUSTOMER_ORDER_DEPOSITS";
     public static String SEND_REMINDER_FOR_INVOICES = "SEND_REMINDER_FOR_INVOICES";
     public static String SEND_REMINDER_TO_CONFRERE_FOR_ANNOUNCEMENTS = "SEND_REMINDER_TO_CONFRERE_FOR_ANNOUNCEMENTS";
+    public static String SEND_REMINDER_TO_CONFRERE_FOR_PROVIDER_INVOICE = "SEND_REMINDER_TO_CONFRERE_FOR_PROVIDER_INVOICE";
     public static String SEND_REMINDER_TO_CUSTOMER_FOR_PROOF_READING = "SEND_REMINDER_TO_CUSTOMER_FOR_PROOF_READING";
+    public static String SEND_REMINDER_TO_CUSTOMER_FOR_MISSING_ATTACHMENT_QUERIES = "SEND_REMINDER_TO_CUSTOMER_FOR_MISSING_ATTACHMENT_QUERIES";
+    public static String SEND_REMINDER_TO_CUSTOMER_FOR_BILAN_PUBLICATION = "SEND_REMINDER_TO_CUSTOMER_FOR_BILAN_PUBLICATION";
     public static String PUBLISH_ANNOUNCEMENT_TO_ACTU_LEGALE = "PUBLISH_ANNOUNCEMENT_TO_ACTU_LEGALE";
     public static String SEND_PUBLICATION_FLAG = "SEND_PUBLICATION_FLAG";
     public static String DO_OCR_ON_INVOICE = "DO_OCR_ON_INVOICE";

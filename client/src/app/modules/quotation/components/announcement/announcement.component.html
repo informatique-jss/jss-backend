@@ -7,8 +7,8 @@
             <tr>
               <td>
                 <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
-                  propertyName="department" [isMandatory]="true" [isDisabled]="!editMode" label="Département"
-                  [isDisabled]="!editMode" (onOptionSelected)="updateConfrereAndCharacterPrice()"
+                  propertyName="department" [isMandatory]="true" label="Département" [isDisabled]="!editMode"
+                  (onOptionSelected)="updateConfrereAndCharacterPrice()"
                   [filterAvailableEntities]="announcement.confrere?announcement.confrere.departments:undefined"
                   [conditionnalRequired]=" !isStatusOpen">
                 </autocomplete-department>
@@ -27,7 +27,7 @@
               <td>
                 <generic-datepicker [(model)]="announcement.publicationDate" label="Date de publication"
                   [minDate]="getCurrentDate()" [form]="announcementForm" propertyName="publicationDate"
-                  [isMandatory]="true" [conditionnalRequired]=" !isStatusOpen" [isDisabled]="!editMode"
+                  [isMandatory]="false" [isDisabled]="!editMode"
                   (onDateChange)="updateCharacterPrice()"></generic-datepicker>
               </td>
               <td>
@@ -40,9 +40,8 @@
             <tr>
               <td>
                 <select-notice-family [(model)]="announcement.noticeTypeFamily" label="Rubrique"
-                  [form]="announcementForm" propertyName="noticeTypeFamily" [isMandatory]="true"
-                  (selectionChange)="clearNoticeTypeField()"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                  [form]="announcementForm" propertyName="noticeTypeFamily" [isMandatory]="false"
+                  (selectionChange)="clearNoticeTypeField()" [isDisabled]="!editMode">
                 </select-notice-family>
               </td>
               <td *ngIf="announcement.noticeTypeFamily">
@@ -102,6 +101,8 @@
           </table>
         </div>
       </fieldset>
+      <mat-divider class="margin-mat-divider"></mat-divider>
+      <customer-order-comment *ngIf="provision && provision.id " [provision]="provision"></customer-order-comment>
     </mat-tab>
     <mat-tab label="Annonce">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
@@ -160,6 +161,7 @@
                     height: 500,
                     menubar: true,
                     entity_encoding : 'raw',
+                    browser_spellcheck: true,
                     language: 'fr_FR',
                     plugins: [
                       'table','fullscreen', 'lists', 'advlist'
@@ -183,6 +185,7 @@
      menubar: true,
      entity_encoding : 'raw',
      language: 'fr_FR',
+     browser_spellcheck: true,
      plugins: [
        'table','fullscreen', 'lists', 'advlist'
      ],
@@ -262,6 +265,7 @@
       </provision-options>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="announcement.id!=null && announcement.id!=undefined && provision">
+      <paper-set *ngIf="quotation &&  instanceOfCustomerOrderFn(quotation)" [customerOrder]="quotation"></paper-set>
       <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>

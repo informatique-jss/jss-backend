@@ -165,6 +165,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeQuotation"
+                label="Type de pièce-jointe - Devis PDF" [form]="constantForm" propertyName="attachmentTypeQuotation"
+                [isMandatory]="true" [isDisabled]="!editMode" [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCni" label="Type de pièce-jointe - CNI"
                 [form]="constantForm" propertyName="attachmentTypeCni" [isMandatory]="true" [isDisabled]="!editMode"
                 [byPassAttachmentHiddenFilter]="true">
@@ -201,6 +209,24 @@
               <select-attachment-type [(model)]="constant.attachmentTypeProviderInvoice"
                 label="Type de pièce-jointe - Facture fournisseur" [form]="constantForm"
                 propertyName="attachmentTypeProviderInvoice" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeRefusInfogreffe"
+                label="Type de pièce-jointe - Refus Infogreffe" [form]="constantForm"
+                propertyName="attachmentTypeRefusInfogreffe" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeAutreInfogreffe"
+                label="Type de pièce-jointe - Autre Infogreffe" [form]="constantForm"
+                propertyName="attachmentTypeAutreInfogreffe" [isMandatory]="true" [isDisabled]="!editMode"
                 [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
@@ -314,6 +340,23 @@
               <select-attachment-type [(model)]="constant.attachmentTypeComplexAnnouncement"
                 label="Type de pièce-jointe - annonce complexe" [form]="constantForm"
                 propertyName="attachmentTypeComplexAnnouncement" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeContract" label="Type de pièce-jointe - contrat"
+                [form]="constantForm" propertyName="attachmentTypeContract" [isMandatory]="true"
+                [isDisabled]="!editMode" [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeTemplate"
+                label="Type de pièce-jointe - modèle de document" [form]="constantForm"
+                propertyName="attachmentTypeTemplate" [isMandatory]="true" [isDisabled]="!editMode"
                 [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
@@ -575,8 +618,8 @@
           <tr>
             <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeBilan"
-                label="Type de poste de facturation - Bilan" [form]="constantForm" propertyName="billingTypeBilan"
-                [isMandatory]="true" [isDisabled]="!editMode">
+                label="Type de poste de facturation - Bilan (relecture)" [form]="constantForm"
+                propertyName="billingTypeBilan" [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
           </tr>
@@ -642,6 +685,50 @@
               <autocomplete-billing-type [(model)]="constant.billingTypeCorrespondenceFees"
                 label="Type de poste de facturation - Frais de Correspondance" [form]="constantForm"
                 propertyName="billingTypeCorrespondenceFees" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDomiciliationContractTypeKeepMail"
+                label="Type de poste de facturation - Domiciliation - Conservation du courrier" [form]="constantForm"
+                propertyName="billingTypeDomiciliationContractTypeKeepMail" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDomiciliationContractTypeRouteEmail"
+                label="Type de poste de facturation - Domiciliation - Envoi du courrier par mail" [form]="constantForm"
+                propertyName="billingTypeDomiciliationContractTypeRouteEmail" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDomiciliationContractTypeRouteMail"
+                label="Type de poste de facturation - Domiciliation - Envoi du courrier par La Poste"
+                [form]="constantForm" propertyName="billingTypeDomiciliationContractTypeRouteMail" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDomiciliationContractTypeRouteEmailAndMail"
+                label="Type de poste de facturation - Domiciliation - Envoi du courrier par La Poste et par mail"
+                [form]="constantForm" propertyName="billingTypeDomiciliationContractTypeRouteEmailAndMail"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeSupplyFullBeCopy"
+                label="Type de poste de facturation - Copie intégrale des BE" [form]="constantForm"
+                propertyName="billingTypeSupplyFullCopy" [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
           </tr>
@@ -768,6 +855,22 @@
           </tr>
           <tr>
             <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupFacturation"
+                label="Groupe Active Directory - Facturation" [form]="constantForm"
+                propertyName="activeDirectoryGroupFacturation" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-active-directory-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupFormalites"
+                label="Groupe Active Directory - Formalites" [form]="constantForm"
+                propertyName="activeDirectoryGroupFormalites" [isMandatory]=" true"
+                [isDisabled]="!editMode"></select-active-directory-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-contract-type [(model)]="constant.domiciliationContractTypeRouteEmail"
                 label="Contrat de domiciliation - redirection par mail" [form]="constantForm"
                 propertyName="domiciliationContractTypeRouteEmail" [isMandatory]="true" [isDisabled]="!editMode">
@@ -795,6 +898,22 @@
               <select-mail-redirection [(model)]="constant.mailRedirectionTypeOther"
                 label="Type de redirection du courier - autres" [form]="constantForm"
                 propertyName="mailRedirectionTypeOther" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-mail-redirection>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-mail-redirection [(model)]="constant.mailRedirectionTypeLegalGuardian"
+                label="Type de redirection du courier - Représentant légal" [form]="constantForm"
+                propertyName="mailRedirectionTypeLegalGuardian" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-mail-redirection>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-mail-redirection [(model)]="constant.mailRedirectionTypeActivity"
+                label="Type de redirection du courier - Exercice de l'activité" [form]="constantForm"
+                propertyName="mailRedirectionTypeActivity" [isMandatory]="true" [isDisabled]="!editMode">
               </select-mail-redirection>
             </td>
           </tr>
@@ -1205,6 +1324,22 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountLitigious"
+                [form]="constantForm" propertyName="principalAccountingAccountLitigious" [isMandatory]="true"
+                label="Compte comptable principal - Litigieux"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountSuspicious"
+                [form]="constantForm" propertyName="principalAccountingAccountSuspicious" [isMandatory]="true"
+                label="Compte comptable principal - Douteux"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountDepositProvider"
                 [form]="constantForm" propertyName="principalAccountingAccountDepositProvider" [isMandatory]="true"
                 label="Compte comptable principal - Acompte fournisseur"
@@ -1332,6 +1467,13 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeOther" [form]="constantForm"
+                propertyName="serviceTypeOther" [isMandatory]="true" label="Service - Autre"
+                [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-datepicker [(model)]="constant.dateAccountingClosureForAll"
                 label="Date - cloture comptable pour les non comptables" [form]="constantForm"
                 propertyName="dateAccountingClosureForAll" [isMandatory]="true"
@@ -1339,9 +1481,13 @@
             </td>
           </tr>
           <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeBilanPublication"
+                label="Type de prestation - Bilan" [form]="constantForm" propertyName="provisionTypeBilanPublication"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type></td>
+          </tr>
+          <tr>
             <td>
               <generic-datepicker [(model)]="constant.dateAccountingClosureForAccountant"
-                label="Date - cloture comptable pour les comptables" [form]="constantForm"
                 propertyName="dateAccountingClosureForAccountant" [isMandatory]="true"
                 [isDisabled]="!editMode"></generic-datepicker>
             </td>

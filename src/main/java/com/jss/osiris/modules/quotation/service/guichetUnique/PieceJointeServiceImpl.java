@@ -21,7 +21,7 @@ public class PieceJointeServiceImpl implements PieceJointeService {
 
     @Override
     public PiecesJointe getPieceJointe(Integer id) {
-        Optional<PiecesJointe> pieceJointe = pieceJointeRepository.findByAttachmentId(id);
+        Optional<PiecesJointe> pieceJointe = pieceJointeRepository.findByAttachmentId(id + "");
         if (pieceJointe.isPresent())
             return pieceJointe.get();
         return null;

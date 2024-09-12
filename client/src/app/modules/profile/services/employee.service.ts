@@ -8,7 +8,7 @@ import { Employee } from '../model/Employee';
 @Injectable({
   providedIn: 'root'
 })
-export class EmployeeService extends AppRestService<Employee>{
+export class EmployeeService extends AppRestService<Employee> {
 
   constructor(http: HttpClient) {
     super(http, "profile");
@@ -29,6 +29,23 @@ export class EmployeeService extends AppRestService<Employee>{
 
   renewResponsablePassword(responsable: Responsable) {
     return this.get(new HttpParams().set("idResponsable", responsable.id), "responsable/password", "Mot de passe renouvelé et envoyé", "Erreur lors du renouvellement du mot de passe");
+  }
+
+  getEmployeeBackgoundColor(employee: Employee | undefined): string {
+    if (employee) {
+      const name = employee.firstname + employee.lastname;
+      var hash = 0;
+      for (var i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      var colour = '#';
+      for (var i = 0; i < 3; i++) {
+        var value = (hash >> (i * 8)) & 0xFF;
+        colour += ('00' + value.toString(16)).substr(-2);
+      }
+      return colour;
+    }
+    return "#973434";
   }
 
 }

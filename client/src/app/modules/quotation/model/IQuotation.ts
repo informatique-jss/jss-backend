@@ -8,6 +8,7 @@ import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { Confrere } from "./Confrere";
+import { CustomerOrderComment } from "./CustomerOrderComment";
 
 export interface IQuotation extends IAttachment, IDocument {
   id: number;
@@ -17,15 +18,12 @@ export interface IQuotation extends IAttachment, IDocument {
   confrere: Confrere | undefined;
   specialOffers: SpecialOffer[] | undefined;
   createdDate: Date;
-  observations: string;
-  description: string;
-  instructions: string;
   isQuotation: boolean;
   assoAffaireOrders: AssoAffaireOrder[];
   firstReminderDateTime: Date;
   secondReminderDateTime: Date;
   thirdReminderDateTime: Date;
-  customerMailCustomMessage: string;
   customerOrderOrigin: CustomerOrderOrigin;
   abandonReason: QuotationAbandonReason;
+  customerOrderComments: CustomerOrderComment[];
 }

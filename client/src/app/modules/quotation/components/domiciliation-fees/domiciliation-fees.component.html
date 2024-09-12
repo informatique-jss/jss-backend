@@ -1,0 +1,44 @@
+<form [formGroup]="domiciliationFeesForm" *ngIf=" provision && provision.id && provision.domiciliation">
+  <div class="form-div">
+    <div>
+      <p>
+        Déclarer un frais postal :
+      </p>
+      <table class="full-width">
+        <tr>
+          <td>
+            <generic-datepicker [(model)]="newFee.feeDate" label="Date du frais" [form]="domiciliationFeesForm"
+              propertyName="feeDate" [isMandatory]="true"></generic-datepicker>
+          </td>
+          <td>
+            <generic-input [(model)]="newFee.amount" label="Montant (TTC)" [form]="domiciliationFeesForm"
+              propertyName="amount" [isMandatory]="true" type="number"></generic-input>
+          </td>
+          <td>
+            <select-billing-type [(model)]="newFee.billingType" label="Type de frais" [form]="domiciliationFeesForm"
+              propertyName="billingType" [isMandatory]="true"
+              [availableBillingTypes]="provision.provisionType.billingTypes"
+              [displayOnlyOptionnal]="true"></select-billing-type>
+          </td>
+          <td class="fab-td-button">
+            <button mat-mini-fab color="warn" matTooltip="Ajouter le paiement" (click)="addNewFee()"
+              class="add-button fab-td-button-top">
+              <mat-icon>add</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div *ngIf="provision.payments">
+      <p>
+        Frais postaux :
+      </p>
+      <sort-table [actions]="domiciliationFeesTableActions" [columns]="domiciliationFeesDisplayedColumns"
+        [values]="provision.domiciliation.domiciliationFees" [noPaddingBottom]="true" [noMaxHeight]="true"
+        tableName="Frais postaux domiciliation"
+        *ngIf="provision.domiciliation.domiciliationFees && provision.domiciliation.domiciliationFees.length>0 "
+        [displayTotalLines]="true">
+      </sort-table>
+    </div>
+  </div>
+</form>

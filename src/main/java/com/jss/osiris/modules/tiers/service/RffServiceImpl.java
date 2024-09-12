@@ -16,8 +16,6 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.miscellaneous.model.BillingItem;
-import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
@@ -46,9 +44,6 @@ public class RffServiceImpl implements RffService {
 
     @Autowired
     VatService vatService;
-
-    @Autowired
-    BillingItemService billingItemService;
 
     @Autowired
     PricingHelper pricingHelper;
@@ -201,11 +196,8 @@ public class RffServiceImpl implements RffService {
         invoice.setTiers(rff.getTiers());
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
-        List<BillingItem> rffBillingItem = billingItemService
-                .getBillingItemByBillingType(constantService.getBillingTypeRff());
-
         InvoiceItem invoiceItem = new InvoiceItem();
-        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(rffBillingItem, null));
+        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(constantService.getBillingTypeRff(), null));
         invoiceItem.setDiscountAmount(0f);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);

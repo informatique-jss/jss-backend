@@ -15,6 +15,7 @@ export interface QuotationSearchResult {
   totalPrice: number;
   lastStatusUpdate: Date;
   customerOrderOriginLabel: string;
+  serviceTypeLabel: string;
 }
 
 

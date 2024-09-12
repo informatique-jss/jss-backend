@@ -1,12 +1,12 @@
 package com.jss.osiris;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
+
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class ApplicationPropertiesAudit {
@@ -37,6 +37,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.competant.authorities.update");
         isOk = isOk && checkProperty("schedulling.log.osiris.announcement.confrere.query.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.proof.reading.reminder");
+        isOk = isOk && checkProperty("schedulling.customer.order.recurring.generation");
+        isOk = isOk && checkProperty("schedulling.log.osiris.competent.authority.reminder");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.update.last.hour");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.opened");
         isOk = isOk && checkProperty("schedulling.central.pay.payment.request.validation.check");
@@ -91,9 +93,25 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("azure.form.recognizer.model.invoices.name");
         isOk = isOk && checkProperty("azure.form.recognizer.model.receipts.name");
         isOk = isOk && checkProperty("azure.form.recognizer.confidence.threshold");
+        isOk = isOk && checkProperty("azure.translator.api.key");
+        isOk = isOk && checkProperty("azure.translator.api.endpoint");
+        isOk = isOk && checkProperty("azure.translator.api.route");
+        isOk = isOk && checkProperty("azure.translator.api.region");
         isOk = isOk && checkProperty("schedulling.audit.clean");
         isOk = isOk && checkProperty("schedulling.log.purge");
+        isOk = isOk && checkProperty("schedulling.batch.purge");
         isOk = isOk && checkProperty("schedulling.node.priority");
+        isOk = isOk && checkProperty("mail.temporized.temporization.seconds");
+        isOk = isOk && checkProperty("schedulling.log.osiris.customer.bilan.publication.reminder");
+        isOk = isOk && checkProperty("schedulling.log.osiris.customer.missing.attachment.queries");
+        isOk = isOk && checkProperty("infogreffe.auth.entry.point");
+        isOk = isOk && checkProperty("infogreffe.auth.login");
+        isOk = isOk && checkProperty("infogreffe.auth.password");
+        isOk = isOk && checkProperty("infogreffe.auth.client.id");
+        isOk = isOk && checkProperty("infogreffe.auth.grant.type");
+        isOk = isOk && checkProperty("infogreffe.url");
+        isOk = isOk && checkProperty("schedulling.infogreffe.refresh.all");
+        isOk = isOk && checkProperty("schedulling.infogreffe.refresh.last.day");
 
         isOk = isOk && checkAccountingParams();
 

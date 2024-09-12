@@ -7,13 +7,12 @@
       {{displayLabel(type)}}
     </mat-option>
   </mat-select>
+  <mat-icon color="accent" matTooltip="Afficher le responsable" matTooltipShowDelay="1000" matSuffix
+    (click)="clickOnPreviewIcon()" *ngIf="isDisplayPreviewShortcut " class="pointer ">
+    visibility
+  </mat-icon>
   <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
     *ngIf="!isDisabled && model!=undefined" class="pointer">
     close
-  </mat-icon>
-  <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
-    matTooltipShowDelay="1000" matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined"
-    class="pointer ">
-    adjust
   </mat-icon>
 </mat-form-field>

@@ -2,8 +2,6 @@ package com.jss.osiris.modules.miscellaneous.repository;
 
 import java.util.List;
 
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+
+import jakarta.persistence.QueryHint;
 
 public interface CityRepository extends QueryCacheCrudRepository<City, Integer> {
     @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })

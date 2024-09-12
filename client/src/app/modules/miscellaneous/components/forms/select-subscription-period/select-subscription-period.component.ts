@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { SubscriptionPeriodType } from 'src/app/modules/tiers/model/SubscriptionPeriodType';
 import { SubscriptionPeriodTypeService } from 'src/app/modules/tiers/services/subscription.period.type.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-subscription-period',
@@ -15,8 +15,8 @@ export class SelectSubscriptionPeriodComponent extends GenericSelectComponent<Su
 
   types: SubscriptionPeriodType[] = [] as Array<SubscriptionPeriodType>;
 
-  constructor(private formBuild: UntypedFormBuilder, private subscriptionPeriodTypeService: SubscriptionPeriodTypeService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private subscriptionPeriodTypeService: SubscriptionPeriodTypeService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

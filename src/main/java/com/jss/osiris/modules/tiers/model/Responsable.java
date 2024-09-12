@@ -3,21 +3,6 @@ package com.jss.osiris.modules.tiers.model;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -36,13 +21,31 @@ import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.profile.model.Employee;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(indexes = { @Index(name = "idx_responsable_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_responsable_commercial", columnList = "id_commercial"),
 		@Index(name = "idx_responsable_login_web", columnList = "loginWeb", unique = true) })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
 	private Integer id;
 
@@ -452,6 +455,20 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	public AccountingAccount getAccountingAccountDeposit() {
 		if (this.getTiers() != null)
 			return this.getTiers().getAccountingAccountDeposit();
+		return null;
+	}
+
+	@Override
+	public AccountingAccount getAccountingAccountLitigious() {
+		if (this.getTiers() != null)
+			return this.getTiers().getAccountingAccountLitigious();
+		return null;
+	}
+
+	@Override
+	public AccountingAccount getAccountingAccountSuspicious() {
+		if (this.getTiers() != null)
+			return this.getTiers().getAccountingAccountSuspicious();
 		return null;
 	}
 

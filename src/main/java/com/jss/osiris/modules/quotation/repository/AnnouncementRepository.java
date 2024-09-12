@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
-import com.jss.osiris.libs.QueryCacheCrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
@@ -24,7 +24,8 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
                         " a.notice " +
                         " from announcement a " +
                         " join provision p on p.id_announcement = a.id " +
-                        " join asso_affaire_order asso_affaire on asso_affaire.id = p.id_asso_affaire_order " +
+                        " join service on service.id = p.id_service " +
+                        " join asso_affaire_order asso_affaire on asso_affaire.id = service.id_asso_affaire_order " +
                         " join affaire on affaire.id = asso_affaire.id_affaire " +
                         " join department d on d.id = a.id_department " +
                         " join customer_order on customer_order.id = asso_affaire.id_customer_order " +
@@ -55,7 +56,8 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
         @Query(nativeQuery = true, value = " " +
                         " select affaire.id " +
                         " from announcement a join provision p on p.id_announcement = a.id " +
-                        " join asso_affaire_order asso on asso.id = p.id_asso_affaire_order " +
+                        " join service on service.id = p.id_service " +
+                        " join asso_affaire_order asso on asso.id = service.id_asso_affaire_order " +
                         " join affaire on affaire.id = asso.id_affaire  " +
                         " where a.id = :announcementId " +
                         "")
@@ -84,4 +86,22 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
         @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null and firstClientReviewSentMailDateTime is not null ")
         List<Announcement> getAnnouncementForCustomerProofReadingReminder(
                         @Param("announcementStatus") AnnouncementStatus announcementStatus);
+
+        @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null  and confrere <> :confrere  ")
+        List<Announcement> getAnnouncementForConfrereReminderProviderInvoice(
+                        @Param("announcementStatus") AnnouncementStatus announcementStatus,
+                        @Param("confrere") Confrere confrere);
+
+        @Query(nativeQuery = true, value = "" +
+                        " select a.*  " +
+                        " from announcement a  " +
+                        " join provision p on p.id_announcement  =a.id " +
+                        " where a.id_announcement_status  = :announcementStatusDoneId and p.id_provision_type  = :provisionTypeBilanPublicationId "
+                        +
+                        " and a.publication_date between  date_trunc('year', current_date - interval '1 year') and   date_trunc('year', current_date) "
+                        +
+                        "")
+        List<Announcement> getAnnouncementForBilanPublicationReminder(
+                        @Param("announcementStatusDoneId") Integer announcementStatusDoneId,
+                        @Param("provisionTypeBilanPublicationId") Integer provisionTypeBilanPublicationId);
 }

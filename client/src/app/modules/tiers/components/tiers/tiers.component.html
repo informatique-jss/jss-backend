@@ -60,7 +60,8 @@
         <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
       </ng-template>
     </mat-tab>
-    <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable">
+    <mat-tab label="Comptes"
+      *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable && tiers.id">
       <ng-template matTabContent>
         <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
       </ng-template>

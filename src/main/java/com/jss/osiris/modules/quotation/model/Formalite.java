@@ -2,26 +2,31 @@ package com.jss.osiris.modules.quotation.model;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
 @JsonIgnoreProperties
+@Table(indexes = { @Index(name = "idx_formalite_status", columnList = "id_formalite_status"),
+        @Index(name = "idx_formalite_id_waited_competent_authority", columnList = "id_waited_competent_authority"),
+})
 public class Formalite implements IId {
 
     @Id
@@ -34,23 +39,19 @@ public class Formalite implements IId {
     @IndexedField
     private FormaliteStatus formaliteStatus;
 
-    @Column(columnDefinition = "TEXT")
-    private String observations;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_waited_competent_authority")
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority waitedCompetentAuthority;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_competent_authority_service_provider")
-    @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
-    private CompetentAuthority competentAuthorityServiceProvider;
-
     @OneToMany(mappedBy = "formalite")
     @JsonIgnoreProperties(value = { "content" })
     @IndexedField
     private List<FormaliteGuichetUnique> formalitesGuichetUnique;
+
+    @OneToMany(mappedBy = "formalite")
+    @IndexedField
+    private List<FormaliteInfogreffe> formalitesInfogreffe;
 
     @OneToMany(mappedBy = "formalite")
     @JsonIgnore
@@ -62,14 +63,6 @@ public class Formalite implements IId {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getObservations() {
-        return observations;
-    }
-
-    public void setObservations(String observations) {
-        this.observations = observations;
     }
 
     public CompetentAuthority getWaitedCompetentAuthority() {
@@ -88,14 +81,6 @@ public class Formalite implements IId {
         this.formaliteStatus = formaliteStatus;
     }
 
-    public CompetentAuthority getCompetentAuthorityServiceProvider() {
-        return competentAuthorityServiceProvider;
-    }
-
-    public void setCompetentAuthorityServiceProvider(CompetentAuthority competentAuthorityServiceProvider) {
-        this.competentAuthorityServiceProvider = competentAuthorityServiceProvider;
-    }
-
     public List<Provision> getProvision() {
         return provision;
     }
@@ -110,6 +95,22 @@ public class Formalite implements IId {
 
     public void setFormalitesGuichetUnique(List<FormaliteGuichetUnique> formalitesGuichetUnique) {
         this.formalitesGuichetUnique = formalitesGuichetUnique;
+    }
+
+    public ActeDeposit getActeDeposit() {
+        return acteDeposit;
+    }
+
+    public void setActeDeposit(ActeDeposit acteDeposit) {
+        this.acteDeposit = acteDeposit;
+    }
+
+    public List<FormaliteInfogreffe> getFormalitesInfogreffe() {
+        return formalitesInfogreffe;
+    }
+
+    public void setFormalitesInfogreffe(List<FormaliteInfogreffe> formalitesInfogreffe) {
+        this.formalitesInfogreffe = formalitesInfogreffe;
     }
 
 }

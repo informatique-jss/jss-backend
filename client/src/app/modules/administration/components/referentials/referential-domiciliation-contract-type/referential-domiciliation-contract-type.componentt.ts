@@ -8,7 +8,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 
 @Component({
   selector: 'referential-domiciliation-contract-type',
-  templateUrl: './../generic-referential/generic-referential.component.html',
+  templateUrl: './referential-domiciliation-contract-type.component.html',
   styleUrls: ['./../generic-referential/generic-referential.component.css']
 })
 export class ReferentialDomiciliationContractTypeComponent extends GenericReferentialComponent<DomiciliationContractType> implements OnInit {

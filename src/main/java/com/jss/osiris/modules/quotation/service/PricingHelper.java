@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.audit.model.Audit;
@@ -34,12 +33,15 @@ import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
+import com.jss.osiris.modules.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
+import com.jss.osiris.modules.quotation.model.Service;
 
-@Service
+@org.springframework.stereotype.Service
 public class PricingHelper {
 
     @Autowired
@@ -88,9 +90,10 @@ public class PricingHelper {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (quotation.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions()) {
-                        provision.setAssoAffaireOrder(assoAffaireOrder);
+                for (Service service : assoAffaireOrder.getServices())
+                    for (Provision provision : service.getProvisions()) {
+                        provision.setService(service);
+                        service.setAssoAffaireOrder(assoAffaireOrder);
                         if (provision.getProvisionType() != null && provision.getProvisionType().getId() != null)
                             setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
                     }
@@ -126,8 +129,16 @@ public class PricingHelper {
         return null;
     }
 
+    <<<<<<<HEAD
+
     public BillingItem getAppliableBillingItem(List<BillingItem> billingItems, IQuotation quotation)
             throws OsirisException {
+=======
+
+    public BillingItem getAppliableBillingItem(BillingType billingType, IQuotation quotation)
+            throws OsirisException {
+        List<BillingItem> billingItems = billingItemService.getBillingItemByBillingType(billingType);
+>>>>>>> develop
         if (billingItems == null)
             throw new OsirisException(null, "No billing items provided");
 
@@ -175,7 +186,8 @@ public class PricingHelper {
     }
 
     private void setInvoiceItemPreTaxPriceAndLabel(InvoiceItem invoiceItem, BillingItem billingItem,
-            Provision provision) throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+            Provision provision, IQuotation quotation)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         invoiceItem.setLabel(billingItem.getBillingType().getLabel());
         if (billingItem.getBillingType().getIsPriceBasedOnCharacterNumber()) {
             CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
@@ -274,6 +286,30 @@ public class PricingHelper {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
         }
 
+        // Domiciliation pricing
+        // First one => double price for base
+        if (provision.getDomiciliation() != null && quotation.getId() != null) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
+            CustomerOrder masterCustomerOrder = (customerOrder.getIsRecurring() != null
+                    && customerOrder.getIsRecurring()) ? customerOrder
+                            : customerOrder.getCustomerOrderParentRecurring();
+            if (masterCustomerOrder != null && masterCustomerOrder.getCustomerOrderFrequency() != null)
+                if (billingItem.getBillingType().getId()
+                        .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
+                        || billingItem.getBillingType().getId()
+                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmail().getId())
+                        || billingItem.getBillingType().getId()
+                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmailAndMail()
+                                        .getId())
+                        || billingItem.getBillingType().getId()
+                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteMail().getId()))
+                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                            * masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber());
+
+            if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring())
+                invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice() * 2);
+        }
+
         if (invoiceItem.getPreTaxPrice() != null)
             invoiceItem.setPreTaxPrice(Math.round(invoiceItem.getPreTaxPrice() * 100f) / 100f);
 
@@ -308,6 +344,9 @@ public class PricingHelper {
     private void setInvoiceItemsForProvision(Provision provision, IQuotation quotation, boolean persistInvoiceItem)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
+        if (provision == null)
+            return;
+
         if (quotation != null && provision != null) {
             if (provision.getInvoiceItems() == null)
                 provision.setInvoiceItems(new ArrayList<InvoiceItem>());
@@ -326,145 +365,144 @@ public class PricingHelper {
             ProvisionType provisionType = provisionTypeService.getProvisionType(provision.getProvisionType().getId());
             if (provisionType != null) {
                 for (BillingType billingType : provisionType.getBillingTypes()) {
-                    List<BillingItem> billingItems = billingItemService.getBillingItemByBillingType(billingType);
-                    if (billingItems != null && billingItems.size() > 0) {
-                        BillingItem billingItem = getAppliableBillingItem(billingItems, quotation);
+                    BillingItem billingItem = getAppliableBillingItem(billingType, quotation);
 
-                        if (billingItem != null && billingType.getAccountingAccountProduct() != null
-                                && (!billingItem.getBillingType().getIsOptionnal()
-                                        || hasOption(billingItem.getBillingType(), provision))) {
+                    if (billingItem != null && billingType.getAccountingAccountProduct() != null
+                            && (!billingItem.getBillingType().getIsOptionnal()
+                                    || hasOption(billingItem.getBillingType(), provision))) {
 
-                            // If vacation multiple option, bypass vacation and traitement billing type
-                            if (provision.getIsVacationMultipleModification() != null
-                                    && provision.getIsVacationMultipleModification()
-                                    && billingType.getIsVacation() != null
-                                    && billingType.getIsVacation()) {
-                                continue;
-                            }
-                            if (provision.getIsTreatmentMultipleModiciation() != null
-                                    && provision.getIsTreatmentMultipleModiciation()
-                                    && billingType.getIsTraitement() != null
-                                    && billingType.getIsTraitement()) {
-                                continue;
-                            }
-
-                            InvoiceItem invoiceItem = null;
-
-                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                                for (InvoiceItem invoiceItemProvision : provision.getInvoiceItems()) {
-
-                                    InvoiceItem tempInvoiceItem;
-                                    if (invoiceItemProvision.getId() != null) {
-                                        tempInvoiceItem = invoiceItemService
-                                                .getInvoiceItem(invoiceItemProvision.getId());
-                                    } else
-                                        tempInvoiceItem = invoiceItemProvision;
-
-                                    if (tempInvoiceItem.getOriginProviderInvoice() != null)
-                                        continue;
-
-                                    if (invoiceItemProvision.getBillingItem() != null
-                                            && invoiceItemProvision.getBillingItem().getBillingType().getId()
-                                                    .equals(billingType.getId()))
-                                        invoiceItem = invoiceItemProvision;
-                                }
-
-                            if (invoiceItem == null) {
-                                invoiceItem = new InvoiceItem();
-                                provision.getInvoiceItems().add(invoiceItem);
-                            }
-
-                            // Complete invoice item
-                            invoiceItem.setBillingItem(billingItem);
-                            invoiceItem.setInvoice(null);
-                            invoiceItem.setProvision(provision);
-
-                            if (invoiceItem.getIsOverridePrice() == null)
-                                invoiceItem.setIsOverridePrice(false);
-
-                            if (!invoiceItem.getIsOverridePrice() || !billingType.getCanOverridePrice()
-                                    || invoiceItem.getPreTaxPrice() == null
-                                    || invoiceItem.getPreTaxPrice() <= 0
-                                    || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted())
-                                setInvoiceItemPreTaxPriceAndLabel(invoiceItem, billingItem, provision);
-                            computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
-
-                            if (invoiceItem.getPreTaxPrice() == null)
-                                invoiceItem.setPreTaxPrice(0f);
-
-                            if (persistInvoiceItem)
-                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                        // If vacation multiple option, bypass vacation and traitement billing type
+                        if (provision.getIsVacationMultipleModification() != null
+                                && provision.getIsVacationMultipleModification() && billingType.getIsVacation() != null
+                                && billingType.getIsVacation()) {
+                            continue;
                         }
+                        if (provision.getIsTreatmentMultipleModiciation() != null
+                                && provision.getIsTreatmentMultipleModiciation()
+                                && billingType.getIsTraitement() != null
+                                && billingType.getIsTraitement()) {
+                            continue;
+                        }
+
+                        InvoiceItem invoiceItem = null;
+
+                        if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                            for (InvoiceItem invoiceItemProvision : provision.getInvoiceItems()) {
+
+                                InvoiceItem tempInvoiceItem;
+                                if (invoiceItemProvision.getId() != null) {
+                                    tempInvoiceItem = invoiceItemService
+                                            .getInvoiceItem(invoiceItemProvision.getId());
+                                } else
+                                    tempInvoiceItem = invoiceItemProvision;
+
+                                if (tempInvoiceItem.getOriginProviderInvoice() != null)
+                                    continue;
+
+                                if (invoiceItemProvision.getBillingItem() != null
+                                        && invoiceItemProvision.getBillingItem().getBillingType().getId()
+                                                .equals(billingType.getId()))
+                                    invoiceItem = invoiceItemProvision;
+                            }
+
+                        if (invoiceItem == null) {
+                            invoiceItem = new InvoiceItem();
+                            provision.getInvoiceItems().add(invoiceItem);
+                        }
+
+                        // Complete invoice item
+                        invoiceItem.setBillingItem(billingItem);
+                        invoiceItem.setInvoice(null);
+                        invoiceItem.setProvision(provision);
+
+                        if (invoiceItem.getIsOverridePrice() == null)
+                            invoiceItem.setIsOverridePrice(false);
+
+                        if (!invoiceItem.getIsOverridePrice() || !billingType.getCanOverridePrice()
+                                || invoiceItem.getPreTaxPrice() == null
+                                || invoiceItem.getPreTaxPrice() <= 0
+                                || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted())
+                            setInvoiceItemPreTaxPriceAndLabel(invoiceItem, billingItem, provision, quotation);
+                        computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
+
+                        if (invoiceItem.getPreTaxPrice() == null)
+                            invoiceItem.setPreTaxPrice(0f);
+
+                        if (persistInvoiceItem)
+                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                     }
                 }
-
-                // Delete unused item
-                ArrayList<InvoiceItem> invoiceItemsDeleted = new ArrayList<InvoiceItem>();
-                ArrayList<Integer> billingTypeAlreadyFound = new ArrayList<Integer>();
-                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    // Invoice item generated from provider invoices are handled after
-                    InvoiceItem tempInvoiceItem;
-                    if (invoiceItem.getId() != null) {
-                        tempInvoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
-                    } else
-                        tempInvoiceItem = invoiceItem;
-
-                    if (tempInvoiceItem.getInvoice() == null && tempInvoiceItem.getOriginProviderInvoice() == null) {
-                        boolean found = false;
-                        for (BillingType billingType : provisionType.getBillingTypes()) {
-                            if (invoiceItem.getBillingItem() != null
-                                    && billingType.getId().equals(invoiceItem.getBillingItem().getBillingType().getId())
-                                    && (!billingType.getIsOptionnal()
-                                            || hasOption(billingType, provision))
-                                    && !billingTypeAlreadyFound
-                                            .contains(invoiceItem.getBillingItem().getBillingType().getId())) {
-                                found = true;
-                                billingTypeAlreadyFound.add(invoiceItem.getBillingItem().getBillingType().getId());
-                            }
-                        }
-
-                        if (!found) {
-                            invoiceItemsDeleted.add(invoiceItem);
-                            invoiceItem.setProvision(null);
-                            if (persistInvoiceItem && invoiceItem.getId() != null) {
-                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                                invoiceItemService.deleteInvoiceItem(invoiceItem);
-                            }
-                        }
-                    }
-                }
-                provision.getInvoiceItems().removeAll(invoiceItemsDeleted);
             }
 
-            // Delete cancelled invoice
+            // Delete unused item
             ArrayList<InvoiceItem> invoiceItemsDeleted = new ArrayList<InvoiceItem>();
-            ArrayList<Integer> idInvoiceAlreadyDone = new ArrayList<Integer>();
-            if (provision.getInvoiceItems() != null) {
-                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+            ArrayList<Integer> billingTypeAlreadyFound = new ArrayList<Integer>();
+            for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                // Invoice item generated from provider invoices are handled after
+                InvoiceItem tempInvoiceItem;
+                if (invoiceItem.getId() != null) {
+                    tempInvoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
+                } else
+                    tempInvoiceItem = invoiceItem;
 
-                    InvoiceItem tempInvoiceItem;
-                    if (invoiceItem.getId() != null) {
-                        tempInvoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
-                    } else
-                        tempInvoiceItem = invoiceItem;
-
-                    if (tempInvoiceItem.getOriginProviderInvoice() != null) {
-                        if (tempInvoiceItem.getOriginProviderInvoice().getInvoiceStatus()
-                                .getId().equals(constantService.getInvoiceStatusCancelled().getId())) {
-                            invoiceItemsDeleted.add(invoiceItem);
-
-                            if (persistInvoiceItem && invoiceItem.getId() != null) {
-                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                                invoiceItemService.deleteInvoiceItem(invoiceItem);
-                            }
+                if (tempInvoiceItem.getInvoice() == null && tempInvoiceItem.getOriginProviderInvoice() == null
+                        && provisionType != null) {
+                    boolean found = false;
+                    for (BillingType billingType : provisionType.getBillingTypes()) {
+                        if (invoiceItem.getBillingItem() != null
+                                && billingType.getId().equals(invoiceItem.getBillingItem().getBillingType().getId())
+                                && (!billingType.getIsOptionnal()
+                                        || hasOption(billingType, provision))
+                                && !billingTypeAlreadyFound
+                                        .contains(invoiceItem.getBillingItem().getBillingType().getId())) {
+                            found = true;
+                            billingTypeAlreadyFound.add(invoiceItem.getBillingItem().getBillingType().getId());
                         }
-                        idInvoiceAlreadyDone.add(tempInvoiceItem.getOriginProviderInvoice().getId());
+                    }
+
+                    if (!found) {
+                        invoiceItemsDeleted.add(invoiceItem);
+                        invoiceItem.setProvision(null);
+                        if (persistInvoiceItem && invoiceItem.getId() != null) {
+                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                            invoiceItemService.deleteInvoiceItem(invoiceItem);
+                        }
                     }
                 }
-                provision.getInvoiceItems().removeAll(invoiceItemsDeleted);
             }
+            provision.getInvoiceItems().removeAll(invoiceItemsDeleted);
+        }
 
-            // Reinvoiced provider invoices
+        // Delete cancelled invoice
+        ArrayList<InvoiceItem> invoiceItemsDeleted = new ArrayList<InvoiceItem>();
+        ArrayList<Integer> idInvoiceAlreadyDone = new ArrayList<Integer>();
+        if (provision != null && provision.getInvoiceItems() != null) {
+            for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+
+                InvoiceItem tempInvoiceItem;
+                if (invoiceItem.getId() != null) {
+                    tempInvoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
+                } else
+                    tempInvoiceItem = invoiceItem;
+
+                if (tempInvoiceItem != null && tempInvoiceItem.getOriginProviderInvoice() != null) {
+                    if (tempInvoiceItem.getOriginProviderInvoice().getInvoiceStatus()
+                            .getId().equals(constantService.getInvoiceStatusCancelled().getId())) {
+                        invoiceItemsDeleted.add(invoiceItem);
+
+                        if (persistInvoiceItem && invoiceItem.getId() != null) {
+                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                            invoiceItemService.deleteInvoiceItem(invoiceItem);
+                        }
+                    }
+                    idInvoiceAlreadyDone.add(tempInvoiceItem.getOriginProviderInvoice().getId());
+                }
+            }
+            provision.getInvoiceItems().removeAll(invoiceItemsDeleted);
+        }
+
+        // Reinvoiced provider invoices
+        if (provision != null) {
             if (provision.getProviderInvoices() != null) {
                 for (Invoice invoice : provision.getProviderInvoices()) {
                     if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
@@ -541,8 +579,53 @@ public class PricingHelper {
                     }
                 }
             }
-        }
 
+            // Manage domiciliation fees
+            if (provision.getDomiciliation() != null && provision.getDomiciliation().getDomiciliationFees() != null) {
+                for (DomiciliationFee domiciliationFee : provision.getDomiciliation().getDomiciliationFees()) {
+                    if (domiciliationFee.getId() != null) {
+                        boolean found = false;
+                        if (provision.getInvoiceItems() != null)
+                            for (InvoiceItem domiciliationInvoiceItem : provision.getInvoiceItems()) {
+                                if (domiciliationInvoiceItem.getDomiciliationFee() != null && domiciliationInvoiceItem
+                                        .getDomiciliationFee().getId().equals(domiciliationFee.getId())) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                        if (!found) {
+                            InvoiceItem invoiceItem = new InvoiceItem();
+                            provision.getInvoiceItems().add(invoiceItem);
+                            invoiceItem
+                                    .setBillingItem(
+                                            getAppliableBillingItem(domiciliationFee.getBillingType(), quotation));
+                            invoiceItem.setInvoice(null);
+                            invoiceItem.setProvision(provision);
+                            if (invoiceItem.getIsOverridePrice() == null)
+                                invoiceItem.setIsOverridePrice(true);
+                            setInvoiceItemPreTaxPriceAndLabel(invoiceItem, invoiceItem.getBillingItem(), provision,
+                                    quotation);
+                            Float preTaxPrice = domiciliationFee.getAmount();
+                            if (domiciliationFee.getBillingType().getIsOverrideVat() != null
+                                    && domiciliationFee.getBillingType().getIsOverrideVat()) {
+                                if (domiciliationFee.getBillingType().getVat() != null
+                                        && domiciliationFee.getBillingType().getVat().getRate() > 0)
+                                    preTaxPrice = preTaxPrice
+                                            / (1f + domiciliationFee.getBillingType().getVat().getRate() / 100f);
+                            } else {
+                                preTaxPrice = preTaxPrice / 1.2f;
+                            }
+                            invoiceItem.setPreTaxPrice(preTaxPrice);
+                            invoiceItem.setLabel(invoiceItem.getLabel() + " le "
+                                    + domiciliationFee.getFeeDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                            computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
+                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private boolean hasOption(BillingType billingType, Provision provision) throws OsirisException {
@@ -658,6 +741,28 @@ public class PricingHelper {
         if (billingType.getId().equals(constantService.getBillingTypeShippingCosts().getId())
                 && getPublicationPaperNbr(provision) > 0)
             return true;
+        if (billingType.getId().equals(constantService.getBillingTypeSupplyFullBeCopy().getId())
+                && provision.getIsSupplyFullBeCopy() != null && provision.getIsSupplyFullBeCopy())
+            return true;
+
+        // Domiciliation pricing
+        if (provision.getDomiciliation() != null
+                && provision.getDomiciliation().getDomiciliationContractType() != null) {
+            DomiciliationContractType contract = provision.getDomiciliation().getDomiciliationContractType();
+            if (billingType.getId().equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
+                    && contract.getId().equals(constantService.getDomiciliationContractTypeKeepMail().getId()))
+                return true;
+            if (billingType.getId().equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmail().getId())
+                    && contract.getId().equals(constantService.getDomiciliationContractTypeRouteEmail().getId()))
+                return true;
+            if (billingType.getId()
+                    .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmailAndMail().getId())
+                    && contract.getId().equals(constantService.getDomiciliationContractTypeRouteEmailAndMail().getId()))
+                return true;
+            if (billingType.getId().equals(constantService.getBillingTypeDomiciliationContractTypeRouteMail().getId())
+                    && contract.getId().equals(constantService.getDomiciliationContractTypeRouteMail().getId()))
+                return true;
+        }
 
         return false;
     }

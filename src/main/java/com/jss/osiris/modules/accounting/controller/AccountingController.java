@@ -209,6 +209,12 @@ public class AccountingController {
                 accountingAccountService.getAccountingAccountByLabelOrCode(label), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/accounting-account")
+    public ResponseEntity<AccountingAccount> getAccountingAccountById(@RequestParam Integer id) {
+        return new ResponseEntity<AccountingAccount>(
+                accountingAccountService.getAccountingAccount(id), HttpStatus.OK);
+    }
+
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/accounting/close/daily")
     public ResponseEntity<Boolean> dailyAccountClosing() throws OsirisException {

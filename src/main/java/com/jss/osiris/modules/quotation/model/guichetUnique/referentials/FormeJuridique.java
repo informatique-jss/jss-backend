@@ -2,13 +2,15 @@ package com.jss.osiris.modules.quotation.model.guichetUnique.referentials;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
+import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.miscellaneous.model.ICode;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 @Entity
+@DoNotAudit
 public class FormeJuridique implements Serializable, ICode {
     public FormeJuridique(String code) {
         this.code = code;
@@ -23,7 +25,6 @@ public class FormeJuridique implements Serializable, ICode {
     @Column(columnDefinition = "TEXT")
     private String label;
 
-    
     private String labelShort;
 
     public String getCode() {

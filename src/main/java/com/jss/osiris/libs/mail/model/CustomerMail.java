@@ -3,39 +3,67 @@ package com.jss.osiris.libs.mail.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(indexes = {
+        @Index(name = "idx_customer_mail_send", columnList = "is_sent"),
         @Index(name = "idx_customer_mail_tiers", columnList = "id_tiers"),
         @Index(name = "idx_customer_mail_responsable", columnList = "id_responsable"),
         @Index(name = "idx_customer_mail_quotation", columnList = "id_quotation"),
         @Index(name = "idx_customer_mail_customer_order", columnList = "id_customer_order"),
         @Index(name = "idx_customer_mail_confrere", columnList = "id_confrere") })
 public class CustomerMail {
+
+    public static String TEMPLATE_WAITING_DEPOSIT = "waiting-deposit";
+    public static String TEMPLATE_WAITING_QUOTATION_VALIDATION = "waiting-quotation-validation";
+    public static String TEMPLATE_QUOTATION_VALIDATED = "quotation-validated";
+    public static String TEMPLATE_SEND_CREDIT_NOTE = "send-credit-note";
+    public static String TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS = "customer-order-in-progress";
+    public static String TEMPLATE_SEND_ATTACHMENTS = "send-attanchments";
+    public static String TEMPLATE_SEND_PUBLICATION_RECEIPT = "send-publication-receipt";
+    public static String TEMPLATE_SEND_PUBLICATION_FLAG = "send-publication-flag";
+    public static String TEMPLATE_SEND_PROOF_READING = "send-proof-reading";
+    public static String TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE = "send-announcement-confrere";
+    public static String TEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE = "send-announcement-erratum-confrere";
+    public static String TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER = "send-announcement-confrere-reminder";
+    public static String TEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER = "send-confrere-provider-invoice-reminder";
+    public static String TEMPLATE_CUSTOMER_ORDER_FINALIZATION = "customer-order-finalization";
+    public static String TEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER = "send-customer-bilan-publication-reminder";
+    public static String TEMPLATE_BILLING_CLOSURE = "billing-closure";
+    public static String TEMPLATE_INVOICE_REMINDER = "invoice-reminder";
+    public static String TEMPLATE_MISSING_ATTACHMENT = "missing-attachment";
+    public static String TEMPLATE_RENEW_PASSWORD = "renew-password";
+    public static String TEMPLATE_REQUEST_RIB = "request-rib";
+    public static String TEMPLATE_SEND_RFF = "send-rff";
+    public static String TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = "send-competent-authority-reminder";
+
     @Id
     @SequenceGenerator(name = "customer_mail_sequence", sequenceName = "customer_mail_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_mail_sequence")
@@ -43,76 +71,15 @@ public class CustomerMail {
 
     private String headerPicture;
 
-    @Column(length = 1000)
-    private String title;
-
-    @Column(length = 2000)
-    private String subtitle;
-
-    @Column(length = 1000)
-    private String label;
-
-    @Column(length = 2000)
-    private String labelSubtitle;
-
-    @Column(length = 2000)
-    private String explaination;
-
     @Column(columnDefinition = "TEXT")
-    private String explainationElements;
-
-    @Column(length = 2000)
-    private String explaination2;
-
-    @Column(length = 2000)
-    private String explaination3;
-
-    @Column(length = 2000)
-    private String paymentExplaination;
-
-    @Column(length = 2000)
-    private String paymentExplaination2;
-
-    @Column(length = 2000)
-    private String cbExplanation;
+    private String explaination;
 
     @Column(length = 1000)
     private String cbLink;
 
-    @Column(length = 2000)
-    private String quotationValidation;
-
-    @Column(length = 1000)
-    private String quotationValidationLink;
-
-    @Column(length = 2000)
-    private String paymentExplainationWarning;
-
-    @OneToMany(mappedBy = "customerMail", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties(value = { "customerMail" }, allowSetters = true)
-    private List<VatMail> vatMails;
-
-    private Float preTaxPriceTotal;
-    private Float discountTotal;
-    private Float preTaxPriceTotalWithDicount;
-
-    @OneToMany(mappedBy = "customerMail", cascade = CascadeType.ALL)
-    private List<CustomerMailAssoAffaireOrder> customerMailAssoAffaireOrders;
-
-    private Float priceTotal;
-
-    @Column(length = 2000)
-    private String totalSubtitle;
-
-    @Column(length = 1000)
-    private String greetings;
-
     private Boolean sendToMe;
 
     private Boolean copyToMe;
-
-    @Column(columnDefinition = "TEXT")
-    private String customerMailCustomMessage;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_mail_compute_result")
@@ -123,6 +90,7 @@ public class CustomerMail {
     private Employee replyTo;
 
     private String replyToMail;
+    private String copyToMail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_employee_send_to_me")
@@ -161,11 +129,32 @@ public class CustomerMail {
     @JsonIgnoreProperties(value = { "customerMail" }, allowSetters = true)
     private List<Attachment> attachments;
 
+    @Column(name = "is_sent")
     private Boolean isSent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rff")
-    Rff rff;
+    private Rff rff;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_missing_attachment_query")
+    private MissingAttachmentQuery missingAttachmentQuery;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_provision")
+    private Provision provision;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_competent_authority")
+    private CompetentAuthority competentAuthority;
+
+    private String mailTemplate;
+
+    private LocalDateTime toSendAfter;
+
+    private Boolean isCancelled;
+
+    private Boolean isLastReminder;
 
     public Integer getId() {
         return id;
@@ -183,36 +172,167 @@ public class CustomerMail {
         this.headerPicture = headerPicture;
     }
 
-    public String getTitle() {
-        return title;
+    public static String getTEMPLATE_WAITING_DEPOSIT() {
+        return TEMPLATE_WAITING_DEPOSIT;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public static void setTEMPLATE_WAITING_DEPOSIT(String tEMPLATE_WAITING_DEPOSIT) {
+        TEMPLATE_WAITING_DEPOSIT = tEMPLATE_WAITING_DEPOSIT;
     }
 
-    public String getSubtitle() {
-        return subtitle;
+    public static String getTEMPLATE_WAITING_QUOTATION_VALIDATION() {
+        return TEMPLATE_WAITING_QUOTATION_VALIDATION;
     }
 
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
+    public static void setTEMPLATE_WAITING_QUOTATION_VALIDATION(String tEMPLATE_WAITING_QUOTATION_VALIDATION) {
+        TEMPLATE_WAITING_QUOTATION_VALIDATION = tEMPLATE_WAITING_QUOTATION_VALIDATION;
     }
 
-    public String getLabel() {
-        return label;
+    public static String getTEMPLATE_QUOTATION_VALIDATED() {
+        return TEMPLATE_QUOTATION_VALIDATED;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public static void setTEMPLATE_QUOTATION_VALIDATED(String tEMPLATE_QUOTATION_VALIDATED) {
+        TEMPLATE_QUOTATION_VALIDATED = tEMPLATE_QUOTATION_VALIDATED;
     }
 
-    public String getLabelSubtitle() {
-        return labelSubtitle;
+    public static String getTEMPLATE_SEND_CREDIT_NOTE() {
+        return TEMPLATE_SEND_CREDIT_NOTE;
     }
 
-    public void setLabelSubtitle(String labelSubtitle) {
-        this.labelSubtitle = labelSubtitle;
+    public static void setTEMPLATE_SEND_CREDIT_NOTE(String tEMPLATE_SEND_CREDIT_NOTE) {
+        TEMPLATE_SEND_CREDIT_NOTE = tEMPLATE_SEND_CREDIT_NOTE;
+    }
+
+    public static String getTEMPLATE_CUSTOMER_ORDER_IN_PROGRESS() {
+        return TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS;
+    }
+
+    public static void setTEMPLATE_CUSTOMER_ORDER_IN_PROGRESS(String tEMPLATE_CUSTOMER_ORDER_IN_PROGRESS) {
+        TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS = tEMPLATE_CUSTOMER_ORDER_IN_PROGRESS;
+    }
+
+    public static String getTEMPLATE_SEND_ATTACHMENTS() {
+        return TEMPLATE_SEND_ATTACHMENTS;
+    }
+
+    public static void setTEMPLATE_SEND_ATTACHMENTS(String tEMPLATE_SEND_ATTACHMENTS) {
+        TEMPLATE_SEND_ATTACHMENTS = tEMPLATE_SEND_ATTACHMENTS;
+    }
+
+    public static String getTEMPLATE_SEND_PUBLICATION_RECEIPT() {
+        return TEMPLATE_SEND_PUBLICATION_RECEIPT;
+    }
+
+    public static void setTEMPLATE_SEND_PUBLICATION_RECEIPT(String tEMPLATE_SEND_PUBLICATION_RECEIPT) {
+        TEMPLATE_SEND_PUBLICATION_RECEIPT = tEMPLATE_SEND_PUBLICATION_RECEIPT;
+    }
+
+    public static String getTEMPLATE_SEND_PUBLICATION_FLAG() {
+        return TEMPLATE_SEND_PUBLICATION_FLAG;
+    }
+
+    public static void setTEMPLATE_SEND_PUBLICATION_FLAG(String tEMPLATE_SEND_PUBLICATION_FLAG) {
+        TEMPLATE_SEND_PUBLICATION_FLAG = tEMPLATE_SEND_PUBLICATION_FLAG;
+    }
+
+    public static String getTEMPLATE_SEND_PROOF_READING() {
+        return TEMPLATE_SEND_PROOF_READING;
+    }
+
+    public static void setTEMPLATE_SEND_PROOF_READING(String tEMPLATE_SEND_PROOF_READING) {
+        TEMPLATE_SEND_PROOF_READING = tEMPLATE_SEND_PROOF_READING;
+    }
+
+    public static String getTEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE() {
+        return TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE;
+    }
+
+    public static void setTEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE(String tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE) {
+        TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE = tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE;
+    }
+
+    public static String getTEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE() {
+        return TEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE;
+    }
+
+    public static void setTEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE(
+            String tEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE) {
+        TEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE = tEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE;
+    }
+
+    public static String getTEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER() {
+        return TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER;
+    }
+
+    public static void setTEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER(
+            String tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER) {
+        TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER = tEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER;
+    }
+
+    public static String getTEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER() {
+        return TEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER;
+    }
+
+    public static void setTEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER(
+            String tEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER) {
+        TEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER = tEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER;
+    }
+
+    public static String getTEMPLATE_CUSTOMER_ORDER_FINALIZATION() {
+        return TEMPLATE_CUSTOMER_ORDER_FINALIZATION;
+    }
+
+    public static void setTEMPLATE_CUSTOMER_ORDER_FINALIZATION(String tEMPLATE_CUSTOMER_ORDER_FINALIZATION) {
+        TEMPLATE_CUSTOMER_ORDER_FINALIZATION = tEMPLATE_CUSTOMER_ORDER_FINALIZATION;
+    }
+
+    public static String getTEMPLATE_BILLING_CLOSURE() {
+        return TEMPLATE_BILLING_CLOSURE;
+    }
+
+    public static void setTEMPLATE_BILLING_CLOSURE(String tEMPLATE_BILLING_CLOSURE) {
+        TEMPLATE_BILLING_CLOSURE = tEMPLATE_BILLING_CLOSURE;
+    }
+
+    public static String getTEMPLATE_INVOICE_REMINDER() {
+        return TEMPLATE_INVOICE_REMINDER;
+    }
+
+    public static void setTEMPLATE_INVOICE_REMINDER(String tEMPLATE_INVOICE_REMINDER) {
+        TEMPLATE_INVOICE_REMINDER = tEMPLATE_INVOICE_REMINDER;
+    }
+
+    public static String getTEMPLATE_MISSING_ATTACHMENT() {
+        return TEMPLATE_MISSING_ATTACHMENT;
+    }
+
+    public static void setTEMPLATE_MISSING_ATTACHMENT(String tEMPLATE_MISSING_ATTACHMENT) {
+        TEMPLATE_MISSING_ATTACHMENT = tEMPLATE_MISSING_ATTACHMENT;
+    }
+
+    public static String getTEMPLATE_RENEW_PASSWORD() {
+        return TEMPLATE_RENEW_PASSWORD;
+    }
+
+    public static void setTEMPLATE_RENEW_PASSWORD(String tEMPLATE_RENEW_PASSWORD) {
+        TEMPLATE_RENEW_PASSWORD = tEMPLATE_RENEW_PASSWORD;
+    }
+
+    public static String getTEMPLATE_REQUEST_RIB() {
+        return TEMPLATE_REQUEST_RIB;
+    }
+
+    public static void setTEMPLATE_REQUEST_RIB(String tEMPLATE_REQUEST_RIB) {
+        TEMPLATE_REQUEST_RIB = tEMPLATE_REQUEST_RIB;
+    }
+
+    public static String getTEMPLATE_SEND_RFF() {
+        return TEMPLATE_SEND_RFF;
+    }
+
+    public static void setTEMPLATE_SEND_RFF(String tEMPLATE_SEND_RFF) {
+        TEMPLATE_SEND_RFF = tEMPLATE_SEND_RFF;
     }
 
     public String getExplaination() {
@@ -223,76 +343,28 @@ public class CustomerMail {
         this.explaination = explaination;
     }
 
-    public String getExplainationElements() {
-        return explainationElements;
+    public String getCbLink() {
+        return cbLink;
     }
 
-    public void setExplainationElements(String explainationElements) {
-        this.explainationElements = explainationElements;
+    public void setCbLink(String cbLink) {
+        this.cbLink = cbLink;
     }
 
-    public String getExplaination2() {
-        return explaination2;
+    public Boolean getSendToMe() {
+        return sendToMe;
     }
 
-    public void setExplaination2(String explaination2) {
-        this.explaination2 = explaination2;
+    public void setSendToMe(Boolean sendToMe) {
+        this.sendToMe = sendToMe;
     }
 
-    public Float getDiscountTotal() {
-        return discountTotal;
+    public Boolean getCopyToMe() {
+        return copyToMe;
     }
 
-    public void setDiscountTotal(Float discountTotal) {
-        this.discountTotal = discountTotal;
-    }
-
-    public Float getPreTaxPriceTotalWithDicount() {
-        return preTaxPriceTotalWithDicount;
-    }
-
-    public void setPreTaxPriceTotalWithDicount(Float preTaxPriceTotalWithDicount) {
-        this.preTaxPriceTotalWithDicount = preTaxPriceTotalWithDicount;
-    }
-
-    public List<VatMail> getVatMails() {
-        return vatMails;
-    }
-
-    public void setVatMails(List<VatMail> vatMails) {
-        this.vatMails = vatMails;
-    }
-
-    public Float getPriceTotal() {
-        return priceTotal;
-    }
-
-    public void setPriceTotal(Float priceTotal) {
-        this.priceTotal = priceTotal;
-    }
-
-    public String getTotalSubtitle() {
-        return totalSubtitle;
-    }
-
-    public void setTotalSubtitle(String totalSubtitle) {
-        this.totalSubtitle = totalSubtitle;
-    }
-
-    public String getGreetings() {
-        return greetings;
-    }
-
-    public void setGreetings(String greetings) {
-        this.greetings = greetings;
-    }
-
-    public Float getPreTaxPriceTotal() {
-        return preTaxPriceTotal;
-    }
-
-    public void setPreTaxPriceTotal(Float preTaxPriceTotal) {
-        this.preTaxPriceTotal = preTaxPriceTotal;
+    public void setCopyToMe(Boolean copyToMe) {
+        this.copyToMe = copyToMe;
     }
 
     public MailComputeResult getMailComputeResult() {
@@ -311,60 +383,12 @@ public class CustomerMail {
         this.replyTo = replyTo;
     }
 
-    public String getSubject() {
-        return subject;
+    public String getReplyToMail() {
+        return replyToMail;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public Boolean getSendToMe() {
-        return sendToMe;
-    }
-
-    public void setSendToMe(Boolean sendToMe) {
-        this.sendToMe = sendToMe;
-    }
-
-    public LocalDateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(LocalDateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public List<CustomerMailAssoAffaireOrder> getCustomerMailAssoAffaireOrders() {
-        return customerMailAssoAffaireOrders;
-    }
-
-    public void setCustomerMailAssoAffaireOrders(List<CustomerMailAssoAffaireOrder> customerMailAssoAffaireOrders) {
-        this.customerMailAssoAffaireOrders = customerMailAssoAffaireOrders;
-    }
-
-    public CustomerOrder getCustomerOrder() {
-        return customerOrder;
-    }
-
-    public void setCustomerOrder(CustomerOrder customerOrder) {
-        this.customerOrder = customerOrder;
-    }
-
-    public String getCbExplanation() {
-        return cbExplanation;
-    }
-
-    public void setCbExplanation(String cbExplanation) {
-        this.cbExplanation = cbExplanation;
-    }
-
-    public String getCbLink() {
-        return cbLink;
-    }
-
-    public void setCbLink(String cbLink) {
-        this.cbLink = cbLink;
+    public void setReplyToMail(String replyToMail) {
+        this.replyToMail = replyToMail;
     }
 
     public Employee getSendToMeEmployee() {
@@ -375,68 +399,28 @@ public class CustomerMail {
         this.sendToMeEmployee = sendToMeEmployee;
     }
 
-    public String getExplaination3() {
-        return explaination3;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setExplaination3(String explaination3) {
-        this.explaination3 = explaination3;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
-    public String getReplyToMail() {
-        return replyToMail;
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
-    public void setReplyToMail(String replyToMail) {
-        this.replyToMail = replyToMail;
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 
-    public String getPaymentExplaination() {
-        return paymentExplaination;
+    public CustomerOrder getCustomerOrder() {
+        return customerOrder;
     }
 
-    public void setPaymentExplaination(String paymentExplaination) {
-        this.paymentExplaination = paymentExplaination;
-    }
-
-    public String getPaymentExplaination2() {
-        return paymentExplaination2;
-    }
-
-    public void setPaymentExplaination2(String paymentExplaination2) {
-        this.paymentExplaination2 = paymentExplaination2;
-    }
-
-    public String getPaymentExplainationWarning() {
-        return paymentExplainationWarning;
-    }
-
-    public void setPaymentExplainationWarning(String paymentExplainationWarning) {
-        this.paymentExplainationWarning = paymentExplainationWarning;
-    }
-
-    public List<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<Attachment> attachments) {
-        this.attachments = attachments;
-    }
-
-    public Boolean getIsSent() {
-        return isSent;
-    }
-
-    public void setIsSent(Boolean isSent) {
-        this.isSent = isSent;
-    }
-
-    public Tiers getTiers() {
-        return tiers;
-    }
-
-    public void setTiers(Tiers tiers) {
-        this.tiers = tiers;
+    public void setCustomerOrder(CustomerOrder customerOrder) {
+        this.customerOrder = customerOrder;
     }
 
     public Quotation getQuotation() {
@@ -445,6 +429,14 @@ public class CustomerMail {
 
     public void setQuotation(Quotation quotation) {
         this.quotation = quotation;
+    }
+
+    public Tiers getTiers() {
+        return tiers;
+    }
+
+    public void setTiers(Tiers tiers) {
+        this.tiers = tiers;
     }
 
     public Responsable getResponsable() {
@@ -463,36 +455,20 @@ public class CustomerMail {
         this.confrere = confrere;
     }
 
-    public String getCustomerMailCustomMessage() {
-        return customerMailCustomMessage;
+    public List<Attachment> getAttachments() {
+        return attachments;
     }
 
-    public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
-        this.customerMailCustomMessage = customerMailCustomMessage;
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 
-    public Boolean getCopyToMe() {
-        return copyToMe;
+    public Boolean getIsSent() {
+        return isSent;
     }
 
-    public void setCopyToMe(Boolean copyToMe) {
-        this.copyToMe = copyToMe;
-    }
-
-    public String getQuotationValidation() {
-        return quotationValidation;
-    }
-
-    public void setQuotationValidation(String quotationValidation) {
-        this.quotationValidation = quotationValidation;
-    }
-
-    public String getQuotationValidationLink() {
-        return quotationValidationLink;
-    }
-
-    public void setQuotationValidationLink(String quotationValidationLink) {
-        this.quotationValidationLink = quotationValidationLink;
+    public void setIsSent(Boolean isSent) {
+        this.isSent = isSent;
     }
 
     public Rff getRff() {
@@ -501,6 +477,88 @@ public class CustomerMail {
 
     public void setRff(Rff rff) {
         this.rff = rff;
+    }
+
+    public MissingAttachmentQuery getMissingAttachmentQuery() {
+        return missingAttachmentQuery;
+    }
+
+    public void setMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery) {
+        this.missingAttachmentQuery = missingAttachmentQuery;
+    }
+
+    public Provision getProvision() {
+        return provision;
+    }
+
+    public void setProvision(Provision provision) {
+        this.provision = provision;
+    }
+
+    public String getMailTemplate() {
+        return mailTemplate;
+    }
+
+    public void setMailTemplate(String mailTemplate) {
+        this.mailTemplate = mailTemplate;
+    }
+
+    public LocalDateTime getToSendAfter() {
+        return toSendAfter;
+    }
+
+    public void setToSendAfter(LocalDateTime toSendAfter) {
+        this.toSendAfter = toSendAfter;
+    }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
+    public Boolean getIsLastReminder() {
+        return isLastReminder;
+    }
+
+    public void setIsLastReminder(Boolean isLastReminder) {
+        this.isLastReminder = isLastReminder;
+    }
+
+    public static String getTEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER() {
+        return TEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER;
+    }
+
+    public static void setTEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER(
+            String tEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER) {
+        TEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER = tEMPLATE_SEND_CUSTOMER_BILAN_PUBLICATION_REMINDER;
+    }
+
+    public CompetentAuthority getCompetentAuthority() {
+        return competentAuthority;
+    }
+
+    public void setCompetentAuthority(CompetentAuthority competentAuthority) {
+        this.competentAuthority = competentAuthority;
+    }
+
+    public static String getTEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER() {
+        return TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER;
+    }
+
+    public static void setTEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER(
+            String tEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER) {
+        TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = tEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER;
+    }
+
+    public String getCopyToMail() {
+        return copyToMail;
+    }
+
+    public void setCopyToMail(String copyToMail) {
+        this.copyToMail = copyToMail;
     }
 
 }

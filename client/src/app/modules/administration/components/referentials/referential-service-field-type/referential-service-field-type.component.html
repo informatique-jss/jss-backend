@@ -1,0 +1,73 @@
+<div>
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll mat-elevation-z2">
+    <sort-table [columns]="displayedColumns" [values]="entities" tableName="Référentiel" [noMaxHeight]="true"
+      [noPaddingBottom]="true" (onRowClick)="selectEntity($event)" [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>
+<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+  <form [formGroup]="entityForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr *ngIf="selectedEntity.id">
+            <td>
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [form]="entityForm"
+                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [form]="entityForm"
+                propertyName="label" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="100"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-service-field-data-type [(model)]="selectedEntity.dataType" label="Type de données"
+                [form]="entityForm" propertyName="dataType" [isMandatory]="true" [isDisabled]="!editMode"
+                (selectionChange)="clearPossibleValues()"></select-service-field-data-type>
+            </td>
+          </tr>
+        </table>
+        <ng-container *ngIf="selectedEntity.dataType==SERVICE_FIELD_TYPE_SELECT">
+          <table class="full-width">
+            <tr *ngFor="let possibleValue of selectedEntity.serviceFieldTypePossibleValues;let i = index">
+              <td>
+                <generic-input [(model)]="selectedEntity.serviceFieldTypePossibleValues[i].value" label="Valeur"
+                  [form]="entityForm" [propertyName]='"value"+i' [isMandatory]="true" [isDisabled]="!editMode"
+                  [maxLength]="255"></generic-input>
+              </td>
+              <td>
+                <button *ngIf="editMode" (click)="deletePossibleValue(possibleValue)" mat-raised-button color="accent">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <button *ngIf="editMode" (click)="addPossibleValue()" mat-raised-button color="accent">Ajouter une
+                  valeur
+                </button>
+              </td>
+            </tr>
+          </table>
+        </ng-container>
+      </fieldset>
+    </div>
+  </form>
+</div>

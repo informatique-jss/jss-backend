@@ -6,11 +6,6 @@
     (click)="openConfrereDialog()">
     <mat-icon>search</mat-icon>
   </button>
-  <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
-    matTooltipShowDelay="1000" matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined"
-    class="pointer ">
-    adjust
-  </mat-icon>
   <button (click)="clearField()"
     *ngIf="model!=undefined && model!=null && model.id !=undefined && model.id!=null && !isDisabled " matSuffix
     mat-icon-button>

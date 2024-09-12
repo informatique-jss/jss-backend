@@ -7,6 +7,7 @@ import { Mail } from "../../miscellaneous/model/Mail";
 import { Phone } from "../../miscellaneous/model/Phone";
 import { BuildingDomiciliation } from "./BuildingDomiciliation";
 import { DomiciliationContractType } from "./DomiciliationContractType";
+import { DomiciliationFee } from "./DomiciliationFee";
 import { DomiciliationStatus } from './DomiciliationStatus';
 import { MailRedirectionType } from "./MailRedirectionType";
 
@@ -23,8 +24,6 @@ export interface Domiciliation {
   country: Country;
   mails: Mail[];
   mailRecipient: string;
-  startDate: Date;
-  endDate: Date;
   activityDescription: string;
   activityAddress: string;
   activityPostalCode: string;
@@ -53,4 +52,5 @@ export interface Domiciliation {
   legalGardianMails: Mail[];
   legalGardianPhones: Phone[];
   domiciliationStatus: DomiciliationStatus;
+  domiciliationFees: DomiciliationFee[];
 }

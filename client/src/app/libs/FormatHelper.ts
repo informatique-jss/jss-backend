@@ -57,14 +57,20 @@ export function formatDateFrance(date: Date) {
   ].join('/');
 }
 
+export function formatDateTimeFrance(date: Date) {
+  if (!(date instanceof Date))
+    date = new Date(date);
+  return formatDateFrance(date) + " " + [
+    padTo2Digits(date.getHours()),
+    padTo2Digits(date.getMinutes()),
+    padTo2Digits(date.getSeconds()),
+  ].join(':');
+}
+
 export function formatDateTimeForSortTable<T>(element: T, column: SortTableColumn<T>): string {
   if (element && column && column.fieldName && getObjectPropertybyString(element, column.fieldName)) {
     let date = new Date(getObjectPropertybyString(element, column.fieldName));
-    return formatDateFrance(date) + " " + [
-      padTo2Digits(date.getHours()),
-      padTo2Digits(date.getMinutes()),
-      padTo2Digits(date.getSeconds()),
-    ].join(':');
+    return formatDateTimeFrance(date);
   }
 
   return "";
@@ -83,4 +89,15 @@ export function getObjectPropertybyString(element: any, propertyPath: string) {
     }
   }
   return element;
+}
+
+export function formatBytes(bytes: number, decimals: number) {
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
+  const k = 1024;
+  const dm = decimals <= 0 ? 0 : decimals || 2;
+  const sizes = ['Octets', 'Ko', 'Mo', 'Go', 'To', 'Po', 'Eo', 'Zo', 'Yo'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }

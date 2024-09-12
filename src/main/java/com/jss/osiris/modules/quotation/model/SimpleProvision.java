@@ -1,21 +1,24 @@
 package com.jss.osiris.modules.quotation.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
 @Entity
+@Table(indexes = { @Index(name = "idx_simple_provision_status", columnList = "id_simple_provision_status"),
+})
 public class SimpleProvision implements IId {
 
 	@Id
@@ -27,9 +30,6 @@ public class SimpleProvision implements IId {
 	@JoinColumn(name = "id_simple_provision_status")
 	@IndexedField
 	private SimpleProvisionStatus simpleProvisionStatus;
-
-	@Column(columnDefinition = "TEXT")
-	private String observations;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_waited_competent_authority")
@@ -50,14 +50,6 @@ public class SimpleProvision implements IId {
 
 	public void setSimpleProvisionStatus(SimpleProvisionStatus simpleProvisionStatus) {
 		this.simpleProvisionStatus = simpleProvisionStatus;
-	}
-
-	public String getObservations() {
-		return observations;
-	}
-
-	public void setObservations(String observations) {
-		this.observations = observations;
 	}
 
 	public CompetentAuthority getWaitedCompetentAuthority() {

@@ -2,8 +2,6 @@ package com.jss.osiris.modules.invoicing.service;
 
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +16,8 @@ import com.jss.osiris.modules.invoicing.repository.AzureReceiptRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AzureReceiptServiceImpl implements AzureReceiptService {

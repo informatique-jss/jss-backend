@@ -1,11 +1,11 @@
 package com.jss.osiris.modules.accounting.repository;
 
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.QueryHints;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
+
+import jakarta.persistence.QueryHint;
 
 public interface PrincipalAccountingAccountRepository
         extends QueryCacheCrudRepository<PrincipalAccountingAccount, Integer> {

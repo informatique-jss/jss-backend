@@ -3,24 +3,25 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class ProvisionType implements Serializable, IId {
@@ -66,6 +67,12 @@ public class ProvisionType implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_default_competent_authority_service_provider")
 	private CompetentAuthority defaultCompetentAuthorityServiceProvider;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_customer_order_recuring_frequency")
+	private CustomerOrderFrequency recurringFrequency;
+
+	private Boolean isRecurring;
 
 	public Integer getId() {
 		return id;
@@ -162,6 +169,22 @@ public class ProvisionType implements Serializable, IId {
 
 	public void setIsDisplayAnnualAccountScreen(Boolean isDisplayAnnualAccountScreen) {
 		this.isDisplayAnnualAccountScreen = isDisplayAnnualAccountScreen;
+	}
+
+	public CustomerOrderFrequency getRecurringFrequency() {
+		return recurringFrequency;
+	}
+
+	public void setRecurringFrequency(CustomerOrderFrequency recurringFrequency) {
+		this.recurringFrequency = recurringFrequency;
+	}
+
+	public Boolean getIsRecurring() {
+		return isRecurring;
+	}
+
+	public void setIsRecurring(Boolean isRecurring) {
+		this.isRecurring = isRecurring;
 	}
 
 }

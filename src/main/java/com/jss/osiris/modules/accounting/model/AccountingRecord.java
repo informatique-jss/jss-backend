@@ -4,20 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
@@ -29,10 +15,26 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(indexes = {
 		@Index(name = "idx_accounting_record_payment", columnList = "id_payment"),
 		@Index(name = "idx_accounting_record_customer_order", columnList = "id_customer_order"),
+		@Index(name = "idx_accounting_record_accounting_account", columnList = "id_accounting_account"),
+		@Index(name = "idx_accounting_record_accounting_journal", columnList = "id_accounting_journal"),
 		@Index(name = "idx_accounting_record_invoice_item", columnList = "id_invoice_item"),
 		@Index(name = "idx_accounting_record_accounting_account", columnList = "id_accounting_account"),
 		@Index(name = "idx_accounting_record_invoice", columnList = "id_invoice")

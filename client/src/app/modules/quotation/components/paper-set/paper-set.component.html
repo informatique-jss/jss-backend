@@ -1,0 +1,13 @@
+<div class="mat-elevation-z2 form-div " *ngIf="customerOrder ">
+  <div class=" full-width">
+    <div class="fab-extended-button-containter"><button mat-fab extended color="primary" (click)="addPaperSetType()">
+        <mat-icon>add_task</mat-icon>
+        Choisir une nouvelle action à réaliser
+      </button>
+    </div>
+    <sort-table [refreshTable]="refreshPaperSetTable.asObservable()" [columns]="displayedColumns"
+      *ngIf="customerOrder && customerOrder.paperSets && customerOrder.paperSets.length>0" [displayTotalLines]="false"
+      [values]="displayedPaperSets" tableName="Gestion des documents disponibles" [noPaddingBottom]="true">
+    </sort-table>
+  </div>
+</div>

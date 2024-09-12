@@ -4,7 +4,7 @@ export interface QuotationReporting {
   affaireSiret: number;
   waitedCompetentAuthorityLabel: string;
   affaireLabel: string;
-  customerOrderId: number;
+  quotationId: number;
   provisionId: number;
   provisionTypeLabel: string;
   provisionFamilyTypeLabel: string;

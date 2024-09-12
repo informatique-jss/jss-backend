@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +12,8 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
+
+import jakarta.persistence.QueryHint;
 
 public interface QuotationRepository extends QueryCacheCrudRepository<Quotation, Integer> {
 
@@ -32,6 +32,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " coalesce(t2.id,t.id) as tiersId,"
                         + " cf.id as confrereId,"
                         + " origin.label as customerOrderOriginLabel,"
+                        + " STRING_AGG(DISTINCT case when service.custom_label is null then st.label else service.custom_label  end,', ') as serviceTypeLabel,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ') as affaireLabel,"
                         + " co.description as quotationDescription"
@@ -39,7 +40,9 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " join customer_order_origin origin on origin.id = co.id_customer_order_origin"
                         + " join quotation_status cos on cos.id = co.id_quotation_status"
                         + " left join asso_affaire_order asso on asso.id_quotation = co.id"
-                        + " left join provision on provision.id_asso_affaire_order = asso.id"
+                        + " left join service on service.id_asso_affaire_order = asso.id"
+                        + " left join service_type st on st.id = service.id_service_type"
+                        + " left join provision on provision.id_service = service.id"
                         + " left join invoice_item i on i.id_provision = provision.id"
                         + " left join affaire af on af.id = asso.id_affaire"
                         + " left join city on af.id_city = city.id"
@@ -70,6 +73,6 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Quotation> findByCustomerOrders_Id(Integer idCustomerOrder);
 
-        @Query(value = "select q.* from quotation q where exists (select 1 from asso_affaire_order a join provision p on p.id_asso_affaire_order = a.id where a.id_quotation = q.id and  p.id_announcement = :announcementId)", nativeQuery = true)
+        @Query(value = "select q.* from quotation q where exists (select 1 from asso_affaire_order a join service on service.id_asso_affaire_order = a.id join provision p on p.id_service = service.id where a.id_quotation = q.id and  p.id_announcement = :announcementId)", nativeQuery = true)
         Optional<Quotation> findQuotationForAnnouncement(@Param("announcementId") Integer announcementId);
 }

@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -35,19 +37,27 @@ import { AnnouncementListComponent } from '../announcement-list/announcement-lis
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
+import { CustomerOrderCommentComponent } from '../customer-order-comment/customer-order-comment.component';
 import { CustomerOrderPaymentComponent } from '../customer-order-payment/customer-order-payment.component';
 import { DebourComponent } from '../debour/debour.component';
+import { DomiciliationFeesComponent } from '../domiciliation-fees/domiciliation-fees.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
+import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 import { FormaliteComponent } from '../formalite/formalite.component';
 import { ContentComponent } from '../guichet-unique/content/content.component';
 import { EntrepriseComponent } from '../guichet-unique/entreprise/entreprise.component';
 import { IdentiteComponent } from '../guichet-unique/identite/identite.component';
 import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
 import { PersonnePhysiqueComponent } from '../guichet-unique/personne-physique/personne-physique.component';
+import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
+import { MissingAttachmentQueriesComponent } from '../missing-attachment-queries/missing-attachment-queries.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
+import { OrderingListTaggedComponent } from '../ordering-list-tagged/ordering-list-tagged.component';
 import { OrderingListComponent } from '../ordering-list/ordering-list.component';
+import { PaperSetListComponent } from '../paper-set-list/paper-set-list.component';
+import { PaperSetComponent } from '../paper-set/paper-set.component';
 import { PaymentListComponent } from '../payment-list/payment-list.component';
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
@@ -58,10 +68,18 @@ import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { RecurringChildOrderingListComponent } from '../recurring-child-ordering-list/recurring-child-ordering-list.component';
+import { RecurringOrderingListComponent } from '../recurring-ordering-list/recurring-ordering-list.component';
+import { RecurringParentOrderingListComponent } from '../recurring-parent-ordering-list/recurring-parent-ordering-list.component';
 import { RefundPaymentDialogComponent } from '../refund-payment-dialog/refund-payment-dialog.component';
 import { SelectAccountingAccountDialogComponent } from '../select-accounting-account-dialog/select-accounting-account-dialog.component';
-import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
+import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
+import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
+import { SelectServiceDialogComponent } from '../select-service-dialog/select-service-dialog.component';
+import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
+import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
 
@@ -69,6 +87,7 @@ const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
   { path: 'quotation/:id', component: QuotationComponent },
   { path: 'order', component: QuotationComponent },
+  { path: 'recurring-order', component: RecurringOrderingListComponent },
   { path: 'order/:id', component: QuotationComponent },
   { path: 'provision', component: ProvisionListComponent },
   { path: 'provisions/:employeeId', component: ProvisionListComponent },
@@ -76,6 +95,7 @@ const routes: Routes = [
   { path: 'provision/:id/:idProvision', component: ProvisionComponent },
   { path: 'affaire', component: AffaireListComponent },
   { path: 'affaire/:id', component: AffaireComponent },
+  { path: 'paper-set', component: PaperSetListComponent },
 ];
 
 @NgModule({
@@ -99,12 +119,14 @@ const routes: Routes = [
     MatCheckboxModule,
     MatTooltipModule,
     MatTabsModule,
+    MatDividerModule,
     MiscellaneousModule,
     MatSidenavModule,
     MatTableModule,
     MatSortModule,
     MatMenuModule,
     MatDatepickerModule,
+    MatCardModule,
   ],
   declarations: [QuotationComponent,
     QuotationAbandonReasonDialog,
@@ -126,7 +148,7 @@ const routes: Routes = [
     SimpleProvisionComponent,
     AffaireListComponent,
     AffaireComponent,
-    SelectAttachmentTypeDialogComponent,
+    MissingAttachmentMailDialogComponent,
     AddAffaireComponent,
     CustomerOrderPaymentComponent,
     PaymentListComponent,
@@ -147,6 +169,22 @@ const routes: Routes = [
     GuichetUniqueStatusComponent,
     DebourComponent,
     ActeDepositComponent,
+    ServiceComponent,
+    SelectServiceTypeDialogComponent,
+    SelectServiceDialogComponent,
+    SelectDocumentTypeDialogComponent,
+    MissingAttachmentQueriesComponent,
+    RecurringOrderingListComponent,
+    RecurringParentOrderingListComponent,
+    RecurringChildOrderingListComponent,
+    DomiciliationFeesComponent,
+    CustomerOrderCommentComponent,
+    PaperSetListComponent,
+    PaperSetComponent,
+    SelectPaperSetTypeDialogComponent,
+    OrderingListTaggedComponent,
+    FormaliteAssociateDialog,
+    InfogreffeStatusComponent
   ],
   exports: [
     OrderingListComponent,
@@ -157,6 +195,8 @@ const routes: Routes = [
     AnnouncementListComponent,
     DirectDebitTransfertListComponent,
     QuotationComponent,
+    OrderingListTaggedComponent,
+    InfogreffeStatusComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

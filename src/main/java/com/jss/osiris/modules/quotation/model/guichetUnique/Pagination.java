@@ -1,14 +1,16 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.libs.search.model.DoNotAudit;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 
 @Entity
+@DoNotAudit
 public class Pagination {
     @Id
     @SequenceGenerator(name = "guichet_unique_pagination_sequence", sequenceName = "guichet_unique_pagination_sequence", allocationSize = 1)

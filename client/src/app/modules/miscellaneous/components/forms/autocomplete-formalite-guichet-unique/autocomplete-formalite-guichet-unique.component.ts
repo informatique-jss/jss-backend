@@ -7,9 +7,9 @@ import { Observable } from 'rxjs';
 import { GUICHET_UNIQUE_BASE_URL } from 'src/app/libs/Constants';
 import { FormaliteGuichetUnique } from 'src/app/modules/quotation/model/guichet-unique/FormaliteGuichetUnique';
 import { AppService } from 'src/app/services/app.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
-import { FormaliteGuichetUniqueService } from '../../../services/formalite.guichet.unique.service';
+import { FormaliteInfogreffeService } from '../../../services/formalite.infogreffe.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { FormaliteGuichetUniqueService } from '../../../services/formalite.guichet.unique.service';
 
 @Component({
   selector: 'autocomplete-guichet-unique-formalite',
@@ -23,10 +23,8 @@ export class AutocompleteGuichetUniqueFormaliteComponent extends GenericAutocomp
   @Input() label: string = "Label";
 
   constructor(private formBuild: UntypedFormBuilder,
-    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
-    private appService: AppService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<FormaliteGuichetUnique[]> {

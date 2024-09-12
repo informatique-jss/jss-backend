@@ -59,6 +59,12 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                 "En attente de l'autorité compétente", "pending",
                 false, false,
                 AggregateStatus.AGGREGATE_STATUS_WAITING);
+
+        updateStatus(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED, "Rejeté par l'autorité compétente", "gpp_bad", false,
+                false, AggregateStatus.AGGREGATE_STATUS_WAITING);
+        updateStatus(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED, "Validé par l'autorité compétente", "approval",
+                false, false, AggregateStatus.AGGREGATE_STATUS_WAITING);
+
         updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true,
                 AggregateStatus.AGGREGATE_STATUS_DONE);
 
@@ -73,6 +79,16 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
         setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
                 FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY);
         setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
+                FormaliteStatus.FORMALITE_DONE);
+
+        setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED,
+                FormaliteStatus.FORMALITE_IN_PROGRESS);
+        setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED,
+                FormaliteStatus.FORMALITE_DONE);
+
+        setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED,
+                FormaliteStatus.FORMALITE_IN_PROGRESS);
+        setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED,
                 FormaliteStatus.FORMALITE_DONE);
 
         setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,

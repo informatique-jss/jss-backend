@@ -1,0 +1,21 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-grid #chipListPaymentType>
+    <mat-chip-row *ngFor="let formeJuridique of model" (removed)="removeElement(formeJuridique)">
+      {{formeJuridique.label}}
+      <button matChipRemove *ngIf="!isDisabled">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip-row>
+    <input matInput placeholder="Choisir une forme juridique" [formControlName]="propertyName" #paymentTypeInput
+      [matChipInputFor]="chipListPaymentType" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+      [disabled]="isDisabled" [matAutocomplete]="autoComplete">
+  </mat-chip-grid>
+  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+  <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
+    (optionSelected)="addFormeJuridique($event)">
+    <mat-option *ngFor="let paymentType of filteredFormeJuridiques | async" [value]="paymentType">
+      {{paymentType.label}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

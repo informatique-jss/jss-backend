@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface OrderingSearchResult {
@@ -27,6 +28,8 @@ public interface OrderingSearchResult {
 
     public String getAffaireLabel();
 
+    public String getServiceTypeLabel();
+
     public Float getTotalPrice();
 
     public Float getDepositTotalAmount();
@@ -42,4 +45,18 @@ public interface OrderingSearchResult {
     public String getCustomerOrderOriginLabel();
 
     public String getProvisionStatus();
+
+    // Recurring
+
+    public Integer getCustomerOrderParentRecurringId();
+
+    public LocalDate getRecurringPeriodStartDate();
+
+    public LocalDate getRecurringPeriodEndDate();
+
+    public LocalDate getRecurringStartDate();
+
+    public LocalDate getRecurringEndDate();
+
+    public Boolean getIsRecurringAutomaticallyBilled();
 }

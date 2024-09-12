@@ -3,7 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable, map, startWith } from 'rxjs';
 import { PrincipalAccountingAccount } from 'src/app/modules/accounting/model/PrincipalAccountingAccount';
-import { UserNoteService } from 'src/app/services/user.notes.service';
+import { AppService } from 'src/app/services/app.service';
 import { PrincipalAccountingAccountService } from '../../../../accounting/services/principal.accounting.account.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
@@ -18,8 +18,9 @@ export class ChipsPrincipalAccountingAccountComponent extends GenericChipsCompon
   filteredPrincipalAccountingAccounts: Observable<PrincipalAccountingAccount[]> | undefined;
   @ViewChild('PrincipalAccountingAccountInput') PrincipalAccountingAccountInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private principalAccountingAccountService: PrincipalAccountingAccountService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private principalAccountingAccountService: PrincipalAccountingAccountService, private appService3: AppService
+  ) {
+    super(formBuild, appService3)
   }
 
   callOnNgInit(): void {

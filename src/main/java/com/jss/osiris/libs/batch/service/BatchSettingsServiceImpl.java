@@ -65,6 +65,30 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.GUICHET_UNIQUE));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.REFRESH_FORMALITE_INFOGREFFE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REFRESH_FORMALITE_INFOGREFFE);
+            batchSettings.setLabel("Mise à jour des dossiers Infogreffe");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INFOGREFFE));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL);
+            batchSettings.setLabel("Mise à jour du détail des dossiers Infogreffe");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INFOGREFFE));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.PAY_FORMALITE_GUICHET_UNIQUE) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.PAY_FORMALITE_GUICHET_UNIQUE);
@@ -149,6 +173,18 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.SYSTEM));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.PURGE_BATCH) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.PURGE_BATCH);
+            batchSettings.setLabel("Purge des batchs");
+            batchSettings.setFixedRate(5 * 60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.SYSTEM));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.CLEAN_AUDIT) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.CLEAN_AUDIT);
@@ -221,10 +257,46 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.SEND_REMINDER_TO_CONFRERE_FOR_PROVIDER_INVOICE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.SEND_REMINDER_TO_CONFRERE_FOR_PROVIDER_INVOICE);
+            batchSettings.setLabel("Relance par mail des confrère pour la réception des factures fournisseurs");
+            batchSettings.setFixedRate(60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_PROOF_READING) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_PROOF_READING);
             batchSettings.setLabel("Relance par mail des clients pour la validation des BAT");
+            batchSettings.setFixedRate(60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_BILAN_PUBLICATION) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_BILAN_PUBLICATION);
+            batchSettings.setLabel("Relance par mail des clients pour la publication des bilans annuels");
+            batchSettings.setFixedRate(60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REMINDERS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_MISSING_ATTACHMENT_QUERIES) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_MISSING_ATTACHMENT_QUERIES);
+            batchSettings.setLabel("Relance par mail des clients pour les pièces manquantes");
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);

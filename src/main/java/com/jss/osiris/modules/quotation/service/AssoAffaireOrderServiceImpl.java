@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,7 +8,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
@@ -37,6 +37,8 @@ import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
+import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
@@ -46,15 +48,18 @@ import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
+import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
-@Service
+@org.springframework.stereotype.Service
 public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
@@ -124,7 +129,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
 
     @Autowired
+    FormaliteInfogreffeService formaliteInfogreffeService;
+
+    @Autowired
     PaymentService paymentService;
+
+    @Autowired
+    ServiceService serviceService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -154,8 +165,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public AssoAffaireOrder addOrUpdateAssoAffaireOrder(
             AssoAffaireOrder assoAffaireOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        for (Provision provision : assoAffaireOrder.getProvisions()) {
-            provision.setAssoAffaireOrder(assoAffaireOrder);
+        for (Service service : assoAffaireOrder.getServices()) {
+            service.setAssoAffaireOrder(assoAffaireOrder);
+            if (service.getAssoServiceDocuments() != null)
+                for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments())
+                    assoServiceDocument.setService(service);
+
+            for (Provision provision : service.getProvisions()) {
+                provision.setService(service);
+            }
         }
 
         assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder(), true);
@@ -196,295 +214,400 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         Employee maxWeightEmployee = null;
         Integer maxWeight = -1000000000;
 
-        for (Provision provision : assoAffaireOrder.getProvisions()) {
-            provision.setAssoAffaireOrder(assoAffaireOrder);
+        for (Service service : assoAffaireOrder.getServices()) {
 
-            if (provision.getAttachments() != null)
-                for (Attachment attachment : provision.getAttachments()) {
-                    attachment.setProvision(provision);
-                    attachmentService.addOrUpdateAttachment(attachment);
+            service.setAssoAffaireOrder(assoAffaireOrder);
+            if (service.getAssoServiceDocuments() != null)
+                for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments())
+                    assoServiceDocument.setService(service);
+
+            // Complete field id_service in AssoServiceFieldType table
+            if (service.getAssoServiceFieldTypes() != null)
+                for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes())
+                    assoServiceFieldType.setService(service);
+
+            for (Provision provision : service.getProvisions()) {
+                provision.setService(service);
+
+                if (provision.getAttachments() != null)
+                    for (Attachment attachment : provision.getAttachments()) {
+                        attachment.setProvision(provision);
+                        attachmentService.addOrUpdateAttachment(attachment);
+                    }
+
+                if (provision.getId() != null && provision.getInvoiceItems() != null)
+                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                        if (invoiceItem.getId() != null)
+                            invoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
+                    }
+
+                if (provision.getDomiciliation() != null) {
+                    Domiciliation domiciliation = provision.getDomiciliation();
+                    if (customerOrder.getId() == null || domiciliation.getDomiciliationStatus() == null)
+                        domiciliation.setDomiciliationStatus(domiciliationStatusService
+                                .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
+
+                    // If mails already exists, get their ids
+                    if (domiciliation != null && domiciliation.getMails() != null
+                            && domiciliation.getMails().size() > 0)
+                        mailService.populateMailIds(domiciliation.getMails());
+
+                    // If mails already exists, get their ids
+                    if (domiciliation != null && domiciliation.getActivityMails() != null
+                            && domiciliation.getActivityMails().size() > 0)
+                        mailService.populateMailIds(domiciliation.getActivityMails());
+
+                    // If mails already exists, get their ids
+                    if (domiciliation != null
+                            && domiciliation.getLegalGardianMails() != null
+                            && domiciliation.getLegalGardianMails().size() > 0)
+                        mailService.populateMailIds(domiciliation.getLegalGardianMails());
+
+                    if (domiciliation != null
+                            && domiciliation.getLegalGardianPhones() != null
+                            && domiciliation.getLegalGardianPhones().size() > 0)
+                        phoneService.populatePhoneIds(domiciliation.getLegalGardianPhones());
+
                 }
 
-            if (provision.getId() != null && provision.getInvoiceItems() != null)
-                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    if (invoiceItem.getId() != null)
-                        invoiceItem = invoiceItemService.getInvoiceItem(invoiceItem.getId());
-                }
+                if (provision.getFormalite() != null) {
+                    Formalite formalite = provision.getFormalite();
+                    if (customerOrder.getId() == null || formalite.getFormaliteStatus() == null)
+                        formalite.setFormaliteStatus(
+                                formaliteStatusService
+                                        .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
 
-            if (provision.getDomiciliation() != null) {
-                Domiciliation domiciliation = provision.getDomiciliation();
-                if (customerOrder.getId() == null || domiciliation.getDomiciliationStatus() == null)
-                    domiciliation.setDomiciliationStatus(domiciliationStatusService
-                            .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
-
-                if (domiciliation.getEndDate() == null && domiciliation.getStartDate() != null)
-                    domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
-
-                // If mails already exists, get their ids
-                if (domiciliation != null && domiciliation.getMails() != null
-                        && domiciliation.getMails().size() > 0)
-                    mailService.populateMailIds(domiciliation.getMails());
-
-                // If mails already exists, get their ids
-                if (domiciliation != null && domiciliation.getActivityMails() != null
-                        && domiciliation.getActivityMails().size() > 0)
-                    mailService.populateMailIds(domiciliation.getActivityMails());
-
-                // If mails already exists, get their ids
-                if (domiciliation != null
-                        && domiciliation.getLegalGardianMails() != null
-                        && domiciliation.getLegalGardianMails().size() > 0)
-                    mailService.populateMailIds(domiciliation.getLegalGardianMails());
-
-                if (domiciliation != null
-                        && domiciliation.getLegalGardianPhones() != null
-                        && domiciliation.getLegalGardianPhones().size() > 0)
-                    phoneService.populatePhoneIds(domiciliation.getLegalGardianPhones());
-
-            }
-
-            if (provision.getFormalite() != null) {
-                Formalite formalite = provision.getFormalite();
-                if (customerOrder.getId() == null || formalite.getFormaliteStatus() == null)
-                    formalite.setFormaliteStatus(
-                            formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
-
-                else if (formalite.getFormalitesGuichetUnique() != null) {
-                    for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
-                        if (formaliteGuichetUnique.getStatus() == null
-                                || !formaliteGuichetUniqueStatusService
-                                        .getFormaliteGuichetUniqueStatus(formaliteGuichetUnique.getStatus().getCode())
-                                        .getIsCloseState()) {
-                            formaliteGuichetUnique.setFormalite(formalite);
-                            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                    else if (formalite.getFormalitesGuichetUnique() != null) {
+                        for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
+                                .getFormalitesGuichetUnique()) {
+                            if (formaliteGuichetUnique.getStatus() == null
+                                    || !formaliteGuichetUniqueStatusService
+                                            .getFormaliteGuichetUniqueStatus(
+                                                    formaliteGuichetUnique.getStatus().getCode())
+                                            .getIsCloseState()) {
+                                formaliteGuichetUnique.setFormalite(formalite);
+                                formaliteGuichetUniqueService
+                                        .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                            }
 
                             batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
                                     formaliteGuichetUnique.getId());
                         }
                     }
-                }
-
-                if (formalite.getId() != null) {
-                    Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
-                    if (originalFormalite != null && originalFormalite.getFormalitesGuichetUnique() != null
-                            && originalFormalite.getFormalitesGuichetUnique().size() > 0) {
-                        for (FormaliteGuichetUnique formaliteGuichetUniqueOrigin : originalFormalite
-                                .getFormalitesGuichetUnique()) {
-                            Boolean found = false;
-                            if (formalite.getFormalitesGuichetUnique() != null)
-                                for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
-                                        .getFormalitesGuichetUnique())
-                                    if (formaliteGuichetUnique.getId().equals(formaliteGuichetUniqueOrigin.getId()))
-                                        found = true;
-                            if (!found)
-                                formaliteGuichetUniqueOrigin.setFormalite(null);
-                            formaliteGuichetUniqueService
-                                    .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUniqueOrigin);
-
-                            if (formalite.getFormaliteStatus().getIsCloseState()) {
-                                if (formaliteGuichetUniqueStatusService
-                                        .getFormaliteGuichetUniqueStatus(
-                                                formaliteGuichetUniqueOrigin.getStatus().getCode())
-                                        .getIsCloseState() == false)
-                                    throw new OsirisClientMessageException(
-                                            "Impossible de terminer la formalité, le dossier GU n'est pas terminé");
-                            }
+                    if (formalite.getFormalitesInfogreffe() != null) {
+                        for (FormaliteInfogreffe formaliteInfogreffe : formalite
+                                .getFormalitesInfogreffe()) {
+                            formaliteInfogreffe.setFormalite(formalite);
+                            formaliteInfogreffeService.addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                            batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL,
+                                    formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
                         }
                     }
-                    if (formalite.getFormalitesGuichetUnique() != null
-                            && formalite.getFormalitesGuichetUnique().size() > 0)
-                        for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique()) {
-                            formaliteGuichetUnique.setFormalite(formalite);
-                            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
-                        }
 
-                }
+                    if (formalite.getId() != null) {
+                        Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
+                        if (originalFormalite != null
+                                && originalFormalite.getFormalitesGuichetUnique() != null
+                                && originalFormalite.getFormalitesGuichetUnique().size() > 0) {
+                            for (FormaliteGuichetUnique formaliteGuichetUniqueOrigin : originalFormalite
+                                    .getFormalitesGuichetUnique()) {
+                                Boolean found = false;
+                                if (formalite.getFormalitesGuichetUnique() != null)
+                                    for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
+                                            .getFormalitesGuichetUnique())
+                                        if (formaliteGuichetUnique.getId()
+                                                .equals(formaliteGuichetUniqueOrigin.getId()))
+                                            found = true;
+                                if (!found)
+                                    formaliteGuichetUniqueOrigin.setFormalite(null);
+                                formaliteGuichetUniqueService
+                                        .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUniqueOrigin);
 
-                if (formalite.getFormaliteStatus().getIsCloseState()
-                        && formalite.getCompetentAuthorityServiceProvider() != null
-                        && formalite.getCompetentAuthorityServiceProvider().getId()
-                                .equals(constantService.getCompetentAuthorityInpi().getId())
-                        && (formalite.getFormalitesGuichetUnique() == null
-                                || formalite.getFormalitesGuichetUnique().size() == 0))
-                    throw new OsirisClientMessageException(
-                            "Merci de compléter le nom du dossier GU avant de clôturer la formalité");
-            }
-
-            if (provision.getAnnouncement() != null) {
-                Announcement announcement = provision.getAnnouncement();
-
-                announcementService.completeAnnouncementWithAffaire(assoAffaireOrder);
-
-                // If complex, extract string from PDF and put it to notice
-                if (announcement.getIsComplexAnnouncement())
-                    announcement = announcementService.updateComplexAnnouncementNotice(announcement, provision,
-                            isFromUser);
-
-                announcement.setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
-
-                if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
-                    announcement.setAnnouncementStatus(announcementStatusService
-                            .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
-
-                if (announcement.getDocuments() != null)
-                    for (Document document : announcement.getDocuments())
-                        document.setAnnouncement(announcement);
-
-                boolean publicationProofFound = false;
-                if (announcement != null) {
-                    if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
-                        for (Attachment attachment : provision.getAttachments())
-                            if (attachment.getAttachmentType().getId()
-                                    .equals(constantService.getAttachmentTypePublicationProof().getId())) {
-                                publicationProofFound = true;
-                                break;
+                                if (formalite.getFormaliteStatus().getIsCloseState()) {
+                                    if (formaliteGuichetUniqueStatusService
+                                            .getFormaliteGuichetUniqueStatus(
+                                                    formaliteGuichetUniqueOrigin.getStatus().getCode())
+                                            .getIsCloseState() == false)
+                                        throw new OsirisClientMessageException(
+                                                "Impossible de terminer la formalité, le dossier GU n'est pas terminé");
+                                }
                             }
+                        }
+                        if (originalFormalite != null
+                                && originalFormalite.getFormalitesInfogreffe() != null
+                                && originalFormalite.getFormalitesInfogreffe().size() > 0) {
+                            for (FormaliteInfogreffe formaliteInfogreffeOrigin : originalFormalite
+                                    .getFormalitesInfogreffe()) {
+                                Boolean found = false;
+                                if (formalite.getFormalitesInfogreffe() != null)
+                                    for (FormaliteInfogreffe formaliteInfogreffe : formalite
+                                            .getFormalitesInfogreffe())
+                                        if (formaliteInfogreffe.getId()
+                                                .equals(formaliteInfogreffeOrigin.getId()))
+                                            found = true;
+                                if (!found) {
+                                    formaliteInfogreffeOrigin.setFormalite(null);
+                                    formaliteInfogreffeService
+                                            .addOrUpdateFormaliteInfogreffe(formaliteInfogreffeOrigin);
+                                }
+
+                                if (formalite.getFormaliteStatus().getIsCloseState()) {
+                                    if (formaliteInfogreffeOrigin.getEvenements() != null
+                                            && formaliteInfogreffeOrigin.getEvenements().size() > 0) {
+                                        formaliteInfogreffeOrigin.getEvenements().sort(
+                                                (o1, o2) -> ((LocalDateTime) o1.getCreatedDate())
+                                                        .compareTo((LocalDateTime) (o2.getCreatedDate())));
+                                        if (formaliteInfogreffeOrigin.getEvenements().get(0).getCodeEtat()
+                                                .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED))
+                                            throw new OsirisClientMessageException(
+                                                    "Impossible de terminer la formalité, le dossier Infogreffe n'est pas terminé");
+                                    }
+                                }
+                            }
+                        }
+                        if (formalite.getFormalitesGuichetUnique() != null
+                                && formalite.getFormalitesGuichetUnique().size() > 0)
+                            for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
+                                    .getFormalitesGuichetUnique()) {
+                                if (formaliteGuichetUnique.getFormalite() == null) {
+                                    FormaliteGuichetUnique currentFormaliteGuichetUnique = formaliteGuichetUniqueService
+                                            .getFormaliteGuichetUnique(formaliteGuichetUnique.getId());
+                                    if (currentFormaliteGuichetUnique != null) {
+                                        currentFormaliteGuichetUnique.setFormalite(formalite);
+                                        formaliteGuichetUniqueService
+                                                .addOrUpdateFormaliteGuichetUnique(currentFormaliteGuichetUnique);
+                                    } else {
+                                        formaliteGuichetUnique.setFormalite(formalite);
+                                        formaliteGuichetUniqueService
+                                                .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                                    }
+                                }
+                            }
+
+                        if (formalite.getFormalitesInfogreffe() != null
+                                && formalite.getFormalitesInfogreffe().size() > 0)
+                            for (FormaliteInfogreffe formaliteInfogreffe : formalite
+                                    .getFormalitesInfogreffe()) {
+                                if (formaliteInfogreffe.getFormalite() == null) {
+                                    formaliteInfogreffe.setFormalite(formalite);
+                                    formaliteInfogreffeService
+                                            .addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                                }
+                            }
+                    }
+
+                    if (formalite.getActeDeposit() != null && formalite.getActeDeposit().getId() == null) {
+                        batchService.declareNewBatch(Batch.DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE,
+                                formalite.getId());
+                    }
+
+                    if (formalite.getFormaliteStatus().getIsCloseState()
+                            && (formalite.getFormalitesGuichetUnique() == null
+                                    || formalite.getFormalitesGuichetUnique().size() == 0)
+                            && (formalite.getFormalitesInfogreffe() == null
+                                    || formalite.getFormalitesInfogreffe().size() == 0))
+                        throw new OsirisClientMessageException(
+                                "Merci de compléter le nom du dossier GU ou Infogreffe avant de clôturer la formalité");
                 }
 
-                // Handle status change
-                if (announcement.getAnnouncementStatus() != null
-                        && announcement.getConfrere() != null) {
+                if (provision.getAnnouncement() != null) {
+                    Announcement announcement = provision.getAnnouncement();
 
-                    if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()) &&
-                            announcement.getAnnouncementStatus().getCode()
-                                    .equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)) {
+                    announcementService.completeAnnouncementWithAffaire(assoAffaireOrder);
+
+                    // If complex, extract string from PDF and put it to notice
+                    if (announcement.getIsComplexAnnouncement())
+                        announcement = announcementService.updateComplexAnnouncementNotice(announcement,
+                                provision,
+                                isFromUser);
+
+                    announcement
+                            .setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
+
+                    if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
                         announcement.setAnnouncementStatus(announcementStatusService
-                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
-                    }
+                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
 
-                    // If JSS generate publication receipt if user accept
-                    if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-                        if (announcement.getAnnouncementStatus().getCode()
-                                .equals(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS)) {
-                            announcementService.generateStoreAndSendPublicationReceipt((CustomerOrder) customerOrder,
-                                    announcement);
-                        }
-                    } else {
-                        // Else send publication receipt when it's available and if user accept
+                    if (announcement.getDocuments() != null)
+                        for (Document document : announcement.getDocuments())
+                            document.setAnnouncement(announcement);
+
+                    boolean publicationProofFound = false;
+                    if (announcement != null) {
                         if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
                             for (Attachment attachment : provision.getAttachments())
                                 if (attachment.getAttachmentType().getId()
-                                        .equals(constantService.getAttachmentTypePublicationReceipt().getId())) {
-                                    announcementService.generateStoreAndSendPublicationReceipt(
-                                            (CustomerOrder) customerOrder,
-                                            announcement);
+                                        .equals(constantService.getAttachmentTypePublicationProof()
+                                                .getId())) {
+                                    publicationProofFound = true;
                                     break;
                                 }
                     }
 
-                    if (announcement.getAnnouncementStatus().getCode()
-                            .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)) {
-                        announcementService.generateAndStoreAnnouncementWordFile((CustomerOrder) customerOrder,
-                                assoAffaireOrder, provision, announcement);
-                    }
-                    if (publicationProofFound && announcement.getAnnouncementStatus().getCode()
-                            .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
-                        announcement.setAnnouncementStatus(announcementStatusService
-                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+                    // Handle status change
+                    if (announcement.getAnnouncementStatus() != null
+                            && announcement.getConfrere() != null) {
 
-                    if (announcement.getIsProofReadingDocument() && announcement.getAnnouncementStatus().getCode()
-                            .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER)) {
-                        if (announcement.getFirstClientReviewSentMailDateTime() == null) {
-                            announcement.setFirstClientReviewReminderDateTime(null);
-                            announcement.setSecondClientReviewReminderDateTime(null);
-                            announcement.setThirdClientReviewReminderDateTime(null);
-                            announcementService.generateStoreAndSendProofReading(announcement,
-                                    (CustomerOrder) customerOrder);
+                        if (announcement.getConfrere().getId()
+                                .equals(constantService.getConfrereJssSpel().getId())
+                                &&
+                                announcement.getAnnouncementStatus().getCode()
+                                        .equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)) {
+                            announcement.setAnnouncementStatus(announcementStatusService
+                                    .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
+                        }
+
+                        // If JSS generate publication receipt if user accept
+                        if (announcement.getConfrere().getId()
+                                .equals(constantService.getConfrereJssSpel().getId())) {
+                            if (announcement.getAnnouncementStatus().getCode()
+                                    .equals(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS)) {
+                                announcementService.generateStoreAndSendPublicationReceipt(
+                                        (CustomerOrder) customerOrder,
+                                        announcement);
+                            }
+                        } else {
+                            // Else send publication receipt when it's available and if user accept
+                            if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                                for (Attachment attachment : provision.getAttachments())
+                                    if (attachment.getAttachmentType().getId()
+                                            .equals(constantService.getAttachmentTypePublicationReceipt()
+                                                    .getId())) {
+                                        announcementService.generateStoreAndSendPublicationReceipt(
+                                                (CustomerOrder) customerOrder,
+                                                announcement);
+                                        break;
+                                    }
+                        }
+
+                        if (announcement.getAnnouncementStatus().getCode()
+                                .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)) {
+                            announcementService.generateAndStoreAnnouncementWordFile(
+                                    (CustomerOrder) customerOrder,
+                                    assoAffaireOrder, provision, announcement);
+                        }
+                        if (publicationProofFound && announcement.getAnnouncementStatus().getCode()
+                                .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
+                            announcement.setAnnouncementStatus(announcementStatusService
+                                    .getAnnouncementStatusByCode(
+                                            AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+
+                        if (announcement.getIsProofReadingDocument()
+                                && announcement.getAnnouncementStatus().getCode()
+                                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER)) {
+                            if (announcement.getFirstClientReviewSentMailDateTime() == null) {
+                                announcement.setFirstClientReviewReminderDateTime(null);
+                                announcement.setSecondClientReviewReminderDateTime(null);
+                                announcement.setThirdClientReviewReminderDateTime(null);
+                                announcementService.generateStoreAndSendProofReading(announcement,
+                                        (CustomerOrder) customerOrder);
+                            }
+                        }
+
+                        if (announcement.getAnnouncementStatus().getCode()
+                                .equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
+                            announcementService.generateStoreAndSendPublicationFlag(
+                                    (CustomerOrder) customerOrder,
+                                    announcement);
                         }
                     }
 
-                    if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
-                        announcementService.generateStoreAndSendPublicationFlag((CustomerOrder) customerOrder,
-                                announcement);
-                    }
                 }
 
-            }
+                if (provision.getSimpleProvision() != null) {
+                    SimpleProvision simpleProvision = provision.getSimpleProvision();
+                    if (customerOrder.getId() == null || simpleProvision.getSimpleProvisionStatus() == null)
+                        simpleProvision.setSimpleProvisionStatus(simpleProvisionStatusService
+                                .getSimpleProvisionStatusByCode(
+                                        SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
+                }
 
-            if (provision.getSimpleProvision() != null) {
-                SimpleProvision simpleProvision = provision.getSimpleProvision();
-                if (customerOrder.getId() == null || simpleProvision.getSimpleProvisionStatus() == null)
-                    simpleProvision.setSimpleProvisionStatus(simpleProvisionStatusService
-                            .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
-            }
-
-            // Auto associate payment and provider invoice if only one match is found
-            if (provision != null && provision.getId() != null) {
-                Provision originalProvision = provisionService.getProvision(provision.getId());
-                if (customerOrder instanceof CustomerOrder
-                        && ((CustomerOrder) customerOrder).getCustomerOrderStatus().getCode()
-                                .equals(CustomerOrderStatus.BILLED)
-                        && originalProvision.getPayments() != null
-                        && originalProvision.getPayments().size() > 0 && originalProvision.getProviderInvoices() != null
-                        && originalProvision.getProviderInvoices().size() > 0) {
-                    outerloop: for (Payment payment : originalProvision.getPayments()) {
-                        Invoice invoiceFound = null;
-                        if (payment.getIsCancelled() == false) {
-                            for (Invoice invoice : originalProvision.getProviderInvoices()) {
-                                if (invoice.getInvoiceStatus().getId()
-                                        .equals(constantService.getInvoiceStatusReceived().getId())) {
-                                    if (Math.round(
-                                            invoice.getTotalPrice()
-                                                    * 100f) == (Math.round(-payment.getPaymentAmount() * 100f))) {
-                                        if (invoiceFound != null)
-                                            continue outerloop;
-                                        invoiceFound = invoice;
+                // Auto associate payment and provider invoice if only one match is found
+                if (provision != null && provision.getId() != null) {
+                    Provision originalProvision = provisionService.getProvision(provision.getId());
+                    if (customerOrder instanceof CustomerOrder
+                            && ((CustomerOrder) customerOrder).getCustomerOrderStatus().getCode()
+                                    .equals(CustomerOrderStatus.BILLED)
+                            && originalProvision.getPayments() != null
+                            && originalProvision.getPayments().size() > 0
+                            && originalProvision.getProviderInvoices() != null
+                            && originalProvision.getProviderInvoices().size() > 0) {
+                        outerloop: for (Payment payment : originalProvision.getPayments()) {
+                            Invoice invoiceFound = null;
+                            if (payment.getIsCancelled() == false) {
+                                for (Invoice invoice : originalProvision.getProviderInvoices()) {
+                                    if (invoice.getInvoiceStatus().getId()
+                                            .equals(constantService.getInvoiceStatusReceived().getId())) {
+                                        if (Math.round(
+                                                invoice.getTotalPrice()
+                                                        * 100f) == (Math
+                                                                .round(-payment.getPaymentAmount()
+                                                                        * 100f))) {
+                                            if (invoiceFound != null)
+                                                continue outerloop;
+                                            invoiceFound = invoice;
+                                        }
                                     }
                                 }
+                                if (invoiceFound != null)
+                                    paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
+                                            Arrays.asList(invoiceFound), null, null, null, null, null,
+                                            null);
                             }
-                            if (invoiceFound != null)
-                                paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
-                                        Arrays.asList(invoiceFound), null, null, null, null, null, null);
                         }
                     }
                 }
-            }
 
-            // Set proper assignation regarding provision item configuration
-            if (provision.getAssignedTo() == null && customerOrder instanceof CustomerOrder) {
-                Employee employee = provision.getProvisionType().getDefaultEmployee();
+                // Set proper assignation regarding provision item configuration
+                if (provision.getAssignedTo() == null && customerOrder instanceof CustomerOrder) {
+                    Employee employee = provision.getProvisionType().getDefaultEmployee();
 
-                if (provision.getProvisionType().getAssignationType() != null) {
-                    if (provision.getProvisionType().getAssignationType().getCode()
-                            .equals(AssignationType.FORMALISTE)) {
-                        if (customerOrder.getConfrere() != null
-                                && customerOrder.getConfrere().getFormalisteEmployee() != null)
-                            employee = customerOrder.getConfrere().getFormalisteEmployee();
-                        if (customerOrder.getResponsable() != null) {
-                            if (customerOrder.getResponsable().getFormalisteEmployee() != null)
-                                employee = customerOrder.getResponsable().getFormalisteEmployee();
-                            else if (customerOrder.getResponsable().getTiers().getFormalisteEmployee() != null)
-                                employee = customerOrder.getResponsable().getTiers().getFormalisteEmployee();
-                        } else if (customerOrder.getTiers() != null
-                                && customerOrder.getTiers().getFormalisteEmployee() != null)
-                            employee = customerOrder.getTiers().getFormalisteEmployee();
+                    if (provision.getProvisionType().getAssignationType() != null) {
+                        if (provision.getProvisionType().getAssignationType().getCode()
+                                .equals(AssignationType.FORMALISTE)) {
+                            if (customerOrder.getConfrere() != null
+                                    && customerOrder.getConfrere().getFormalisteEmployee() != null)
+                                employee = customerOrder.getConfrere().getFormalisteEmployee();
+                            if (customerOrder.getResponsable() != null) {
+                                if (customerOrder.getResponsable().getFormalisteEmployee() != null)
+                                    employee = customerOrder.getResponsable().getFormalisteEmployee();
+                                else if (customerOrder.getResponsable().getTiers()
+                                        .getFormalisteEmployee() != null)
+                                    employee = customerOrder.getResponsable().getTiers()
+                                            .getFormalisteEmployee();
+                            } else if (customerOrder.getTiers() != null
+                                    && customerOrder.getTiers().getFormalisteEmployee() != null)
+                                employee = customerOrder.getTiers().getFormalisteEmployee();
+                        }
+                        if (provision.getProvisionType().getAssignationType().getCode()
+                                .equals(AssignationType.PUBLICISTE)) {
+                            if (customerOrder.getConfrere() != null
+                                    && customerOrder.getConfrere().getInsertionEmployee() != null)
+                                employee = customerOrder.getConfrere().getInsertionEmployee();
+                            if (customerOrder.getResponsable() != null) {
+                                if (customerOrder.getResponsable().getInsertionEmployee() != null)
+                                    employee = customerOrder.getResponsable().getInsertionEmployee();
+                                else if (customerOrder.getResponsable().getTiers()
+                                        .getInsertionEmployee() != null)
+                                    employee = customerOrder.getResponsable().getTiers()
+                                            .getInsertionEmployee();
+                            } else if (customerOrder.getTiers() != null
+                                    && customerOrder.getTiers().getInsertionEmployee() != null)
+                                employee = customerOrder.getTiers().getInsertionEmployee();
+                        }
                     }
-                    if (provision.getProvisionType().getAssignationType().getCode()
-                            .equals(AssignationType.PUBLICISTE)) {
-                        if (customerOrder.getConfrere() != null
-                                && customerOrder.getConfrere().getInsertionEmployee() != null)
-                            employee = customerOrder.getConfrere().getInsertionEmployee();
-                        if (customerOrder.getResponsable() != null) {
-                            if (customerOrder.getResponsable().getInsertionEmployee() != null)
-                                employee = customerOrder.getResponsable().getInsertionEmployee();
-                            else if (customerOrder.getResponsable().getTiers().getInsertionEmployee() != null)
-                                employee = customerOrder.getResponsable().getTiers().getInsertionEmployee();
-                        } else if (customerOrder.getTiers() != null
-                                && customerOrder.getTiers().getInsertionEmployee() != null)
-                            employee = customerOrder.getTiers().getInsertionEmployee();
+                    provision.setAssignedTo(employee);
+                    if (currentEmployee == null || !currentEmployee.getId().equals(employee.getId())) {
+                        currentEmployee = employee;
+                        nbrAssignation++;
                     }
-                }
-                provision.setAssignedTo(employee);
-                if (currentEmployee == null || !currentEmployee.getId().equals(employee.getId())) {
-                    currentEmployee = employee;
-                    nbrAssignation++;
-                }
 
-                // Handle weight
-                if (provision.getProvisionType().getAssignationWeight() != null
-                        && provision.getProvisionType().getAssignationWeight() > maxWeight) {
-                    maxWeight = provision.getProvisionType().getAssignationWeight();
-                    maxWeightEmployee = employee;
+                    // Handle weight
+                    if (provision.getProvisionType().getAssignationWeight() != null
+                            && provision.getProvisionType().getAssignationWeight() > maxWeight) {
+                        maxWeight = provision.getProvisionType().getAssignationWeight();
+                        maxWeightEmployee = employee;
+                    }
                 }
             }
         }
@@ -497,9 +620,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             if (assoAffaireOrder.getAssignedTo() == null)
                 assoAffaireOrder.setAssignedTo(maxWeightEmployee);
 
-            for (Provision provision : assoAffaireOrder.getProvisions())
-                if (provision.getAssignedTo() == null)
-                    provision.setAssignedTo(maxWeightEmployee);
+            for (Service service : assoAffaireOrder.getServices())
+                for (Provision provision : service.getProvisions())
+                    if (provision.getAssignedTo() == null)
+                        provision.setAssignedTo(maxWeightEmployee);
         }
 
         return assoAffaireOrder;
@@ -534,6 +658,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             responsibleId.add(0);
         }
 
+        Integer commercialId = 0;
+        if (affaireSearch.getCommercial() != null) {
+            commercialId = affaireSearch.getCommercial().getId();
+        }
+
         affaireId = 0;
         if (affaireSearch.getAffaire() != null)
             affaireId = affaireSearch.getAffaire().getId();
@@ -553,13 +682,30 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaireSearch.getWaitedCompetentAuthority() != null)
             waitedCompetentAuthorityId = affaireSearch.getWaitedCompetentAuthority().getId();
 
+        String formaliteGuichetUniqueStatusCode = "0";
+        if (affaireSearch.getFormaliteGuichetUniqueStatus() != null)
+            formaliteGuichetUniqueStatusCode = affaireSearch.getFormaliteGuichetUniqueStatus().getCode();
+
+        String formaliteInfogreffeStatusCode = "0";
+        if (affaireSearch.getFormaliteInfogreffeStatusCode() != null)
+            formaliteInfogreffeStatusCode = affaireSearch.getFormaliteInfogreffeStatusCode();
+
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.ABANDONED);
 
+        if (affaireSearch.getIsMissingQueriesToManualRemind() == null)
+            affaireSearch.setIsMissingQueriesToManualRemind(false);
+
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
-                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId);
+                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId,
+                affaireSearch.getIsMissingQueriesToManualRemind(),
+                simpleProvisionStatusService
+                        .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
+                        .getId(),
+                formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT).getId(),
+                commercialId, formaliteGuichetUniqueStatusCode, formaliteInfogreffeStatusCode);
     }
 }

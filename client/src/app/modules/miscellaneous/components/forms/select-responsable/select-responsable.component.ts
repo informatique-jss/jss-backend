@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-responsable',
@@ -12,14 +12,14 @@ import { GenericMultipleSelectComponent } from '../generic-select/generic-multip
 export class SelectResponsableComponent extends GenericMultipleSelectComponent<Responsable> implements OnInit {
 
   types: Responsable[] = [] as Array<Responsable>;
-
+  isDisplayPreviewShortcut: boolean = true;
   /**
  * List of responsables to choose from
  */
   @Input() responsableList: Responsable[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -50,5 +50,9 @@ export class SelectResponsableComponent extends GenericMultipleSelectComponent<R
 
   displayLabel(object: any): string {
     return object ? (object.firstname + " " + object.lastname) : '';
+  }
+
+  getPreviewActionLinkFunction(entity: Responsable): string[] | undefined {
+    return ['tiers/responsable', entity.id + ""];
   }
 }

@@ -1,7 +1,7 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_AUTHORITY_REJECTED, FORMALITE_AUTHORITY_VALIDATED, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { PaymentSearch } from 'src/app/modules/invoicing/model/PaymentSearch';
 import { RefundSearch } from 'src/app/modules/invoicing/model/RefundSearch';
@@ -15,6 +15,7 @@ import { CustomerOrderStatus } from 'src/app/modules/quotation/model/CustomerOrd
 import { DomiciliationStatus } from 'src/app/modules/quotation/model/DomiciliationStatus';
 import { FormaliteStatus } from 'src/app/modules/quotation/model/FormaliteStatus';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
+import { OrderingSearchTagged } from 'src/app/modules/quotation/model/OrderingSearchTagged';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { SimpleProvisionStatus } from 'src/app/modules/quotation/model/SimpleProvisonStatus';
@@ -51,8 +52,6 @@ export class DashboardComponent implements OnInit {
   customerOrderStatus: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   quotationStatus: QuotationStatus[] = [] as Array<QuotationStatus>;
 
-
-
   currentEmployee: Employee | undefined;
   items: Array<string> = [];
   itemsSize: Array<string> = [];
@@ -64,26 +63,34 @@ export class DashboardComponent implements OnInit {
   AFFAIRE_RESPONSIBLE_TO_DO = "Mes prestations en responsabilité à faire";
   AFFAIRE_RESPONSIBLE_IN_PROGRESS = "Mes prestations en responsabilité en cours";
   AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY = "Mes formalités simples en attente de l'autorité compétente"
+  AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED = "Mes formalités rejetées par l'AC"
+  AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED = "Mes formalités validées par l'AC"
   AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT = "Mes formalités simples en attente de documents"
+  AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER = "Mes formalités en PM à relancer manuellement"
 
   affaireSearchInProgress: AffaireSearch = {} as AffaireSearch;
   affaireSearchToDo: AffaireSearch = {} as AffaireSearch;
   affaireSearchResponsibleInProgress: AffaireSearch = {} as AffaireSearch;
   affaireSearchResponsibleToDo: AffaireSearch = {} as AffaireSearch;
   affaireSearchWaitingAuthority: AffaireSearch = {} as AffaireSearch;
+  affaireSearcAuthorityRejected: AffaireSearch = {} as AffaireSearch;
+  affaireSearcAuthorityValidated: AffaireSearch = {} as AffaireSearch;
   affaireSearchWaitingDocument: AffaireSearch = {} as AffaireSearch;
+  affaireSearchMissingAttachmentQueryManually: AffaireSearch = {} as AffaireSearch;
 
   ORDER_OPEN = "Mes commandes ouvertes";
   ALL_ORDER_OPEN = "Commandes ouvertes";
   ORDER_BEING_PROCESSED = "Mes commandes en cours";
   ORDER_TO_BILLED = "Commandes en attente de facturation";
   ORDERS_AWAITING_DEPOSIT = "Mes commandes en attente d’acompte";
+  ORDER_GROUP_TAGGED_WITH_COMMENT = "Mes commandes où je suis tagué"
 
   orderingSearchOpen: OrderingSearch = {} as OrderingSearch;
   orderingSearchAllOpen: OrderingSearch = {} as OrderingSearch;
   orderingSearchBeingProcessed: OrderingSearch = {} as OrderingSearch;
   orderingSearchToBilled: OrderingSearch = {} as OrderingSearch;
   orderingSearchToAwaitingDeposit: OrderingSearch = {} as OrderingSearch;
+  orderingSearchTagged: OrderingSearchTagged = {} as OrderingSearchTagged;
 
   QUOTATION_OPEN = "Mes devis ouverts";
   QUOTATION_TO_VERIFY = "Mes devis à vérifier";
@@ -111,7 +118,7 @@ export class DashboardComponent implements OnInit {
   this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN, this.ALL_ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
   this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT,
-  this.PROVISION_BOARD].sort((a, b) => a.localeCompare(b));
+  this.PROVISION_BOARD, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED, this.AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER, this.ORDER_GROUP_TAGGED_WITH_COMMENT].sort((a, b) => a.localeCompare(b));
 
   BOX_SIZE_X_SMALL = "Zoom très petit";
   BOX_SIZE_SMALL = "Zoom petit";
@@ -161,7 +168,6 @@ export class DashboardComponent implements OnInit {
         this.customerOrderStatus = response.customerOrderStatus;
         this.quotationStatus = response.quotationStatus;
 
-
         this.affaireSearchInProgress.assignedTo = this.currentEmployee;
         this.affaireSearchInProgress.status = this.statusTypes.filter(stauts => !stauts.isOpenState && !stauts.isCloseState);
 
@@ -182,6 +188,15 @@ export class DashboardComponent implements OnInit {
         this.affaireSearchWaitingAuthority.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY);
         this.affaireSearchWaitingAuthority.status.push(...this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY));
 
+        this.affaireSearcAuthorityRejected.assignedTo = this.currentEmployee;
+        this.affaireSearcAuthorityRejected.status = this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_AUTHORITY_REJECTED);
+
+        this.affaireSearchMissingAttachmentQueryManually.commercial = this.currentEmployee;
+        this.affaireSearchMissingAttachmentQueryManually.isMissingQueriesToManualRemind = true;
+
+        this.affaireSearcAuthorityValidated.assignedTo = this.currentEmployee;
+        this.affaireSearcAuthorityValidated.status = this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_AUTHORITY_VALIDATED);
+
         this.orderingSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
 
@@ -194,6 +209,9 @@ export class DashboardComponent implements OnInit {
         this.orderingSearchToAwaitingDeposit.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT)!];
 
         this.orderingSearchToBilled.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_BILLED)!];
+
+        this.orderingSearchTagged.assignedToEmployee = this.currentEmployee!;
+        this.orderingSearchTagged.isOnlyDisplayUnread = true;
 
         this.quotationSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.quotationSearchOpen.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_OPEN)!];
@@ -314,6 +332,9 @@ export class DashboardComponent implements OnInit {
     } else if (currentSize == this.BOX_SIZE_LARGE) {
       this.boxWidth = '650px';
       this.boxHeight = '500px';
+    } else if (currentSize == this.BOX_SIZE_X_LARGE) {
+      this.boxWidth = '750px';
+      this.boxHeight = '600px';
     } else if (currentSize == this.BOX_SIZE_FULL_WIDTH) {
       this.boxWidth = 'calc(95vw - 220px)';
       this.boxHeight = '600px';

@@ -12,9 +12,11 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.quotation.model.Quotation;
 
 public interface CustomerOrderService {
@@ -54,6 +56,8 @@ public interface CustomerOrderService {
                         OsirisDuplicateException;
 
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
+
+        public List<IOrderingSearchTaggedResult> searchOrdersTagged(OrderingSearchTagged orderingSearchResult);
 
         public void reindexCustomerOrder() throws OsirisException;
 
@@ -103,7 +107,15 @@ public interface CustomerOrderService {
 
         public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation);
 
+        public List<OrderingSearchResult> searchByCustomerOrderParentRecurringId(Integer idCustomerOrder);
+
+        public List<OrderingSearchResult> searchByCustomerOrderParentRecurringByCustomerOrderId(
+                        Integer idCustomerOrder);
+
         public void offerCustomerOrder(CustomerOrder customerOrder) throws OsirisException,
                         OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException;
+
+        public void generateRecurringCustomerOrders() throws OsirisException, OsirisClientMessageException,
+                        OsirisValidationException, OsirisDuplicateException;
 
 }

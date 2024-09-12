@@ -12,9 +12,14 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 
 public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<AssoAffaireOrder, Integer> {
 
-        @Query(nativeQuery = true, value = "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end   as affaireLabel,"
+        @Query(nativeQuery = true, value = "with efi as (select id_formalite_infogreffe , code_etat from ( " +
+                        "select id_formalite_infogreffe , sum(1) over(partition by id_formalite_infogreffe order by created_date desc) as n, code_etat  "
                         +
-                        " a.address || ' - ' || a.postal_Code ||' - '||ci.label as affaireAddress," +
+                        "from evenement_infogreffe ei where code_etat is not null and length(trim(code_etat))>0) t where n = 1) "
+                        +
+                        "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end   as affaireLabel,"
+                        +
+                        " ci.label ||' - '|| a.address || ' - ' || a.postal_Code as affaireAddress," +
                         "  coalesce(case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end,"
                         + "case when t2.denomination is not null and t2.denomination!='' then t2.denomination else t2.firstname || ' '||t2.lastname end) as tiersLabel,"
                         +
@@ -25,6 +30,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " pf.label ||' - '||pt.label as provisionTypeLabel," +
                         " coalesce(ans.label,fs.label,doms.label, sps.label) as statusLabel," +
                         " asso.id_customer_order as customerOrderId," +
+                        " STRING_AGG(DISTINCT case when service.custom_label is null then st.label else service.custom_label  end,', ') as serviceTypeLabel,"
+                        +
                         " asso.id as assoId," +
                         " p.is_emergency as isEmergency," +
                         " p.id as provisionId, " +
@@ -36,7 +43,9 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " join affaire a on a.id = asso.id_affaire" +
                         " join customer_order c on c.id = asso.id_customer_order" +
                         " join customer_order_status cs on cs.id = c.id_customer_order_status" +
-                        " join provision p on p.id_asso_affaire_order = asso.id" +
+                        " join service on service.id_asso_affaire_order = asso.id" +
+                        " join service_type st on st.id = service.id_service_type" +
+                        " join provision p on p.id_service = service.id" +
                         " left join city ci on ci.id = a.id_city" +
                         " left join tiers t on t.id = c.id_tiers" +
                         " left join responsable r on r.id = c.id_responsable" +
@@ -49,12 +58,18 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " left join announcement_status ans on an.id_announcement_status = ans.id" +
                         " left join confrere cf on cf.id = an.id_confrere" +
                         " left join formalite fo on fo.id = p.id_formalite" +
+                        " left join formalite_guichet_unique fgu on fgu.id_formalite = fo.id" +
                         " left join formalite_status fs on fs.id = fo.id_formalite_status" +
+                        " left join formalite_infogreffe fi on fi.id_formalite = fo.id" +
+                        " left join efi on efi.id_formalite_infogreffe = fi.id" +
                         " left join domiciliation dom on dom.id = p.id_domiciliation" +
                         " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
                         " left join simple_provision sp on sp.id = p.id_simple_provision" +
                         " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
-                        " left join competent_authority sp_ca on sp_ca.id = sp.id_waited_competent_authority " +
+                        " left join missing_attachment_query ma on ma.id_service = service.id and ma.third_customer_reminder_date_time is not null and (sp.id_simple_provision_status = :simpleProvisionStatusWaitingAttachmentId or fo.id_formalite_status = :formaliteStatusWaitingAttachmentId ) and  ma.third_customer_reminder_date_time+INTERVAL '8 day' < now() "
+                        +
+                        " left join competent_authority sp_ca on sp_ca.id = coalesce(sp.id_waited_competent_authority,fo.id_waited_competent_authority) "
+                        +
                         " left join competent_authority ca on ca.id = a.id_competent_authority " +
                         " left join audit on " +
                         "  audit.entity_id=an.id and audit.entity = 'Announcement' and audit.field_name = 'announcementStatus' "
@@ -73,7 +88,12 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         " and ( :waitedCompetentAuthorityId =0 or sp.id_waited_competent_authority =:waitedCompetentAuthorityId) "
                         +
-                        " and ( :affaireId =0 or a.id =:affaireId) "
+                        " and ( :affaireId =0 or a.id =:affaireId) " +
+                        " and ( :isMissingQueriesToManualRemind = false or ma.id is not null) " +
+                        " and ( :commercialId = 0 or t2.id_commercial=:commercialId) " +
+                        " and ( :formaliteGuichetUniqueStatusCode = '0' or fgu.id_status=:formaliteGuichetUniqueStatusCode) "
+                        +
+                        " and ( :formaliteInfogreffeStatusCode = '0' or efi.code_etat=:formaliteInfogreffeStatusCode) "
                         +
                         " and ( COALESCE(:assignedTo) =0 or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
@@ -94,5 +114,11 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         @Param("excludedCustomerOrderStatusCode") List<String> excludedCustomerOrderStatusCode,
                         @Param("customerOrder") List<Integer> customerOrder,
                         @Param("waitedCompetentAuthorityId") Integer waitedCompetentAuthorityId,
-                        @Param("affaireId") Integer affaireId);
+                        @Param("affaireId") Integer affaireId,
+                        @Param("isMissingQueriesToManualRemind") Boolean isMissingQueriesToManualRemind,
+                        @Param("simpleProvisionStatusWaitingAttachmentId") Integer simpleProvisionStatusWaitingAttachmentId,
+                        @Param("formaliteStatusWaitingAttachmentId") Integer formaliteStatusWaitingAttachmentId,
+                        @Param("commercialId") Integer commercialId,
+                        @Param("formaliteGuichetUniqueStatusCode") String formaliteGuichetUniqueStatusCode,
+                        @Param("formaliteInfogreffeStatusCode") String formaliteInfogreffeStatusCode);
 }

@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,14 +12,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.miscellaneous.model.AssoMailCompetentAuthorityServiceFamilyGroup;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
+import com.jss.osiris.modules.miscellaneous.model.ICompetentAuthorityMailReminder;
+import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
+import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
+import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
+import com.jss.osiris.modules.quotation.service.ProvisionService;
+import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 
 @Service
 public class CompetentAuthorityServiceImpl implements CompetentAuthorityService {
@@ -33,6 +47,21 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
 
     @Autowired
     AccountingAccountService accountingAccountService;
+
+    @Autowired
+    MailHelper mailHelper;
+
+    @Autowired
+    FormaliteStatusService formaliteStatusService;
+
+    @Autowired
+    SimpleProvisionStatusService simpleProvisionStatusService;
+
+    @Autowired
+    ProvisionService provisionService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @Override
     public List<CompetentAuthority> getCompetentAuthorities() {
@@ -88,6 +117,16 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
         if (competentAuthority != null && competentAuthority.getPhones() != null
                 && competentAuthority.getPhones().size() > 0) {
             phoneService.populatePhoneIds(competentAuthority.getPhones());
+        }
+
+        // If asso mail for specific mail reminder, get their ids
+        if (competentAuthority.getAssoMailCompetentAuthorityServiceFamilyGroups() != null
+                && competentAuthority.getAssoMailCompetentAuthorityServiceFamilyGroups().size() > 0) {
+            for (AssoMailCompetentAuthorityServiceFamilyGroup asso : competentAuthority
+                    .getAssoMailCompetentAuthorityServiceFamilyGroups()) {
+                mailService.populateMailIds(asso.getMails());
+                asso.setCompetentAuthority(competentAuthority);
+            }
         }
 
         // Generate accounting accounts
@@ -153,5 +192,70 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     @Override
     public CompetentAuthority getCompetentAuthorityByAzureCustomReference(String azureCustomReference) {
         return competentAuthorityRepository.findByAzureCustomReference(azureCustomReference);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void sendRemindersToCompetentAuthorities() throws OsirisException, OsirisClientMessageException {
+
+        SimpleProvisionStatus simpleProvisionWaitingAcStatus = simpleProvisionStatusService
+                .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY);
+        FormaliteStatus formaliteWaitingAcStatus = formaliteStatusService
+                .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY);
+        List<ICompetentAuthorityMailReminder> competentMailResult = competentAuthorityRepository
+                .findCompetentAuthoritiesMailToSend(simpleProvisionWaitingAcStatus.getCode(),
+                        formaliteWaitingAcStatus.getCode(), simpleProvisionWaitingAcStatus.getId(),
+                        formaliteWaitingAcStatus.getId());
+
+        if (competentMailResult != null && competentMailResult.size() > 0) {
+            String currentKey = null;
+            List<Provision> provisionToSend = new ArrayList<Provision>();
+            ICompetentAuthorityMailReminder lastReminder = null;
+
+            for (ICompetentAuthorityMailReminder reminder : competentMailResult) {
+                if (reminder.getMailId() != null && reminder.getMailId().length() > 0) {
+                    String newKey = computeKeyForICompetentAuthorityMailReminder(reminder);
+                    if (currentKey != null && !currentKey.equals(newKey) && lastReminder != null) {
+                        currentKey = newKey;
+
+                        // fetch mail
+                        List<String> mailsId = Arrays.asList(lastReminder.getMailId().split(";"));
+                        List<Mail> mails = new ArrayList<Mail>();
+                        for (String mailId : mailsId) {
+                            mails.add(mailService.getMail(Integer.parseInt(mailId)));
+                        }
+
+                        mailHelper.sendCompetentAuthorityMailForReminder(
+                                employeeService.getEmployee(lastReminder.getEmployeeId()),
+                                getCompetentAuthority(lastReminder.getCompetentAuthorityId()), provisionToSend, mails);
+                        provisionToSend = new ArrayList<Provision>();
+                    }
+                    currentKey = newKey;
+                    lastReminder = reminder;
+                    Provision provision = provisionService.getProvision(reminder.getProvisionId());
+                    provision.setLastStatusReminderAcDateTime(LocalDateTime.now());
+                    provisionService.addOrUpdateProvision(provision);
+                    provision.setLastStatusReminderAcDateTime(reminder.getStatusDate());
+                    provisionToSend.add(provisionService.getProvision(reminder.getProvisionId()));
+                }
+                // Send last one
+                if (provisionToSend.size() > 0 && lastReminder != null) {
+                    // fetch mail
+                    List<String> mailsId = Arrays.asList(lastReminder.getMailId().split(";"));
+                    List<Mail> mails = new ArrayList<Mail>();
+                    for (String mailId : mailsId) {
+                        mails.add(mailService.getMail(Integer.parseInt(mailId)));
+                    }
+
+                    mailHelper.sendCompetentAuthorityMailForReminder(
+                            employeeService.getEmployee(lastReminder.getEmployeeId()),
+                            getCompetentAuthority(lastReminder.getCompetentAuthorityId()), provisionToSend, mails);
+                }
+            }
+        }
+    }
+
+    private String computeKeyForICompetentAuthorityMailReminder(ICompetentAuthorityMailReminder reminder) {
+        return reminder.getEmployeeId() + reminder.getCompetentAuthorityId() + reminder.getMailId();
     }
 }

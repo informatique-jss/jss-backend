@@ -10,6 +10,12 @@ export interface OrderingSearch {
   assignedToEmployee: Employee;
   customerOrderStatus: CustomerOrderStatus[];
   customerOrders: ITiers[];
-  affaires: Affaire[];
+  affaire: Affaire;
   idCustomerOrder: number;
+  idQuotation: number;
+  idCustomerOrderParentRecurring: number;
+  idCustomerOrderChildRecurring: number;
+  isDisplayOnlyRecurringCustomerOrder: boolean;
+  isDisplayOnlyParentRecurringCustomerOrder: boolean;
+  recurringValidityDate: Date;
 }

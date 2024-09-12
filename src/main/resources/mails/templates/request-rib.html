@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]-->
+    <!--[if !mso]><!-->
+    <link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Bitter" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+    <!--<![endif]-->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            color: rgb(35, 61, 86);
+            font-size: 14px;
+            font-weight: 400;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: inherit !important;
+        }
+
+        #MessageViewBody a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        p {
+            line-height: inherit
+        }
+
+        .desktop_hide,
+        .desktop_hide table {
+            mso-hide: all;
+            display: none;
+            max-height: 0px;
+            overflow: hidden;
+        }
+
+        @media (max-width:625px) {
+
+            .desktop_hide table.icons-inner,
+            .social_block.desktop_hide .social-table {
+                display: inline-block !important;
+            }
+
+            .icons-inner {
+                text-align: center;
+            }
+
+            .icons-inner td {
+                margin: 0 auto;
+            }
+
+            .image_block img.big,
+            .row-content {
+                width: 100% !important;
+            }
+
+            .mobile_hide {
+                display: none;
+            }
+
+            .stack .column {
+                width: 100%;
+                display: block;
+            }
+
+            .mobile_hide {
+                min-height: 0;
+                max-height: 0;
+                max-width: 0;
+                overflow: hidden;
+                font-size: 0px;
+            }
+
+            .desktop_hide,
+            .desktop_hide table {
+                display: table !important;
+                max-height: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body style="background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+    <table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF;">
+        <tbody>
+            <tr>
+                <td>
+                    <table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0"
+                        role="presentation"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: rgb(222, 226, 230);">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table class="row-content stack" align="center" border="0" cellpadding="0"
+                                        cellspacing="0" role="presentation"
+                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fefef8; border-radius: 6px; color: #000000; width: 750px;"
+                                        width="750">
+                                        <tbody>
+                                            <tr>
+                                                <td class="column column-1" width="100%"
+                                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 5px; padding-bottom: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                                    <table th:if="${jssHeaderPicture!=null || jssHeaderPlain!=null}"
+                                                        class="image_block block-1" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-bottom:30px;padding-top:15px;width:100%;padding-right:0px;padding-left:0px;">
+                                                                <div class="alignment" align="center"
+                                                                    style="line-height:10px"><img class="big"
+                                                                        th:if="${jssHeaderPicture!=null}"
+                                                                        src="picture.png"
+                                                                        th:src="|cid:${jssHeaderPicture}|"
+                                                                        style="display: block; height: auto; border: 0; width: 570px; max-width: 100%;"
+                                                                        width="570" alt="" title="" /><img class="big"
+                                                                        th:if="${jssHeaderPicturePlain!=null}"
+                                                                        src="picture.png"
+                                                                        th:src="@{classpath:${jssHeaderPicturePlain}}"
+                                                                        style="display: block; height: auto; border: 0; width: 570px; max-width: 100%;"
+                                                                        width="570" alt="" title="" /></div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="heading_block block-2" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;text-align:center;width:100%;">
+                                                                <h1
+                                                                    style="margin: 0; white-space: nowrap;color: rgb(35, 61, 86); direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: normal; line-height: 24px; text-align: center; margin-top: 0; margin-bottom: 0;">
+                                                                    <strong><span>Demande de RIB</span></strong>
+                                                                </h1>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="text_block block-3" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;padding-top:15px;">
+                                                                <div style="font-family: Arial, sans-serif">
+                                                                    <div
+                                                                        style="font-size: 22px;font-weight: 700; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: rgb(196, 174, 139); line-height: 1.2;text-align: center;">
+                                                                        <span>Commande n°<span
+                                                                                th:text="${customerOrder.id}"></span>
+                                                                            - <span th:text="${affaireLabel}">
+                                                                            </span></span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="text_block block-3" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;padding-top:15px;">
+                                                                <div style="font-family: Arial, sans-serif">
+                                                                    <div
+                                                                        style="font-size: 14px;font-weight: 700; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: rgb(196, 174, 139); line-height: 1.2;text-align: center;">
+                                                                        <span th:text="${affaireLabelDetails}"> </span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="text_block block-3" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        th-if="${referenceLabel!=null}"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;padding-top:15px;">
+                                                                <div style="font-family: Arial, sans-serif">
+                                                                    <div
+                                                                        style="font-size: 14px;font-weight: 700; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: rgb(196, 174, 139); line-height: 1.2;text-align: center;">
+                                                                        <span th:text="${referenceLabel}"> </span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="image_block block-5" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        th:if="${headerPicture!=null}"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td
+                                                                style="width:100%;padding-right:0px;padding-left:0px;padding-top:20px;">
+                                                                <div class="alignment" align="center"
+                                                                    style="line-height:10px"><img class="big"
+                                                                        src="sample.png" th:src="|cid:${headerPicture}|"
+                                                                        style="display: block; height: auto; border: 0; width: 750px;"
+                                                                        width="750" alt="" title="" /></div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 10px;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;width:100%;">
+                                                                <p>Bonjour,</p>
+                                                                <p>Dans le cadre de votre commande, nous avons facturé,
+                                                                    déduit l’acompte reçu et il y a un trop-perçu. Afin
+                                                                    de le rembourser, nous vous remercions de nous
+                                                                    envoyer le RIB du compte concerné par retour de
+                                                                    mail.</p>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 10px;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;width:100%;">
+                                                                <p>Nous restons à votre disposition pour toute
+                                                                    information complémentaire.</p>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="text_block block-3" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;padding-top:15px;">
+                                                                <div style="font-family: Arial, sans-serif">
+                                                                    <div
+                                                                        style="font-size: 22px;font-weight: 700; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: rgb(196, 174, 139); line-height: 1.2;text-align: center;">
+                                                                        A très bientôt !
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;padding-top: 10px;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-left:10px;padding-right:10px;width:100%;">
+                                                                <p><span style="font-size: 18px;"><span
+                                                                            th:text="${replyToEmployee.firstname}"></span>
+                                                                        <span
+                                                                            th:text="${replyToEmployee.lastname}"></span></span><br />
+                                                                    <span
+                                                                        th:text="${replyToEmployee.title}"></span><br />
+                                                                    01 47 03 10 10<br />
+                                                                    <a href="" style="text-decoration:underline">
+                                                                        <span
+                                                                            style="color:rgb(35, 61, 86);; text-decoration:none"><span
+                                                                                th:text="${replyToEmployee.mail}"></span></span>
+                                                                    </a>
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="divider_block block-13" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td
+                                                                style="padding-bottom:10px;padding-left:10px;padding-right:10px;padding-top:30px;">
+                                                                <div class="alignment" align="center">
+                                                                    <table border="0" cellpadding="0" cellspacing="0"
+                                                                        role="presentation" width="100%"
+                                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                                        <tr>
+                                                                            <td class="divider_inner"
+                                                                                style="font-size: 1px; line-height: 1px; border-top: 2px solid #C4AE8B;">
+                                                                                <span>&#8202;</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="row-content stack" align="center" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; background-color: #c4ae8b; width: 750px;"
+                                                        width="750">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="column column-1" width="100%"
+                                                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 20px; padding-bottom: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                                                    <table class="social_block block-1" width="100%"
+                                                                        border="0" cellpadding="10" cellspacing="0"
+                                                                        role="presentation"
+                                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                                        <tr>
+                                                                            <td class="pad">
+                                                                                <div class="alignment"
+                                                                                    style="text-align:center;">
+                                                                                    <table class="social-table"
+                                                                                        width="168px" border="0"
+                                                                                        cellpadding="0" cellspacing="0"
+                                                                                        role="presentation"
+                                                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; display: inline-block;">
+                                                                                        <tr
+                                                                                            th:if="${jssHeaderPicture!=null}">
+                                                                                            <td
+                                                                                                style="padding:0 5px 0 5px;">
+                                                                                                <a href="https://www.linkedin.com/company/journal-sp-cial-des-soci-t-s---jss?originalSubdomain=fr"
+                                                                                                    target="_blank"><img
+                                                                                                        th:src="|cid:${linkedin}|"
+                                                                                                        src="linkedin.png"
+                                                                                                        width="32"
+                                                                                                        height="32"
+                                                                                                        alt="Linkedin"
+                                                                                                        title="linkedin"
+                                                                                                        style="display: block; height: auto; border: 0;" /></a>
+                                                                                            </td>
+                                                                                            <td
+                                                                                                style="padding:0 5px 0 5px;">
+                                                                                                <a href="https://twitter.com/Jss_Journal"
+                                                                                                    target="_blank"><img
+                                                                                                        th:src="|cid:${twitter}|"
+                                                                                                        src="twitter.png"
+                                                                                                        width="32"
+                                                                                                        height="32"
+                                                                                                        alt="Twitter"
+                                                                                                        title="twitter"
+                                                                                                        style="display: block; height: auto; border: 0;" /></a>
+                                                                                            </td>
+                                                                                            <td
+                                                                                                style="padding:0 5px 0 5px;">
+                                                                                                <a href="https://www.facebook.com/Journal.Special.des.Societes/?ref=hl"
+                                                                                                    target="_blank"><img
+                                                                                                        th:src="|cid:${facebook}|"
+                                                                                                        src="facebook.png"
+                                                                                                        width="32"
+                                                                                                        height="32"
+                                                                                                        alt="Facebook"
+                                                                                                        title="facebook"
+                                                                                                        style="display: block; height: auto; border: 0;" /></a>
+                                                                                            </td>
+                                                                                            <td
+                                                                                                style="padding:0 5px 0 5px;">
+                                                                                                <a href="https://www.instagram.com/lejournalspecialdessocietes/"
+                                                                                                    target="_blank"><img
+                                                                                                        th:src="|cid:${instagram}|"
+                                                                                                        src="instagram.png"
+                                                                                                        width="32"
+                                                                                                        height="32"
+                                                                                                        alt="Instagram"
+                                                                                                        title="instagram"
+                                                                                                        style="display: block; height: auto; border: 0;" /></a>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

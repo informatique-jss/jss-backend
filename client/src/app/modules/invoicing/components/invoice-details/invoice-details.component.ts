@@ -7,9 +7,11 @@ import { QuotationComponent } from 'src/app/modules/quotation/components/quotati
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
+import { Service } from 'src/app/modules/quotation/model/Service';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
+import { ServiceService } from 'src/app/modules/quotation/services/service.service';
 import { CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
@@ -40,7 +42,8 @@ export class InvoiceDetailsComponent implements OnInit {
     private habilitationService: HabilitationsService,
     private quotationService: QuotationService,
     private customerOrderService: CustomerOrderService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private serviceService: ServiceService,
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
@@ -122,6 +125,10 @@ export class InvoiceDetailsComponent implements OnInit {
   getResponsableName = getResponsableName;
   getLetteringDate = getLetteringDate;
 
+  getServiceLabel(service: Service) {
+    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
+  }
+
   computePreTaxPriceTotal(quotation: IQuotation): number {
     return QuotationComponent.computePreTaxPriceTotal(quotation);
   }
@@ -129,7 +136,7 @@ export class InvoiceDetailsComponent implements OnInit {
     if (invoice && affaire) {
       for (let i = 0; i < invoice.invoiceItems.length; i++) {
         const invoiceItem = invoice.invoiceItems[i];
-        if (invoiceItem.provision.assoAffaireOrder.affaire.id == affaire.id)
+        if (invoiceItem.provision.service.assoAffaireOrder.affaire.id == affaire.id)
           return i;
       }
     }

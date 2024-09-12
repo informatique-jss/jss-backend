@@ -2,13 +2,14 @@ import { Payment } from "../../invoicing/model/Payment";
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { Employee } from "../../profile/model/Employee";
 import { Announcement } from "./Announcement";
-import { AssoAffaireOrder } from "./AssoAffaireOrder";
+import { CustomerOrderComment } from "./CustomerOrderComment";
 import { Domiciliation } from "./Domiciliation";
 import { Formalite } from './Formalite';
 import { Invoice } from "./Invoice";
 import { InvoiceItem } from "./InvoiceItem";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
 import { ProvisionType } from "./ProvisionType";
+import { Service } from "./Service";
 import { SimpleProvision } from './SimpleProvision';
 
 export interface Provision extends IAttachment {
@@ -20,7 +21,7 @@ export interface Provision extends IAttachment {
   provisionFamilyType: ProvisionFamilyType;
   provisionType: ProvisionType;
   invoiceItems: InvoiceItem[]
-  assoAffaireOrder: AssoAffaireOrder;
+  service: Service;
   assignedTo: Employee;
   isLogo: boolean;
   isRedactedByJss: boolean;
@@ -56,6 +57,9 @@ export interface Provision extends IAttachment {
   isVacationUpdateBeneficialOwners: boolean;
   isFormalityAdditionalDeclaration: boolean;
   isCorrespondenceFees: boolean;
+  isSupplyFullBeCopy: boolean;
   providerInvoices: Invoice[];
   payments: Payment[];
+  lastCompetentAuthorityReminderDateTime: Date;
+  customerOrderComments: CustomerOrderComment[];
 }

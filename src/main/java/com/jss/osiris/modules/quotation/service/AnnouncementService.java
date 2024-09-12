@@ -74,6 +74,11 @@ public interface AnnouncementService {
         public void sendReminderToConfrereForAnnouncement(Announcement announcement)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public void sendRemindersToConfrereForProviderInvoice() throws OsirisException;
+
+        public void sendReminderToConfrereForProviderInvoice(Announcement announcement)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
         public void sendRemindersToCustomerForProofReading() throws OsirisException, OsirisClientMessageException;
 
         public void sendReminderToCustomerForProofReading(Announcement announcement)
@@ -82,6 +87,11 @@ public interface AnnouncementService {
         public Confrere getConfrereForAnnouncement(Integer idAnnouncement);
 
         public void completeAnnouncementWithAffaire(AssoAffaireOrder assoAffaireOrder)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public void sendRemindersToCustomerForBilanPublication() throws OsirisException;
+
+        public void sendReminderToCustomerForBilanPublication(Announcement announcement)
                         throws OsirisException, OsirisClientMessageException;
 
 }
