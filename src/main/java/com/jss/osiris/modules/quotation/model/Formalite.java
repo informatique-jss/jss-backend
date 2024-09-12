@@ -102,14 +102,6 @@ public class Formalite implements IId {
         this.formalitesGuichetUnique = formalitesGuichetUnique;
     }
 
-    public ActeDeposit getActeDeposit() {
-        return acteDeposit;
-    }
-
-    public void setActeDeposit(ActeDeposit acteDeposit) {
-        this.acteDeposit = acteDeposit;
-    }
-
     public List<FormaliteInfogreffe> getFormalitesInfogreffe() {
         return formalitesInfogreffe;
     }
