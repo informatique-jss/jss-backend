@@ -86,6 +86,7 @@ export class DomiciliationComponent implements OnInit {
       if (this.domiciliation! != null && this.domiciliation!.legalGardianCivility == undefined)
         this.domiciliation!.legalGardianCivility = this.civilities[0];
     })
+    this.restoreTab();
   }
 
   getCurrentDate(): Date {
@@ -100,8 +101,6 @@ export class DomiciliationComponent implements OnInit {
         this.domiciliation!.mailRedirectionType = this.mailRedirectionTypes[0];
       if (this.domiciliation! != null && this.domiciliation!.buildingDomiciliation == undefined || this.domiciliation!.buildingDomiciliation == null)
         this.domiciliation!.buildingDomiciliation = this.buildingDomiciliations[0];
-      if (this.domiciliation! != null && this.domiciliation!.startDate != null && this.domiciliation!.startDate != undefined)
-        this.domiciliation!.startDate = new Date(this.domiciliation!.startDate);
       if (this.domiciliation! != null && this.domiciliation!.legalGardianBirthdate != null && this.domiciliation!.legalGardianBirthdate != undefined)
         this.domiciliation!.legalGardianBirthdate = new Date(this.domiciliation!.legalGardianBirthdate);
       if (this.domiciliation!.isLegalPerson == null || this.domiciliation!.isLegalPerson == undefined)
@@ -119,8 +118,6 @@ export class DomiciliationComponent implements OnInit {
     this.domiciliationForm.markAllAsTouched();
     if (this.domiciliation.legalGardianBirthdate)
       this.domiciliation.legalGardianBirthdate = new Date(this.domiciliation.legalGardianBirthdate.setHours(12));
-    if (this.domiciliation.startDate)
-      this.domiciliation.startDate = new Date(this.domiciliation.startDate.setHours(12));
     return this.domiciliationForm.valid;
   }
 
@@ -131,11 +128,18 @@ export class DomiciliationComponent implements OnInit {
       && this.domiciliation.mailRedirectionType && this.domiciliation.mailRedirectionType.id == this.mailRedirectionTypeOther.id;
   }
 
+  mustDecribeActivityMail() {
+    return this.domiciliation != null && this.domiciliation.domiciliationContractType &&
+      (this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteEmail.id
+        || this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteEmailAndMail.id)
+      && this.domiciliation.mailRedirectionType && this.domiciliation!.mailRedirectionType.id == this.constantService.getMailRedirectionTypeActivity().id;
+  }
+
   mustDecribeMail() {
     return this.domiciliation != null && this.domiciliation.domiciliationContractType &&
       (this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteEmail.id
         || this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteEmailAndMail.id)
-      && this.domiciliation.mailRedirectionType && this.domiciliation!.mailRedirectionType.id == this.mailRedirectionTypeOther.id;
+      && this.domiciliation.mailRedirectionType && this.domiciliation!.mailRedirectionType.id == this.constantService.getMailRedirectionTypeOther().id;
   }
 
   fillPostalCode(city: City) {

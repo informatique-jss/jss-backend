@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'generic-datepicker',
@@ -30,8 +30,8 @@ export class GenericDatepickerComponent extends GenericFormComponent implements 
   @Input() hint: string = "";
 
   constructor(
-    private formBuilder3: UntypedFormBuilder, userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3);
+    private formBuilder3: UntypedFormBuilder, private appService2: AppService) {
+    super(formBuilder3, appService2);
   }
 
   ngOnInit() {
@@ -60,5 +60,9 @@ export class GenericDatepickerComponent extends GenericFormComponent implements 
 
   dateChange(value: Date) {
     this.onDateChange.emit(value);
+  }
+
+  getPreviewActionLinkFunction(entity: any): string[] | undefined {
+    return undefined;
   }
 }

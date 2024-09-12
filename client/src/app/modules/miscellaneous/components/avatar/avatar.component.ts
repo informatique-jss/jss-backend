@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Employee } from 'src/app/modules/profile/model/Employee';
+import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 
 @Component({
   selector: 'avatar',
@@ -12,7 +13,9 @@ export class AvatarComponent implements OnInit {
   initials: string = "";
   @Input() size: number = 40;
 
-  constructor() { }
+  constructor(
+    private employeeService: EmployeeService,
+  ) { }
 
   ngOnInit() {
     this.computeInitials();
@@ -32,20 +35,7 @@ export class AvatarComponent implements OnInit {
   }
 
   backgoundColor(): string {
-    if (this.employee) {
-      const name = this.employee.firstname + this.employee.lastname;
-      var hash = 0;
-      for (var i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      var colour = '#';
-      for (var i = 0; i < 3; i++) {
-        var value = (hash >> (i * 8)) & 0xFF;
-        colour += ('00' + value.toString(16)).substr(-2);
-      }
-      return colour;
-    }
-    return "#973434";
+    return this.employeeService.getEmployeeBackgoundColor(this.employee);
   }
 
   fontSize() {

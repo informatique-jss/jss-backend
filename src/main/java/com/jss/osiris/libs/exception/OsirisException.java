@@ -8,10 +8,18 @@ public class OsirisException extends Exception {
         super();
     }
 
+    public OsirisException(String message) {
+        super(message);
+    }
+
     public OsirisException(Exception e, String incorrectField) {
         super(incorrectField);
         if (e != null)
             causeException = e;
+        // Get and use root cause
+        if (e instanceof OsirisException && ((OsirisException) e).getCauseException() != null)
+            causeException = ((OsirisException) e).getCauseException();
+
     }
 
     public Exception getCauseException() {

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { TypeOrigineService } from 'src/app/modules/miscellaneous/services/guichet-unique/type.origine.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { TypeOrigine } from '../../../../../quotation/model/guichet-unique/referentials/TypeOrigine';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-type-origine',
@@ -14,8 +14,8 @@ export class SelectTypeOrigineComponent extends GenericSelectComponent<TypeOrigi
 
   types: TypeOrigine[] = [] as Array<TypeOrigine>;
 
-  constructor(private formBuild: UntypedFormBuilder, private TypeOrigineService: TypeOrigineService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private TypeOrigineService: TypeOrigineService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

@@ -75,46 +75,53 @@
               {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
             </td>
           </tr>
-          <ng-container *ngFor="let provision of asso.provisions;let indexProvision = index">
-            <tr class="mat-mdc-row mdc-data-table__row " *ngIf="provision.provisionType">
-              <td class="mat-mdc-cell mdc-data-table__cell  affaire " colspan="2">
-                {{provision.provisionType.label}}
-              </td>
-            </tr>
-            <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+          <ng-container *ngFor="let service of asso.services;let indexService = index">
+            <ng-container *ngFor="let provision of service.provisions;let indexProvision = index">
               <tr class="mat-mdc-row mdc-data-table__row ">
-                <td class="mat-mdc-cell mdc-data-table__cell  ">
-                  <span class="invoice-item">{{invoiceItem.label}} <mat-icon color="accent" inline="true"
-                      [matTooltip]="invoiceItem.isGifted?'Ne plus offrir cette ligne de facturation':'Offrir cette ligne de facturation'"
-                      *ngIf="editMode && !getLetteringDate(invoiceItem.invoice)" class="info-icon pointer"
-                      (click)="toggleIsGifTed(invoiceItem)">redeem</mat-icon>
-                    <mat-icon color="accent" inline="true"
-                      matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
-                      *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
-                      class="info-icon">info</mat-icon></span>
-                </td>
-                <td class="mat-mdc-cell mdc-data-table__cell  td-price "
-                  *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice">
-                  {{invoiceItem.preTaxPrice|number}} €
-                </td>
-                <td class="mat-mdc-cell mdc-data-table__cell "
-                  *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
-                  <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
-                    [propertyName]='"preTaxPrice"+indexInvoiceItem+indexProvision+indexAsso' [isMandatory]="true"
-                    type="number" step="0,01" (onFormBlur)="itemChange(invoiceItem)"
-                    hint="Laisser vide pour recalculer le prix">
-                  </generic-input>
+                <td class="mat-mdc-cell mdc-data-table__cell  affaire  affaire-align  " colspan="2">
+                  {{getServiceLabel(service)}}
                 </td>
               </tr>
-              <tr class="mat-mdc-row mdc-data-table__row "
-                *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-                <td class="mat-mdc-cell mdc-data-table__cell ">
-                  <span class="invoice-item">Remise</span>
-                </td>
-                <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
-                  - {{invoiceItem.discountAmount|number}} €
+              <tr class="mat-mdc-row mdc-data-table__row " *ngIf="provision.provisionType">
+                <td class="mat-mdc-cell mdc-data-table__cell  affaire " colspan="2">
+                  {{provision.provisionType.label}}
                 </td>
               </tr>
+              <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+                <tr class="mat-mdc-row mdc-data-table__row ">
+                  <td class="mat-mdc-cell mdc-data-table__cell  ">
+                    <span class="invoice-item">{{invoiceItem.label}} <mat-icon color="accent" inline="true"
+                        [matTooltip]="invoiceItem.isGifted?'Ne plus offrir cette ligne de facturation':'Offrir cette ligne de facturation'"
+                        *ngIf="editMode && !getLetteringDate(invoiceItem.invoice)" class="info-icon pointer"
+                        (click)="toggleIsGifTed(invoiceItem)">redeem</mat-icon>
+                      <mat-icon color="accent" inline="true"
+                        matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
+                        *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
+                        class="info-icon">info</mat-icon></span>
+                  </td>
+                  <td class="mat-mdc-cell mdc-data-table__cell  td-price "
+                    *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice">
+                    {{invoiceItem.preTaxPrice|number}} €
+                  </td>
+                  <td class="mat-mdc-cell mdc-data-table__cell "
+                    *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
+                    <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
+                      [propertyName]='"preTaxPrice"+indexInvoiceItem+indexProvision+indexAsso' [isMandatory]="true"
+                      type="number" step="0,01" (onFormBlur)="itemChange(invoiceItem)"
+                      hint="Laisser vide pour recalculer le prix">
+                    </generic-input>
+                  </td>
+                </tr>
+                <tr class="mat-mdc-row mdc-data-table__row "
+                  *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+                  <td class="mat-mdc-cell mdc-data-table__cell ">
+                    <span class="invoice-item">Remise</span>
+                  </td>
+                  <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
+                    - {{invoiceItem.discountAmount|number}} €
+                  </td>
+                </tr>
+              </ng-container>
             </ng-container>
           </ng-container>
         </ng-container>

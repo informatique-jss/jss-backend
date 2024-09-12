@@ -3,24 +3,11 @@ package com.jss.osiris.modules.quotation.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -31,6 +18,22 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(indexes = { @Index(name = "idx_quotation_status", columnList = "id_quotation_status"),
 		@Index(name = "idx_quotation_responsable", columnList = "id_responsable"),
@@ -38,7 +41,8 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 public class Quotation implements IQuotation {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
 	private Integer id;
 
@@ -66,6 +70,7 @@ public class Quotation implements IQuotation {
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
 	private LocalDateTime createdDate;
 
@@ -73,16 +78,12 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_quotation_status")
 	private QuotationStatus quotationStatus;
 
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime lastStatusUpdate;
 
-	@Column(columnDefinition = "TEXT")
-	private String observations;
-
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT") // TODO : delete when new website
 	private String description;
-
-	@Column(columnDefinition = "TEXT")
-	private String instructions;
 
 	@OneToMany(mappedBy = "quotation")
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
@@ -115,16 +116,25 @@ public class Quotation implements IQuotation {
 	@JsonIgnore // For client-side performance purpose
 	private List<CustomerOrder> customerOrders;
 
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime firstReminderDateTime;
-	private LocalDateTime secondReminderDateTime;
-	private LocalDateTime thirdReminderDateTime;
 
-	@Column(columnDefinition = "TEXT")
-	private String customerMailCustomMessage;
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	private LocalDateTime secondReminderDateTime;
+
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	private LocalDateTime thirdReminderDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_origin")
 	private CustomerOrderOrigin customerOrderOrigin;
+
+	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "quotation", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
+	private List<CustomerOrderComment> customerOrderComments;
 
 	public Integer getId() {
 		return id;
@@ -164,14 +174,6 @@ public class Quotation implements IQuotation {
 
 	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
-	}
-
-	public String getObservations() {
-		return observations;
-	}
-
-	public void setObservations(String observations) {
-		this.observations = observations;
 	}
 
 	public String getDescription() {
@@ -278,14 +280,6 @@ public class Quotation implements IQuotation {
 		this.quotationLabel = quotationLabel;
 	}
 
-	public String getCustomerMailCustomMessage() {
-		return customerMailCustomMessage;
-	}
-
-	public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
-		this.customerMailCustomMessage = customerMailCustomMessage;
-	}
-
 	public Employee getAssignedTo() {
 		return assignedTo;
 	}
@@ -318,12 +312,12 @@ public class Quotation implements IQuotation {
 		this.abandonReason = abandonReason;
 	}
 
-	public String getInstructions() {
-		return instructions;
+	public List<CustomerOrderComment> getCustomerOrderComments() {
+		return customerOrderComments;
 	}
 
-	public void setInstructions(String instructions) {
-		this.instructions = instructions;
+	public void setCustomerOrderComments(List<CustomerOrderComment> customerOrderComments) {
+		this.customerOrderComments = customerOrderComments;
 	}
 
 }

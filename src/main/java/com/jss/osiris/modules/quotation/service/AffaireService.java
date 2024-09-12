@@ -28,7 +28,8 @@ public interface AffaireService {
 
     public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException;
 
-    public void updateAffaireFromRne(Affaire affaire) throws OsirisException, OsirisClientMessageException;
+    public void updateAffaireFromRne(Affaire affaire)
+            throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
     public Affaire refreshAffaireFromRne(Affaire affaire)
             throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;

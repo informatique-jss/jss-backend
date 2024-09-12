@@ -3,7 +3,7 @@ package com.jss.osiris.libs.exception;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OsirisDuplicateException extends Exception {
+public class OsirisDuplicateException extends OsirisException {
     public OsirisDuplicateException() {
         super();
     }

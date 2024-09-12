@@ -7,6 +7,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -29,6 +30,8 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.ProvisionType;
+import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
@@ -124,7 +127,17 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeAnnouncement() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeContract() throws OsirisException;
+
     public AttachmentType getAttachmentTypeComplexAnnouncement() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeTemplate() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeQuotation() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeRefusInfogreffe() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeAutreInfogreffe() throws OsirisException;
 
     public Country getCountryFrance() throws OsirisException;
 
@@ -192,6 +205,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeBilan() throws OsirisException;
 
+    public ProvisionType getProvisionTypeBilanPublication() throws OsirisException;
+
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
 
     public BillingType getBillingTypeEmolumentsDeGreffeDebour() throws OsirisException;
@@ -207,6 +222,16 @@ public interface ConstantService {
     public BillingType getBillingtypeFormalityAdditionalDeclaration() throws OsirisException;
 
     public BillingType getBillingtypeCorrespondenceFees() throws OsirisException;
+
+    public BillingType getBillingTypeDomiciliationContractTypeKeepMail() throws OsirisException;
+
+    public BillingType getBillingTypeDomiciliationContractTypeRouteEmail() throws OsirisException;
+
+    public BillingType getBillingTypeDomiciliationContractTypeRouteMail() throws OsirisException;
+
+    public BillingType getBillingTypeDomiciliationContractTypeRouteEmailAndMail() throws OsirisException;
+
+    public BillingType getBillingTypeSupplyFullBeCopy() throws OsirisException;
 
     public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException;
 
@@ -247,6 +272,10 @@ public interface ConstantService {
     public DomiciliationContractType getDomiciliationContractTypeRouteEmail() throws OsirisException;
 
     public MailRedirectionType getMailRedirectionTypeOther() throws OsirisException;
+
+    public MailRedirectionType getMailRedirectionTypeLegalGuardian() throws OsirisException;
+
+    public MailRedirectionType getMailRedirectionTypeActivity() throws OsirisException;
 
     public ActType getActTypeSeing() throws OsirisException;
 
@@ -356,6 +385,10 @@ public interface ConstantService {
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountDepositProvider() throws OsirisException;
 
+    public PrincipalAccountingAccount getPrincipalAccountingAccountLitigious() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountSuspicious() throws OsirisException;
+
     public PrincipalAccountingAccount getPrincipalAccountingAccountCustomer() throws OsirisException;
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountProduct() throws OsirisException;
@@ -393,6 +426,12 @@ public interface ConstantService {
     public RffFrequency getRffFrequencyMonthly() throws OsirisException;
 
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
+
+    public ServiceType getServiceTypeOther() throws OsirisException;
+
+    public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException;
+
+    public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() throws OsirisException;
 
     public LocalDate getDateAccountingClosureForAll() throws OsirisException;
 

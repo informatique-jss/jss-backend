@@ -187,8 +187,8 @@ public class RefundServiceImpl implements RefundService {
 
         if (refund.getCustomerOrder() != null && refund.getCustomerOrder().getAssoAffaireOrders() != null) {
             Affaire affaire = refund.getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
-            refund.setLabel(refund.getLabel() + " / " + (affaire.getDenomination() != null ? affaire.getDenomination()
-                    : (affaire.getFirstname() + " " + affaire.getLastname())));
+            refund.setLabel((affaire.getDenomination() != null ? affaire.getDenomination()
+                    : (affaire.getFirstname() + " " + affaire.getLastname())) + " / " + refund.getLabel());
         }
 
         refund.setRefundAmount(amount);

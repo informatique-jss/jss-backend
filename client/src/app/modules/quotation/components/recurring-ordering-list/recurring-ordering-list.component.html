@@ -1,0 +1,8 @@
+<mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndex" (selectedTabChange)="changeTab($event)">
+  <mat-tab label="Commandes parentes">
+    <recurring-parent-ordering-list></recurring-parent-ordering-list>
+  </mat-tab>
+  <mat-tab label="Commandes enfants">
+    <recurring-child-ordering-list></recurring-child-ordering-list>
+  </mat-tab>
+</mat-tab-group>

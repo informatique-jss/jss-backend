@@ -67,9 +67,9 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " when i.third_reminder_date_time is not null " +
                         "  then 'Relancé trois fois'  " +
                         " end reminderType, " +
-                        " sum(coalesce((select count(*) from announcement a join provision p on p.id_announcement =a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id),0)) as nbrAnnouncement, "
+                        " sum(coalesce((select count(*) from announcement a join provision p on p.id_announcement =a.id join service on service.id = p.id_service join asso_affaire_order aao on aao.id = service.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id),0)) as nbrAnnouncement, "
                         +
-                        " (select string_agg(distinct cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) as announcementDepartment "
+                        " (select string_agg(distinct cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join service on service.id = p.id_service join asso_affaire_order aao on aao.id = service.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) as announcementDepartment "
                         +
                         " from " +
                         " invoice i " +
@@ -148,7 +148,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         "  then 'Relancé trois fois'  " +
                         " end ," +
                         " ist.label,  " +
-                        " (select  string_agg(distinct  cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join asso_affaire_order aao on aao.id = p.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) "
+                        " (select string_agg(distinct cast(d.code as text),', ' )  from announcement a join department d on d.id = a.id_department  join provision p on p.id_announcement = a.id join service on service.id = p.id_service join asso_affaire_order aao on aao.id = service.id_asso_affaire_order where aao.id_customer_order = i.customer_order_id) "
                         +
                         "")
         List<ITurnoverReporting> getTurnoverReporting(@Param("invoiceStatusId") List<Integer> invoiceStatusId);

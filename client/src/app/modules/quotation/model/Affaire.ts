@@ -39,4 +39,7 @@ export interface Affaire extends IReferential, IAttachment {
   competentAuthority: CompetentAuthority;
   acronym: string;
   tiersFollowups: TiersFollowup[];
+  employeeNumber: number;
+  apeCodes: string;
+  isMainOffice: boolean;
 }

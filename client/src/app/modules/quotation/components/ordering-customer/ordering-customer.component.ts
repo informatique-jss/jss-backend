@@ -46,11 +46,15 @@ export class OrderingCustomerComponent implements OnInit {
   customerOrderTableActions: SortTableAction<OrderingSearchResult>[] = [] as Array<SortTableAction<OrderingSearchResult>>;
   customerOrderDisplayedColumns: SortTableColumn<OrderingSearchResult>[] = [] as Array<SortTableColumn<OrderingSearchResult>>;
 
+  customerOrderRecurringDisplayedColumns: SortTableColumn<OrderingSearchResult>[] = [] as Array<SortTableColumn<OrderingSearchResult>>;
+  customerOrderRecurringTableActions: SortTableAction<OrderingSearchResult>[] = [] as Array<SortTableAction<OrderingSearchResult>>;
+
   quotationTableActions: SortTableAction<QuotationSearchResult>[] = [] as Array<SortTableAction<QuotationSearchResult>>;
   quotationDisplayedColumns: SortTableColumn<QuotationSearchResult>[] = [] as Array<SortTableColumn<QuotationSearchResult>>;
 
   customerOrderQuotations: QuotationSearchResult[] | undefined;
   quotationCustomerOrders: OrderingSearchResult[] | undefined;
+  customerOrderRecurring: OrderingSearchResult[] | undefined;
 
   selectedCustomerOrder: IndexEntity | undefined;
 
@@ -84,6 +88,21 @@ export class OrderingCustomerComponent implements OnInit {
 
       if (changes.quotation && this.quotation.id && instanceOfQuotation(this.quotation))
         this.orderingSearchResultService.getCustomerOrderForQuotation(this.quotation).subscribe(quotations => this.quotationCustomerOrders = quotations);
+
+      if (changes.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation) && this.quotation.isRecurring)
+        this.orderingSearchResultService.getCustomerOrderByCustomerOrderParentRecurringId(this.quotation).subscribe(customerOrders => this.customerOrderRecurring = customerOrders);
+
+      if (changes.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation) && this.quotation.hasCustomerOrderParentRecurring)
+        this.orderingSearchResultService.getCustomerOrderParentRecurringByCustomerOrderId(this.quotation).subscribe(customerOrders => this.customerOrderRecurring = customerOrders);
+
+      if (changes.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation))
+        if (this.quotation.isRecurring) {
+          this.customerOrderRecurringDisplayedColumns.push({ id: "recurringStartDate", fieldName: "recurringStartDate", label: "Début", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);
+          this.customerOrderRecurringDisplayedColumns.push({ id: "recurringEndDate", fieldName: "recurringEndDate", label: "Fin", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);
+        } else {
+          this.customerOrderRecurringDisplayedColumns.push({ id: "recurringPeriodStartDate", fieldName: "recurringPeriodStartDate", label: "Début période", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);
+          this.customerOrderRecurringDisplayedColumns.push({ id: "recurringPeriodEndDate", fieldName: "recurringPeriodEndDate", label: "Fin période", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);
+        }
     }
   }
 
@@ -117,6 +136,21 @@ export class OrderingCustomerComponent implements OnInit {
         return undefined;
       }, display: true,
     } as SortTableAction<QuotationSearchResult>);
+
+    this.customerOrderRecurringDisplayedColumns = [];
+    this.customerOrderRecurringDisplayedColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn<OrderingSearchResult>);
+    this.customerOrderRecurringDisplayedColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn<OrderingSearchResult>);
+    this.customerOrderRecurringDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);
+    this.customerOrderRecurringDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchResult>);
+
+
+    this.customerOrderRecurringTableActions.push({
+      actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction<OrderingSearchResult>, element: OrderingSearchResult) => {
+        if (element)
+          return ['/order', element.customerOrderId];
+        return undefined;
+      }, display: true,
+    } as SortTableAction<OrderingSearchResult>);
   }
 
   orderingCustomerForm = this.formBuilder.group({
@@ -129,10 +163,6 @@ export class OrderingCustomerComponent implements OnInit {
       this.quotation.tiers = response;
       this.quotation.responsable = undefined;
       this.quotation.responsable = undefined;
-      if (this.quotation.tiers) {
-        this.quotation.observations = this.quotation.tiers.observations;
-        this.quotation.instructions = this.quotation.tiers.instructions;
-      }
       this.setDocument();
     })
   }
@@ -141,9 +171,6 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotation.confrere = confrere;
     this.quotation.tiers = undefined;
     this.quotation.responsable = undefined;
-    if (this.quotation.confrere) {
-      this.quotation.observations = this.quotation.confrere.observations;
-    }
     this.setDocument();
   }
 
@@ -155,8 +182,6 @@ export class OrderingCustomerComponent implements OnInit {
     this.tiersService.getTiersByResponsable(responsable.entityId).subscribe(response => {
       if (this.quotation.responsable != null) {
         this.quotation.responsable.tiers = response;
-        this.quotation.observations = this.quotation.responsable.tiers.observations;
-        this.quotation.instructions = this.quotation.responsable.tiers.instructions;
         this.setDocument();
       }
     })

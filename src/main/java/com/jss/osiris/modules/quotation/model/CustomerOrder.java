@@ -1,34 +1,22 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
@@ -36,9 +24,27 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 @Entity
 @Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status"),
 		@Index(name = "idx_customer_order_responsable", columnList = "id_responsable"),
+		@Index(name = "idx_customer_order_assigned_to", columnList = "id_assigned_to"),
 		@Index(name = "idx_customer_order_tiers", columnList = "id_tiers") })
 public class CustomerOrder implements IQuotation, ICreatedDate {
 
@@ -47,11 +53,11 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, Confrere confrere,
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
-			String observations, String description, String instructions, List<Attachment> attachments,
+			String description, List<Attachment> attachments,
 			List<Document> documents,
 			List<AssoAffaireOrder> assoAffaireOrders,
-			List<Quotation> quotations, String quotationLabel, Boolean isQuotation,
-			List<Invoice> invoices, List<AccountingRecord> accountingRecords) {
+			List<Quotation> quotations, Boolean isQuotation,
+			List<Invoice> invoices, List<CustomerOrderComment> customerOrderComments) {
 		this.assignedTo = assignedTo;
 		this.tiers = tiers;
 		this.responsable = responsable;
@@ -59,20 +65,19 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.specialOffers = specialOffers;
 		this.createdDate = createdDate;
 		this.customerOrderStatus = customerOrderStatus;
-		this.observations = observations;
 		this.description = description;
-		this.instructions = instructions;
 		this.attachments = attachments;
 		this.documents = documents;
 		this.assoAffaireOrders = assoAffaireOrders;
 		this.quotations = quotations;
 		this.isQuotation = isQuotation;
 		this.invoices = invoices;
-		this.accountingRecords = accountingRecords;
+		this.customerOrderComments = customerOrderComments;
 	}
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
 	private Integer id;
 
@@ -100,6 +105,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
 	private LocalDateTime createdDate;
 
@@ -113,14 +119,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JoinColumn(name = "id_abandon_reason")
 	private QuotationAbandonReason abandonReason;
 
-	@Column(columnDefinition = "TEXT")
-	private String observations;
-
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT") // TODO : delete when new website
 	private String description;
-
-	@Column(columnDefinition = "TEXT")
-	private String instructions;
 
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
@@ -128,7 +128,12 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@IndexedField
 	private List<Document> documents;
+
+	@OneToMany(targetEntity = PaperSet.class, mappedBy = "customerOrder", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	private List<PaperSet> paperSets;
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
@@ -152,11 +157,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			"childrenPayments" }, allowSetters = true)
 	private List<Payment> payments;
 
-	@OneToMany(targetEntity = AccountingRecord.class, mappedBy = "customerOrder")
-	@JsonIgnoreProperties(value = { "customerOrder", "invoice", "deposit", "payment" }, allowSetters = true)
-	@JsonIgnore // For client-side performance purpose
-	private List<AccountingRecord> accountingRecords;
-
 	private LocalDateTime firstReminderDateTime;
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
@@ -170,14 +170,35 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Refund> refunds;
 
-	@Column(columnDefinition = "TEXT")
-	private String customerMailCustomMessage;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_origin")
 	private CustomerOrderOrigin customerOrderOrigin;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_customer_order_parent_recurring")
+	@JsonIgnore // For client-side performance purpose
+	private CustomerOrder customerOrderParentRecurring;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_recurring_frequency")
+	private CustomerOrderFrequency customerOrderFrequency;
+
+	@Transient
+	private Boolean hasCustomerOrderParentRecurring;
+
+	private LocalDate recurringPeriodStartDate;
+	private LocalDate recurringPeriodEndDate;
+
+	private LocalDate recurringStartDate;
+	private LocalDate recurringEndDate;
+	private Boolean isRecurring;
+	private Boolean isRecurringAutomaticallyBilled;
+
 	private Boolean isGifted;
+
+	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "customerOrder", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	private List<CustomerOrderComment> customerOrderComments;
 
 	public Integer getId() {
 		return id;
@@ -243,14 +264,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.lastStatusUpdate = lastStatusUpdate;
 	}
 
-	public String getObservations() {
-		return observations;
-	}
-
-	public void setObservations(String observations) {
-		this.observations = observations;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -307,14 +320,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.invoices = invoices;
 	}
 
-	public List<AccountingRecord> getAccountingRecords() {
-		return accountingRecords;
-	}
-
-	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
-		this.accountingRecords = accountingRecords;
-	}
-
 	public LocalDateTime getFirstReminderDateTime() {
 		return firstReminderDateTime;
 	}
@@ -345,14 +350,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setProviderInvoices(List<Invoice> providerInvoices) {
 		this.providerInvoices = providerInvoices;
-	}
-
-	public String getCustomerMailCustomMessage() {
-		return customerMailCustomMessage;
-	}
-
-	public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
-		this.customerMailCustomMessage = customerMailCustomMessage;
 	}
 
 	public Employee getAssignedTo() {
@@ -395,14 +392,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.abandonReason = abandonReason;
 	}
 
-	public String getInstructions() {
-		return instructions;
-	}
-
-	public void setInstructions(String instructions) {
-		this.instructions = instructions;
-	}
-
 	public List<Refund> getRefunds() {
 		return refunds;
 	}
@@ -411,4 +400,91 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.refunds = refunds;
 	}
 
+	public CustomerOrder getCustomerOrderParentRecurring() {
+		return customerOrderParentRecurring;
+	}
+
+	public void setCustomerOrderParentRecurring(CustomerOrder customerOrderParentRecurring) {
+		this.customerOrderParentRecurring = customerOrderParentRecurring;
+	}
+
+	public LocalDate getRecurringStartDate() {
+		return recurringStartDate;
+	}
+
+	public void setRecurringStartDate(LocalDate recurringStartDate) {
+		this.recurringStartDate = recurringStartDate;
+	}
+
+	public LocalDate getRecurringEndDate() {
+		return recurringEndDate;
+	}
+
+	public void setRecurringEndDate(LocalDate recurringEndDate) {
+		this.recurringEndDate = recurringEndDate;
+	}
+
+	public Boolean getIsRecurringAutomaticallyBilled() {
+		return isRecurringAutomaticallyBilled;
+	}
+
+	public void setIsRecurringAutomaticallyBilled(Boolean isRecurringAutomaticallyBilled) {
+		this.isRecurringAutomaticallyBilled = isRecurringAutomaticallyBilled;
+	}
+
+	public LocalDate getRecurringPeriodStartDate() {
+		return recurringPeriodStartDate;
+	}
+
+	public void setRecurringPeriodStartDate(LocalDate recurringPeriodStartDate) {
+		this.recurringPeriodStartDate = recurringPeriodStartDate;
+	}
+
+	public LocalDate getRecurringPeriodEndDate() {
+		return recurringPeriodEndDate;
+	}
+
+	public void setRecurringPeriodEndDate(LocalDate recurringPeriodEndDate) {
+		this.recurringPeriodEndDate = recurringPeriodEndDate;
+	}
+
+	public Boolean getHasCustomerOrderParentRecurring() {
+		return hasCustomerOrderParentRecurring;
+	}
+
+	public void setHasCustomerOrderParentRecurring(Boolean hasCustomerOrderParentRecurring) {
+		this.hasCustomerOrderParentRecurring = hasCustomerOrderParentRecurring;
+	}
+
+	public Boolean getIsRecurring() {
+		return isRecurring;
+	}
+
+	public void setIsRecurring(Boolean isRecurring) {
+		this.isRecurring = isRecurring;
+	}
+
+	public CustomerOrderFrequency getCustomerOrderFrequency() {
+		return customerOrderFrequency;
+	}
+
+	public void setCustomerOrderFrequency(CustomerOrderFrequency customerOrderFrequency) {
+		this.customerOrderFrequency = customerOrderFrequency;
+	}
+
+	public List<CustomerOrderComment> getCustomerOrderComments() {
+		return customerOrderComments;
+	}
+
+	public void setCustomerOrderComments(List<CustomerOrderComment> customerOrderComments) {
+		this.customerOrderComments = customerOrderComments;
+	}
+
+	public List<PaperSet> getPaperSets() {
+		return paperSets;
+	}
+
+	public void setPaperSets(List<PaperSet> paperSets) {
+		this.paperSets = paperSets;
+	}
 }

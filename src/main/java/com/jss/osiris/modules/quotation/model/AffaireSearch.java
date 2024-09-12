@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 public class AffaireSearch {
@@ -16,6 +17,10 @@ public class AffaireSearch {
     private List<Tiers> customerOrders;
     private Affaire affaire;
     private CompetentAuthority waitedCompetentAuthority;
+    private Boolean isMissingQueriesToManualRemind;
+    private Employee commercial;
+    private FormaliteGuichetUniqueStatus formaliteGuichetUniqueStatus;
+    private String formaliteInfogreffeStatusCode;
 
     public List<Tiers> getCustomerOrders() {
         return customerOrders;
@@ -71,6 +76,38 @@ public class AffaireSearch {
 
     public void setAffaire(Affaire affaire) {
         this.affaire = affaire;
+    }
+
+    public Boolean getIsMissingQueriesToManualRemind() {
+        return isMissingQueriesToManualRemind;
+    }
+
+    public void setIsMissingQueriesToManualRemind(Boolean isMissingQueriesToManualRemind) {
+        this.isMissingQueriesToManualRemind = isMissingQueriesToManualRemind;
+    }
+
+    public Employee getCommercial() {
+        return commercial;
+    }
+
+    public void setCommercial(Employee commercial) {
+        this.commercial = commercial;
+    }
+
+    public FormaliteGuichetUniqueStatus getFormaliteGuichetUniqueStatus() {
+        return formaliteGuichetUniqueStatus;
+    }
+
+    public void setFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus formaliteGuichetUniqueStatus) {
+        this.formaliteGuichetUniqueStatus = formaliteGuichetUniqueStatus;
+    }
+
+    public String getFormaliteInfogreffeStatusCode() {
+        return formaliteInfogreffeStatusCode;
+    }
+
+    public void setFormaliteInfogreffeStatusCode(String formaliteInfogreffeStatusCode) {
+        this.formaliteInfogreffeStatusCode = formaliteInfogreffeStatusCode;
     }
 
 }

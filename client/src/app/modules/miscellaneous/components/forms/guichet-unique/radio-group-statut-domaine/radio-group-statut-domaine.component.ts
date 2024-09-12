@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { StatutDomaineService } from 'src/app/modules/miscellaneous/services/guichet-unique/statut.domaine.service';
 import { StatutDomaine } from 'src/app/modules/quotation/model/guichet-unique/referentials/StatutDomaine';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-statut-domaine',
@@ -14,8 +14,8 @@ export class RadioGroupStatutDomaineComponent extends GenericRadioGroupComponent
   types: StatutDomaine[] = [] as Array<StatutDomaine>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private StatutDomaineService: StatutDomaineService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private StatutDomaineService: StatutDomaineService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

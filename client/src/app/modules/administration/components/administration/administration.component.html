@@ -298,10 +298,44 @@
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-complain-origin>
         <referential-complain-cause *ngIf="selectedReferential==COMPLAIN_CAUSE_REFERENTIAL"
-        (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-        [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-        [cloneEvent]="cloneEvent.asObservable()">
-      </referential-complain-cause>
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-complain-cause>
+        <referential-service-family *ngIf="selectedReferential==SERVICE_FAMILY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-service-family>
+        <referential-service-family-group *ngIf="selectedReferential==SERVICE_FAMILY_GROUP_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-service-family-group>
+        <referential-service-type *ngIf="selectedReferential==SERVICE_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-service-type>
+        <referential-customer-order-frequency *ngIf="selectedReferential==CUSTOMER_ORDER_FREQUENCY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-customer-order-frequency>
+        <referential-active-directory-group *ngIf="selectedReferential==ACTIVE_DIRECTORY_GROUP_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-active-directory-group>
+        <referential-paper-set-type *ngIf="selectedReferential==PAPER_SET_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()"></referential-paper-set-type>
+        <referential-service-field-type *ngIf="selectedReferential==SERVICE_FIELD_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-service-field-type>
         <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
           (click)="saveEntity()">
           <mat-icon>save</mat-icon>

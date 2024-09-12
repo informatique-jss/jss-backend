@@ -1,6 +1,6 @@
 package com.jss.osiris.libs.exception;
 
-public class OsirisValidationException extends Exception {
+public class OsirisValidationException extends OsirisException {
     public OsirisValidationException() {
         super();
     }

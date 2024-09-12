@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Department } from '../../../model/Department';
 import { DepartmentService } from '../../../services/department.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-department',
@@ -16,8 +16,8 @@ export class AutocompleteDepartmentComponent extends GenericLocalAutocompleteCom
 
   @Input() filterAvailableEntities: Department[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private departmentService: DepartmentService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private departmentService: DepartmentService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: Department[], value: string): Department[] {

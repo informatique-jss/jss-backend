@@ -9,7 +9,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
-import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
@@ -18,13 +17,11 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
-import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
-import com.jss.osiris.modules.invoicing.service.AzureReceiptService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
-import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
@@ -35,6 +32,7 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
+import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
@@ -55,16 +53,13 @@ public class OsirisScheduller {
 	EmployeeService employeeService;
 
 	@Autowired
-	CustomerMailService customerMailService;
-
-	@Autowired
-	NotificationService notificationService;
-
-	@Autowired
 	GlobalExceptionHandler globalExceptionHandler;
 
 	@Value("${schedulling.pool.size}")
 	private Integer schedullingPoolSize;
+
+	@Value("${dev.mode}")
+	private Boolean devMode;
 
 	@Autowired
 	QuotationStatusService quotationStatusService;
@@ -97,10 +92,16 @@ public class OsirisScheduller {
 	CustomerOrderService customerOrderService;
 
 	@Autowired
+	CustomerMailService customerMailService;
+
+	@Autowired
 	InvoiceService invoiceService;
 
 	@Autowired
 	AnnouncementService announcementService;
+
+	@Autowired
+	MissingAttachmentQueryService missingAttachmentQueryService;
 
 	@Autowired
 	EtablissementPublicsDelegate etablissementPublicsDelegate;
@@ -115,19 +116,13 @@ public class OsirisScheduller {
 	CentralPayPaymentRequestService centralPayPaymentRequestService;
 
 	@Autowired
-	AzureInvoiceService azureInvoiceService;
-
-	@Autowired
-	AzureReceiptService azureReceiptService;
-
-	@Autowired
-	AuditService auditService;
-
-	@Autowired
 	BatchSettingsService batchSettingsService;
 
 	@Autowired
 	BatchService batchService;
+
+	@Autowired
+	CompetentAuthorityService competentAuthorityService;
 
 	@Autowired
 	NodeService nodeService;
@@ -166,9 +161,16 @@ public class OsirisScheduller {
 			batchService.declareNewBatch(Batch.PURGE_LOGS, null);
 	}
 
+	@Scheduled(cron = "${schedulling.batch.purge}")
+	private void purgeBatch() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.PURGE_BATCH, null);
+	}
+
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
 	private void checkAllCentralPayPaymentRequests()
-			throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+			throws OsirisException, OsirisClientMessageException,
+			OsirisValidationException, OsirisDuplicateException {
 		try {
 			if (nodeService.shouldIBatch())
 				centralPayPaymentRequestService.checkAllPaymentRequests();
@@ -219,11 +221,54 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(cron = "${schedulling.log.osiris.invoice.confrere.query.reminder}")
+	private void reminderConfrereForProviderInvoice() {
+		try {
+			if (nodeService.shouldIBatch())
+				announcementService.sendRemindersToConfrereForProviderInvoice();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(cron = "${schedulling.log.osiris.customer.proof.reading.reminder}")
 	private void reminderClientReviewQuery() {
 		try {
 			if (nodeService.shouldIBatch())
 				announcementService.sendRemindersToCustomerForProofReading();
+
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.customer.bilan.publication.reminder}")
+	private void reminderToCustomerForBilanPublication() {
+		try {
+			if (nodeService.shouldIBatch())
+				announcementService.sendRemindersToCustomerForBilanPublication();
+
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.customer.missing.attachment.queries}")
+	private void sendRemindersToCustomerForMissingAttachmentQuery() {
+		try {
+			if (nodeService.shouldIBatch())
+				missingAttachmentQueryService.sendRemindersToCustomerForMissingAttachmentQuery();
+
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.competent.authority.reminder}")
+	private void sendRemindersToCompetentAuthorities() {
+		try {
+			if (nodeService.shouldIBatch())
+				competentAuthorityService.sendRemindersToCompetentAuthorities();
 
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
@@ -275,7 +320,7 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.opened}")
 	private void refreshAllOpenFormalities() {
 		try {
-			if (nodeService.shouldIBatch())
+			if (nodeService.shouldIBatch() && !devMode)
 				guichetUniqueDelegateService.refreshAllOpenFormalities();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
@@ -285,8 +330,28 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.guichet.unique.refresh.update.last.hour}")
 	private void refreshFormalitiesFromLastHour() {
 		try {
-			if (nodeService.shouldIBatch())
+			if (nodeService.shouldIBatch() && !devMode)
 				guichetUniqueDelegateService.refreshFormalitiesFromLastHour();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 1000, fixedDelayString = "${schedulling.infogreffe.refresh.last.day}")
+	private void refreshAllFormalitiesInfogreffeFromLastDay() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE, 1);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.infogreffe.refresh.all}")
+	private void refreshAllFormalitiesInfogreffe() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE, 0);
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -307,6 +372,26 @@ public class OsirisScheduller {
 		try {
 			if (nodeService.shouldIBatch())
 				accountingRecordService.sendBillingClosureReceipt();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.customer.order.recurring.generation}")
+	private void generateRecurringCustomerOrders() {
+		try {
+			if (nodeService.shouldIBatch())
+				customerOrderService.generateRecurringCustomerOrders();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 1000, fixedDelay = 1000 * 60)
+	private void sendTemporizedMails() {
+		try {
+			if (nodeService.shouldIBatch())
+				customerMailService.sendTemporizedMails();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

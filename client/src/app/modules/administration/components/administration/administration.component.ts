@@ -83,10 +83,17 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   CUSTOMER_ORDER_ORIGIN_REFERENTIAL = "Origine des commandes";
   DEPARTMENT_VAT_SETTING_REFERENTIAL = "TVA par département";
   RFF_FREQUENCY_REFERENTIAL = "Périodicité des RFF";
+  SERVICE_TYPE_REFERENTIAL = "Service";
   COMPLAIN_PROBLEM_REFERENTIAL = "Reclamation - Probleme de vente";
   COMPLAIN_CAUSE_REFERENTIAL = "Reclamation - Cause du probleme de vente";
   COMPLAIN_ORIGIN_REFERENTIAL = "Reclamation - Origine du probleme de vente";
   QUOTATION_ABANDON_REASON_REFERENTIAL = "Raison d'abandon des commandes/devis";
+  SERVICE_FAMILY_REFERENTIAL = "Famille de service";
+  SERVICE_FAMILY_GROUP_REFERENTIAL = "Groupe de famille de service";
+  CUSTOMER_ORDER_FREQUENCY_REFERENTIAL = "Fréquence des commandes récurrentes";
+  ACTIVE_DIRECTORY_GROUP_REFERENTIAL = "Groupes Active Directory";
+  PAPER_SET_TYPE_REFERENTIAL = "Types d'action documentaire";
+  SERVICE_FIELD_TYPE_REFERENTIAL = "Types de champs de service";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -110,6 +117,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.PROVISION_FAMILY_TYPE_REFERENTIAL);
     this.referentials.push(this.PROVISION_TYPE_REFERENTIAL);
     this.referentials.push(this.RECORD_TYPE_REFERENTIAL);
+    this.referentials.push(this.PAPER_SET_TYPE_REFERENTIAL);
     this.referentials.push(this.TRANSFERT_FUNDS_TYPE_REFERENTIAL);
     this.referentials.push(this.BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL);
     this.referentials.push(this.BILLING_CLOSURE_TYPE_REFERENTIAL);
@@ -127,6 +135,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.COMPETENT_AUTHORITY_TYPE_REFERENTIAL);
     this.referentials.push(this.COUNTRY_REFERENTIAL);
     this.referentials.push(this.DELIVERY_SERVICE_REFERENTIAL);
+    this.referentials.push(this.ACTIVE_DIRECTORY_GROUP_REFERENTIAL);
     this.referentials.push(this.DOCUMENT_TYPE_REFERENTIAL);
     this.referentials.push(this.LANGUAGE_REFERENTIAL);
     this.referentials.push(this.LEGAL_FORM_REFERENTIAL);
@@ -140,6 +149,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.BILLING_ITEM_REFERENTIAL);
     this.referentials.push(this.BILLING_TYPE_REFERENTIAL);
     this.referentials.push(this.DEPARTMENT_REFERENTIAL);
+    this.referentials.push(this.CUSTOMER_ORDER_FREQUENCY_REFERENTIAL);
     this.referentials.push(this.GIFT_REFERENTIAL);
     this.referentials.push(this.SPECIAL_OFFER_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL);
@@ -155,9 +165,12 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.DEPARTMENT_VAT_SETTING_REFERENTIAL);
     this.referentials.push(this.COMPLAIN_PROBLEM_REFERENTIAL);
     this.referentials.push(this.COMPLAIN_CAUSE_REFERENTIAL);
-    this.referentials.push(this. COMPLAIN_ORIGIN_REFERENTIAL);
-
+    this.referentials.push(this.COMPLAIN_ORIGIN_REFERENTIAL);
+    this.referentials.push(this.SERVICE_TYPE_REFERENTIAL);
     this.referentials.push(this.QUOTATION_ABANDON_REASON_REFERENTIAL);
+    this.referentials.push(this.SERVICE_FAMILY_REFERENTIAL);
+    this.referentials.push(this.SERVICE_FAMILY_GROUP_REFERENTIAL);
+    this.referentials.push(this.SERVICE_FIELD_TYPE_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

@@ -3,19 +3,6 @@ package com.jss.osiris.modules.tiers.model;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -37,12 +24,31 @@ import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.profile.model.Employee;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Table(indexes = { @Index(name = "idx_tiers_commercial", columnList = "id_commercial"),
+})
 public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
 	private Integer id;
 
@@ -217,6 +223,14 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_account_litigious")
+	private AccountingAccount accountingAccountLitigious;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_account_suspicious")
+	private AccountingAccount accountingAccountSuspicious;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_rff_frequency")
@@ -631,6 +645,22 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	public void setRffMail(String rffMail) {
 		this.rffMail = rffMail;
+	}
+
+	public AccountingAccount getAccountingAccountLitigious() {
+		return accountingAccountLitigious;
+	}
+
+	public void setAccountingAccountLitigious(AccountingAccount accountingAccountLitigious) {
+		this.accountingAccountLitigious = accountingAccountLitigious;
+	}
+
+	public AccountingAccount getAccountingAccountSuspicious() {
+		return accountingAccountSuspicious;
+	}
+
+	public void setAccountingAccountSuspicious(AccountingAccount accountingAccountSuspicious) {
+		this.accountingAccountSuspicious = accountingAccountSuspicious;
 	}
 
 }

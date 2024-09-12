@@ -3,8 +3,6 @@ package com.jss.osiris.modules.tiers.repository;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.QueryHint;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +11,8 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.model.TiersType;
+
+import jakarta.persistence.QueryHint;
 
 public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer> {
 
@@ -58,8 +58,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         +
                         "   from " +
                         "           asso_affaire_order aao " +
-                        "   left join provision p on " +
-                        "           p.id_asso_affaire_order= aao.id " +
+                        "  left join service on service.id_asso_affaire_order = aao.id left join provision p on " +
+                        "           p.id_service= service.id " +
                         "   left join announcement a on " +
                         "           a.id = p.id_announcement " +
                         "           join customer_order co on co.id = aao.id_customer_order " +

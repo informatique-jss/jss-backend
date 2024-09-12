@@ -103,10 +103,11 @@ export class AddInvoiceComponent implements OnInit {
             this.indexedCustomerOrder = customerOrder as any;
             if (customerOrder.assoAffaireOrders)
               for (let asso of customerOrder.assoAffaireOrders)
-                if (asso.provisions)
-                  for (let provision of asso.provisions)
-                    if (provision.id == this.inIdProvision)
-                      this.invoice.provision = provision;
+                for (let service of asso.services)
+                  if (service.provisions)
+                    for (let provision of service.provisions)
+                      if (provision.id == this.inIdProvision)
+                        this.invoice.provision = provision;
           }
         })
 
@@ -336,9 +337,10 @@ export class AddInvoiceComponent implements OnInit {
         this.invoice.customerOrderForInboundInvoice = response as CustomerOrder;
         if (this.inIdProvision)
           for (let asso of response.assoAffaireOrders)
-            for (let provision of asso.provisions)
-              if (provision.id == this.inIdProvision)
-                this.invoice.provision = provision;
+            for (let service of asso.services)
+              for (let provision of service.provisions)
+                if (provision.id == this.inIdProvision)
+                  this.invoice.provision = provision;
       } else
         this.indexedCustomerOrder = undefined;
     })
@@ -408,8 +410,9 @@ export class AddInvoiceComponent implements OnInit {
     let outProvisions = [];
     if (this.invoice && this.invoice.customerOrderForInboundInvoice && this.invoice.customerOrderForInboundInvoice.assoAffaireOrders) {
       for (let asso of this.invoice.customerOrderForInboundInvoice.assoAffaireOrders) {
-        for (let provision of asso.provisions)
-          outProvisions.push(provision)
+        for (let service of asso.services)
+          for (let provision of service.provisions)
+            outProvisions.push(provision)
       }
     }
     return outProvisions;

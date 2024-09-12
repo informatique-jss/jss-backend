@@ -36,6 +36,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
@@ -47,6 +48,7 @@ import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -56,6 +58,7 @@ import com.jss.osiris.modules.miscellaneous.model.Gift;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
+import com.jss.osiris.modules.miscellaneous.model.PaperSetType;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.model.Regie;
@@ -64,6 +67,7 @@ import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
+import com.jss.osiris.modules.miscellaneous.service.ActiveDirectoryGroupService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
@@ -74,6 +78,7 @@ import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
+import com.jss.osiris.modules.miscellaneous.service.CustomerOrderFrequencyService;
 import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.miscellaneous.service.DeliveryServiceService;
 import com.jss.osiris.modules.miscellaneous.service.DepartmentService;
@@ -83,6 +88,7 @@ import com.jss.osiris.modules.miscellaneous.service.GiftService;
 import com.jss.osiris.modules.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
+import com.jss.osiris.modules.miscellaneous.service.PaperSetTypeService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ProviderService;
 import com.jss.osiris.modules.miscellaneous.service.RegieService;
@@ -94,16 +100,19 @@ import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeDocumentService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -137,6 +146,9 @@ public class MiscellaneousController {
 
     @Autowired
     CompetentAuthorityTypeService competentAuthorityTypeService;
+
+    @Autowired
+    TypeDocumentService typeDocumentService;
 
     @Autowired
     ValidationHelper validationHelper;
@@ -245,6 +257,72 @@ public class MiscellaneousController {
 
     @Autowired
     DepartmentVatSettingService departmentVatSettingService;
+
+    @Autowired
+    CustomerOrderFrequencyService customerOrderFrequencyService;
+
+    @Autowired
+    ActiveDirectoryGroupService activeDirectoryGroupService;
+
+    @Autowired
+    PaperSetTypeService paperSetTypeService;
+
+    @GetMapping(inputEntryPoint + "/paper-set-types")
+    public ResponseEntity<List<PaperSetType>> getPaperSetTypes() {
+        return new ResponseEntity<List<PaperSetType>>(paperSetTypeService.getPaperSetTypes(), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/paper-set-type")
+    public ResponseEntity<PaperSetType> addOrUpdatePaperSetType(
+            @RequestBody PaperSetType paperSetTypes) throws OsirisValidationException, OsirisException {
+        if (paperSetTypes.getId() != null)
+            validationHelper.validateReferential(paperSetTypes, true, "paperSetTypes");
+        validationHelper.validateString(paperSetTypes.getCode(), true, "code");
+        validationHelper.validateString(paperSetTypes.getLabel(), true, "label");
+
+        return new ResponseEntity<PaperSetType>(paperSetTypeService.addOrUpdatePaperSetType(paperSetTypes),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/active-directory-groups")
+    public ResponseEntity<List<ActiveDirectoryGroup>> getActiveDirectoryGroups() {
+        return new ResponseEntity<List<ActiveDirectoryGroup>>(activeDirectoryGroupService.getActiveDirectoryGroups(),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/active-directory-group")
+    public ResponseEntity<ActiveDirectoryGroup> addOrUpdateActiveDirectoryGroup(
+            @RequestBody ActiveDirectoryGroup activeDirectoryGroups) throws OsirisValidationException, OsirisException {
+        if (activeDirectoryGroups.getId() != null)
+            validationHelper.validateReferential(activeDirectoryGroups, true, "activeDirectoryGroups");
+        validationHelper.validateString(activeDirectoryGroups.getCode(), true, "code");
+        validationHelper.validateString(activeDirectoryGroups.getLabel(), true, "label");
+        validationHelper.validateString(activeDirectoryGroups.getActiveDirectoryPath(), true, "activeDirectoryPath");
+
+        return new ResponseEntity<ActiveDirectoryGroup>(
+                activeDirectoryGroupService.addOrUpdateActiveDirectoryGroup(activeDirectoryGroups), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/customer-order-frequencies")
+    public ResponseEntity<List<CustomerOrderFrequency>> getCustomerOrderFrequencies() {
+        return new ResponseEntity<List<CustomerOrderFrequency>>(
+                customerOrderFrequencyService.getCustomerOrderFrequencies(), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/customer-order-frequency")
+    public ResponseEntity<CustomerOrderFrequency> addOrUpdateCustomerOrderFrequency(
+            @RequestBody CustomerOrderFrequency customerOrderFrequencies)
+            throws OsirisValidationException, OsirisException {
+        if (customerOrderFrequencies.getId() != null)
+            validationHelper.validateReferential(customerOrderFrequencies, true, "customerOrderFrequencies");
+        validationHelper.validateString(customerOrderFrequencies.getCode(), true, "code");
+        validationHelper.validateString(customerOrderFrequencies.getLabel(), true, "label");
+        validationHelper.validateInteger(customerOrderFrequencies.getMonthNumber(), true, "daysNumber");
+
+        return new ResponseEntity<CustomerOrderFrequency>(
+                customerOrderFrequencyService.addOrUpdateCustomerOrderFrequency(customerOrderFrequencies),
+                HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/department-vat-settings")
     public ResponseEntity<List<DepartmentVatSetting>> getDepartmentVatSettings() {
@@ -385,6 +463,7 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getAttachmentTypeCni(), true, "AttachmentTypeCni");
         validationHelper.validateReferential(constant.getAttachmentTypeLogo(), true, "AttachmentTypeLogo");
         validationHelper.validateReferential(constant.getAttachmentTypeJournal(), true, "AttachmentTypeJournal");
+        validationHelper.validateReferential(constant.getAttachmentTypeQuotation(), true, "AttachmentTypeQuotation");
         validationHelper.validateReferential(constant.getAttachmentTypeProofOfAddress(), true,
                 "AttachmentTypeProofOfAddress");
         validationHelper.validateReferential(constant.getAttachmentTypePublicationProof(), true,
@@ -992,7 +1071,6 @@ public class MiscellaneousController {
             validationHelper.validateReferential(documentTypes, true, "documentTypes");
         validationHelper.validateString(documentTypes.getCode(), true, 20, "code");
         validationHelper.validateString(documentTypes.getLabel(), true, 100, "label");
-
         return new ResponseEntity<DocumentType>(documentTypeService.addOrUpdateDocumentType(documentTypes),
                 HttpStatus.OK);
     }
@@ -1032,10 +1110,12 @@ public class MiscellaneousController {
 
     @PostMapping(inputEntryPoint + "/attachment/upload")
     public ResponseEntity<List<Attachment>> uploadAttachment(@RequestParam MultipartFile file,
-            @RequestParam Integer idEntity, @RequestParam String entityType,
+            @RequestParam(required = false) Integer idEntity, @RequestParam(required = false) String codeEntity,
+            @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
             @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType,
-            @RequestParam(name = "pageSelection", required = false) String pageSelection)
+            @RequestParam(name = "pageSelection", required = false) String pageSelection,
+            @RequestParam(name = "typeDocumentCode", required = false) String typeDocumentCode)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (idAttachmentType == null)
             throw new OsirisValidationException("idAttachmentType");
@@ -1048,11 +1128,18 @@ public class MiscellaneousController {
         if (filename == null || filename.equals(""))
             throw new OsirisValidationException("filename");
 
-        if (idEntity == null)
-            throw new OsirisValidationException("idEntity");
+        if (idEntity == null && codeEntity == null)
+            throw new OsirisValidationException("idEntity or codeEntity");
 
         if (entityType == null)
             throw new OsirisValidationException("entityType");
+
+        TypeDocument typeDocument = null;
+        if (typeDocumentCode != null) {
+            typeDocument = typeDocumentService.getTypeDocumentByCode(typeDocumentCode);
+            if (typeDocument == null)
+                throw new OsirisValidationException("typeDocument");
+        }
 
         if (!entityType.equals(Tiers.class.getSimpleName())
                 && !entityType.equals("Ofx")
@@ -1063,12 +1150,15 @@ public class MiscellaneousController {
                 && !entityType.equals(CompetentAuthority.class.getSimpleName())
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Affaire.class.getSimpleName())
+                && !entityType.equals(AssoServiceDocument.class.getSimpleName())
+                && !entityType.equals(TypeDocument.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName()))
+
             throw new OsirisValidationException("entityType");
 
         return new ResponseEntity<List<Attachment>>(
-                attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename,
-                        replaceExistingAttachementType, pageSelection),
+                attachmentService.addAttachment(file, idEntity, codeEntity, entityType, attachmentType, filename,
+                        replaceExistingAttachementType, pageSelection, typeDocument),
                 HttpStatus.OK);
     }
 
@@ -1223,6 +1313,16 @@ public class MiscellaneousController {
     public ResponseEntity<OsirisLog> addOrUpdateLogs(@RequestBody OsirisLog osirisLog)
             throws OsirisValidationException, OsirisException {
         return new ResponseEntity<OsirisLog>(globalExceptionHandler.addOrUpdateLog(osirisLog), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/customer-mail/send/immediatly")
+    public ResponseEntity<Boolean> sendCustomerMailImmediatly(@RequestParam Integer idCustomerMail)
+            throws OsirisValidationException, OsirisException {
+        CustomerMail customerMail = customerMailService.getMail(idCustomerMail);
+        if (customerMail == null)
+            throw new OsirisValidationException("customerMail");
+        customerMailService.sendCustomerMailImmediatly(customerMail);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/customer-mail/quotation")

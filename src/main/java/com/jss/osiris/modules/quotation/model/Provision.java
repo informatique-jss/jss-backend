@@ -1,21 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -27,10 +13,27 @@ import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 @Entity
-@Table(indexes = { @Index(name = "idx_provision_asso_affaire_order", columnList = "id_asso_affaire_order"),
+@Table(indexes = { @Index(name = "idx_provision_service", columnList = "id_service"),
 		@Index(name = "idx_provision_formalite", columnList = "id_formalite"),
 		@Index(name = "idx_provision_domicialitation", columnList = "id_domiciliation"),
+		@Index(name = "idx_provision_employee", columnList = "id_employee"),
 		@Index(name = "idx_provision_simple_provision", columnList = "id_simple_provision"),
 		@Index(name = "idx_provision_announcement", columnList = "id_announcement"),
 })
@@ -42,9 +45,9 @@ public class Provision implements IId, IAttachment {
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_asso_affaire_order")
+	@JoinColumn(name = "id_service")
 	@JsonIgnoreProperties(value = { "provisions" }, allowSetters = true)
-	private AssoAffaireOrder assoAffaireOrder;
+	private Service service;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
@@ -183,6 +186,9 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isCorrespondenceFees;
 
+	@Column(nullable = false)
+	private Boolean isSupplyFullBeCopy;
+
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
 	private List<Attachment> attachments;
@@ -199,20 +205,21 @@ public class Provision implements IId, IAttachment {
 			"invoice" }, allowSetters = true)
 	private List<Payment> payments;
 
+	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
+	private List<CustomerOrderComment> customerOrderComments;
+
+	@Transient
+	private LocalDateTime lastStatusReminderAcDateTime;
+
+	private LocalDateTime lastCompetentAuthorityReminderDateTime;
+
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public AssoAffaireOrder getAssoAffaireOrder() {
-		return assoAffaireOrder;
-	}
-
-	public void setAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder) {
-		this.assoAffaireOrder = assoAffaireOrder;
 	}
 
 	public ProvisionType getProvisionType() {
@@ -575,4 +582,43 @@ public class Provision implements IId, IAttachment {
 		this.isRneUpdate = isRneUpdate;
 	}
 
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
+	}
+
+	public LocalDateTime getLastStatusReminderAcDateTime() {
+		return lastStatusReminderAcDateTime;
+	}
+
+	public void setLastStatusReminderAcDateTime(LocalDateTime lastStatusReminderAcDateTime) {
+		this.lastStatusReminderAcDateTime = lastStatusReminderAcDateTime;
+	}
+
+	public LocalDateTime getLastCompetentAuthorityReminderDateTime() {
+		return lastCompetentAuthorityReminderDateTime;
+	}
+
+	public void setLastCompetentAuthorityReminderDateTime(LocalDateTime lastCompetentAuthorityReminderDateTime) {
+		this.lastCompetentAuthorityReminderDateTime = lastCompetentAuthorityReminderDateTime;
+	}
+
+	public List<CustomerOrderComment> getCustomerOrderComments() {
+		return customerOrderComments;
+	}
+
+	public void setCustomerOrderComments(List<CustomerOrderComment> customerOrderComments) {
+		this.customerOrderComments = customerOrderComments;
+	}
+
+	public Boolean getIsSupplyFullBeCopy() {
+		return isSupplyFullBeCopy;
+	}
+
+	public void setIsSupplyFullBeCopy(Boolean isSupplyFullBeCopy) {
+		this.isSupplyFullBeCopy = isSupplyFullBeCopy;
+	}
 }

@@ -20,6 +20,8 @@ public interface AssoAffaireOrderSearchResult {
 
 	public String getProvisionTypeLabel();
 
+	public String getServiceTypeLabel();
+
 	public String getStatusLabel();
 
 	public String getAssoId();

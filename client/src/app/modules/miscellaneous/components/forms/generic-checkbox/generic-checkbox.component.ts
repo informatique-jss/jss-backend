@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'generic-checkbox',
@@ -10,11 +10,14 @@ import { GenericFormComponent } from '../generic-form.components';
 })
 export class GenericCheckboxComponent extends GenericFormComponent implements OnInit {
   constructor(
-    private formBuilder3: UntypedFormBuilder, private userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3);
+    private formBuilder3: UntypedFormBuilder, private appService2: AppService) {
+    super(formBuilder3, appService2);
   }
 
   callOnNgInit(): void {
   }
 
+  getPreviewActionLinkFunction(entity: any): string[] | undefined {
+    return undefined;
+  }
 }

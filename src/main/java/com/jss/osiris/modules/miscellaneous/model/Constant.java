@@ -3,15 +3,6 @@ package com.jss.osiris.modules.miscellaneous.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
@@ -23,6 +14,8 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.ProvisionType;
+import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
@@ -37,11 +30,22 @@ import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+
 @Entity
 public class Constant implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -197,6 +201,26 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeAutomaticMail;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_contract")
+	private AttachmentType attachmentTypeContract;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_template")
+	private AttachmentType attachmentTypeTemplate;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_quotation")
+	private AttachmentType attachmentTypeQuotation;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_Refus_infogreffe")
+	private AttachmentType attachmentTypeRefusInfogreffe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_Autre_infogreffe")
+	private AttachmentType attachmentTypeAutreInfogreffe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -348,6 +372,26 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_rne_update")
 	private BillingType billingTypeRneUpdate;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_domiciliation_contract_keep_mail")
+	private BillingType billingTypeDomiciliationContractTypeKeepMail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_email")
+	private BillingType billingTypeDomiciliationContractTypeRouteEmail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_mail")
+	private BillingType billingTypeDomiciliationContractTypeRouteMail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_mail_email")
+	private BillingType billingTypeDomiciliationContractTypeRouteEmailAndMail;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_supply_full_be_copy")
+	private BillingType billingTypeSupplyFullBeCopy;
+
 	@Column(length = 1000)
 	private String stringNantissementDepositFormeJuridiqueCode;
 	@Column(length = 1000)
@@ -422,6 +466,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_mail_redirection_type_other")
 	private MailRedirectionType mailRedirectionTypeOther;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_mail_redirection_type_legal_guardian")
+	private MailRedirectionType mailRedirectionTypeLegalGuardian;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_mail_redirection_type_activity")
+	private MailRedirectionType mailRedirectionTypeActivity;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_act_type_seing")
@@ -632,6 +684,14 @@ public class Constant implements Serializable, IId {
 	private PrincipalAccountingAccount principalAccountingAccountDeposit;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_principal_accounting_account_litigious")
+	private PrincipalAccountingAccount principalAccountingAccountLitigious;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_principal_accounting_account_suspicious")
+	private PrincipalAccountingAccount principalAccountingAccountSuspicious;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_principal_accounting_account_deposit_provider")
 	private PrincipalAccountingAccount principalAccountingAccountDepositProvider;
 
@@ -721,6 +781,22 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_rff_frequency_monthly")
 	private RffFrequency rffFrequencyMonthly;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_service_type_other")
+	private ServiceType serviceTypeOther;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_provision_type_bilan_publication")
+	private ProvisionType provisionTypeBilanPublication;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_active_directory_group_formalites")
+	private ActiveDirectoryGroup activeDirectoryGroupFormalites;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_active_directory_group_facturation")
+	private ActiveDirectoryGroup activeDirectoryGroupFacturation;
 
 	private LocalDate dateAccountingClosureForAccountant;
 	private LocalDate dateAccountingClosureForAll;
@@ -1489,6 +1565,14 @@ public class Constant implements Serializable, IId {
 		this.attachmentTypeJournal = attachmentTypeJournal;
 	}
 
+	public AttachmentType getAttachmentTypeQuotation() {
+		return attachmentTypeQuotation;
+	}
+
+	public void setAttachmentTypeQuotation(AttachmentType attachmentTypeQuotation) {
+		this.attachmentTypeQuotation = attachmentTypeQuotation;
+	}
+
 	public BillingClosureRecipientType getBillingClosureRecipientTypeResponsable() {
 		return billingClosureRecipientTypeResponsable;
 	}
@@ -1580,6 +1664,14 @@ public class Constant implements Serializable, IId {
 
 	public PrincipalAccountingAccount getPrincipalAccountingAccountDeposit() {
 		return principalAccountingAccountDeposit;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountLitigious() {
+		return principalAccountingAccountLitigious;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountSuspicious() {
+		return principalAccountingAccountSuspicious;
 	}
 
 	public void setPrincipalAccountingAccountDeposit(PrincipalAccountingAccount principalAccountingAccountDeposit) {
@@ -1809,6 +1901,23 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeDeboursNonTaxable(BillingType billingTypeDeboursNonTaxable) {
 		this.billingTypeDeboursNonTaxable = billingTypeDeboursNonTaxable;
+	}
+
+	public BillingType getBillingTypeSupplyFullBeCopy() {
+		return billingTypeSupplyFullBeCopy;
+	}
+
+	public void setBillingTypeSupplyFullBeCopy(BillingType billingTypeSupplyFullBeCopy) {
+		this.billingTypeSupplyFullBeCopy = billingTypeSupplyFullBeCopy;
+	}
+
+	public void setPrincipalAccountingAccountLitigious(PrincipalAccountingAccount principalAccountingAccountLitigious) {
+		this.principalAccountingAccountLitigious = principalAccountingAccountLitigious;
+	}
+
+	public void setPrincipalAccountingAccountSuspicious(
+			PrincipalAccountingAccount principalAccountingAccountSuspicious) {
+		this.principalAccountingAccountSuspicious = principalAccountingAccountSuspicious;
 	}
 
 	public AccountingAccount getAccountingAccountCaisse() {
@@ -2109,12 +2218,96 @@ public class Constant implements Serializable, IId {
 		this.competentAuthorityTypeInsee = competentAuthorityTypeInsee;
 	}
 
+	public ServiceType getServiceTypeOther() {
+		return serviceTypeOther;
+	}
+
+	public void setServiceTypeOther(ServiceType serviceTypeOther) {
+		this.serviceTypeOther = serviceTypeOther;
+	}
+
+	public ProvisionType getProvisionTypeBilanPublication() {
+		return provisionTypeBilanPublication;
+	}
+
+	public void setProvisionTypeBilanPublication(ProvisionType provisionTypeBilanPublication) {
+		this.provisionTypeBilanPublication = provisionTypeBilanPublication;
+	}
+
 	public AccountingJournal getAccountingJournalBilan() {
 		return accountingJournalBilan;
 	}
 
 	public void setAccountingJournalBilan(AccountingJournal accountingJournalBilan) {
 		this.accountingJournalBilan = accountingJournalBilan;
+	}
+
+	public AttachmentType getAttachmentTypeContract() {
+		return attachmentTypeContract;
+	}
+
+	public void setAttachmentTypeContract(AttachmentType attachmentTypeContract) {
+		this.attachmentTypeContract = attachmentTypeContract;
+	}
+
+	public AttachmentType getAttachmentTypeTemplate() {
+		return attachmentTypeTemplate;
+	}
+
+	public void setAttachmentTypeTemplate(AttachmentType attachmentTypeTemplate) {
+		this.attachmentTypeTemplate = attachmentTypeTemplate;
+	}
+
+	public BillingType getBillingTypeDomiciliationContractTypeKeepMail() {
+		return billingTypeDomiciliationContractTypeKeepMail;
+	}
+
+	public void setBillingTypeDomiciliationContractTypeKeepMail(
+			BillingType billingTypeDomiciliationContractTypeKeepMail) {
+		this.billingTypeDomiciliationContractTypeKeepMail = billingTypeDomiciliationContractTypeKeepMail;
+	}
+
+	public BillingType getBillingTypeDomiciliationContractTypeRouteEmail() {
+		return billingTypeDomiciliationContractTypeRouteEmail;
+	}
+
+	public void setBillingTypeDomiciliationContractTypeRouteEmail(
+			BillingType billingTypeDomiciliationContractTypeRouteEmail) {
+		this.billingTypeDomiciliationContractTypeRouteEmail = billingTypeDomiciliationContractTypeRouteEmail;
+	}
+
+	public BillingType getBillingTypeDomiciliationContractTypeRouteMail() {
+		return billingTypeDomiciliationContractTypeRouteMail;
+	}
+
+	public void setBillingTypeDomiciliationContractTypeRouteMail(
+			BillingType billingTypeDomiciliationContractTypeRouteMail) {
+		this.billingTypeDomiciliationContractTypeRouteMail = billingTypeDomiciliationContractTypeRouteMail;
+	}
+
+	public BillingType getBillingTypeDomiciliationContractTypeRouteEmailAndMail() {
+		return billingTypeDomiciliationContractTypeRouteEmailAndMail;
+	}
+
+	public void setBillingTypeDomiciliationContractTypeRouteEmailAndMail(
+			BillingType billingTypeDomiciliationContractTypeRouteEmailAndMail) {
+		this.billingTypeDomiciliationContractTypeRouteEmailAndMail = billingTypeDomiciliationContractTypeRouteEmailAndMail;
+	}
+
+	public MailRedirectionType getMailRedirectionTypeLegalGuardian() {
+		return mailRedirectionTypeLegalGuardian;
+	}
+
+	public void setMailRedirectionTypeLegalGuardian(MailRedirectionType mailRedirectionTypeLegalGuardian) {
+		this.mailRedirectionTypeLegalGuardian = mailRedirectionTypeLegalGuardian;
+	}
+
+	public MailRedirectionType getMailRedirectionTypeActivity() {
+		return mailRedirectionTypeActivity;
+	}
+
+	public void setMailRedirectionTypeActivity(MailRedirectionType mailRedirectionTypeActivity) {
+		this.mailRedirectionTypeActivity = mailRedirectionTypeActivity;
 	}
 
 	public LocalDate getDateAccountingClosureForAccountant() {
@@ -2132,4 +2325,37 @@ public class Constant implements Serializable, IId {
 	public void setDateAccountingClosureForAll(LocalDate dateAccountingClosureForAll) {
 		this.dateAccountingClosureForAll = dateAccountingClosureForAll;
 	}
+
+	public AttachmentType getAttachmentTypeRefusInfogreffe() {
+		return attachmentTypeRefusInfogreffe;
+	}
+
+	public void setAttachmentTypeRefusInfogreffe(AttachmentType attachmentTypeRefusInfogreffe) {
+		this.attachmentTypeRefusInfogreffe = attachmentTypeRefusInfogreffe;
+	}
+
+	public AttachmentType getAttachmentTypeAutreInfogreffe() {
+		return attachmentTypeAutreInfogreffe;
+	}
+
+	public void setAttachmentTypeAutreInfogreffe(AttachmentType attachmentTypeAutreInfogreffe) {
+		this.attachmentTypeAutreInfogreffe = attachmentTypeAutreInfogreffe;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() {
+		return activeDirectoryGroupFormalites;
+	}
+
+	public void setActiveDirectoryGroupFormalites(ActiveDirectoryGroup activeDirectoryGroupFormalites) {
+		this.activeDirectoryGroupFormalites = activeDirectoryGroupFormalites;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() {
+		return activeDirectoryGroupFacturation;
+	}
+
+	public void setActiveDirectoryGroupFacturation(ActiveDirectoryGroup activeDirectoryGroupFacturation) {
+		this.activeDirectoryGroupFacturation = activeDirectoryGroupFacturation;
+	}
+
 }

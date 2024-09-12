@@ -1,6 +1,7 @@
 import { IReferential } from "../../administration/model/IReferential";
 import { BillingType } from "../../miscellaneous/model/BillingType";
 import { CompetentAuthority } from "../../miscellaneous/model/CompetentAuthority";
+import { CustomerOrderFrequency } from "../../miscellaneous/model/CustomerOrderFrequency";
 import { Employee } from "../../profile/model/Employee";
 import { AssignationType } from "./AssignationType";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
@@ -16,4 +17,6 @@ export interface ProvisionType extends IReferential {
   defaultCompetentAuthorityServiceProvider: CompetentAuthority;
   isDisplayActeDepositScreen: boolean;
   isDisplayAnnualAccountScreen: boolean;
+  isRecurring: boolean;
+  recurringFrequency: CustomerOrderFrequency;
 }

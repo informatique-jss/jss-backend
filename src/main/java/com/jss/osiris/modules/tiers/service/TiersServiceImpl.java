@@ -185,10 +185,14 @@ public class TiersServiceImpl implements TiersService {
             tiers.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             tiers.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             tiers.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
+            tiers.setAccountingAccountLitigious(accountingAccountCouple.getAccountingAccountLitigious());
+            tiers.setAccountingAccountSuspicious(accountingAccountCouple.getAccountingAccountSuspicious());
         } else {
             accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountCustomer(), tiersLabel);
             accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountDeposit(), tiersLabel);
             accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountProvider(), tiersLabel);
+            accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountSuspicious(), tiersLabel);
+            accountingAccountService.updateAccountingAccountLabel(tiers.getAccountingAccountLitigious(), tiersLabel);
         }
 
         if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0)
@@ -355,9 +359,13 @@ public class TiersServiceImpl implements TiersService {
         accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountCustomer());
         accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountDeposit());
         accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountProvider());
+        accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountLitigious());
+        accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountSuspicious());
         tiers.setAccountingAccountCustomer(null);
         tiers.setAccountingAccountDeposit(null);
         tiers.setAccountingAccountProvider(null);
+        tiers.setAccountingAccountSuspicious(null);
+        tiers.setAccountingAccountLitigious(null);
 
         addOrUpdateTiers(tiers);
 

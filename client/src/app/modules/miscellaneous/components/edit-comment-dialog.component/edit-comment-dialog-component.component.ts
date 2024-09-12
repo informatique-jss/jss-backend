@@ -10,6 +10,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class EditCommentDialogComponent {
 
   comment: string = "";
+  isMandatory: boolean = true;
 
   constructor(
     public dialogRef: MatDialogRef<EditCommentDialogComponent>,

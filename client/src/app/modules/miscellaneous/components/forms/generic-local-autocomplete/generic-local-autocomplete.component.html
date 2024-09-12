@@ -5,11 +5,6 @@
   <mat-icon color="accent" matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
     close
   </mat-icon>
-  <mat-icon color="accent" matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)"
-    matTooltipShowDelay="1000" matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined"
-    class="pointer ">
-    adjust
-  </mat-icon>
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let billingType of filteredTypes | async" [value]="billingType">

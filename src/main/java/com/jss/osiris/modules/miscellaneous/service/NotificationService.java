@@ -10,6 +10,7 @@ import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -60,6 +61,9 @@ public interface NotificationService {
         public void notifyInvoiceToReminder(Invoice invoice) throws OsirisException;
 
         public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException;
+
+        public void notifyAttachmentAddToService(Service service, Attachment attachment)
+                        throws OsirisException;
 
         public void notifyGuichetUniqueFormaliteStatus(Provision provision,
                         FormaliteGuichetUnique formaliteGuichetUnique) throws OsirisException;

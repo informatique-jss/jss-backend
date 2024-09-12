@@ -19,6 +19,15 @@ export interface OrderingSearchResult {
   affaireAddress: string;
   lastStatusUpdate: Date;
   customerOrderOriginLabel: string;
+  serviceTypeLabel: string;
+
+  // Recurring
+  customerOrderParentRecurringId: number;
+  recurringPeriodStartDate: Date;
+  recurringPeriodEndDate: Date;
+  recurringStartDate: Date;
+  recurringEndDate: Date;
+  isRecurringAutomaticallyBilled: boolean;
 }
 
 

@@ -3,17 +3,17 @@ package com.jss.osiris.modules.miscellaneous.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 import com.jss.osiris.modules.profile.model.Employee;
 
@@ -39,6 +39,7 @@ public class Notification implements Serializable, IId {
   public static String INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
 
   public static String PROVISION_ADD_ATTACHMENT = "PROVISION_ADD_ATTACHMENT";
+  public static String SERVICE_ADD_ATTACHMENT = "SERVICE_ADD_ATTACHMENT";
   public static String PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED";
 
   public static String TIERS_DEPOSIT_MANDATORY = "TIERS_DEPOSIT_MANDATORY";

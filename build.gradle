@@ -20,54 +20,52 @@ repositories {
         } 
 } 
   
- 
+  
 dependencies {
     // Spring
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.4'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.4' 
-    implementation 'org.springframework.boot:spring-boot-starter-security:2.6.4'
-    implementation 'org.springframework.session:spring-session-jdbc:2.6.3'
-    implementation 'org.springframework.ldap:spring-ldap-core:2.4.1'
-    implementation 'org.springframework.security:spring-security-ldap:5.7.3'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
-    runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.4'
-    implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.5'
-    implementation 'org.springframework.boot:spring-boot-starter-cache:2.6.4'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.2.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.4' 
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.2.4'
+    implementation 'org.springframework.session:spring-session-jdbc:3.2.2'
+    implementation 'org.springframework.ldap:spring-ldap-core:3.2.2'
+    implementation 'org.springframework.security:spring-security-ldap:6.2.3'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.4'
+    implementation 'org.springframework.boot:spring-boot-starter-cache:3.2.4'
     implementation 'com.hazelcast:hazelcast-all:4.2.7'
     implementation 'com.hazelcast:hazelcast-hibernate53:5.0.0'
 
     // Database
-    implementation 'org.hibernate:hibernate-c3p0:5.6.9.Final'
-	implementation 'org.postgresql:postgresql:42.3.5' 
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.3'
+    implementation 'org.hibernate.orm:hibernate-c3p0:6.4.4.Final'
+	implementation 'org.postgresql:postgresql:42.7.3' 
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5-jakarta:2.17.0'
 
     // Type tools
 	implementation 'org.apache.commons:commons-collections4:4.4'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'commons-validator:commons-validator:1.7'
-    implementation 'org.apache.commons:commons-text:1.10.0'
-    implementation 'fr.marcwrobel:jbanking:4.1.0'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'commons-validator:commons-validator:1.8.0'
+    implementation 'org.apache.commons:commons-text:1.11.0'
+    implementation 'fr.marcwrobel:jbanking:4.2.0'
     
     // PDF, XML, Office & HTML generation
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.7.1'
-    implementation 'org.apache.poi:poi-ooxml:5.2.2'
-    implementation 'org.apache.poi:poi:5.2.2'
-    implementation 'org.xhtmlrenderer:flying-saucer-core:9.1.22'
-    implementation 'org.xhtmlrenderer:flying-saucer-pdf-itext5:9.1.22'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.2.4'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.xhtmlrenderer:flying-saucer-core:9.7.1'
+    implementation 'org.xhtmlrenderer:flying-saucer-pdf-itext5:9.7.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.0'
 
     // QR code generation
-    implementation 'com.google.zxing:core:3.5.1'
-    implementation 'com.google.zxing:javase:3.5.1'
+    implementation 'com.google.zxing:core:3.5.3'
+    implementation 'com.google.zxing:javase:3.5.3'
 
     // Azure libs
-    implementation 'com.azure:azure-ai-formrecognizer:4.0.6'
-    implementation 'com.azure:azure-identity:1.8.3'
-} 
-
-group = 'com.jss.osiris' 
-version = '21.3' 
+    implementation 'com.azure:azure-ai-formrecognizer:4.1.6'
+    implementation 'com.azure:azure-identity:1.11.4'
+}
+ 
+group = 'com.jss.osiris'
+version = '22' 
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '17'
 targetCompatibility = '17'

@@ -1,11 +1,11 @@
 package com.jss.osiris.libs.batch.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -13,6 +13,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class BatchCategory implements IId {
 
     public static String GUICHET_UNIQUE = "GUICHET_UNIQUE";
+    public static String INFOGREFFE = "INFOGREFFE";
     public static String INDEXATION = "INDEXATION";
     public static String ACCOUNTING = "ACCOUNTING";
     public static String SYSTEM = "SYSTEM";

@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { TypeDocumentService } from 'src/app/modules/miscellaneous/services/guichet-unique/type.document.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { TypeDocument } from '../../../../../quotation/model/guichet-unique/referentials/TypeDocument';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-type-document',
@@ -13,9 +13,10 @@ import { GenericLocalAutocompleteComponent } from '../../generic-local-autocompl
 export class AutocompleteTypeDocumentComponent extends GenericLocalAutocompleteComponent<TypeDocument> implements OnInit {
 
   types: TypeDocument[] = [] as Array<TypeDocument>;
+  @Input() onlyDisplayWithAttachmentType: boolean = false;
 
-  constructor(private formBuild: UntypedFormBuilder, private TypeDocumentService: TypeDocumentService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private TypeDocumentService: TypeDocumentService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: TypeDocument[], value: string): TypeDocument[] {
@@ -26,7 +27,14 @@ export class AutocompleteTypeDocumentComponent extends GenericLocalAutocompleteC
   }
 
   initTypes(): void {
-    this.TypeDocumentService.getTypeDocument().subscribe(response => this.types = response);
+    this.TypeDocumentService.getTypeDocument().subscribe(response => {
+      if (this.onlyDisplayWithAttachmentType) {
+        for (let type of response)
+          if (type.attachmentType)
+            this.types.push(type);
+      } else
+        this.types = response
+    });
   }
 
 }

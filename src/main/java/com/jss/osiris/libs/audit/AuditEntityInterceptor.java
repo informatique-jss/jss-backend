@@ -1,12 +1,12 @@
 package com.jss.osiris.libs.audit;
 
-import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hibernate.EmptyInterceptor;
+import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,13 @@ import com.jss.osiris.libs.audit.model.Audit;
 import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.node.model.Node;
+import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Service
-public class AuditEntityInterceptor extends EmptyInterceptor {
+public class AuditEntityInterceptor implements Interceptor {
 
     Session session;
 
@@ -44,25 +45,26 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
     @Override
     public boolean onFlushDirty(
             Object entity,
-            Serializable id,
+            Object id,
             Object[] currentState,
             Object[] previousState,
             String[] propertyNames,
             Type[] types) {
         this.auditEntity(previousState, currentState, entity, id, propertyNames);
-        return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
+        return Interceptor.super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
     }
 
     @Override
     public boolean onSave(
             Object entity,
-            Serializable id,
+            Object id,
             Object[] state,
             String[] propertyNames,
             Type[] types) {
         if (!entity.getClass().getName().equals(IndexEntity.class.getName())
                 && !entity.getClass().getName().equals(Batch.class.getName())
-                && !entity.getClass().getName().equals(Audit.class.getName()) && id instanceof Integer) {
+                && !entity.getClass().getName().equals(Audit.class.getName())
+                && id instanceof Integer && isAuditAuthorized(entity)) {
             Audit audit = new Audit();
             audit.setUsername(activeDirectoryHelper.getCurrentUsername());
             audit.setDatetime(LocalDateTime.now());
@@ -72,14 +74,15 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
             audit.setFieldName("id");
             auditService.addOrUpdateAudit(audit);
         }
-        return super.onSave(entity, id, state, propertyNames, types);
+        return Interceptor.super.onSave(entity, id, state, propertyNames, types);
     }
 
     private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
-            Serializable id, String[] propertyNames) {
+            Object id, String[] propertyNames) {
         if (!entity.getClass().getName().equals(IndexEntity.class.getName())
                 && !entity.getClass().getName().equals(Batch.class.getName())
-                && !entity.getClass().getName().equals(Node.class.getName()) && id instanceof Integer) {
+                && !entity.getClass().getName().equals(Node.class.getName())
+                && id instanceof Integer && isAuditAuthorized(entity)) {
             for (int i = 0; i < previousState.length; i++) {
                 Object oldField = previousState[i];
                 Object newField = currentState[i];
@@ -177,5 +180,15 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
         ret.add(Void.class);
         ret.add(String.class);
         return ret;
+    }
+
+    private boolean isAuditAuthorized(Object entity) {
+        if (entity != null) {
+            for (Annotation annotation : entity.getClass().getAnnotations()) {
+                if (annotation.annotationType().getName().equals(DoNotAudit.class.getName()))
+                    return false;
+            }
+        }
+        return true;
     }
 }

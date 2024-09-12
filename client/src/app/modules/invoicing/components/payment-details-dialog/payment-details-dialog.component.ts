@@ -201,17 +201,17 @@ export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecke
 
         if (this.selectedPayment.provision) {
           this.currentProvision = this.selectedPayment.provision;
-          if (this.selectedPayment.provision.assoAffaireOrder)
-            this.currentCustomerOrder = this.selectedPayment.provision.assoAffaireOrder.customerOrder;
+          if (this.selectedPayment.provision.service.assoAffaireOrder)
+            this.currentCustomerOrder = this.selectedPayment.provision.service.assoAffaireOrder.customerOrder;
 
-          this.currentAffaire = this.selectedPayment.provision.assoAffaireOrder.affaire;
+          this.currentAffaire = this.selectedPayment.provision.service.assoAffaireOrder.affaire;
 
-          if (this.selectedPayment.provision.assoAffaireOrder.customerOrder.tiers)
-            this.currentTiers = this.selectedPayment.provision.assoAffaireOrder.customerOrder.tiers;
-          if (this.selectedPayment.provision.assoAffaireOrder.customerOrder.responsable)
-            this.currentResponsable = this.selectedPayment.provision.assoAffaireOrder.customerOrder.responsable;
-          if (this.selectedPayment.provision.assoAffaireOrder.customerOrder.confrere)
-            this.currentConfrere = this.selectedPayment.provision.assoAffaireOrder.customerOrder.confrere;
+          if (this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.tiers)
+            this.currentTiers = this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.tiers;
+          if (this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.responsable)
+            this.currentResponsable = this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.responsable;
+          if (this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.confrere)
+            this.currentConfrere = this.selectedPayment.provision.service.assoAffaireOrder.customerOrder.confrere;
         }
 
         this.searchAccountingRecord = {} as AccountingRecordSearch;

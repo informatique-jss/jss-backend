@@ -50,6 +50,10 @@ public interface ITiers extends IId, IDocument {
 
 	public AccountingAccount getAccountingAccountDeposit();
 
+	public AccountingAccount getAccountingAccountSuspicious();
+
+	public AccountingAccount getAccountingAccountLitigious();
+
 	public List<TiersFollowup> getTiersFollowups();
 
 	public String getIntercommunityVat();

@@ -28,7 +28,12 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     public void cleanAudit() {
-        auditRepository.cleanAudit();
+        try {
+            auditRepository.cleanAudit();
+        } catch (Exception e) {
+            if (!e.getMessage().contains("could not extract ResultSet"))
+                throw e;
+        }
     }
 
 }

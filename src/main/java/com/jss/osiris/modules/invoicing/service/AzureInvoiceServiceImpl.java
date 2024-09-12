@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +18,8 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.repository.AzureInvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
-import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -31,6 +27,8 @@ import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AzureInvoiceServiceImpl implements AzureInvoiceService {
@@ -61,9 +59,6 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
 
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
-
-    @Autowired
-    BillingItemService billingItemService;
 
     @Autowired
     PricingHelper pricingHelper;
@@ -126,7 +121,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
 
         Invoice invoice = new Invoice();
         invoice.setCompetentAuthority(azureInvoice.getCompetentAuthority());
-        invoice.setCustomerOrderForInboundInvoice(currentProvision.getAssoAffaireOrder().getCustomerOrder());
+        invoice.setCustomerOrderForInboundInvoice(
+                currentProvision.getService().getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(azureInvoice.getInvoiceId());
         invoice.setIsInvoiceFromProvider(true);
         invoice.setIsProviderCreditNote(false);
@@ -138,11 +134,9 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
         // Taxable item
-        List<BillingItem> taxableBillingItem = billingItemService
-                .getBillingItemByBillingType(constantService.getBillingTypeEmolumentsDeGreffeDebour());
-
         InvoiceItem invoiceItem = new InvoiceItem();
-        invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(taxableBillingItem, null));
+        invoiceItem.setBillingItem(
+                pricingHelper.getAppliableBillingItem(constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));
         invoiceItem.setDiscountAmount(0f);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
@@ -158,11 +152,9 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoice.getInvoiceItems().add(invoiceItem);
 
         // Non taxable item
-        List<BillingItem> nonTaxableBillingItem = billingItemService
-                .getBillingItemByBillingType(constantService.getBillingTypeDeboursNonTaxable());
-
         InvoiceItem invoiceItem2 = new InvoiceItem();
-        invoiceItem2.setBillingItem(pricingHelper.getAppliableBillingItem(nonTaxableBillingItem, null));
+        invoiceItem2.setBillingItem(
+                pricingHelper.getAppliableBillingItem(constantService.getBillingTypeDeboursNonTaxable(), null));
         invoiceItem2.setDiscountAmount(0f);
         invoiceItem2.setIsGifted(false);
         invoiceItem2.setIsOverridePrice(false);

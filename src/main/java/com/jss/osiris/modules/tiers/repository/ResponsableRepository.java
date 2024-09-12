@@ -27,8 +27,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         +
                         "  from " +
                         "          asso_affaire_order aao " +
-                        "  left join provision p on " +
-                        "          p.id_asso_affaire_order= aao.id " +
+                        "  left join service on service.id_asso_affaire_order = aao.id left join provision p on " +
+                        "          p.id_service= service.id " +
                         "  left join announcement a on " +
                         "          a.id = p.id_announcement " +
                         "          join customer_order co on co.id = aao.id_customer_order " +

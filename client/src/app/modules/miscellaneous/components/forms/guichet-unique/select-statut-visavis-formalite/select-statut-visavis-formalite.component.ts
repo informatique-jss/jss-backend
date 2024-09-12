@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { StatutVisAVisFormaliteService } from 'src/app/modules/miscellaneous/services/guichet-unique/statut.visavis.formalite.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { StatutVisAVisFormalite } from '../../../../../quotation/model/guichet-unique/referentials/StatutVisAVisFormalite';
 import { GenericSelectComponent } from '../../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-statut-visavis-formalite',
@@ -14,8 +14,8 @@ export class SelectStatutVisAVisFormaliteComponent extends GenericSelectComponen
 
   types: StatutVisAVisFormalite[] = [] as Array<StatutVisAVisFormalite>;
 
-  constructor(private formBuild: UntypedFormBuilder, private StatutVisAVisFormaliteService: StatutVisAVisFormaliteService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private StatutVisAVisFormaliteService: StatutVisAVisFormaliteService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

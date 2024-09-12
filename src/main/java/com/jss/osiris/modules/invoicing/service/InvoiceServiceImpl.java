@@ -273,6 +273,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         addOrUpdateInvoice(invoice);
+        if (invoice.getIsInvoiceFromProvider() == false && invoice.getIsProviderCreditNote() == false)
+            generateInvoicePdf(invoice, invoice.getCustomerOrder());
 
         // Associate attachment for azure invoice
         if (invoice.getAzureInvoice() != null) {
@@ -280,6 +282,43 @@ public class InvoiceServiceImpl implements InvoiceService {
                     .getAttachment(invoice.getAzureInvoice().getAttachments().get(0).getId());
             attachment.setInvoice(invoice);
             attachmentService.addOrUpdateAttachment(attachment);
+        }
+        return invoice;
+    }
+
+    public Invoice generateInvoicePdf(Invoice invoice, CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        // Create invoice PDF and attach it to customerOrder and invoice
+        File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice,
+                invoice.getReverseCreditNote());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+        try {
+            List<Attachment> attachments = new ArrayList<Attachment>();
+            if (customerOrder != null)
+                attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
+                        customerOrder.getId(), null,
+                        CustomerOrder.class.getSimpleName(),
+                        constantService.getAttachmentTypeInvoice(),
+                        "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                        false, "Facture n°" + invoice.getId(), null, null, null);
+            else
+                attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
+                        invoice.getId(), null,
+                        Invoice.class.getSimpleName(),
+                        constantService.getAttachmentTypeInvoice(),
+                        "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                        false, "Facture n°" + invoice.getId(), null, null, null);
+
+            for (Attachment attachment : attachments)
+                if (attachment.getDescription().contains(invoice.getId() + "")) {
+                    attachment.setInvoice(invoice);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
+
+        } catch (FileNotFoundException e) {
+            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+        } finally {
+            invoicePdf.delete();
         }
         return invoice;
     }
@@ -401,11 +440,11 @@ public class InvoiceServiceImpl implements InvoiceService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(creditNotePdf),
-                        customerOrder.getId(),
+                        customerOrder.getId(), null,
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypeCreditNote(),
                         "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                        false, "Avoir n°" + creditNote.getId(), null, null);
+                        false, "Avoir n°" + creditNote.getId(), null, null, null);
 
                 for (Attachment attachment : attachments)
                     if (attachment.getDescription().contains(creditNote.getId() + "")) {
@@ -424,7 +463,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         addOrUpdateInvoice(invoice);
 
         if (customerOrder != null)
-            mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote, invoice);
+            mailHelper.sendCreditNoteToCustomer(customerOrder, false, creditNote);
 
         return invoice;
     }
@@ -501,7 +540,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public List<InvoiceSearchResult> getInvoiceForCustomerOrder(Integer customerOrderId) throws OsirisException {
         return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
-                0, customerOrderId, Arrays.asList(0), 0, constantService.getDocumentTypeBilling().getId());
+                0, customerOrderId, Arrays.asList(0), 0, 0,
+                constantService.getDocumentTypeBilling().getId());
     }
 
     @Override
@@ -509,7 +549,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             throws OsirisException {
         return invoiceRepository.findInvoice(Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), null, null, false, constantService.getInvoiceStatusPayed().getId(),
-                0, 0, Arrays.asList(0), customerOrderId, constantService.getDocumentTypeBilling().getId());
+                0, 0, Arrays.asList(0), 0, customerOrderId,
+                constantService.getDocumentTypeBilling().getId());
     }
 
     @Override
@@ -545,12 +586,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoiceSearch.getInvoiceId() == null)
             invoiceSearch.setInvoiceId(0);
 
+        Integer salesEmployeeId = 0;
+        if (invoiceSearch.getSalesEmployee() != null)
+            salesEmployeeId = invoiceSearch.getSalesEmployee().getId();
+
         return invoiceRepository.findInvoice(statusId,
                 invoiceSearch.getStartDate().withHour(0).withMinute(0),
                 invoiceSearch.getEndDate().withHour(23).withMinute(59), invoiceSearch.getMinAmount(),
                 invoiceSearch.getMaxAmount(), invoiceSearch.getShowToRecover(),
                 constantService.getInvoiceStatusPayed().getId(), invoiceSearch.getInvoiceId(),
-                invoiceSearch.getCustomerOrderId(), customerOrderId, 0,
+                invoiceSearch.getCustomerOrderId(), customerOrderId, salesEmployeeId, 0,
                 constantService.getDocumentTypeBilling().getId());
     }
 

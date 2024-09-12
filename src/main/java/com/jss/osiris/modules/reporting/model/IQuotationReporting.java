@@ -11,7 +11,7 @@ public interface IQuotationReporting {
 
     public String getAffaireLabel();
 
-    public Integer getCustomerOrderId();
+    public Integer getQuotationId();
 
     public Integer getProvisionId();
 

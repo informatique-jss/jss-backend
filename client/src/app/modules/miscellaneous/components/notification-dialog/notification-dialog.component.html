@@ -364,6 +364,22 @@
                         Un document a été ajouté sur une prestation : {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
+                    <ng-container *ngIf="notification.notificationType==SERVICE_ADD_ATTACHMENT">
+                      <mat-card-header>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Document ajouté</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-header>
+                      <mat-card-content>
+                        Un document a été ajouté sur le service : {{notification.detail1}}
+                      </mat-card-content>
+                    </ng-container>
                     <ng-container *ngIf="notification.notificationType==PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED">
                       <mat-card-header>
                         <mat-card-title matBadge="X" matBadgePosition="above before"

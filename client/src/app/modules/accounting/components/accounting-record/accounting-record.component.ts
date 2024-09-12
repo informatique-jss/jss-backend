@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
@@ -19,6 +20,7 @@ import { ITiers } from '../../../tiers/model/ITiers';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordSearch } from '../../model/AccountingRecordSearch';
 import { AccountingRecordSearchResult } from '../../model/AccountingRecordSearchResult';
+import { AccountingAccountService } from '../../services/accounting.account.service';
 import { AccountingRecordSearchResultService } from '../../services/accounting.record.search.result.service';
 import { AccountingRecordService } from '../../services/accounting.record.service';
 
@@ -44,6 +46,8 @@ export class AccountingRecordComponent implements OnInit {
     private paymentDetailsDialogService: PaymentDetailsDialogService,
     public confirmationDialog: MatDialog,
     private constantService: ConstantService,
+    private activatedRoute: ActivatedRoute,
+    private accountingAccountService: AccountingAccountService
   ) { }
 
   accountingRecords: AccountingRecordSearchResult[] | undefined;
@@ -56,6 +60,8 @@ export class AccountingRecordComponent implements OnInit {
   tableActionToLetterValues: SortTableAction<AccountingRecordSearchResult>[] = [] as Array<SortTableAction<AccountingRecordSearchResult>>;
   bookmark: AccountingRecordSearch | undefined;
   refreshLetteringTable: Subject<void> = new Subject<void>();
+  accountingAccountId: string | undefined;
+
 
   canAddNewAccountingRecord() {
     return this.habilitationService.canAddNewAccountingRecord();
@@ -162,6 +168,16 @@ export class AccountingRecordComponent implements OnInit {
       }, display: true,
     } as SortTableAction<AccountingRecordSearchResult>);
 
+    let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+    this.accountingAccountId = this.activatedRoute.snapshot.params.accountingAccountId;
+    if (url[1].path == "view" && this.accountingAccountId) {
+      this.accountingAccountService.getAccountingAccountById(parseInt(this.accountingAccountId)).subscribe(response => {
+        this.accountingRecordSearch.accountingAccount = response;
+        this.accountingRecordSearch.hideLettered = true;
+        this.setCurentFiscalYear();
+        this.searchRecords();
+      });
+    }
   }
 
   letterSelectedRecords() {
@@ -252,11 +268,10 @@ export class AccountingRecordComponent implements OnInit {
     if (this.accountingRecordSearch.startDate)
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
 
-    if (!this.tiersToDisplay && !this.accountingRecordSearch.idPayment)
+    if (!this.tiersToDisplay && !this.accountingRecordSearch.idPayment && !this.accountingAccountId)
       this.userPreferenceService.setUserSearchBookmark(this.accountingRecordSearch, "accounting-record");
     this.accountingRecordSearchService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
       this.accountingRecords = response;
-      this.computeBalanceAndDebitAndCreditAccumulation();
 
     });
   }

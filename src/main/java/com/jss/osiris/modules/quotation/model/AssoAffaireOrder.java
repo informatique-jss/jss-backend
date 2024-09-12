@@ -3,19 +3,19 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -26,6 +26,8 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Table(uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "id_customer_order", "id_affaire", "id_quotation" }) }, indexes = {
 				@Index(name = "idx_asso_affaire_customer_order", columnList = "id_customer_order"),
+				@Index(name = "idx_asso_affaire_affaire", columnList = "id_affaire"),
+				@Index(name = "idx_asso_affaire_employee", columnList = "id_employee"),
 				@Index(name = "idx_asso_affaire_quotation", columnList = "id_quotation") })
 public class AssoAffaireOrder implements Serializable, IId {
 
@@ -56,10 +58,10 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@JoinColumn(name = "id_employee")
 	private Employee assignedTo;
 
-	@OneToMany(targetEntity = Provision.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = Service.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
 	@IndexedField
-	private List<Provision> provisions;
+	private List<Service> services;
 
 	public Affaire getAffaire() {
 		return affaire;
@@ -101,12 +103,12 @@ public class AssoAffaireOrder implements Serializable, IId {
 		this.quotation = quotation;
 	}
 
-	public List<Provision> getProvisions() {
-		return provisions;
+	public List<Service> getServices() {
+		return services;
 	}
 
-	public void setProvisions(List<Provision> provisions) {
-		this.provisions = provisions;
+	public void setServices(List<Service> services) {
+		this.services = services;
 	}
 
 }

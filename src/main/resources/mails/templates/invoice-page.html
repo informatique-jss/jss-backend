@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            font-family: 'Times New Roman', Times, serif
+        }
+
+        @page {
+            size: a4 portrait;
+
+            @bottom-right {
+                content: counter(page);
+            }
+
+            counter-increment: page;
+            counter-reset: page 1;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .cgv {
+            width: 297px;
+        }
+
+        .cgv h3 {
+            margin: 0;
+            margin-top: 5px;
+            font-size: 15px;
+        }
+
+        .cgv p {
+            margin: 0;
+            text-align: justify;
+            margin-top: 5px;
+            line-height: 9px;
+            font-size: 9px
+        }
+
+        .td-with-price {
+            width: 130px;
+        }
+    </style>
+</head>
+
+<body style="background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+    <table>
+        <tr>
+            <td><img width="690px" th:src="@{classpath:/images/invoice-page1-header.png}" src="picture.png" />
+            </td>
+        </tr>
+    </table>
+    <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
+        <tr>
+            <td style="text-align: left;">
+                <span th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Avoir : <span
+                        th:text="${invoice.id}"></span><br /></span>
+                <span th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Facture : <span
+                        th:text="${reverseCreditNote.id}"></span><br /></span>
+                <span th:if="${invoice.isCreditNote==false}">Facture : <span
+                        th:text="${invoice.id}"></span><br /></span>
+                <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
+                <span th:if="${customerOrder!=null}">Commande n°<span th:text="${customerOrder.id}"></span><span
+                        th:id="${recurringParentId!=null}">
+                        <span th:text="${recurringParentId}"></span></span><br /></span>
+                <span th:if="${quotation!=null}">Devis : <span th:text="${quotation.id}"></span><br /></span>
+                <span th:if="${responsableOnBilling!=null}">Commande transmise par :<span
+                        th:text="${responsableOnBilling}"></span><br />
+                </span>
+                <span th:if="${invoice.isCommandNumberMandatory}">Votre référence annuelle :<span
+                        th:text="${invoice.commandNumber}"></span><br />
+                </span>
+                <span th:if="${externalReference!=null}">Votre référence : <span
+                        th:text="${externalReference}"></span></span>
+            </td>
+            <td style="width: 100px;"></td>
+            <td colspan="2">
+                <table style=" width: 100%;">
+                    <tr>
+                        <td>
+                            <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
+                        </td>
+                    </tr>
+                </table>
+                <table style="border : solid; border-color: rgb(0,83,159);width: 100%;">
+                    <tr>
+                        <td>
+                            <span th:text="${invoice.billingLabel}"></span><br />
+                            <span th:text="${invoice.billingLabelAddress}"></span><br />
+                            <span><span th:text="${invoice.billingLabelPostalCode}"></span> <span
+                                    th:text="${invoice.billingLabelCity.label}"></span><span
+                                    th:if="${invoice.cedexComplement}"
+                                    th:text="${invoice.cedexComplement}"></span></span>
+                        </td>
+                    </tr>
+                </table>
+                <table style=" width: 100%;" th:if="${recurringStartDate!=null}">
+                    <tr>
+                        <td>
+                            <p>
+                                Période du <span th:text="${recurringStartDate}"></span> au
+                                <span th:text="${recurringEndDate}"></span>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+                <table style=" width: 100%;">
+                    <tr>
+                        <td>
+                            <span
+                                th:if="${invoice.billingLabelIntercommunityVat!=null} and ${invoice.billingLabelIntercommunityVat.length()>0} ">Numéro
+                                de TVA :<span th:text="${invoice.billingLabelIntercommunityVat}"></span></span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <div th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">
+        <p>Avoir n°<span th:text="${invoice.id}"></span> annulant la facture n°<span
+                th:text="${reverseCreditNote.id}">th:text="${invoice.id}"</span></p>
+    </div>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
+        th:if="${reverseCreditNote==null}">
+        <th:block th:if="${assos!=null}" th:each="asso : ${assos}">
+            <tr>
+                <td style="padding-top: 20px; text-align : center" th:if="${asso.affaire.denomination!=null} "
+                    colspan="2">
+                    <strong>Société <span th:text="${asso.affaire.denomination}"></span><span
+                            th:text="${asso.affaire.firstname}"></span>
+                        <span th:text="${asso.affaire.lastname}"></span></strong>
+                </td>
+                <td style="padding-top: 20px;text-align : center" th:if="${asso.affaire.denomination==null} "
+                    colspan="2">
+                    <strong><span th:text="${asso.affaire.civility.label}"></span> <span
+                            th:text="${asso.affaire.firstname}"></span> <span
+                            th:text="${asso.affaire.lastname}"></span></strong>
+                </td>
+            </tr>
+            <th:block th:each="service : ${asso.services}">
+                <tr>
+                    <td style="padding-top: 20px; text-align : center" colspan="2">
+                        <strong><span th:if="${service.customLabel!=null}"
+                                th:text="${service.customLabel}"></span></strong>
+                        <strong><span th:if="${service.customLabel==null}"
+                                th:text="${service.serviceType.label}"></span></strong>
+                    </td>
+                </tr>
+                <th:block th:each="invoiceItem : ${service.provisions[0].invoiceItems}"
+                    th:if="${invoiceItem.preTaxPrice!=0} or ${invoiceItem.isGifted}">
+                    <tr>
+                        <td style="padding-left: 10px">
+                            <span th:text="${invoiceItem.label}"></span>
+                        </td>
+                        <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                            <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
+                            €
+                        </td>
+                    </tr>
+                    <tr th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
+                        <td>
+                            <span style="padding-left: 10px">Remise</span>
+                        </td>
+                        <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                            - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
+                            €</td>
+                    </tr>
+                </th:block>
+            </th:block>
+        </th:block>
+
+        <th:block th:each="invoiceItem : ${invoiceItems}"
+            th:if="${invoiceItems!=null} and (${invoiceItem.preTaxPrice!=0} or ${invoiceItem.isGifted})">
+            <tr>
+                <td style="padding-left: 10px">
+                    <span th:text="${invoiceItem.label}"></span>
+                </td>
+                <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                    <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
+                    €
+                </td>
+            </tr>
+            <tr th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
+                <td>
+                    <span style="padding-left: 10px">Remise</span>
+                </td>
+                <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                    - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
+                    €</td>
+            </tr>
+        </th:block>
+
+    </table>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
+        th:if="${reverseCreditNote!=null}">
+        <th:block th:each="invoiceItem : ${invoice.invoiceItems}"
+            th:if="${invoiceItem.preTaxPrice!=0} or ${invoiceItem.isGifted}">
+            <tr>
+                <td style="padding-left: 10px">
+                    <span th:text="${invoiceItem.label}"></span>
+                </td>
+                <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                    <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
+                    €
+                </td>
+            </tr>
+            <tr th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
+                <td>
+                    <span style="padding-left: 10px">Remise</span>
+                </td>
+                <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                    - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
+                    €</td>
+            </tr>
+        </th:block>
+    </table>
+    <p style="margin-top: 10px;">&#160;</p>
+    <table
+        style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;  break-inside: avoid;  transform: translateY(2px); ">
+        <tr>
+            <td>
+                Total HT
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(preTaxPriceTotal,1,2)}"></span>
+                €
+            </td>
+        </tr>
+
+        <tr th:if="${discountTotal!=null}">
+            <td>
+                Total remises
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"> - <span
+                    th:text="${#numbers.formatDecimal(discountTotal,1,2)}"></span>
+                €
+            </td>
+        </tr>
+
+        <tr th:if="${discountTotal!=null}">
+            <td>
+                Total HT remisé
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(preTaxPriceTotalWithDicount,1,2)}"></span>
+                €
+            </td>
+        </tr>
+
+        <tr th:if="${vats!=null}" th:each="vat : ${vats}">
+            <td><span th:text="${vat.label}"></span><span>
+                    sur la base de </span><span th:text="${#numbers.formatDecimal(vat.base,1,2)}"></span>
+                €
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(vat.total,1,2)}"></span>
+                €
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Total TTC
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(priceTotal,1,2)}"></span>
+                €
+            </td>
+        </tr>
+        <tr th:if="${payments.size()>0}" th:each="payment : ${payments}">
+            <td>
+                Acompte <span th:text="${payment.label}"></span>
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                - <span th:text="${#numbers.formatDecimal(payment.paymentAmount,1,2)}"></span>
+                €
+            </td>
+        </tr>
+        <tr th:if="(${invoice.isCreditNote==null} or ${invoice.isCreditNote==false})">
+            <td style="border-top: solid; border-color: rgb(0,83,159)">
+                <span th:if="${remainingToPay!=null} and ${remainingToPay>0 }">Restant dû</span><span
+                    th:if="${remainingToPay==null} or ${remainingToPay==0 }">Solde</span>
+            </td>
+            <td class="td-with-price"
+                style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
+                <strong><span th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
+                    €</strong>
+            </td>
+        </tr>
+        <tr th:if="${refunds.size()>0}" th:each="refund : ${refunds}">
+            <td>
+                <strong><span th:text="${refund.label}"></span></strong>
+            </td>
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+                <strong>- <span th:text="${#numbers.formatDecimal(refund.refundAmount,1,2)}"></span>
+                    €</strong>
+            </td>
+        </tr>
+    </table>
+    <p style="font-size: 12px;" th:if="${!isPrelevementType}"><strong>Echéance de paiement : <span
+                th:text="${invoiceDueDate}"></span></strong></p>
+    <p style="font-size: 12px;" th:if="${isPrelevementType}"><strong>Date d'exécution du prélèvement : <span
+                th:text="${invoiceDueDate}"></span></strong></p>
+    <p style="font-size: 12px;">Retard de paiement. Maj de 3 fois le taux d’intérêt légal (Application du CC -
+        Article
+        L441-6)<br />
+        TVA acquittée sur les débits</p>
+    <p style="font-size: 12px;">Les règlements par chèque ne sont pas acceptés</p>
+    <div class="page-break">
+        <table>
+            <tr>
+                <td><img width="690px" th:src="@{classpath:/images/invoice-page1-header.png}" src="picture.png" />
+                </td>
+            </tr>
+        </table>
+        <table style="width:690px">
+            <tr>
+                <td style="font-size: 20px;text-align: center;font-weight: bolder;">CONDITIONS GENERALES DE VENTE
+                </td>
+            </tr>
+        </table>
+        <table style="padding-left: 20px; padding-right:20px;width:690px;text-align: center;font-weight: bold;">
+            <tr>
+                <td>Toute commande passée avec notre Société implique l’acceptation pure et simple des présentes
+                    conditions générales.
+                    Toutes les dispositions contraires sont nulles. </td>
+            </tr>
+        </table>
+        <table style="width:690px;">
+            <tr>
+                <td class="cgv">
+                    <h3>ACCEPTATION</h3>
+                    <p>Tout ordre d’insertion, de formalité ou de prestations annexes doit être accompagné d’un bon
+                        de
+                        commande précis. Aucun ordre n’est accepté par téléphone.</p>
+                    <p>
+                        Tout ordre devra, mentionner clairement le nom, l’adresse et le mail du donneur d’ordre, de
+                        l’affaire, la prestation demandée, le libellé de la facture, l’adresse de livraison, la
+                        référence de commande ou du devis si établi. Toute particularité doit être spécifiée pour le
+                        bon
+                        traitement de la commande.</p>
+                    <p>
+                        Les annulations, les suspensions ou modifications ne sont reconnues comme telles que dans la
+                        mesure où elles sont faites par écrit sous réserve du respect des délais prévus par les
+                        supports
+                        et fournisseurs pour la remise des documents ou des dates limites d’annulation. Faute de
+                        respect
+                        de ses dispositions, les travaux et démarches engagées seront facturés.</p>
+                    <h3>CONDITIONS DE REALISATION DES COMMANDES</h3>
+                    <p>Annonces légales : Les annonces légales paraissent sous la responsabilité de l’annonceur,
+                        dans le
+                        cas où un texte destiné à être publié serait rédigé partiellement ou totalement par lui. Le
+                        Journal décline toute responsabilité quant aux erreurs qui apparaîtraient lors de la
+                        publication, n’ayant pas la possibilité de le contrôler par rapport à l’acte correspondant.
+                    </p>
+                    <p>
+                        Le service des annonces (annonces@jss.fr) se réserve le droit d’apporter certaines
+                        modifications
+                        ou corrections aux projets d’insertions rédigés par le donneur d’ordre afin de se conformer
+                        aux
+                        exigences légales en vigueur.
+                    </p>
+                    <p>
+                        L’Annonceur s’interdit expressément de diffuser des Publicités ayant un caractère illicite,
+                        contraires à l’ordre public, aux bonnes mœurs. L’Annonceur garantit en outre que les
+                        Publicités
+                        ne sont pas diffamatoires, obscènes, haineuses, pornographiques ou blasphématoires, ou tout
+                        autre message qui pourrait constituer un crime ou un délit et ne portent pas atteinte aux
+                        droits
+                        des tiers.</p>
+                    <p>
+                        A ce titre, l’Annonceur garantit donc l’Editeur contre tout dommage, condamnation, frais ou
+                        coûts relatifs à toute demande, action et/ou réclamation formulée à son encontre et fondée
+                        sur
+                        l’atteinte par l’Annonceur à un quelconque droit d’un tiers.</p>
+                    <p>
+                        L’Editeur peut, à tout moment, refuser de diffuser ou interrompre toute diffusion d’une
+                        Publicité contraire à cette interdiction, et plus généralement en cas de Publicité qui ne
+                        correspondrait pas à la ligne éditoriale des Supports ou qui serait contraire aux intérêts
+                        matériels ou moraux de l’Editeur, sans que l’Annonceur et/ou son Mandataire ne puissent
+                        prétendre à aucune indemnité.</p>
+                    <p>
+                        Formalités : Les documents et déclarations transmis par le donneur d’ordre au service des
+                        formalités sont présentés comme tels sous la responsabilité du donneur d’ordre. Dans le cas
+                        où
+                        un document destiné à être déposé ou présenté au Registre du Commerce, Centre de Formalité
+                        des
+                        Entreprises, Répertoire des Métiers, I.N.P.I, Trésor Public, I.N.S.E.E, Préfectures,
+                        Traducteurs, Huissiers de Justice, Consulats ou Ambassades ou tout autre organisme, serait
+                        rédigé partiellement ou totalement par le donneur d’ordre, le Journal Spécial des Sociétés
+                        décline toute responsabilité quant aux erreurs, qui apparaîtraient lors de la
+                        retranscription de
+                        ces documents par les organismes susvisés.</p>
+                    <p>
+                        UUn pouvoir dûment rempli et signé au profit du Journal Spécial des Sociétés doit
+                        accompagner
+                        les demandes de formalités.</p>
+                    <p>
+                        Le service des formalités (formalites@jss.fr ) se réserve le droit d’apporter certaines
+                        recommandations quant aux documents rédigés par le donneur d’ordre, cela afin de se
+                        conformer
+                        aux exigences légales en vigueur.
+                    </p>
+                    <p>
+                        Formations : Les frais de participation comprennent : la formation et les documents
+                        pédagogiques. Toute annulation qui ne sera pas effectuée 7 jours au moins avant la date de
+                        la
+                        formation ne pourra donner lieu au remboursement. La Direction se réserve quant à elle le
+                        droit
+                        d’annuler la formation faute d’un nombre suffisant de participants.</p>
+                    <p>
+                        Abonnement :</p>
+                    <p>
+                        Les abonnements souscrits à nos publications sont à leur échéance reconduits tacitement.
+                        Néanmoins, l’abonné peut y mettre un terme par mail : abo@jss.fr </p>
+                    <p>
+                        Domiciliation :</p>
+                    <p>
+                        Il convient de se reporter au contrat de domiciliation signé. Le Journal Spécial des
+                        Sociétés
+                        est libéré de l’obligation d’exécution des commandes de clients pour tous cas fortuits ou de
+                        force majeure (grèves totales, partielles, inondations, incendies, pandémies etc…).
+                    </p>
+                    <h3>DOCUMENTS FOURNIS</h3>
+                    <p>Insertions et formalités :</p>
+                    <p>
+                        Les délais relatifs aux démarches mentionnés sur les devis et bons de commande ne sont
+                        donnés
+                        qu’à titre indicatif. Ils ne deviennent effectifs qu’à la réception de tous les éléments
+                        constitutifs de la demande. Les éléments et fichiers (moins de 5M0) devront être de qualité
+                        suffisante et être conformes aux spécifications techniques du service des Insertions et des
+                        Formalités.</p>
+                </td>
+                <td class="cgv" style="padding-left: 10px;">
+                    <p>
+                        Le Journal Spécial des Sociétés n’est pas responsable des accidents ou pertes survenus aux
+                        documents, formulaires ou tous autres actes transmis, en dehors du Journal Spécial des
+                        Sociétés.
+                    </p>
+                    <p>
+                        L’annonce publiée est justifiée soit par l’envoi du Journal publicateur, d’une attestation
+                        de
+                        parution ou d’un témoin de publication. L’accomplissement des formalités est justifié soit
+                        par
+                        l’envoi de K-bis à jour, certificat de dépôt, de récépissé, synthèse ou toute autre
+                        attestation
+                        délivrée par les organismes mentionnés ci-dessus.</p>
+                    <p>
+                        Tout retard dans l’envoi des justificatifs ne saurait conduire au non-règlement ou au
+                        décalage
+                        du règlement.</p>
+                    <h3>CONDITIONS DE FACTURATION</h3>
+                    <p>Insertions et formalités :
+                        Les factures sont émises au nom du donneur d’ordre, ou à l’affaire, ou à une tierce entité à
+                        préciser lors de la commande.</p>
+                    <p>
+                        Le prix de la publication d’une annonce légale est fixé par décret ministériel annuellement
+                        selon soit un prix forfaitaire par type de forme pour les constitutions et pour les
+                        radiations
+                        de sociétés, soit au nombre de caractères publiées de filet à filet. Les prix appliqués sont
+                        ceux fixés au jour de la parution de l’annonce.</p>
+                    <p>
+                        La formalité est facturée sur la base des tarifs JSS en vigueur et mis à jour chaque année
+                        et
+                        sur la base des conditions tarifaires propres à chaque valideur en vigueur (tarifs des
+                        Greffes,
+                        INPI, Répertoire des Métiers, Trésor Public).</p>
+                    <h3>CONDITIONS DE REGLEMENT</h3>
+                    <p>En fonction des accords commerciaux, les factures sont payables par acompte, à réception ou
+                        dans
+                        un délai de 30 jours, conformément à l’article L.441-10 C.Com.
+                        Suivant l’importance ou la nature du travail à exécuter (dissolution/liquidation) un acompte
+                        sera réclamé au moment de la commande. Cet acompte sera déduit de la facture. Un solde
+                        créditeur
+                        sera alors remboursé ou un solde débiteur sera à régler dans un délai de 30 jours.</p>
+                    <p>
+                        Tout règlement par virement ou CB depuis l’étranger générant des frais bancaires à notre
+                        encontre, entraînera une facturation complémentaire pour frais d’encaissement.</p>
+                    <p>
+                        Les frais d’oppositions sur chèques perdus sont à la charge du client ou de l’affaire.</p>
+                    <h3>RETARD DE REGLEMENT</h3>
+                    <p>Le délai pour régler les sommes dues ne peut dépasser quarante-cinq jours à compter de la
+                        date
+                        d'émission de la facture.</p>
+                    <p>
+                        En cas de retard de paiement, le Journal Spécial des Sociétés se réserve le droit de
+                        suspendre
+                        l’exécution des ordres en cours. Les sommes facturées qui n’ont pas été payées à l’échéance
+                        prévue portent de plein droit intérêt au taux légal. Les frais de recouvrement étant à la
+                        charge
+                        du débiteur.</p>
+                    <p>
+                        Tout retard dans le paiement du prix entraînera l’envoi d’une lettre simple. Si cette lettre
+                        n’était pas suivie d’effet, dans les 20 jours de son envoi, le client recevrait une lettre
+                        recommandée avec A.R valant mise en demeure. Sept jours à compter de l’émission de cette
+                        lettre,
+                        le client sera redevable du prix de la facture majorée de 3 fois le taux d’intérêt légal, le
+                        Journal Spécial des Sociétés pourra alors prendre toutes les mesures nécessaires afin de se
+                        faire payer et notamment engager la responsabilité contractuelle du donneur d’ordre.</p>
+                    <p>
+                        En cas de défaillance d’un intermédiaire titulaire d’un mandat de paiement et/ou d’un
+                        engagement
+                        de paiement, le donneur d’ordre s’engage en dernier ressort à régler la créance impayée, car
+                        il
+                        est considéré légalement comme le débiteur, conformément à l’art. 1998 du Code civil. Nos
+                        conditions particulières sont disponibles sur simple demande.</p>
+                    <h3>RECLAMATION</h3>
+                    <p>Toute réclamation à l’exécution d’un ordre de publication doit être portée à notre
+                        connaissance 7
+                        jours francs après la date d’envoi des journaux.</p>
+                    <p>
+                        Toute correction à un ordre de formalité doit être portée à notre connaissance 7 jours
+                        francs
+                        après la date d’envoi des documents.</p>
+                    <p>
+                        La demande devra être accompagnée d’un justificatif. Selon la cause, l’ordre pourra faire
+                        l’objet d’une facturation.</p>
+                    <p>
+                        Toute réclamation sur les éléments de la facture doit être portée à notre connaissance
+                        (facturation@jss.fr) dans un délai maximum de 7 jours francs à compter de sa réception.</p>
+                    <h3>ELECTION DU DOMICILE DE JURIDICTION</h3>
+                    <p>L’élection de domicile est faite à l’adresse indiquée en tête de nos factures.</p>
+                    <p>
+                        En cas de contestation relative à l’exécution du contrat de vente ou au paiement du prix,
+                        ainsi
+                        qu’en cas d’interprétation sur l ‘exécution des clauses et conditions sus-indiquées, le
+                        Tribunal
+                        de Commerce de PARIS sera seul compétent, même en cas de pluralité des défendeurs.</p>
+                    <p>Maj 01/01/2023</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

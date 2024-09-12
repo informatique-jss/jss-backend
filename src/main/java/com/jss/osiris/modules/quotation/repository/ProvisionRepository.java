@@ -25,7 +25,8 @@ public interface ProvisionRepository extends QueryCacheCrudRepository<Provision,
                         " end as type, " +
                         " count(*) as number " +
                         " from provision p  " +
-                        " join asso_affaire_order asso on asso.id = p.id_asso_affaire_order " +
+                        " join service on service.id = p.id_service " +
+                        " join asso_affaire_order asso on asso.id = service.id_asso_affaire_order " +
                         " join customer_order c on c.id = asso.id_customer_order " +
                         " join customer_order_status cs on cs.id = c.id_customer_order_status " +
                         " join employee e on e.id = p.id_employee " +

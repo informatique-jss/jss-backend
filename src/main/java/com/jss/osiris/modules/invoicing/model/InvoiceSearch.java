@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 public class InvoiceSearch {
@@ -15,6 +16,7 @@ public class InvoiceSearch {
     private List<Tiers> customerOrders;
     private Integer invoiceId;
     private Integer customerOrderId;
+    private Employee salesEmployee;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -86,6 +88,14 @@ public class InvoiceSearch {
 
     public void setCustomerOrderId(Integer customerOrderId) {
         this.customerOrderId = customerOrderId;
+    }
+
+    public Employee getSalesEmployee() {
+        return salesEmployee;
+    }
+
+    public void setSalesEmployee(Employee salesEmployee) {
+        this.salesEmployee = salesEmployee;
     }
 
 }

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 
 @Component({
@@ -29,10 +29,15 @@ export class GenericTextareaComponent extends GenericFormComponent implements On
  * Default : 3
  */
   @Input() numberOfLines: number = 3;
+  /**
+* Hint to display
+*/
+  @Input() hint: string = "";
 
   constructor(
-    private formBuilder3: UntypedFormBuilder,
-    private userNoteService3: UserNoteService) { super(formBuilder3, userNoteService3) }
+    private formBuilder3: UntypedFormBuilder, private appService2: AppService) {
+    super(formBuilder3, appService2)
+  }
 
   callOnNgInit(): void {
   }
@@ -50,4 +55,7 @@ export class GenericTextareaComponent extends GenericFormComponent implements On
     this.filterInput.emit();
   }
 
+  getPreviewActionLinkFunction(entity: any): string[] | undefined {
+    return undefined;
+  }
 }

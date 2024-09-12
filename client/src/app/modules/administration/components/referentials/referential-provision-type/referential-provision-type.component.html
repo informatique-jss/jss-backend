@@ -63,7 +63,7 @@
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.assignationWeight" label="Poids de l'assignation"
-                hint="Lorsqu'un poids est défini sur au moins une prestation d'une affaire, alors l'ensemble des prestations de l'affaire et l'affaire est assigné au responsable de la prestation la plus lourde"
+                matTooltip="Lorsqu'un poids est défini sur au moins une prestation d'une affaire, alors l'ensemble des prestations de l'affaire et l'affaire est assigné au responsable de la prestation la plus lourde"
                 [form]="entityForm" propertyName="assignationWeight" [isMandatory]="false" [isDisabled]="!editMode"
                 type="number"></generic-input>
             </td>
@@ -84,13 +84,16 @@
             </td>
           </tr>
         </table>
-        <table class="full-width"
-          *ngIf="selectedEntity.provisionScreenType && selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
+        <table class="full-width">
           <tr>
             <td>
-              <autocomplete-competent-authority [(model)]="selectedEntity.defaultCompetentAuthorityServiceProvider"
-                [form]="entityForm" propertyName="defaultCompetentAuthorityServiceProvider" [isMandatory]="false"
-                [isDisabled]="!editMode" label="Fournisseur de service par défaut"></autocomplete-competent-authority>
+              <generic-toggle [(model)]="selectedEntity.isRecurring" label="Est recurrente par défaut ?"
+                [form]="entityForm" propertyName="isRecurring"></generic-toggle>
+            </td>
+            <td *ngIf="selectedEntity.isRecurring">
+              <select-customer-order-frequency [(model)]="selectedEntity.recurringFrequency"
+                label="Fréquence de récurrence" [form]="entityForm" propertyName="recurringFrequency"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-customer-order-frequency>
             </td>
           </tr>
         </table>

@@ -23,4 +23,7 @@ public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Int
                         @Param("denomination") String denomination);
 
         Affaire findByRna(String rna);
+
+        @Query(nativeQuery = true, value = "select * from affaire a  where siren is not null or siret is not null order by coalesce(last_rne_update,'1950-01-01') limit 5000")
+        List<Affaire> getAffairesForUpdate();
 }

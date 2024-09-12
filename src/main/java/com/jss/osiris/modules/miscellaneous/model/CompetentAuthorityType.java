@@ -2,12 +2,12 @@ package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class CompetentAuthorityType implements Serializable, IId {
@@ -25,6 +25,8 @@ public class CompetentAuthorityType implements Serializable, IId {
 
 	@Column(nullable = false)
 	private Boolean isDirectCharge;
+
+	private Boolean isToReminder;
 
 	public Integer getId() {
 		return id;
@@ -56,6 +58,14 @@ public class CompetentAuthorityType implements Serializable, IId {
 
 	public void setIsDirectCharge(Boolean isDirectCharge) {
 		this.isDirectCharge = isDirectCharge;
+	}
+
+	public Boolean getIsToReminder() {
+		return isToReminder;
+	}
+
+	public void setIsToReminder(Boolean isToReminder) {
+		this.isToReminder = isToReminder;
 	}
 
 }

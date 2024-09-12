@@ -6,4 +6,5 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDoc
 public interface TypeDocumentRepository extends QueryCacheCrudRepository<TypeDocument, String> {
 
     TypeDocument findByCode(String code);
+
 }

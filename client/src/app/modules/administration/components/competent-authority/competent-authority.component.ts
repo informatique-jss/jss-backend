@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
+import { AssoMailCompetentAuthorityServiceFamilyGroup } from 'src/app/modules/miscellaneous/model/AssoMailCompetentAuthorityServiceFamilyGroup';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
@@ -222,4 +223,20 @@ export class CompetentAuthorityComponent implements OnInit {
     this.index = this.userPreferenceService.getUserTabsSelectionIndex('competent-authority');
   }
 
+  addAssoMailCompetentAuthorityServiceFamilyGroups() {
+    if (this.selectedcompetentAuthority) {
+      if (!this.selectedcompetentAuthority.assoMailCompetentAuthorityServiceFamilyGroups) {
+        this.selectedcompetentAuthority.assoMailCompetentAuthorityServiceFamilyGroups = [];
+      }
+      this.selectedcompetentAuthority.assoMailCompetentAuthorityServiceFamilyGroups.push({} as AssoMailCompetentAuthorityServiceFamilyGroup);
+    }
+  }
+
+  deleteAssoMailCompetentAuthorityServiceFamilyGroups(asso: AssoMailCompetentAuthorityServiceFamilyGroup) {
+    if (this.selectedcompetentAuthority) {
+      if (this.selectedcompetentAuthority.assoMailCompetentAuthorityServiceFamilyGroups) {
+        this.selectedcompetentAuthority.assoMailCompetentAuthorityServiceFamilyGroups.splice(this.selectedcompetentAuthority.assoMailCompetentAuthorityServiceFamilyGroups.indexOf(asso), 1);
+      }
+    }
+  }
 }

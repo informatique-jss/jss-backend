@@ -1,18 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDate;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -29,11 +18,25 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeEx
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+
 @Entity
 public class Affaire implements IId, IAttachment {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
 	private Integer id;
 
@@ -141,6 +144,15 @@ public class Affaire implements IId, IAttachment {
 	@OneToMany(mappedBy = "affaire", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "affaire" }, allowSetters = true)
 	private List<Attachment> attachments;
+
+	private Integer employeeNumber;
+
+	private LocalDate lastRneUpdate;
+
+	private Boolean isMainOffice;
+
+	@Column(columnDefinition = "TEXT")
+	private String apeCodes;
 
 	public String getPaymentIban() {
 		return paymentIban;
@@ -372,6 +384,38 @@ public class Affaire implements IId, IAttachment {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public Integer getEmployeeNumber() {
+		return employeeNumber;
+	}
+
+	public void setEmployeeNumber(Integer employeeNumber) {
+		this.employeeNumber = employeeNumber;
+	}
+
+	public String getApeCodes() {
+		return apeCodes;
+	}
+
+	public void setApeCodes(String apeCodes) {
+		this.apeCodes = apeCodes;
+	}
+
+	public LocalDate getLastRneUpdate() {
+		return lastRneUpdate;
+	}
+
+	public void setLastRneUpdate(LocalDate lastRneUpdate) {
+		this.lastRneUpdate = lastRneUpdate;
+	}
+
+	public Boolean getIsMainOffice() {
+		return isMainOffice;
+	}
+
+	public void setIsMainOffice(Boolean isMainOffice) {
+		this.isMainOffice = isMainOffice;
 	}
 
 }

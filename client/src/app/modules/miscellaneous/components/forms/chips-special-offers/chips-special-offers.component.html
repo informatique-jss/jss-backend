@@ -20,7 +20,6 @@
       <mat-icon>close</mat-icon>
     </button>
   </mat-chip-grid>
-  <mat-hint>Glisser/déposer pour ordonner</mat-hint>
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addSpecialOffer($event)">
     <mat-option *ngFor="let specialOffer of filteredSpecialOffers | async" [value]="specialOffer">

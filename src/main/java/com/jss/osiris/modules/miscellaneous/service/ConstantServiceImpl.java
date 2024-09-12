@@ -15,6 +15,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -38,6 +39,8 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.ProvisionType;
+import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
@@ -290,6 +293,21 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeContract() throws OsirisException {
+        return getConstants().getAttachmentTypeContract();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeTemplate() throws OsirisException {
+        return getConstants().getAttachmentTypeTemplate();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeQuotation() throws OsirisException {
+        return getConstants().getAttachmentTypeQuotation();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
@@ -455,6 +473,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ProvisionType getProvisionTypeBilanPublication() throws OsirisException {
+        return getConstants().getProvisionTypeBilanPublication();
+    }
+
+    @Override
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException {
         return getConstants().getBillingTypeInfogreffeDebour();
     }
@@ -492,6 +515,31 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingtypeCorrespondenceFees() throws OsirisException {
         return getConstants().getBillingTypeCorrespondenceFees();
+    }
+
+    @Override
+    public BillingType getBillingTypeDomiciliationContractTypeKeepMail() throws OsirisException {
+        return getConstants().getBillingTypeDomiciliationContractTypeKeepMail();
+    }
+
+    @Override
+    public BillingType getBillingTypeDomiciliationContractTypeRouteEmail() throws OsirisException {
+        return getConstants().getBillingTypeDomiciliationContractTypeRouteEmail();
+    }
+
+    @Override
+    public BillingType getBillingTypeDomiciliationContractTypeRouteMail() throws OsirisException {
+        return getConstants().getBillingTypeDomiciliationContractTypeRouteMail();
+    }
+
+    @Override
+    public BillingType getBillingTypeDomiciliationContractTypeRouteEmailAndMail() throws OsirisException {
+        return getConstants().getBillingTypeDomiciliationContractTypeRouteEmailAndMail();
+    }
+
+    @Override
+    public BillingType getBillingTypeSupplyFullBeCopy() throws OsirisException {
+        return getConstants().getBillingTypeSupplyFullBeCopy();
     }
 
     @Override
@@ -592,6 +640,16 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public MailRedirectionType getMailRedirectionTypeOther() throws OsirisException {
         return getConstants().getMailRedirectionTypeOther();
+    }
+
+    @Override
+    public MailRedirectionType getMailRedirectionTypeLegalGuardian() throws OsirisException {
+        return getConstants().getMailRedirectionTypeLegalGuardian();
+    }
+
+    @Override
+    public MailRedirectionType getMailRedirectionTypeActivity() throws OsirisException {
+        return getConstants().getMailRedirectionTypeActivity();
     }
 
     @Override
@@ -870,6 +928,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountLitigious() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountLitigious();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountSuspicious() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountSuspicious();
+    }
+
+    @Override
     public PrincipalAccountingAccount getPrincipalAccountingAccountProduct() throws OsirisException {
         return getConstants().getPrincipalAccountingAccountProduct();
     }
@@ -960,6 +1028,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ServiceType getServiceTypeOther() throws OsirisException {
+        return getConstants().getServiceTypeOther();
+    }
+
+    @Override
     public LocalDate getDateAccountingClosureForAll() throws OsirisException {
         return this.getConstants().getDateAccountingClosureForAll();
     }
@@ -969,4 +1042,23 @@ public class ConstantServiceImpl implements ConstantService {
         return this.getConstants().getDateAccountingClosureForAccountant();
     }
 
+    @Override
+    public AttachmentType getAttachmentTypeRefusInfogreffe() throws OsirisException {
+        return this.getConstants().getAttachmentTypeRefusInfogreffe();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeAutreInfogreffe() throws OsirisException {
+        return this.getConstants().getAttachmentTypeAutreInfogreffe();
+    }
+
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupFormalites();
+    }
+
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupFacturation();
+    }
 }

@@ -40,4 +40,6 @@ export interface CustomerMail {
   confrere: Confrere;
   attachments: Attachment[];
   isSent: boolean;
+  isCancelled: boolean;
+  toSendAfter: Date;
 }

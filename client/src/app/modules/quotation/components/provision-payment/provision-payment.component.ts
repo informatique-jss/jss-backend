@@ -149,10 +149,12 @@ export class ProvisionPaymentComponent implements OnInit {
   }
 
   addNewPayment() {
-    if (this.newPayment && this.provisionPaymentForm.valid && this.provision && this.quotation)
+    if (this.newPayment && this.provisionPaymentForm.valid && this.provision && this.quotation) {
+      this.newPayment.paymentDate = new Date(this.newPayment.paymentDate.setHours(12));
       this.paymentService.addProvisionPayment(this.newPayment, this.provision).subscribe(payment => {
         this.appService.openRoute(null, '/order/' + this.quotation!.id, null);
       })
+    }
   }
 
   createNewInvoice(event: any) {
