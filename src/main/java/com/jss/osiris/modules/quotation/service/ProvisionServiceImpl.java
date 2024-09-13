@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
-import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
-import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -34,12 +32,6 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     GeneratePdfDelegate generatePdfDelegate;
-
-    @Autowired
-    ConstantService constantService;
-
-    @Autowired
-    AttachmentService attachmentService;
 
     @Override
     public Provision getProvision(Integer id) {
