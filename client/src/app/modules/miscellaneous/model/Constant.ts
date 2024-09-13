@@ -230,6 +230,7 @@ export interface Constant {
   rffFrequencyMonthly: RffFrequency;
   serviceTypeOther: ServiceType;
   provisionTypeBilanPublication: ProvisionType;
+  provisionTypeRegistrationAct: ProvisionType;
   dateAccountingClosureForAll: Date;
   dateAccountingClosureForAccountant: Date;
   activeDirectoryGroupFormalites: ActiveDirectoryGroup;

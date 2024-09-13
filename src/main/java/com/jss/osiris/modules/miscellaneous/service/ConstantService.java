@@ -207,6 +207,8 @@ public interface ConstantService {
 
     public ProvisionType getProvisionTypeBilanPublication() throws OsirisException;
 
+    public ProvisionType getProvisionTypeRegistrationAct() throws OsirisException;
+
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
 
     public BillingType getBillingTypeEmolumentsDeGreffeDebour() throws OsirisException;

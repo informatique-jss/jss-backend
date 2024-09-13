@@ -1486,6 +1486,13 @@
                 [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type></td>
           </tr>
           <tr>
+          <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeRegistrationAct"
+                label="Type de prestation - Enregistrement, Acte au TP" [form]="constantForm"
+                propertyName="provisionTypeRegistrationAct" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-provision-type></td>
+          </tr>
+          <tr>
             <td>
               <generic-datepicker [(model)]="constant.dateAccountingClosureForAccountant"
                 label="Date - cloture comptable pour les comptables" [form]="constantForm"

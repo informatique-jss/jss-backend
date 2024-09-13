@@ -59,6 +59,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
+  registrationAct = this.constantService.getProvisionTypeRegistrationAct();
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -121,6 +122,23 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           this.saveAsso()
         else if (this.asso)
           this.editAsso()
+    });
+  }
+
+  generateRegistrationAct() {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Générer l'enregistrement d'acte ?",
+        closeActionText: "Annuler",
+        validationActionText: "Valider"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult == true) {
+        this.provisionService.getRegistrationActPdf(this.inputProvisionId);;
+      }
     });
   }
 
@@ -547,7 +565,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (saveAsso)
       this.saveAsso();
   }
-
 
   setCurrentProvisionWorkflow(provision: Provision) {
     this.currentProvisionWorkflow = provision;

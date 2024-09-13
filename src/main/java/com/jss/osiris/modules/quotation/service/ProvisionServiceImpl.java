@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
+import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -26,6 +31,15 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
+
+    @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
+
+    @Autowired
+    ConstantService constantService;
+
+    @Autowired
+    AttachmentService attachmentService;
 
     @Override
     public Provision getProvision(Integer id) {
@@ -57,6 +71,11 @@ public class ProvisionServiceImpl implements ProvisionService {
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED).getId(),
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT).getId(),
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN).getId());
+    }
+
+    @Override
+    public File getRegistrationActPdf(Provision provision) throws OsirisException {
+        return generatePdfDelegate.generateRegistrationActPdf(provision);
     }
 
 }
