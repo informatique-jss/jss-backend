@@ -791,6 +791,10 @@ public class Constant implements Serializable, IId {
 	private ProvisionType provisionTypeBilanPublication;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_provision_type_registration_act")
+	private ProvisionType provisionTypeRegistrationAct;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_active_directory_group_formalites")
 	private ActiveDirectoryGroup activeDirectoryGroupFormalites;
 
@@ -2356,6 +2360,14 @@ public class Constant implements Serializable, IId {
 
 	public void setActiveDirectoryGroupFacturation(ActiveDirectoryGroup activeDirectoryGroupFacturation) {
 		this.activeDirectoryGroupFacturation = activeDirectoryGroupFacturation;
+	}
+
+	public ProvisionType getProvisionTypeRegistrationAct() {
+		return provisionTypeRegistrationAct;
+	}
+
+	public void setProvisionTypeRegistrationAct(ProvisionType provisionTypeRegistrationAct) {
+		this.provisionTypeRegistrationAct = provisionTypeRegistrationAct;
 	}
 
 }

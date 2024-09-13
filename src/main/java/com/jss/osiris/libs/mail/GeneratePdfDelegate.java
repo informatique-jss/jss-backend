@@ -1360,4 +1360,41 @@ public class GeneratePdfDelegate {
 
         return tempPdfFile;
     }
+
+    public File generateRegistrationActPdf(Provision provision) throws OsirisException {
+        final Context ctx = new Context();
+
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        if (provision != null) {
+            ctx.setVariable("provision", provision);
+            if (provision.getService() != null && provision.getService().getAssoAffaireOrder() != null)
+                ctx.setVariable("customerOrder", provision.getService().getAssoAffaireOrder().getCustomerOrder());
+        }
+
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(mailHelper.emailTemplateEngine().process("registration-act", ctx));
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("Enregistrement d'acte", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for registration act");
+        }
+        return tempFile;
+    }
 }

@@ -229,6 +229,10 @@
     (click)="generatePublicationFlagMail()">
     <span>Recevoir le mail de témoin de publication</span>
   </button>
+  <button mat-menu-item
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.provisionType.code==registrationAct.code"
+    (click)="generateRegistrationAct()">
+    <span>Télécharger l'acte d'enregistrement</span> </button>
   <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="generateAttachmentsMail()">
     <span>Envoyer des pièces jointes</span>
   </button>

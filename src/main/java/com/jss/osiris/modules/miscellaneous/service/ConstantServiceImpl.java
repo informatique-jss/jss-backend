@@ -478,6 +478,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ProvisionType getProvisionTypeRegistrationAct() throws OsirisException {
+        return getConstants().getProvisionTypeRegistrationAct();
+    }
+
+    @Override
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException {
         return getConstants().getBillingTypeInfogreffeDebour();
     }

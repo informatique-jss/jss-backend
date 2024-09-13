@@ -935,6 +935,35 @@ public class QuotationController {
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/provision/generate/registration-act")
+  public ResponseEntity<byte[]> getRegistrationActPdf(@RequestParam("idProvision") Integer idProvision)
+      throws OsirisException {
+    byte[] data = null;
+    HttpHeaders headers = null;
+    if (idProvision == null)
+      throw new OsirisValidationException("idProvision");
+
+    Provision provision = provisionService.getProvision(idProvision);
+    File registrationActFile = provisionService.getRegistrationActPdf(provision);
+
+    if (registrationActFile != null) {
+      try {
+        data = Files.readAllBytes(registrationActFile.toPath());
+      } catch (IOException e) {
+        throw new OsirisException(e, "Unable to read file " + registrationActFile.toPath());
+      }
+
+      headers = new HttpHeaders();
+      headers.add("filename",
+          "Enregistrement d'acte au TP.pdf");
+      headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+      headers.setContentLength(data.length);
+      headers.set("content-type", "application/pdf");
+      registrationActFile.delete();
+    }
+    return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/mail/generate/invoice")
   public ResponseEntity<CustomerOrder> generateInvoiceMail(@RequestParam Integer customerOrderId)
       throws OsirisValidationException, OsirisClientMessageException {
