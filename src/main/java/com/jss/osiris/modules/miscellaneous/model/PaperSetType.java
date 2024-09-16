@@ -22,6 +22,9 @@ public class PaperSetType implements Serializable, IId {
 
 	private String code;
 
+	@Column(columnDefinition = "TEXT")
+	private String comment;
+
 	public Integer getId() {
 		return id;
 	}
@@ -44,6 +47,14 @@ public class PaperSetType implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

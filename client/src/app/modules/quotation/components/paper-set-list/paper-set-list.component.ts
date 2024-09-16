@@ -8,6 +8,16 @@ import { AppService } from 'src/app/services/app.service';
 import { PaperSetResult } from '../../model/PaperSetResult';
 import { PaperSetResultService } from '../../services/paper.set.result.service';
 import { PaperSetService } from '../../services/paper.set.service';
+import { Comment } from '@angular/compiler';
+import { CommentPaperSetDialogComponent } from '../../../miscellaneous/components/add-comment-paper-set-dialog/comment-paper-set-dialog/comment-paper-set-dialog.component';
+import { CustomerOrderComment } from '../../model/CustomerOrderComment';
+import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
+import { CustomerOrderService } from '../../services/customer.order.service';
+import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
+import { IQuotation } from '../../model/IQuotation';
+import { instanceOfCustomerOrder } from '../../../../libs/TypeHelper';
+import { Employee } from 'src/app/modules/profile/model/Employee';
+import { EmployeeService } from '../../../profile/services/employee.service';
 
 @Component({
   selector: 'app-paper-set-list',
@@ -23,13 +33,18 @@ export class PaperSetListComponent implements OnInit {
   tableAction: SortTableAction<PaperSetResult>[] = [];
   isDisplayCancelled: boolean = false;
   isDisplayValidated: boolean = false;
+  newComment: CustomerOrderComment = {} as CustomerOrderComment;
+  currentEmployee: Employee | undefined;
 
   constructor(
     private appService: AppService,
     public confirmationDialog: MatDialog,
     private formBuilder: FormBuilder,
     private paperSetResultService: PaperSetResultService,
-    private paperSetService: PaperSetService
+    private paperSetService: PaperSetService,
+    private customerOrderService: CustomerOrderService,
+    private customerOrderCommentService: CustomerOrderCommentService,
+    private employeeService: EmployeeService,
   ) { }
 
   ngOnInit() {
@@ -79,19 +94,30 @@ export class PaperSetListComponent implements OnInit {
     this.tableAction.push({
       actionIcon: "check", actionName: "Valider cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
-          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+          const dialogRef = this.confirmationDialog.open(CommentPaperSetDialogComponent, {
             maxWidth: "400px",
             data: {
               title: "Valider l'action",
-              content: "Êtes-vous sûr de vouloir valider cette action et de libérer l'emplacement associé ?",
-              closeActionText: "Annuler",
-              validationActionText: "Confirmer"
             }
           });
 
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult) {
               this.paperSetService.validatePaperSet(element.id).subscribe(response => this.searchPaperSets());
+              if (dialogResult && element.customerOrderId) {
+                this.customerOrderService.getCustomerOrder(element.customerOrderId).subscribe(customerOrder => {
+                  if (customerOrder && instanceOfCustomerOrder(customerOrder)) {
+                    this.newComment.customerOrder = customerOrder;
+                    this.newComment.comment = dialogResult;
+                    this.employeeService.getCurrentEmployee().subscribe(currentEmployee => {
+                      this.newComment.employee = currentEmployee;
+                      this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
+                        customerOrder.customerOrderComments.push(response);
+                      });
+                    })
+                  }
+                });
+              }
             }
           });
         }
@@ -102,26 +128,36 @@ export class PaperSetListComponent implements OnInit {
     this.tableAction.push({
       actionIcon: "cancel", actionName: "Annuler cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
-          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+          const dialogRef = this.confirmationDialog.open(CommentPaperSetDialogComponent, {
             maxWidth: "400px",
             data: {
               title: "Annuler l'action",
-              content: "Êtes-vous sûr de vouloir annuler cette action et de libérer l'emplacement associé ?",
-              closeActionText: "Annuler",
-              validationActionText: "Confirmer"
             }
           });
 
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult) {
               this.paperSetService.cancelPaperSet(element.id).subscribe(response => this.searchPaperSets());
+              if (dialogResult && element.customerOrderId) {
+                this.customerOrderService.getCustomerOrder(element.customerOrderId).subscribe(customerOrder => {
+                  if (customerOrder && instanceOfCustomerOrder(customerOrder)) {
+                    this.newComment.customerOrder = customerOrder;
+                    this.newComment.comment = dialogResult;
+                    this.employeeService.getCurrentEmployee().subscribe(currentEmployee => {
+                      this.newComment.employee = currentEmployee;
+                      this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
+                        customerOrder.customerOrderComments.push(response);
+                      });
+                    })
+                  }
+                });
+              }
             }
           });
         }
         return undefined;
       }, display: true,
     } as SortTableAction<PaperSetResult>);
-
 
     this.searchPaperSets();
   }
