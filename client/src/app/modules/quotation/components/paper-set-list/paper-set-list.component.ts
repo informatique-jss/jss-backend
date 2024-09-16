@@ -7,6 +7,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { AppService } from 'src/app/services/app.service';
+import { CommentPaperSetDialogComponent } from '../../../miscellaneous/components/add-comment-paper-set-dialog/comment-paper-set-dialog/comment-paper-set-dialog.component';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { PaperSetResult } from '../../model/PaperSetResult';
 import { PaperSetResultService } from '../../services/paper.set.result.service';
@@ -90,9 +91,6 @@ export class PaperSetListComponent implements OnInit {
             maxWidth: "400px",
             data: {
               title: "Valider l'action",
-              content: "Êtes-vous sûr de vouloir valider cette action et de libérer l'emplacement associé ?",
-              closeActionText: "Annuler",
-              validationActionText: "Confirmer"
             }
           });
 
@@ -119,13 +117,10 @@ export class PaperSetListComponent implements OnInit {
     this.tableAction.push({
       actionIcon: "cancel", actionName: "Annuler cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
-          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+          const dialogRef = this.confirmationDialog.open(CommentPaperSetDialogComponent, {
             maxWidth: "400px",
             data: {
               title: "Annuler l'action",
-              content: "Êtes-vous sûr de vouloir annuler cette action et de libérer l'emplacement associé ?",
-              closeActionText: "Annuler",
-              validationActionText: "Confirmer"
             }
           });
 
