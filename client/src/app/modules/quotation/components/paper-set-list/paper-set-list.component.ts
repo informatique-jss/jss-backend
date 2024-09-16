@@ -104,20 +104,7 @@ export class PaperSetListComponent implements OnInit {
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult) {
               this.paperSetService.validatePaperSet(element.id).subscribe(response => this.searchPaperSets());
-              if (dialogResult && element.customerOrderId) {
-                this.customerOrderService.getCustomerOrder(element.customerOrderId).subscribe(customerOrder => {
-                  if (customerOrder && instanceOfCustomerOrder(customerOrder)) {
-                    this.newComment.customerOrder = customerOrder;
-                    this.newComment.comment = dialogResult;
-                    this.employeeService.getCurrentEmployee().subscribe(currentEmployee => {
-                      this.newComment.employee = currentEmployee;
-                      this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
-                        customerOrder.customerOrderComments.push(response);
-                      });
-                    })
-                  }
-                });
-              }
+              this.addCommentPaperSet(dialogResult, element);
             }
           });
         }
@@ -138,20 +125,7 @@ export class PaperSetListComponent implements OnInit {
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult) {
               this.paperSetService.cancelPaperSet(element.id).subscribe(response => this.searchPaperSets());
-              if (dialogResult && element.customerOrderId) {
-                this.customerOrderService.getCustomerOrder(element.customerOrderId).subscribe(customerOrder => {
-                  if (customerOrder && instanceOfCustomerOrder(customerOrder)) {
-                    this.newComment.customerOrder = customerOrder;
-                    this.newComment.comment = dialogResult;
-                    this.employeeService.getCurrentEmployee().subscribe(currentEmployee => {
-                      this.newComment.employee = currentEmployee;
-                      this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
-                        customerOrder.customerOrderComments.push(response);
-                      });
-                    })
-                  }
-                });
-              }
+              this.addCommentPaperSet(dialogResult, element);
             }
           });
         }
@@ -171,4 +145,22 @@ export class PaperSetListComponent implements OnInit {
     }
     );
   }
+
+  addCommentPaperSet(dialogResult: any, element: any) {
+    if (dialogResult && element.customerOrderId) {
+      this.customerOrderService.getCustomerOrder(element.customerOrderId).subscribe(customerOrder => {
+        if (customerOrder && instanceOfCustomerOrder(customerOrder)) {
+          this.newComment.customerOrder = customerOrder;
+          this.newComment.comment = dialogResult;
+          this.employeeService.getCurrentEmployee().subscribe(currentEmployee => {
+            this.newComment.employee = currentEmployee;
+            this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
+              customerOrder.customerOrderComments.push(response);
+            });
+          })
+        }
+      });
+    }
+  }
 }
+
