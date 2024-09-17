@@ -58,8 +58,8 @@ export class ServiceComponent implements OnInit {
     if (changes.service && this.service) {
       if (this.service.assoServiceDocuments && this.service.assoServiceDocuments.length > 0)
         this.service.assoServiceDocuments.sort((a: AssoServiceDocument, b: AssoServiceDocument) => {
-          let aLabel = ((a.isMandatory) ? "0" : "1") + a.typeDocument.label;
-          let bLabel = ((b.isMandatory) ? "0" : "1") + b.typeDocument.label;
+          let aLabel = ((a.isMandatory) ? "0" : "1") + a.typeDocument.customLabel;
+          let bLabel = ((b.isMandatory) ? "0" : "1") + b.typeDocument.customLabel;
           return aLabel.localeCompare(bLabel)
         });
     }
@@ -84,7 +84,7 @@ export class ServiceComponent implements OnInit {
       maxWidth: "400px",
       data: {
         title: "Supprimer le type de document",
-        content: "Êtes-vous sûr de vouloir supprimer le type de document " + document.typeDocument.label + " ? Cela effacera toutes les pièces jointes associées.",
+        content: "Êtes-vous sûr de vouloir supprimer le type de document " + document.typeDocument.customLabel + " ? Cela effacera toutes les pièces jointes associées.",
         closeActionText: "Annuler",
         validationActionText: "Supprimer"
       }
@@ -163,7 +163,7 @@ export class ServiceComponent implements OnInit {
   documentContainsSearch(document: AssoServiceDocument) {
     let found = false;
     if (this.searchText && document) {
-      found = document.typeDocument.label.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0;
+      found = document.typeDocument.customLabel.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0;
       if (!found && document.attachments && document.attachments.length > 0) {
         for (let attachment of document.attachments)
           if (attachment.uploadedFile.filename.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0) {

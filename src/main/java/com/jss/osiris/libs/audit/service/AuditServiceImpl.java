@@ -31,7 +31,7 @@ public class AuditServiceImpl implements AuditService {
         try {
             auditRepository.cleanAudit();
         } catch (Exception e) {
-            if (!e.getMessage().contains("could not extract ResultSet"))
+            if (!e.getMessage().contains("could not extract ResultSet") || !e.getMessage().contains("ultat retourn"))
                 throw e;
         }
     }

@@ -75,7 +75,7 @@
         (afterExpand)="onExpandedChange(provision.id)" [expanded]=" provision.id==inputProvisionId">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            {{computeServiceLabel(service, true)}} {{computeProvisionLabel( provision)}}
+            {{computeServiceLabel(service, true)}} {{computeProvisionLabel(service, provision, true)}}
           </mat-panel-title>
           <mat-panel-description>
             <span class="status-text"
@@ -136,7 +136,7 @@
       <button mat-menu-item [matMenuTriggerFor]="menu3" (mouseover)="setCurrentProvisionWorkflow(provision)"
         *ngFor="let provision of service.provisions"><span
           style="color:#c4ae8b">{{computeServiceLabel(service,false)}}</span>
-        {{computeProvisionLabel(provision)}}</button>
+        {{computeProvisionLabel(service, provision, true)}}</button>
     </ng-container>
   </mat-menu>
 </button>
@@ -191,7 +191,7 @@
       <button mat-menu-item [matMenuTriggerFor]="menu4" (mouseover)="setCurrentProvisionWorkflow(provision)"
         *ngFor="let provision of service.provisions"><span
           style="color:#c4ae8b">{{computeServiceLabel(service,false)}}</span>
-        {{computeProvisionLabel(provision)}}</button>
+        {{computeProvisionLabel(service, provision, true)}}</button>
     </ng-container>
   </mat-menu>
 </button>

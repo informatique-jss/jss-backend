@@ -2,7 +2,7 @@
   <mat-label>{{label}}</mat-label>
   <mat-chip-grid #chipListTypeDocument>
     <mat-chip-row *ngFor="let typeDocument of model" (removed)="removeElement(typeDocument)">
-      {{typeDocument.label}}
+      {{typeDocument.customLabel}}
       <button matChipRemove *ngIf="!isDisabled">
         <mat-icon>cancel</mat-icon>
       </button>
@@ -14,7 +14,7 @@
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addTypeDocument($event)">
     <mat-option *ngFor="let typeDocument of filteredTypeDocuments | async" [value]="typeDocument">
-      {{typeDocument.label}}
+      {{typeDocument.customLabel}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

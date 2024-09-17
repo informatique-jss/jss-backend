@@ -46,6 +46,9 @@ public class TypeDocument implements ICode, IAttachment {
     @Column(columnDefinition = "TEXT")
     private String label;
 
+    @Column(columnDefinition = "TEXT")
+    private String customLabel;
+
     @OneToMany(mappedBy = "typeDocumentAttachment", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "typeDocumentAttachment" }, allowSetters = true)
     private List<Attachment> attachments;
@@ -88,5 +91,45 @@ public class TypeDocument implements ICode, IAttachment {
 
     public void setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
+    }
+
+    public static String getUNSIGNED_SYNTHESES_DOCUMENT_CODE() {
+        return UNSIGNED_SYNTHESES_DOCUMENT_CODE;
+    }
+
+    public static void setUNSIGNED_SYNTHESES_DOCUMENT_CODE(String uNSIGNED_SYNTHESES_DOCUMENT_CODE) {
+        UNSIGNED_SYNTHESES_DOCUMENT_CODE = uNSIGNED_SYNTHESES_DOCUMENT_CODE;
+    }
+
+    public static String getSIGNED_SYNTHESES_DOCUMENT_CODE() {
+        return SIGNED_SYNTHESES_DOCUMENT_CODE;
+    }
+
+    public static void setSIGNED_SYNTHESES_DOCUMENT_CODE(String sIGNED_SYNTHESES_DOCUMENT_CODE) {
+        SIGNED_SYNTHESES_DOCUMENT_CODE = sIGNED_SYNTHESES_DOCUMENT_CODE;
+    }
+
+    public static String getUNSIGNED_BE_DOCUMENT_CODE() {
+        return UNSIGNED_BE_DOCUMENT_CODE;
+    }
+
+    public static void setUNSIGNED_BE_DOCUMENT_CODE(String uNSIGNED_BE_DOCUMENT_CODE) {
+        UNSIGNED_BE_DOCUMENT_CODE = uNSIGNED_BE_DOCUMENT_CODE;
+    }
+
+    public static String getSIGNED_BE_DOCUMENT_CODE() {
+        return SIGNED_BE_DOCUMENT_CODE;
+    }
+
+    public static void setSIGNED_BE_DOCUMENT_CODE(String sIGNED_BE_DOCUMENT_CODE) {
+        SIGNED_BE_DOCUMENT_CODE = sIGNED_BE_DOCUMENT_CODE;
+    }
+
+    public String getCustomLabel() {
+        return customLabel;
+    }
+
+    public void setCustomLabel(String customLabel) {
+        this.customLabel = customLabel;
     }
 }

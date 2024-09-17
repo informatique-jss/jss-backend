@@ -5,6 +5,8 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
+import { ServiceService } from 'src/app/modules/quotation/services/service.service';
+import { ConstantService } from '../../modules/miscellaneous/services/constant.service';
 import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';
 import { IndexEntity } from './IndexEntity';
@@ -46,6 +48,8 @@ export class SearchComponent implements OnInit {
   constructor(private searchDialogRef: MatDialogRef<SearchComponent>,
     protected indexEntityService: IndexEntityService,
     private appService: AppService,
+    private serviceService: ServiceService,
+    private constantService: ConstantService,
     protected formBuilder: UntypedFormBuilder,
     private router: Router) { }
 
@@ -211,14 +215,15 @@ export class SearchComponent implements OnInit {
 
   getProvisionLabel(entity: any) {
     let out = [];
-    if (entity.text.provisions && entity.text.customerOrder) {
-      for (let provision of entity.text.provisions)
-        out.push((provision.provisionFamilyType ? provision.provisionFamilyType.label : "")
-          + " - " + (provision.provisionType ? provision.provisionType.label : "")
-          + " - " + (provision.assignedTo ? provision.assignedTo.firstname + " " + provision.assignedTo.lastname : "")
-          + (provision.simpleProvision && provision.simpleProvision.simpleProvisionStatus ? " - " + provision.simpleProvision.simpleProvisionStatus.label : "")
-          + (provision.formalite && provision.formalite.formaliteStatus ? " - " + provision.formalite.formaliteStatus.label : "")
-        );
+    if (entity.text.services && entity.text.customerOrder) {
+      for (let service of entity.text.services) {
+        out.push(this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther()));
+        for (let provision of service.provisions)
+          out.push((provision.assignedTo ? provision.assignedTo.firstname + " " + provision.assignedTo.lastname : "")
+            + (provision.simpleProvision && provision.simpleProvision.simpleProvisionStatus ? " - " + provision.simpleProvision.simpleProvisionStatus.label : "")
+            + (provision.formalite && provision.formalite.formaliteStatus ? " - " + provision.formalite.formaliteStatus.label : "")
+          );
+      }
       return out.join(" / ") + " / Commande " + entity.text.customerOrder.id;
     }
     return "";
