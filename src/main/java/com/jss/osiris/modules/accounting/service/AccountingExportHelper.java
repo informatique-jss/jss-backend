@@ -212,9 +212,7 @@ public class AccountingExportHelper {
                                                                 .setCellValue(accountingRecord.getId());
                                         currentCell.setCellStyle(recordCellStyle);
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        if (accountingRecord.getContrePasseOperationId() != null)
-                                                currentCell.setCellValue(
-                                                                accountingRecord.getContrePasseOperationId());
+                                        currentCell.setCellValue("");
                                         currentCell.setCellStyle(recordCellStyle);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         currentCell.setCellValue(
@@ -777,8 +775,7 @@ public class AccountingExportHelper {
                                                         .setCellValue(accountingRecord.getId());
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (accountingRecord.getContrePasseOperationId() != null)
-                                        currentCell.setCellValue(accountingRecord.getContrePasseOperationId());
+                                currentCell.setCellValue("");
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(
@@ -1032,8 +1029,7 @@ public class AccountingExportHelper {
                                                         .setCellValue(accountingRecord.getId());
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (accountingRecord.getContrePasseOperationId() != null)
-                                        currentCell.setCellValue(accountingRecord.getContrePasseOperationId());
+                                currentCell.setCellValue("");
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(

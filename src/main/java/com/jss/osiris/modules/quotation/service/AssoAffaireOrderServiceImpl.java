@@ -57,7 +57,7 @@ import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
-import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
@@ -546,8 +546,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 }
                                 if (invoiceFound != null)
                                     paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
-                                            Arrays.asList(invoiceFound), null, null, null, null, null,
-                                            null);
+                                            Arrays.asList(invoiceFound), null, null, null, null, null);
                             }
                         }
                     }
@@ -560,35 +559,17 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     if (provision.getProvisionType().getAssignationType() != null) {
                         if (provision.getProvisionType().getAssignationType().getCode()
                                 .equals(AssignationType.FORMALISTE)) {
-                            if (customerOrder.getConfrere() != null
-                                    && customerOrder.getConfrere().getFormalisteEmployee() != null)
-                                employee = customerOrder.getConfrere().getFormalisteEmployee();
-                            if (customerOrder.getResponsable() != null) {
-                                if (customerOrder.getResponsable().getFormalisteEmployee() != null)
-                                    employee = customerOrder.getResponsable().getFormalisteEmployee();
-                                else if (customerOrder.getResponsable().getTiers()
-                                        .getFormalisteEmployee() != null)
-                                    employee = customerOrder.getResponsable().getTiers()
-                                            .getFormalisteEmployee();
-                            } else if (customerOrder.getTiers() != null
-                                    && customerOrder.getTiers().getFormalisteEmployee() != null)
-                                employee = customerOrder.getTiers().getFormalisteEmployee();
+                            if (customerOrder.getResponsable().getFormalisteEmployee() != null)
+                                employee = customerOrder.getResponsable().getFormalisteEmployee();
+                            else if (customerOrder.getResponsable().getTiers().getFormalisteEmployee() != null)
+                                employee = customerOrder.getResponsable().getTiers().getFormalisteEmployee();
                         }
                         if (provision.getProvisionType().getAssignationType().getCode()
                                 .equals(AssignationType.PUBLICISTE)) {
-                            if (customerOrder.getConfrere() != null
-                                    && customerOrder.getConfrere().getInsertionEmployee() != null)
-                                employee = customerOrder.getConfrere().getInsertionEmployee();
-                            if (customerOrder.getResponsable() != null) {
-                                if (customerOrder.getResponsable().getInsertionEmployee() != null)
-                                    employee = customerOrder.getResponsable().getInsertionEmployee();
-                                else if (customerOrder.getResponsable().getTiers()
-                                        .getInsertionEmployee() != null)
-                                    employee = customerOrder.getResponsable().getTiers()
-                                            .getInsertionEmployee();
-                            } else if (customerOrder.getTiers() != null
-                                    && customerOrder.getTiers().getInsertionEmployee() != null)
-                                employee = customerOrder.getTiers().getInsertionEmployee();
+                            if (customerOrder.getResponsable().getInsertionEmployee() != null)
+                                employee = customerOrder.getResponsable().getInsertionEmployee();
+                            else if (customerOrder.getResponsable().getTiers().getInsertionEmployee() != null)
+                                employee = customerOrder.getResponsable().getTiers().getInsertionEmployee();
                         }
                     }
                     provision.setAssignedTo(employee);
@@ -609,9 +590,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (nbrAssignation == 1 && assoAffaireOrder.getAssignedTo() == null)
             assoAffaireOrder.setAssignedTo(currentEmployee);
 
-        if (maxWeightEmployee != null)
-
-        {
+        if (maxWeightEmployee != null) {
             if (assoAffaireOrder.getAssignedTo() == null)
                 assoAffaireOrder.setAssignedTo(maxWeightEmployee);
 
@@ -667,7 +646,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (affaireSearch.getCustomerOrders() != null && affaireSearch.getCustomerOrders().size() > 0) {
-            for (ITiers tiers : affaireSearch.getCustomerOrders())
+            for (Tiers tiers : affaireSearch.getCustomerOrders())
                 customerOrderId.add(tiers.getId());
         } else {
             customerOrderId.add(0);

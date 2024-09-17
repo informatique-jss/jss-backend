@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.AssoMailCompetentAuthorityServiceFamilyGroup;
 import com.jss.osiris.modules.miscellaneous.model.City;
@@ -108,11 +107,6 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
                 && competentAuthority.getMails().size() > 0)
             mailService.populateMailIds(competentAuthority.getMails());
 
-        // If mails already exists, get their ids
-        if (competentAuthority != null && competentAuthority.getAccountingMails() != null
-                && competentAuthority.getAccountingMails().size() > 0)
-            mailService.populateMailIds(competentAuthority.getAccountingMails());
-
         // If phones already exists, get their ids
         if (competentAuthority != null && competentAuthority.getPhones() != null
                 && competentAuthority.getPhones().size() > 0) {
@@ -129,25 +123,6 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
             }
         }
 
-        // Generate accounting accounts
-        if (competentAuthority.getId() == null
-                || competentAuthority.getAccountingAccountCustomer() == null
-                        && competentAuthority.getAccountingAccountProvider() == null
-                        && competentAuthority.getAccountingAccountDepositProvider() == null) {
-            AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                    .generateAccountingAccountsForEntity(competentAuthority.getLabel(), true);
-            competentAuthority.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
-            competentAuthority.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
-            competentAuthority
-                    .setAccountingAccountDepositProvider(accountingAccountCouple.getAccountingAccountDeposit());
-        } else {
-            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountCustomer(),
-                    competentAuthority.getLabel());
-            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountDeposit(),
-                    competentAuthority.getLabel());
-            accountingAccountService.updateAccountingAccountLabel(competentAuthority.getAccountingAccountProvider(),
-                    competentAuthority.getLabel());
-        }
         return competentAuthorityRepository.save(competentAuthority);
     }
 

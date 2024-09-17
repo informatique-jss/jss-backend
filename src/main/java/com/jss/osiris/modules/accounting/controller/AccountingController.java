@@ -233,8 +233,7 @@ public class AccountingController {
             return new ResponseEntity<List<AccountingRecordSearchResult>>(
                     accountingRecordService.searchAccountingRecords(accountingRecordSearch, false), HttpStatus.OK);
 
-        if (accountingRecordSearch.getTiersId() == null
-                && accountingRecordSearch.getConfrereId() == null) {
+        if (accountingRecordSearch.getTiersId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
@@ -309,8 +308,7 @@ public class AccountingController {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
-        if (accountingRecordSearch.getTiersId() == null
-                && accountingRecordSearch.getConfrereId() == null) {
+        if (accountingRecordSearch.getTiersId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
@@ -351,8 +349,7 @@ public class AccountingController {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
-        if (accountingRecordSearch.getTiersId() == null
-                && accountingRecordSearch.getConfrereId() == null) {
+        if (accountingRecordSearch.getTiersId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
@@ -394,8 +391,7 @@ public class AccountingController {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
-        if (accountingRecordSearch.getTiersId() == null
-                && accountingRecordSearch.getConfrereId() == null) {
+        if (accountingRecordSearch.getTiersId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
@@ -429,15 +425,16 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/billing-closure-receipt/download")
-    public ResponseEntity<byte[]> downloadBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId)
+    public ResponseEntity<byte[]> downloadBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId,
+            @RequestParam("responsableId") Integer responsableId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         byte[] data = null;
         HttpHeaders headers = null;
 
-        if (tiersId == null)
+        if (tiersId == null || responsableId == null)
             throw new OsirisValidationException("tiersId");
 
-        File billingClosureExport = accountingRecordService.getBillingClosureReceiptFile(tiersId, true);
+        File billingClosureExport = accountingRecordService.getBillingClosureReceiptFile(tiersId, responsableId, true);
 
         if (billingClosureExport != null) {
             try {
@@ -461,12 +458,13 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/billing-closure-receipt/send")
-    public ResponseEntity<Boolean> sendBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId)
+    public ResponseEntity<Boolean> sendBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId,
+            @RequestParam("responsableId") Integer responsableId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        if (tiersId == null)
+        if (tiersId == null || responsableId == null)
             throw new OsirisValidationException("tiersId");
 
-        accountingRecordService.getBillingClosureReceiptFile(tiersId, false);
+        accountingRecordService.getBillingClosureReceiptFile(tiersId, responsableId, false);
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }

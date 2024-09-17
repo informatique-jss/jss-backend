@@ -1,25 +1,21 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import { Responsable } from '../../model/Responsable';
-import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
-import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
-import { Tiers } from '../../model/Tiers';
-import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { ITiers } from '../../model/ITiers';
-import { OrderingSearchResult } from 'src/app/modules/quotation/model/OrderingSearchResult';
-import { OrderingSearchResultService } from 'src/app/modules/quotation/services/ordering.search.result.service';
-import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
-import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
-import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
-import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
-import { InvoiceSearchResult } from 'src/app/modules/invoicing/model/InvoiceSearchResult';
-import { QuotationSearchResult } from 'src/app/modules/quotation/model/QuotationSearchResult';
-import { CustomerOrderFiller } from '../../model/CustomerOrderFiller';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
+import { InvoiceSearchResult } from 'src/app/modules/invoicing/model/InvoiceSearchResult';
+import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
-import { Employee } from 'src/app/modules/profile/model/Employee';
-import { AssoAffaireOrderSearchResult } from 'src/app/modules/quotation/model/AssoAffaireOrderSearchResult';
-import { Subscription } from 'rxjs';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
+import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
+import { OrderingSearchResult } from 'src/app/modules/quotation/model/OrderingSearchResult';
+import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
+import { QuotationSearchResult } from 'src/app/modules/quotation/model/QuotationSearchResult';
+import { OrderingSearchResultService } from 'src/app/modules/quotation/services/ordering.search.result.service';
+import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
+import { CustomerOrderFiller } from '../../model/CustomerOrderFiller';
+import { Responsable } from '../../model/Responsable';
+import { Tiers } from '../../model/Tiers';
 
 @Component({
   selector: 'visit-prepa-customer-orders-responsible',
@@ -54,11 +50,11 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
     private invoiceSearchResultService: InvoiceSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
     private constantService: ConstantService,
-    ) {
-    }
+  ) {
+  }
 
   ngAfterContentChecked(): void {
-      this.changeDetectorRef.detectChanges();
+    this.changeDetectorRef.detectChanges();
   }
 
   ngOnInit() {
@@ -67,27 +63,27 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
     this.invoices = [{} as InvoiceSearchResult];
     this.customerOrderFiller = [{} as CustomerOrderFiller];
 
-    this.displayedColumnsSalesRecord.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Donneur d'ordre"  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "Nº commande"  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Donneur d'ordre" } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "Nº commande" } as SortTableColumn<CustomerOrderFiller>);
     this.displayedColumnsSalesRecord.push({ id: "createdDateCO", fieldName: "createdDateCO", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire"  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut de la commande"  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "invoiceId", fieldName: "invoiceId", label: "facture"  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "createdDateInvoice", fieldName: "createdDateInvoice", label: "Date de la Facture", valueFonction: formatDateTimeForSortTable  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "totalPriceInvoice", fieldName: "totalPriceInvoice", label: "Montant de la Facture", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "remainingToPayInvoice", fieldName: "remainingToPayInvoice", label: "Reste à payer", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable  } as SortTableColumn<CustomerOrderFiller>);
-    this.displayedColumnsSalesRecord.push({ id: "nbrCommandes", fieldName: "nbrCommandes", label: "Nbr commandes"  } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut de la commande" } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "invoiceId", fieldName: "invoiceId", label: "facture" } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "createdDateInvoice", fieldName: "createdDateInvoice", label: "Date de la Facture", valueFonction: formatDateTimeForSortTable } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "totalPriceInvoice", fieldName: "totalPriceInvoice", label: "Montant de la Facture", valueFonction: formatEurosForSortTable } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "remainingToPayInvoice", fieldName: "remainingToPayInvoice", label: "Reste à payer", valueFonction: formatEurosForSortTable } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable } as SortTableColumn<CustomerOrderFiller>);
+    this.displayedColumnsSalesRecord.push({ id: "nbrCommandes", fieldName: "nbrCommandes", label: "Nbr commandes" } as SortTableColumn<CustomerOrderFiller>);
 
     if (this.overrideIconAction == "") {
 
-    this.salesRecordTableActions.push({
-      actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction<CustomerOrderFiller>, element: CustomerOrderFiller) => {
-        if (element)
-          return ['/order', element.customerOrderId];
-        return undefined;
-      }, display: true,
-    } as SortTableAction<CustomerOrderFiller>);
+      this.salesRecordTableActions.push({
+        actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction<CustomerOrderFiller>, element: CustomerOrderFiller) => {
+          if (element)
+            return ['/order', element.customerOrderId];
+          return undefined;
+        }, display: true,
+      } as SortTableAction<CustomerOrderFiller>);
 
       this.salesRecordTableActions.push({
         actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction<CustomerOrderFiller>, element: CustomerOrderFiller) => {
@@ -108,7 +104,7 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
     this.searchText = filterValue.toLowerCase();
   }
 
- loadCustomerOrderFilter() {
+  loadCustomerOrderFilter() {
     this.orderingSearch.customerOrders = [this.tiers];
     this.orderingSearchResultService.getOrders(this.orderingSearch).subscribe(response => {
       this.orders = response;
@@ -116,11 +112,11 @@ export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, Aft
     })
   }
 
- loadInvoiceFilter(){
-  this.invoiceSearch.customerOrders = [this.tiers];
-  this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
-    this.invoices = response;
-  })
+  loadInvoiceFilter() {
+    this.invoiceSearch.customerOrders = [this.tiers];
+    this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
+      this.invoices = response;
+    })
   }
 
   fillCustomerOrderFiller() {

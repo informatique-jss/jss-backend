@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { QUOTATION_STATUS_SENT_TO_CUSTOMER } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
-import { getCustomerOrderForIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -77,9 +76,6 @@ export class OrderingCustomerComponent implements OnInit {
     if (changes.quotation) {
       if (this.quotation.responsable && this.quotation.responsable.id && !this.searchedResponsable) {
         this.indexEntityService.getResponsableByKeyword(this.quotation.responsable.id + "", false).subscribe(response => this.searchedResponsable = response[0]);
-      }
-      if (this.quotation.tiers && this.quotation.tiers.id && !this.searchedTiers) {
-        this.indexEntityService.getIndividualTiersByKeyword(this.quotation.tiers.id + "").subscribe(response => this.searchedTiers = response[0]);
       }
       this.orderingCustomerForm.markAllAsTouched();
 
@@ -156,22 +152,10 @@ export class OrderingCustomerComponent implements OnInit {
   orderingCustomerForm = this.formBuilder.group({
   });
 
-  getCustomerOrderForIQuotation = getCustomerOrderForIQuotation;
-
-  fillTiers(tiers: IndexEntity) {
-    this.tiersService.getTiers(tiers.entityId).subscribe(response => {
-      this.quotation.tiers = response;
-      this.quotation.responsable = undefined;
-      this.quotation.responsable = undefined;
-      this.setDocument();
-    })
-  }
 
   fillConfrere(confrere: Confrere) {
-    this.quotation.confrere = confrere;
-    this.quotation.tiers = undefined;
-    this.quotation.responsable = undefined;
-    this.setDocument();
+    //this.quotation.confrere = confrere; // TODO : refonte
+    this.fillResponsable({ "entityId": confrere.responsable.id } as IndexEntity);
   }
 
   fillResponsable(responsable: IndexEntity) {
@@ -185,12 +169,11 @@ export class OrderingCustomerComponent implements OnInit {
         this.setDocument();
       }
     })
-    this.quotation.tiers = undefined;
   }
 
   getFormStatus(): boolean {
     this.orderingCustomerForm.markAllAsTouched();
-    return this.orderingCustomerForm.valid && (this.quotation.responsable != undefined || this.quotation.tiers != undefined || this.quotation.confrere != undefined);
+    return this.orderingCustomerForm.valid && (this.quotation.responsable != undefined);
   }
 
   instanceOfQuotation = instanceOfQuotation;

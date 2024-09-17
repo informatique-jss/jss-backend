@@ -21,7 +21,7 @@ import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.repository.VatRepository;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.IQuotation;
-import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Service
 public class VatServiceImpl implements VatService {
@@ -181,13 +181,7 @@ public class VatServiceImpl implements VatService {
     private Country getCountryForIQuotation(IQuotation quotation) throws OsirisException, OsirisClientMessageException {
         Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
 
-        ITiers customerOrder = null;
-        if (quotation.getConfrere() != null)
-            customerOrder = quotation.getConfrere();
-        else if (quotation.getResponsable() != null)
-            customerOrder = quotation.getResponsable().getTiers();
-        else
-            customerOrder = quotation.getTiers();
+        Tiers customerOrder = quotation.getResponsable().getTiers();
 
         // No VAT abroad (France and Monaco)
         Country country = null;
@@ -216,13 +210,7 @@ public class VatServiceImpl implements VatService {
     private City getCityForIQuotation(IQuotation quotation) throws OsirisException, OsirisClientMessageException {
         Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
 
-        ITiers customerOrder = null;
-        if (quotation.getConfrere() != null)
-            customerOrder = quotation.getConfrere();
-        else if (quotation.getResponsable() != null)
-            customerOrder = quotation.getResponsable().getTiers();
-        else
-            customerOrder = quotation.getTiers();
+        Tiers customerOrder = quotation.getResponsable().getTiers();
 
         City city = null;
         if (billingDocument == null || billingDocument.getBillingLabelType() == null
@@ -253,20 +241,14 @@ public class VatServiceImpl implements VatService {
     }
 
     private Country getCountryForInvoice(Invoice invoice) throws OsirisException, OsirisClientMessageException {
-        ITiers customerOrder = null;
+        Tiers customerOrder = null;
 
         if (invoice.getBillingLabelCountry() != null)
             return invoice.getBillingLabelCountry();
         else if (invoice.getProvider() != null)
             return invoice.getProvider().getCountry();
-        else if (invoice.getCompetentAuthority() != null)
-            return invoice.getCompetentAuthority().getCountry();
-        else if (invoice.getConfrere() != null)
-            customerOrder = invoice.getConfrere();
-        else if (invoice.getResponsable() != null)
-            customerOrder = invoice.getResponsable().getTiers();
         else
-            customerOrder = invoice.getTiers();
+            customerOrder = invoice.getResponsable().getTiers();
 
         Country country = null;
         if (invoice.getBillingLabelType() == null
@@ -289,20 +271,14 @@ public class VatServiceImpl implements VatService {
     }
 
     private City getCityForInvoice(Invoice invoice) throws OsirisException, OsirisClientMessageException {
-        ITiers customerOrder = null;
+        Tiers customerOrder = null;
 
         if (invoice.getBillingLabelCity() != null)
             return invoice.getBillingLabelCity();
         else if (invoice.getProvider() != null)
             return cityService.getCity(invoice.getProvider().getCity().getId());
-        else if (invoice.getCompetentAuthority() != null)
-            return cityService.getCity(invoice.getCompetentAuthority().getCity().getId());
-        else if (invoice.getConfrere() != null)
-            customerOrder = invoice.getConfrere();
-        else if (invoice.getResponsable() != null)
-            customerOrder = invoice.getResponsable().getTiers();
         else
-            customerOrder = invoice.getTiers();
+            customerOrder = invoice.getResponsable().getTiers();
 
         City city = null;
         if (invoice.getBillingLabelType() == null
@@ -329,7 +305,7 @@ public class VatServiceImpl implements VatService {
     @Override
     public void completeVatOnInvoiceItem(InvoiceItem invoiceItem, Invoice invoice)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        if (invoice.getIsInvoiceFromProvider() == false && invoice.getIsProviderCreditNote() == false) {
+        if (invoice.getResponsable() != null) {
             chooseCorrectVatDeductibleCollected(invoiceItem, false);
             Vat applicableVat = getGeographicalApplicableVatForSales(invoice, invoiceItem.getVat());
             if (applicableVat == null)

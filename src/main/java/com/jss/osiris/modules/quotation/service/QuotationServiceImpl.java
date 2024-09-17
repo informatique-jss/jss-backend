@@ -52,7 +52,7 @@ import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
-import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class QuotationServiceImpl implements QuotationService {
@@ -155,8 +155,7 @@ public class QuotationServiceImpl implements QuotationService {
 
         // Set default customer order assignation to sales employee if not set
         if (quotation.getAssignedTo() == null)
-            quotation.setAssignedTo(
-                    getCustomerOrderOfQuotation(quotation).getDefaultCustomerOrderEmployee());
+            quotation.setAssignedTo(quotation.getResponsable().getDefaultCustomerOrderEmployee());
 
         // Complete provisions
         boolean oneNewProvision = false;
@@ -282,18 +281,6 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws OsirisException {
-        if (quotation.getConfrere() != null)
-            return quotation.getConfrere();
-        if (quotation.getResponsable() != null)
-            return quotation.getResponsable();
-        if (quotation.getTiers() != null)
-            return quotation.getTiers();
-
-        throw new OsirisException(null, "No customer order declared on IQuotation " + quotation.getId());
-    }
-
-    @Override
     public List<QuotationSearchResult> searchQuotations(QuotationSearch quotationSearch) {
         ArrayList<Integer> statusId = new ArrayList<Integer>();
         if (quotationSearch.getQuotationStatus() != null && quotationSearch.getQuotationStatus().size() > 0) {
@@ -322,7 +309,7 @@ public class QuotationServiceImpl implements QuotationService {
 
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (quotationSearch.getCustomerOrders() != null && quotationSearch.getCustomerOrders().size() > 0) {
-            for (ITiers tiers : quotationSearch.getCustomerOrders())
+            for (Tiers tiers : quotationSearch.getCustomerOrders())
                 customerOrderId.add(tiers.getId());
         } else {
             customerOrderId.add(0);
@@ -593,17 +580,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (!quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER))
             throw new OsirisValidationException("Wrong quotation status");
 
-        boolean isDepositMandatory = false;
-
-        if (quotation.getTiers() != null) {
-            isDepositMandatory = quotation.getTiers().getIsProvisionalPaymentMandatory();
-        } else if (quotation.getConfrere() != null) {
-            isDepositMandatory = quotation.getConfrere().getIsProvisionalPaymentMandatory();
-        } else if (quotation.getResponsable() != null) {
-            isDepositMandatory = quotation.getResponsable().getTiers().getIsProvisionalPaymentMandatory();
-        }
-
-        if (isDepositMandatory)
+        if (quotation.getResponsable().getTiers().getIsProvisionalPaymentMandatory())
             throw new OsirisValidationException("Deposit mandatory");
 
         addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);

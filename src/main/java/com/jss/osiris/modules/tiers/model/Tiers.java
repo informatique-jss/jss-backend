@@ -16,7 +16,7 @@ import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
+import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
@@ -44,7 +44,7 @@ import jakarta.persistence.Table;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(indexes = { @Index(name = "idx_tiers_commercial", columnList = "id_commercial"),
 })
-public class Tiers implements ITiers, IAttachment, IGenericTiers {
+public class Tiers implements IAttachment, IId {
 
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
@@ -211,10 +211,6 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	@ManyToMany
 	@JoinTable(name = "asso_tiers_competitor", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_competitor"))
 	private List<Competitor> competitors;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_accounting_account_provider")
-	private AccountingAccount accountingAccountProvider;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_customer")
@@ -516,14 +512,6 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 		this.tiersFollowups = tiersFollowups;
 	}
 
-	public AccountingAccount getAccountingAccountProvider() {
-		return accountingAccountProvider;
-	}
-
-	public void setAccountingAccountProvider(AccountingAccount accountingAccountProvider) {
-		this.accountingAccountProvider = accountingAccountProvider;
-	}
-
 	public AccountingAccount getAccountingAccountCustomer() {
 		return accountingAccountCustomer;
 	}
@@ -608,7 +596,6 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
 	}
 
-	@Override
 	public String getLabel() {
 		if (getDenomination() != null)
 			return getDenomination();

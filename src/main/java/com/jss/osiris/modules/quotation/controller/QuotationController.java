@@ -1436,17 +1436,9 @@ public class QuotationController {
     validationHelper.validateString(confrere.getPostalCode(), false, 10, "PostalCode");
     validationHelper.validateString(confrere.getCedexComplement(), false, 20, "CedexComplement");
     validationHelper.validateReferential(confrere.getCity(), false, "City");
+    validationHelper.validateReferential(confrere.getResponsable(), false, "Responsable");
+    validationHelper.validateReferential(confrere.getProvider(), false, "Provider");
     validationHelper.validateReferential(confrere.getCountry(), false, "Country");
-    validationHelper.validateReferential(confrere.getVatCollectionType(), true, "VatCollectionType");
-    validationHelper.validateReferential(confrere.getPaymentType(), true, "PaymentType");
-    validationHelper.validateIban(confrere.getPaymentIban(), false, "PaymentIBAN");
-    validationHelper.validateBic(confrere.getPaymentBic(), false, "PaymentBic");
-    validationHelper.validateString(confrere.getIntercommunityVat(), false, 20, "intercommunityVat");
-
-    if (confrere.getPaymentType() != null
-        && confrere.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
-      validationHelper.validateDate(confrere.getSepaMandateSignatureDate(), true, "SepaMandateSignatureDate");
-    }
 
     if (confrere.getSpecialOffers() != null) {
       for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
@@ -1480,7 +1472,6 @@ public class QuotationController {
         validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
         validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
             "BillingClosureRecipientType");
-        validationHelper.validateReferential(document.getRegie(), false, "Regie");
 
         if (document.getIsRecipientAffaire() == null)
           document.setIsRecipientAffaire(false);

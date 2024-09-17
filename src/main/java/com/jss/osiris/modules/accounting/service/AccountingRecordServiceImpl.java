@@ -48,9 +48,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   AccountingJournalService accountingJournalService;
 
   @Autowired
-  AccountingBalanceHelper accountingBalanceHelper;
-
-  @Autowired
   AccountingExportHelper accountingExportHelper;
 
   @Autowired
@@ -240,9 +237,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getTiersId() == null)
       accountingRecordSearch.setTiersId(0);
 
-    if (accountingRecordSearch.getConfrereId() == null)
-      accountingRecordSearch.setConfrereId(0);
-
     if (accountingRecordSearch.getStartDate() == null)
       accountingRecordSearch.setStartDate(LocalDateTime.now().minusYears(100));
 
@@ -262,7 +256,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     return accountingRecordRepository.searchAccountingRecords(accountingAccountId, accountingClass, journalId,
         accountingRecordSearch.getTiersId(),
-        accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
         accountingRecordSearch.getIsFromAs400(),
         accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
@@ -380,9 +373,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Transactional(rollbackFor = Exception.class)
   @Override
-  public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
+  public File getBillingClosureReceiptFile(Integer tiersId, Integer responsableId, boolean downloadFile)
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-    return billingClosureReceiptDelegate.getBillingClosureReceiptFile(tiersId, downloadFile);
+    return billingClosureReceiptDelegate.getBillingClosureReceiptFile(tiersId, responsableId, downloadFile);
   }
 
   @Transactional(rollbackFor = Exception.class)

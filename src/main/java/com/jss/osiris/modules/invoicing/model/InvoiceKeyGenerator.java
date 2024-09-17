@@ -12,8 +12,7 @@ public class InvoiceKeyGenerator implements IdentifierGenerator {
     public Serializable generate(SharedSessionContractImplementor session, Object obj) throws HibernateException {
         Invoice invoice = (Invoice) obj;
         String seqName = "";
-        if (invoice.getIsInvoiceFromProvider() != null && invoice.getIsInvoiceFromProvider()
-                || invoice.getIsProviderCreditNote() != null && invoice.getIsProviderCreditNote()) {
+        if (invoice.getProvider() != null) {
             seqName = "hibernate_sequence";
         } else {
             seqName = "invoice_sequence";
