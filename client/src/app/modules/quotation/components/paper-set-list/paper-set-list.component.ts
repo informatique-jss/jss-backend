@@ -11,6 +11,7 @@ import { PaperSetResult } from '../../model/PaperSetResult';
 import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { PaperSetResultService } from '../../services/paper.set.result.service';
 import { PaperSetService } from '../../services/paper.set.service';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-paper-set-list',
@@ -85,17 +86,31 @@ export class PaperSetListComponent implements OnInit {
     this.tableAction.push({
       actionIcon: "check", actionName: "Valider cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
-          const dialogRef = this.confirmationDialog.open(EditCommentDialogComponent, {
-            width: '40%',
+
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
             data: {
-              title: "Nouveau commentaire",
+              title: "Valider l'action",
+              content: "Êtes-vous sûr de vouloir valider cette action et de libérer l'emplacement associé ?",
+              closeActionText: "Annuler",
+              validationActionText: "Confirmer"
             }
           });
 
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult) {
-              this.paperSetService.validatePaperSet(element.id).subscribe(response => this.searchPaperSets());
-              this.addCommentPaperSet(dialogResult, element);
+              const dialogRef = this.confirmationDialog.open(EditCommentDialogComponent, {
+                width: '40%',
+                data: {
+                  title: "Nouveau commentaire",
+                }
+              });
+              dialogRef.afterClosed().subscribe(dialogResult => {
+                if (dialogResult) {
+                  this.paperSetService.validatePaperSet(element.id).subscribe(response => this.searchPaperSets());
+                  this.addCommentPaperSet(dialogResult, element);
+                }
+              });
             }
           });
         }
@@ -106,17 +121,30 @@ export class PaperSetListComponent implements OnInit {
     this.tableAction.push({
       actionIcon: "cancel", actionName: "Annuler cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
-          const dialogRef = this.confirmationDialog.open(EditCommentDialogComponent, {
-            width: '40%',
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
             data: {
-              title: "Nouveau commentaire",
+              title: "Annuler l'action",
+              content: "Êtes-vous sûr de vouloir annuler cette action et de libérer l'emplacement associé ?",
+              closeActionText: "Annuler",
+              validationActionText: "Confirmer"
             }
           });
 
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult) {
-              this.paperSetService.cancelPaperSet(element.id).subscribe(response => this.searchPaperSets());
-              this.addCommentPaperSet(dialogResult, element);
+              const dialogRef = this.confirmationDialog.open(EditCommentDialogComponent, {
+                width: '40%',
+                data: {
+                  title: "Nouveau commentaire",
+                }
+              });
+              dialogRef.afterClosed().subscribe(dialogResult => {
+                if (dialogResult) {
+                  this.paperSetService.cancelPaperSet(element.id).subscribe(response => this.searchPaperSets());
+                  this.addCommentPaperSet(dialogResult, element);
+                }
+              });
             }
           });
         }
