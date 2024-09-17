@@ -1,11 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/services/app.service';
 import { IndexEntity } from '../../../../../routing/search/IndexEntity';
 import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
 import { TIERS_ENTITY_TYPE } from '../../../../../routing/search/search.component';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-tiers-individual',
@@ -54,7 +54,7 @@ export class AutocompleteTiersIndividualComponent extends GenericAutocompleteCom
     return "";
   }
 
-  override getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
-    return ['tiers', entity.entityId + ""];
+  getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
+    return ['/tiers', entity.entityId + ""];
   }
 }

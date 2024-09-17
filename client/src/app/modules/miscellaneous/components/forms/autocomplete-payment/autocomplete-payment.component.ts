@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { PaymentSearchResultService } from 'src/app/modules/invoicing/services/payment.search.result.service';
+import { AppService } from 'src/app/services/app.service';
 import { PaymentSearch } from '../../../../invoicing/model/PaymentSearch';
 import { PaymentSearchResult } from '../../../../invoicing/model/PaymentSearchResult';
 import { ConstantService } from '../../../services/constant.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-payment',
@@ -43,6 +43,6 @@ export class AutocompletePaymentComponent extends GenericAutocompleteComponent<P
   }
 
   getPreviewActionLinkFunction(entity: PaymentSearchResult): string[] | undefined {
-    return ['invoicing/payment', entity.id + ""];
+    return ['/invoicing/payment', entity.id + ""];
   }
 }

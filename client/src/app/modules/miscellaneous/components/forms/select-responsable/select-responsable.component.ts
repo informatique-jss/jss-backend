@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
-import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 import { AppService } from 'src/app/services/app.service';
+import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
   selector: 'select-responsable',
@@ -53,6 +53,6 @@ export class SelectResponsableComponent extends GenericMultipleSelectComponent<R
   }
 
   getPreviewActionLinkFunction(entity: Responsable): string[] | undefined {
-    return ['tiers/responsable', entity.id + ""];
+    return ['/tiers/responsable', entity.id + ""];
   }
 }
