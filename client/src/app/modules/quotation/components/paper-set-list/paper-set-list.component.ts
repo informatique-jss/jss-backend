@@ -95,7 +95,7 @@ export class PaperSetListComponent implements OnInit {
       actionIcon: "check", actionName: "Valider cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
           const dialogRef = this.confirmationDialog.open(CommentPaperSetDialogComponent, {
-            maxWidth: "400px",
+            width: '40%',
             data: {
               title: "Valider l'action",
             }
@@ -116,7 +116,7 @@ export class PaperSetListComponent implements OnInit {
       actionIcon: "cancel", actionName: "Annuler cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
           const dialogRef = this.confirmationDialog.open(CommentPaperSetDialogComponent, {
-            maxWidth: "400px",
+            width: '40%',
             data: {
               title: "Annuler l'action",
             }
