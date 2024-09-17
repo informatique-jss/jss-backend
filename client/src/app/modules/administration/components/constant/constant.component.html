@@ -215,6 +215,24 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeRefusInfogreffe"
+                label="Type de pièce-jointe - Refus Infogreffe" [form]="constantForm"
+                propertyName="attachmentTypeRefusInfogreffe" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeAutreInfogreffe"
+                label="Type de pièce-jointe - Autre Infogreffe" [form]="constantForm"
+                propertyName="attachmentTypeAutreInfogreffe" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCreditNote" label="Type de pièce-jointe - Avoir"
                 [form]="constantForm" propertyName="attachmentTypeCreditNote" [isMandatory]="true"
                 [byPassAttachmentHiddenFilter]="true" [isDisabled]="!editMode">
@@ -837,6 +855,22 @@
           </tr>
           <tr>
             <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupFacturation"
+                label="Groupe Active Directory - Facturation" [form]="constantForm"
+                propertyName="activeDirectoryGroupFacturation" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-active-directory-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupFormalites"
+                label="Groupe Active Directory - Formalites" [form]="constantForm"
+                propertyName="activeDirectoryGroupFormalites" [isMandatory]=" true"
+                [isDisabled]="!editMode"></select-active-directory-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-contract-type [(model)]="constant.domiciliationContractTypeRouteEmail"
                 label="Contrat de domiciliation - redirection par mail" [form]="constantForm"
                 propertyName="domiciliationContractTypeRouteEmail" [isMandatory]="true" [isDisabled]="!editMode">
@@ -1450,6 +1484,12 @@
             <td><select-provision-type [(model)]="constant.provisionTypeBilanPublication"
                 label="Type de prestation - Bilan" [form]="constantForm" propertyName="provisionTypeBilanPublication"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type></td>
+          </tr>
+          <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeRegistrationAct"
+                label="Type de prestation - Enregistrement, Acte au TP" [form]="constantForm"
+                propertyName="provisionTypeRegistrationAct" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-provision-type></td>
           </tr>
           <tr>
             <td>

@@ -20,6 +20,7 @@ public class AffaireSearch {
     private Boolean isMissingQueriesToManualRemind;
     private Employee commercial;
     private FormaliteGuichetUniqueStatus formaliteGuichetUniqueStatus;
+    private String formaliteInfogreffeStatusCode;
 
     public List<Tiers> getCustomerOrders() {
         return customerOrders;
@@ -99,6 +100,14 @@ public class AffaireSearch {
 
     public void setFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus formaliteGuichetUniqueStatus) {
         this.formaliteGuichetUniqueStatus = formaliteGuichetUniqueStatus;
+    }
+
+    public String getFormaliteInfogreffeStatusCode() {
+        return formaliteInfogreffeStatusCode;
+    }
+
+    public void setFormaliteInfogreffeStatusCode(String formaliteInfogreffeStatusCode) {
+        this.formaliteInfogreffeStatusCode = formaliteInfogreffeStatusCode;
     }
 
 }

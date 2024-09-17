@@ -198,10 +198,11 @@
                                                                                     th:text="${provision.assignedTo.mail}"></span></span></a>
                                                                     </li>
                                                                     <li>Un justificatif électronique</li>
-                                                                    <li th:if="${publicationPaperNumber>0}"></li>
-                                                                    <span th:text="${publicationPaperNumber}"></span>
-                                                                    exemplaire(s) justificatifs papiers avec le nom
-                                                                    de l'affaire et la page de parution
+                                                                    <li th:if="${publicationPaperNumber>0}">
+                                                                        <span
+                                                                            th:text="${publicationPaperNumber}"></span>
+                                                                        exemplaire(s) justificatifs papiers avec le nom
+                                                                        de l'affaire et la page de parution
                                                                     </li>
                                                                     <li th:if="${provision.isPublicationReceipt} ">La
                                                                         version PDF du journal ou la version PDF de la

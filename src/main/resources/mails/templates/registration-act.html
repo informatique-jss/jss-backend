@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <style>
+        .centered {
+            text-align: center;
+        }
+
+        .border {
+            border: 2px solid black;
+            width: 25px;
+            height: 25px;
+            position: absolute;
+        }
+
+        .border-top-left {
+            border-width: 2px 0 0 2px;
+            top: 100px;
+            left: 70px;
+        }
+
+        .border-top-right {
+            border-width: 2px 2px 0 0;
+            top: 100px;
+            right: 70px;
+        }
+
+        .border-bottom-left {
+            border-width: 0 0 2px 2px;
+            top: 400px;
+            left: 70px;
+        }
+
+        .border-bottom-right {
+            border-width: 0 2px 2px 0;
+            top: 400px;
+            right: 70px;
+        }
+
+        .info-box {
+            border: 1px solid black;
+            width: 380px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .gray-box {
+            border: 1px solid black;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            background-color: lightgray;
+        }
+
+        .relative-text {
+            position: relative;
+            margin-left: 350px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <span th:if="${currentDate!=null}" th:text="${currentDate}"></span>
+    <span th:if="${customerOrder!=null}">Commande n°<span th:text="${customerOrder.id}"></span></span>
+    <div class="centered">
+        <h2>MERCI DE NOUS RETOURNER CETTE PAGE AVEC LES ACTES ENREGISTRÉS</h2>
+    </div>
+    <div style="height: 360px;"></div>
+    <div class="border border-top-left"></div>
+    <div class="border border-top-right"></div>
+    <div class="border border-bottom-left"></div>
+    <div class="border border-bottom-right"></div>
+    <div class="centered">
+        <div class="info-box">
+            <strong>JOURNAL SPÉCIAL DES SOCIÉTÉS</strong><br></br>
+            8, rue St Augustin - 75080 PARIS Cedex 02<br></br>
+            Tél: 0147031010 - Fax: 0147039955
+        </div>
+    </div>
+    <div style="height: 10px;"></div>
+    <div>
+        <div class="gray-box">BUREAU D’ENREGISTREMENT DE : SIE<br></br>ENVOI DU</div>
+        <div class="gray-box">DENOMINATION</div>
+        <div class="gray-box">AFFAIRE SUIVI PAR DOSSIR N°:</div>
+        <div class="gray-box">RESPONSABLE</div>
+        <div class="gray-box">N° DE CHEQUE:</div>
+        <div class="gray-box">VIREMENT</div>
+        <div class="gray-box">DATE</div>
+        <div class="gray-box">MONTANT</div>
+        <div class="relative-text">achat du Bureau d'Enregistrement:</div>
+    </div>
+</body>
+
+</html>

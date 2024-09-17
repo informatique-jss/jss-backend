@@ -367,7 +367,6 @@ public class CustomerMailServiceImpl implements CustomerMailService {
             batchService.declareNewBatch(Batch.SEND_MAIL, mail.getId());
     }
 
-    @Transactional
     @Override
     public void sendMail(CustomerMail mail)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {

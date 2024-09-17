@@ -4,14 +4,14 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { forkJoin, tap } from 'rxjs';
 import { MAX_SIZE_UPLOAD_FILES } from 'src/app/libs/Constants';
 import { formatBytes } from 'src/app/libs/FormatHelper';
+import { instanceOfIAttachmentCode } from 'src/app/libs/TypeHelper';
 import { TypeDocument } from 'src/app/modules/quotation/model/guichet-unique/referentials/TypeDocument';
 import { AppService } from 'src/app/services/app.service';
 import { AttachmentType } from '../../model/AttachmentType';
 import { IAttachment } from '../../model/IAttachment';
+import { IAttachmentCode } from '../../model/IAttachmentCode';
 import { AttachmentTypeService } from '../../services/attachment.type.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
-import { IAttachmentCode } from '../../model/IAttachmentCode';
-import { instanceOfIAttachmentCode } from 'src/app/libs/TypeHelper';
 
 @Component({
   selector: 'multiple-upload',
@@ -75,22 +75,17 @@ export class MultipleUploadComponent implements OnInit {
       this.uploadFiles();
   }
 
-  deleteFile(file: any) {
-    this.files.splice(this.files.indexOf(file));
-    this.attachmentForm.markAllAsTouched();
-  }
-
   checkFiles() {
     if (this.files)
       for (let file of this.files) {
         if (file.size > MAX_SIZE_UPLOAD_FILES) {
-          this.deleteFile(file);
+          this.files = [];
           this.appService.displaySnackBar("Taille maximale d'import limitée à 10 Mo", true, 15);
         }
         if (this.forcedFileExtension) {
           var extensionRegexp = /(?:\.([^.]+))?$/;
           if (!extensionRegexp.exec(file.name)![1] || extensionRegexp.exec(file.name)![1].toLowerCase() != this.forcedFileExtension.toLowerCase()) {
-            this.deleteFile(file);
+            this.files = [];
             this.appService.displaySnackBar("Le fichier doit être au format " + this.forcedFileExtension.toUpperCase(), true, 15);
           }
         }

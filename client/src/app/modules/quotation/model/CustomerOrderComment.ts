@@ -13,7 +13,7 @@ export interface CustomerOrderComment {
   customerOrder: CustomerOrder;
   quotation: Quotation;
   activeDirectoryGroups: ActiveDirectoryGroup[];
-
+  isRead: boolean;
   // Only for frontend
   isCurrentUserInGroup: boolean;
 }

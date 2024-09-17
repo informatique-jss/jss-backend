@@ -55,6 +55,7 @@ import { AutocompleteCustomerOrderComponent } from '../forms/autocomplete-custom
 import { AutocompleteDepartmentComponent } from '../forms/autocomplete-department/autocomplete-department.component';
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
 import { AutocompleteGuichetUniqueFormaliteComponent } from '../forms/autocomplete-formalite-guichet-unique/autocomplete-formalite-guichet-unique.component';
+import { AutocompleteInfogreffeFormaliteComponent } from '../forms/autocomplete-formalite-infogreffe/autocomplete-formalite-infogreffe.component';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/autocomplete-payment.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
@@ -196,6 +197,7 @@ import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/
 import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
+import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-directory-group/select-active-directory-group.component';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
 import { SelectBatchCategoryComponent } from '../forms/select-batch-category/select-batch-category.component';
@@ -215,6 +217,7 @@ import { SelectDepartmentComponent } from '../forms/select-department/select-dep
 import { SelectDepartmentsComponent } from '../forms/select-departments/select-departments.component';
 import { SelectDocumentTypeComponent } from '../forms/select-document-type/select-document-type.component';
 import { SelectFollowupComponent } from '../forms/select-followup/select-followup.component';
+import { SelectFormaliteInfogreffeStatusComponent } from '../forms/select-formalite-infogreffe-status/select-formalite-infogreffe-status.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
 import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-one/select-invoice-status-one.component';
@@ -538,6 +541,9 @@ const routes: Routes = [
     SelectServiceFieldTypeComponent,
     SelectValueServiceFieldTypeComponent,
     SelectServiceFieldDataTypeComponent,
+    SelectActiveDirectoryGroupComponent,
+    AutocompleteInfogreffeFormaliteComponent,
+    SelectFormaliteInfogreffeStatusComponent
   ],
   exports: [
     HistoryComponent,
@@ -774,6 +780,9 @@ const routes: Routes = [
     SelectServiceFieldTypeComponent,
     SelectValueServiceFieldTypeComponent,
     SelectServiceFieldDataTypeComponent,
+    SelectActiveDirectoryGroupComponent,
+    AutocompleteInfogreffeFormaliteComponent,
+    SelectFormaliteInfogreffeStatusComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

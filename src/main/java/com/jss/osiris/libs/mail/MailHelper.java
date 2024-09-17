@@ -60,6 +60,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
@@ -67,9 +68,13 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.infoGreffe.EvenementInfogreffe;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.ServiceService;
+import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -158,6 +163,10 @@ public class MailHelper {
 
     @Autowired
     ResponsableService responsableService;
+
+    @Autowired
+    ServiceService serviceService;
+    FormaliteInfogreffeService formaliteInfogreffeService;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -483,10 +492,26 @@ public class MailHelper {
             setQuotationPrice(quotation, ctx);
 
         if (mail.getMissingAttachmentQuery() != null) {
-            for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
-                if (asso.getFormalisteComment() != null)
-                    asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
-            ctx.setVariable("assoServiceDocuments", mail.getMissingAttachmentQuery().getAssoServiceDocument());
+            if (mail.getMissingAttachmentQuery().getAssoServiceDocument() != null
+                    && mail.getMissingAttachmentQuery().getAssoServiceDocument().size() > 0) {
+                for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
+                    if (asso.getFormalisteComment() != null)
+                        asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
+                ctx.setVariable("assoServiceDocuments", mail.getMissingAttachmentQuery().getAssoServiceDocument());
+            } else
+                ctx.setVariable("assoServiceDocuments", null);
+
+            if (mail.getMissingAttachmentQuery().getAssoServiceFieldType() != null
+                    && mail.getMissingAttachmentQuery().getAssoServiceFieldType().size() > 0) {
+                for (AssoServiceFieldType asso : mail.getMissingAttachmentQuery().getAssoServiceFieldType())
+                    if (asso.getFormalisteComment() != null)
+                        asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
+                ctx.setVariable("assoServiceFieldTypes", mail.getMissingAttachmentQuery().getAssoServiceFieldType());
+            } else
+                ctx.setVariable("assoServiceFieldTypes", null);
+
+            ctx.setVariable("serviceLabel",
+                    serviceService.getServiceLabel(mail.getMissingAttachmentQuery().getService()));
         }
 
         ctx.setVariable("isLastReminder", mail.getIsLastReminder() != null && mail.getIsLastReminder());
@@ -691,7 +716,7 @@ public class MailHelper {
         mail.setCustomerOrder(customerOrder);
 
         MailComputeResult mailComputeResult = mailComputeHelper
-                .computeMailForCustomerOrderCreationConfirmation(customerOrder);
+                .computeMailForDepositRequest(customerOrder);
 
         mail.setHeaderPicture("images/mails/waiting-deposit.png");
 
@@ -1182,7 +1207,7 @@ public class MailHelper {
         mail.setHeaderPicture("images/mails/renew-password.png");
         mail.setReplyToMail(constantService.getStringSalesSharedMailbox() + "");
         mail.setSendToMe(false);
-        mail.setExplaination(password);
+        mail.setExplaination(responsable.getLoginWeb() + " / " + password);
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
 
@@ -1240,7 +1265,10 @@ public class MailHelper {
         if (query.getComment() != null)
             mail.setExplaination(query.getComment().replaceAll("\r?\n", "<br/>"));
 
-        mail.setReplyTo(query.getService().getAssoAffaireOrder().getAssignedTo());
+        Employee sendToEmployee = employeeService.getCurrentEmployee();
+        if (sendToEmployee == null)
+            sendToEmployee = query.getService().getAssoAffaireOrder().getAssignedTo();
+        mail.setReplyTo(sendToEmployee);
         mail.setSendToMe(query.getSendToMe());
         mail.setMailComputeResult(mailComputeHelper.computeMailForGenericDigitalDocument(customerOrder));
         mail.setIsLastReminder(isLastReminder);
@@ -1250,7 +1278,9 @@ public class MailHelper {
         }
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        if (mail.getMissingAttachmentQuery() != null) {
+        if (mail.getMissingAttachmentQuery() != null
+                && mail.getMissingAttachmentQuery().getAssoServiceDocument() != null
+                && mail.getMissingAttachmentQuery().getAssoServiceDocument().size() > 0) {
             for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
                 if (asso.getTypeDocument() != null)
                     if (asso.getTypeDocument().getAttachments() != null
@@ -1359,6 +1389,20 @@ public class MailHelper {
                 }
                 if (liasseList.size() > 0)
                     label += " / liasse(s) GU " + String.join(", ", liasseList);
+            }
+            if (provision.getFormalite() != null && provision.getFormalite().getFormalitesInfogreffe() != null) {
+                ArrayList<String> liasseList = new ArrayList<String>();
+                for (FormaliteInfogreffe formaliteInfogreffe : provision.getFormalite()
+                        .getFormalitesInfogreffe()) {
+                    EvenementInfogreffe evenementInfogreffe = formaliteInfogreffeService
+                            .getLastEvenementInfogreffe(formaliteInfogreffe, true);
+                    if (evenementInfogreffe != null && (evenementInfogreffe.getCodeEtat().equals("ENVOYE_AU_GRF")
+                            || evenementInfogreffe.getCodeEtat().equals("RECU_PAR_LE_GRF"))) {
+                        liasseList.add(formaliteInfogreffe.getReferenceTechnique());
+                    }
+                }
+                if (liasseList.size() > 0)
+                    label += " / liasse(s) Infogreffe " + String.join(", ", liasseList);
             }
             provisionDetails.add(label);
         }

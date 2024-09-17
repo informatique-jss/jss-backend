@@ -59,6 +59,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
+  registrationAct = this.constantService.getProvisionTypeRegistrationAct();
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -121,6 +122,23 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           this.saveAsso()
         else if (this.asso)
           this.editAsso()
+    });
+  }
+
+  generateRegistrationAct() {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Générer l'enregistrement d'acte ?",
+        closeActionText: "Annuler",
+        validationActionText: "Valider"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult == true) {
+        this.provisionService.getRegistrationActPdf(this.inputProvisionId);;
+      }
     });
   }
 
@@ -269,6 +287,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     service.provisions.push(provision);
     return provision;
   }
+
 
   duplicateProvision(service: Service, provision: Provision): Provision {
     let newProvisionDuplicated = {} as Provision;
@@ -502,7 +521,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     }
     if (provision.formalite) {
       if (status.code == FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY &&
-        (!provision.formalite.competentAuthorityServiceProvider || provision.formalite.competentAuthorityServiceProvider.id != this.constantService.getCompetentAuthorityInpi().id)) {
+        (!provision.formalite.formalitesGuichetUnique && !provision.formalite.formalitesInfogreffe)) {
         saveAsso = false;
         const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseCompetentAuthorityDialogComponent, {
           maxWidth: "400px",
@@ -547,7 +566,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (saveAsso)
       this.saveAsso();
   }
-
 
   setCurrentProvisionWorkflow(provision: Provision) {
     this.currentProvisionWorkflow = provision;
@@ -654,10 +672,12 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     })
   }
 
-  computeProvisionLabel(provision: Provision): string {
-    let label = provision.provisionType.label;
+  public computeProvisionLabel(service: Service, provision: Provision, doNotDisplayService: boolean): string {
+    let label = provision.provisionType ? (provision.provisionFamilyType.label + ' - ' + provision.provisionType.label) : '';
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
+    if (!doNotDisplayService)
+      label = this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther()) + " - " + label;
     return label;
   }
 

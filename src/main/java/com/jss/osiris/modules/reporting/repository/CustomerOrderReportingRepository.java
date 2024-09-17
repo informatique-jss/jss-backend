@@ -17,11 +17,13 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
                         " lastReminderDate, " +
-                        " customerOrderCreator " +
+                        " customerOrderCreator, " +
+                        " customerOrderCreatedDateYear, customerOrderCreatedDateMonth, customerOrderCreatedDateDay, customerOrderCreatedDateWeek "
+                        +
                         " from " +
                         " ( " +
                         " select " +
-                        " co.id, " +
+                        " co.id as id, " +
                         " cos2.label as customerOrderStatusLabel, " +
                         " concat(e.firstname, " +
                         " ' ', " +
@@ -40,7 +42,11 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " ' / ') as aggregateProvisionTypeLabel, " +
                         " to_char(coalesce(third_reminder_date_time,second_reminder_date_time,first_reminder_date_time),'YYYY-MM-DD') as lastReminderDate, "
                         +
-                        " adt.username as customerOrderCreator" +
+                        " adt.username as customerOrderCreator, " +
+                        " to_char(adt.datetime, 'YYYY') as customerOrderCreatedDateYear, " +
+                        " to_char(adt.datetime, 'YYYY-MM') as customerOrderCreatedDateMonth, " +
+                        " to_char(adt.datetime, 'YYYY-MM-DD') as customerOrderCreatedDateDay," +
+                        " to_char(adt.datetime, 'YYYY-MM - tmw') as customerOrderCreatedDateWeek" +
                         " from " +
                         " customer_order co " +
                         " join customer_order_status cos2 on " +
@@ -63,14 +69,19 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " ' ', " +
                         " e.lastname) , " +
                         " co.id, " +
-                        " adt.username" +
+                        " adt.username, " +
+                        " to_char(adt.datetime, 'YYYY')  , " +
+                        " to_char(adt.datetime, 'YYYY-MM')  , " +
+                        " to_char(adt.datetime, 'YYYY-MM - tmw')  , " +
+                        " to_char(adt.datetime, 'YYYY-MM-DD') " +
                         " ) t " +
                         " group by " +
                         " customerOrderStatusLabel, " +
                         " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
                         " lastReminderDate, " +
-                        " customerOrderCreator "
+                        " customerOrderCreator ," +
+                        " customerOrderCreatedDateYear, customerOrderCreatedDateMonth, customerOrderCreatedDateDay, customerOrderCreatedDateWeek "
                         +
                         "")
         List<ICustomerOrderReporting> getCustomerOrderReporting();

@@ -120,4 +120,12 @@ export const Dictionnary = {
   "isProviderInvoice": "Est une facture fournisseur ?",
   "journalTypeLabel": "Type de journal",
   "customerOrderCreator": "Commande créée par",
+  "REJETE_DEF_GRF": "Formalité rejetée définitivement",
+  "REJETE_GRF": "Formalité rejetée",
+  "RECU_PAR_LE_GRF": "Formalité reçue",
+  "REPRISE": "Reprise en cours",
+  "SAUVEGARDE": "Sauvegardée",
+  "ENVOYE_AU_GRF": "Envoyée au greffe",
+  "ENVOI_EN_COURS": "Envoi en cours",
+  "VALIDE": "Validée"
 };

@@ -338,6 +338,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.provisionTypeBilanPublication;
   }
 
+  getProvisionTypeRegistrationAct() {
+    return this.constant.provisionTypeRegistrationAct;
+  }
+
   getBillingTypeInfogreffeDebour() {
     return this.constant.billingTypeInfogreffeDebour;
   }
@@ -782,5 +786,13 @@ export class ConstantService extends AppRestService<Constant> {
 
   getDateAccountingClosureForAccountant() {
     return this.constant.dateAccountingClosureForAccountant;
+  }
+
+  getActiveDirectoryGroupFormalites() {
+    return this.constant.activeDirectoryGroupFormalites;
+  }
+
+  getActiveDirectoryGroupFacturation() {
+    return this.constant.activeDirectoryGroupFacturation;
   }
 }

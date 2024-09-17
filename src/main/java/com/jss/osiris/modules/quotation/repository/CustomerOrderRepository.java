@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 
 import jakarta.persistence.QueryHint;
@@ -85,6 +86,74 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         @Param("isDisplayOnlyRecurringCustomerOrder") Boolean isDisplayOnlyRecurringCustomerOrder,
                         @Param("isDisplayOnlyParentRecurringCustomerOrder") Boolean isDisplayOnlyParentRecurringCustomerOrder,
                         @Param("recurringValidityDate") LocalDate recurringValidityDate);
+
+        @Query(nativeQuery = true, value = "select "
+                        + " case when cf.id is not null then cf.label"
+                        + " when r.id is not null then  r.firstname || ' '||r.lastname "
+                        + " else case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end end as customerOrderLabel,"
+                        + " coalesce(case when t2.denomination is not null and t2.denomination!='' then t2.denomination else t.firstname || ' '||t.lastname end, case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end) as tiersLabel,"
+                        + " cos.label as customerOrderStatus,"
+                        + " co.created_date as createdDate,"
+                        + " co.last_status_update as lastStatusUpdate,"
+                        + " coalesce(cf.id_commercial,r.id_commercial,t.id_commercial,t2.id_commercial) as salesEmployeeId,"
+                        + " co.id_assigned_to as assignedToEmployeeId,"
+                        + " co.id as customerOrderId,"
+                        + " r.id as responsableId,"
+                        + " min(quotation.id_quotation) as quotationId,"
+                        + " coalesce(t2.id,t.id) as tiersId,"
+                        + " cf.id as confrereId,"
+                        + " origin.label as customerOrderOriginLabel,"
+                        + " STRING_AGG(DISTINCT case when service.custom_label is null then st.label else service.custom_label  end,', ') as serviceTypeLabel,"
+                        + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
+                        + " (select sum(COALESCE(payment.payment_amount,0)) from  payment where payment.id_customer_order = co.id and payment.is_cancelled=false ) as depositTotalAmount ,"
+                        + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ' ) as affaireLabel,"
+                        + " STRING_AGG(DISTINCT af.siren ,', '  ) as affaireSiren,"
+                        + " STRING_AGG(DISTINCT af.address ||' '||af.postal_code||' '||city.label ||' '||country.label ,', '  ) as affaireAddress,"
+                        + " co.id_customer_order_parent_recurring as customerOrderParentRecurringId, "
+                        + " co.recurring_period_start_date  as recurringPeriodStartDate, "
+                        + " co.recurring_period_end_date  as recurringPeriodEndDate, "
+                        + " co.recurring_start_date  as recurringStartDate, "
+                        + " co.recurring_end_date  as recurringEndDate, "
+                        + " co.is_recurring_automatically_billed  as isRecurringAutomaticallyBilled, "
+                        + " co.description as customerOrderDescription, "
+                        + " STRING_AGG(DISTINCT grp.label, ', ') as activeDirectoryGroupLabel "
+                        + " from customer_order co"
+                        + " join customer_order_origin origin on origin.id = co.id_customer_order_origin"
+                        + " join customer_order_status cos on cos.id = co.id_customer_order_status"
+                        + " left join asso_quotation_customer_order quotation on quotation.id_customer_order = co.id"
+                        + " left join asso_affaire_order asso on asso.id_customer_order = co.id"
+                        + " left join service on service.id_asso_affaire_order = asso.id"
+                        + " left join service_type st on st.id = service.id_service_type"
+                        + " left join provision on provision.id_service = service.id"
+                        + " left join invoice_item i on i.id_provision = provision.id"
+                        + " left join affaire af on af.id = asso.id_affaire"
+                        + " left join city on af.id_city = city.id"
+                        + " left join country on city.id_country = country.id"
+                        + " left join confrere cf on cf.id = co.id_confrere"
+                        + " left join responsable r on r.id = co.id_responsable"
+                        + " left join tiers t on t.id = co.id_tiers"
+                        + " left join tiers t2 on t2.id = r.id_tiers"
+                        + " left join asso_quotation_customer_order asso_co on asso_co.id_customer_order = co.id "
+                        + " join customer_order_comment com on co.id= com.id_customer_order "
+                        + " join asso_customer_order_comment_active_directory_group asso_grp on com.id = asso_grp.id_customer_order_comment "
+                        + " join active_directory_group grp on asso_grp.id_active_directory_group = grp.id "
+                        + " where ( COALESCE(:customerOrderStatus) =0 or co.id_customer_order_status in (:customerOrderStatus)) "
+                        + " and co.created_date>=:startDate and co.created_date<=:endDate "
+                        + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
+                        + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
+                        + " and ( COALESCE(:activeDirectoryGroupId)=0 or exists (select 1 from asso_customer_order_comment_active_directory_group asso_grp2 "
+                        + " join active_directory_group grp2 on asso_grp2.id_active_directory_group = grp2.id "
+                        + " where grp2.id =:activeDirectoryGroupId and asso_grp2.id_customer_order_comment = com.id) ) "
+                        + " and ( :isDisplayOnlyUnread and COALESCE(com.is_read,false)=false or :isDisplayOnlyUnread=false) "
+                        + " group by cf.id, cf.label, r.id, r.firstname,origin.label,  r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
+                        + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id,t2.id, cf.id, co.description,co.id_assigned_to ")
+        List<IOrderingSearchTaggedResult> findTaggedCustomerOrders(
+                        @Param("customerOrderStatus") List<Integer> customerOrderStatus,
+                        @Param("salesEmployee") List<Integer> salesEmployee,
+                        @Param("assignedToEmployee") List<Integer> assignedToEmployee,
+                        @Param("activeDirectoryGroupId") Integer activeDirectoryGroupId,
+                        @Param("isDisplayOnlyUnread") Boolean isDisplayOnlyUnread,
+                        @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
         @Query(value = "select n from CustomerOrder n where customerOrderStatus=:customerOrderStatus and thirdReminderDateTime is null ")
         List<CustomerOrder> findCustomerOrderForReminder(

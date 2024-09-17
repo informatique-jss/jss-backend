@@ -282,7 +282,10 @@ public class QuotationValidationHelper {
                                                 "AffaireRecipient");
                                 validationHelper.validateString(document.getClientRecipient(), false, 200,
                                                 "ClientRecipient");
-                                validationHelper.validateString(document.getCommandNumber(), false, 40,
+                                validationHelper.validateString(document.getCommandNumber(),
+                                                document.getIsCommandNumberMandatory() != null
+                                                                && document.getIsCommandNumberMandatory(),
+                                                40,
                                                 "CommandNumber");
                                 validationHelper.validateReferential(document.getPaymentDeadlineType(), false,
                                                 "PaymentDeadlineType");
@@ -414,7 +417,7 @@ public class QuotationValidationHelper {
                         validationHelper.validateReferential(domiciliation.getCity(), false, "City");
                         validationHelper.validateReferential(domiciliation.getCountry(), false, "Country");
                         validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(),
-                                        false, 60,
+                                        false, 600,
                                         "AccountingRecordDomiciliation");
 
                         if (domiciliation.isLegalPerson()) {
@@ -587,8 +590,6 @@ public class QuotationValidationHelper {
                         Formalite formalite = provision.getFormalite();
                         validationHelper.validateReferential(formalite.getWaitedCompetentAuthority(), false,
                                         "WaitedCompetentAuthority");
-                        validationHelper.validateReferential(formalite.getCompetentAuthorityServiceProvider(), false,
-                                        "competentAuthorityServiceProvider");
                 }
 
                 // Simple provision

@@ -1,7 +1,9 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.io.File;
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
@@ -14,4 +16,6 @@ public interface ProvisionService {
     public List<ProvisionBoardResult> getDashboardEmployee(List<Employee> employees);
 
     public Provision addOrUpdateProvision(Provision provision);
+
+    public File getRegistrationActPdf(Provision provision) throws OsirisException;
 }

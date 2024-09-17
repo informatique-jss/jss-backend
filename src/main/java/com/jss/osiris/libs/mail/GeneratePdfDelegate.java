@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -51,6 +52,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -121,6 +123,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    InvoiceItemService invoiceItemService;
 
     @Autowired
     TranslationService translationService;
@@ -450,7 +455,7 @@ public class GeneratePdfDelegate {
                                     invoiceItems.addAll(provision.getInvoiceItems());
                                 }
                                 service.getProvisions().get(0)
-                                        .setInvoiceItems(getGroupedInvoiceItemsForDebours(invoiceItems));
+                                        .setInvoiceItemsGrouped(getGroupedInvoiceItemsForDebours(invoiceItems));
                             }
                         }
                     assos.add(asso);
@@ -591,6 +596,13 @@ public class GeneratePdfDelegate {
         final String htmlContent = StringEscapeUtils
                 .unescapeHtml4(mailHelper.emailTemplateEngine().process("invoice-page", ctx));
 
+        try {
+            PrintWriter out = new PrintWriter("C:\\uploads\\html.txt");
+            out.println(htmlContent);
+            out.close();
+        } catch (Exception e) {
+
+        }
         File tempFile;
         OutputStream outputStream;
         try {
@@ -624,7 +636,7 @@ public class GeneratePdfDelegate {
                     if (invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
                         if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()) {
                             if (invoiceItemNonTaxable == null) {
-                                invoiceItemNonTaxable = invoiceItem;
+                                invoiceItemNonTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
                                 if (invoiceItemNonTaxable.getDiscountAmount() == null)
                                     invoiceItemNonTaxable.setDiscountAmount(0f);
                             } else {
@@ -636,7 +648,8 @@ public class GeneratePdfDelegate {
                             }
                         } else {
                             if (invoiceItemTaxable == null) {
-                                invoiceItemTaxable = invoiceItem;
+                                invoiceItemTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
+                                ;
                                 if (invoiceItemTaxable.getDiscountAmount() == null)
                                     invoiceItemTaxable.setDiscountAmount(0f);
                             } else {
@@ -1337,5 +1350,42 @@ public class GeneratePdfDelegate {
         reader.close();
 
         return tempPdfFile;
+    }
+
+    public File generateRegistrationActPdf(Provision provision) throws OsirisException {
+        final Context ctx = new Context();
+
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        if (provision != null) {
+            ctx.setVariable("provision", provision);
+            if (provision.getService() != null && provision.getService().getAssoAffaireOrder() != null)
+                ctx.setVariable("customerOrder", provision.getService().getAssoAffaireOrder().getCustomerOrder());
+        }
+
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(mailHelper.emailTemplateEngine().process("registration-act", ctx));
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("Enregistrement d'acte", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for registration act");
+        }
+        return tempFile;
     }
 }

@@ -48,6 +48,7 @@ import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -539,11 +540,15 @@ public class PaymentServiceImpl implements PaymentService {
             newPayment.setCustomerOrder(correspondingCustomerOrder.get(i));
             addOrUpdatePayment(newPayment);
 
-            if (!isMovedFromInvoice)
-                customerOrderCommentService.createCustomerOrderComment(correspondingCustomerOrder.get(i),
+            if (!isMovedFromInvoice) {
+                CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                        correspondingCustomerOrder.get(i),
                         "Nouveau paiement n°" + newPayment.getId() + " de " + newPayment.getPaymentAmount()
                                 + " € placé sur la commande");
 
+                customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                        constantService.getActiveDirectoryGroupFacturation());
+            }
             accountingRecordGenerationService.generateAccountingRecordsForSaleOnCustomerOrderDeposit(
                     correspondingCustomerOrder.get(i), newPayment);
 
@@ -949,11 +954,15 @@ public class PaymentServiceImpl implements PaymentService {
             } else {
                 accountingRecordGenerationService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
 
-                if (!isMovedFromCustomerOrder && invoice.getCustomerOrder() != null)
-                    customerOrderCommentService.createCustomerOrderComment(invoice.getCustomerOrder(),
+                if (!isMovedFromCustomerOrder && invoice.getCustomerOrder() != null) {
+                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                            invoice.getCustomerOrder(),
                             "Nouveau paiement n°" + payment.getId() + " de " + payment.getPaymentAmount()
                                     + " € placé sur la facture n°" + invoice.getId());
 
+                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                            constantService.getActiveDirectoryGroupFacturation());
+                }
                 Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
                 // Handle appoint
                 if (checkForAppoint && Math.abs(remainingToPayForCurrentInvoice) > 0

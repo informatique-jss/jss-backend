@@ -14,6 +14,7 @@
                     inline : true,
                     min_height : 200,
                     entity_encoding : 'raw',
+                    browser_spellcheck: true,
                     language: 'fr_FR',
                     plugins: ['lists', 'advlist'
                     ],
@@ -51,8 +52,16 @@
           </p>
           <p class="message" [innerHTML]="comment.comment| trustHtml"> </p>
           <span class="timestamp" [matTooltip]="getTooltipDateText(comment)">{{comment.createdDateTime |
-            date:'dd/MM/yyyy'}}</span><button mat-icon-button matTooltip="Editer le commentaire" color="accent"
+            date:'dd/MM/yyyy à HH:mm'}}</span><button mat-icon-button matTooltip="Editer le commentaire" color="accent"
             class="edit-icon" *ngIf="canEditComment(comment)" (click)="editComment(comment)"><mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Marquer comme non lu"
+            *ngIf="comment.activeDirectoryGroups && comment.activeDirectoryGroups.length>0 && comment.isRead"
+            class="read-icon" (click)="confirmReading(comment)"><mat-icon>visibility_off</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Marquer comme lu"
+            *ngIf="comment.activeDirectoryGroups&& comment.activeDirectoryGroups.length>0 && !comment.isRead"
+            class="read-icon" (click)="confirmReading(comment)"><mat-icon>visibility</mat-icon>
           </button>
         </div>
         <div class="bubble-arrow" [class.bubble-arrow-for-myself]="comment.isCurrentUserInGroup"></div>

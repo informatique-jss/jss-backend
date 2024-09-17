@@ -38,6 +38,7 @@ import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
+import { ActiveDirectoryGroup } from './ActiveDirectoryGroup';
 
 export interface Constant {
   id: number;
@@ -82,6 +83,8 @@ export interface Constant {
   attachmentTypeContract: AttachmentType;
   attachmentTypeTemplate: AttachmentType;
   attachmentTypeQuotation: AttachmentType;
+  attachmentTypeRefusInfogreffe: AttachmentType;
+  attachmentTypeAutreInfogreffe: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeDeboursNonTaxable: BillingType;
@@ -227,6 +230,9 @@ export interface Constant {
   rffFrequencyMonthly: RffFrequency;
   serviceTypeOther: ServiceType;
   provisionTypeBilanPublication: ProvisionType;
+  provisionTypeRegistrationAct: ProvisionType;
   dateAccountingClosureForAll: Date;
   dateAccountingClosureForAccountant: Date;
+  activeDirectoryGroupFormalites: ActiveDirectoryGroup;
+  activeDirectoryGroupFacturation: ActiveDirectoryGroup;
 }

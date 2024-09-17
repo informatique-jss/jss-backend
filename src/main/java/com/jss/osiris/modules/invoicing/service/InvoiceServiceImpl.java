@@ -683,22 +683,28 @@ public class InvoiceServiceImpl implements InvoiceService {
             if (invoice.getManualPaymentType() == null
                     || !invoice.getManualPaymentType().getId()
                             .equals(constantService.getPaymentTypePrelevement().getId())) {
-                if (invoice.getFirstReminderDateTime() == null
-                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
-                    toSend = true;
-                    invoice.setFirstReminderDateTime(LocalDateTime.now());
+                if (invoice.getFirstReminderDateTime() == null) {
+                    if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
+                        toSend = true;
+                        invoice.setFirstReminderDateTime(LocalDateTime.now());
 
-                    notificationService.notifyTiersDepositMandatory(invoice.getResponsable(),
-                            invoice);
-                } else if (invoice.getSecondReminderDateTime() == null
-                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))) {
-                    toSend = true;
-                    invoice.setSecondReminderDateTime(LocalDateTime.now());
-                } else if (invoice.getThirdReminderDateTime() == null
-                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))) {
-                    toSend = true;
-                    invoice.setThirdReminderDateTime(LocalDateTime.now());
-                    notificationService.notifyInvoiceToReminder(invoice);
+                        notificationService.notifyTiersDepositMandatory(invoice.getResponsable(), invoice);
+                    }
+                } else if (invoice.getSecondReminderDateTime() == null) {
+                    if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))
+                            && LocalDate.now().minusDays(15)
+                                    .isAfter(invoice.getFirstReminderDateTime().toLocalDate())) {
+                        toSend = true;
+                        invoice.setSecondReminderDateTime(LocalDateTime.now());
+                    }
+                } else if (invoice.getThirdReminderDateTime() == null) {
+                    if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15 + 15))
+                            && LocalDate.now().minusDays(15)
+                                    .isAfter(invoice.getSecondReminderDateTime().toLocalDate())) {
+                        toSend = true;
+                        invoice.setThirdReminderDateTime(LocalDateTime.now());
+                        notificationService.notifyInvoiceToReminder(invoice);
+                    }
                 }
 
                 if (toSend) {

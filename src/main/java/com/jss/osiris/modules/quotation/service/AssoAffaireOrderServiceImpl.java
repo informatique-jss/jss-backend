@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,9 +52,11 @@ import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
+import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
@@ -124,6 +127,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
+
+    @Autowired
+    FormaliteInfogreffeService formaliteInfogreffeService;
 
     @Autowired
     PaymentService paymentService;
@@ -288,6 +294,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     formaliteGuichetUnique.getId());
                         }
                     }
+                    if (formalite.getFormalitesInfogreffe() != null) {
+                        for (FormaliteInfogreffe formaliteInfogreffe : formalite
+                                .getFormalitesInfogreffe()) {
+                            formaliteInfogreffe.setFormalite(formalite);
+                            formaliteInfogreffeService.addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                            batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL,
+                                    formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
+                        }
+                    }
 
                     if (formalite.getId() != null) {
                         Formalite originalFormalite = formaliteService.getFormalite(formalite.getId());
@@ -318,30 +333,68 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 }
                             }
                         }
+                        if (originalFormalite != null
+                                && originalFormalite.getFormalitesInfogreffe() != null
+                                && originalFormalite.getFormalitesInfogreffe().size() > 0) {
+                            for (FormaliteInfogreffe formaliteInfogreffeOrigin : originalFormalite
+                                    .getFormalitesInfogreffe()) {
+                                Boolean found = false;
+                                if (formalite.getFormalitesInfogreffe() != null)
+                                    for (FormaliteInfogreffe formaliteInfogreffe : formalite
+                                            .getFormalitesInfogreffe())
+                                        if (formaliteInfogreffe.getId()
+                                                .equals(formaliteInfogreffeOrigin.getId()))
+                                            found = true;
+                                if (!found) {
+                                    formaliteInfogreffeOrigin.setFormalite(null);
+                                    formaliteInfogreffeService
+                                            .addOrUpdateFormaliteInfogreffe(formaliteInfogreffeOrigin);
+                                }
+
+                                if (formalite.getFormaliteStatus().getIsCloseState()) {
+                                    if (formaliteInfogreffeOrigin.getEvenements() != null
+                                            && formaliteInfogreffeOrigin.getEvenements().size() > 0) {
+                                        formaliteInfogreffeOrigin.getEvenements().sort(
+                                                (o1, o2) -> ((LocalDateTime) o1.getCreatedDate())
+                                                        .compareTo((LocalDateTime) (o2.getCreatedDate())));
+                                        if (formaliteInfogreffeOrigin.getEvenements().get(0).getCodeEtat()
+                                                .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED))
+                                            throw new OsirisClientMessageException(
+                                                    "Impossible de terminer la formalité, le dossier Infogreffe n'est pas terminé");
+                                    }
+                                }
+                            }
+                        }
                         if (formalite.getFormalitesGuichetUnique() != null
                                 && formalite.getFormalitesGuichetUnique().size() > 0)
                             for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
                                     .getFormalitesGuichetUnique()) {
-                                formaliteGuichetUnique.setFormalite(formalite);
-                                formaliteGuichetUniqueService
-                                        .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                                if (formaliteGuichetUnique.getFormalite() == null) {
+                                    FormaliteGuichetUnique currentFormaliteGuichetUnique = formaliteGuichetUniqueService
+                                            .getFormaliteGuichetUnique(formaliteGuichetUnique.getId());
+                                    if (currentFormaliteGuichetUnique != null) {
+                                        currentFormaliteGuichetUnique.setFormalite(formalite);
+                                        formaliteGuichetUniqueService
+                                                .addOrUpdateFormaliteGuichetUnique(currentFormaliteGuichetUnique);
+                                    } else {
+                                        formaliteGuichetUnique.setFormalite(formalite);
+                                        formaliteGuichetUniqueService
+                                                .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
+                                    }
+                                }
                             }
 
+                        if (formalite.getFormalitesInfogreffe() != null
+                                && formalite.getFormalitesInfogreffe().size() > 0)
+                            for (FormaliteInfogreffe formaliteInfogreffe : formalite
+                                    .getFormalitesInfogreffe()) {
+                                if (formaliteInfogreffe.getFormalite() == null) {
+                                    formaliteInfogreffe.setFormalite(formalite);
+                                    formaliteInfogreffeService
+                                            .addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                                }
+                            }
                     }
-
-                    if (formalite.getActeDeposit() != null && formalite.getActeDeposit().getId() == null) {
-                        batchService.declareNewBatch(Batch.DECLARE_NEW_ACTE_DEPOSIT_ON_GUICHET_UNIQUE,
-                                formalite.getId());
-                    }
-
-                    if (formalite.getFormaliteStatus().getIsCloseState()
-                            && formalite.getCompetentAuthorityServiceProvider() != null
-                            && formalite.getCompetentAuthorityServiceProvider().getId()
-                                    .equals(constantService.getCompetentAuthorityInpi().getId())
-                            && (formalite.getFormalitesGuichetUnique() == null
-                                    || formalite.getFormalitesGuichetUnique().size() == 0))
-                        throw new OsirisClientMessageException(
-                                "Merci de compléter le nom du dossier GU avant de clôturer la formalité");
                 }
 
                 if (provision.getAnnouncement() != null) {
@@ -416,9 +469,17 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                         if (announcement.getAnnouncementStatus().getCode()
                                 .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)) {
-                            announcementService.generateAndStoreAnnouncementWordFile(
-                                    (CustomerOrder) customerOrder,
-                                    assoAffaireOrder, provision, announcement);
+                            boolean generateWord = true;
+                            if (provision.getAnnouncement().getId() != null) {
+                                Announcement currentAnnouncement = announcementService
+                                        .getAnnouncement(provision.getAnnouncement().getId());
+                                generateWord = !currentAnnouncement.getNotice().equals(announcement.getNotice());
+                            }
+
+                            if (generateWord)
+                                announcementService.generateAndStoreAnnouncementWordFile(
+                                        (CustomerOrder) customerOrder,
+                                        assoAffaireOrder, provision, announcement);
                         }
                         if (publicationProofFound && announcement.getAnnouncementStatus().getCode()
                                 .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
@@ -599,6 +660,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaireSearch.getFormaliteGuichetUniqueStatus() != null)
             formaliteGuichetUniqueStatusCode = affaireSearch.getFormaliteGuichetUniqueStatus().getCode();
 
+        String formaliteInfogreffeStatusCode = "0";
+        if (affaireSearch.getFormaliteInfogreffeStatusCode() != null)
+            formaliteInfogreffeStatusCode = affaireSearch.getFormaliteInfogreffeStatusCode();
+
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
@@ -615,6 +680,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
                         .getId(),
                 formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT).getId(),
-                commercialId, formaliteGuichetUniqueStatusCode);
+                commercialId, formaliteGuichetUniqueStatusCode, formaliteInfogreffeStatusCode);
     }
 }

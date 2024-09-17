@@ -3,7 +3,12 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,12 +21,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_asso_service_document", columnList = "id_service") })
@@ -42,7 +41,7 @@ public class AssoServiceDocument implements Serializable, IId {
 	@IndexedField
 	private TypeDocument typeDocument;
 
-	@OneToMany(mappedBy = "assoServiceDocument", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "assoServiceDocument", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoServiceDocument" }, allowSetters = true)
 	private List<Attachment> attachments;
 

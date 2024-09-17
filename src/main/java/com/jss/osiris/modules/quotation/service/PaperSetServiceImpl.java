@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.quotation.model.PaperSet;
 import com.jss.osiris.modules.quotation.repository.PaperSetRepository;
@@ -20,6 +23,9 @@ public class PaperSetServiceImpl implements PaperSetService {
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public List<PaperSet> getPaperSets() {
@@ -64,21 +70,29 @@ public class PaperSetServiceImpl implements PaperSetService {
         return paperSetRepository.findPaperSets(textSearch, isDisplayValidated, isDisplayCancelled);
     }
 
-    public PaperSet cancelPaperSet(PaperSet paperSet) {
+    public PaperSet cancelPaperSet(PaperSet paperSet) throws OsirisException {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsCancelled(true);
-        customerOrderCommentService.createCustomerOrderComment(paperSet.getCustomerOrder(),
+        CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                paperSet.getCustomerOrder(),
                 "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
                         + " a été annulée (emplacement n°" + paperSet.getLocationNumber() + ")");
+
+        customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                constantService.getActiveDirectoryGroupFormalites());
         return addOrUpdatePaperSet(paperSet);
     }
 
-    public PaperSet validatePaperSet(PaperSet paperSet) {
+    public PaperSet validatePaperSet(PaperSet paperSet) throws OsirisException {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsValidated(true);
-        customerOrderCommentService.createCustomerOrderComment(paperSet.getCustomerOrder(),
+        CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                paperSet.getCustomerOrder(),
                 "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
                         + " a été effectuée (emplacement n°" + paperSet.getLocationNumber() + ")");
+
+        customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                constantService.getActiveDirectoryGroupFormalites());
         return addOrUpdatePaperSet(paperSet);
     }
 }

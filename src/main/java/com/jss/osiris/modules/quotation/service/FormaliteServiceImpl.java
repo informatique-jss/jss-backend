@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.repository.FormaliteRepository;
 
@@ -20,6 +21,9 @@ public class FormaliteServiceImpl implements FormaliteService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    CustomerOrderStatusService customerOrderStatusService;
 
     @Override
     public Formalite getFormalite(Integer id) {
@@ -37,6 +41,7 @@ public class FormaliteServiceImpl implements FormaliteService {
 
     @Override
     public List<Formalite> getFormaliteForGURefresh() throws OsirisException {
-        return formaliteRepository.getFormaliteForGURefresh(constantService.getCompetentAuthorityInpi());
+        return formaliteRepository.getFormaliteForGURefresh(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED).getId());
     }
 }

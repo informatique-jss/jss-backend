@@ -8,6 +8,7 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -44,15 +45,14 @@ public class Formalite implements IId {
     @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority waitedCompetentAuthority;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_competent_authority_service_provider")
-    @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
-    private CompetentAuthority competentAuthorityServiceProvider;
-
     @OneToMany(mappedBy = "formalite")
     @JsonIgnoreProperties(value = { "content" })
     @IndexedField
     private List<FormaliteGuichetUnique> formalitesGuichetUnique;
+
+    @OneToMany(mappedBy = "formalite")
+    @IndexedField
+    private List<FormaliteInfogreffe> formalitesInfogreffe;
 
     @OneToMany(mappedBy = "formalite")
     @JsonIgnore
@@ -86,14 +86,6 @@ public class Formalite implements IId {
         this.formaliteStatus = formaliteStatus;
     }
 
-    public CompetentAuthority getCompetentAuthorityServiceProvider() {
-        return competentAuthorityServiceProvider;
-    }
-
-    public void setCompetentAuthorityServiceProvider(CompetentAuthority competentAuthorityServiceProvider) {
-        this.competentAuthorityServiceProvider = competentAuthorityServiceProvider;
-    }
-
     public List<Provision> getProvision() {
         return provision;
     }
@@ -110,12 +102,12 @@ public class Formalite implements IId {
         this.formalitesGuichetUnique = formalitesGuichetUnique;
     }
 
-    public ActeDeposit getActeDeposit() {
-        return acteDeposit;
+    public List<FormaliteInfogreffe> getFormalitesInfogreffe() {
+        return formalitesInfogreffe;
     }
 
-    public void setActeDeposit(ActeDeposit acteDeposit) {
-        this.acteDeposit = acteDeposit;
+    public void setFormalitesInfogreffe(List<FormaliteInfogreffe> formalitesInfogreffe) {
+        this.formalitesInfogreffe = formalitesInfogreffe;
     }
 
 }

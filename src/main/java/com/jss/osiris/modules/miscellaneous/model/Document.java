@@ -118,6 +118,7 @@ public class Document implements Serializable, IId {
 	private Boolean isCommandNumberMandatory;
 
 	@Column(length = 40)
+	@IndexedField
 	private String commandNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)

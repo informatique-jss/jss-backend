@@ -513,7 +513,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         if (announcements != null && announcements.size() > 0) {
             for (Announcement announcement : announcements) {
-                batchService.declareNewBatch(Batch.SEND_REMINDER_TO_CONFRERE_FOR_ANNOUNCEMENTS, announcement.getId());
+                if (announcement.getId() != null) {
+                    CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+                    if (customerOrder.getCustomerOrderStatus() != null
+                            && !customerOrder.getCustomerOrderStatus().getCode()
+                                    .equals(CustomerOrderStatus.ABANDONED))
+                        batchService.declareNewBatch(Batch.SEND_REMINDER_TO_CONFRERE_FOR_ANNOUNCEMENTS,
+                                announcement.getId());
+                }
             }
         }
     }
@@ -528,8 +535,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         if (announcements != null && announcements.size() > 0) {
             for (Announcement announcement : announcements) {
-                batchService.declareNewBatch(Batch.SEND_REMINDER_TO_CONFRERE_FOR_PROVIDER_INVOICE,
-                        announcement.getId());
+                if (announcement.getId() != null) {
+                    CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+                    if (customerOrder.getCustomerOrderStatus() != null
+                            && !customerOrder.getCustomerOrderStatus().getCode()
+                                    .equals(CustomerOrderStatus.ABANDONED))
+                        batchService.declareNewBatch(Batch.SEND_REMINDER_TO_CONFRERE_FOR_PROVIDER_INVOICE,
+                                announcement.getId());
+                }
             }
         }
     }
@@ -560,30 +573,32 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             }
 
                 boolean toSend = false;
-
-                if (announcement.getPublicationDate().isBefore(LocalDate.now().minusDays(1 * 7))) {
-                    toSend = true;
-                    announcement.setFirstConfrereReminderProviderInvoiceDateTime(LocalDateTime.now());
-                } else if (!toSend && announcement.getFirstConfrereReminderDateTime() != null) {
-                    if (announcement.getFirstConfrereReminderDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                if (customerOrder.getCustomerOrderStatus() != null
+                        && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)) {
+                    if (announcement.getPublicationDate().isBefore(LocalDate.now().minusDays(1 * 7))) {
                         toSend = true;
-                        announcement.setSecondReminderProviderInvoiceDateTime(LocalDateTime.now());
+                        announcement.setFirstConfrereReminderProviderInvoiceDateTime(LocalDateTime.now());
+                    } else if (!toSend && announcement.getFirstConfrereReminderDateTime() != null) {
+                        if (announcement.getFirstConfrereReminderDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                            toSend = true;
+                            announcement.setSecondReminderProviderInvoiceDateTime(LocalDateTime.now());
+                        }
+                    } else if (!toSend && announcement.getSecondReminderProviderInvoiceDateTime() != null
+                            && announcement.getThirdReminderProviderInvoiceDateTime() == null) {
+                        if (announcement.getSecondReminderProviderInvoiceDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                            toSend = true;
+                            announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
+                        }
                     }
-                } else if (!toSend && announcement.getSecondReminderProviderInvoiceDateTime() != null
-                        && announcement.getThirdReminderProviderInvoiceDateTime() == null) {
-                    if (announcement.getSecondReminderProviderInvoiceDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
-                        toSend = true;
-                        announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
-                    }
-                }
 
-                if (toSend) {
-                    mailHelper.sendConfrereReminderProviderInvoice(
-                            customerOrderService.getCustomerOrder(customerOrder.getId()), currentAsso,
-                            false, currentProvision, announcement);
-                    addOrUpdateAnnouncement(announcement);
+                    if (toSend) {
+                        mailHelper.sendConfrereReminderProviderInvoice(
+                                customerOrderService.getCustomerOrder(customerOrder.getId()), currentAsso,
+                                false, currentProvision, announcement);
+                        addOrUpdateAnnouncement(announcement);
+                    }
                 }
             }
         }
@@ -611,31 +626,37 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             }
 
                 boolean toSend = false;
-                if (announcement.getFirstConfrereReminderDateTime() == null) {
-                    if (announcement.getFirstConfrereSentMailDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 3))) {
-                        toSend = true;
-                        announcement.setFirstConfrereReminderDateTime(LocalDateTime.now());
+                if (customerOrder.getCustomerOrderStatus() != null
+                        && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)) {
+                    if (announcement.getFirstConfrereReminderDateTime() == null) {
+                        if (announcement.getFirstConfrereSentMailDateTime() != null
+                                && announcement.getFirstConfrereSentMailDateTime()
+                                        .isBefore(LocalDateTime.now().minusDays(1 * 3))) {
+                            toSend = true;
+                            announcement.setFirstConfrereReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getSecondConfrereReminderDateTime() == null) {
+                        if (announcement.getFirstConfrereSentMailDateTime() != null
+                                && announcement.getFirstConfrereSentMailDateTime()
+                                        .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                            toSend = true;
+                            announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getThirdConfrereReminderDateTime() == null) {
+                        if (announcement.getFirstConfrereSentMailDateTime() != null
+                                && announcement.getFirstConfrereSentMailDateTime()
+                                        .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                            toSend = true;
+                            announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
+                        }
                     }
-                } else if (announcement.getSecondConfrereReminderDateTime() == null) {
-                    if (announcement.getFirstConfrereSentMailDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
-                        toSend = true;
-                        announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
-                    }
-                } else if (announcement.getThirdConfrereReminderDateTime() == null) {
-                    if (announcement.getFirstConfrereSentMailDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
-                        toSend = true;
-                        announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
-                    }
-                }
 
-                if (toSend) {
-                    mailHelper.sendAnnouncementRequestToConfrere(
-                            customerOrderService.getCustomerOrder(customerOrder.getId()), currentAsso,
-                            false, currentProvision, announcement, true);
-                    addOrUpdateAnnouncement(announcement);
+                    if (toSend) {
+                        mailHelper.sendAnnouncementRequestToConfrere(
+                                customerOrderService.getCustomerOrder(customerOrder.getId()), currentAsso,
+                                false, currentProvision, announcement, true);
+                        addOrUpdateAnnouncement(announcement);
+                    }
                 }
             }
         }
@@ -654,6 +675,52 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
 
                 boolean toSend = false;
+                if (customerOrder.getCustomerOrderStatus() != null
+                        && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)) {
+                    if (announcement.getFirstClientReviewSentMailDateTime() != null) {
+                        if (announcement.getFirstClientReviewReminderDateTime() == null) {
+                            if (announcement.getFirstClientReviewSentMailDateTime()
+                                    .isBefore(LocalDateTime.now().minusDays(1 * 2))) {
+                                toSend = true;
+                                announcement.setFirstClientReviewReminderDateTime(LocalDateTime.now());
+                            }
+                        } else if (announcement.getSecondClientReviewReminderDateTime() == null) {
+                            if (announcement.getFirstClientReviewSentMailDateTime()
+                                    .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                                toSend = true;
+                                announcement.setSecondClientReviewReminderDateTime(LocalDateTime.now());
+                            }
+                        } else if (announcement.getThirdClientReviewReminderDateTime() == null) {
+                            if (announcement.getFirstClientReviewSentMailDateTime()
+                                    .isBefore(LocalDateTime.now().minusDays(1 * 6))) {
+                                toSend = true;
+                                announcement.setThirdClientReviewReminderDateTime(LocalDateTime.now());
+                            }
+                        }
+
+                        if (toSend) {
+                            mailHelper.sendProofReadingToCustomer(
+                                    customerOrderService.getCustomerOrder(customerOrder.getId()), false, announcement,
+                                    true);
+                            addOrUpdateAnnouncement(announcement);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void sendReminderToCustomerForProofReading(Announcement announcement)
+            throws OsirisException, OsirisClientMessageException {
+
+        if (announcement != null) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+
+            boolean toSend = false;
+            if (customerOrder.getCustomerOrderStatus() != null
+                    && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)) {
                 if (announcement.getFirstClientReviewSentMailDateTime() != null) {
                     if (announcement.getFirstClientReviewReminderDateTime() == null) {
                         if (announcement.getFirstClientReviewSentMailDateTime()
@@ -681,46 +748,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 true);
                         addOrUpdateAnnouncement(announcement);
                     }
-                }
-            }
-        }
-    }
-
-    @Override
-    @Transactional
-    public void sendReminderToCustomerForProofReading(Announcement announcement)
-            throws OsirisException, OsirisClientMessageException {
-
-        if (announcement != null) {
-            CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
-
-            boolean toSend = false;
-            if (announcement.getFirstClientReviewSentMailDateTime() != null) {
-                if (announcement.getFirstClientReviewReminderDateTime() == null) {
-                    if (announcement.getFirstClientReviewSentMailDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 2))) {
-                        toSend = true;
-                        announcement.setFirstClientReviewReminderDateTime(LocalDateTime.now());
-                    }
-                } else if (announcement.getSecondClientReviewReminderDateTime() == null) {
-                    if (announcement.getFirstClientReviewSentMailDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
-                        toSend = true;
-                        announcement.setSecondClientReviewReminderDateTime(LocalDateTime.now());
-                    }
-                } else if (announcement.getThirdClientReviewReminderDateTime() == null) {
-                    if (announcement.getFirstClientReviewSentMailDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 6))) {
-                        toSend = true;
-                        announcement.setThirdClientReviewReminderDateTime(LocalDateTime.now());
-                    }
-                }
-
-                if (toSend) {
-                    mailHelper.sendProofReadingToCustomer(
-                            customerOrderService.getCustomerOrder(customerOrder.getId()), false, announcement,
-                            true);
-                    addOrUpdateAnnouncement(announcement);
                 }
             }
         }
@@ -826,8 +853,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         if (announcements != null && announcements.size() > 0) {
             for (Announcement announcement : announcements) {
-                batchService.declareNewBatch(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_BILAN_PUBLICATION,
-                        announcement.getId());
+                CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+                if (customerOrder.getCustomerOrderStatus() != null
+                        && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
+                    batchService.declareNewBatch(Batch.SEND_REMINDER_TO_CUSTOMER_FOR_BILAN_PUBLICATION,
+                            announcement.getId());
             }
         }
     }
@@ -837,13 +867,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void sendReminderToCustomerForBilanPublication(Announcement announcement)
             throws OsirisException, OsirisClientMessageException {
         announcement = getAnnouncement(announcement.getId());
-        if ((announcement.getIsBilanPublicationReminderIsSent() == null
-                || announcement.getIsBilanPublicationReminderIsSent() == false)
-                && announcement.getPublicationDate().plusYears(1).minusDays(30).isBefore(LocalDate.now())) {
-            mailHelper.sendReminderToCustomerForBilanPublication(announcement,
-                    customerOrderService.getCustomerOrderForAnnouncement(announcement));
-            announcement.setIsBilanPublicationReminderIsSent(true);
-            addOrUpdateAnnouncement(announcement);
+
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+        if (customerOrder.getCustomerOrderStatus() != null
+                && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)) {
+            if ((announcement.getIsBilanPublicationReminderIsSent() == null
+                    || announcement.getIsBilanPublicationReminderIsSent() == false)
+                    && announcement.getPublicationDate().plusYears(1).minusDays(30).isBefore(LocalDate.now())) {
+                mailHelper.sendReminderToCustomerForBilanPublication(announcement,
+                        customerOrderService.getCustomerOrderForAnnouncement(announcement));
+                announcement.setIsBilanPublicationReminderIsSent(true);
+                addOrUpdateAnnouncement(announcement);
+            }
         }
     }
 }

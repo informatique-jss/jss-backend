@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -41,17 +40,15 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
-import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
+import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AssoServiceDocumentService;
-import com.jss.osiris.modules.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
@@ -130,9 +127,6 @@ public class AttachmentServiceImpl implements AttachmentService {
     NotificationService notificationService;
 
     @Autowired
-    CustomerOrderStatusService customerOrderStatusService;
-
-    @Autowired
     BatchService batchService;
 
     @Autowired
@@ -143,9 +137,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     PdfTools pdfTools;
-
-    @Autowired
-    CustomerOrderCommentService customerOrderCommentService;
 
     @Autowired
     MissingAttachmentQueryService missingAttachmentQueryService;
@@ -257,7 +248,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachment.setTypeDocumentAttachment(typeDocumentAttachment);
         } else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
             AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
-            checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
+            missingAttachmentQueryService.checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
             if (assoServiceDocument == null)
                 return new ArrayList<Attachment>();
             attachment.setAssoServiceDocument(assoServiceDocument);
@@ -278,6 +269,22 @@ public class AttachmentServiceImpl implements AttachmentService {
 
             // Notify user
             notificationService.notifyAttachmentAddToProvision(provision, attachment);
+
+            // Attached publication flag to service
+            if (attachment.getAttachmentType().getId()
+                    .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
+                if (provision.getService().getAssoServiceDocuments() != null
+                        && provision.getService().getAssoServiceDocuments().size() > 0) {
+                    for (AssoServiceDocument assoServiceDocument : provision.getService().getAssoServiceDocuments()) {
+                        if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
+                                && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
+                                        .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
+                            attachment.setAssoServiceDocument(assoServiceDocument);
+                        }
+                    }
+                }
+            }
+
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)
@@ -421,59 +428,8 @@ public class AttachmentServiceImpl implements AttachmentService {
         return newAttachment;
     }
 
-    private void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument, Attachment attachment) {
-        if (assoServiceDocument.getService().getMissingAttachmentQueries() != null
-                && assoServiceDocument.getService().getMissingAttachmentQueries().size() > 0) {
-
-            List<MissingAttachmentQuery> missingAttchmentQueries = assoServiceDocument.getService()
-                    .getMissingAttachmentQueries();
-            missingAttchmentQueries.sort(new Comparator<MissingAttachmentQuery>() {
-                @Override
-                public int compare(MissingAttachmentQuery o1, MissingAttachmentQuery o2) {
-                    if (o1 == null && o2 != null)
-                        return 1;
-                    if (o1 != null && o2 == null)
-                        return -1;
-                    if (o2 != null && o1 != null)
-                        return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
-                    return 1;
-                }
-            });
-
-            for (MissingAttachmentQuery missingAttachmentQuery : assoServiceDocument.getService()
-                    .getMissingAttachmentQueries()) {
-                if (missingAttachmentQuery.getSendToMe() == false) {
-                    for (AssoServiceDocument assoServiceDocumentService : assoServiceDocument.getService()
-                            .getAssoServiceDocuments())
-                        for (AssoServiceDocument assoServiceDocumentMissingQuery : missingAttachmentQuery
-                                .getAssoServiceDocument()) {
-                            if (assoServiceDocumentService.getTypeDocument().getCode()
-                                    .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode())) {
-                                if (assoServiceDocumentMissingQuery.getAttachments() != null
-                                        && assoServiceDocumentMissingQuery.getAttachments().size() > 0) {
-                                    boolean isAtLeastOneAttachmentAvailable = false;
-                                    for (Attachment attachmentDocument : assoServiceDocumentMissingQuery
-                                            .getAttachments()) {
-                                        if (!attachmentDocument.getIsDisabled()) {
-                                            isAtLeastOneAttachmentAvailable = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!isAtLeastOneAttachmentAvailable && !attachment.getTypeDocument().getCode()
-                                            .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
-                                        return;
-                                } else if (!attachment.getTypeDocument().getCode()
-                                        .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
-                                    return;
-                            }
-                        }
-                    customerOrderCommentService.createCustomerOrderComment(
-                            assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
-                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée");
-                    return;
-                }
-            }
-        }
+    @Override
+    public List<Attachment> findByDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe) {
+        return attachmentRepository.findByDocumentAssocieInfogreffe(documentAssocieInfogreffe.getUrlTelechargement());
     }
 }

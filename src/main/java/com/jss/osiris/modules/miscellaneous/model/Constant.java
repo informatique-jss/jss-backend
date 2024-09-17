@@ -213,6 +213,14 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeQuotation;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_Refus_infogreffe")
+	private AttachmentType attachmentTypeRefusInfogreffe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_Autre_infogreffe")
+	private AttachmentType attachmentTypeAutreInfogreffe;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -781,6 +789,18 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provision_type_bilan_publication")
 	private ProvisionType provisionTypeBilanPublication;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_provision_type_registration_act")
+	private ProvisionType provisionTypeRegistrationAct;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_active_directory_group_formalites")
+	private ActiveDirectoryGroup activeDirectoryGroupFormalites;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_active_directory_group_facturation")
+	private ActiveDirectoryGroup activeDirectoryGroupFacturation;
 
 	private LocalDate dateAccountingClosureForAccountant;
 	private LocalDate dateAccountingClosureForAll;
@@ -2308,6 +2328,46 @@ public class Constant implements Serializable, IId {
 
 	public void setDateAccountingClosureForAll(LocalDate dateAccountingClosureForAll) {
 		this.dateAccountingClosureForAll = dateAccountingClosureForAll;
+	}
+
+	public AttachmentType getAttachmentTypeRefusInfogreffe() {
+		return attachmentTypeRefusInfogreffe;
+	}
+
+	public void setAttachmentTypeRefusInfogreffe(AttachmentType attachmentTypeRefusInfogreffe) {
+		this.attachmentTypeRefusInfogreffe = attachmentTypeRefusInfogreffe;
+	}
+
+	public AttachmentType getAttachmentTypeAutreInfogreffe() {
+		return attachmentTypeAutreInfogreffe;
+	}
+
+	public void setAttachmentTypeAutreInfogreffe(AttachmentType attachmentTypeAutreInfogreffe) {
+		this.attachmentTypeAutreInfogreffe = attachmentTypeAutreInfogreffe;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() {
+		return activeDirectoryGroupFormalites;
+	}
+
+	public void setActiveDirectoryGroupFormalites(ActiveDirectoryGroup activeDirectoryGroupFormalites) {
+		this.activeDirectoryGroupFormalites = activeDirectoryGroupFormalites;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() {
+		return activeDirectoryGroupFacturation;
+	}
+
+	public void setActiveDirectoryGroupFacturation(ActiveDirectoryGroup activeDirectoryGroupFacturation) {
+		this.activeDirectoryGroupFacturation = activeDirectoryGroupFacturation;
+	}
+
+	public ProvisionType getProvisionTypeRegistrationAct() {
+		return provisionTypeRegistrationAct;
+	}
+
+	public void setProvisionTypeRegistrationAct(ProvisionType provisionTypeRegistrationAct) {
+		this.provisionTypeRegistrationAct = provisionTypeRegistrationAct;
 	}
 
 }

@@ -54,7 +54,7 @@ export class AutocompleteTiersIndividualComponent extends GenericAutocompleteCom
     return "";
   }
 
-  getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
+  override getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
     return ['tiers', entity.entityId + ""];
   }
 }

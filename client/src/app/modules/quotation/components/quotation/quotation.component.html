@@ -11,13 +11,13 @@
               {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
             </td>
           </tr>
-          <ng-container *ngFor="let service of asso.services">
+          <ng-container *ngFor="let service of asso.services ">
+            <tr *ngIf="service  ">
+              <td class="affaire " colspan="2">
+                <strong>{{getServiceLabel(service)}}</strong>
+              </td>
+            </tr>
             <ng-container *ngFor="let provision of service.provisions">
-              <tr *ngIf="service ">
-                <td class="affaire " colspan="2">
-                  <strong>{{getServiceLabel(service)}}</strong>
-                </td>
-              </tr>
               <tr *ngIf="provision.provisionType">
                 <td class="affaire " colspan="2">
                   {{provision.provisionType.label}}
@@ -97,7 +97,18 @@
 
   <mat-sidenav-content class="padding-bottom">
     <div *ngIf="!editMode && !quotation.id && !isQuotationUrl && !idQuotation">
-      <ordering-list></ordering-list>
+      <mat-tab-group animationDuration="0ms">
+        <mat-tab label="Commandes">
+          <ng-template matTabContent>
+            <ordering-list></ordering-list>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Commandes taggées">
+          <ng-template matTabContent>
+            <ordering-list-tagged></ordering-list-tagged>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
     </div>
     <div *ngIf="!editMode && !quotation.id && isQuotationUrl && !idQuotation">
       <quotation-list></quotation-list>

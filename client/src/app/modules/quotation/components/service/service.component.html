@@ -20,7 +20,7 @@
       <ng-container *ngFor="let document of service.assoServiceDocuments;let index= index">
         <mat-card class="document-card" *ngIf="!searchText || searchText.length==0 || documentContainsSearch(document)">
           <mat-card-header>
-            <mat-card-title>{{document.typeDocument.label}}</mat-card-title>
+            <mat-card-title>{{document.typeDocument.customLabel}}</mat-card-title>
             <mat-card-subtitle
               matTooltip="Commentaire du formaliste">{{document.formalisteComment?document.formalisteComment :
               "&nbsp;"}}</mat-card-subtitle>
@@ -62,8 +62,12 @@
     </div>
   </ng-container>
 
-  <div style="width: 100%;text-align: right;" *ngIf="editMode">
-    <button matTooltip="Changer de statut" mat-fab color="accent" matTooltip="Ajouter un nouveau type de document"
+  <div style="width: 100%;text-align: right;">
+    <button matTooltip="Télécharger tous les documents" mat-fab color="accent" (click)="downloadAllFiles()"
+      *ngIf="!editMode">
+      <mat-icon>download</mat-icon>
+    </button>
+    <button mat-fab color="accent" matTooltip="Ajouter un nouveau type de document" *ngIf="editMode"
       (click)="addNewDocumentType(service)">
       <mat-icon>post_add</mat-icon>
     </button>

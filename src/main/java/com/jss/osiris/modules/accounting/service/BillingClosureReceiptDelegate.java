@@ -397,7 +397,8 @@ public class BillingClosureReceiptDelegate {
         value.setEventDateTime(invoice.getCreatedDate());
         value.setEventDateString(invoice.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         value.setEventDescription("Facture n°" + invoice.getId());
-        if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())
+        if (invoice.getManualPaymentType() != null
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())
                 && invoice.getDirectDebitTransfert() != null)
             value.setDirectDebitTransfertDateTime(invoice.getDirectDebitTransfert()
                     .getTransfertDateTime().toLocalDate());

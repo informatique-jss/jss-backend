@@ -15,6 +15,7 @@ import { CustomerOrderStatus } from 'src/app/modules/quotation/model/CustomerOrd
 import { DomiciliationStatus } from 'src/app/modules/quotation/model/DomiciliationStatus';
 import { FormaliteStatus } from 'src/app/modules/quotation/model/FormaliteStatus';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
+import { OrderingSearchTagged } from 'src/app/modules/quotation/model/OrderingSearchTagged';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { SimpleProvisionStatus } from 'src/app/modules/quotation/model/SimpleProvisonStatus';
@@ -51,8 +52,6 @@ export class DashboardComponent implements OnInit {
   customerOrderStatus: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   quotationStatus: QuotationStatus[] = [] as Array<QuotationStatus>;
 
-
-
   currentEmployee: Employee | undefined;
   items: Array<string> = [];
   itemsSize: Array<string> = [];
@@ -84,12 +83,14 @@ export class DashboardComponent implements OnInit {
   ORDER_BEING_PROCESSED = "Mes commandes en cours";
   ORDER_TO_BILLED = "Commandes en attente de facturation";
   ORDERS_AWAITING_DEPOSIT = "Mes commandes en attente d’acompte";
+  ORDER_GROUP_TAGGED_WITH_COMMENT = "Mes commandes où je suis tagué"
 
   orderingSearchOpen: OrderingSearch = {} as OrderingSearch;
   orderingSearchAllOpen: OrderingSearch = {} as OrderingSearch;
   orderingSearchBeingProcessed: OrderingSearch = {} as OrderingSearch;
   orderingSearchToBilled: OrderingSearch = {} as OrderingSearch;
   orderingSearchToAwaitingDeposit: OrderingSearch = {} as OrderingSearch;
+  orderingSearchTagged: OrderingSearchTagged = {} as OrderingSearchTagged;
 
   QUOTATION_OPEN = "Mes devis ouverts";
   QUOTATION_TO_VERIFY = "Mes devis à vérifier";
@@ -117,7 +118,7 @@ export class DashboardComponent implements OnInit {
   this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN, this.ALL_ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
   this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT,
-  this.PROVISION_BOARD, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED, this.AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER].sort((a, b) => a.localeCompare(b));
+  this.PROVISION_BOARD, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED, this.AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER, this.ORDER_GROUP_TAGGED_WITH_COMMENT].sort((a, b) => a.localeCompare(b));
 
   BOX_SIZE_X_SMALL = "Zoom très petit";
   BOX_SIZE_SMALL = "Zoom petit";
@@ -167,7 +168,6 @@ export class DashboardComponent implements OnInit {
         this.customerOrderStatus = response.customerOrderStatus;
         this.quotationStatus = response.quotationStatus;
 
-
         this.affaireSearchInProgress.assignedTo = this.currentEmployee;
         this.affaireSearchInProgress.status = this.statusTypes.filter(stauts => !stauts.isOpenState && !stauts.isCloseState);
 
@@ -209,6 +209,9 @@ export class DashboardComponent implements OnInit {
         this.orderingSearchToAwaitingDeposit.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT)!];
 
         this.orderingSearchToBilled.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_BILLED)!];
+
+        this.orderingSearchTagged.assignedToEmployee = this.currentEmployee!;
+        this.orderingSearchTagged.isOnlyDisplayUnread = true;
 
         this.quotationSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.quotationSearchOpen.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_OPEN)!];

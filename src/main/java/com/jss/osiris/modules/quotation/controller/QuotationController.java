@@ -69,6 +69,7 @@ import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.quotation.model.AttachmentMailRequest;
@@ -85,8 +86,10 @@ import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
+import com.jss.osiris.modules.quotation.model.Formalite;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.FundType;
+import com.jss.osiris.modules.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.JournalType;
@@ -96,6 +99,7 @@ import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.quotation.model.PaperSet;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
@@ -118,6 +122,7 @@ import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.ValidationRequest;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
@@ -140,6 +145,7 @@ import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService
 import com.jss.osiris.modules.quotation.service.DomiciliationFeeService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
+import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
@@ -167,6 +173,7 @@ import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
+import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
@@ -388,6 +395,12 @@ public class QuotationController {
   @Autowired
   AssoServiceFieldTypeService assoServiceFieldTypeService;
 
+  @Autowired
+  FormaliteService formaliteService;
+
+  @Autowired
+  FormaliteInfogreffeService formaliteInfogreffeService;
+
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
     return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(), HttpStatus.OK);
@@ -465,6 +478,24 @@ public class QuotationController {
     return new ResponseEntity<PaperSet>(paperSetService.addOrUpdatePaperSet(paperSet), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order-comment/toggle-read")
+  public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderCommentBookmark(
+      @RequestParam Integer customerOrderCommentId) throws OsirisValidationException, OsirisException {
+    CustomerOrderComment customerOrderComment = customerOrderCommentService
+        .getCustomerOrderComment(customerOrderCommentId);
+
+    if (customerOrderComment == null)
+      throw new OsirisValidationException("customerOrderComment");
+
+    if (customerOrderComment.getIsRead() == null || customerOrderComment.getIsRead() == false)
+      customerOrderComment.setIsRead(true);
+    else
+      customerOrderComment.setIsRead(false);
+
+    return new ResponseEntity<CustomerOrderComment>(
+        customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment), HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/customer-order-comment")
   public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderComment(
       @RequestBody CustomerOrderComment customerOrderComment) throws OsirisValidationException, OsirisException {
@@ -501,6 +532,7 @@ public class QuotationController {
     if (customerOrderComment.getActiveDirectoryGroups() != null)
       for (ActiveDirectoryGroup group : customerOrderComment.getActiveDirectoryGroups()) {
         validationHelper.validateReferential(group, false, "group");
+
       }
 
     if (customerOrderComment.getId() == null)
@@ -838,7 +870,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/mail/billing/compute")
   public ResponseEntity<MailComputeResult> computeMailForBilling(
-      @RequestBody Quotation quotation) throws OsirisException, OsirisClientMessageException {
+      @RequestBody CustomerOrder quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
         mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation),
         HttpStatus.OK);
@@ -846,7 +878,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/mail/digital/compute")
   public ResponseEntity<MailComputeResult> computeMailForDigitalDocument(
-      @RequestBody Quotation quotation) throws OsirisException, OsirisClientMessageException {
+      @RequestBody CustomerOrder quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
         mailComputeHelper.computeMailForGenericDigitalDocument(quotation),
         HttpStatus.OK);
@@ -901,6 +933,35 @@ public class QuotationController {
 
     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, true);
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/provision/generate/registration-act")
+  public ResponseEntity<byte[]> getRegistrationActPdf(@RequestParam("idProvision") Integer idProvision)
+      throws OsirisException {
+    byte[] data = null;
+    HttpHeaders headers = null;
+    if (idProvision == null)
+      throw new OsirisValidationException("idProvision");
+
+    Provision provision = provisionService.getProvision(idProvision);
+    File registrationActFile = provisionService.getRegistrationActPdf(provision);
+
+    if (registrationActFile != null) {
+      try {
+        data = Files.readAllBytes(registrationActFile.toPath());
+      } catch (IOException e) {
+        throw new OsirisException(e, "Unable to read file " + registrationActFile.toPath());
+      }
+
+      headers = new HttpHeaders();
+      headers.add("filename",
+          "Enregistrement d'acte au TP.pdf");
+      headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+      headers.setContentLength(data.length);
+      headers.set("content-type", "application/pdf");
+      registrationActFile.delete();
+    }
+    return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mail/generate/invoice")
@@ -1672,6 +1733,26 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/order-tagged/search")
+  public ResponseEntity<List<IOrderingSearchTaggedResult>> searchOrders(
+      @RequestBody OrderingSearchTagged orderingSearchTagged)
+      throws OsirisValidationException, OsirisException {
+    if (orderingSearchTagged == null)
+      throw new OsirisValidationException("orderingSearchTagged");
+
+    validationHelper.validateReferential(orderingSearchTagged.getSalesEmployee(), false, "SalesEmployee");
+    if (orderingSearchTagged.getCustomerOrderStatus() != null)
+      for (CustomerOrderStatus status : orderingSearchTagged.getCustomerOrderStatus())
+        validationHelper.validateReferential(status, false, "status");
+
+    validationHelper.validateReferential(orderingSearchTagged.getSalesEmployee(), false, "SalesEmployee");
+    validationHelper.validateReferential(orderingSearchTagged.getAssignedToEmployee(), false, "AssignedToEmployee");
+
+    return new ResponseEntity<List<IOrderingSearchTaggedResult>>(
+        customerOrderService.searchOrdersTagged(orderingSearchTagged),
+        HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/quotation/search")
   public ResponseEntity<List<QuotationSearchResult>> searchQuotations(@RequestBody QuotationSearch quotationSearch)
       throws OsirisValidationException, OsirisException {
@@ -1836,7 +1917,7 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
-  public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation)
+  public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody CustomerOrder quotation)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     return new ResponseEntity<IQuotation>(pricingHelper.getAndSetInvoiceItemsForQuotationForFront(quotation, false),
         HttpStatus.OK);
@@ -2190,23 +2271,38 @@ public class QuotationController {
   public ResponseEntity<MissingAttachmentQuery> generateAttachmentTypeMail(@RequestBody MissingAttachmentQuery query)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
-    if (query.getAssoServiceDocument() == null || query.getAssoServiceDocument().size() == 0)
+    if ((query.getAssoServiceDocument() == null || query.getAssoServiceDocument().size() == 0)
+        && (query.getAssoServiceFieldType() == null || query.getAssoServiceFieldType().size() == 0))
       throw new OsirisValidationException("assoServiceDocumentList");
 
-    AssoServiceDocument asso = null;
-    for (AssoServiceDocument assoServiceDocument : query.getAssoServiceDocument()) {
-      asso = assoServiceDocumentService.getAssoServiceDocument(assoServiceDocument.getId());
-      if (asso == null)
-        throw new OsirisValidationException("assoServiceDocument");
-    }
+    AssoServiceDocument assoServiceDocument = null;
+    if (query.getAssoServiceDocument() != null && query.getAssoServiceDocument().size() > 0)
+      for (AssoServiceDocument assoServiceDocumentItem : query.getAssoServiceDocument()) {
+        assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(assoServiceDocumentItem.getId());
+        if (assoServiceDocument == null)
+          throw new OsirisValidationException("assoServiceDocument");
+      }
 
-    if (asso != null) {
-      MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(asso.getService().getAssoAffaireOrder().getCustomerOrder());
-      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-        throw new OsirisValidationException("MailTo");
+    AssoServiceFieldType assoServiceFieldType = null;
+    if (query.getAssoServiceFieldType() != null && query.getAssoServiceFieldType().size() > 0)
+      for (AssoServiceFieldType assoServiceFieldTypeItem : query.getAssoServiceFieldType()) {
+        assoServiceFieldType = assoServiceFieldTypeService.getAssoServiceFieldType(assoServiceFieldTypeItem.getId());
+        if (assoServiceFieldType == null)
+          throw new OsirisValidationException("assoServiceFieldTypeItem");
+      }
 
-    }
+    MailComputeResult mailComputeResult = new MailComputeResult();
+    if (assoServiceDocument != null)
+      mailComputeResult = mailComputeHelper
+          .computeMailForPublicationReceipt(assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder());
+
+    if (assoServiceFieldType != null)
+      mailComputeResult = mailComputeHelper
+          .computeMailForPublicationReceipt(assoServiceFieldType.getService().getAssoAffaireOrder().getCustomerOrder());
+
+    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+      throw new OsirisValidationException("MailTo");
+
     return new ResponseEntity<MissingAttachmentQuery>(
         missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false), HttpStatus.OK);
   }
@@ -2335,6 +2431,32 @@ public class QuotationController {
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/formalite-infogreffe/search")
+  public ResponseEntity<List<FormaliteInfogreffe>> getFormaliteInfogreffeServiceByReference(
+      @RequestParam String value)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    List<FormaliteInfogreffe> formalites = null;
+
+    if (value != null && value.length() > 2) {
+      formalites = formaliteInfogreffeService.getFormaliteInfogreffeByReference(value.toUpperCase());
+    }
+
+    return new ResponseEntity<List<FormaliteInfogreffe>>(formalites, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/formalite/update")
+  public ResponseEntity<Formalite> addOrUpdateFormalite(
+      @RequestBody Formalite formalite)
+      throws OsirisValidationException, OsirisException {
+    if (formalite != null)
+      return new ResponseEntity<Formalite>(
+          formaliteService.addOrUpdateFormalite(formalite),
+          HttpStatus.OK);
+    else
+      throw new OsirisValidationException("formalite");
+  }
+
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @GetMapping(inputEntryPoint + "/customer-order/credit-note")
   public ResponseEntity<Boolean> generateCreditNoteForCustomerOrderInvoice(
@@ -2367,5 +2489,4 @@ public class QuotationController {
     customerOrderService.reinitInvoicing(customerOrder);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
-
 }

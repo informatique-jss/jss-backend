@@ -137,12 +137,12 @@
               </td>
             </tr>
             <ng-container *ngFor="let service of asso.services">
+              <tr class="mat-mdc-row mdc-data-table__row ">
+                <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2">
+                  {{getServiceLabel(service)}}
+                </td>
+              </tr>
               <ng-container *ngFor="let provision of service.provisions">
-                <tr class="mat-mdc-row mdc-data-table__row ">
-                  <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2">
-                    {{getServiceLabel(service)}}
-                  </td>
-                </tr>
                 <tr class="mat-mdc-row mdc-data-table__row " *ngIf="provision.provisionType">
                   <td class="mat-mdc-cell mdc-data-table__cell  affaire" colspan="2">
                     {{provision.provisionType.label}}

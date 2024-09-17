@@ -164,7 +164,8 @@
                                                                         <span>Commande n°<span
                                                                                 th:text="${customerOrder.id}"></span>
                                                                             - <span th:text="${affaireLabel}">
-                                                                            </span></span>
+                                                                            </span> - <span th:text="${serviceLabel}">
+                                                                            </span> </span>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -225,7 +226,7 @@
                                                                 <p>Bonjour <span th:text="${customerName}"></span>,</p>
                                                                 <p>Dans l'objectif de poursuivre rapidement le
                                                                     traitement de votre commande, pourriez-vous nous
-                                                                    transmettre les pièces suivantes ?</p>
+                                                                    transmettre les pièces/informations suivantes ?</p>
                                                                 <p th:if="${isLastReminder}"><strong>Merci de nous
                                                                         confirmer la poursuite de votre commande. Sans
                                                                         retour de votre part sous 8 jours nous
@@ -234,13 +235,30 @@
                                                                     <li
                                                                         th:each="assoServiceDocument : ${assoServiceDocuments}">
                                                                         <span
-                                                                            th:text="${assoServiceDocument.typeDocument.label}"></span>
+                                                                            th:text="${assoServiceDocument.typeDocument.customLabel}"></span>
                                                                         <span
                                                                             th:if="${assoServiceDocument.isMandatory==false}">(facultatif)</span>
                                                                         <span
                                                                             th:if="${assoServiceDocument.formalisteComment!=null}">
                                                                             - <span
                                                                                 th:text="${assoServiceDocument.formalisteComment}"></span></span>
+                                                                    </li>
+                                                                </ul>
+                                                                <p
+                                                                    th:if="${assoServiceDocuments!=null} and ${assoServiceFieldTypes!=null}">
+                                                                    De la même façon, pourriez-vous nous fournir les
+                                                                    informations suivantes : </p>
+                                                                <ul>
+                                                                    <li th:if="${assoServiceFieldTypes!=null}"
+                                                                        th:each="assoServiceFieldType : ${assoServiceFieldTypes}">
+                                                                        <span
+                                                                            th:text="${assoServiceFieldType.serviceFieldType.label}"></span>
+                                                                        <span
+                                                                            th:if="${assoServiceFieldType.isMandatory==false}">(facultatif)</span>
+                                                                        <span
+                                                                            th:if="${assoServiceFieldType.formalisteComment!=null}">
+                                                                            - <span
+                                                                                th:text="${assoServiceFieldType.formalisteComment}"></span></span>
                                                                     </li>
                                                                 </ul>
                                                             </td>

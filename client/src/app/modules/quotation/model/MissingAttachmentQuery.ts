@@ -1,7 +1,9 @@
 import { AssoServiceDocument } from './AssoServiceDocument';
+import { AssoServiceFieldType } from './AssoServiceFieldType';
 export interface MissingAttachmentQuery {
   id: number | undefined;
   assoServiceDocument: AssoServiceDocument[];
+  assoServiceFieldType: AssoServiceFieldType[];
   comment: string;
   sendToMe: boolean;
   copyToMe: boolean;

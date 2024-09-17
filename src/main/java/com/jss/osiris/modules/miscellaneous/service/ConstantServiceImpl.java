@@ -15,6 +15,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -474,6 +475,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ProvisionType getProvisionTypeBilanPublication() throws OsirisException {
         return getConstants().getProvisionTypeBilanPublication();
+    }
+
+    @Override
+    public ProvisionType getProvisionTypeRegistrationAct() throws OsirisException {
+        return getConstants().getProvisionTypeRegistrationAct();
     }
 
     @Override
@@ -1041,4 +1047,23 @@ public class ConstantServiceImpl implements ConstantService {
         return this.getConstants().getDateAccountingClosureForAccountant();
     }
 
+    @Override
+    public AttachmentType getAttachmentTypeRefusInfogreffe() throws OsirisException {
+        return this.getConstants().getAttachmentTypeRefusInfogreffe();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeAutreInfogreffe() throws OsirisException {
+        return this.getConstants().getAttachmentTypeAutreInfogreffe();
+    }
+
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupFormalites();
+    }
+
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupFacturation();
+    }
 }
