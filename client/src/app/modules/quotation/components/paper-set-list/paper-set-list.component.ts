@@ -1,11 +1,14 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { Employee } from 'src/app/modules/profile/model/Employee';
 import { AppService } from 'src/app/services/app.service';
+import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { PaperSetResult } from '../../model/PaperSetResult';
+import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { PaperSetResultService } from '../../services/paper.set.result.service';
 import { PaperSetService } from '../../services/paper.set.service';
 
@@ -29,7 +32,8 @@ export class PaperSetListComponent implements OnInit {
     public confirmationDialog: MatDialog,
     private formBuilder: FormBuilder,
     private paperSetResultService: PaperSetResultService,
-    private paperSetService: PaperSetService
+    private paperSetService: PaperSetService,
+    private customerOrderCommentService: CustomerOrderCommentService,
   ) { }
 
   ngOnInit() {
@@ -79,13 +83,10 @@ export class PaperSetListComponent implements OnInit {
     this.tableAction.push({
       actionIcon: "check", actionName: "Valider cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
-          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-            maxWidth: "400px",
+          const dialogRef = this.confirmationDialog.open(EditCommentDialogComponent, {
+            width: '40%',
             data: {
-              title: "Valider l'action",
-              content: "Êtes-vous sûr de vouloir valider cette action et de libérer l'emplacement associé ?",
-              closeActionText: "Annuler",
-              validationActionText: "Confirmer"
+              title: "Nouveau commentaire",
             }
           });
 
@@ -102,13 +103,10 @@ export class PaperSetListComponent implements OnInit {
     this.tableAction.push({
       actionIcon: "cancel", actionName: "Annuler cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
-          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-            maxWidth: "400px",
+          const dialogRef = this.confirmationDialog.open(EditCommentDialogComponent, {
+            width: '40%',
             data: {
-              title: "Annuler l'action",
-              content: "Êtes-vous sûr de vouloir annuler cette action et de libérer l'emplacement associé ?",
-              closeActionText: "Annuler",
-              validationActionText: "Confirmer"
+              title: "Nouveau commentaire",
             }
           });
 
