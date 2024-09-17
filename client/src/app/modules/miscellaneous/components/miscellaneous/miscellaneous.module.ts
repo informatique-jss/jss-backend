@@ -266,7 +266,6 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
-import { CommentPaperSetDialogComponent } from '../add-comment-paper-set-dialog/comment-paper-set-dialog/comment-paper-set-dialog.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -547,7 +546,6 @@ const routes: Routes = [
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
     SelectFormaliteInfogreffeStatusComponent,
-    CommentPaperSetDialogComponent
   ],
   exports: [
     HistoryComponent,
@@ -788,7 +786,6 @@ const routes: Routes = [
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
     SelectFormaliteInfogreffeStatusComponent,
-    CommentPaperSetDialogComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

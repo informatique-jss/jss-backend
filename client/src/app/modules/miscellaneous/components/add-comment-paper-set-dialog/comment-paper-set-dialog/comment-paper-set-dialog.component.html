@@ -1,9 +1,0 @@
-<h1 mat-dialog-title>Rédiger un commentaire</h1>
-<div mat-dialog-content style="margin-top : 15px">
-  <generic-textarea [(model)]="comment" label="Commentaire" [form]="commentForm" propertyName="comment"
-    [isMandatory]="isMandatory" [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
-</div>
-<div mat-dialog-actions align="end">
-  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
-  <button mat-raised-button color="warn" (click)="onConfirm()">Confirmer</button>
-</div>
