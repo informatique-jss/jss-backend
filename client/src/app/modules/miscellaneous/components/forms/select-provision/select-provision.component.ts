@@ -24,7 +24,7 @@ export class SelectProvisionComponent extends GenericSelectComponent<Provision> 
     return provision.provisionFamilyType.label + " - " + provision.provisionType.label
   }
 
-  getPreviewActionLinkFunction(entity: Provision): string[] | undefined {
+  override getPreviewActionLinkFunction(entity: Provision): string[] | undefined {
     return ['provision/', + entity.service.assoAffaireOrder.affaire.id + "/" + entity.id + ""];
   }
 }
