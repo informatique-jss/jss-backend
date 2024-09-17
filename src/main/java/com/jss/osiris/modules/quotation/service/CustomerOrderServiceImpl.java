@@ -75,6 +75,7 @@ import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.OrderingSearchTagged;
+import com.jss.osiris.modules.quotation.model.PaperSet;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
@@ -444,6 +445,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : BILLED => generate invoice
         if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
+
+            // If no closed paper set
+            if (customerOrder.getPaperSets() != null) {
+                for (PaperSet paperSet : customerOrder.getPaperSets()) {
+                    if (paperSet.getIsCancelled() == null || paperSet.getIsCancelled() == false
+                            || paperSet.getIsValidated() == null || paperSet.getIsValidated() == false) {
+                        throw new OsirisClientMessageException(
+                                "Impossible de facturer la commande, des actions documentaires sont encore en cours");
+                    }
+                }
+            }
             // save once customer order to recompute invoice item before set it in stone...
             this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
 

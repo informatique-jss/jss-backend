@@ -1210,7 +1210,7 @@ public class MailHelper {
         mail.setHeaderPicture("images/mails/renew-password.png");
         mail.setReplyToMail(constantService.getStringSalesSharedMailbox() + "");
         mail.setSendToMe(false);
-        mail.setExplaination(password);
+        mail.setExplaination(responsable.getLoginWeb() + " / " + password);
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
 

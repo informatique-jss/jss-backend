@@ -273,6 +273,7 @@ export class AccountingRecordComponent implements OnInit {
       this.userPreferenceService.setUserSearchBookmark(this.accountingRecordSearch, "accounting-record");
     this.accountingRecordSearchService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
       this.accountingRecords = response;
+      this.computeBalanceAndDebitAndCreditAccumulation();
 
     });
   }
