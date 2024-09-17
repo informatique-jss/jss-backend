@@ -469,9 +469,17 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                         if (announcement.getAnnouncementStatus().getCode()
                                 .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)) {
-                            announcementService.generateAndStoreAnnouncementWordFile(
-                                    (CustomerOrder) customerOrder,
-                                    assoAffaireOrder, provision, announcement);
+                            boolean generateWord = true;
+                            if (provision.getAnnouncement().getId() != null) {
+                                Announcement currentAnnouncement = announcementService
+                                        .getAnnouncement(provision.getAnnouncement().getId());
+                                generateWord = !currentAnnouncement.getNotice().equals(announcement.getNotice());
+                            }
+
+                            if (generateWord)
+                                announcementService.generateAndStoreAnnouncementWordFile(
+                                        (CustomerOrder) customerOrder,
+                                        assoAffaireOrder, provision, announcement);
                         }
                         if (publicationProofFound && announcement.getAnnouncementStatus().getCode()
                                 .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))

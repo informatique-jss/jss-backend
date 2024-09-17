@@ -306,9 +306,11 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 .equals(ValidationsRequestStatus.MSA_ACCEPTATION_PENDING)
                                 || validationRequest.getStatus().getCode()
                                         .equals(ValidationsRequestStatus.VALIDATION_PENDING)) {
-                            List<CompetentAuthority> competentAuthorities = competentAuthorityService
-                                    .getCompetentAuthorityByInpiReference(
-                                            validationRequest.getPartnerCenter().getCode());
+                            List<CompetentAuthority> competentAuthorities = null;
+                            if (validationRequest.getPartnerCenter() != null)
+                                competentAuthorityService
+                                        .getCompetentAuthorityByInpiReference(
+                                                validationRequest.getPartnerCenter().getCode());
 
                             // Try with partner label
                             if ((competentAuthorities == null || competentAuthorities.size() == 0)
