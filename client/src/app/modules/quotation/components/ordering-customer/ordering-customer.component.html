@@ -52,11 +52,11 @@
         <tr>
           <td>
             <chips-mail [(model)]="getCustomerOrderForIQuotation(quotation).mails" label="Mails"
-              [form]="orderingCustomerForm" propertyName="mails" [isDisabled]="!editMode"></chips-mail>
+              [form]="orderingCustomerForm" propertyName="mails" [isDisabled]="true"></chips-mail>
           </td>
           <td>
             <chips-phone [(model)]="getCustomerOrderForIQuotation(quotation).phones" label="Téléphones"
-              [form]="orderingCustomerForm" propertyName="phones" [isDisabled]="!editMode"></chips-phone>
+              [form]="orderingCustomerForm" propertyName="phones" [isDisabled]="true"></chips-phone>
           </td>
           <td style="vertical-align: middle;"><span *ngIf="quotation.responsable">Adresse :
               {{quotation.responsable.tiers.address}}
