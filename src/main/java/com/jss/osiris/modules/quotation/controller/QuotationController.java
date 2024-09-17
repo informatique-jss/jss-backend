@@ -496,6 +496,19 @@ public class QuotationController {
         customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment), HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/customer-order-comment/create")
+  public ResponseEntity<CustomerOrderComment> createCustomerOrderComment(
+      @RequestParam Integer customerOrderId, @RequestParam String comment) throws OsirisValidationException {
+    CustomerOrder customerOrder = null;
+    if (customerOrderId != null && comment != null)
+      customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder != null)
+      validationHelper.validateString(comment, true, "comment");
+    return new ResponseEntity<CustomerOrderComment>(
+        customerOrderCommentService.createCustomerOrderComment(customerOrder, comment), HttpStatus.OK);
+
+  }
+
   @PostMapping(inputEntryPoint + "/customer-order-comment")
   public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderComment(
       @RequestBody CustomerOrderComment customerOrderComment) throws OsirisValidationException, OsirisException {

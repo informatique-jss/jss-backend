@@ -6,6 +6,8 @@ import { CustomerOrder } from '../../model/CustomerOrder';
 import { PaperSet } from '../../model/PaperSet';
 import { PaperSetService } from '../../services/paper.set.service';
 import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
+import { PaperSetType } from 'src/app/modules/miscellaneous/model/PaperSetType';
+import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 
 @Component({
   selector: 'paper-set',
@@ -21,7 +23,8 @@ export class PaperSetComponent implements OnInit {
 
   constructor(
     public selectPaperSetTypeDialogComponent: MatDialog,
-    private paperSetService: PaperSetService
+    private paperSetService: PaperSetService,
+    private customerOrderCommentService: CustomerOrderCommentService,
   ) { }
 
   ngOnInit() {
@@ -30,6 +33,7 @@ export class PaperSetComponent implements OnInit {
     this.displayedColumns.push({ id: "locationNumber", fieldName: "locationNumber", label: "Emplacement" } as SortTableColumn<PaperSet>);
     this.displayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé ?", valueFonction: (element: PaperSet | PaperSet) => { if (element.isCancelled) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSet | PaperSet>);
     this.displayedColumns.push({ id: "isValidated", fieldName: "isValidated", label: "Validé ?", valueFonction: (element: PaperSet | PaperSet) => { if (element.isValidated) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSet | PaperSet>);
+    this.displayedColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn<PaperSet>);
     this.refreshPaperSets();
   }
 
@@ -48,11 +52,13 @@ export class PaperSetComponent implements OnInit {
       if (this.customerOrder.paperSets)
         dialogRef.componentInstance.excludedPaperSetTypes = this.customerOrder.paperSets.filter(paperSet => !paperSet.isCancelled).map(paperSet => paperSet.paperSetType);
 
-      dialogRef.afterClosed().subscribe(response => {
-        if (response != null && this.customerOrder) {
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult != null && this.customerOrder) {
           let paperSet = {} as PaperSet;
           paperSet.customerOrder = this.customerOrder;
-          paperSet.paperSetType = response;
+          paperSet.paperSetType = dialogResult.paperSetType;
+          paperSet.comment = dialogResult.comment;
+          this.customerOrderCommentService.createCustomerOrderComment(this.customerOrder.id, paperSet.comment);
           this.paperSetService.addOrUpdatePaperSet(paperSet).subscribe(newPaperSet => {
             this.customerOrder!.paperSets.push(newPaperSet);
             this.refreshPaperSets();

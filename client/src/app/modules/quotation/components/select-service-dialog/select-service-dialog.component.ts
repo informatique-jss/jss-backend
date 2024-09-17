@@ -5,7 +5,6 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { Service } from '../../model/Service';
 import { ServiceService } from '../../services/service.service';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 
 @Component({
   selector: 'app-select-service-dialog',
@@ -22,7 +21,7 @@ export class SelectServiceDialogComponent implements OnInit {
     private dialog: MatDialog,
     private serviceService: ServiceService,
     private constantService: ConstantService,
-    public dialogRef: MatDialogRef<SelectServiceTypeDialogComponent>
+    public dialogRef: MatDialogRef<SelectServiceDialogComponent>
   ) { }
 
   serviceTypeForm = this.formBuilder.group({});
