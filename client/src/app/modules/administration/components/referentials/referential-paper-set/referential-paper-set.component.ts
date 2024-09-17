@@ -8,7 +8,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 
 @Component({
   selector: 'referential-paper-set-type',
-  templateUrl: './referential-paper-set.component.html',
+  templateUrl: './../generic-referential/generic-referential.component.html',
   styleUrls: ['./../generic-referential/generic-referential.component.css']
 })
 export class ReferentialPaperSetTypeComponent extends GenericReferentialComponent<PaperSetType> implements OnInit {

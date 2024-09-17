@@ -16,6 +16,10 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
     return this.getList(new HttpParams(), "customer-order-comments");
   }
 
+  createCustomerOrderComment(customerOrderId: number, comment: string) {
+    return this.postItem(new HttpParams().set("customerOrderId", customerOrderId).set("comment", comment), "customer-order-comment/create", null, "Commentaire Enregistré", "Erreur lors de la création du commentaire");
+  }
+
   addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {
     return this.addOrUpdate(new HttpParams(), "customer-order-comment", customerOrderComment, "Enregistré", "Erreur lors de l'enregistrement");
   }

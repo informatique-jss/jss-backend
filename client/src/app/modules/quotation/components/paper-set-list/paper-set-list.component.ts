@@ -148,17 +148,10 @@ export class PaperSetListComponent implements OnInit {
 
   addCommentPaperSet(dialogResult: any, element: any) {
     if (dialogResult && element.customerOrderId) {
-      this.customerOrderService.getCustomerOrder(element.customerOrderId).subscribe(customerOrder => {
-        if (customerOrder && instanceOfCustomerOrder(customerOrder)) {
-          this.newComment.customerOrder = customerOrder;
-          this.newComment.comment = dialogResult;
-          this.employeeService.getCurrentEmployee().subscribe(currentEmployee => {
-            this.newComment.employee = currentEmployee;
-            this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
-              customerOrder.customerOrderComments.push(response);
-            });
-          })
-        }
+      element.comment = dialogResult;
+      this.paperSetService.addOrUpdatePaperSet(element);
+      this.customerOrderCommentService.createCustomerOrderComment(element.customerOrderId, dialogResult).subscribe(response => {
+        this.searchPaperSets();
       });
     }
   }
