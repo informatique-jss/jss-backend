@@ -36,6 +36,13 @@
           </tr>
           <tr>
             <td>
+              <generic-input [(model)]="selectedEntity.customLabel" label="Nom affiché" [maxLength]="200"
+                [form]="entityForm" propertyName="customLabel" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-toggle [(model)]="selectedEntity.isToDownloadOnProvision"
                 label="Télécharger automatiquement la pièce-jointe sur la prestation ?" [form]="entityForm"
                 propertyName="isToDownloadOnProvision"></generic-toggle>

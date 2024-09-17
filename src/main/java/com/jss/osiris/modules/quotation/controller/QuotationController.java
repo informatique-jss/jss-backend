@@ -870,7 +870,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/mail/billing/compute")
   public ResponseEntity<MailComputeResult> computeMailForBilling(
-      @RequestBody Quotation quotation) throws OsirisException, OsirisClientMessageException {
+      @RequestBody CustomerOrder quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
         mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation),
         HttpStatus.OK);
@@ -878,7 +878,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/mail/digital/compute")
   public ResponseEntity<MailComputeResult> computeMailForDigitalDocument(
-      @RequestBody Quotation quotation) throws OsirisException, OsirisClientMessageException {
+      @RequestBody CustomerOrder quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
         mailComputeHelper.computeMailForGenericDigitalDocument(quotation),
         HttpStatus.OK);
@@ -1897,7 +1897,7 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
-  public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation)
+  public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody CustomerOrder quotation)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     return new ResponseEntity<IQuotation>(pricingHelper.getAndSetInvoiceItemsForQuotationForFront(quotation, false),
         HttpStatus.OK);

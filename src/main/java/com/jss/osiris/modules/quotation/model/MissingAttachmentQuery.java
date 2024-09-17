@@ -3,6 +3,9 @@ package com.jss.osiris.modules.quotation.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -15,8 +18,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_service_missing_attachment_query", columnList = "id_service") })
@@ -40,6 +41,7 @@ public class MissingAttachmentQuery {
     @JsonIgnoreProperties(value = { "service" }, allowSetters = true)
     private List<AssoServiceFieldType> assoServiceFieldType;
 
+    @Column(columnDefinition = "TEXT")
     private String comment;
     private Boolean sendToMe;
     private Boolean copyToMe;

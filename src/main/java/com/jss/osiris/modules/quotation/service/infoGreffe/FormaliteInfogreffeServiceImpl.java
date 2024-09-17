@@ -98,19 +98,21 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                         && formaliteInfogreffe.getEntreprise().getSiren() == null)
                     formaliteInfogreffe.setEntreprise(null);
 
-                // Save only if new one
-                FormaliteInfogreffe currentFormaliteInfogreffe = getFormaliteInfogreffe(
-                        formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
-
-                if (currentFormaliteInfogreffe == null)
-                    addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
                 if (!isRefreshOnlyToday || formaliteInfogreffe.getEvenements() == null
                         || formaliteInfogreffe.getEvenements() != null
                                 && formaliteInfogreffe.getEvenements().size() > 0
                                 && formaliteInfogreffe.getEvenements().get(0).getCreatedDate()
-                                        .isAfter(LocalDateTime.now().withHour(00).withMinute(00).minusSeconds(01)))
+                                        .isAfter(LocalDateTime.now().withHour(00).withMinute(00).minusSeconds(01))) {
+                    // Save only if new one
+                    FormaliteInfogreffe currentFormaliteInfogreffe = getFormaliteInfogreffe(
+                            formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
+
+                    if (currentFormaliteInfogreffe == null)
+                        addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
                     batchService.declareNewBatch(Batch.REFRESH_FORMALITE_INFOGREFFE_DETAIL,
                             formaliteInfogreffe.getIdentifiantFormalite().getFormaliteNumero());
+                }
+
             }
         }
     }
@@ -131,7 +133,8 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                 || !currentStatus.getCodeEtat().equals(newStatus.getCodeEtat());
 
         if (formaliteInfogreffe.getEntreprise() != null
-                && formaliteInfogreffe.getEntreprise().getSiren() == null)
+                && (formaliteInfogreffe.getEntreprise().getSiren() == null
+                        || formaliteInfogreffe.getEntreprise().getSiren().equals("null")))
             formaliteInfogreffe.setEntreprise(null);
         addOrUpdateFormaliteInfogreffe(formaliteInfogreffeDetail);
 
@@ -157,23 +160,35 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                                 InputStream documentInfogreffe = infogreffeDelegateService
                                         .getAttachmentFileFromEvenementInfogreffe(documentAssocieInfogreffe);
 
-                                String filename = documentAssocieInfogreffe.getTypeDocument() + "_"
-                                        + evenementInfogreffe.getCreatedDate()
-                                                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
-                                        + ".pdf";
-                                List<Attachment> attachments = attachmentService.addAttachment(documentInfogreffe,
-                                        formaliteInfogreffeDetail.getFormalite().getProvision().get(0).getId(), null,
-                                        Provision.class.getSimpleName(),
-                                        getAttachmentTypeDocumentAssocieInfogreffe(documentAssocieInfogreffe),
-                                        filename,
-                                        false, null,
-                                        null, null, null);
+                                int size = 0;
+                                if (documentInfogreffe != null) {
+                                    try {
+                                        size = documentInfogreffe.available();
+                                    } catch (Exception e) {
+                                        throw new OsirisException(e, "Impossible to determine size of document");
+                                    }
+                                    if (size > 1) {
+                                        String filename = documentAssocieInfogreffe.getTypeDocument() + "_"
+                                                + evenementInfogreffe.getCreatedDate()
+                                                        .format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
+                                                + ".pdf";
+                                        List<Attachment> attachments = attachmentService.addAttachment(
+                                                documentInfogreffe,
+                                                formaliteInfogreffeDetail.getFormalite().getProvision().get(0).getId(),
+                                                null,
+                                                Provision.class.getSimpleName(),
+                                                getAttachmentTypeDocumentAssocieInfogreffe(documentAssocieInfogreffe),
+                                                filename,
+                                                false, null,
+                                                null, null, null);
 
-                                for (Attachment attachment : attachments) {
-                                    if (attachment.getUploadedFile().getFilename().equals(filename)) {
-                                        attachment.setDocumentAssocieInfogreffe(documentAssocieInfogreffe);
-                                        attachmentService.addOrUpdateAttachment(attachment);
-                                        break;
+                                        for (Attachment attachment : attachments) {
+                                            if (attachment.getUploadedFile().getFilename().equals(filename)) {
+                                                attachment.setDocumentAssocieInfogreffe(documentAssocieInfogreffe);
+                                                attachmentService.addOrUpdateAttachment(attachment);
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
 

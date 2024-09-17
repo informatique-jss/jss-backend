@@ -319,7 +319,10 @@ public class QuotationValidationHelper {
                                                 "AffaireRecipient");
                                 validationHelper.validateString(document.getClientRecipient(), false, 200,
                                                 "ClientRecipient");
-                                validationHelper.validateString(document.getCommandNumber(), false, 40,
+                                validationHelper.validateString(document.getCommandNumber(),
+                                                document.getIsCommandNumberMandatory() != null
+                                                                && document.getIsCommandNumberMandatory(),
+                                                40,
                                                 "CommandNumber");
                                 validationHelper.validateReferential(document.getPaymentDeadlineType(), false,
                                                 "PaymentDeadlineType");

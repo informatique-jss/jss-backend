@@ -26,7 +26,7 @@
     <table class="full-width">
       <tr *ngFor="let assoServiceDocument of selectedAssoServiceDocument; let index = index">
         <td style="width: 300px;">
-          {{assoServiceDocument.typeDocument.label}} - {{assoServiceDocument.typeDocument.attachmentType.label}}
+          {{assoServiceDocument.typeDocument.customLabel}} - {{assoServiceDocument.typeDocument.attachmentType.label}}
           {{assoServiceDocument.isMandatory? " - Obligatoire":""}}
         </td>
         <td colspan="3">

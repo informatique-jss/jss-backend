@@ -54,6 +54,7 @@ import jakarta.persistence.Table;
 		@Index(name = "idx_azure_receipt_attachment", columnList = "id_azure_receipt"),
 		@Index(name = "idx_uploaded_file_attachment", columnList = "id_uploaded_file"),
 		@Index(name = "idx_responsable_attachment", columnList = "id_responsable"),
+		@Index(name = "idx_asso_service_document_attachment", columnList = "id_asso_service_document"),
 		@Index(name = "idx_document_associe_infogreffe", columnList = "id_document_associe_infogreffe") })
 public class Attachment implements Serializable, IId {
 

@@ -50,7 +50,7 @@ export class AttachmentsComponent implements OnInit {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom" } as SortTableColumn<Attachment>);
     this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn<Attachment>);
-    this.displayedColumns.push({ id: "typeDocument", fieldName: "typeDocument.label", label: "Type INPI" } as SortTableColumn<Attachment>);
+    this.displayedColumns.push({ id: "typeDocument", fieldName: "typeDocument.customLabel", label: "Type INPI" } as SortTableColumn<Attachment>);
     this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn<Attachment>);
     this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Attachment>);
     this.displayedColumns.push({ id: "size", fieldName: "uploadedFile.size", label: "Taille", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.uploadedFile.size ? formatBytes(element.uploadedFile.size, 2) : "" } } as SortTableColumn<Attachment>);

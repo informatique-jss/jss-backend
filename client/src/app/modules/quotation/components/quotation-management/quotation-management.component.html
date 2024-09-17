@@ -101,7 +101,8 @@
                   <td *ngIf="billingDocument.isCommandNumberMandatory">
                     <generic-input [(model)]="billingDocument.commandNumber" label="N° de commande"
                       (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
-                      propertyName="commandNumber" [maxLength]="40"></generic-input>
+                      [isMandatory]="billingDocument.isCommandNumberMandatory" propertyName="commandNumber"
+                      [maxLength]="40"></generic-input>
                   </td>
                 </tr>
               </table>

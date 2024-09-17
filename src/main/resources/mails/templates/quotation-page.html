@@ -229,7 +229,7 @@
                 <ul>
                     <li th:if="${service.assoServiceDocuments!=null} and ${assoServiceDocument.isMandatory}"
                         th:each="assoServiceDocument : ${service.assoServiceDocuments}">
-                        <span th:text="${assoServiceDocument.typeDocument.label}"></span>
+                        <span th:text="${assoServiceDocument.typeDocument.customLabel}"></span>
                     </li>
                 </ul>
             </th:block>

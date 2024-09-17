@@ -152,7 +152,7 @@
                                 th:text="${service.serviceType.label}"></span></strong>
                     </td>
                 </tr>
-                <th:block th:each="invoiceItem : ${service.provisions[0].invoiceItems}"
+                <th:block th:each="invoiceItem : ${service.provisions[0].invoiceItemsGrouped}"
                     th:if="${invoiceItem.preTaxPrice!=0} or ${invoiceItem.isGifted}">
                     <tr>
                         <td style="padding-left: 10px">

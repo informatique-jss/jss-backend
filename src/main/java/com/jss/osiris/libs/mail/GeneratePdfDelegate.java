@@ -52,6 +52,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -124,6 +125,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    InvoiceItemService invoiceItemService;
 
     @Autowired
     TranslationService translationService;
@@ -449,7 +453,7 @@ public class GeneratePdfDelegate {
                                     invoiceItems.addAll(provision.getInvoiceItems());
                                 }
                                 service.getProvisions().get(0)
-                                        .setInvoiceItems(getGroupedInvoiceItemsForDebours(invoiceItems));
+                                        .setInvoiceItemsGrouped(getGroupedInvoiceItemsForDebours(invoiceItems));
                             }
                         }
                     assos.add(asso);
@@ -646,7 +650,7 @@ public class GeneratePdfDelegate {
                     if (invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
                         if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable()) {
                             if (invoiceItemNonTaxable == null) {
-                                invoiceItemNonTaxable = invoiceItem;
+                                invoiceItemNonTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
                                 if (invoiceItemNonTaxable.getDiscountAmount() == null)
                                     invoiceItemNonTaxable.setDiscountAmount(0f);
                             } else {
@@ -658,7 +662,8 @@ public class GeneratePdfDelegate {
                             }
                         } else {
                             if (invoiceItemTaxable == null) {
-                                invoiceItemTaxable = invoiceItem;
+                                invoiceItemTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
+                                ;
                                 if (invoiceItemTaxable.getDiscountAmount() == null)
                                     invoiceItemTaxable.setDiscountAmount(0f);
                             } else {
