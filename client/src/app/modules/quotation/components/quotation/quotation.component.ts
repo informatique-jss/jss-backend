@@ -698,15 +698,18 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.appService.openRoute(null, '/order/' + this.quotation.id, null);
   }
 
-  currentInvoiceGeneration: boolean = false;
+  currentInvoiceGeneration: Subscription | undefined;
+
   generateInvoiceItem() {
-    if (!this.currentInvoiceGeneration && this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0]
+    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0]
       && this.quotation.assoAffaireOrders[0].services && this.quotation.assoAffaireOrders[0].services[0]
       && this.quotation.assoAffaireOrders[0].services[0].provisions && this.quotation.assoAffaireOrders[0].services[0].provisions[0]
       && this.quotation.assoAffaireOrders[0].services[0].provisions[0].provisionType && this.quotation.assoAffaireOrders[0].services[0].provisions[0].isRedactedByJss != null) {
-      this.currentInvoiceGeneration = true;
-      this.quotationService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
-        this.currentInvoiceGeneration = false;
+
+      if (this.currentInvoiceGeneration)
+        this.currentInvoiceGeneration.unsubscribe();
+
+      this.currentInvoiceGeneration = this.quotationService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
         this.mergeInvoiceItem(this.quotation, response);
       })
     }
