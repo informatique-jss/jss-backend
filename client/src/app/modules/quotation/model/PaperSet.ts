@@ -8,4 +8,6 @@ export interface PaperSet {
   locationNumber: number;
   isCancelled: boolean;
   isValidated: boolean;
+  creationComment: string;
+  validationComment: string;
 }

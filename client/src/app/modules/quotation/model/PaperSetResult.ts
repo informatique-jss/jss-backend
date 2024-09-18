@@ -13,4 +13,5 @@ export interface PaperSetResult {
   locationNumber: number;
   isValidated: boolean;
   isCancelled: boolean;
+  creationComment: string;
 }

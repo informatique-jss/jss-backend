@@ -543,7 +543,7 @@ const routes: Routes = [
     SelectServiceFieldDataTypeComponent,
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
-    SelectFormaliteInfogreffeStatusComponent
+    SelectFormaliteInfogreffeStatusComponent,
   ],
   exports: [
     HistoryComponent,
@@ -782,7 +782,7 @@ const routes: Routes = [
     SelectServiceFieldDataTypeComponent,
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
-    SelectFormaliteInfogreffeStatusComponent
+    SelectFormaliteInfogreffeStatusComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent
