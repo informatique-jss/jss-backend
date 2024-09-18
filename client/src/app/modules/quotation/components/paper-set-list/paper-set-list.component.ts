@@ -48,6 +48,7 @@ export class PaperSetListComponent implements OnInit {
     this.displayedColumns.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "servicesLabel", fieldName: "servicesLabel", label: "Service(s)" } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({ id: "creationComment", fieldName: "creationComment", label: "Commentaire" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({
       id: "isDone", fieldName: "isDone", label: "Statut action", valueFonction: (element: PaperSetResult, column: SortTableColumn<PaperSetResult>) => {
         if (element && column)
@@ -136,9 +137,9 @@ export class PaperSetListComponent implements OnInit {
                   title: "Nouveau commentaire",
                 }
               });
-              dialogRef.afterClosed().subscribe(dialogResult => {
-                if (dialogResult) {
-                  this.paperSetService.cancelPaperSet(element.id, dialogResult).subscribe(response => this.searchPaperSets());
+              dialogRef.afterClosed().subscribe(dialogResultComment => {
+                if (dialogResultComment) {
+                  this.paperSetService.cancelPaperSet(element.id, dialogResultComment).subscribe(response => this.searchPaperSets());
                 }
               });
             }
