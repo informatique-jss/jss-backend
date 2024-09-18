@@ -817,6 +817,7 @@ public class MailHelper {
 
     @Transactional
     public void sendCustomerOrderAttachmentsToCustomer(CustomerOrder customerOrder, AssoAffaireOrder asso,
+            Provision provision,
             boolean sendToMe, List<Attachment> attachmentsToSend)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
@@ -836,7 +837,11 @@ public class MailHelper {
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_ATTACHMENTS);
         mail.setAttachments(finalAttachments);
         mail.setHeaderPicture("images/mails/send-attanchments.png");
-        mail.setReplyTo(asso.getAssignedTo());
+        if (provision != null) {
+            mail.setReplyTo(provision.getAssignedTo());
+        } else {
+            mail.setReplyTo(asso.getAssignedTo());
+        }
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
         mail.setSubject("Vos pièces numériques - commande n°" + customerOrder.getId() + " - "
@@ -1448,7 +1453,8 @@ public class MailHelper {
         }
 
         if (attachments.size() > 0)
-            sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), sendToMe,
+            sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), null,
+                    sendToMe,
                     attachments);
     }
 }
