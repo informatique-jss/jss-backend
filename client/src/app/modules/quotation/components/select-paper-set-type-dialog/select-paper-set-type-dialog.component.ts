@@ -1,8 +1,8 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { PaperSetType } from 'src/app/modules/miscellaneous/model/PaperSetType';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
+import { PaperSet } from '../../model/PaperSet';
 
 @Component({
   selector: 'app-select-paper-set-type-dialog',
@@ -12,10 +12,10 @@ import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/
 export class SelectPaperSetTypeDialogComponent implements OnInit {
   selectedPaperSetType: PaperSetType | undefined;
   excludedPaperSetTypes: PaperSetType[] = [];
+  newPaperSet: PaperSet = {} as PaperSet;
 
   constructor(private formBuilder: FormBuilder,
-    private dialog: MatDialog,
-    public dialogRef: MatDialogRef<SelectServiceTypeDialogComponent>
+    public dialogRef: MatDialogRef<SelectPaperSetTypeDialogComponent>
   ) { }
 
   serviceTypeForm = this.formBuilder.group({});
@@ -31,8 +31,10 @@ export class SelectPaperSetTypeDialogComponent implements OnInit {
   }
 
   validatePaperSetType() {
-    if (this.selectedPaperSetType)
-      this.dialogRef.close(this.selectedPaperSetType);
+    if (this.selectedPaperSetType) {
+      this.newPaperSet.paperSetType = this.selectedPaperSetType;
+      this.dialogRef.close(this.newPaperSet);
+    }
   }
 
   closeDialog() {

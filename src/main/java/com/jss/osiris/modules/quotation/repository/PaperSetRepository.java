@@ -39,7 +39,8 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " 		else s.custom_label " +
                         " 	end, " +
                         " 	', ') as servicesLabel, " +
-                        " 	ps.location_number as locationNumber " +
+                        " 	ps.location_number as locationNumber, " +
+                        " 	ps.creation_comment as creationComment " +
                         " from " +
                         " 	paper_set ps " +
                         " join paper_set_type pst on " +
@@ -81,7 +82,8 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " 	' ', " +
                         " 	r.lastname), " +
                         " 	r.id, " +
-                        " 	ps.location_number order by ps.location_number" +
+                        " 	ps.location_number, " +
+                        "       ps.creation_comment order by ps.location_number" +
                         "")
         List<IPaperSetResult> findPaperSets(@Param("textSearch") String textSearch,
                         @Param("isDisplayValidated") Boolean isDisplayValidated,

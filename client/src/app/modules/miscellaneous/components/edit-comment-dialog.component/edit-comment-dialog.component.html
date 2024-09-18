@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Editer le commentaire</h1>
+<h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content style="margin-top : 15px">
   <generic-textarea [(model)]="comment" label="Commentaire" [form]="commentForm" propertyName="comment"
     [isMandatory]="isMandatory" [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
