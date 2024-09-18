@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -8,10 +9,8 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { AppService } from 'src/app/services/app.service';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { PaperSetResult } from '../../model/PaperSetResult';
-import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { PaperSetResultService } from '../../services/paper.set.result.service';
 import { PaperSetService } from '../../services/paper.set.service';
-import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-paper-set-list',
@@ -36,7 +35,6 @@ export class PaperSetListComponent implements OnInit {
     private formBuilder: FormBuilder,
     private paperSetResultService: PaperSetResultService,
     private paperSetService: PaperSetService,
-    private customerOrderCommentService: CustomerOrderCommentService,
   ) { }
 
   ngOnInit() {
