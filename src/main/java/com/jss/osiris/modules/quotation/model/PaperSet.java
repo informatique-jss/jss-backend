@@ -40,7 +40,10 @@ public class PaperSet implements Serializable, IId {
 	private Boolean isValidated;
 
 	@Column(columnDefinition = "TEXT")
-	private String comment;
+	private String creationComment;
+
+	@Column(columnDefinition = "TEXT")
+	private String validationComment;
 
 	public Integer getId() {
 		return id;
@@ -90,12 +93,20 @@ public class PaperSet implements Serializable, IId {
 		this.isValidated = isValidated;
 	}
 
-	public String getComment() {
-		return comment;
+	public String getCreationComment() {
+		return creationComment;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setCreationComment(String creationComment) {
+		this.creationComment = creationComment;
+	}
+
+	public String getValidationComment() {
+		return validationComment;
+	}
+
+	public void setValidationComment(String validationComment) {
+		this.validationComment = validationComment;
 	}
 
 }

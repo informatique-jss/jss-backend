@@ -454,7 +454,7 @@ public class QuotationController {
       throw new OsirisValidationException("paperSet");
 
     if (paperSetComment != null && paperSetComment.trim().length() > 0)
-      paperSet.setComment(paperSetComment);
+      paperSet.setValidationComment(paperSetComment);
     return new ResponseEntity<PaperSet>(paperSetService.cancelPaperSet(paperSet), HttpStatus.OK);
   }
 
@@ -467,7 +467,7 @@ public class QuotationController {
     if (paperSet == null)
       throw new OsirisValidationException("paperSet");
     if (paperSetComment != null && paperSetComment.trim().length() > 0)
-      paperSet.setComment(paperSetComment);
+      paperSet.setValidationComment(paperSetComment);
     return new ResponseEntity<PaperSet>(paperSetService.validatePaperSet(paperSet), HttpStatus.OK);
   }
 
