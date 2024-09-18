@@ -6,8 +6,6 @@ import { CustomerOrder } from '../../model/CustomerOrder';
 import { PaperSet } from '../../model/PaperSet';
 import { PaperSetService } from '../../services/paper.set.service';
 import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
-import { PaperSetType } from 'src/app/modules/miscellaneous/model/PaperSetType';
-import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 
 @Component({
   selector: 'paper-set',
@@ -24,7 +22,6 @@ export class PaperSetComponent implements OnInit {
   constructor(
     public selectPaperSetTypeDialogComponent: MatDialog,
     private paperSetService: PaperSetService,
-    private customerOrderCommentService: CustomerOrderCommentService,
   ) { }
 
   ngOnInit() {
@@ -58,13 +55,11 @@ export class PaperSetComponent implements OnInit {
           paperSet.customerOrder = this.customerOrder;
           paperSet.paperSetType = dialogResult.paperSetType;
           paperSet.comment = dialogResult.comment;
-          this.customerOrderCommentService.createCustomerOrderComment(this.customerOrder.id, paperSet.comment);
           this.paperSetService.addOrUpdatePaperSet(paperSet).subscribe(newPaperSet => {
-            this.customerOrder!.paperSets.push(newPaperSet);
             this.refreshPaperSets();
           })
         }
-      })
+      });
     }
   }
 
