@@ -34,9 +34,6 @@ public class CompetentAuthority implements IAttachment, IId {
 	@IndexedField
 	private String label;
 
-	@Column(nullable = false, length = 20)
-	private String code;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority_type")
 	private CompetentAuthorityType competentAuthorityType;
@@ -215,14 +212,6 @@ public class CompetentAuthority implements IAttachment, IId {
 
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
 	}
 
 	public CompetentAuthorityType getCompetentAuthorityType() {

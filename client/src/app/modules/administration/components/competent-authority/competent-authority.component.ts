@@ -71,7 +71,6 @@ export class CompetentAuthorityComponent implements OnInit {
 
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn<CompetentAuthority>);
-    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn<CompetentAuthority>);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<CompetentAuthority>);
     this.displayedColumns.push({ id: "competentAuthorityType", fieldName: "competentAuthorityType.label", label: "Type" } as SortTableColumn<CompetentAuthority>);
 

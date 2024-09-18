@@ -35,11 +35,6 @@
                       [form]="entityForm2" propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
                   </td>
                   <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.code" label="Codification" [maxLength]="20"
-                      [form]="entityForm2" propertyName="code" [isMandatory]="true"
-                      [isDisabled]="!editMode"></generic-input>
-                  </td>
-                  <td>
                     <generic-input [(model)]="selectedcompetentAuthority.inpiReference" label="Référence INPI"
                       [maxLength]="250" [form]="entityForm2" propertyName="inpiReference" [isMandatory]="false"
                       [isDisabled]="!editMode"></generic-input>
