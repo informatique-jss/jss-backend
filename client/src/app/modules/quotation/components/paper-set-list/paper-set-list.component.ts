@@ -7,12 +7,10 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { AppService } from 'src/app/services/app.service';
-import { CommentPaperSetDialogComponent } from '../../../miscellaneous/components/add-comment-paper-set-dialog/comment-paper-set-dialog/comment-paper-set-dialog.component';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { PaperSetResult } from '../../model/PaperSetResult';
 import { PaperSetResultService } from '../../services/paper.set.result.service';
 import { PaperSetService } from '../../services/paper.set.service';
-import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-paper-set-list',
