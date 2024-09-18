@@ -28,8 +28,8 @@ export class PaperSetComponent implements OnInit {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "paperSetType", fieldName: "paperSetType.label", label: "Action à réaliser" } as SortTableColumn<PaperSet>);
     this.displayedColumns.push({ id: "locationNumber", fieldName: "locationNumber", label: "Emplacement" } as SortTableColumn<PaperSet>);
-    this.displayedColumns.push({ id: "creationComment", fieldName: "creationComment", label: "Commentaire formaliste" } as SortTableColumn<PaperSet>);
-    this.displayedColumns.push({ id: "validationComment", fieldName: "validationComment", label: "Commentaire de clotûre" } as SortTableColumn<PaperSet>);
+    this.displayedColumns.push({ id: "creationComment", fieldName: "creationComment", label: "Commentaire" } as SortTableColumn<PaperSet>);
+    this.displayedColumns.push({ id: "validationComment", fieldName: "validationComment", label: "Commentaire de validation/annulation" } as SortTableColumn<PaperSet>);
     this.displayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé ?", valueFonction: (element: PaperSet | PaperSet) => { if (element.isCancelled) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSet | PaperSet>);
     this.displayedColumns.push({ id: "isValidated", fieldName: "isValidated", label: "Validé ?", valueFonction: (element: PaperSet | PaperSet) => { if (element.isValidated) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSet | PaperSet>);
     this.displayedColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn<PaperSet>);
