@@ -76,6 +76,7 @@ import { SelectAccountingAccountDialogComponent } from '../select-accounting-acc
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
 import { SelectServiceDialogComponent } from '../select-service-dialog/select-service-dialog.component';
 import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
@@ -184,7 +185,8 @@ const routes: Routes = [
     SelectPaperSetTypeDialogComponent,
     OrderingListTaggedComponent,
     FormaliteAssociateDialog,
-    InfogreffeStatusComponent
+    InfogreffeStatusComponent,
+    SelectMultiServiceTypeDialogComponent
   ],
   exports: [
     OrderingListComponent,

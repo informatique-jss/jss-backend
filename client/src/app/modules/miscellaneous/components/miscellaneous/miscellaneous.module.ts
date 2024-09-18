@@ -266,6 +266,7 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
+import { ChipsServiceTypeComponent } from '../forms/chips-service-type/chips-service-type.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -545,7 +546,12 @@ const routes: Routes = [
     SelectServiceFieldDataTypeComponent,
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
+<<<<<<< HEAD
     SelectFormaliteInfogreffeStatusComponent
+=======
+    SelectFormaliteInfogreffeStatusComponent,
+    ChipsServiceTypeComponent
+>>>>>>> aa799612 (save devs fusion add new multi-service)
   ],
   exports: [
     HistoryComponent,
@@ -785,7 +791,12 @@ const routes: Routes = [
     SelectServiceFieldDataTypeComponent,
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
+<<<<<<< HEAD
     SelectFormaliteInfogreffeStatusComponent
+=======
+    SelectFormaliteInfogreffeStatusComponent,
+    ChipsServiceTypeComponent
+>>>>>>> aa799612 (save devs fusion add new multi-service)
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent
