@@ -1014,9 +1014,14 @@ public class QuotationController {
       throw new OsirisValidationException("attachments");
 
     ArrayList<Attachment> outAttachment = new ArrayList<Attachment>();
-    for (Attachment attachment : attachmentMailRequest.getAttachements())
-      outAttachment.add(
-          (Attachment) validationHelper.validateReferential(attachment, true, "attachment n°" + attachment.getId()));
+    Provision provision = null;
+    for (Attachment attachment : attachmentMailRequest.getAttachements()) {
+      Attachment fetchedAttachment = (Attachment) validationHelper.validateReferential(attachment, true,
+          "attachment n°" + attachment.getId());
+      outAttachment.add(fetchedAttachment);
+      if (fetchedAttachment.getProvision() != null)
+        provision = fetchedAttachment.getProvision();
+    }
 
     MailComputeResult mailComputeResult = mailComputeHelper
         .computeMailForSendNumericAttachment(attachmentMailRequest.getCustomerOrder());
@@ -1024,7 +1029,7 @@ public class QuotationController {
       throw new OsirisValidationException("MailTo");
 
     mailHelper.sendCustomerOrderAttachmentsToCustomer(attachmentMailRequest.getCustomerOrder(),
-        attachmentMailRequest.getAssoAffaireOrder(), attachmentMailRequest.getSendToMe(),
+        attachmentMailRequest.getAssoAffaireOrder(), provision, attachmentMailRequest.getSendToMe(),
         outAttachment);
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }

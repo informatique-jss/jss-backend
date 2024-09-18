@@ -144,7 +144,7 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " join active_directory_group grp on asso_grp.id_active_directory_group = grp.id "
                         + " where ( COALESCE(:customerOrderStatus) =0 or co.id_customer_order_status in (:customerOrderStatus)) "
                         + " and co.created_date>=:startDate and co.created_date<=:endDate "
-                        + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
+                        + " and ( COALESCE(:assignedToEmployee) =0 or provision.id_employee in (:assignedToEmployee))"
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:activeDirectoryGroupId)=0 or exists (select 1 from asso_customer_order_comment_active_directory_group asso_grp2 "
                         + " join active_directory_group grp2 on asso_grp2.id_active_directory_group = grp2.id "

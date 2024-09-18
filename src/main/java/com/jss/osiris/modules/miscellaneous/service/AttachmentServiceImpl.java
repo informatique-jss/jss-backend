@@ -264,7 +264,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                 addOrUpdateAttachment(attachment);
                 mailHelper.sendCustomerOrderAttachmentsToCustomer(
                         provision.getService().getAssoAffaireOrder().getCustomerOrder(),
-                        provision.getService().getAssoAffaireOrder(), false, Arrays.asList(attachment));
+                        provision.getService().getAssoAffaireOrder(), provision, false, Arrays.asList(attachment));
             }
 
             // Notify user
