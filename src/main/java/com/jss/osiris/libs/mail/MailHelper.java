@@ -1270,7 +1270,7 @@ public class MailHelper {
             sendToEmployee = query.getService().getAssoAffaireOrder().getAssignedTo();
         mail.setReplyTo(sendToEmployee);
         mail.setSendToMe(query.getSendToMe());
-        mail.setMailComputeResult(mailComputeHelper.computeMailForGenericDigitalDocument(customerOrder));
+        mail.setMailComputeResult(mailComputeHelper.computeMailForMissingAttachmentQueryToCustomer(customerOrder));
         mail.setIsLastReminder(isLastReminder);
 
         if (query.getCopyToMe()) {
