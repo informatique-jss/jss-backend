@@ -106,8 +106,7 @@ export class PaperSetListComponent implements OnInit {
               });
               dialogRef.afterClosed().subscribe(dialogResult => {
                 if (dialogResult) {
-                  this.paperSetService.validatePaperSet(element.id).subscribe(response => this.searchPaperSets());
-                  this.addCommentPaperSet(dialogResult, element);
+                  this.paperSetService.validatePaperSet(element.id, dialogResult).subscribe(response => this.searchPaperSets());
                 }
               });
             }
@@ -140,8 +139,7 @@ export class PaperSetListComponent implements OnInit {
               });
               dialogRef.afterClosed().subscribe(dialogResult => {
                 if (dialogResult) {
-                  this.paperSetService.cancelPaperSet(element.id).subscribe(response => this.searchPaperSets());
-                  this.addCommentPaperSet(dialogResult, element);
+                  this.paperSetService.cancelPaperSet(element.id, dialogResult).subscribe(response => this.searchPaperSets());
                 }
               });
             }
