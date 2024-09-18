@@ -391,12 +391,20 @@ public class GeneratePdfDelegate {
     public File generateQuotationPdf(Quotation quotation) throws OsirisException {
         final Context ctx = new Context();
 
-        ctx.setVariable("tiersReference", quotation.getResponsable().getTiers().getId()
-                + (quotation.getResponsable().getTiers().getIdAs400() != null
-                        ? ("/" + quotation.getResponsable().getTiers().getIdAs400())
-                        : ""));
-        ctx.setVariable("responsableOnBilling", quotation.getResponsable().getFirstname() + " "
-                + quotation.getResponsable().getLastname());
+        if (quotation.getResponsable() != null) {
+            ctx.setVariable("tiersReference", quotation.getResponsable().getTiers().getId()
+                    + (quotation.getResponsable().getTiers().getIdAs400() != null
+                            ? ("/" + quotation.getResponsable().getTiers().getIdAs400())
+                            : ""));
+            ctx.setVariable("responsableOnBilling", quotation.getResponsable().getFirstname() + " "
+                    + quotation.getResponsable().getLastname());
+        } else {
+            ctx.setVariable("tiersReference", quotation.getTiers().getId()
+                    + (quotation.getTiers().getIdAs400() != null
+                            ? ("/" + quotation.getTiers().getIdAs400())
+                            : ""));
+        }
+
         ctx.setVariable("assos", quotation.getAssoAffaireOrders());
         ctx.setVariable("quotation", quotation);
         ctx.setVariable("quotationCreatedDate", quotation.getCreatedDate().format(DateTimeFormatter
