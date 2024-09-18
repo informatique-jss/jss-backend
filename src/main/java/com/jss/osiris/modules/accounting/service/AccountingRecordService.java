@@ -22,7 +22,7 @@ public interface AccountingRecordService {
         public AccountingRecord getAccountingRecord(Integer id);
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer id);
-  
+
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
                         throws OsirisException;
 
@@ -49,7 +49,7 @@ public interface AccountingRecordService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
+        public File getBillingClosureReceiptFile(Integer tiersId, Integer responsableId, boolean downloadFile)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         // Front search method

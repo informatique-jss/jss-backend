@@ -44,6 +44,11 @@
                       [maxLength]="250" [form]="entityForm2" propertyName="inpiReference" [isMandatory]="false"
                       [isDisabled]="!editMode"></generic-input>
                   </td>
+                  <td>
+                    <generic-input [(model)]="selectedcompetentAuthority.intercommunityVat" label="Numéro de TVA"
+                      [maxLength]="250" [form]="entityForm2" propertyName="intercommunityVat" [isMandatory]="false"
+                      [isDisabled]="!editMode"></generic-input>
+                  </td>
                 </tr>
                 <tr>
                   <td>
@@ -57,6 +62,12 @@
                       propertyName="azureCustomReference" [isMandatory]="false"
                       hint="A utiliser lorsque la TVA intercommunautaire n'est pas présente sur les factures"
                       [isDisabled]="!editMode"></generic-input>
+                  </td>
+                  <td>
+                    <autocomplete-provider [(model)]="selectedcompetentAuthority.provider" [form]="entityForm2"
+                      propertyName="provider" [isMandatory]="false" [isDisabled]="!editMode"
+                      [isDisabled]="!editMode || (selectedcompetentAuthority!=undefined && selectedcompetentAuthority!=null && selectedcompetentAuthority.provider!=undefined && selectedcompetentAuthority.provider!=null)"
+                      label="Fournisseur associé"></autocomplete-provider>
                   </td>
                 </tr>
               </table>
@@ -77,44 +88,8 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.iban" label="IBAN" [form]="entityForm2"
-                      propertyName="iban" [isMandatory]="false" [isDisabled]="!editMode"
-                      [maxLength]="40"></generic-input>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.bic" label="BIC" [form]="entityForm2"
-                      propertyName="bic" [isMandatory]="false" [isDisabled]="!editMode"
-                      [maxLength]="40"></generic-input>
-                  </td>
-                  <td>
-                    <chips-payment-type [(model)]="selectedcompetentAuthority.paymentTypes"
-                      label="Type de paiements autorisés" [form]="entityForm2" propertyName="paymentTypes"
-                      [isMandatory]="false" [isDisabled]="!editMode"></chips-payment-type>
-                  </td>
-                  <td>
-                    <select-payment-types [(model)]="selectedcompetentAuthority.defaultPaymentType"
-                      label="Type de paiement par défaut" [form]="entityForm2" propertyName="defaultPaymentType"
-                      [isMandatory]="false" [isDisabled]="!editMode"></select-payment-types>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.intercommunityVat" [isDisabled]="!editMode"
-                      label="TVA intercommunaitaire" [form]="entityForm2" propertyName="intercommunityVat"
-                      [isMandatory]="false" [conditionnalRequired]=""
-                      [customValidators]="[checkVAT('intercommunityVat')]">
-                    </generic-input>
-                  </td>
-                </tr>
-              </table>
-              <table class="full-width">
-                <tr>
-                  <td>
                     <chips-mail [(model)]="selectedcompetentAuthority.mails" label="Mails" [form]="entityForm2"
                       propertyName="mails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
-                  </td>
-                  <td>
-                    <chips-mail [(model)]="selectedcompetentAuthority.accountingMails" label="Mails (comptabilité)"
-                      [form]="entityForm2" propertyName="accountingMails" [isMandatory]="false"
-                      [isDisabled]="!editMode"></chips-mail>
                   </td>
                   <table class="full-width">
                     <tr>
@@ -168,34 +143,6 @@
                       [form]="entityForm2" propertyName="schedulle" [isMandatory]="false" [isDisabled]="!editMode"
                       [maxLength]="2000">
                     </generic-input>
-                  </td>
-                </tr>
-              </table>
-              <table class="full-width">
-                <tr>
-                  <td>
-                    <autocomplete-accounting-account [(model)]="selectedcompetentAuthority.accountingAccountProvider"
-                      [form]="entityForm2" propertyName="accountingAccountProvider" [isMandatory]="false"
-                      [isDisabled]="!editMode" label="Compte comptable fournisseur">
-                    </autocomplete-accounting-account>
-                  </td>
-                  <td>
-                    <autocomplete-accounting-account [(model)]="selectedcompetentAuthority.accountingAccountCustomer"
-                      [form]="entityForm2" propertyName="accountingAccountCustomer" [isMandatory]="false"
-                      [isDisabled]="!editMode" label="Compte comptable client">
-                    </autocomplete-accounting-account>
-                  </td>
-                  <td>
-                    <autocomplete-accounting-account
-                      [(model)]="selectedcompetentAuthority.accountingAccountDepositProvider" [form]="entityForm2"
-                      propertyName="accountingAccountDepositProvider" [isMandatory]="false" [isDisabled]="!editMode"
-                      label="Compte comptable acompte fournisseur">
-                    </autocomplete-accounting-account>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="selectedcompetentAuthority.reinvoicing" label="Refacturation (%)"
-                      [form]="entityForm2" propertyName="reinvoicing" [isMandatory]="false" [isDisabled]="!editMode"
-                      type="number"></generic-input>
                   </td>
                 </tr>
               </table>
@@ -313,12 +260,6 @@
         </mat-tab>
         <mat-tab label="Pointage des relevés" *ngIf="selectedcompetentAuthority.id">
           <receipt-reconciliation [provider]="selectedcompetentAuthority"></receipt-reconciliation>
-        </mat-tab>
-        <mat-tab label="Factures" *ngIf="selectedcompetentAuthority.id">
-          <ng-template matTabContent>
-            <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
-              [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
-          </ng-template>
         </mat-tab>
         <mat-tab label=" Documents" *ngIf="selectedcompetentAuthority.id">
           <attachments [entity]="selectedcompetentAuthority" [editMode]="editMode"

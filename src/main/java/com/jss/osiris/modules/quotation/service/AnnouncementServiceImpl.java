@@ -554,8 +554,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (announcement != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
 
-            if (announcement.getConfrere().getIsRemindProviderInvoice() == null
-                    || announcement.getConfrere().getIsRemindProviderInvoice() == false)
+            if (announcement.getConfrere().getProvider().getIsRemindProviderInvoice() == null
+                    || announcement.getConfrere().getProvider().getIsRemindProviderInvoice() == false)
                 return;
 
             // Get provision

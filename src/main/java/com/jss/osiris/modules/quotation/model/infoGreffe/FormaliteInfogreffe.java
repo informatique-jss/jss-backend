@@ -8,6 +8,7 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.quotation.model.Formalite;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -56,6 +57,7 @@ public class FormaliteInfogreffe {
     @JsonIgnoreProperties(value = { "formaliteInfogreffe" }, allowSetters = true)
     private List<EvenementInfogreffe> evenements;
 
+    @Column(columnDefinition = "TEXT")
     private String evtCommentaire;
     private Boolean suppressionPossible;
     private Boolean reprisePossible;

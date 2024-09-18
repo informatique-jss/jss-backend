@@ -10,7 +10,6 @@ export interface QuotationSearchResult {
   quotationId: number;
   responsableId: number;
   tiersId: number;
-  confrereId: number;
   affaireLabel: string;
   totalPrice: number;
   lastStatusUpdate: Date;

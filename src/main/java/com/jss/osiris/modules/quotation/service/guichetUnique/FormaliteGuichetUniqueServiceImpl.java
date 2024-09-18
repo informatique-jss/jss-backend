@@ -306,9 +306,11 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 .equals(ValidationsRequestStatus.MSA_ACCEPTATION_PENDING)
                                 || validationRequest.getStatus().getCode()
                                         .equals(ValidationsRequestStatus.VALIDATION_PENDING)) {
-                            List<CompetentAuthority> competentAuthorities = competentAuthorityService
-                                    .getCompetentAuthorityByInpiReference(
-                                            validationRequest.getPartnerCenter().getCode());
+                            List<CompetentAuthority> competentAuthorities = null;
+                            if (validationRequest.getPartnerCenter() != null)
+                                competentAuthorityService
+                                        .getCompetentAuthorityByInpiReference(
+                                                validationRequest.getPartnerCenter().getCode());
 
                             // Try with partner label
                             if ((competentAuthorities == null || competentAuthorities.size() == 0)
@@ -458,11 +460,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisException, OsirisClientMessageException,
             OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
-        invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        // invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        // TODO : refonte
+        invoice.setProvider(constantService.getCompetentAuthorityInpi().getProvider());
         invoice.setCustomerOrderForInboundInvoice(provision.getService().getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +
                 cart.getId());
-        invoice.setIsInvoiceFromProvider(true);
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
         PaymentType paymentType = null;
@@ -507,7 +510,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisException, OsirisClientMessageException,
             OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
-        invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        // invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
+        // TODO refonte
+        invoice.setProvider(constantService.getCompetentAuthorityInpi().getProvider());
         invoice.setCustomerOrderForInboundInvoice(provision.getService().getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +
                 cart.getId());
@@ -590,8 +595,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         }
                     }
 
-        invoice.setIsInvoiceFromProvider(false);
-        invoice.setIsProviderCreditNote(true);
+        invoice.setIsCreditNote(true);
         invoice.setProvision(provision);
 
         return invoiceHelper.getPriceTotal(invoice) > 0f ? invoiceService.addOrUpdateInvoiceFromUser(invoice) : null;

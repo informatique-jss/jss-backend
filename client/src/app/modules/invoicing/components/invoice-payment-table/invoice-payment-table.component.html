@@ -38,7 +38,7 @@
     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
     </td>
   </tr>
-  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="!invoice.isCreditNote && !invoice.isProviderCreditNote">
+  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="!invoice.isCreditNote">
     <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
     </td>
     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getAmountRemaining(invoice)}} €

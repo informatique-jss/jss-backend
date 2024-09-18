@@ -19,7 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class Provider implements IAttachment, IGenericTiers {
+public class Provider implements IAttachment, IId {
 
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
@@ -33,10 +33,6 @@ public class Provider implements IAttachment, IGenericTiers {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_provider")
 	private AccountingAccount accountingAccountProvider;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_accounting_account_customer")
-	private AccountingAccount accountingAccountCustomer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_deposit")
@@ -107,6 +103,8 @@ public class Provider implements IAttachment, IGenericTiers {
 	@IndexedField
 	private String siret;
 
+	private Boolean isRemindProviderInvoice;
+
 	public Integer getId() {
 		return id;
 	}
@@ -129,14 +127,6 @@ public class Provider implements IAttachment, IGenericTiers {
 
 	public void setAccountingAccountProvider(AccountingAccount accountingAccountProvider) {
 		this.accountingAccountProvider = accountingAccountProvider;
-	}
-
-	public AccountingAccount getAccountingAccountCustomer() {
-		return accountingAccountCustomer;
-	}
-
-	public void setAccountingAccountCustomer(AccountingAccount accountingAccountCustomer) {
-		this.accountingAccountCustomer = accountingAccountCustomer;
 	}
 
 	public String getIban() {
@@ -289,6 +279,14 @@ public class Provider implements IAttachment, IGenericTiers {
 
 	public void setSiret(String siret) {
 		this.siret = siret;
+	}
+
+	public Boolean getIsRemindProviderInvoice() {
+		return isRemindProviderInvoice;
+	}
+
+	public void setIsRemindProviderInvoice(Boolean isRemindProviderInvoice) {
+		this.isRemindProviderInvoice = isRemindProviderInvoice;
 	}
 
 }

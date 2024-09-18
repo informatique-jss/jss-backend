@@ -2,17 +2,17 @@ import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
+import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
 import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
 import { Service } from '../../model/Service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { ServiceService } from '../../services/service.service';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
-import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
-import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
 
 @Component({
   selector: 'app-select-attachment-type-dialog',
@@ -53,7 +53,7 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "typeDocument", fieldName: "typeDocument.label", label: "Type de document" } as SortTableColumn<AssoServiceDocument>);
+    this.displayedColumns.push({ id: "typeDocument", fieldName: "typeDocument.customLabel", label: "Type de document" } as SortTableColumn<AssoServiceDocument>);
     this.displayedColumns.push({ id: "typeAttachment", fieldName: "typeDocument.attachmentType.label", label: "Type de PJ" } as SortTableColumn<AssoServiceDocument>);
     this.displayedColumns.push({ id: "isMandatory", fieldName: "isMandatory", label: "Obligatoire ?", valueFonction: (element: AssoServiceDocument, column: SortTableColumn<AssoServiceDocument>) => { return element.isMandatory ? "Oui" : "Non" } } as SortTableColumn<AssoServiceDocument>);
     this.displayedColumns.push({ id: "existingFiles", fieldName: "existingFiles", label: "Fichiers", valueFonction: (element: AssoServiceDocument, column: SortTableColumn<AssoServiceDocument>) => { return element.attachments ? element.attachments.map(attachment => attachment.uploadedFile.filename).join(" / ") : "" } } as SortTableColumn<AssoServiceDocument>);

@@ -4,6 +4,30 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.GenericGenerator;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.City;
+import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
+import com.jss.osiris.modules.quotation.model.BankTransfert;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
+import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Rff;
+import com.jss.osiris.modules.tiers.model.TiersFollowup;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,33 +40,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.jss.osiris.libs.JacksonLocalDateSerializer;
-import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.accounting.model.AccountingRecord;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.City;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
-import com.jss.osiris.modules.miscellaneous.model.Country;
-import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.miscellaneous.model.PaymentType;
-import com.jss.osiris.modules.miscellaneous.model.Provider;
-import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.Confrere;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
-import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.tiers.model.BillingLabelType;
-import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Rff;
-import com.jss.osiris.modules.tiers.model.Tiers;
-import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status"),
@@ -94,18 +91,12 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JoinColumn(name = "id_responsable")
 	private Responsable responsable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_confrere")
-	private Confrere confrere;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_tiers")
-	private Tiers tiers;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_competent_authority")
-	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
-	private CompetentAuthority competentAuthority;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "id_competent_authority")
+	// @JsonIgnoreProperties(value = { "departments", "cities", "regions" },
+	// allowSetters = true)
+	// private CompetentAuthority competentAuthority;
+	// TODO refonte
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provider")
@@ -141,7 +132,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private Boolean isResponsableOnBilling;
 	private Boolean isCommandNumberMandatory;
 
-	private Boolean isInvoiceFromProvider;
+	// private Boolean isInvoiceFromProvider;
 
 	@Column(length = 40)
 	private String commandNumber;
@@ -193,7 +184,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	private CustomerOrder customerOrderForInboundInvoice;
 
 	private Boolean isCreditNote;
-	private Boolean isProviderCreditNote;
+	// private Boolean isProviderCreditNote;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_credit_note")
@@ -248,28 +239,12 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 		this.invoiceItems = invoiceItems;
 	}
 
-	public Tiers getTiers() {
-		return tiers;
-	}
-
-	public void setTiers(Tiers tiers) {
-		this.tiers = tiers;
-	}
-
 	public Responsable getResponsable() {
 		return responsable;
 	}
 
 	public void setResponsable(Responsable responsable) {
 		this.responsable = responsable;
-	}
-
-	public Confrere getConfrere() {
-		return confrere;
-	}
-
-	public void setConfrere(Confrere confrere) {
-		this.confrere = confrere;
 	}
 
 	public String getBillingLabel() {
@@ -464,14 +439,6 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 		this.attachments = attachments;
 	}
 
-	public Boolean getIsInvoiceFromProvider() {
-		return isInvoiceFromProvider;
-	}
-
-	public void setIsInvoiceFromProvider(Boolean isInvoiceFromProvider) {
-		this.isInvoiceFromProvider = isInvoiceFromProvider;
-	}
-
 	public List<TiersFollowup> getTiersFollowups() {
 		return tiersFollowups;
 	}
@@ -486,14 +453,6 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setManualPaymentType(PaymentType manualPaymentType) {
 		this.manualPaymentType = manualPaymentType;
-	}
-
-	public CompetentAuthority getCompetentAuthority() {
-		return competentAuthority;
-	}
-
-	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
-		this.competentAuthority = competentAuthority;
 	}
 
 	public CustomerOrder getCustomerOrderForInboundInvoice() {
@@ -558,14 +517,6 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setDirectDebitTransfert(DirectDebitTransfert directDebitTransfert) {
 		this.directDebitTransfert = directDebitTransfert;
-	}
-
-	public Boolean getIsProviderCreditNote() {
-		return isProviderCreditNote;
-	}
-
-	public void setIsProviderCreditNote(Boolean isProviderCreditNote) {
-		this.isProviderCreditNote = isProviderCreditNote;
 	}
 
 	public List<Refund> getRefunds() {

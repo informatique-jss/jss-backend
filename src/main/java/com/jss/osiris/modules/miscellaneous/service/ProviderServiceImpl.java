@@ -47,16 +47,12 @@ public class ProviderServiceImpl implements ProviderService {
     public Provider addOrUpdateProvider(Provider provider) throws OsirisException {
         // Generate accounting accounts
         if (provider.getId() == null
-                || provider.getAccountingAccountCustomer() == null && provider.getAccountingAccountProvider() == null
-                        && provider.getAccountingAccountDeposit() == null) {
+                || provider.getAccountingAccountProvider() == null && provider.getAccountingAccountDeposit() == null) {
             AccountingAccountTrouple accountingAccountCouple = accountingAccountService
                     .generateAccountingAccountsForEntity(provider.getLabel(), false);
-            provider.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             provider.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             provider.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
         } else {
-            accountingAccountService.updateAccountingAccountLabel(provider.getAccountingAccountCustomer(),
-                    provider.getLabel());
             accountingAccountService.updateAccountingAccountLabel(provider.getAccountingAccountDeposit(),
                     provider.getLabel());
             accountingAccountService.updateAccountingAccountLabel(provider.getAccountingAccountProvider(),

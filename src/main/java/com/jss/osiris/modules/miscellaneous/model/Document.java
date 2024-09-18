@@ -171,10 +171,6 @@ public class Document implements Serializable, IId {
 	private Boolean addToClientMailList;
 	private Boolean addToAffaireMailList;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_regie")
-	private Regie regie;
-
 	public Integer getId() {
 		return id;
 	}
@@ -429,14 +425,6 @@ public class Document implements Serializable, IId {
 
 	public void setBillingLabelIsIndividual(Boolean billingLabelIsIndividual) {
 		this.billingLabelIsIndividual = billingLabelIsIndividual;
-	}
-
-	public Regie getRegie() {
-		return regie;
-	}
-
-	public void setRegie(Regie regie) {
-		this.regie = regie;
 	}
 
 	public Announcement getAnnouncement() {

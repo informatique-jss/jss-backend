@@ -7,7 +7,6 @@ import { BillingType } from 'src/app/modules/miscellaneous/model/BillingType';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { Provision } from '../../model/Provision';
 import { ConfrereService } from '../../services/confrere.service';
 
@@ -19,7 +18,6 @@ import { ConfrereService } from '../../services/confrere.service';
 export class ProvisionOptionsComponent implements OnInit {
 
   @Input() provision: Provision | undefined;
-  @Input() customerOrder: ITiers | undefined;
   @Input() editMode: boolean = false;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 

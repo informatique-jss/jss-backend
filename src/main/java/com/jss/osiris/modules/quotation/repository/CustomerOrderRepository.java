@@ -20,20 +20,17 @@ import jakarta.persistence.QueryHint;
 public interface CustomerOrderRepository extends QueryCacheCrudRepository<CustomerOrder, Integer> {
 
         @Query(nativeQuery = true, value = "select "
-                        + " case when cf.id is not null then cf.label"
-                        + " when r.id is not null then  r.firstname || ' '||r.lastname "
-                        + " else case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end end as customerOrderLabel,"
-                        + " coalesce(case when t2.denomination is not null and t2.denomination!='' then t2.denomination else t.firstname || ' '||t.lastname end, case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end) as tiersLabel,"
+                        + "  r.firstname || ' '||r.lastname as customerOrderLabel,"
+                        + " case when t2.denomination is not null and t2.denomination!='' then t2.denomination else t2.firstname || ' '||t2.lastname end as tiersLabel,"
                         + " cos.label as customerOrderStatus,"
                         + " co.created_date as createdDate,"
                         + " co.last_status_update as lastStatusUpdate,"
-                        + " coalesce(cf.id_commercial,r.id_commercial,t.id_commercial,t2.id_commercial) as salesEmployeeId,"
+                        + " t2.id_commercial as salesEmployeeId,"
                         + " co.id_assigned_to as assignedToEmployeeId,"
                         + " co.id as customerOrderId,"
                         + " r.id as responsableId,"
                         + " min(quotation.id_quotation) as quotationId,"
-                        + " coalesce(t2.id,t.id) as tiersId,"
-                        + " cf.id as confrereId,"
+                        + " t2.id as tiersId,"
                         + " origin.label as customerOrderOriginLabel,"
                         + " STRING_AGG(DISTINCT case when service.custom_label is null then st.label else service.custom_label  end,', ') as serviceTypeLabel,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
@@ -60,9 +57,7 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " left join affaire af on af.id = asso.id_affaire"
                         + " left join city on af.id_city = city.id"
                         + " left join country on city.id_country = country.id"
-                        + " left join confrere cf on cf.id = co.id_confrere"
                         + " left join responsable r on r.id = co.id_responsable"
-                        + " left join tiers t on t.id = co.id_tiers"
                         + " left join tiers t2 on t2.id = r.id_tiers"
                         + " left join asso_quotation_customer_order asso_co on asso_co.id_customer_order = co.id "
                         + " where ( COALESCE(:customerOrderStatus) =0 or co.id_customer_order_status in (:customerOrderStatus)) "
@@ -75,11 +70,11 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         + " and ( :idCustomerOrderParentRecurring =0 or co.id_customer_order_parent_recurring = :idCustomerOrderParentRecurring)"
                         + " and ( :idCustomerOrderChildRecurring =0 or co.id = (select id_customer_order_parent_recurring from customer_order where id =:idCustomerOrderChildRecurring))"
                         + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
-                        + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
-                        + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder) or t2.id in (:customerOrder))"
+                        + " and ( COALESCE(:salesEmployee) =0 or  r.id_commercial in (:salesEmployee)  or  t2.id_commercial in (:salesEmployee))"
+                        + " and ( COALESCE(:customerOrder)=0 or  r.id in (:customerOrder) or t2.id in (:customerOrder))"
                         + " and ( COALESCE(:affaire)=0 or af.id =:affaire )"
-                        + " group by cf.id, cf.label, r.id, r.firstname,origin.label,  r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
-                        + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id,t2.id, cf.id, co.description,co.id_assigned_to ")
+                        + " group by r.id, r.firstname,origin.label,  r.lastname,  t2.denomination, t2.firstname, t2.lastname, cos.label, "
+                        + " co.created_date, r.id_commercial, t2.id_commercial, co.id, r.id, t2.id,  co.description,co.id_assigned_to ")
         List<OrderingSearchResult> findCustomerOrders(@Param("salesEmployee") List<Integer> salesEmployee,
                         @Param("assignedToEmployee") List<Integer> assignedToEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,

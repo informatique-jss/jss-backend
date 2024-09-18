@@ -61,7 +61,6 @@ import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.miscellaneous.model.PaperSetType;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
-import com.jss.osiris.modules.miscellaneous.model.Regie;
 import com.jss.osiris.modules.miscellaneous.model.Region;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
@@ -91,7 +90,6 @@ import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PaperSetTypeService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ProviderService;
-import com.jss.osiris.modules.miscellaneous.service.RegieService;
 import com.jss.osiris.modules.miscellaneous.service.RegionService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatCollectionTypeService;
@@ -203,9 +201,6 @@ public class MiscellaneousController {
 
     @Autowired
     PaymentService paymentService;
-
-    @Autowired
-    RegieService regieService;
 
     @Autowired
     InvoiceService invoiceService;
@@ -566,30 +561,6 @@ public class MiscellaneousController {
         return new ResponseEntity<Constant>(constantService.addOrUpdateConstant(constant), HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/regies")
-    public ResponseEntity<List<Regie>> getRegies() {
-        return new ResponseEntity<List<Regie>>(regieService.getRegies(), HttpStatus.OK);
-    }
-
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    @PostMapping(inputEntryPoint + "/regie")
-    public ResponseEntity<Regie> addOrUpdateRegie(
-            @RequestBody Regie regie) throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        if (regie.getId() != null)
-            validationHelper.validateReferential(regie, true, "regie");
-        validationHelper.validateString(regie.getCode(), true, "Code");
-        validationHelper.validateString(regie.getLabel(), true, "Label");
-        validationHelper.validateReferential(regie.getCountry(), true, "Country");
-        validationHelper.validateReferential(regie.getCity(), true, "City");
-        validationHelper.validateString(regie.getPostalCode(), false, 10, "PostalCode");
-        validationHelper.validateString(regie.getCedexComplement(), false, 20, "CedexComplement");
-        validationHelper.validateString(regie.getAddress(), true, 100, "Address");
-        validationHelper.validateIban(regie.getIban(), true, "Iban");
-        validationHelper.validateBic(regie.getBic(), true, "BIC");
-
-        return new ResponseEntity<Regie>(regieService.addOrUpdateRegie(regie), HttpStatus.OK);
-    }
-
     @GetMapping(inputEntryPoint + "/providers")
     public ResponseEntity<List<Provider>> getProviders() {
         return new ResponseEntity<List<Provider>>(providerService.getProviders(), HttpStatus.OK);
@@ -603,11 +574,13 @@ public class MiscellaneousController {
         if (provider.getId() != null)
             validationHelper.validateReferential(provider, true, "provider");
         validationHelper.validateString(provider.getLabel(), true, "Label");
-        validationHelper.validateIban(provider.getIban(), false, "Iban");
-        validationHelper.validateBic(provider.getBic(), false, "Bic");
+        validationHelper.validateIban(provider.getIban(),
+                provider.getPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId()), "Iban");
+        validationHelper.validateBic(provider.getBic(),
+                provider.getPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId()), "Bic");
         validationHelper.validateString(provider.getJssReference(), false, 20, "JssReference");
         validationHelper.validateReferential(provider.getVatCollectionType(), true, "VatCollectionType");
-        validationHelper.validateReferential(provider.getPaymentType(), false, "PaymentType");
+        validationHelper.validateReferential(provider.getPaymentType(), true, "PaymentType");
         validationHelper.validateReferential(provider.getDefaultBillingItem(), false, "DefaultBillingItem");
         if (provider.getCountry() != null
                 && provider.getCountry().getId().equals(constantService.getCountryFrance().getId()))
@@ -982,8 +955,9 @@ public class MiscellaneousController {
         validationHelper.validateString(competentAuthority.getCode(), true, 20, "code");
         validationHelper.validateString(competentAuthority.getLabel(), true, 200, "label");
         validationHelper.validateString(competentAuthority.getSchedulle(), false, 2000, "Schedulle");
-        validationHelper.validateReferential(competentAuthority.getDefaultPaymentType(), false, "defaultPaymentType");
+        validationHelper.validateString(competentAuthority.getIntercommunityVat(), false, 20, "IntercommunityVat");
         validationHelper.validateString(competentAuthority.getInpiReference(), false, 250, "InpiReference");
+        validationHelper.validateReferential(competentAuthority.getProvider(), false, "Provider");
         validationHelper.validateReferential(competentAuthority.getCompetentAuthorityType(), true,
                 "CompetentAuthorityType");
         if (competentAuthority.getCities() == null && competentAuthority.getDepartments() == null
@@ -1002,9 +976,6 @@ public class MiscellaneousController {
             for (Department department : competentAuthority.getDepartments())
                 validationHelper.validateReferential(department, false, "department");
 
-        validationHelper.validateIban(competentAuthority.getIban(), false, "Iban");
-        validationHelper.validateBic(competentAuthority.getBic(), false, "Bic");
-        validationHelper.validateString(competentAuthority.getIntercommunityVat(), false, 20, "IntercommunityVat");
         validationHelper.validateString(competentAuthority.getAzureCustomReference(), false, 250,
                 "azureCustomReference");
         validationHelper.validateString(competentAuthority.getContact(), false, 40, "Contact");
@@ -1014,10 +985,6 @@ public class MiscellaneousController {
         validationHelper.validateString(competentAuthority.getCedexComplement(), false, 40, "CedexComplement");
         validationHelper.validateReferential(competentAuthority.getCity(), false, "City");
         validationHelper.validateReferential(competentAuthority.getCountry(), false, "Country");
-
-        if (competentAuthority.getPaymentTypes() != null)
-            for (PaymentType paymentType : competentAuthority.getPaymentTypes())
-                validationHelper.validateReferential(paymentType, true, "Payment type");
 
         return new ResponseEntity<CompetentAuthority>(
                 competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority), HttpStatus.OK);
