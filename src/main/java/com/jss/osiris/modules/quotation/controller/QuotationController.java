@@ -479,8 +479,10 @@ public class QuotationController {
       currentPaperSet = (PaperSet) validationHelper.validateReferential(paperSet, true, "paperSets");
       paperSet.setLocationNumber(currentPaperSet.getLocationNumber());
     }
-    validationHelper.validateReferential(paperSet.getCustomerOrder(), true, "CustomerOrder");
+    validationHelper.validateReferential(paperSet.getCustomerOrder(), true, "customerOrder");
     validationHelper.validateReferential(paperSet.getPaperSetType(), true, "paperSetType");
+    if (paperSet.getCreationComment() != null && paperSet.getCreationComment().trim().length() > 0)
+      validationHelper.validateString(paperSet.getCreationComment(), null, "creationComment");
 
     return new ResponseEntity<PaperSet>(paperSetService.addOrUpdatePaperSet(paperSet), HttpStatus.OK);
   }
