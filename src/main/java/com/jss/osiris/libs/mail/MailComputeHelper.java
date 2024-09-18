@@ -46,52 +46,57 @@ public class MailComputeHelper {
 
     public MailComputeResult computeMailForGenericDigitalDocument(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
+    }
+
+    public MailComputeResult computeMailForMissingAttachmentQueryToCustomer(IQuotation quotation)
+            throws OsirisException, OsirisClientMessageException {
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, true);
     }
 
     public MailComputeResult computeMailForQuotationMail(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForQuotationCreationConfirmation(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForCustomerOrderCreationConfirmation(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForDepositRequest(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), true);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false, false);
     }
 
     public MailComputeResult computeMailForPublicationReceipt(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForReadingProof(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForPublicationFlag(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForSendNumericAttachment(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForBillingClosure(ITiers tiers)
@@ -123,7 +128,8 @@ public class MailComputeHelper {
         return computeMailForConfrereAnnouncementRequest(announcement);
     }
 
-    private MailComputeResult computeMailForDocument(IQuotation quotation, DocumentType documentType, boolean useRegie)
+    private MailComputeResult computeMailForDocument(IQuotation quotation, DocumentType documentType, boolean useRegie,
+            boolean isForcedClient)
             throws OsirisException, OsirisClientMessageException {
 
         if (quotation == null)
@@ -152,7 +158,7 @@ public class MailComputeHelper {
 
         if (quotationDocument != null) {
             boolean hasAlreadyAddMails = false;
-            if (quotationDocument.getIsRecipientAffaire()) {
+            if (quotationDocument.getIsRecipientAffaire() && !isForcedClient) {
                 mailComputeResult.setIsSendToAffaire(true);
                 if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
@@ -173,7 +179,8 @@ public class MailComputeHelper {
             }
 
             if (quotationDocument.getIsRecipientClient()
-                    || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()) {
+                    || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()
+                    || isForcedClient) {
                 hasAlreadyAddMails = false;
                 mailComputeResult.setIsSendToClient(true);
                 if (quotationDocument.getMailsClient() != null
@@ -181,6 +188,12 @@ public class MailComputeHelper {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsClient());
                     mailComputeResult.setMailToClientOrigin("mails indiqués dans la commande");
                     hasAlreadyAddMails = true;
+                }
+
+                if (isForcedClient) {
+                    if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
+                        mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
+                    }
                 }
                 if (hasAlreadyAddMails && !quotationDocument.getAddToClientMailList()) {
                     // do nothing
