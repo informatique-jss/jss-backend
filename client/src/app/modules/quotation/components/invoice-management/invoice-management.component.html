@@ -47,11 +47,11 @@
             {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
         </ng-container>
       </td>
-      <td class="mat-mdc-cell mdc-data-table__cell  td-info">
+      <td class="mat-mdc-cell mdc-data-table__cell  td-info" *ngIf="quotation.responsable">
         <p>{{getCustomerOrderNameForIQuotation(quotation)}}</p>
-        <p>{{getCustomerOrderForIQuotation(quotation).address}}</p>
-        <p>{{getCustomerOrderForIQuotation(quotation).postalCode}}
-          {{getCustomerOrderForIQuotation(quotation).city?getCustomerOrderForIQuotation(quotation).city.label:""}}{{getCustomerOrderForIQuotation(quotation).country?getCustomerOrderForIQuotation(quotation).country.label:""}}
+        <p>{{quotation.responsable.address}}</p>
+        <p>{{quotation.responsable.postalCode}}
+          {{quotation.responsable.city?quotation.responsable.city.label:""}}{{quotation.responsable.country?quotation.responsable.country.label:""}}
         </p>
       </td>
     </tr>

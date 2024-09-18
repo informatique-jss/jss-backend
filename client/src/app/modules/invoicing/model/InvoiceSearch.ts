@@ -1,5 +1,5 @@
 import { Employee } from "../../profile/model/Employee";
-import { ITiers } from "../../tiers/model/ITiers";
+import { Tiers } from "../../tiers/model/Tiers";
 import { InvoiceStatus } from "./InvoiceStatus";
 
 export interface InvoiceSearch {
@@ -9,7 +9,7 @@ export interface InvoiceSearch {
   maxAmount: number;
   invoiceStatus: InvoiceStatus[];
   showToRecover: boolean;
-  customerOrders: ITiers[];
+  customerOrders: Tiers[];
   invoiceId: number;
   customerOrderId: number;
   salesEmployee: Employee;

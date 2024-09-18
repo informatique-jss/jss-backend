@@ -68,6 +68,7 @@ export abstract class GenericFormComponent implements OnInit {
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
       this.modelChange.emit(this.model);
+      this.checkPreviewIconAvailable();
     }
     if (changes.isDisabled) {
       if (this.isDisabled) {

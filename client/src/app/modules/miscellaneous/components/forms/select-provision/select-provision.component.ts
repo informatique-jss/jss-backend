@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Provision } from 'src/app/modules/quotation/model/Provision';
-import { GenericSelectComponent } from '../generic-select/generic-select.component';
 import { AppService } from 'src/app/services/app.service';
+import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
   selector: 'select-provision',
@@ -25,6 +25,6 @@ export class SelectProvisionComponent extends GenericSelectComponent<Provision> 
   }
 
   getPreviewActionLinkFunction(entity: Provision): string[] | undefined {
-    return ['provision/', + entity.service.assoAffaireOrder.affaire.id + "/" + entity.id + ""];
+    return ['/provision/', + entity.service.assoAffaireOrder.affaire.id + "/" + entity.id + ""];
   }
 }

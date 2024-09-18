@@ -99,8 +99,6 @@ export class RecurringChildOrderingListComponent implements OnInit {
         return ['/tiers/responsable', element.responsableId];
       if (element.tiersId)
         return ['/tiers', element.tiersId];
-      if (element.confrereId)
-        return ['/confrere', element.confrereId];
     }
     return ['/tiers'];
   }

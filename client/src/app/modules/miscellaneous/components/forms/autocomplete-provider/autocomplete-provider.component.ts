@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { AppService } from 'src/app/services/app.service';
 import { Provider } from '../../../model/Provider';
 import { ProviderService } from '../../../services/provider.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-provider',
@@ -28,6 +28,6 @@ export class AutocompleteProviderComponent extends GenericLocalAutocompleteCompo
   }
 
   getPreviewActionLinkFunction(entity: Provider): string[] | undefined {
-    return ['administration/provider', entity.id + ""];
+    return ['/administration/provider', entity.id + ""];
   }
 }

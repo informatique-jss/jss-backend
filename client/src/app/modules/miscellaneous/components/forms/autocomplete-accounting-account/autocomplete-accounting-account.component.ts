@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
 import { PrincipalAccountingAccount } from 'src/app/modules/accounting/model/PrincipalAccountingAccount';
 import { AccountingAccountService } from 'src/app/modules/accounting/services/accounting.account.service';
-import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 import { AppService } from '../../../../../services/app.service';
+import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
   selector: 'autocomplete-accounting-account',
@@ -64,6 +64,6 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
 
 
   override getPreviewActionLinkFunction(entity: AccountingAccount): string[] | undefined {
-    return ['accounting/view', entity.id + ""];
+    return ['/accounting/view', entity.id + ""];
   }
 }

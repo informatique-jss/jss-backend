@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +18,6 @@ import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CustomerOrderOriginService;
@@ -28,7 +26,6 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
@@ -47,7 +44,6 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.ProvisionTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
-import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -164,41 +160,22 @@ public class QuotationValidationHelper {
                                 .equals(constantService.getCustomerOrderOriginWebSite().getId())
                                 && (quotation.getSpecialOffers() == null || quotation.getSpecialOffers().size() == 0)
                                 || quotation.getId() == null) {
-                        ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
-                        if (tiers instanceof Responsable)
-                                tiers = ((Responsable) tiers).getTiers();
+                        Tiers tiers = quotation.getResponsable().getTiers();
 
                         List<SpecialOffer> specialOffers = null;
-                        if (tiers instanceof Tiers && ((Tiers) tiers).getSpecialOffers() != null
-                                        && ((Tiers) tiers).getSpecialOffers().size() > 0)
-                                specialOffers = ((Tiers) tiers).getSpecialOffers();
-                        if (tiers instanceof Confrere && ((Confrere) tiers).getSpecialOffers() != null
-                                        && ((Confrere) tiers).getSpecialOffers().size() > 0)
-                                specialOffers = ((Confrere) tiers).getSpecialOffers();
-
-                        if (specialOffers != null) {
+                        if (tiers.getSpecialOffers() != null && tiers.getSpecialOffers().size() > 0) {
+                                specialOffers = tiers.getSpecialOffers();
                                 quotation.setSpecialOffers(new ArrayList<SpecialOffer>());
                                 for (SpecialOffer specialOffer : specialOffers)
                                         quotation.getSpecialOffers().add(specialOffer);
                         }
                 }
 
-                quotation.setTiers((Tiers) validationHelper.validateReferential(quotation.getTiers(), false, "Tiers"));
                 quotation.setResponsable(
                                 (Responsable) validationHelper.validateReferential(quotation.getResponsable(), false,
                                                 "Responsable"));
 
-                if (quotation.getTiers() != null && quotation.getConfrere() == null
-                                && quotation.getResponsable() == null
-                                && quotation.getTiers().getIsIndividual() == false)
-                        throw new OsirisValidationException("Tiers must be individual !");
-
-                quotation.setConfrere(
-                                (Confrere) validationHelper.validateReferential(quotation.getConfrere(), false,
-                                                "Confrere"));
-
-                if (quotation.getResponsable() == null && quotation.getTiers() == null
-                                && quotation.getConfrere() == null)
+                if (quotation.getResponsable() == null)
                         throw new OsirisValidationException("No customer order");
 
                 if (quotation.getResponsable() != null && !quotation.getResponsable().getIsActive())
@@ -206,9 +183,8 @@ public class QuotationValidationHelper {
                                         "Il n'est pas possible d'utiliser un responsable inactif !");
 
                 // Generate missing documents
-                IDocument tiersDocument = ObjectUtils.firstNonNull(quotation.getConfrere(), quotation.getResponsable(),
-                                quotation.getTiers());
-                Document billingDocument = documentService.getBillingDocument(tiersDocument.getDocuments());
+                Document billingDocument = documentService
+                                .getBillingDocument(quotation.getResponsable().getDocuments());
                 if (documentService.getBillingDocument(quotation.getDocuments()) == null && billingDocument != null) {
                         billingDocument = documentService.cloneDocument(billingDocument);
                         billingDocument.setTiers(null);
@@ -223,7 +199,8 @@ public class QuotationValidationHelper {
                         quotation.getDocuments().add(billingDocument);
                 }
 
-                Document digitalDocument = documentService.getDocumentByDocumentType(tiersDocument.getDocuments(),
+                Document digitalDocument = documentService.getDocumentByDocumentType(
+                                quotation.getResponsable().getDocuments(),
                                 constantService.getDocumentTypeDigital());
                 if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
                                 constantService.getDocumentTypeDigital()) == null && digitalDocument != null) {
@@ -240,7 +217,8 @@ public class QuotationValidationHelper {
                         quotation.getDocuments().add(digitalDocument);
                 }
 
-                Document paperDocument = documentService.getDocumentByDocumentType(tiersDocument.getDocuments(),
+                Document paperDocument = documentService.getDocumentByDocumentType(
+                                quotation.getResponsable().getDocuments(),
                                 constantService.getDocumentTypePaper());
                 if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
                                 constantService.getDocumentTypePaper()) == null && paperDocument != null) {
@@ -267,15 +245,8 @@ public class QuotationValidationHelper {
 
                 // Check customer order is not a prospect
                 if (isCustomerOrder && !isOpen) {
-                        if (quotation.getTiers() != null
-                                        && quotation.getTiers().getTiersType().getId()
-                                                        .equals(constantService.getTiersTypeProspect().getId()))
-                                throw new OsirisClientMessageException(
-                                                "Le donneur d'ordre ne doit pas être un prospect");
-
-                        if (quotation.getResponsable() != null
-                                        && quotation.getResponsable().getTiersType().getId()
-                                                        .equals(constantService.getTiersTypeProspect().getId()))
+                        if (quotation.getResponsable().getTiersType().getId()
+                                        .equals(constantService.getTiersTypeProspect().getId()))
                                 throw new OsirisClientMessageException(
                                                 "Le donneur d'ordre ne doit pas être un prospect");
                 }
@@ -311,7 +282,10 @@ public class QuotationValidationHelper {
                                                 "AffaireRecipient");
                                 validationHelper.validateString(document.getClientRecipient(), false, 200,
                                                 "ClientRecipient");
-                                validationHelper.validateString(document.getCommandNumber(), false, 40,
+                                validationHelper.validateString(document.getCommandNumber(),
+                                                document.getIsCommandNumberMandatory() != null
+                                                                && document.getIsCommandNumberMandatory(),
+                                                40,
                                                 "CommandNumber");
                                 validationHelper.validateReferential(document.getPaymentDeadlineType(), false,
                                                 "PaymentDeadlineType");

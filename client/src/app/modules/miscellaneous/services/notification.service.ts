@@ -10,7 +10,7 @@ import { NotificationDialogComponent } from '../components/notification-dialog/n
 @Injectable({
   providedIn: 'root'
 })
-export class NotificationService extends AppRestService<Notification>{
+export class NotificationService extends AppRestService<Notification> {
 
   notifications: Observable<Notification[]> | undefined;
   notificationsResult: Notification[] = [] as Array<Notification>;
@@ -27,6 +27,8 @@ export class NotificationService extends AppRestService<Notification>{
       retry(),
       tap((value) => {
         this.notificationsResult = value;
+        if (!this.notificationsResult)
+          this.notificationsResult = [] as Array<Notification>;
         this.generateWindowsNotification();
       }),
       share(),
@@ -49,6 +51,8 @@ export class NotificationService extends AppRestService<Notification>{
   }
 
   getNotificationsResult(): Notification[] {
+    if (!this.notificationsResult)
+      this.notificationsResult = [] as Array<Notification>;
     return this.notificationsResult;
   }
 

@@ -74,11 +74,11 @@ import { ReferentialPrincipalAccountingAccountComponent } from '../referentials/
 import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
 import { ReferentialQuotationAbandonReasonComponent } from '../referentials/referential-quotation-abandon-reason/referential-quotation-abandon-reason';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
-import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
 import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
 import { ReferentialServiceFamilyGroupComponent } from '../referentials/referential-service-family-group/referential-service-family-group.component';
 import { ReferentialServiceFamilyComponent } from '../referentials/referential-service-family/referential-service-family.component';
+import { ReferentialServiceFieldTypeComponent } from '../referentials/referential-service-field-type/referential-service-field-type.component';
 import { ReferentialServiceTypeComponent } from '../referentials/referential-service/referential-service-type.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
@@ -94,7 +94,6 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
-import { ReferentialServiceFieldTypeComponent } from '../referentials/referential-service-field-type/referential-service-field-type.component';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -183,7 +182,6 @@ const routes: Routes = [
     ReferentialDepartmentComponent,
     ConstantComponent,
     ReferentialBillingTypeComponent,
-    ReferentialRegieComponent,
     ReferentialAccountingJournalComponent,
     ReferentialInvoiceStatusComponent,
     ReferentialPrincipalAccountingAccountComponent,

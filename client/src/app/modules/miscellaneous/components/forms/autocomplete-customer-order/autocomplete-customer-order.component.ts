@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/services/app.service';
 import { IndexEntity } from '../../../../../routing/search/IndexEntity';
 import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-customer-order',
@@ -30,6 +30,6 @@ export class AutocompleteCustomerOrderComponent extends GenericAutocompleteCompo
   }
 
   getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
-    return ['order', entity.entityId + ""];
+    return ['/order', entity.entityId + ""];
   }
 }

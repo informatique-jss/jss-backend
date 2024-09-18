@@ -6,7 +6,7 @@ import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { formatDate, formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
-import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
+import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
 import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
@@ -52,7 +52,6 @@ export class InvoiceManagementComponent implements OnInit {
   getLetteringDate = getLetteringDate;
   getAffaireListFromIQuotation = getAffaireListFromIQuotation;
   getCustomerOrderNameForIQuotation = getCustomerOrderNameForIQuotation;
-  getCustomerOrderForIQuotation = getCustomerOrderForIQuotation;
   getAffaireListArrayForIQuotation = getAffaireListArrayForIQuotation;
   formatDate = formatDate;
 
@@ -185,7 +184,7 @@ export class InvoiceManagementComponent implements OnInit {
   }
 
   updateInvoiceLabelResult() {
-    if (this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation) && (this.quotation.tiers || this.quotation.confrere || this.quotation.responsable)) {
+    if (this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation) && (this.quotation.responsable)) {
       this.invoiceLabelResultService.getInvoiceLabelComputeResult(this.quotation).subscribe(response => {
         if (response && response.billingLabel)
           this.invoiceLabelResult = response;

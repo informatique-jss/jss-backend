@@ -61,10 +61,6 @@
             {{selectedRefundAffaire.denomination?selectedRefundAffaire.denomination:(selectedRefundAffaire.firstname+"
             "+selectedRefundAffaire.lastname)}} <span (click)="cancelRefundChoice()" class="pointer">(annuler)</span>
           </p>
-          <p *ngIf="selectedRefundConfrere">
-            Remboursement à {{getCustomerOrderNameForITiers(selectedRefundConfrere)}} <span
-              (click)="cancelRefundChoice()" class="pointer">(annuler)</span>
-          </p>
           <p *ngIf="selectedRefundTiers">
             Remboursement à {{getCustomerOrderNameForITiers(selectedRefundTiers)}} <span (click)="cancelRefundChoice()"
               class="pointer">(annuler)</span>

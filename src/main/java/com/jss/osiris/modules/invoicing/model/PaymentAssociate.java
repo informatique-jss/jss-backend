@@ -3,8 +3,8 @@ package com.jss.osiris.modules.invoicing.model;
 import java.util.List;
 
 import com.jss.osiris.modules.quotation.model.Affaire;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 public class PaymentAssociate {
@@ -13,8 +13,7 @@ public class PaymentAssociate {
     private List<CustomerOrder> customerOrders;
     private Affaire affaireRefund;
     private Tiers tiersRefund;
-    private Tiers tiersOrder;
-    private Confrere confrereRefund;
+    private Responsable responsableOrder;
     private List<Float> byPassAmount;
 
     public Payment getPayment() {
@@ -57,10 +56,6 @@ public class PaymentAssociate {
         this.byPassAmount = byPassAmount;
     }
 
-    public Confrere getConfrereRefund() {
-        return confrereRefund;
-    }
-
     public Tiers getTiersRefund() {
         return tiersRefund;
     }
@@ -69,16 +64,12 @@ public class PaymentAssociate {
         this.tiersRefund = tiersRefund;
     }
 
-    public void setConfrereRefund(Confrere confrereRefund) {
-        this.confrereRefund = confrereRefund;
+    public Responsable getResponsableOrder() {
+        return responsableOrder;
     }
 
-    public Tiers getTiersOrder() {
-        return tiersOrder;
-    }
-
-    public void setTiersOrder(Tiers tiersOrder) {
-        this.tiersOrder = tiersOrder;
+    public void setResponsableOrder(Responsable responsableOrder) {
+        this.responsableOrder = responsableOrder;
     }
 
 }

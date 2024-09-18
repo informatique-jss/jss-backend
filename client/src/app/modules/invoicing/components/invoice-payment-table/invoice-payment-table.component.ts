@@ -1,17 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { formatDate } from 'src/app/libs/FormatHelper';
-import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
-import { Responsable } from 'src/app/modules/tiers/model/Responsable';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { Payment } from '../../model/Payment';
 import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
 import { PaymentService } from '../../services/payment.service';
 import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
-import { getAmountPayed, getCustomerOrderForInvoice, getRemainingToPay } from '../invoice-tools';
+import { getAmountPayed, getRemainingToPay } from '../invoice-tools';
 
 @Component({
   selector: 'invoice-payment-table',
@@ -62,10 +60,8 @@ export class InvoicePaymentTableComponent implements OnInit {
   }
 
   refundAppoint(payment: Payment) {
-    if (this.invoice) {
-      let customerOrder: ITiers = getCustomerOrderForInvoice(this.invoice);
-      if (instanceOfResponsable(customerOrder))
-        customerOrder = (customerOrder as Responsable).tiers;
+    if (this.invoice && this.invoice.responsable) {
+      let customerOrder: Tiers = this.invoice.responsable.tiers;
 
       let affaireId = 1;
       if (this.invoice && this.invoice.customerOrder) {

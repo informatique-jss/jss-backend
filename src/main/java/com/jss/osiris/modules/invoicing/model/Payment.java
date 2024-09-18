@@ -240,7 +240,6 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setCreatedDate(LocalDateTime createdDate) {
 		setPaymentDate(createdDate);
-		;
 	}
 
 	public CustomerOrder getCustomerOrder() {

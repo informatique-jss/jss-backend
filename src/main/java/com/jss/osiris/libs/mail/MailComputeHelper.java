@@ -14,17 +14,14 @@ import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.model.Regie;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.service.QuotationService;
-import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -46,57 +43,57 @@ public class MailComputeHelper {
 
     public MailComputeResult computeMailForGenericDigitalDocument(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital());
     }
 
     public MailComputeResult computeMailForQuotationMail(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital());
     }
 
     public MailComputeResult computeMailForQuotationCreationConfirmation(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital());
     }
 
     public MailComputeResult computeMailForCustomerOrderCreationConfirmation(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital());
     }
 
     public MailComputeResult computeMailForDepositRequest(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital());
     }
 
     public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), true);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling());
     }
 
     public MailComputeResult computeMailForPublicationReceipt(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital());
     }
 
     public MailComputeResult computeMailForReadingProof(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital());
     }
 
     public MailComputeResult computeMailForPublicationFlag(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital());
     }
 
     public MailComputeResult computeMailForSendNumericAttachment(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital());
     }
 
-    public MailComputeResult computeMailForBillingClosure(ITiers tiers)
+    public MailComputeResult computeMailForBillingClosure(Tiers tiers, Responsable responsable)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForITiers(tiers);
+        return computeMailForITiers(tiers, responsable);
     }
 
     public MailComputeResult computeMailForRff(Rff rff)
@@ -123,7 +120,7 @@ public class MailComputeHelper {
         return computeMailForConfrereAnnouncementRequest(announcement);
     }
 
-    private MailComputeResult computeMailForDocument(IQuotation quotation, DocumentType documentType, boolean useRegie)
+    private MailComputeResult computeMailForDocument(IQuotation quotation, DocumentType documentType)
             throws OsirisException, OsirisClientMessageException {
 
         if (quotation == null)
@@ -140,13 +137,13 @@ public class MailComputeHelper {
         mailComputeResult.setIsSendToAffaire(false);
 
         Document quotationDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(), documentType);
-        ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
+        Responsable responsable = quotation.getResponsable();
 
         if (quotationDocument == null)
             throw new OsirisException(null,
                     "Document " + documentType.getLabel() + " not found in IQuoation " + quotation.getId());
 
-        if (customerOrder == null)
+        if (responsable == null)
             throw new OsirisException(null,
                     "Customer order not found for IQuoation " + quotation.getId());
 
@@ -184,26 +181,18 @@ public class MailComputeHelper {
                 }
                 if (hasAlreadyAddMails && !quotationDocument.getAddToClientMailList()) {
                     // do nothing
-                } else if (customerOrder instanceof Responsable
-                        && ((Responsable) customerOrder).getMails() != null
-                        && ((Responsable) customerOrder).getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(((Responsable) customerOrder).getMails());
+                } else if (responsable.getMails() != null
+                        && responsable.getMails().size() > 0) {
+                    mailComputeResult.getRecipientsMailTo().addAll(responsable.getMails());
                     mailComputeResult.setMailToClientOrigin("mails du responsable");
-                } else if (customerOrder instanceof Responsable
-                        && ((Responsable) customerOrder).getTiers().getMails() != null
-                        && ((Responsable) customerOrder).getTiers().getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(((Responsable) customerOrder).getTiers().getMails());
+                } else if (responsable.getTiers().getMails() != null
+                        && responsable.getTiers().getMails().size() > 0) {
+                    mailComputeResult.getRecipientsMailTo().addAll(responsable.getTiers().getMails());
                     mailComputeResult.setMailToClientOrigin("mails du tiers associé au responsable");
-                } else if (useRegie && customerOrder instanceof Confrere
-                        && ((Confrere) customerOrder).getRegie() != null
-                        && ((Confrere) customerOrder).getRegie().getMails() != null
-                        && ((Confrere) customerOrder).getRegie().getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(((Confrere) customerOrder).getRegie().getMails());
-                    mailComputeResult.setMailToClientOrigin("mails de la régie du confrère");
-                } else if (customerOrder.getMails() != null
-                        && customerOrder.getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(customerOrder.getMails());
-                    mailComputeResult.setMailToClientOrigin("mails du tiers/confrère");
+                } else if (responsable.getMails() != null
+                        && responsable.getMails().size() > 0) {
+                    mailComputeResult.getRecipientsMailTo().addAll(responsable.getMails());
+                    mailComputeResult.setMailToClientOrigin("mails du tiers");
                 } else
                     throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
 
@@ -237,9 +226,10 @@ public class MailComputeHelper {
         return mailComputeResult;
     }
 
-    private MailComputeResult computeMailForITiers(ITiers tiers) throws OsirisException, OsirisClientMessageException {
+    private MailComputeResult computeMailForITiers(Tiers tiers, Responsable responsable)
+            throws OsirisException, OsirisClientMessageException {
 
-        if (tiers == null)
+        if (tiers == null && responsable == null)
             throw new OsirisException(null, "ITiers not provided");
 
         // Compute recipients
@@ -249,31 +239,31 @@ public class MailComputeHelper {
         mailComputeResult.setIsSendToClient(true);
         mailComputeResult.setIsSendToAffaire(false);
 
-        Document billingClosureDocument = documentService.getDocumentByDocumentType(tiers.getDocuments(),
-                constantService.getDocumentTypeBillingClosure());
+        Document billingClosureDocument = null;
+        if (tiers != null) {
+            billingClosureDocument = documentService.getDocumentByDocumentType(tiers.getDocuments(),
+                    constantService.getDocumentTypeBillingClosure());
+        } else if (responsable != null) {
+            billingClosureDocument = documentService.getDocumentByDocumentType(responsable.getDocuments(),
+                    constantService.getDocumentTypeBillingClosure());
+        }
         if (billingClosureDocument != null && billingClosureDocument.getMailsClient() != null
                 && billingClosureDocument.getMailsClient().size() > 0
                 && billingClosureDocument.getBillingClosureRecipientType().getId()
                         .equals(constantService.getBillingClosureRecipientTypeOther().getId())) {
             mailComputeResult.getRecipientsMailTo().addAll(billingClosureDocument.getMailsClient());
             mailComputeResult.setMailToClientOrigin("mails Autres du paramétrage du relevé de compte");
-        } else if (tiers instanceof Responsable
-                && ((Responsable) tiers).getMails() != null
-                && ((Responsable) tiers).getMails().size() > 0) {
-            mailComputeResult.getRecipientsMailTo().addAll(((Responsable) tiers).getMails());
+        } else if (responsable != null
+                && responsable.getMails() != null
+                && responsable.getMails().size() > 0) {
+            mailComputeResult.getRecipientsMailTo().addAll(responsable.getMails());
             mailComputeResult.setMailToClientOrigin("mails du responsable");
-        } else if (tiers instanceof Responsable
-                && ((Responsable) tiers).getTiers().getMails() != null
-                && ((Responsable) tiers).getTiers().getMails().size() > 0) {
-            mailComputeResult.getRecipientsMailTo().addAll(((Responsable) tiers).getTiers().getMails());
+        } else if (responsable != null
+                && responsable.getTiers().getMails() != null
+                && responsable.getTiers().getMails().size() > 0) {
+            mailComputeResult.getRecipientsMailTo().addAll(responsable.getTiers().getMails());
             mailComputeResult.setMailToClientOrigin("mails du tiers associé au responsable");
-        } else if (tiers instanceof Confrere
-                && ((Confrere) tiers).getRegie() != null
-                && ((Confrere) tiers).getRegie().getMails() != null
-                && ((Confrere) tiers).getRegie().getMails().size() > 0) {
-            mailComputeResult.getRecipientsMailTo().addAll(((Confrere) tiers).getRegie().getMails());
-            mailComputeResult.setMailToClientOrigin("mails de la régie du confrère");
-        } else if (tiers.getMails() != null
+        } else if (tiers != null && tiers.getMails() != null
                 && tiers.getMails().size() > 0) {
             mailComputeResult.getRecipientsMailTo().addAll(tiers.getMails());
             mailComputeResult.setMailToClientOrigin("mails du tiers/confrère");
@@ -332,17 +322,15 @@ public class MailComputeHelper {
 
         if (paperDocument.getIsRecipientClient()
                 || !paperDocument.getIsRecipientClient() && !paperDocument.getIsRecipientAffaire()) {
-            ITiers customer = quotationService.getCustomerOrderOfQuotation(customerOrder);
+            Responsable responsable = customerOrder.getResponsable();
             if (paperDocument.getClientRecipient() != null && !paperDocument.getClientRecipient().equals("")
                     || paperDocument.getClientAddress() != null && !paperDocument.getClientAddress().equals("")) {
                 invoiceLabelResult.setBillingLabel(paperDocument.getClientRecipient());
                 invoiceLabelResult.setBillingLabelAddress(paperDocument.getClientAddress());
                 invoiceLabelResult.setLabelOrigin("l'adresse indiquée dans la commande");
-            } else if (customer instanceof Responsable
-                    && ((Responsable) customer).getTiers().getAddress() != null
-                    && ((Responsable) customer).getTiers().getCity() != null) {
-                Tiers tiers = ((Responsable) customer).getTiers();
-                Responsable responsable = ((Responsable) customer);
+            } else if (responsable != null) {
+
+                Tiers tiers = responsable.getTiers();
                 if (tiers.getMailRecipient() == null || tiers.getMailRecipient().length() == 0)
                     invoiceLabelResult.setBillingLabel((tiers.getDenomination() != null ? tiers.getDenomination()
                             : tiers.getFirstname() + " " + tiers.getLastname()) + "\r\n"
@@ -358,50 +346,9 @@ public class MailComputeHelper {
                 invoiceLabelResult.setBillingLabelPostalCode(tiers.getPostalCode());
                 invoiceLabelResult.setBillingLabelIntercommunityVat(tiers.getIntercommunityVat());
                 invoiceLabelResult.setLabelOrigin("l'adresse du tiers");
-            } else if (customer instanceof Confrere && ((Confrere) customer).getRegie() != null
-                    && ((Confrere) customer).getRegie().getAddress() != null
-                    && ((Confrere) customer).getRegie().getCity() != null) {
-                Regie regie = ((Confrere) customer).getRegie();
-
-                invoiceLabelResult.setBillingLabel(regie.getLabel());
-                invoiceLabelResult.setBillingLabelAddress(regie.getAddress());
-                invoiceLabelResult.setBillingLabelCity(regie.getCity());
-                invoiceLabelResult.setBillingLabelComplementCedex(regie.getCedexComplement());
-                invoiceLabelResult.setBillingLabelCountry(regie.getCountry());
-                invoiceLabelResult.setBillingLabelPostalCode(regie.getPostalCode());
-                invoiceLabelResult.setLabelOrigin("l'adresse de la régie du confrère");
-            } else if (customer instanceof Confrere
-                    && ((Confrere) customer).getAddress() != null
-                    && ((Confrere) customer).getCity() != null) {
-                Confrere confrere = ((Confrere) customer);
-
-                invoiceLabelResult.setBillingLabel(confrere.getLabel());
-                invoiceLabelResult.setBillingLabelAddress(confrere.getAddress());
-                invoiceLabelResult.setBillingLabelCity(confrere.getCity());
-                invoiceLabelResult.setBillingLabelComplementCedex(confrere.getCedexComplement());
-                invoiceLabelResult.setBillingLabelCountry(confrere.getCountry());
-                invoiceLabelResult.setBillingLabelPostalCode(confrere.getPostalCode());
-                invoiceLabelResult.setBillingLabelIntercommunityVat(confrere.getIntercommunityVat());
-                invoiceLabelResult.setLabelOrigin("l'adresse du confrère");
-            } else if (customer instanceof Tiers
-                    && ((Tiers) customer).getAddress() != null
-                    && ((Tiers) customer).getCity() != null) {
-                Tiers tiers = (Tiers) customer;
-                if (tiers.getMailRecipient() == null || tiers.getMailRecipient().length() == 0)
-                    invoiceLabelResult.setBillingLabel(
-                            tiers.getDenomination() != null ? tiers.getDenomination()
-                                    : tiers.getFirstname() + " " + tiers.getLastname());
-                else
-                    invoiceLabelResult.setBillingLabel(tiers.getMailRecipient());
-                invoiceLabelResult.setBillingLabelAddress(tiers.getAddress());
-                invoiceLabelResult.setBillingLabelCity(tiers.getCity());
-                invoiceLabelResult.setBillingLabelComplementCedex(tiers.getCedexComplement());
-                invoiceLabelResult.setBillingLabelCountry(tiers.getCountry());
-                invoiceLabelResult.setBillingLabelPostalCode(tiers.getPostalCode());
-                invoiceLabelResult.setBillingLabelIntercommunityVat(tiers.getIntercommunityVat());
-                invoiceLabelResult.setLabelOrigin("l'adresse du tiers");
-            } else
+            } else {
                 throw new OsirisClientMessageException("Aucune adresse postale trouvée pour le client");
+            }
         }
         return invoiceLabelResult;
     }

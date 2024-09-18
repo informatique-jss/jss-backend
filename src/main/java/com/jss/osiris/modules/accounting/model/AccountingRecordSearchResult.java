@@ -46,8 +46,6 @@ public interface AccountingRecordSearchResult {
 
   Integer getPaymentId();
 
-  Integer getContrePasseOperationId();
-
   String getAffaireLabel();
 
   String getResponsable();

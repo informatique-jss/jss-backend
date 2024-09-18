@@ -62,7 +62,6 @@ import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-co
 import { AutocompletePrincipalAccountingAccountComponent } from '../forms/autocomplete-principal-accounting-account/autocomplete-principal-accounting-account.component';
 import { AutocompleteProviderComponent } from '../forms/autocomplete-provider/autocomplete-provider.component';
 import { AutocompleteProvisionTypeComponent } from '../forms/autocomplete-provision-type/autocomplete-provision-type.component';
-import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomplete-regie.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
 import { AutocompleteRnaComponent } from '../forms/autocomplete-rna/autocomplete-rna.component';
@@ -363,7 +362,6 @@ const routes: Routes = [
     SelectVatComponent,
     SelectRegionsComponent,
     AutocompleteRegionComponent,
-    AutocompleteRegieComponent,
     SelectFundTypeComponent,
     ChipsCityComponent,
     AutocompleteDepartmentComponent,
@@ -640,7 +638,6 @@ const routes: Routes = [
     SortTableComponent,
     EditCommentDialogComponent,
     SelectInvoiceStatusComponent,
-    AutocompleteRegieComponent,
     SelectAssignationTypeComponent,
     ChipsProvisionFamilyTypeComponent,
     AutocompleteBillingItemComponent,

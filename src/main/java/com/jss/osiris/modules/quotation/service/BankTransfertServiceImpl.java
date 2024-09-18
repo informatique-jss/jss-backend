@@ -61,7 +61,6 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
-import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.repository.BankTransfertRepository;
@@ -181,8 +180,17 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         }
         bankTransfert.setTransfertAmount(invoice.getTotalPrice());
         bankTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
-        bankTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));
-        bankTransfert.setTransfertBic(invoiceHelper.getBicOfOrderingCustomer(invoice));
+
+        if (invoice.getRff() != null) {
+            bankTransfert.setTransfertBic(invoice.getResponsable().getTiers().getRffBic());
+            bankTransfert.setTransfertIban(invoice.getResponsable().getTiers().getRffIban());
+        } else {
+            if (invoice.getProvider().getIban() == null || invoice.getProvider().getBic() == null)
+                throw new OsirisClientMessageException("BIC or IBAN not set on provider");
+
+            bankTransfert.setTransfertIban(invoice.getProvider().getIban());
+            bankTransfert.setTransfertBic(invoice.getProvider().getBic());
+        }
 
         if (bankTransfert.getTransfertIban() == null || bankTransfert.getTransfertBic() == null)
             throw new OsirisException(null, "IBAN or BIC not found for bank transfert");
@@ -250,8 +258,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 document.getCstmrCdtTrfInitnBean().getPmtInfBean().add(generateBodyForBankTransfert(
                         header.getMsgId(), bankTransfert.getTransfertAmount(),
                         bankTransfert.getTransfertDate().toLocalDate(),
-                        (bankTransfert.getCompetentAuthorityLabel() != null ? bankTransfert.getCompetentAuthorityLabel()
-                                : StringUtils.substring(bankTransfert.getInvoiceBillingLabel(), 0, 139)),
+                        StringUtils.substring(bankTransfert.getInvoiceBillingLabel(), 0, 139),
                         completeTransfert.getTransfertIban().replaceAll(" ", ""),
                         completeTransfert.getTransfertBic().replaceAll(" ", ""),
                         StringUtils.substring(completeTransfert.getId() + " - " + completeTransfert.getLabel(), 0,
@@ -260,17 +267,17 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 if (!completeTransfert.getIsAlreadyExported()) {
                     addOrUpdateBankTransfert(completeTransfert);
                     if (completeTransfert.getInvoices() != null && completeTransfert.getInvoices().size() == 1) {
-                        IGenericTiers tiers = invoiceHelper.getCustomerOrder(completeTransfert.getInvoices().get(0));
                         completeTransfert.setPayments(new ArrayList<Payment>());
 
                         Payment payment = paymentService.generateNewBankTransfertPayment(
-                                completeTransfert, -completeTransfert.getTransfertAmount(), tiers);
+                                completeTransfert, -completeTransfert.getTransfertAmount(),
+                                completeTransfert.getInvoices().get(0).getProvider());
                         completeTransfert.getPayments().add(payment);
                         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment,
                                 false);
                         paymentService.manualMatchPaymentInvoicesAndCustomerOrders(
                                 completeTransfert.getPayments().get(0),
-                                Arrays.asList(completeTransfert.getInvoices().get(0)), null, null, null, null, null,
+                                Arrays.asList(completeTransfert.getInvoices().get(0)), null, null, null, null,
                                 null);
                     }
                 }

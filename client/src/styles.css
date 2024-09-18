@@ -91,6 +91,10 @@ mini-fab-add mat-form-field.mat-mdc-form-field, mat-option, .mat-mdc-cell {
   cursor: pointer;
 }
 
+.visibility{
+  margin-top: 10px;
+}
+
 .tooltip {
   margin-top: 5px !important;
 }

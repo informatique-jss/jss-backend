@@ -7,7 +7,6 @@ import { City } from "./City";
 import { Country } from "./Country";
 import { DocumentType } from "./DocumentType";
 import { Mail } from "./Mail";
-import { Regie } from "./Regie";
 
 export interface Document {
   id: number | undefined;
@@ -43,6 +42,5 @@ export interface Document {
   billingLabelCity: City;
   billingLabelCountry: Country;
   billingLabelIsIndividual: boolean;
-  regie: Regie;
   externalReference: string;
 }

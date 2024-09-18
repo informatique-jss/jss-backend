@@ -23,12 +23,10 @@ import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
-import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
-import com.jss.osiris.modules.tiers.model.Responsable;
 
 @Service
 public class AccountingRecordGenerationServiceImpl implements AccountingRecordGenerationService {
@@ -120,38 +118,6 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         return accountingRecordService.addOrUpdateAccountingRecord(newAccountingRecord, false);
     }
 
-    private AccountingAccount getProviderAccountingAccountForInvoice(Invoice invoice) throws OsirisException {
-        AccountingAccount accountingAccount = null;
-        if (invoice.getProvider() != null)
-            accountingAccount = invoice.getProvider().getAccountingAccountProvider();
-        if (invoice.getCompetentAuthority() != null)
-            accountingAccount = invoice.getCompetentAuthority().getAccountingAccountProvider();
-        if (invoice.getConfrere() != null)
-            accountingAccount = invoice.getConfrere().getAccountingAccountProvider();
-        if (invoice.getTiers() != null)
-            accountingAccount = invoice.getTiers().getAccountingAccountProvider();
-        if (invoice.getResponsable() != null && invoice.getResponsable().getTiers() != null)
-            accountingAccount = invoice.getResponsable().getTiers().getAccountingAccountProvider();
-        if (accountingAccount == null)
-            throw new OsirisException(null, "No customer accounting account in Provider ");
-
-        return accountingAccount;
-    }
-
-    private AccountingAccount getCustomerAccountingAccountForInvoice(Invoice invoice) throws OsirisException {
-        IGenericTiers customerOrder = invoiceHelper.getCustomerOrder(invoice);
-        AccountingAccount accountingAccountCustomer = null;
-        if (customerOrder instanceof Responsable)
-            accountingAccountCustomer = ((Responsable) customerOrder).getTiers().getAccountingAccountCustomer();
-        else
-            accountingAccountCustomer = customerOrder.getAccountingAccountCustomer();
-
-        if (accountingAccountCustomer == null)
-            throw new OsirisException(null, "No customer accounting account in ITiers " + customerOrder.getId());
-
-        return accountingAccountCustomer;
-    }
-
     private void checkBalance(Float balance) throws OsirisValidationException {
         if (Math.abs(Math.round(balance * 100f)) > 1)
             throw new OsirisValidationException("Balance not null");
@@ -171,9 +137,6 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         if (refund.getTiers() != null)
             account = refund.getTiers().getAccountingAccountCustomer();
-
-        if (refund.getConfrere() != null)
-            account = refund.getConfrere().getAccountingAccountCustomer();
 
         if (account == null)
             throw new OsirisException(null, "Accounting account not found for refund");
@@ -216,11 +179,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     private boolean letterInvoice(Invoice invoice) throws OsirisException {
         AccountingAccount accountingAccount;
         invoice = invoiceService.getInvoice(invoice.getId());
-        if (invoice.getIsInvoiceFromProvider() != null && invoice.getIsInvoiceFromProvider()
-                || invoice.getIsProviderCreditNote() != null && invoice.getIsProviderCreditNote())
-            accountingAccount = getProviderAccountingAccountForInvoice(invoice);
+        if (invoice.getProvider() != null)
+            accountingAccount = invoice.getProvider().getAccountingAccountProvider();
         else
-            accountingAccount = getCustomerAccountingAccountForInvoice(invoice);
+            accountingAccount = invoice.getResponsable().getTiers().getAccountingAccountCustomer();
 
         List<AccountingRecord> accountingRecords = accountingRecordService
                 .findByAccountingAccountAndInvoice(accountingAccount, invoice);
@@ -280,7 +242,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     private void unletterInvoiceEmitted(Invoice invoice) throws OsirisException {
-        AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
+        AccountingAccount accountingAccountCustomer = invoice.getResponsable().getTiers()
+                .getAccountingAccountCustomer();
 
         List<AccountingRecord> accountingRecords = accountingRecordService
                 .findByAccountingAccountAndInvoice(accountingAccountCustomer, invoice);
@@ -296,7 +259,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     private void unletterInvoiceReceived(Invoice invoice) throws OsirisException {
-        AccountingAccount accountingAccountProvider = getProviderAccountingAccountForInvoice(invoice);
+        AccountingAccount accountingAccountProvider = invoice.getProvider().getAccountingAccountProvider();
 
         List<AccountingRecord> accountingRecords = accountingRecordService
                 .findByAccountingAccountAndInvoice(accountingAccountProvider, invoice);
@@ -307,7 +270,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 accountingRecord.setLetteringNumber(null);
                 accountingRecordService.addOrUpdateAccountingRecord(accountingRecord, true);
             }
-        if (invoice.getIsProviderCreditNote())
+        if (invoice.getIsCreditNote())
             invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
         else
             invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
@@ -330,18 +293,20 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (invoice == null)
             throw new OsirisException(null, "No invoice provided");
 
-        if (invoice.getCustomerOrder() == null && invoiceHelper.getCustomerOrder(invoice) == null)
+        if (invoice.getCustomerOrder() == null && invoice.getResponsable() == null)
             throw new OsirisException(null, "No customer order or ITiers in invoice " + invoice.getId());
 
         String labelPrefix = invoice.getCustomerOrder() != null
                 ? ("Facture pour la commande n°" + invoice.getCustomerOrder().getId())
                 : ("Facture libre n°" + invoice.getId());
 
-        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
-        if (orderingTiers != null && orderingTiers.getLabel() != null)
-            labelPrefix += " - " + orderingTiers.getLabel();
+        labelPrefix += " - " + ((invoice.getResponsable().getTiers().getDenomination() != null)
+                ? invoice.getResponsable().getTiers().getDenomination()
+                : (invoice.getResponsable().getTiers().getFirstname() + " "
+                        + invoice.getResponsable().getTiers().getLastname()));
 
-        AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
+        AccountingAccount accountingAccountCustomer = invoice.getResponsable().getTiers()
+                .getAccountingAccountCustomer();
         Float balance = 0f;
         Integer operationId = getNewTemporaryOperationId();
 
@@ -382,7 +347,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             balance -= billingItemPrice;
 
             if (invoiceItem.getOriginProviderInvoice() != null
-                    && invoiceItem.getOriginProviderInvoice().getIsProviderCreditNote()
+                    && invoiceItem.getOriginProviderInvoice().getIsCreditNote()
                     && invoiceItem.getPreTaxPrice() < 0) {
                 generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
                         invoice.getManualAccountingDocumentNumber(),
@@ -442,16 +407,17 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (invoice == null)
             throw new OsirisException(null, "No invoice provided");
 
-        if (invoice.getCustomerOrder() == null && invoiceHelper.getCustomerOrder(invoice) == null)
+        if (invoice.getCustomerOrder() == null && invoice.getResponsable() == null)
             throw new OsirisException(null, "No customer order or ITiers in invoice " + invoice.getId());
 
         String labelPrefix = invoice.getCustomerOrder() != null
                 ? ("Avoir n°" + creditNote.getId() + " - Commande n°" + invoice.getCustomerOrder().getId())
                 : ("Avoir n°" + creditNote.getId() + " - Facture libre n°" + invoice.getId());
 
-        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
-        if (orderingTiers != null && orderingTiers.getLabel() != null)
-            labelPrefix += " - " + orderingTiers.getLabel();
+        labelPrefix += " - " + ((invoice.getResponsable().getTiers().getDenomination() != null)
+                ? invoice.getResponsable().getTiers().getDenomination()
+                : (invoice.getResponsable().getTiers().getFirstname() + " "
+                        + invoice.getResponsable().getTiers().getLastname()));
 
         Float balance = 0f;
         Integer operationId = getNewTemporaryOperationId();
@@ -488,11 +454,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (originalInvoice != null)
             labelPrefix += " pour la facture " + originalInvoice.getId();
 
-        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
-        if (orderingTiers != null && orderingTiers.getLabel() != null)
-            labelPrefix += " - " + orderingTiers.getLabel();
+        labelPrefix += " - " + invoice.getProvider().getLabel();
 
-        AccountingAccount accountingAccountProvider = getProviderAccountingAccountForInvoice(invoice);
+        AccountingAccount accountingAccountProvider = invoice.getProvider().getAccountingAccountProvider();
 
         Float balance = 0f;
         Integer operationId = getNewTemporaryOperationId();
@@ -567,11 +531,12 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         String labelPrefix = invoice.getCustomerOrder() != null ? ("Commande n°" + invoice.getCustomerOrder().getId())
                 : ("Facture libre n°" + invoice.getId());
 
-        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
-        if (orderingTiers != null && orderingTiers.getLabel() != null)
-            labelPrefix += " - " + orderingTiers.getLabel();
+        labelPrefix += " - " + invoice.getProvider().getLabel();
 
-        AccountingAccount accountingAccountProvider = getProviderAccountingAccountForInvoice(invoice);
+        AccountingAccount accountingAccountProvider = null;
+        if (invoice.getRff() != null)
+            accountingAccountProvider = invoice.getResponsable().getTiers().getAccountingAccountCustomer();
+        accountingAccountProvider = invoice.getProvider().getAccountingAccountProvider();
 
         Float balance = 0f;
         balance += invoiceHelper.getPriceTotal(invoice);
@@ -649,14 +614,12 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         String labelPrefix = "";
         if (invoice.getCustomerOrder() != null)
             labelPrefix = "Annulation - Commande n°" + invoice.getCustomerOrder().getId();
-        else if (invoice.getIsProviderCreditNote())
+        else if (invoice.getIsCreditNote())
             labelPrefix = "Annulation - Avoir n°" + invoice.getId();
         else
             labelPrefix = "Annulation - Facture libre n°" + invoice.getId();
 
-        IGenericTiers orderingTiers = invoiceHelper.getCustomerOrder(invoice);
-        if (orderingTiers != null && orderingTiers.getLabel() != null)
-            labelPrefix += " - " + orderingTiers.getLabel();
+        labelPrefix += " - " + invoice.getProvider().getLabel();
 
         Float balance = 0f;
         Integer operationId = getNewTemporaryOperationId();
@@ -773,11 +736,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         if (payment.getInvoice() != null && payment.getInvoice().getInvoiceStatus().getId()
                 .equals(constantService.getInvoiceStatusPayed().getId())) {
-            if (payment.getInvoice().getIsInvoiceFromProvider())
+            if (payment.getInvoice().getProvider() != null)
                 unletterInvoiceReceived(payment.getInvoice());
-            else if (!payment.getInvoice().getIsInvoiceFromProvider() && !payment.getInvoice().getIsCreditNote())
-                unletterInvoiceEmitted(payment.getInvoice());
-            else if (!payment.getInvoice().getIsProviderCreditNote())
+            else if (payment.getInvoice().getResponsable() != null && !payment.getInvoice().getIsCreditNote())
                 unletterInvoiceEmitted(payment.getInvoice());
         }
 

@@ -5,7 +5,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -22,7 +21,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class CompetentAuthority implements IAttachment, IGenericTiers {
+public class CompetentAuthority implements IAttachment, IId {
 
 	@Id
 	@SequenceGenerator(name = "competent_authority_sequence", sequenceName = "competent_authority_sequence", allocationSize = 1)
@@ -51,18 +50,8 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 	private List<Mail> mails;
 
 	@ManyToMany
-	@JoinTable(name = "asso_competent_authority_accounting_mail", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
-	private List<Mail> accountingMails;
-
-	@ManyToMany
 	@JoinTable(name = "asso_competent_authority_phone", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
-
-	@Column(length = 40)
-	private String iban;
-
-	@Column(length = 40)
-	private String bic;
 
 	@Column(length = 60)
 	private String contact;
@@ -97,20 +86,6 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_accounting_account_provider")
-	private AccountingAccount accountingAccountProvider;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_accounting_account_customer")
-	private AccountingAccount accountingAccountCustomer;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_accounting_account_deposit_provider")
-	private AccountingAccount accountingAccountDepositProvider;
-
-	private Integer reinvoicing;
-
 	@Column(length = 2000)
 	private String schedulle;
 
@@ -120,14 +95,6 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 	@OneToMany(mappedBy = "competentAuthority")
 	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
 	private List<Attachment> attachments;
-
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "asso_competent_authority_payment_type", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_payment_type"))
-	private List<PaymentType> paymentTypes;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_default_payment_type")
-	private PaymentType defaultPaymentType;
 
 	private String inpiReference;
 
@@ -142,28 +109,16 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 	@JsonIgnoreProperties(value = { "competentAuthority" }, allowSetters = true)
 	private List<AssoMailCompetentAuthorityServiceFamilyGroup> assoMailCompetentAuthorityServiceFamilyGroups;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_provider")
+	private Provider provider;
+
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public AccountingAccount getAccountingAccountProvider() {
-		return accountingAccountProvider;
-	}
-
-	public void setAccountingAccountProvider(AccountingAccount accountingAccountProvider) {
-		this.accountingAccountProvider = accountingAccountProvider;
-	}
-
-	public AccountingAccount getAccountingAccountCustomer() {
-		return accountingAccountCustomer;
-	}
-
-	public void setAccountingAccountCustomer(AccountingAccount accountingAccountCustomer) {
-		this.accountingAccountCustomer = accountingAccountCustomer;
 	}
 
 	public String getMailRecipient() {
@@ -238,14 +193,6 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 		this.regions = regions;
 	}
 
-	public String getIban() {
-		return iban;
-	}
-
-	public void setIban(String iban) {
-		this.iban = iban;
-	}
-
 	public List<Mail> getMails() {
 		return mails;
 	}
@@ -286,28 +233,12 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 		this.competentAuthorityType = competentAuthorityType;
 	}
 
-	public Integer getReinvoicing() {
-		return reinvoicing;
-	}
-
-	public void setReinvoicing(Integer reinvoicing) {
-		this.reinvoicing = reinvoicing;
-	}
-
 	public String getSchedulle() {
 		return schedulle;
 	}
 
 	public void setSchedulle(String schedulle) {
 		this.schedulle = schedulle;
-	}
-
-	public List<Mail> getAccountingMails() {
-		return accountingMails;
-	}
-
-	public void setAccountingMails(List<Mail> accountingMails) {
-		this.accountingMails = accountingMails;
 	}
 
 	public String getCedexComplement() {
@@ -326,30 +257,6 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 		this.apiId = apiId;
 	}
 
-	public String getBic() {
-		return bic;
-	}
-
-	public void setBic(String bic) {
-		this.bic = bic;
-	}
-
-	public AccountingAccount getAccountingAccountDepositProvider() {
-		return accountingAccountDepositProvider;
-	}
-
-	public AccountingAccount getAccountingAccountDeposit() {
-		return accountingAccountDepositProvider;
-	}
-
-	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDepositProvider) {
-		this.accountingAccountDepositProvider = accountingAccountDepositProvider;
-	}
-
-	public void setAccountingAccountDepositProvider(AccountingAccount accountingAccountDepositProvider) {
-		this.accountingAccountDepositProvider = accountingAccountDepositProvider;
-	}
-
 	public String getObservations() {
 		return observations;
 	}
@@ -364,22 +271,6 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
-	}
-
-	public List<PaymentType> getPaymentTypes() {
-		return paymentTypes;
-	}
-
-	public void setPaymentTypes(List<PaymentType> paymentTypes) {
-		this.paymentTypes = paymentTypes;
-	}
-
-	public PaymentType getDefaultPaymentType() {
-		return defaultPaymentType;
-	}
-
-	public void setDefaultPaymentType(PaymentType defaultPaymentType) {
-		this.defaultPaymentType = defaultPaymentType;
 	}
 
 	public String getInpiReference() {
@@ -398,14 +289,6 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 		this.azureCustomReference = azureCustomReference;
 	}
 
-	public String getIntercommunityVat() {
-		return intercommunityVat;
-	}
-
-	public void setIntercommunityVat(String intercommunityVat) {
-		this.intercommunityVat = intercommunityVat;
-	}
-
 	public Boolean getIsNotToReminder() {
 		return isNotToReminder;
 	}
@@ -421,6 +304,22 @@ public class CompetentAuthority implements IAttachment, IGenericTiers {
 	public void setAssoMailCompetentAuthorityServiceFamilyGroups(
 			List<AssoMailCompetentAuthorityServiceFamilyGroup> assoMailCompetentAuthorityServiceFamilyGroups) {
 		this.assoMailCompetentAuthorityServiceFamilyGroups = assoMailCompetentAuthorityServiceFamilyGroups;
+	}
+
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
+	}
+
+	public String getIntercommunityVat() {
+		return intercommunityVat;
+	}
+
+	public void setIntercommunityVat(String intercommunityVat) {
+		this.intercommunityVat = intercommunityVat;
 	}
 
 }

@@ -20,8 +20,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end   as affaireLabel,"
                         +
                         " ci.label ||' - '|| a.address || ' - ' || a.postal_Code as affaireAddress," +
-                        "  coalesce(case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end,"
-                        + "case when t2.denomination is not null and t2.denomination!='' then t2.denomination else t2.firstname || ' '||t2.lastname end) as tiersLabel,"
+                        "case when t2.denomination is not null and t2.denomination!='' then t2.denomination else t2.firstname || ' '||t2.lastname end as tiersLabel,"
                         +
                         " r.firstname || ' '||r.lastname as responsableLabel," +
                         " cf.label as confrereLabel," +
@@ -47,7 +46,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " join service_type st on st.id = service.id_service_type" +
                         " join provision p on p.id_service = service.id" +
                         " left join city ci on ci.id = a.id_city" +
-                        " left join tiers t on t.id = c.id_tiers" +
                         " left join responsable r on r.id = c.id_responsable" +
                         " left join tiers t2 on r.id_tiers = t2.id" +
                         " left join employee e1 on e1.id = asso.id_employee" +
@@ -84,7 +82,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         "  audit2.entity_id=an.id and audit2.entity_type in ('Announcement','Formalite','Domiciliation','SimpleProvision')  "
                         +
                         " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"
-                        + " and ( COALESCE(:customerOrder)=0 or r.id in (:customerOrder) or t.id in (:customerOrder))"
+                        + " and ( COALESCE(:customerOrder)=0 or r.id in (:customerOrder)  )"
                         +
                         " and ( :waitedCompetentAuthorityId =0 or sp.id_waited_competent_authority =:waitedCompetentAuthorityId) "
                         +
@@ -100,7 +98,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         " and (COALESCE(:status) =0 or coalesce(ans.id,fs.id,doms.id,sps.id) in (:status) ) " +
                         " group by a.denomination, a.firstname , a.lastname,  " +
-                        "  t.denomination, t.firstname , t.lastname,  " +
                         "  t2.denomination, t2.firstname , t2.lastname,  " +
                         "  r.firstname , r.lastname, asso.id, " +
                         "  a.address ,a.postal_Code ,ci.label ,c.created_date,  " +

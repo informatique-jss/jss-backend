@@ -180,6 +180,7 @@ public class ServiceServiceImpl implements ServiceService {
                     provision.setIsVacationUpdateBeneficialOwners(false);
                     provision.setIsFormalityAdditionalDeclaration(false);
                     provision.setIsCorrespondenceFees(false);
+                    provision.setIsSupplyFullBeCopy(false);
                     provisions.add(provision);
                 }
             }

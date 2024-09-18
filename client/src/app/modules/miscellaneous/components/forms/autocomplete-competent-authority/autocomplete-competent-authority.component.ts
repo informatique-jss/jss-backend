@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/services/app.service';
 import { CompetentAuthority } from '../../../model/CompetentAuthority';
 import { CompetentAuthorityType } from '../../../model/CompetentAuthorityType';
 import { Department } from '../../../model/Department';
 import { CompetentAuthorityService } from '../../../services/competent.authority.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-competent-authority',
@@ -61,6 +61,6 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
   }
 
   getPreviewActionLinkFunction(entity: CompetentAuthority): string[] | undefined {
-    return ['administration/competent/authority', entity.id + ""];
+    return ['/administration/competent/authority', entity.id + ""];
   }
 }

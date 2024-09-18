@@ -10,7 +10,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { ProviderService } from 'src/app/modules/miscellaneous/services/provider.service';
-import { ITiers } from 'src/app/modules/tiers/model/ITiers';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { PROVIDER_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
@@ -41,6 +41,7 @@ export class ProviderComponent implements OnInit {
   displayedColumns: SortTableColumn<Provider>[] = [];
   editMode: boolean = false;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
+  providerAccountSearch: Tiers | undefined;
 
   saveObservableSubscription: Subscription = new Subscription;
   PROVIDER_ENTITY_TYPE = PROVIDER_ENTITY_TYPE;
@@ -102,7 +103,8 @@ export class ProviderComponent implements OnInit {
       this.appService.changeHeaderTitle(element.label);
     this.invoiceSearch.customerOrders = [];
     setTimeout(() =>
-      this.invoiceSearch.customerOrders = [({ id: this.selectedProvider!.id } as any) as ITiers], 0);
+      this.invoiceSearch.customerOrders = [({ id: this.selectedProvider!.id } as any) as Tiers], 0);
+    this.providerAccountSearch = { id: this.selectedProvider.id } as Tiers;
   }
 
   applyFilter(filterValue: any) {

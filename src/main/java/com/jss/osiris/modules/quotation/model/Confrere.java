@@ -1,7 +1,20 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.miscellaneous.model.City;
+import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.Department;
+import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.Mail;
+import com.jss.osiris.modules.miscellaneous.model.Phone;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
+import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.miscellaneous.model.WeekDay;
+import com.jss.osiris.modules.tiers.model.Responsable;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,30 +30,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.accounting.model.AccountingAccount;
-import com.jss.osiris.modules.miscellaneous.model.City;
-import com.jss.osiris.modules.miscellaneous.model.Country;
-import com.jss.osiris.modules.miscellaneous.model.Department;
-import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
-import com.jss.osiris.modules.miscellaneous.model.Language;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.model.PaymentType;
-import com.jss.osiris.modules.miscellaneous.model.Phone;
-import com.jss.osiris.modules.miscellaneous.model.Regie;
-import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
-import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
-import com.jss.osiris.modules.miscellaneous.model.WeekDay;
-import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.tiers.model.ITiers;
-import com.jss.osiris.modules.tiers.model.TiersFollowup;
-
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Confrere implements ITiers, IGenericTiers {
+public class Confrere implements IId {
 
 	@Id
 	@SequenceGenerator(name = "confrere_sequence", sequenceName = "confrere_sequence", allocationSize = 1)
@@ -61,10 +53,6 @@ public class Confrere implements ITiers, IGenericTiers {
 	@ManyToMany
 	@JoinTable(name = "asso_confrere_mail", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
-
-	@ManyToMany
-	@JoinTable(name = "asso_confrere_accounting_mail", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
-	private List<Mail> accountingMails;
 
 	@ManyToMany
 	@JoinTable(name = "asso_confrere_phone", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
@@ -109,26 +97,11 @@ public class Confrere implements ITiers, IGenericTiers {
 
 	private Integer discountRate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_accounting_account_provider")
-	private AccountingAccount accountingAccountProvider;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_accounting_account_customer")
-	private AccountingAccount accountingAccountCustomer;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_accounting_account_deposit")
-	private AccountingAccount accountingAccountDeposit;
-
 	@Column(length = 60)
 	private String mailRecipient;
 
 	@Column(length = 100)
 	private String address;
-
-	@Column(length = 20)
-	private String intercommunityVat;
 
 	@Column(length = 10)
 	private String postalCode;
@@ -147,107 +120,20 @@ public class Confrere implements ITiers, IGenericTiers {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_vat_collection_type")
-	private VatCollectionType vatCollectionType;
-
 	@OneToMany(mappedBy = "confrere", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "confrere" }, allowSetters = true)
 	private List<Document> documents;
 
-	@Column(nullable = false)
-	private Boolean isProvisionalPaymentMandatory;
-
-	@Column(nullable = false)
-	private Boolean isSepaMandateReceived;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_provider")
+	private Provider provider;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_payment_type")
-	private PaymentType paymentType;
-
-	@Column(length = 40)
-	@JsonProperty("paymentIban")
-	private String paymentIban;
-
-	@Column(length = 40)
-	private String paymentBic;
-
-	private LocalDate sepaMandateSignatureDate;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_commercial")
-	private Employee salesEmployee;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_default_customer_order_employee")
-	private Employee defaultCustomerOrderEmployee;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_formaliste")
-	private Employee formalisteEmployee;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_insertion")
-	private Employee insertionEmployee;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_language")
-	private Language language;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_regie")
-	private Regie regie;
-
-	@OneToMany(mappedBy = "confrere")
-	@JsonIgnoreProperties(value = { "confrere", "affaire" }, allowSetters = true)
-	private List<TiersFollowup> tiersFollowups;
-
-	private Boolean doNotUse;
-
-	private Boolean isRemindProviderInvoice;
+	@JoinColumn(name = "id_responsable")
+	private Responsable responsable;
 
 	public Integer getId() {
 		return id;
-	}
-
-	public List<Mail> getAccountingMails() {
-		return accountingMails;
-	}
-
-	public Boolean getIsProvisionalPaymentMandatory() {
-		return isProvisionalPaymentMandatory;
-	}
-
-	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
-		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
-	}
-
-	public Boolean getIsSepaMandateReceived() {
-		return isSepaMandateReceived;
-	}
-
-	public void setIsSepaMandateReceived(Boolean isSepaMandateReceived) {
-		this.isSepaMandateReceived = isSepaMandateReceived;
-	}
-
-	public PaymentType getPaymentType() {
-		return paymentType;
-	}
-
-	public void setPaymentType(PaymentType paymentType) {
-		this.paymentType = paymentType;
-	}
-
-	public void setAccountingMails(List<Mail> accountingMails) {
-		this.accountingMails = accountingMails;
-	}
-
-	public JournalType getJournalType() {
-		return journalType;
-	}
-
-	public void setJournalType(JournalType journalType) {
-		this.journalType = journalType;
 	}
 
 	public void setId(Integer id) {
@@ -260,70 +146,6 @@ public class Confrere implements ITiers, IGenericTiers {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public AccountingAccount getAccountingAccountProvider() {
-		return accountingAccountProvider;
-	}
-
-	public void setAccountingAccountProvider(AccountingAccount accountingAccountProvider) {
-		this.accountingAccountProvider = accountingAccountProvider;
-	}
-
-	public AccountingAccount getAccountingAccountCustomer() {
-		return accountingAccountCustomer;
-	}
-
-	public void setAccountingAccountCustomer(AccountingAccount accountingAccountCustomer) {
-		this.accountingAccountCustomer = accountingAccountCustomer;
-	}
-
-	public AccountingAccount getAccountingAccountLitigious() {
-		return null;
-	}
-
-	public AccountingAccount getAccountingAccountSuspicious() {
-		return null;
-	}
-
-	public String getMailRecipient() {
-		return mailRecipient;
-	}
-
-	public void setMailRecipient(String mailRecipient) {
-		this.mailRecipient = mailRecipient;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getPostalCode() {
-		return postalCode;
-	}
-
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-	}
-
-	public City getCity() {
-		return city;
-	}
-
-	public void setCity(City city) {
-		this.city = city;
-	}
-
-	public Country getCountry() {
-		return country;
-	}
-
-	public void setCountry(Country country) {
-		this.country = country;
 	}
 
 	public String getLabel() {
@@ -358,6 +180,14 @@ public class Confrere implements ITiers, IGenericTiers {
 		this.phones = phones;
 	}
 
+	public List<SpecialOffer> getSpecialOffers() {
+		return specialOffers;
+	}
+
+	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
+		this.specialOffers = specialOffers;
+	}
+
 	public Integer getReinvoicing() {
 		return reinvoicing;
 	}
@@ -372,6 +202,14 @@ public class Confrere implements ITiers, IGenericTiers {
 
 	public void setWeekDays(List<WeekDay> weekDays) {
 		this.weekDays = weekDays;
+	}
+
+	public JournalType getJournalType() {
+		return journalType;
+	}
+
+	public void setJournalType(JournalType journalType) {
+		this.journalType = journalType;
 	}
 
 	public String getLastShipmentForPublication() {
@@ -446,83 +284,6 @@ public class Confrere implements ITiers, IGenericTiers {
 		this.paperPrice = paperPrice;
 	}
 
-	public String getObservations() {
-		return observations;
-	}
-
-	public void setObservations(String observations) {
-		this.observations = observations;
-	}
-
-	public VatCollectionType getVatCollectionType() {
-		return vatCollectionType;
-	}
-
-	public void setVatCollectionType(VatCollectionType vatCollectionType) {
-		this.vatCollectionType = vatCollectionType;
-	}
-
-	public List<Document> getDocuments() {
-		return documents;
-	}
-
-	public void setDocuments(List<Document> documents) {
-		this.documents = documents;
-	}
-
-	public List<SpecialOffer> getSpecialOffers() {
-		return specialOffers;
-	}
-
-	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
-		this.specialOffers = specialOffers;
-	}
-
-	public Employee getSalesEmployee() {
-		return salesEmployee;
-	}
-
-	public void setSalesEmployee(Employee salesEmployee) {
-		this.salesEmployee = salesEmployee;
-	}
-
-	public Employee getFormalisteEmployee() {
-		return formalisteEmployee;
-	}
-
-	public void setFormalisteEmployee(Employee formalisteEmployee) {
-		this.formalisteEmployee = formalisteEmployee;
-	}
-
-	public Employee getInsertionEmployee() {
-		return insertionEmployee;
-	}
-
-	public void setInsertionEmployee(Employee insertionEmployee) {
-		this.insertionEmployee = insertionEmployee;
-	}
-
-	public Language getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(Language language) {
-		this.language = language;
-	}
-
-	@Override
-	public Boolean getIsIndividual() {
-		return false;
-	}
-
-	public AccountingAccount getAccountingAccountDeposit() {
-		return accountingAccountDeposit;
-	}
-
-	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
-		this.accountingAccountDeposit = accountingAccountDeposit;
-	}
-
 	public Integer getDiscountRate() {
 		return discountRate;
 	}
@@ -531,20 +292,28 @@ public class Confrere implements ITiers, IGenericTiers {
 		this.discountRate = discountRate;
 	}
 
-	public Regie getRegie() {
-		return regie;
+	public String getMailRecipient() {
+		return mailRecipient;
 	}
 
-	public void setRegie(Regie regie) {
-		this.regie = regie;
+	public void setMailRecipient(String mailRecipient) {
+		this.mailRecipient = mailRecipient;
 	}
 
-	public List<TiersFollowup> getTiersFollowups() {
-		return tiersFollowups;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setTiersFollowups(List<TiersFollowup> tiersFollowups) {
-		this.tiersFollowups = tiersFollowups;
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
 	}
 
 	public String getCedexComplement() {
@@ -555,60 +324,52 @@ public class Confrere implements ITiers, IGenericTiers {
 		this.cedexComplement = cedexComplement;
 	}
 
-	public String getPaymentIban() {
-		return paymentIban;
+	public City getCity() {
+		return city;
 	}
 
-	public void setPaymentIban(String paymentIban) {
-		this.paymentIban = paymentIban;
+	public void setCity(City city) {
+		this.city = city;
 	}
 
-	public String getPaymentBic() {
-		return paymentBic;
+	public Country getCountry() {
+		return country;
 	}
 
-	public void setPaymentBic(String paymentBic) {
-		this.paymentBic = paymentBic;
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 
-	public LocalDate getSepaMandateSignatureDate() {
-		return sepaMandateSignatureDate;
+	public String getObservations() {
+		return observations;
 	}
 
-	public void setSepaMandateSignatureDate(LocalDate sepaMandateSignatureDate) {
-		this.sepaMandateSignatureDate = sepaMandateSignatureDate;
+	public void setObservations(String observations) {
+		this.observations = observations;
 	}
 
-	public Employee getDefaultCustomerOrderEmployee() {
-		return defaultCustomerOrderEmployee;
+	public List<Document> getDocuments() {
+		return documents;
 	}
 
-	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
-		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
 	}
 
-	public String getIntercommunityVat() {
-		return intercommunityVat;
+	public Provider getProvider() {
+		return provider;
 	}
 
-	public void setIntercommunityVat(String intercommunityVat) {
-		this.intercommunityVat = intercommunityVat;
+	public void setProvider(Provider provider) {
+		this.provider = provider;
 	}
 
-	public Boolean getDoNotUse() {
-		return doNotUse;
+	public Responsable getResponsable() {
+		return responsable;
 	}
 
-	public void setDoNotUse(Boolean doNotUse) {
-		this.doNotUse = doNotUse;
-	}
-
-	public Boolean getIsRemindProviderInvoice() {
-		return isRemindProviderInvoice;
-	}
-
-	public void setIsRemindProviderInvoice(Boolean isRemindProviderInvoice) {
-		this.isRemindProviderInvoice = isRemindProviderInvoice;
+	public void setResponsable(Responsable responsable) {
+		this.responsable = responsable;
 	}
 
 }

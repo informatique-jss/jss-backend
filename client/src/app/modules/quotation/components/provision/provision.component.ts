@@ -288,6 +288,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     return provision;
   }
 
+
   duplicateProvision(service: Service, provision: Provision): Provision {
     let newProvisionDuplicated = {} as Provision;
     newProvisionDuplicated.provisionFamilyType = provision.provisionFamilyType;
@@ -671,10 +672,12 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     })
   }
 
-  computeProvisionLabel(provision: Provision): string {
-    let label = provision.provisionType.label;
+  public computeProvisionLabel(service: Service, provision: Provision, doNotDisplayService: boolean): string {
+    let label = provision.provisionType ? (provision.provisionFamilyType.label + ' - ' + provision.provisionType.label) : '';
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
+    if (!doNotDisplayService)
+      label = this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther()) + " - " + label;
     return label;
   }
 

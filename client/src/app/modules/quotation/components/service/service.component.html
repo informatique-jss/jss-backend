@@ -20,7 +20,7 @@
       <ng-container *ngFor="let document of service.assoServiceDocuments;let index= index">
         <mat-card class="document-card" *ngIf="!searchText || searchText.length==0 || documentContainsSearch(document)">
           <mat-card-header>
-            <mat-card-title>{{document.typeDocument.label}}</mat-card-title>
+            <mat-card-title>{{document.typeDocument.customLabel}}</mat-card-title>
             <mat-card-subtitle
               matTooltip="Commentaire du formaliste">{{document.formalisteComment?document.formalisteComment :
               "&nbsp;"}}</mat-card-subtitle>

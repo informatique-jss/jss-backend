@@ -1,7 +1,7 @@
 <form [formGroup]="simpleProvisionForm" *ngIf="simpleProvision && provision">
   <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
     <mat-tab [label]="provision.provisionType.label">
-      <div class="form-div">
+      <!--div class="form-div" >
         <table class="full-width">
           <tr
             *ngIf="simpleProvision.waitedCompetentAuthority && simpleProvision.simpleProvisionStatus && simpleProvision.simpleProvisionStatus.code ==SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY">
@@ -16,7 +16,7 @@
                 [isDisabled]="true"></generic-datepicker></td>
           </tr>
         </table>
-      </div>
+      </div-->
       <mat-divider class="margin-mat-divider"></mat-divider>
       <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
     </mat-tab>

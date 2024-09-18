@@ -27,21 +27,21 @@ public interface TiersReportingRepository extends CrudRepository<Quotation, Inte
                         " 	concat(e1.firstname, " +
                         " 	' ', " +
                         " 	e2.lastname)) as salesEmployeeLabel, " +
-                        " to_char(date_trunc('year',min(coalesce (co1.created_date,co2.created_date)) ),'YYYY') as firstOrderYear, "
+                        " to_char(date_trunc('year',min(co2.created_date) ),'YYYY') as firstOrderYear, "
                         +
-                        " to_char(date_trunc('month',min(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM') as firstOrderMonth, "
+                        " to_char(date_trunc('month',min(co2.created_date) ),'YYYY-MM') as firstOrderMonth, "
                         +
-                        " to_char(date_trunc('week',min(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM - tmw') as firstOrderWeek, "
+                        " to_char(date_trunc('week',min(co2.created_date) ),'YYYY-MM - tmw') as firstOrderWeek, "
                         +
-                        " to_char(date_trunc('day',min(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM-DD') as firstOrderDay, "
+                        " to_char(date_trunc('day',min(co2.created_date) ),'YYYY-MM-DD') as firstOrderDay, "
                         +
-                        " to_char(date_trunc('year',max(coalesce (co1.created_date,co2.created_date)) ),'YYYY') as lastOrderYear, "
+                        " to_char(date_trunc('year',max(co2.created_date) ),'YYYY') as lastOrderYear, "
                         +
-                        " to_char(date_trunc('month',max(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM') as lastOrderMonth, "
+                        " to_char(date_trunc('month',max(co2.created_date) ),'YYYY-MM') as lastOrderMonth, "
                         +
-                        " to_char(date_trunc('week',max(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM - tmw') as lastOrderWeek, "
+                        " to_char(date_trunc('week',max(co2.created_date) ),'YYYY-MM - tmw') as lastOrderWeek, "
                         +
-                        " to_char(date_trunc('day',max(coalesce (co1.created_date,co2.created_date)) ),'YYYY-MM-DD') as lastOrderDay, "
+                        " to_char(date_trunc('day',max(co2.created_date) ),'YYYY-MM-DD') as lastOrderDay, "
                         +
                         " to_char(date_trunc('year',min(a1.datetime) ),'YYYY') as createdDateYear, "
                         +
@@ -51,7 +51,7 @@ public interface TiersReportingRepository extends CrudRepository<Quotation, Inte
                         +
                         " to_char(date_trunc('day',min(a1.datetime)  ),'YYYY-MM-DD') as createdDateDay, " +
                         " to_char(date_trunc('day',max(tf1.followup_date)  ),'YYYY-MM-DD') as lastTiersFollowupDate, " +
-                        " count(distinct coalesce(co1.id, co2.id)) as nbrCustomerOrder, " +
+                        " count(distinct  co2.id) as nbrCustomerOrder, " +
                         " to_char(date_trunc('day',max(tf2.followup_date)  ),'YYYY-MM-DD') as lastResponsableFollowupDate "
                         +
                         " from " +
@@ -66,7 +66,6 @@ public interface TiersReportingRepository extends CrudRepository<Quotation, Inte
                         " 	e1.id = t.id_commercial " +
                         " left join employee e2 on " +
                         " 	e2.id = r.id_commercial " +
-                        " left join customer_order co1 on co1.id_tiers  = t.id " +
                         " left join customer_order co2 on co2.id_responsable  = r.id " +
                         " left join audit a1 on a1.field_name='id' and a1.entity='Tiers' and a1.entity_id = t.id " +
                         " left join  tiers_followup tf1 on tf1.id_tiers = t.id  " +

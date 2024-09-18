@@ -420,7 +420,7 @@ public class MailHelper {
             ctx.setVariable("invoiceLabelResult",
                     invoiceHelper.computeInvoiceLabelResult(
                             documentService.getBillingDocument(quotation.getDocuments()),
-                            quotation, quotationService.getCustomerOrderOfQuotation(quotation)));
+                            quotation, quotation.getResponsable()));
         }
 
         // Compute deposit amount
@@ -610,11 +610,6 @@ public class MailHelper {
                 customerName = customerOrder.getResponsable().getCivility().getLabel() + " "
                         + customerOrder.getResponsable().getFirstname() + " "
                         + customerOrder.getResponsable().getLastname();
-            } else if (customerOrder.getTiers() != null
-                    && customerOrder.getTiers().getIsIndividual() == true) {
-                customerName = customerOrder.getTiers().getCivility().getLabel() + " "
-                        + customerOrder.getTiers().getFirstname() + " "
-                        + customerOrder.getTiers().getLastname();
             }
         }
         return customerName;
@@ -1185,7 +1180,8 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public void sendBillingClosureToCustomer(List<Attachment> attachments, Tiers tiers, boolean sendToMe)
+    public void sendBillingClosureToCustomer(List<Attachment> attachments, Tiers tiers, Responsable responsable,
+            boolean sendToMe)
             throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
@@ -1196,9 +1192,10 @@ public class MailHelper {
         mail.setAttachments(attachments);
         mail.setReplyToMail(constantService.getStringAccountingSharedMaiblox() + "");
         mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForBillingClosure(tiers));
+        mail.setMailComputeResult(mailComputeHelper.computeMailForBillingClosure(tiers, responsable));
         mail.setSubject("Votre relevé de compte client n°" + tiers.getId());
         mail.setTiers(tiers);
+        mail.setResponsable(responsable);
 
         mailService.addMailToQueue(mail);
     }
@@ -1210,7 +1207,7 @@ public class MailHelper {
         mail.setHeaderPicture("images/mails/renew-password.png");
         mail.setReplyToMail(constantService.getStringSalesSharedMailbox() + "");
         mail.setSendToMe(false);
-        mail.setExplaination(password);
+        mail.setExplaination(responsable.getLoginWeb() + " / " + password);
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
 

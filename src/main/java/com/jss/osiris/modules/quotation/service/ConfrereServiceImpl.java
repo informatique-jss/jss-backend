@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -65,10 +64,6 @@ public class ConfrereServiceImpl implements ConfrereService {
                 && confrere.getMails().size() > 0)
             mailService.populateMailIds(confrere.getMails());
 
-        if (confrere != null && confrere.getAccountingMails() != null
-                && confrere.getAccountingMails().size() > 0)
-            mailService.populateMailIds(confrere.getAccountingMails());
-
         // If phones already exists, get their ids
         if (confrere != null && confrere.getPhones() != null
                 && confrere.getPhones().size() > 0) {
@@ -85,29 +80,6 @@ public class ConfrereServiceImpl implements ConfrereService {
                     mailService.populateMailIds(document.getMailsClient());
             }
         }
-
-        // Generate accounting accounts
-        if (confrere.getId() == null
-                || confrere.getAccountingAccountCustomer() == null
-                        && confrere.getAccountingAccountProvider() == null
-                        && confrere.getAccountingAccountDeposit() == null) {
-            AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                    .generateAccountingAccountsForEntity(confrere.getLabel(), false);
-            confrere.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
-            confrere.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
-            confrere.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
-        } else {
-            accountingAccountService.updateAccountingAccountLabel(confrere.getAccountingAccountCustomer(),
-                    confrere.getLabel());
-            accountingAccountService.updateAccountingAccountLabel(confrere.getAccountingAccountDeposit(),
-                    confrere.getLabel());
-            accountingAccountService.updateAccountingAccountLabel(confrere.getAccountingAccountProvider(),
-                    confrere.getLabel());
-        }
-
-        // Set default customer order assignation to sales employee if not set
-        if (confrere.getDefaultCustomerOrderEmployee() == null)
-            confrere.setDefaultCustomerOrderEmployee(confrere.getSalesEmployee());
 
         return confrereRepository.save(confrere);
     }

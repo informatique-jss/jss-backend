@@ -235,7 +235,7 @@
                                                                     <li
                                                                         th:each="assoServiceDocument : ${assoServiceDocuments}">
                                                                         <span
-                                                                            th:text="${assoServiceDocument.typeDocument.label}"></span>
+                                                                            th:text="${assoServiceDocument.typeDocument.customLabel}"></span>
                                                                         <span
                                                                             th:if="${assoServiceDocument.isMandatory==false}">(facultatif)</span>
                                                                         <span

@@ -1,22 +1,18 @@
 import { SortTableColumn } from "../../miscellaneous/model/SortTableColumn";
 import { Affaire } from "../../quotation/model/Affaire";
-import { Confrere } from "../../quotation/model/Confrere";
 import { Invoice } from "../../quotation/model/Invoice";
 import { IQuotation } from '../../quotation/model/IQuotation';
-import { ITiers } from "../../tiers/model/ITiers";
 import { Tiers } from "../../tiers/model/Tiers";
 import { InvoiceSearchResult } from "../model/InvoiceSearchResult";
 
 export function getRemainingToPay(invoice: Invoice) {
-  if (invoice.isInvoiceFromProvider)
+  if (invoice.provider)
     return Math.round((invoice.totalPrice - (-getAmountPayed(invoice))) * 100) / 100;
   return Math.round((invoice.totalPrice - getAmountPayed(invoice)) * 100) / 100;
 }
 
 export function getColumnLink(column: SortTableColumn<InvoiceSearchResult>, element: InvoiceSearchResult) {
   if (element && column.id == "customerOrderName") {
-    if (element.confrereId)
-      return ['/confrere', element.confrereId];
     if (element.responsableId)
       return ['/tiers/responsable', element.responsableId];
     if (element.tiersId)
@@ -36,74 +32,26 @@ export function getCustomerOrderNameForInvoice(element: Invoice) {
   if (element.customerOrder) {
     return getCustomerOrderNameForIQuotation(element.customerOrder);
   } else {
-    if (element.tiers)
-      return element.tiers.firstname + " " + element.tiers.lastname;
     if (element.responsable)
       return element.responsable.firstname + " " + element.responsable.lastname;
-    if (element.confrere)
-      return element.confrere.label
   }
   return "";
 }
 
-export function getCustomerOrderNameForITiers(element: ITiers) {
+export function getCustomerOrderNameForTiers(element: Tiers) {
   if ((element as Tiers).denomination)
     return (element as Tiers).denomination;
   if ((element as Tiers).firstname)
     return (element as Tiers).firstname + " " + (element as Tiers).lastname;
-  if ((element as Confrere).label)
-    return (element as Confrere).label;
   return "";
 }
 
 export function getCustomerOrderNameForIQuotation(element: IQuotation) {
   if (element) {
-    if (element.confrere)
-      return element.confrere.label
     if (element.responsable)
       return element.responsable.firstname + " " + element.responsable.lastname;
-    if (element.tiers)
-      return element.tiers.firstname + " " + element.tiers.lastname;
   }
   return "";
-}
-
-export function getCustomerOrderForInvoice(invoice: Invoice): ITiers {
-  if (invoice.customerOrder) {
-    return getCustomerOrderForIQuotation(invoice.customerOrder);
-  } else {
-    if (invoice.tiers)
-      return invoice.tiers;
-    if (invoice.responsable)
-      return invoice.responsable;
-    if (invoice.confrere)
-      return invoice.confrere;
-  }
-  return {} as ITiers;
-}
-
-export function getCustomerOrderForIQuotation(customerOrder: IQuotation): ITiers {
-  if (customerOrder) {
-    if (customerOrder.confrere)
-      return customerOrder.confrere;
-    if (customerOrder.responsable)
-      return customerOrder.responsable;
-    if (customerOrder.tiers)
-      return customerOrder.tiers;
-  }
-  return {} as ITiers;
-}
-
-export function getProviderLabelForInvoice(invoice: Invoice): any {
-  if (invoice.confrere)
-    return invoice.confrere.label;
-  if (invoice.tiers)
-    return invoice.tiers.denomination ? invoice.tiers.denomination : (invoice.tiers.firstname + " " + invoice.tiers.lastname);
-  if (invoice.responsable)
-    return invoice.responsable.firstname + " " + invoice.responsable.lastname;
-  if (invoice.competentAuthority)
-    return invoice.competentAuthority.label;
-  return null;
 }
 
 export function getAffaireList(invoice: Invoice): string {

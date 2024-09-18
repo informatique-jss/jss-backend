@@ -5,12 +5,13 @@ import { MatTableDataSource } from '@angular/material/table';
 import { formatDateForSortTable } from 'src/app/libs/FormatHelper';
 import { ICSEvent } from 'src/app/libs/ICSEvent';
 import { createEvent } from 'src/app/libs/ICSHelper';
-import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
+import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { Gift } from 'src/app/modules/miscellaneous/model/Gift';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
-import { ITiers } from 'src/app/modules/tiers/model/ITiers';
+import { Responsable } from 'src/app/modules/tiers/model/Responsable';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { environment } from 'src/environments/environment';
 import { Invoice } from '../../../quotation/model/Invoice';
 import { SortTableColumn } from '../../model/SortTableColumn';
@@ -26,7 +27,7 @@ import { TiersFollowupService } from '../../services/tiers.followup.service';
 })
 export class TiersFollowupComponent implements OnInit {
 
-  @Input() tiers: ITiers | undefined;
+  @Input() tiers: Tiers | Responsable | undefined;
   @Input() invoice: Invoice | undefined;
   @Input() affaire: Affaire | undefined;
   @Input() editMode: boolean = false;
@@ -136,8 +137,6 @@ export class TiersFollowupComponent implements OnInit {
       promise = this.tiersFollowupService.addFollowupForInvoice(this.newFollowup, this.invoice);
     else if (this.affaire)
       promise = this.tiersFollowupService.addFollowupForAffaire(this.newFollowup, this.affaire);
-    else if (instanceOfConfrere(this.tiers))
-      promise = this.tiersFollowupService.addFollowupForConfrere(this.newFollowup, this.tiers);
     else if (instanceOfTiers(this.tiers))
       promise = this.tiersFollowupService.addFollowupForTiers(this.newFollowup, this.tiers);
     else if (instanceOfResponsable(this.tiers))
