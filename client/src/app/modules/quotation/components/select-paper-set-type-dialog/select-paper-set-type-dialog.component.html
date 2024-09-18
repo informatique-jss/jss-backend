@@ -6,8 +6,8 @@
     [excludedPaperSetTypes]="excludedPaperSetTypes"></select-paper-set-type>
 </div>
 <div mat-dialog-content style="margin-top : 15px">
-  <generic-textarea [(model)]="newPaperSet.comment" label="Commentaire" [form]="serviceTypeForm" propertyName="comment"
-    [isMandatory]="false" [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
+  <generic-textarea [(model)]="newPaperSet.creationComment" label="Commentaire" [form]="serviceTypeForm"
+    propertyName="comment" [isMandatory]="false" [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
