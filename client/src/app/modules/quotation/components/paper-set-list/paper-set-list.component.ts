@@ -1,7 +1,8 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
@@ -29,7 +30,7 @@ export class PaperSetListComponent implements OnInit {
     public confirmationDialog: MatDialog,
     private formBuilder: FormBuilder,
     private paperSetResultService: PaperSetResultService,
-    private paperSetService: PaperSetService
+    private paperSetService: PaperSetService,
   ) { }
 
   ngOnInit() {
@@ -43,6 +44,7 @@ export class PaperSetListComponent implements OnInit {
     this.displayedColumns.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "servicesLabel", fieldName: "servicesLabel", label: "Service(s)" } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({ id: "creationComment", fieldName: "creationComment", label: "Commentaire" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({
       id: "isDone", fieldName: "isDone", label: "Statut action", valueFonction: (element: PaperSetResult, column: SortTableColumn<PaperSetResult>) => {
         if (element && column)
@@ -79,6 +81,7 @@ export class PaperSetListComponent implements OnInit {
     this.tableAction.push({
       actionIcon: "check", actionName: "Valider cette action", actionClick: (action: SortTableAction<PaperSetResult>, element: PaperSetResult, event: any) => {
         if (element) {
+
           const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
             maxWidth: "400px",
             data: {
@@ -91,7 +94,17 @@ export class PaperSetListComponent implements OnInit {
 
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult) {
-              this.paperSetService.validatePaperSet(element.id).subscribe(response => this.searchPaperSets());
+              const dialogRef = this.confirmationDialog.open(EditCommentDialogComponent, {
+                width: '40%',
+                data: {
+                  title: "Nouveau commentaire",
+                }
+              });
+              dialogRef.afterClosed().subscribe(dialogResultComment => {
+                if (dialogResultComment) {
+                  this.paperSetService.validatePaperSet(element.id, dialogResultComment).subscribe(response => this.searchPaperSets());
+                }
+              });
             }
           });
         }
@@ -114,7 +127,17 @@ export class PaperSetListComponent implements OnInit {
 
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult) {
-              this.paperSetService.cancelPaperSet(element.id).subscribe(response => this.searchPaperSets());
+              const dialogRef = this.confirmationDialog.open(EditCommentDialogComponent, {
+                width: '40%',
+                data: {
+                  title: "Nouveau commentaire",
+                }
+              });
+              dialogRef.afterClosed().subscribe(dialogResultComment => {
+                if (dialogResultComment) {
+                  this.paperSetService.cancelPaperSet(element.id, dialogResultComment).subscribe(response => this.searchPaperSets());
+                }
+              });
             }
           });
         }

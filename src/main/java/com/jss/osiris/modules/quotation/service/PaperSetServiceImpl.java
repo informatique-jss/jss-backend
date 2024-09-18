@@ -62,6 +62,7 @@ public class PaperSetServiceImpl implements PaperSetService {
             if (paperSet.getIsValidated() == null)
                 paperSet.setIsValidated(false);
         }
+
         return paperSetRepository.save(paperSet);
     }
 
@@ -76,7 +77,8 @@ public class PaperSetServiceImpl implements PaperSetService {
         CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                 paperSet.getCustomerOrder(),
                 "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
-                        + " a été annulée (emplacement n°" + paperSet.getLocationNumber() + ")");
+                        + " a été annulée (emplacement n°" + paperSet.getLocationNumber() + "). "
+                        + paperSet.getValidationComment());
 
         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                 constantService.getActiveDirectoryGroupFormalites());
@@ -89,7 +91,8 @@ public class PaperSetServiceImpl implements PaperSetService {
         CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                 paperSet.getCustomerOrder(),
                 "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
-                        + " a été effectuée (emplacement n°" + paperSet.getLocationNumber() + ")");
+                        + " a été effectuée (emplacement n°" + paperSet.getLocationNumber() + "). "
+                        + paperSet.getValidationComment());
 
         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                 constantService.getActiveDirectoryGroupFormalites());

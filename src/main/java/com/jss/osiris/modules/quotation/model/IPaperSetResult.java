@@ -26,4 +26,6 @@ public interface IPaperSetResult {
 	String getServicesLabel();
 
 	Integer getLocationNumber();
+
+	String getCreationComment();
 }

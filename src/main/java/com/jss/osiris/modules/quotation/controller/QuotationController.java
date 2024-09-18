@@ -444,23 +444,30 @@ public class QuotationController {
         paperSetService.searchPaperSets(textSearch, isDisplayValidated, isDisplayCancelled), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/paper-set/cancel")
+  @PostMapping(inputEntryPoint + "/paper-set/cancel")
   public ResponseEntity<PaperSet> cancelPaperSet(
-      @RequestParam Integer paperSetId) throws OsirisValidationException, OsirisException {
+      @RequestParam Integer paperSetId, @RequestBody String paperSetComment)
+      throws OsirisValidationException, OsirisException {
     PaperSet paperSet = paperSetService.getPaperSet(paperSetId);
 
     if (paperSet == null)
       throw new OsirisValidationException("paperSet");
+
+    if (paperSetComment != null && paperSetComment.trim().length() > 0)
+      paperSet.setValidationComment(paperSetComment);
     return new ResponseEntity<PaperSet>(paperSetService.cancelPaperSet(paperSet), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/paper-set/validate")
+  @PostMapping(inputEntryPoint + "/paper-set/validate")
   public ResponseEntity<PaperSet> validatePaperSet(
-      @RequestParam Integer paperSetId) throws OsirisValidationException, OsirisException {
+      @RequestParam Integer paperSetId, @RequestBody String paperSetComment)
+      throws OsirisValidationException, OsirisException {
     PaperSet paperSet = paperSetService.getPaperSet(paperSetId);
 
     if (paperSet == null)
       throw new OsirisValidationException("paperSet");
+    if (paperSetComment != null && paperSetComment.trim().length() > 0)
+      paperSet.setValidationComment(paperSetComment);
     return new ResponseEntity<PaperSet>(paperSetService.validatePaperSet(paperSet), HttpStatus.OK);
   }
 
@@ -472,8 +479,10 @@ public class QuotationController {
       currentPaperSet = (PaperSet) validationHelper.validateReferential(paperSet, true, "paperSets");
       paperSet.setLocationNumber(currentPaperSet.getLocationNumber());
     }
-    validationHelper.validateReferential(paperSet.getCustomerOrder(), true, "CustomerOrder");
+    validationHelper.validateReferential(paperSet.getCustomerOrder(), true, "customerOrder");
     validationHelper.validateReferential(paperSet.getPaperSetType(), true, "paperSetType");
+    if (paperSet.getCreationComment() != null && paperSet.getCreationComment().trim().length() > 0)
+      validationHelper.validateString(paperSet.getCreationComment(), null, "creationComment");
 
     return new ResponseEntity<PaperSet>(paperSetService.addOrUpdatePaperSet(paperSet), HttpStatus.OK);
   }
