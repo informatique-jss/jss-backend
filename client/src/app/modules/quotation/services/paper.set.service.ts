@@ -17,15 +17,14 @@ export class PaperSetService extends AppRestService<PaperSet> {
   }
 
   cancelPaperSet(paperSetId: number, paperSetComment: string) {
-    return this.get(new HttpParams().set("paperSetId", paperSetId).set("paperSetComment", paperSetComment), "paper-set/cancel");
+    return this.postItem(new HttpParams().set("paperSetId", paperSetId), "paper-set/cancel", paperSetComment, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
+  validatePaperSet(paperSetId: number, paperSetComment: string) {
+    return this.postItem(new HttpParams().set("paperSetId", paperSetId), "paper-set/validate", paperSetComment, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
   addOrUpdatePaperSet(paperSet: PaperSet) {
     return this.addOrUpdate(new HttpParams(), "paper-set", paperSet, "Enregistré", "Erreur lors de l'enregistrement");
   }
-
-  validatePaperSet(paperSetId: number, paperSetComment: string) {
-    return this.get(new HttpParams().set("paperSetId", paperSetId).set("paperSetComment", paperSetComment), "paper-set/validate");
-  }
-
 }

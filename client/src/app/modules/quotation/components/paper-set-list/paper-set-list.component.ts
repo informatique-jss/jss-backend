@@ -103,9 +103,9 @@ export class PaperSetListComponent implements OnInit {
                   title: "Nouveau commentaire",
                 }
               });
-              dialogRef.afterClosed().subscribe(dialogResult => {
-                if (dialogResult) {
-                  this.paperSetService.validatePaperSet(element.id, dialogResult).subscribe(response => this.searchPaperSets());
+              dialogRef.afterClosed().subscribe(dialogResultComment => {
+                if (dialogResultComment) {
+                  this.paperSetService.validatePaperSet(element.id, dialogResultComment).subscribe(response => this.searchPaperSets());
                 }
               });
             }
