@@ -1,8 +1,7 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { PaperSetType } from 'src/app/modules/miscellaneous/model/PaperSetType';
-import { CustomerOrder } from '../../model/CustomerOrder';
 import { PaperSet } from '../../model/PaperSet';
 
 @Component({
@@ -16,7 +15,6 @@ export class SelectPaperSetTypeDialogComponent implements OnInit {
   newPaperSet: PaperSet = {} as PaperSet;
 
   constructor(private formBuilder: FormBuilder,
-    private dialog: MatDialog,
     public dialogRef: MatDialogRef<SelectPaperSetTypeDialogComponent>
   ) { }
 
