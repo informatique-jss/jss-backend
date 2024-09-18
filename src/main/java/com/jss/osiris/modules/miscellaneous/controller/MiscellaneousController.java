@@ -979,7 +979,6 @@ public class MiscellaneousController {
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (competentAuthority.getId() != null)
             validationHelper.validateReferential(competentAuthority, true, "competentAuthorities");
-        validationHelper.validateString(competentAuthority.getCode(), true, 20, "code");
         validationHelper.validateString(competentAuthority.getLabel(), true, 200, "label");
         validationHelper.validateString(competentAuthority.getSchedulle(), false, 2000, "Schedulle");
         validationHelper.validateReferential(competentAuthority.getDefaultPaymentType(), false, "defaultPaymentType");

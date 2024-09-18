@@ -1,5 +1,4 @@
 import { AccountingAccount } from "../../accounting/model/AccountingAccount";
-import { IReferential } from "../../administration/model/IReferential";
 import { AssoMailCompetentAuthorityServiceFamilyGroup } from "./AssoMailCompetentAuthorityServiceFamilyGroup";
 import { City } from "./City";
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
@@ -11,7 +10,8 @@ import { PaymentType } from './PaymentType';
 import { Phone } from "./Phone";
 import { Region } from "./Region";
 
-export interface CompetentAuthority extends IReferential, IAttachment {
+export interface CompetentAuthority extends IAttachment {
+  label: string;
   competentAuthorityType: CompetentAuthorityType;
   departments: Department[];
   phones: Phone[];

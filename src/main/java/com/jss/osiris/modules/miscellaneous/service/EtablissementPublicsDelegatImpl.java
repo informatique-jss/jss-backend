@@ -118,8 +118,6 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
                 && organisme.getProperties().getZonage().getCommunes() != null
                 && organisme.getProperties().getZonage().getCommunes().size() > 0) {
             competentAuthority
-                    .setCode(organisme.getProperties().getZonage().getCommunes().get(0).substring(0, 1));
-            competentAuthority
                     .setCities(getCitiesFromInseeCodeList(organisme.getProperties().getZonage().getCommunes()));
         }
 
