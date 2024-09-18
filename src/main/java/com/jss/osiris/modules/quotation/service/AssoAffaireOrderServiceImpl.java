@@ -473,7 +473,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             if (provision.getAnnouncement().getId() != null) {
                                 Announcement currentAnnouncement = announcementService
                                         .getAnnouncement(provision.getAnnouncement().getId());
-                                generateWord = !currentAnnouncement.getNotice().equals(announcement.getNotice());
+
+                                if (currentAnnouncement.getAnnouncementStatus().getId()
+                                        .equals(announcement.getAnnouncementStatus().getId()))
+                                    generateWord = !currentAnnouncement.getNotice().equals(announcement.getNotice());
                             }
 
                             if (generateWord)
