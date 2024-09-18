@@ -62,8 +62,6 @@ public class PaperSetServiceImpl implements PaperSetService {
             if (paperSet.getIsValidated() == null)
                 paperSet.setIsValidated(false);
         }
-        if (paperSet.getComment() != null && paperSet.getComment().trim().length() > 0)
-            customerOrderCommentService.createCustomerOrderComment(paperSet.getCustomerOrder(), paperSet.getComment());
         return paperSetRepository.save(paperSet);
     }
 
