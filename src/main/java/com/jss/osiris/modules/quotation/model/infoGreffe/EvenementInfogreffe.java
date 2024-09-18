@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.JacksonTimestampMillisecondDeserializer;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -38,6 +39,7 @@ public class EvenementInfogreffe {
     @JsonIgnoreProperties(value = { "evenementInfogreffe" }, allowSetters = true)
     private List<DocumentAssocieInfogreffe> documentsAssocies;
 
+    @Column(columnDefinition = "TEXT")
     private String evtCommentaire;
 
     @ManyToOne(fetch = FetchType.LAZY)

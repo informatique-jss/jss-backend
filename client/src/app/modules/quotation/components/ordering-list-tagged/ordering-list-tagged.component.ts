@@ -1,20 +1,19 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { OrderingSearchTagged } from '../../model/OrderingSearchTagged';
-import { OrderingSearchTaggedResult } from '../../model/OrderingSearchTaggedResult';
+import { FormBuilder } from '@angular/forms';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
+import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { Employee } from 'src/app/modules/profile/model/Employee';
-import { OrderingSearchTaggedResultService } from '../../services/ordering.search.tagged.result.service';
-import { AppService } from 'src/app/services/app.service';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { FormBuilder } from '@angular/forms';
-import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
-import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
-import { ITiers } from 'src/app/modules/tiers/model/ITiers';
+import { OrderingSearchTagged } from '../../model/OrderingSearchTagged';
+import { OrderingSearchTaggedResult } from '../../model/OrderingSearchTaggedResult';
+import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
+import { OrderingSearchTaggedResultService } from '../../services/ordering.search.tagged.result.service';
 
 @Component({
   selector: 'ordering-list-tagged',
@@ -138,7 +137,7 @@ export class OrderingListTaggedComponent implements OnInit {
         this.orderingSearchTagged.endDate = new Date(toIsoString(this.orderingSearchTagged.endDate));
       if (this.searchedTiers) {
         this.orderingSearchTagged.customerOrders = [];
-        this.orderingSearchTagged.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers)
+        this.orderingSearchTagged.customerOrders.push({ id: this.searchedTiers.entityId } as Tiers)
       }
       this.orderingSearchTaggedResultService.getOrdersTagged(this.orderingSearchTagged).subscribe(response => {
         this.orders = response;
