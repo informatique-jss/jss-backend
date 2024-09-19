@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.beust.jcommander.Strings;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -54,29 +55,43 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional(rollbackFor = Exception.class)
     public Service getServiceForServiceTypeAndAffaire(ServiceType serviceType, Affaire affaire) {
         Service service = new Service();
-        service.setServiceType(serviceType);
+        if (serviceTypes.size() > 1)
+            service.setServiceType(serviceTypeService.getServiceTypeByCode(ServiceType.SERVICE_TYPE_OTHER));
+        else
+            service.setServiceType(serviceTypes.get(0));
 
         // Documents
         ArrayList<AssoServiceDocument> assoServiceDocuments = new ArrayList<AssoServiceDocument>();
-        if (serviceType.getAssoServiceTypeDocuments() != null)
-            for (AssoServiceTypeDocument assoServiceTypeDocument : serviceType.getAssoServiceTypeDocuments()) {
-                assoServiceDocuments
-                        .add(getAssoServiceDocumentFromAssoServiceTypeDocument(assoServiceTypeDocument, service));
-            }
-        service.setAssoServiceDocuments(assoServiceDocuments);
-
-        // Provision
-        service.setProvisions(getProvisionsFromServiceType(serviceType, affaire, service));
-
-        // Service Fields
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
-        if (serviceType.getAssoServiceTypeFieldTypes() != null)
-            for (AssoServiceTypeFieldType assoServiceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
-                assoServiceFieldTypes
-                        .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(assoServiceTypeFieldType, service));
-            }
-        service.setAssoServiceFieldTypes(assoServiceFieldTypes);
+        ArrayList<String> serviceLabels = new ArrayList<String>();
+        for (ServiceType serviceType : serviceTypes) {
+            // Name of service concat
+            serviceLabels.add(serviceType.getLabel());
 
+            // Documents
+            if (serviceType.getAssoServiceTypeDocuments() != null)
+                for (AssoServiceTypeDocument assoServiceTypeDocument : serviceType.getAssoServiceTypeDocuments()) {
+                    assoServiceDocuments
+                            .add(getAssoServiceDocumentFromAssoServiceTypeDocument(assoServiceTypeDocument, service));
+                }
+            service.setAssoServiceDocuments(assoServiceDocuments);
+
+            // Provision
+            if (service.getProvisions() != null && service.getProvisions().size() > 0)
+                service.getProvisions().addAll(getProvisionsFromServiceType(serviceType, affaire, service));
+            else
+                service.setProvisions(getProvisionsFromServiceType(serviceType, affaire, service));
+
+            // Service Fields
+            if (serviceType.getAssoServiceTypeFieldTypes() != null)
+                for (AssoServiceTypeFieldType assoServiceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
+                    assoServiceFieldTypes
+                            .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(assoServiceTypeFieldType,
+                                    service));
+                }
+            service.setAssoServiceFieldTypes(assoServiceFieldTypes);
+        }
+        service.setCustomLabel(Strings.join(" / ", serviceLabels));
         return service;
     }
 
