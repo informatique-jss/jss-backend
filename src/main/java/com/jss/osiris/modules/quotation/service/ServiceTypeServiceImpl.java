@@ -33,6 +33,11 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
     }
 
     @Override
+    public ServiceType getServiceTypeByCode(String code) {
+        return serviceTypeRepository.findByCode(code);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public ServiceType addOrUpdateServiceType(
             ServiceType serviceType) {

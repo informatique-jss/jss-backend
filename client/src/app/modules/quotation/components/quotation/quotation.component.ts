@@ -56,6 +56,7 @@ import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 import { IQuotation } from './../../model/IQuotation';
+import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 
 @Component({
   selector: 'quotation',
@@ -414,7 +415,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (asso && !asso.services)
       asso.services = [] as Array<Service>;
 
-    let dialogRef = this.selectAttachmentTypeDialog.open(SelectServiceTypeDialogComponent, {
+    let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
       width: '50%',
     });
     dialogRef.componentInstance.affaire = asso.affaire;

@@ -82,6 +82,7 @@ import { QuotationComponent } from './quotation.component';
 import { OrderingListTaggedComponent } from '../ordering-list-tagged/ordering-list-tagged.component';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
+import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 
 const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
@@ -184,7 +185,8 @@ const routes: Routes = [
     SelectPaperSetTypeDialogComponent,
     OrderingListTaggedComponent,
     FormaliteAssociateDialog,
-    InfogreffeStatusComponent
+    InfogreffeStatusComponent,
+    SelectMultiServiceTypeDialogComponent
   ],
   exports: [
     OrderingListComponent,
