@@ -609,7 +609,7 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/service-type/provision")
+  @PostMapping(inputEntryPoint + "/service-types/provisions")
   public ResponseEntity<Service> getServiceForMultiServiceTypesAndAffaire(@RequestParam Integer idAffaire,
       @RequestBody List<ServiceType> serviceTypes) throws OsirisValidationException {
 
