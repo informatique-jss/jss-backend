@@ -24,13 +24,10 @@ export class ServiceService extends AppRestService<Service> {
 
   getServiceForServiceTypeAndAffaire(serviceType: ServiceType, affaire: Affaire) {
     return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("idAffaire", affaire.id), "service-type/provision");
-<<<<<<< HEAD
-=======
   }
 
   getServiceForMultiServiceTypesAndAffaire(serviceTypes: ServiceType[], affaire: Affaire) {
-    return this.postItem(new HttpParams().set("idAffaire", affaire.id), "service-types/provisions", serviceTypes);
->>>>>>> a2036e63 (keep old select and function service)
+    return this.postItem(new HttpParams().set("idAffaire", affaire.id), "service-type/provision", serviceTypes);
   }
 
   modifyServiceType(service: Service, serviceType: ServiceType) {

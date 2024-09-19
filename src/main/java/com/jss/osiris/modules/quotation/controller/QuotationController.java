@@ -609,20 +609,16 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/service-types/provisions")
+  @PostMapping(inputEntryPoint + "/service-type/provision")
   public ResponseEntity<Service> getServiceForMultiServiceTypesAndAffaire(@RequestParam Integer idAffaire,
-      @RequestBody List<ServiceType> serviceTypes) throws OsirisException {
+      @RequestBody List<ServiceType> serviceTypes) throws OsirisValidationException {
 
     Affaire affaire = affaireService.getAffaire(idAffaire);
     if (affaire == null)
       throw new OsirisValidationException("Affaire");
 
-    ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
-    if (serviceType == null)
+    if (serviceTypes == null || serviceTypes.size() == 0)
       throw new OsirisValidationException("ServiceType");
-
-    for (ServiceType serviceType : serviceTypes)
-      validationHelper.validateReferential(serviceType, true, "serviceType");
 
     return new ResponseEntity<Service>(serviceService.getServiceForMultiServiceTypesAndAffaire(serviceTypes, affaire),
         HttpStatus.OK);
