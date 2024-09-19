@@ -1187,6 +1187,16 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/asso/affaire/order/service")
+  public ResponseEntity<AssoAffaireOrder> getAssoFromService(@RequestParam Integer id)
+      throws OsirisValidationException {
+    if (id == null)
+      throw new OsirisValidationException("Id");
+
+    return new ResponseEntity<AssoAffaireOrder>(serviceService.getService(id).getAssoAffaireOrder(),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/assignation-types")
   public ResponseEntity<List<AssignationType>> getAssignationTypes() {
     return new ResponseEntity<List<AssignationType>>(assignationTypeService.getAssignationTypes(), HttpStatus.OK);

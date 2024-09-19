@@ -8,7 +8,7 @@ import { AssoAffaireOrder } from '../../quotation/model/AssoAffaireOrder';
 @Injectable({
   providedIn: 'root'
 })
-export class AssoAffaireOrderService extends AppRestService<AssoAffaireOrder>{
+export class AssoAffaireOrderService extends AppRestService<AssoAffaireOrder> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
@@ -24,6 +24,10 @@ export class AssoAffaireOrderService extends AppRestService<AssoAffaireOrder>{
 
   getAssoAffaireOrderFromProvision(idProvision: number) {
     return this.getById("asso/affaire/order/provision", idProvision);
+  }
+
+  getAssoAffaireOrderFromService(idService: number) {
+    return this.getById("asso/affaire/order/service", idService);
   }
 
   updateAsso(asso: AssoAffaireOrder): Observable<AssoAffaireOrder> {

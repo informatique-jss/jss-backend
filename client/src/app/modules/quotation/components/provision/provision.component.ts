@@ -35,8 +35,8 @@ import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-aut
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
+import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 
 @Component({
   selector: 'provision',
@@ -52,6 +52,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   editMode: boolean = false;
   isStatusOpen: boolean = false;
   inputProvisionId: number = 0;
+  inputServiceId: number = 0;
 
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
@@ -103,8 +104,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.idAffaire = this.activatedRoute.snapshot.params.id != "null" ? this.activatedRoute.snapshot.params.id : null;
 
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
+    this.inputServiceId = this.activatedRoute.snapshot.params.idService;
 
-    if (!this.inputProvisionId)
+    if (!this.inputProvisionId && !this.inputServiceId)
       this.inputProvisionId = this.userPreferenceService.getUserExpensionPanelSelectionId("provision");
 
     this.refreshAffaire();
@@ -141,8 +143,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     let promise: Observable<AssoAffaireOrder> | undefined;
     if (this.idAffaire)
       promise = this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire);
-    else if (this.inputProvisionId)
+    else if (this.inputProvisionId && this.inputProvisionId > 0)
       promise = this.assoAffaireOrderService.getAssoAffaireOrderFromProvision(this.inputProvisionId);
+    else if (this.inputServiceId && this.inputServiceId > 0)
+      promise = this.assoAffaireOrderService.getAssoAffaireOrderFromService(this.inputServiceId);
+
     if (promise)
       promise.subscribe(response => {
         this.asso = response;
