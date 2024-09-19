@@ -452,9 +452,11 @@ public class MailHelper {
         ctx.setVariable("ibanJss", ibanJss);
         ctx.setVariable("bicJss", bicJss);
         ctx.setVariable("cbLink", mail.getCbLink());
-        ctx.setVariable("mailComputeResultInvoice",
-                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
-                        mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation()));
+
+        if (mail.getCustomerOrder() != null || mail.getQuotation() != null)
+            ctx.setVariable("mailComputeResultInvoice",
+                    mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
+                            mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation()));
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());

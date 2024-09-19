@@ -5,7 +5,7 @@ import { IDocument } from "../modules/miscellaneous/model/IDocument";
 export function getDocument(documentType: DocumentType, entity: IDocument) {
   // Tiers not loaded
   if (entity == null || documentType.id == undefined)
-    return { isRecipientClient: false, isRecipientAffaire: false } as Document;
+    return { isRecipientClient: false, isRecipientAffaire: false, addToAffaireMailList: true, addToClientMailList: true } as Document;
 
   // No document in Tiers
   if (entity.documents == null || entity.documents == undefined) {
