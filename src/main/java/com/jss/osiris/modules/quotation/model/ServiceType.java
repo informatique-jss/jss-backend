@@ -21,6 +21,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class ServiceType implements Serializable, IId {
+	public static String SERVICE_TYPE_OTHER = "OTHER";
 
 	@Id
 	@SequenceGenerator(name = "asso_service_type_sequence", sequenceName = "asso_service_type_sequence", allocationSize = 1)

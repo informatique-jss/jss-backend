@@ -155,10 +155,11 @@ public class GeneratePdfDelegate {
                                     .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ").replaceAll("<wbr>", " ")
                                     .replaceAll("</wbr>", " ")
                             : null);
-            ctx.setVariable("notice",
-                    StringEscapeUtils.unescapeHtml4(announcement.getNotice()
-                            .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
-                            .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")));
+            if (announcement.getNotice() != null && !announcement.getNotice().equals(""))
+                ctx.setVariable("notice",
+                        StringEscapeUtils.unescapeHtml4(announcement.getNotice()
+                                .replaceAll("<br style=\"mso-special-character: line-break;\">", "<br/>")
+                                .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")));
 
             // Create the HTML body using Thymeleaf
             final String htmlContent = StringEscapeUtils

@@ -9,5 +9,7 @@ public interface ServiceTypeService {
 
     public ServiceType getServiceType(Integer id);
 
+    public ServiceType getServiceTypeByCode(String code);
+
     public ServiceType addOrUpdateServiceType(ServiceType service);
 }

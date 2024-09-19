@@ -265,6 +265,7 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
+import { ChipsServiceTypeComponent } from '../forms/chips-service-type/chips-service-type.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -544,6 +545,7 @@ const routes: Routes = [
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
     SelectFormaliteInfogreffeStatusComponent,
+    ChipsServiceTypeComponent
   ],
   exports: [
     HistoryComponent,
@@ -783,6 +785,7 @@ const routes: Routes = [
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
     SelectFormaliteInfogreffeStatusComponent,
+    ChipsServiceTypeComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent
