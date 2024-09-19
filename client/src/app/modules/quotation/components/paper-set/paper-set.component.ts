@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { AppService } from 'src/app/services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { PaperSet } from '../../model/PaperSet';
 import { PaperSetService } from '../../services/paper.set.service';
@@ -22,6 +23,7 @@ export class PaperSetComponent implements OnInit {
   constructor(
     public selectPaperSetTypeDialogComponent: MatDialog,
     private paperSetService: PaperSetService,
+    private appService: AppService,
   ) { }
 
   ngOnInit() {
@@ -59,6 +61,8 @@ export class PaperSetComponent implements OnInit {
           paperSet.creationComment = dialogResult.creationComment;
           this.paperSetService.addOrUpdatePaperSet(paperSet).subscribe(newPaperSet => {
             this.refreshPaperSets();
+            if (this.customerOrder)
+              this.appService.openRoute(null, '/order/' + this.customerOrder.id, null);
           })
         }
       });
