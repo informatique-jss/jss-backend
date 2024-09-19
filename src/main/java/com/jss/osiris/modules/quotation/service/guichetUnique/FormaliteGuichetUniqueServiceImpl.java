@@ -240,7 +240,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
                 if (generateInvoices) {
                     for (Cart currentCart : savedFormaliteGuichetUnique.getCarts()) {
-                        if (currentCart.getInvoice() == null) {
+                        if (currentCart.getInvoice() == null && currentCart.getTotal() != 0) {
                             if (currentCart.getStatus().equals(cartStatusPayed)) {
                                 currentCart.setInvoice(
                                         generateInvoiceFromCart(currentCart, formalite.getProvision().get(0)));
@@ -470,7 +470,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
         PaymentType paymentType = null;
 
-        if (cart.getPaymentType() == null && cart.getStatus().equals(cartStatusRefund))
+        if (cart.getPaymentType() == null)
             paymentType = constantService.getPaymentTypeAccount();
         else
             paymentType = paymentTypeService.getPaymentTypeByCodeInpi(cart.getPaymentType());

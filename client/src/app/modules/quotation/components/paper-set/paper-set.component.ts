@@ -37,7 +37,7 @@ export class PaperSetComponent implements OnInit {
 
   refreshPaperSets() {
     if (this.customerOrder && this.customerOrder.paperSets && this.customerOrder.paperSets.length > 0) {
-      this.displayedPaperSets = this.customerOrder.paperSets.filter(paperSet => !paperSet.isCancelled);
+      this.displayedPaperSets = this.customerOrder.paperSets;
       this.refreshPaperSetTable.next();
     }
   }
