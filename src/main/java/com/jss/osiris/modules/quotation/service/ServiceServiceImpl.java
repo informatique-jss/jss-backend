@@ -61,35 +61,48 @@ public class ServiceServiceImpl implements ServiceService {
             service.setServiceType(serviceTypes.get(0));
 
         ArrayList<AssoServiceDocument> assoServiceDocuments = new ArrayList<AssoServiceDocument>();
+        ArrayList<String> typeDocumentCodes = new ArrayList<String>();
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
+        ArrayList<Integer> serviceFieldTypeIds = new ArrayList<Integer>();
         ArrayList<String> serviceLabels = new ArrayList<String>();
+
         for (ServiceType serviceType : serviceTypes) {
             // Name of service concat
             serviceLabels.add(serviceType.getLabel());
-
             // Documents
             if (serviceType.getAssoServiceTypeDocuments() != null)
                 for (AssoServiceTypeDocument assoServiceTypeDocument : serviceType.getAssoServiceTypeDocuments()) {
-                    assoServiceDocuments
-                            .add(getAssoServiceDocumentFromAssoServiceTypeDocument(assoServiceTypeDocument, service));
+                    AssoServiceDocument newAssoServiceDocument = getAssoServiceDocumentFromAssoServiceTypeDocument(
+                            assoServiceTypeDocument, service);
+                    if (newAssoServiceDocument.getTypeDocument() != null
+                            && !typeDocumentCodes.contains(assoServiceTypeDocument.getTypeDocument().getCode())) {
+                        typeDocumentCodes.add(assoServiceTypeDocument.getTypeDocument().getCode());
+                        assoServiceDocuments.add(newAssoServiceDocument);
+                    }
                 }
-            service.setAssoServiceDocuments(assoServiceDocuments);
 
             // Provision
             if (service.getProvisions() != null && service.getProvisions().size() > 0)
-                service.getProvisions().addAll(getProvisionsFromServiceType(serviceType, affaire, service));
+                service.getProvisions().addAll(getProvisionsFromServiceType(serviceType,
+                        affaire, service));
             else
-                service.setProvisions(getProvisionsFromServiceType(serviceType, affaire, service));
+                service.setProvisions(getProvisionsFromServiceType(serviceType, affaire,
+                        service));
 
             // Service Fields
             if (serviceType.getAssoServiceTypeFieldTypes() != null)
                 for (AssoServiceTypeFieldType assoServiceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
-                    assoServiceFieldTypes
-                            .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(assoServiceTypeFieldType,
-                                    service));
+                    AssoServiceFieldType newAssoServiceFieldType = getAssoServiceFieldTypeFromAssoServiceTypeFieldType(
+                            assoServiceTypeFieldType, service);
+                    if (newAssoServiceFieldType.getServiceFieldType() != null
+                            && !serviceFieldTypeIds.contains(assoServiceTypeFieldType.getServiceFieldType().getId())) {
+                        serviceFieldTypeIds.add(assoServiceTypeFieldType.getServiceFieldType().getId());
+                        assoServiceFieldTypes.add(newAssoServiceFieldType);
+                    }
                 }
-            service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         }
+        service.setAssoServiceFieldTypes(assoServiceFieldTypes);
+        service.setAssoServiceDocuments(assoServiceDocuments);
         service.setCustomLabel(Strings.join(" / ", serviceLabels));
         return service;
     }
