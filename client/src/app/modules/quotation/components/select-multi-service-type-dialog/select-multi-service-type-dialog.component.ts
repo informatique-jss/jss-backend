@@ -1,10 +1,10 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
-import { ServiceType } from '../../model/ServiceType';
-import { Affaire } from '../../model/Affaire';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
+import { Affaire } from '../../model/Affaire';
+import { ServiceType } from '../../model/ServiceType';
 import { ServiceService } from '../../services/service.service';
+import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 
 @Component({
   selector: 'select-multi-service-type-dialog',

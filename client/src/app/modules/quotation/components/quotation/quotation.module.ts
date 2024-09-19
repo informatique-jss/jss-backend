@@ -93,6 +93,7 @@ const routes: Routes = [
   { path: 'provision', component: ProvisionListComponent },
   { path: 'provisions/:employeeId', component: ProvisionListComponent },
   { path: 'provision/:id', component: ProvisionComponent },
+  { path: 'service/:idService', component: ProvisionComponent },
   { path: 'provision/:id/:idProvision', component: ProvisionComponent },
   { path: 'affaire', component: AffaireListComponent },
   { path: 'affaire/:id', component: AffaireComponent },

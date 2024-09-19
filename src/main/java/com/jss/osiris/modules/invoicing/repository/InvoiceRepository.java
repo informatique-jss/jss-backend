@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.invoicing.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
