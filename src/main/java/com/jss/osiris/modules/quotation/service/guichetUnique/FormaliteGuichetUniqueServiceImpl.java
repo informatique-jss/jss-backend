@@ -208,7 +208,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     savedFormaliteGuichetUnique.setCarts(new ArrayList<Cart>());
                     for (Cart currentCart : apiFormaliteGuichetUnique.getCarts()) {
                         // Save only if cart > €
-                        if (currentCart.getTotal() != 0) {
+                        if (currentCart.getTotal() != 0 && (currentCart.getStatus().equals(cartStatusPayed)
+                                || currentCart.getStatus().equals(cartStatusRefund))) {
                             currentCart.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
                             if (currentCart.getCartRates() != null)
                                 for (CartRate cartRate : currentCart.getCartRates())
