@@ -81,6 +81,7 @@ import { ChipsPaymentTypeComponent } from '../forms/chips-payment-type/chips-pay
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
 import { ChipsPrincipalAccountingAccountComponent } from '../forms/chips-principal-accounting-account/chips-principal-accounting-account.component';
 import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-family/chips-provision-family.component';
+import { ChipsServiceTypeComponent } from '../forms/chips-service-type/chips-service-type.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
 import { ChipsTypeDocumentComponent } from '../forms/chips-type-document/chips-type-document.component';
 import { GenericCheckboxComponent } from '../forms/generic-checkbox/generic-checkbox.component';
@@ -266,7 +267,6 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
-import { ChipsServiceTypeComponent } from '../forms/chips-service-type/chips-service-type.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -546,12 +546,8 @@ const routes: Routes = [
     SelectServiceFieldDataTypeComponent,
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
-<<<<<<< HEAD
-    SelectFormaliteInfogreffeStatusComponent
-=======
     SelectFormaliteInfogreffeStatusComponent,
     ChipsServiceTypeComponent
->>>>>>> aa799612 (save devs fusion add new multi-service)
   ],
   exports: [
     HistoryComponent,
@@ -791,12 +787,8 @@ const routes: Routes = [
     SelectServiceFieldDataTypeComponent,
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
-<<<<<<< HEAD
-    SelectFormaliteInfogreffeStatusComponent
-=======
     SelectFormaliteInfogreffeStatusComponent,
     ChipsServiceTypeComponent
->>>>>>> aa799612 (save devs fusion add new multi-service)
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent
