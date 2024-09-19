@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.beust.jcommander.Strings;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -54,19 +55,17 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional(rollbackFor = Exception.class)
     public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire) {
         Service service = new Service();
-        if (serviceTypes != null) {
-            if (serviceTypes.size() > 1)
-                service.setServiceType(serviceTypeService.getServiceTypeByCode(ServiceType.SERVICE_TYPE_OTHER));
-            else if (serviceTypes.size() == 1)
-                service.setServiceType(serviceTypes.get(0));
-        }
+        if (serviceTypes.size() > 1)
+            service.setServiceType(serviceTypeService.getServiceTypeByCode(ServiceType.SERVICE_TYPE_OTHER));
+        else
+            service.setServiceType(serviceTypes.get(0));
 
         ArrayList<AssoServiceDocument> assoServiceDocuments = new ArrayList<AssoServiceDocument>();
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
-        String labelService = "";
+        ArrayList<String> serviceLabels = new ArrayList<String>();
         for (ServiceType serviceType : serviceTypes) {
             // Name of service concat
-            labelService += serviceType.getLabel() + " ";
+            serviceLabels.add(serviceType.getLabel());
 
             // Documents
             if (serviceType.getAssoServiceTypeDocuments() != null)
@@ -75,11 +74,13 @@ public class ServiceServiceImpl implements ServiceService {
                             .add(getAssoServiceDocumentFromAssoServiceTypeDocument(assoServiceTypeDocument, service));
                 }
             service.setAssoServiceDocuments(assoServiceDocuments);
+
             // Provision
             if (service.getProvisions() != null && service.getProvisions().size() > 0)
                 service.getProvisions().addAll(getProvisionsFromServiceType(serviceType, affaire, service));
             else
                 service.setProvisions(getProvisionsFromServiceType(serviceType, affaire, service));
+
             // Service Fields
             if (serviceType.getAssoServiceTypeFieldTypes() != null)
                 for (AssoServiceTypeFieldType assoServiceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
@@ -89,7 +90,7 @@ public class ServiceServiceImpl implements ServiceService {
                 }
             service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         }
-        service.setCustomLabel(labelService);
+        service.setCustomLabel(Strings.join(" / ", serviceLabels));
         return service;
     }
 

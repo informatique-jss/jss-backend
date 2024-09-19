@@ -611,7 +611,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/service-types/provisions")
   public ResponseEntity<Service> getServiceForMultiServiceTypesAndAffaire(@RequestParam Integer idAffaire,
-      @RequestBody List<ServiceType> serviceTypes) throws OsirisValidationException {
+      @RequestBody List<ServiceType> serviceTypes) throws OsirisException {
 
     Affaire affaire = affaireService.getAffaire(idAffaire);
     if (affaire == null)
@@ -619,6 +619,9 @@ public class QuotationController {
 
     if (serviceTypes == null || serviceTypes.size() == 0)
       throw new OsirisValidationException("ServiceType");
+
+    for (ServiceType serviceType : serviceTypes)
+      validationHelper.validateReferential(serviceType, true, "serviceType");
 
     return new ResponseEntity<Service>(serviceService.getServiceForMultiServiceTypesAndAffaire(serviceTypes, affaire),
         HttpStatus.OK);
