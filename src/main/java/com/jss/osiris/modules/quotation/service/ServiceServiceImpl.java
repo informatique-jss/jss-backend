@@ -52,31 +52,44 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Service getServiceForServiceTypeAndAffaire(ServiceType serviceType, Affaire affaire) {
+    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire) {
         Service service = new Service();
-        service.setServiceType(serviceType);
+        if (serviceTypes != null) {
+            if (serviceTypes.size() > 1)
+                service.setServiceType(serviceTypeService.getServiceTypeByCode(ServiceType.SERVICE_TYPE_OTHER));
+            else if (serviceTypes.size() == 1)
+                service.setServiceType(serviceTypes.get(0));
+        }
 
-        // Documents
         ArrayList<AssoServiceDocument> assoServiceDocuments = new ArrayList<AssoServiceDocument>();
-        if (serviceType.getAssoServiceTypeDocuments() != null)
-            for (AssoServiceTypeDocument assoServiceTypeDocument : serviceType.getAssoServiceTypeDocuments()) {
-                assoServiceDocuments
-                        .add(getAssoServiceDocumentFromAssoServiceTypeDocument(assoServiceTypeDocument, service));
-            }
-        service.setAssoServiceDocuments(assoServiceDocuments);
-
-        // Provision
-        service.setProvisions(getProvisionsFromServiceType(serviceType, affaire, service));
-
-        // Service Fields
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
-        if (serviceType.getAssoServiceTypeFieldTypes() != null)
-            for (AssoServiceTypeFieldType assoServiceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
-                assoServiceFieldTypes
-                        .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(assoServiceTypeFieldType, service));
-            }
-        service.setAssoServiceFieldTypes(assoServiceFieldTypes);
+        String labelService = "";
+        for (ServiceType serviceType : serviceTypes) {
+            // Name of service concat
+            labelService += serviceType.getLabel() + " ";
 
+            // Documents
+            if (serviceType.getAssoServiceTypeDocuments() != null)
+                for (AssoServiceTypeDocument assoServiceTypeDocument : serviceType.getAssoServiceTypeDocuments()) {
+                    assoServiceDocuments
+                            .add(getAssoServiceDocumentFromAssoServiceTypeDocument(assoServiceTypeDocument, service));
+                }
+            service.setAssoServiceDocuments(assoServiceDocuments);
+            // Provision
+            if (service.getProvisions() != null && service.getProvisions().size() > 0)
+                service.getProvisions().addAll(getProvisionsFromServiceType(serviceType, affaire, service));
+            else
+                service.setProvisions(getProvisionsFromServiceType(serviceType, affaire, service));
+            // Service Fields
+            if (serviceType.getAssoServiceTypeFieldTypes() != null)
+                for (AssoServiceTypeFieldType assoServiceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
+                    assoServiceFieldTypes
+                            .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(assoServiceTypeFieldType,
+                                    service));
+                }
+            service.setAssoServiceFieldTypes(assoServiceFieldTypes);
+        }
+        service.setCustomLabel(labelService);
         return service;
     }
 

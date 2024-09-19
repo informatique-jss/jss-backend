@@ -38,7 +38,7 @@ export class SelectMultiServiceTypeDialogComponent implements OnInit {
 
   generateService() {
     if (this.selectedServiceTypes && this.affaire)
-      this.serviceService.getServiceForMultiServiceTypesAndAffaire(this.selectedServiceTypes).subscribe(response => {
+      this.serviceService.getServiceForMultiServiceTypesAndAffaire(this.selectedServiceTypes, this.affaire).subscribe(response => {
         if (this.customerComment)
           response.customerComment = this.customerComment;
         this.dialogRef.close(response);

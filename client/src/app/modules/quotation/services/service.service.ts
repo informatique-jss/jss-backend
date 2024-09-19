@@ -22,12 +22,8 @@ export class ServiceService extends AppRestService<Service> {
     return this.addOrUpdate(new HttpParams(), "service", service, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
-  getServiceForServiceTypeAndAffaire(serviceType: ServiceType, affaire: Affaire) {
-    return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("idAffaire", affaire.id), "service-type/provision");
-  }
-
-  getServiceForMultiServiceTypesAndAffaire(serviceTypes: ServiceType[]) {
-    return this.postItem(new HttpParams(), "fusion-service-types", serviceTypes);
+  getServiceForMultiServiceTypesAndAffaire(serviceTypes: ServiceType[], affaire: Affaire) {
+    return this.postItem(new HttpParams().set("idAffaire", affaire.id), "service-type/provision", serviceTypes);
   }
 
   modifyServiceType(service: Service, serviceType: ServiceType) {
