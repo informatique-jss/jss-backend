@@ -6,7 +6,7 @@ import { Refund } from '../../invoicing/model/Refund';
 @Injectable({
   providedIn: 'root'
 })
-export class RefundService extends AppRestService<Refund>{
+export class RefundService extends AppRestService<Refund> {
 
   constructor(http: HttpClient) {
     super(http, "refund");
@@ -14,6 +14,10 @@ export class RefundService extends AppRestService<Refund>{
 
   getRefunds() {
     return this.getList(new HttpParams(), "refunds");
+  }
+
+  getRefund(refundId: number) {
+    return this.get(new HttpParams().set("refundId", refundId), "refund");
   }
 
   addOrUpdateRefund(refund: Refund) {

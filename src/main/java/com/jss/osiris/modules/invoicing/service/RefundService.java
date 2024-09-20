@@ -19,6 +19,8 @@ public interface RefundService {
 
         public Refund getRefund(Integer id);
 
+        public RefundSearchResult getRefundById(Integer id);
+
         public Refund addOrUpdateRefund(Refund refund) throws OsirisException;
 
         public List<RefundSearchResult> searchRefunds(RefundSearch refundSearch);

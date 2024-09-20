@@ -9,6 +9,9 @@ import { UserPreferenceService } from 'src/app/services/user.preference.service'
 import { RefundSearch } from '../../model/RefundSearch';
 import { RefundSearchResult } from '../../model/RefundSearchResult';
 import { RefundSearchResultService } from '../../services/refund.search.result.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EditRefundLabelDialogComponent } from 'src/app/modules/miscellaneous/components/edit-refund-label-dialog/edit-refund-label-dialog.component';
+import { RefundService } from '../../services/refund.service';
 
 @Component({
   selector: 'refund-list',
@@ -29,10 +32,12 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
   constructor(
     private refundSearchResultService: RefundSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
+    private refundService: RefundService,
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    public editRefundLabelDialog: MatDialog,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -78,6 +83,23 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
         this.searchRefunds();
       }
     }
+
+    this.tableAction.push({
+      actionIcon: 'edit', actionName: "Modifier le libellé", actionClick: (column: SortTableAction<RefundSearchResult>, element: RefundSearchResult, event: any) => {
+        if (element) {
+          const dialogRef = this.editRefundLabelDialog.open(EditRefundLabelDialogComponent, { maxWidth: "400px" });
+          dialogRef.componentInstance.refundLabel = element.refundLabel;
+
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult) {
+              this.refundService.getRefund(element.id).subscribe(response => {
+                this.refundService.addOrUpdateRefund(response).subscribe();
+              });
+            }
+          });
+        }
+      }, display: true,
+    } as SortTableAction<RefundSearchResult>);
   }
 
   refundForm = this.formBuilder.group({

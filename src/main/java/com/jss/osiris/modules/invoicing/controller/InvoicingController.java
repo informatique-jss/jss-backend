@@ -340,6 +340,15 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/refund/refund")
+    public ResponseEntity<RefundSearchResult> getRefund(@RequestParam Integer refundId)
+            throws OsirisValidationException {
+        if (refundId == null)
+            throw new OsirisValidationException("refundId");
+
+        return new ResponseEntity<RefundSearchResult>(refundService.getRefundById(refundId), HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/refund/payment")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Boolean> refundPayment(@RequestParam Integer paymentId,

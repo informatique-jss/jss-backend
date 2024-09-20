@@ -266,6 +266,7 @@ import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/u
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 import { ChipsServiceTypeComponent } from '../forms/chips-service-type/chips-service-type.component';
+import { EditRefundLabelDialogComponent } from '../edit-refund-label-dialog/edit-refund-label-dialog.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -545,7 +546,8 @@ const routes: Routes = [
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
     SelectFormaliteInfogreffeStatusComponent,
-    ChipsServiceTypeComponent
+    ChipsServiceTypeComponent,
+    EditRefundLabelDialogComponent
   ],
   exports: [
     HistoryComponent,
@@ -785,7 +787,8 @@ const routes: Routes = [
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
     SelectFormaliteInfogreffeStatusComponent,
-    ChipsServiceTypeComponent
+    ChipsServiceTypeComponent,
+    EditRefundLabelDialogComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent
