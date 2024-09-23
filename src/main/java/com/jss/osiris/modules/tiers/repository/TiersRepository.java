@@ -130,7 +130,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         " where " +
                         "    ( :tiersId =0 or t.id = :tiersId) " +
                         " and  ( :salesEmployeeId =0 or e1.id = :salesEmployeeId) " +
-                        " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%'  ) "
+                        " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(concat(t.firstname, ' ',t.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' ) "
                         +
                         " group by " +
                         " 	coalesce(t.denomination, " +

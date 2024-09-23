@@ -66,4 +66,14 @@ export class ChipsServiceTypeComponent extends GenericChipsComponent<ServiceType
       this.serviceTypeInput!.nativeElement.value = '';
     }
   }
+
+  displayLabel(object: ServiceType): string {
+    let label = "";
+    if (object) {
+      if (object.serviceFamily && object.serviceFamily.serviceFamilyGroup)
+        label += object.serviceFamily.serviceFamilyGroup.label + " - ";
+      label += object.label;
+    }
+    return label;
+  }
 }
