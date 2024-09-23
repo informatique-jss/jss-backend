@@ -85,7 +85,7 @@
     </mat-tab>
   </mat-tab-group>
 </div>
-<div [hidden]="(tiers.id!=undefined && tiers.id!=null)">
+<div [hidden]="(tiers.id!=undefined && tiers.id!=null)" *ngIf="!editMode">
   <tiers-list></tiers-list>
 </div>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">
