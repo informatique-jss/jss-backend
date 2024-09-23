@@ -39,20 +39,4 @@ public interface RefundRepository extends QueryCacheCrudRepository<Refund, Integ
                         @Param("isHideExportedRefunds") boolean isHideExportedRefunds,
                         @Param("isHideMatchedRefunds") boolean isHideMatchedRefunds,
                         @Param("idRefund") Integer idRefund);
-
-        @Query(nativeQuery = true, value = " select r.id as id,"
-                        + " r.refund_date_time as refundDate,"
-                        + " r.refund_amount  as refundAmount ,"
-                        + " r.label as refundLabel,"
-                        + " r.refundiban as refundIban,"
-                        + " r.is_already_exported  as isAlreadyExported ,"
-                        + " r.is_matched  as isMatched ,"
-                        + " (select max(coalesce(a1.denomination,a1.firstname ||' ' || a1.lastname)) from affaire a1 join asso_affaire_order a2 on a1.id = a2.id_affaire where a2.id_customer_order = r.id_customer_order) as affaireLabel ,"
-                        + " coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname, confrere.label, tiers.denomination, tiers.firstname || ' ' || tiers.lastname) as refundTiersLabel "
-                        + " from refund r "
-                        + " left join affaire on affaire.id = r.id_affaire "
-                        + " left join confrere on confrere.id = r.id_confrere "
-                        + " left join tiers on tiers.id = r.id_tiers "
-                        + " where (:refundId=0 OR r.id=:refundId) ")
-        RefundSearchResult findRefundById(@Param("refundId") Integer refundId);
 }
