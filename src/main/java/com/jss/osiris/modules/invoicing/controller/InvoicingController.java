@@ -353,7 +353,7 @@ public class InvoicingController {
         if (refund == null)
             throw new OsirisValidationException("refund");
         if (refundLabel != null && refundLabel.trim().length() > 0)
-            refund.setLabel(refundLabel);
+            refund.setLabel(refund.getId() + " - " + refundLabel);
 
         return new ResponseEntity<Refund>(refundService.addOrUpdateRefund(refund), HttpStatus.OK);
     }
