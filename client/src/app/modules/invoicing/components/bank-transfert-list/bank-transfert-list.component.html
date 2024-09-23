@@ -3,6 +3,10 @@
     <table class="full-width table-fixed-layout">
       <tr>
         <td>
+          <autocomplete-provider [(model)]="transfertSearch.provider" [form]="transfertForm" propertyName="provider"
+            [isMandatory]="false" label="Fournisseur destinataire"></autocomplete-provider>
+        </td>
+        <td>
           <generic-input [(model)]="transfertSearch.minAmount" label="Montant minimum" [form]="transfertForm"
             propertyName="minAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
         </td>

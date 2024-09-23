@@ -33,6 +33,7 @@ public interface BankTransfertRepository extends QueryCacheCrudRepository<BankTr
                         + " and r.transfert_date_time>=:startDate and r.transfert_date_time<=:endDate "
                         + "  and (:minAmount is null or r.transfert_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or r.transfert_amount<=CAST(CAST(:maxAmount as text) as real) )"
+                        + " and provider.id=:idProvider "
                         + " and (:label is null or  CAST(r.id as text) = upper(CAST(:label as text)) or  upper(r.label)  like '%' || upper(CAST(:label as text))  || '%' )")
         List<BankTransfertSearchResult> findTransferts(
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -40,5 +41,5 @@ public interface BankTransfertRepository extends QueryCacheCrudRepository<BankTr
                         @Param("label") String label,
                         @Param("isHideExportedRefunds") boolean isHideExportedRefunds,
                         @Param("isDisplaySelectedForExportBankTransfert") boolean isDisplaySelectedForExportBankTransfert,
-                        @Param("idBankTransfert") Integer idBankTransfert);
+                        @Param("idBankTransfert") Integer idBankTransfert, @Param("idProvider") Integer idProvider);
 }

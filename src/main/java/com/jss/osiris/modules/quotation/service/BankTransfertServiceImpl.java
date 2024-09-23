@@ -61,6 +61,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.repository.BankTransfertRepository;
@@ -149,13 +150,17 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             bankTransfertSearch.setEndDate(LocalDateTime.now().plusYears(100));
         if (bankTransfertSearch.getIdBankTransfert() == null)
             bankTransfertSearch.setIdBankTransfert(0);
+        if (bankTransfertSearch.getProvider() == null) {
+            bankTransfertSearch.setProvider(new Provider());
+            bankTransfertSearch.getProvider().setId(0);
+        }
         return bankTransfertRepository.findTransferts(
                 bankTransfertSearch.getStartDate().withHour(0).withMinute(0),
                 bankTransfertSearch.getEndDate().withHour(23).withMinute(59), bankTransfertSearch.getMinAmount(),
                 bankTransfertSearch.getMaxAmount(),
                 bankTransfertSearch.getLabel(), bankTransfertSearch.isHideExportedBankTransfert(),
                 bankTransfertSearch.isDisplaySelectedForExportBankTransfert(),
-                bankTransfertSearch.getIdBankTransfert());
+                bankTransfertSearch.getIdBankTransfert(), bankTransfertSearch.getProvider().getId());
     }
 
     @Override
