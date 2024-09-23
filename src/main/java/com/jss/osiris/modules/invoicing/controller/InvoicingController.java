@@ -341,11 +341,13 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
-    @GetMapping("/refund/refund/label-update")
+    @GetMapping("/refund/label-update")
     public ResponseEntity<Refund> modifyRefundLabel(@RequestParam Integer refundId, @RequestParam String refundLabel)
             throws OsirisException {
         if (refundId == null)
             throw new OsirisValidationException("refundId");
+        if (refundLabel != null)
+            validationHelper.validateString(refundLabel, null, 250, "refundLabel");
 
         Refund refund = refundService.getRefund(refundId);
         if (refund == null)

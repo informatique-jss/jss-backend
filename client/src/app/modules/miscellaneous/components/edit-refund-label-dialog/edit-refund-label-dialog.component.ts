@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   templateUrl: './edit-refund-label-dialog.component.html',
   styleUrls: ['./edit-refund-label-dialog.component.css']
 })
-export class EditRefundLabelDialogComponent implements OnInit {
+export class EditRefundLabelDialogComponent {
 
   refundLabel: string = "";
 
@@ -20,10 +20,6 @@ export class EditRefundLabelDialogComponent implements OnInit {
 
   editRefundLabelForm = this.formBuilder.group({});
 
-  ngOnInit() {
-    //  if (this.data.refundLabel)
-    // this.refundLabel = this.data.refundLabel;
-  }
   onConfirm() {
     if (this.editRefundLabelForm.valid)
       this.dialogRef.close(this.refundLabel);

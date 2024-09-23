@@ -17,7 +17,7 @@ export class RefundService extends AppRestService<Refund> {
   }
 
   modifyRefundLabel(refundId: number, refundLabel: string) {
-    return this.get(new HttpParams().set("refundId", refundId).set("refundLabel", refundLabel), "refund/label-update");
+    return this.get(new HttpParams().set("refundId", refundId).set("refundLabel", refundLabel), "label-update");
   }
 
 }

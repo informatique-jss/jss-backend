@@ -32,6 +32,7 @@ import { ReceiptReconciliationEditDialogComponent } from "../receipt-reconciliat
 import { ReceiptReconciliationComponent } from "../receipt-reconciliation/receipt-reconciliation.component";
 import { RefundListComponent } from '../refund-list/refund-list.component';
 import { InvoiceComponent } from "./invoicing.component";
+import { EditRefundLabelDialogComponent } from "src/app/modules/miscellaneous/components/edit-refund-label-dialog/edit-refund-label-dialog.component";
 
 const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
@@ -82,6 +83,7 @@ const routes: Routes = [
     AddPaymentComponent,
     ReceiptReconciliationComponent,
     ReceiptReconciliationEditDialogComponent,
+    EditRefundLabelDialogComponent
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,
