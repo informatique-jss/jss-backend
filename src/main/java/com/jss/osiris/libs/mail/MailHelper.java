@@ -1061,7 +1061,7 @@ public class MailHelper {
             }
 
         mail.setAttachments(attachments);
-        mail.setReplyTo(asso.getAssignedTo());
+        mail.setReplyTo(provision.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setProvision(provision);
         mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));

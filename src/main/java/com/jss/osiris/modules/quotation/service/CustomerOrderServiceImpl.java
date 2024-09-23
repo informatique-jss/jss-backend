@@ -449,8 +449,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             // If no closed paper set
             if (customerOrder.getPaperSets() != null) {
                 for (PaperSet paperSet : customerOrder.getPaperSets()) {
-                    if (paperSet.getIsCancelled() == null || paperSet.getIsCancelled() == false
-                            || paperSet.getIsValidated() == null || paperSet.getIsValidated() == false) {
+                    if ((paperSet.getIsCancelled() == null || paperSet.getIsCancelled() == false)
+                            && (paperSet.getIsValidated() == null || paperSet.getIsValidated() == false)) {
                         throw new OsirisClientMessageException(
                                 "Impossible de facturer la commande, des actions documentaires sont encore en cours");
                     }
