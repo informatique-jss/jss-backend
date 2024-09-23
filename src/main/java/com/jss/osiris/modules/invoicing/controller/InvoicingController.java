@@ -49,6 +49,7 @@ import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
@@ -338,6 +339,23 @@ public class InvoicingController {
 
         return new ResponseEntity<List<RefundSearchResult>>(refundService.searchRefunds(refundSearch),
                 HttpStatus.OK);
+    }
+
+    @GetMapping("/refund/label-update")
+    public ResponseEntity<Refund> modifyRefundLabel(@RequestParam Integer refundId, @RequestParam String refundLabel)
+            throws OsirisException {
+        if (refundId == null)
+            throw new OsirisValidationException("refundId");
+        if (refundLabel != null)
+            validationHelper.validateString(refundLabel, null, 250, "refundLabel");
+
+        Refund refund = refundService.getRefund(refundId);
+        if (refund == null)
+            throw new OsirisValidationException("refund");
+        if (refundLabel != null && refundLabel.trim().length() > 0)
+            refund.setLabel(refund.getId() + " - " + refundLabel);
+
+        return new ResponseEntity<Refund>(refundService.addOrUpdateRefund(refund), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/refund/payment")
