@@ -49,6 +49,7 @@ import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.model.RefundSearch;
 import com.jss.osiris.modules.invoicing.model.RefundSearchResult;
 import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
@@ -337,6 +338,16 @@ public class InvoicingController {
             throw new OsirisValidationException("refundSearch");
 
         return new ResponseEntity<List<RefundSearchResult>>(refundService.searchRefunds(refundSearch),
+                HttpStatus.OK);
+    }
+
+    @PostMapping("/refund/refund/update")
+    public ResponseEntity<Refund> addOrUpdateRefund(@RequestBody Refund refund)
+            throws OsirisException {
+        if (refund == null)
+            throw new OsirisValidationException("refund");
+
+        return new ResponseEntity<Refund>(refundService.addOrUpdateRefund(refund),
                 HttpStatus.OK);
     }
 

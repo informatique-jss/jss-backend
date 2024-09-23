@@ -55,7 +55,25 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "isMatched", fieldName: "isMatched", label: "Est rapproché", valueFonction: (element: RefundSearchResult, column: SortTableColumn<RefundSearchResult>) => { return (element.isMatched) ? "Oui" : "Non" } } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: RefundSearchResult, column: SortTableColumn<RefundSearchResult>) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn<RefundSearchResult>);
+    this.tableAction.push({
+      actionIcon: 'edit', actionName: "Modifier le libellé", actionClick: (column: SortTableAction<RefundSearchResult>, element: RefundSearchResult, event: any) => {
+        if (element) {
+          const dialogRef = this.editRefundLabelDialog.open(EditRefundLabelDialogComponent, { maxWidth: "400px" });
+          dialogRef.componentInstance.refundLabel = element.refundLabel;
 
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult) {
+              this.refundService.getRefund(element.id).subscribe(response => {
+                response.label = dialogResult;
+                this.refundService.addOrUpdateRefund(response).subscribe(done => {
+                  this.searchRefunds();
+                });
+              });
+            }
+          });
+        }
+      }, display: true,
+    } as SortTableAction<RefundSearchResult>);
     this.setColumns();
 
     this.refundSearch.isHideExportedRefunds = true;
@@ -83,23 +101,6 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
         this.searchRefunds();
       }
     }
-
-    this.tableAction.push({
-      actionIcon: 'edit', actionName: "Modifier le libellé", actionClick: (column: SortTableAction<RefundSearchResult>, element: RefundSearchResult, event: any) => {
-        if (element) {
-          const dialogRef = this.editRefundLabelDialog.open(EditRefundLabelDialogComponent, { maxWidth: "400px" });
-          dialogRef.componentInstance.refundLabel = element.refundLabel;
-
-          dialogRef.afterClosed().subscribe(dialogResult => {
-            if (dialogResult) {
-              this.refundService.getRefund(element.id).subscribe(response => {
-                this.refundService.addOrUpdateRefund(response).subscribe();
-              });
-            }
-          });
-        }
-      }, display: true,
-    } as SortTableAction<RefundSearchResult>);
   }
 
   refundForm = this.formBuilder.group({
