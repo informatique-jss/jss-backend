@@ -341,23 +341,19 @@ public class InvoicingController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("/refund/refund/update")
-    public ResponseEntity<Refund> addOrUpdateRefund(@RequestBody Refund refund)
+    @GetMapping("/refund/refund/label-update")
+    public ResponseEntity<Refund> modifyRefundLabel(@RequestParam Integer refundId, @RequestParam String refundLabel)
             throws OsirisException {
-        if (refund == null)
-            throw new OsirisValidationException("refund");
-
-        return new ResponseEntity<Refund>(refundService.addOrUpdateRefund(refund),
-                HttpStatus.OK);
-    }
-
-    @GetMapping("/refund/refund")
-    public ResponseEntity<RefundSearchResult> getRefund(@RequestParam Integer refundId)
-            throws OsirisValidationException {
         if (refundId == null)
             throw new OsirisValidationException("refundId");
 
-        return new ResponseEntity<RefundSearchResult>(refundService.getRefundById(refundId), HttpStatus.OK);
+        Refund refund = refundService.getRefund(refundId);
+        if (refund == null)
+            throw new OsirisValidationException("refund");
+        if (refundLabel != null && refundLabel.trim().length() > 0)
+            refund.setLabel(refundLabel);
+
+        return new ResponseEntity<Refund>(refundService.addOrUpdateRefund(refund), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/refund/payment")

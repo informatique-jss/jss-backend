@@ -63,11 +63,8 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
 
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult) {
-              this.refundService.getRefund(element.id).subscribe(response => {
-                response.label = dialogResult;
-                this.refundService.addOrUpdateRefund(response).subscribe(done => {
-                  this.searchRefunds();
-                });
+              this.refundService.modifyRefundLabel(element.id, dialogResult).subscribe(response => {
+                this.searchRefunds();
               });
             }
           });

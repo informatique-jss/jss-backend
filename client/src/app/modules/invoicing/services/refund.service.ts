@@ -16,12 +16,8 @@ export class RefundService extends AppRestService<Refund> {
     return this.getList(new HttpParams(), "refunds");
   }
 
-  getRefund(refundId: number) {
-    return this.get(new HttpParams().set("refundId", refundId), "refund");
-  }
-
-  addOrUpdateRefund(refund: Refund) {
-    return this.addOrUpdate(new HttpParams(), "refund/update", refund, "Enregistré", "Erreur lors de l'enregistrement");
+  modifyRefundLabel(refundId: number, refundLabel: string) {
+    return this.get(new HttpParams().set("refundId", refundId).set("refundLabel", refundLabel), "refund/label-update");
   }
 
 }
