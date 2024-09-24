@@ -331,49 +331,57 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 }
 
                 // Update formalite status based on GU status
-                if (savedFormaliteGuichetUnique.getStatus().getCode()
-                        .equals(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING)
-                        || savedFormaliteGuichetUnique.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.ERROR_INSEE_EXISTS_PM)
-                        || savedFormaliteGuichetUnique.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.ERROR_INSEE_EXISTS_PP)
-                        || savedFormaliteGuichetUnique.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.ERROR_DECLARATION_INSEE)
-                        || savedFormaliteGuichetUnique.getStatus().getCode().equals(FormaliteGuichetUniqueStatus.ERROR)
-                        || savedFormaliteGuichetUnique.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.EXPIRED)
-                        || savedFormaliteGuichetUnique.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.REJECTED)) {
-                    savedFormaliteGuichetUnique.getFormalite().setFormaliteStatus(formaliteStatusService
-                            .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
-                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                            savedFormaliteGuichetUnique.getFormalite()
-                                    .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " rejetée ("
-                                    + formaliteGuichetUniqueStatusService
-                                            .getFormaliteGuichetUniqueStatus(
-                                                    savedFormaliteGuichetUnique.getStatus().getCode())
-                                            .getLabel()
-                                    + ")");
+                if (formalite.getFormaliteStatus().getIsCloseState() == null
+                        || formalite.getFormaliteStatus().getIsCloseState() == false) {
+                    if (savedFormaliteGuichetUnique.getStatus().getCode()
+                            .equals(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING)
+                            || savedFormaliteGuichetUnique.getStatus().getCode()
+                                    .equals(FormaliteGuichetUniqueStatus.ERROR_INSEE_EXISTS_PM)
+                            || savedFormaliteGuichetUnique.getStatus().getCode()
+                                    .equals(FormaliteGuichetUniqueStatus.ERROR_INSEE_EXISTS_PP)
+                            || savedFormaliteGuichetUnique.getStatus().getCode()
+                                    .equals(FormaliteGuichetUniqueStatus.ERROR_DECLARATION_INSEE)
+                            || savedFormaliteGuichetUnique.getStatus().getCode()
+                                    .equals(FormaliteGuichetUniqueStatus.ERROR)
+                            || savedFormaliteGuichetUnique.getStatus().getCode()
+                                    .equals(FormaliteGuichetUniqueStatus.EXPIRED)
+                            || savedFormaliteGuichetUnique.getStatus().getCode()
+                                    .equals(FormaliteGuichetUniqueStatus.REJECTED)) {
+                        savedFormaliteGuichetUnique.getFormalite().setFormaliteStatus(formaliteStatusService
+                                .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED));
+                        CustomerOrderComment customerOrderComment = customerOrderCommentService
+                                .createCustomerOrderComment(
+                                        savedFormaliteGuichetUnique.getFormalite()
+                                                .getProvision().get(0).getService().getAssoAffaireOrder()
+                                                .getCustomerOrder(),
+                                        "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " rejetée ("
+                                                + formaliteGuichetUniqueStatusService
+                                                        .getFormaliteGuichetUniqueStatus(
+                                                                savedFormaliteGuichetUnique.getStatus().getCode())
+                                                        .getLabel()
+                                                + ")");
 
-                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
-                            constantService.getActiveDirectoryGroupFormalites());
+                        customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                                constantService.getActiveDirectoryGroupFormalites());
 
-                } else if (savedFormaliteGuichetUnique.getStatus().getCode()
-                        .equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
-                        || savedFormaliteGuichetUnique.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER)
-                        || savedFormaliteGuichetUnique.getStatus().getCode()
-                                .equals(FormaliteGuichetUniqueStatus.VALIDATED)) {
-                    savedFormaliteGuichetUnique.getFormalite().setFormaliteStatus(formaliteStatusService
-                            .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
-                    CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                            savedFormaliteGuichetUnique.getFormalite()
-                                    .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " validée");
+                    } else if (savedFormaliteGuichetUnique.getStatus().getCode()
+                            .equals(FormaliteGuichetUniqueStatus.VALIDATED_DGFIP)
+                            || savedFormaliteGuichetUnique.getStatus().getCode()
+                                    .equals(FormaliteGuichetUniqueStatus.VALIDATED_PARTNER)
+                            || savedFormaliteGuichetUnique.getStatus().getCode()
+                                    .equals(FormaliteGuichetUniqueStatus.VALIDATED)) {
+                        savedFormaliteGuichetUnique.getFormalite().setFormaliteStatus(formaliteStatusService
+                                .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED));
+                        CustomerOrderComment customerOrderComment = customerOrderCommentService
+                                .createCustomerOrderComment(
+                                        savedFormaliteGuichetUnique.getFormalite()
+                                                .getProvision().get(0).getService().getAssoAffaireOrder()
+                                                .getCustomerOrder(),
+                                        "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " validée");
 
-                    customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
-                            constantService.getActiveDirectoryGroupFormalites());
+                        customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                                constantService.getActiveDirectoryGroupFormalites());
+                    }
                 }
                 formaliteService.addOrUpdateFormalite(savedFormaliteGuichetUnique.getFormalite());
             }
@@ -392,10 +400,11 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             if (formalite != null && savedFormaliteGuichetUnique != null && (Arrays
                     .asList(FormaliteGuichetUniqueStatus.PAYMENT_PENDING,
                             FormaliteGuichetUniqueStatus.PAYMENT_VALIDATION_PENDING,
+                            FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING,
                             FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_VALIDATION_PENDING)
                     .contains(savedFormaliteGuichetUnique.getStatus().getCode())
                     || savedFormaliteGuichetUnique.getStatus().getCode()
-                            .equals(FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING)
+                            .equals(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING)
                             && savedFormaliteGuichetUnique.getIsAuthorizedToSign() != null
                             && savedFormaliteGuichetUnique.getIsAuthorizedToSign()))
                 batchService.declareNewBatch(Batch.PAY_FORMALITE_GUICHET_UNIQUE, savedFormaliteGuichetUnique.getId());

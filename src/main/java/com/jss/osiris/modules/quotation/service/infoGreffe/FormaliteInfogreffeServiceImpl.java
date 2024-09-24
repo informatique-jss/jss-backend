@@ -235,6 +235,10 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
         if (formaliteInfogreffe.getFormalite() != null && formaliteInfogreffe.getEvenements() != null
                 && formaliteInfogreffe.getEvenements().size() > 0) {
 
+            if (formaliteInfogreffe.getFormalite().getFormaliteStatus().getIsCloseState() != null
+                    && formaliteInfogreffe.getFormalite().getFormaliteStatus().getIsCloseState())
+                return;
+
             EvenementInfogreffe lastEvent = getLastEvenementInfogreffe(formaliteInfogreffe, true);
 
             if (lastEvent != null) {
