@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.model;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 
 public class BankTransfertSearch {
 
@@ -17,6 +18,10 @@ public class BankTransfertSearch {
     private boolean isDisplaySelectedForExportBankTransfert;
 
     private Integer idBankTransfert;
+
+    private Provider provider;
+
+    private Boolean isOverrideExecutionDate;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -80,6 +85,22 @@ public class BankTransfertSearch {
 
     public void setIdBankTransfert(Integer idBankTransfert) {
         this.idBankTransfert = idBankTransfert;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
+
+    public Boolean getIsOverrideExecutionDate() {
+        return isOverrideExecutionDate;
+    }
+
+    public void setIsOverrideExecutionDate(Boolean isOverrideExecutionDate) {
+        this.isOverrideExecutionDate = isOverrideExecutionDate;
     }
 
 }
