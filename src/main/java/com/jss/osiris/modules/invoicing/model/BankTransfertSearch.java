@@ -21,8 +21,6 @@ public class BankTransfertSearch {
 
     private Provider provider;
 
-    private Boolean isOverrideExecutionDate;
-
     public LocalDateTime getStartDate() {
         return startDate;
     }
@@ -94,13 +92,4 @@ public class BankTransfertSearch {
     public void setProvider(Provider provider) {
         this.provider = provider;
     }
-
-    public Boolean getIsOverrideExecutionDate() {
-        return isOverrideExecutionDate;
-    }
-
-    public void setIsOverrideExecutionDate(Boolean isOverrideExecutionDate) {
-        this.isOverrideExecutionDate = isOverrideExecutionDate;
-    }
-
 }

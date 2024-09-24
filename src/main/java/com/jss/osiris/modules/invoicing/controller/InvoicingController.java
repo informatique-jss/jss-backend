@@ -437,7 +437,8 @@ public class InvoicingController {
     }
 
     @PostMapping(inputEntryPoint + "/transfert/export")
-    public ResponseEntity<byte[]> downloadTransferts(@RequestBody BankTransfertSearch transfertSearch)
+    public ResponseEntity<byte[]> downloadTransferts(@RequestBody BankTransfertSearch transfertSearch,
+            @RequestParam Boolean isOverrideExecutionDate)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         byte[] data = null;
         HttpHeaders headers = null;
@@ -448,7 +449,7 @@ public class InvoicingController {
         if (transfertSearch.getStartDate() == null || transfertSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
-        File refunds = bankTransfertService.getBankTransfertExport(transfertSearch);
+        File refunds = bankTransfertService.getBankTransfertExport(transfertSearch, isOverrideExecutionDate);
 
         if (refunds != null) {
             try {
