@@ -754,6 +754,13 @@ public class PaymentServiceImpl implements PaymentService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         checkPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+
+        if (checkPayment.getCheckNumber() != null) {
+            List<Payment> duplicateCheckPayments = paymentRepository.findByCheckNumber(checkPayment.getCheckNumber());
+            if (duplicateCheckPayments != null && duplicateCheckPayments.size() > 0)
+                throw new OsirisValidationException("Numéro de chèque existant");
+        }
+
         addOrUpdatePayment(checkPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(checkPayment, false);
         batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, checkPayment.getId());
@@ -763,6 +770,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional(rollbackFor = Exception.class)
     public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+        if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())
+                && payment.getCheckNumber() != null) {
+            List<Payment> duplicateCheckPayments = paymentRepository.findByCheckNumber(payment.getCheckNumber());
+            if (duplicateCheckPayments != null && duplicateCheckPayments.size() > 0)
+                throw new OsirisValidationException("Numéro de chèque existant");
+        }
         payment.setProvision(provision);
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         payment.setSourceAccountingAccount(

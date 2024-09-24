@@ -47,4 +47,6 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         @Param("idPayment") Integer idPayment);
 
         Payment findByBankId(String id);
+
+        List<Payment> findByCheckNumber(String checkNumber);
 }
