@@ -209,7 +209,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public File getBankTransfertExport(BankTransfertSearch transfertSearch)
+    public File getBankTransfertExport(BankTransfertSearch transfertSearch, Boolean isOverrideExecutionDate)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
         transfertSearch.setDisplaySelectedForExportBankTransfert(true);
         List<BankTransfertSearchResult> bankTransferts = searchBankTransfert(transfertSearch);
@@ -267,7 +267,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         completeTransfert.getTransfertIban().replaceAll(" ", ""),
                         completeTransfert.getTransfertBic().replaceAll(" ", ""),
                         StringUtils.substring(completeTransfert.getId() + " - " + completeTransfert.getLabel(), 0,
-                                139)));
+                                139),
+                        isOverrideExecutionDate));
 
                 if (!completeTransfert.getIsAlreadyExported()) {
                     addOrUpdateBankTransfert(completeTransfert);
@@ -320,7 +321,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     @Override
     public PmtInfBean generateBodyForBankTransfert(String headerLabel, Float transfertAmount, LocalDate executionDate,
             String recipientLabel,
-            String iban, String transfertBic, String transfertLabel) {
+            String iban, String transfertBic, String transfertLabel, Boolean isOverrideExecutionDate) {
         DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         PmtInfBean body = new PmtInfBean();
 
@@ -342,6 +343,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         transfertPurpose.setCd("CASH");
 
         if (executionDate.isBefore(LocalDate.now()))
+            executionDate = LocalDate.now();
+
+        if (isOverrideExecutionDate)
             executionDate = LocalDate.now();
 
         body.setReqdExctnDt(executionDate.format(formatterDate));

@@ -20,15 +20,15 @@ export class AccountingRecordService extends AppRestService<AccountingRecord> {
   }
 
   exportGrandLivre(accountingRecordSearch: AccountingRecordSearch) {
-    this.downloadPost("grand-livre/export", accountingRecordSearch as any as AccountingRecord);
+    this.downloadPost(new HttpParams(), "grand-livre/export", accountingRecordSearch as any as AccountingRecord);
   }
 
   exportJournal(accountingRecordSearch: AccountingRecordSearch) {
-    this.downloadPost("journal/export", accountingRecordSearch as any as AccountingRecord);
+    this.downloadPost(new HttpParams(), "journal/export", accountingRecordSearch as any as AccountingRecord);
   }
 
   exportAccountingAccount(accountingRecordSearch: AccountingRecordSearch) {
-    this.downloadPost("accounting-account/export", accountingRecordSearch as any as AccountingRecord);
+    this.downloadPost(new HttpParams(), "accounting-account/export", accountingRecordSearch as any as AccountingRecord);
   }
 
   downloadBillingClosureReceipt(tiers: Tiers, responsable: Responsable | undefined) {
