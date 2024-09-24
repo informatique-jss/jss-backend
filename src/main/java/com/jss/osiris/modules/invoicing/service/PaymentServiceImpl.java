@@ -754,6 +754,7 @@ public class PaymentServiceImpl implements PaymentService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         checkPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
+
         addOrUpdatePayment(checkPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(checkPayment, false);
         batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, checkPayment.getId());
@@ -763,6 +764,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional(rollbackFor = Exception.class)
     public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+        if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())
+                && payment.getCheckNumber() != null) {
+            Payment duplicateCheckPayment = paymentRepository.findByCheckNumber(payment.getCheckNumber());
+            if (duplicateCheckPayment != null)
+                throw new OsirisValidationException("Numéro de chèque existant");
+        }
         payment.setProvision(provision);
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         payment.setSourceAccountingAccount(
