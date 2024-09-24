@@ -196,7 +196,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public File getBankTransfertExport(BankTransfertSearch transfertSearch)
+    public File getBankTransfertExport(BankTransfertSearch transfertSearch, Boolean isOverrideExecutionDate)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
         transfertSearch.setDisplaySelectedForExportBankTransfert(true);
         List<BankTransfertSearchResult> bankTransferts = searchBankTransfert(transfertSearch);
@@ -256,7 +256,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         completeTransfert.getTransfertBic().replaceAll(" ", ""),
                         StringUtils.substring(completeTransfert.getId() + " - " + completeTransfert.getLabel(), 0,
                                 139),
-                        transfertSearch.getIsOverrideExecutionDate()));
+                        isOverrideExecutionDate));
 
                 if (!completeTransfert.getIsAlreadyExported()) {
                     addOrUpdateBankTransfert(completeTransfert);
@@ -330,7 +330,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bodyTransfertType.setCtgyPurpBean(transfertPurpose);
         transfertPurpose.setCd("CASH");
 
-        if (!isOverrideExecutionDate && executionDate.isBefore(LocalDate.now()))
+        if (executionDate.isBefore(LocalDate.now()))
             executionDate = LocalDate.now();
 
         if (isOverrideExecutionDate)

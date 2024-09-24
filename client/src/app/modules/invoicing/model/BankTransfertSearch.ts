@@ -10,5 +10,4 @@ export interface BankTransfertSearch {
   isDisplaySelectedForExportBankTransfert: boolean;
   idBankTransfert: number;
   provider: Provider;
-  isOverrideExecutionDate: boolean;
 }
