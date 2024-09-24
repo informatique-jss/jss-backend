@@ -260,6 +260,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
                 assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
+                batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, assoAffaireOrder.getId());
                 for (Service service : assoAffaireOrder.getServices())
                     for (Provision provision : service.getProvisions())
                         if (provision.getId() == null)
