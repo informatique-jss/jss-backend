@@ -756,8 +756,8 @@ public class PaymentServiceImpl implements PaymentService {
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
 
         if (checkPayment.getCheckNumber() != null) {
-            List<Payment> duplicateCheckPayments = paymentRepository.findByCheckNumber(checkPayment.getCheckNumber());
-            if (duplicateCheckPayments != null && duplicateCheckPayments.size() > 0)
+            Payment duplicateCheckPayment = paymentRepository.findByCheckNumber(checkPayment.getCheckNumber());
+            if (duplicateCheckPayment != null)
                 throw new OsirisValidationException("Numéro de chèque existant");
         }
 
@@ -772,8 +772,8 @@ public class PaymentServiceImpl implements PaymentService {
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())
                 && payment.getCheckNumber() != null) {
-            List<Payment> duplicateCheckPayments = paymentRepository.findByCheckNumber(payment.getCheckNumber());
-            if (duplicateCheckPayments != null && duplicateCheckPayments.size() > 0)
+            Payment duplicateCheckPayment = paymentRepository.findByCheckNumber(payment.getCheckNumber());
+            if (duplicateCheckPayment != null)
                 throw new OsirisValidationException("Numéro de chèque existant");
         }
         payment.setProvision(provision);
