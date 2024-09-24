@@ -20,7 +20,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { EditorModule } from '@tinymce/tinymce-angular';
 import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/invoicing.module';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
@@ -111,7 +110,6 @@ const routes: Routes = [
     CommonModule,
     MatTabsModule,
     FormsModule,
-    EditorModule,
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
