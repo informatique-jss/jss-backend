@@ -7,7 +7,7 @@ import { DirectDebitTransfertSearchResult } from '../model/DirectDebitTransfertS
 @Injectable({
   providedIn: 'root'
 })
-export class DirectDebitTransfertSearchResultService extends AppRestService<DirectDebitTransfertSearchResult>{
+export class DirectDebitTransfertSearchResultService extends AppRestService<DirectDebitTransfertSearchResult> {
   constructor(http: HttpClient) {
     super(http, "invoicing");
   }
@@ -17,6 +17,6 @@ export class DirectDebitTransfertSearchResultService extends AppRestService<Dire
   }
 
   exportTransferts(directDebitTransfertSearch: DirectDebitTransfertSearch) {
-    return this.downloadPost("direct/transfert/export", directDebitTransfertSearch as any);
+    return this.downloadPost(new HttpParams(), "direct/transfert/export", directDebitTransfertSearch as any);
   }
 }
