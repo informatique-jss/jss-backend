@@ -134,7 +134,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     }
   }
 
-  exportTransferts() {
-    this.bankTransfertSearchResultService.exportTransferts(this.transfertSearch);
+  exportTransferts(isOverrideExecutionDate: boolean) {
+    this.bankTransfertSearchResultService.exportTransferts(this.transfertSearch, isOverrideExecutionDate);
   }
 }
