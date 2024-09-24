@@ -21,8 +21,6 @@ public class BankTransfertSearch {
 
     private Provider provider;
 
-    private Boolean isOverrideExecutionDate;
-
     public LocalDateTime getStartDate() {
         return startDate;
     }
@@ -87,8 +85,6 @@ public class BankTransfertSearch {
         this.idBankTransfert = idBankTransfert;
     }
 
-    <<<<<<<HEAD=======
-
     public Provider getProvider() {
         return provider;
     }
@@ -96,16 +92,4 @@ public class BankTransfertSearch {
     public void setProvider(Provider provider) {
         this.provider = provider;
     }
-
-    public Boolean getIsOverrideExecutionDate() {
-        return isOverrideExecutionDate;
-    }
-
-    public void setIsOverrideExecutionDate(Boolean isOverrideExecutionDate) {
-        this.isOverrideExecutionDate = isOverrideExecutionDate;
-    }
-
-    >>>>>>>
-
-    cd6b64594 (add new export of bankTransfert with an override of execution date of the transfert, using sysdate)
 }
