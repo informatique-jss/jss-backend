@@ -34,7 +34,6 @@ export class AddPaymentComponent implements OnInit {
       this.newPayment.label = this.newPayment.label + ' - ' + 'n°' + this.checkNumber + ' - ' + this.payer;
       this.newPayment.paymentType = this.constantService.getPaymentTypeCheques();
       this.newPayment.isCancelled = false;
-      this.newPayment.checkNumber = this.checkNumber;
       this.newPayment.isExternallyAssociated = false;
       this.paymentService.addCheckPayment(this.newPayment).subscribe(response => {
         this.appService.openRoute(null, "/invoicing", undefined);

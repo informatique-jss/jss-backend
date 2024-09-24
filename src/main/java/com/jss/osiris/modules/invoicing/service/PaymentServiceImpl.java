@@ -755,12 +755,6 @@ public class PaymentServiceImpl implements PaymentService {
         checkPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
 
-        if (checkPayment.getCheckNumber() != null) {
-            Payment duplicateCheckPayment = paymentRepository.findByCheckNumber(checkPayment.getCheckNumber());
-            if (duplicateCheckPayment != null)
-                throw new OsirisValidationException("Numéro de chèque existant");
-        }
-
         addOrUpdatePayment(checkPayment);
         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(checkPayment, false);
         batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, checkPayment.getId());
