@@ -40,5 +40,5 @@ public interface BankTransfertService {
         public PmtInfBean generateBodyForBankTransfert(String headerLabel, Float transfertAmount,
                         LocalDate executionDate,
                         String recipientLabel,
-                        String iban, String bic, String transfertLabel);
+                        String iban, String bic, String transfertLabel, Boolean isOverrideExecutionDate);
 }

@@ -49,7 +49,14 @@
     </sort-table>
   </div>
 </div>
-<button matTooltip="Exporter pour la banque (résultats affichés)" mat-fab color="accent" class="fab-button"
-  (click)="exportTransferts()" *ngIf="transfers && transfers.length>0">
+<button matTooltip="Exporter pour la banque" mat-fab color="accent" class="fab-button" [matMenuTriggerFor]="menu">
   <mat-icon>file_download</mat-icon>
+  <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+    <button mat-menu-item (click)="exportTransferts(false)">
+      <span>Exporter les résultats affichés</span>
+    </button>
+    <button mat-menu-item (click)="exportTransferts(true)">
+      <span>Exporter les virements en date du jour</span>
+    </button>
+  </mat-menu>
 </button>

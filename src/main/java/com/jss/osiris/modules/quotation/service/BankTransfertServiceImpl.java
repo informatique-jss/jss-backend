@@ -267,7 +267,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                         completeTransfert.getTransfertIban().replaceAll(" ", ""),
                         completeTransfert.getTransfertBic().replaceAll(" ", ""),
                         StringUtils.substring(completeTransfert.getId() + " - " + completeTransfert.getLabel(), 0,
-                                139)));
+                                139),
+                        transfertSearch.getIsOverrideExecutionDate()));
 
                 if (!completeTransfert.getIsAlreadyExported()) {
                     addOrUpdateBankTransfert(completeTransfert);
@@ -320,7 +321,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     @Override
     public PmtInfBean generateBodyForBankTransfert(String headerLabel, Float transfertAmount, LocalDate executionDate,
             String recipientLabel,
-            String iban, String transfertBic, String transfertLabel) {
+            String iban, String transfertBic, String transfertLabel, Boolean isOverrideExecutionDate) {
         DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         PmtInfBean body = new PmtInfBean();
 
@@ -341,7 +342,10 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bodyTransfertType.setCtgyPurpBean(transfertPurpose);
         transfertPurpose.setCd("CASH");
 
-        if (executionDate.isBefore(LocalDate.now()))
+        if (!isOverrideExecutionDate && executionDate.isBefore(LocalDate.now()))
+            executionDate = LocalDate.now();
+
+        if (isOverrideExecutionDate)
             executionDate = LocalDate.now();
 
         body.setReqdExctnDt(executionDate.format(formatterDate));
