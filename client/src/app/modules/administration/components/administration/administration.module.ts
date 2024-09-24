@@ -20,7 +20,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { EditorModule } from '@tinymce/tinymce-angular';
 import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/invoicing.module';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
@@ -80,6 +79,7 @@ import { ReferentialRegionComponent } from '../referentials/referential-region/r
 import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
 import { ReferentialServiceFamilyGroupComponent } from '../referentials/referential-service-family-group/referential-service-family-group.component';
 import { ReferentialServiceFamilyComponent } from '../referentials/referential-service-family/referential-service-family.component';
+import { ReferentialServiceFieldTypeComponent } from '../referentials/referential-service-field-type/referential-service-field-type.component';
 import { ReferentialServiceTypeComponent } from '../referentials/referential-service/referential-service-type.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
@@ -95,7 +95,6 @@ import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referen
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
-import { ReferentialServiceFieldTypeComponent } from '../referentials/referential-service-field-type/referential-service-field-type.component';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
@@ -112,7 +111,6 @@ const routes: Routes = [
     CommonModule,
     MatTabsModule,
     FormsModule,
-    EditorModule,
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
