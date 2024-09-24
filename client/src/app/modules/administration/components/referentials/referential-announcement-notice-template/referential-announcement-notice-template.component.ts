@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
+import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { Observable } from 'rxjs';
 import { AnnouncementNoticeTemplate } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplate';
 import { AnnouncementNoticeTemplateService } from 'src/app/modules/quotation/services/announcement.notice.template.service';
@@ -18,6 +20,8 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
     super(formBuilder2, appService2);
   }
 
+  initialNoticeValue: string = '';
+
   entityForm2 = this.formBuilder2.group({
     notice: ['', Validators.required]
   })
@@ -34,6 +38,7 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
 
   selectEntity(element: AnnouncementNoticeTemplate) {
     this.selectedEntity = element;
+    this.initialNoticeValue = this.selectedEntity.text
     this.selectedEntityChange.emit(this.selectedEntity);
   }
 
@@ -42,5 +47,30 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
   }
   getGetObservable(): Observable<AnnouncementNoticeTemplate[]> {
     return this.announcementNoticeTemplateService.getAnnouncementNoticeTemplates();
+  }
+
+  ckEditorNotice = ClassicEditor;
+  config = {
+    toolbar: ['undo', 'redo', '|', 'fontFamily', 'fontSize', 'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
+      'alignment:left', 'alignment:right', 'alignment:center', 'alignment:justify', '|', 'link', 'bulletedList', 'numberedList', 'outdent', 'indent', 'removeformat'
+    ],
+    plugins: [
+      Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Link, List, Indent, IndentBlock, RemoveFormat, Clipboard, GeneralHtmlSupport, Underline
+    ],
+    htmlSupport: {
+      allow: [
+        {
+          name: /.*/,
+          attributes: true,
+          classes: true,
+          styles: true
+        }
+      ]
+    }
+  } as any;
+
+  onNoticeChange(event: ChangeEvent) {
+    if (this.selectedEntity)
+      this.selectedEntity.text = event.editor.getData();
   }
 }

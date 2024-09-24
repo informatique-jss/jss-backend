@@ -4,32 +4,19 @@
       <mat-icon>add_comment</mat-icon>
       Ajouter un commentaire
     </button></div>
-  <table class="full-width" [formGroup]="commentForm" *ngIf="isDisplayCommentInput">
-    <tr>
+  <table class="full-width" [formGroup]="commentForm">
+    <tr *ngIf="isDisplayCommentInput">
       <td>
-        <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" formControlName="newComment"
-          [disabled]="false" [(ngModel)]="newComment.comment" [init]="{
-                    menubar: false,
-                    selector: '.editor-textarea',
-                    inline : true,
-                    min_height : 200,
-                    entity_encoding : 'raw',
-                    browser_spellcheck: true,
-                    language: 'fr_FR',
-                    plugins: ['lists', 'advlist'
-                    ],
-                    toolbar:
-                    'undo redo | styleselect  |  fontsize | bold italic underline forecolor backcolor | \
-                     numlist bullist | \
-                    bullist numlist outdent indent | removeformat | '
-                  }"></editor>
+        <ckeditor [editor]="ckEditorComment" [config]="config" [data]="initialCommentValue"
+          (change)="onCommentChange($event)"></ckeditor>
       </td>
       <td style="width : 20px ; vertical-align: middle;">
         <button mat-mini-fab matTooltip="Ajouter un commentaire" (click)="addNewComment()">
           <mat-icon>add_comment</mat-icon>
         </button>
       </td>
-    <tr>
+    </tr>
+    <tr *ngIf="isDisplayCommentInput">
       <td colspan="2" style="display : flex; padding-left: 10px;padding-right: 10px;">
         <chips-status style="margin-right : 5px" *ngFor="let group of adGroups" [value]="'@'+group.label"
           [status]="isAdGroupSelectedInComment(group,newComment)?'SELECTED' : ''"
