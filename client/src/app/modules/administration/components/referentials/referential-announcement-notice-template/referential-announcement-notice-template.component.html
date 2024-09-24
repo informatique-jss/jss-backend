@@ -48,20 +48,8 @@
                 <p>Texte :</p>
                 <span [innerHTML]="selectedEntity.text| trustHtml" class="no-font"></span>
               </div>
-              <editor apiKey="7pgnveyplwectwsk1gw9tdhl1vz1r0lt0zt9jkea2ypfllpm" *ngIf="editMode"
-                formControlName="notice" [disabled]="!editMode" [(ngModel)]="selectedEntity.text" [init]="&#123;
-   height: 500,
-   menubar: false,
-   entity_encoding : 'raw',
-   browser_spellcheck: true,
-   plugins: [
-     'table'
-   ],
-   toolbar:
-     'undo redo | formatselect | bold italic backcolor | \
-     alignleft aligncenter alignright alignjustify | \
-     bullist numlist outdent indent | removeformat | help'
- &#125;"></editor>
+              <ckeditor *ngIf="editMode" [editor]="ckEditorNotice" [config]="config" [data]="initialNoticeValue"
+                (change)="onNoticeChange($event)"></ckeditor>
             </td>
           </tr>
         </table>

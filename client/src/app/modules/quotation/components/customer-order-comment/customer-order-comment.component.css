@@ -31,7 +31,7 @@ editor {
   position: absolute;
   top: 0px;
   right: 24px;
-  color:  var(--accent-color);
+  color: var(--accent-color);
 }
 
 .speech-wrapper {
@@ -93,4 +93,9 @@ editor {
       border-top-color: var(--warn-color) !important;
     }
   }
+}
+
+
+:host ::ng-deep .ck-editor__editable_inline {
+  min-height: 100px;
 }

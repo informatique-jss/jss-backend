@@ -5,6 +5,8 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
+import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
@@ -35,6 +37,7 @@ import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
+
 
 @Component({
   selector: 'announcement',
@@ -81,6 +84,9 @@ export class AnnouncementComponent implements OnInit {
 
   announcementStatus: AnnouncementStatus[] | undefined;
 
+  initialNoticeValue: string = "";
+  initialHeaderValue: string = "";
+
   constructor(private formBuilder: UntypedFormBuilder,
     private characterPriceService: CharacterPriceService,
     private constantService: ConstantService,
@@ -99,6 +105,7 @@ export class AnnouncementComponent implements OnInit {
   canAddNewInvoice() {
     return this.habilitationsService.canAddNewInvoice();
   }
+
   ngOnInit() {
     this.announcementStatusService.getAnnouncementStatus().subscribe(response => { this.announcementStatus = response });
 
@@ -123,9 +130,6 @@ export class AnnouncementComponent implements OnInit {
       startWith(''),
       map(value => this._filterNoticeTemplates(value)),
     );
-
-    this.announcementForm.get("notice")?.valueChanges.subscribe(response => this.noticeChangeFunction());
-    this.announcementForm.get("noticeHeader")?.valueChanges.subscribe(response => this.noticeChangeFunction());
 
     if (this.provision && this.provision.announcement)
       this.paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.provision.announcement);
@@ -156,17 +160,39 @@ export class AnnouncementComponent implements OnInit {
 
       this.announcementForm.markAllAsTouched();
       this.updateCharacterPrice();
+      this.initialNoticeValue = this.announcement.notice;
+      this.initialHeaderValue = this.announcement.noticeHeader;
     }
   }
 
   announcementForm = this.formBuilder.group({
     noticeTypes: [''],
     noticeTemplates: [''],
-    notice: [''],
-    noticeHeader: [''],
     confrere: [''],
     journalType: [''],
   });
+
+
+  ckEditorNotice = ClassicEditor;
+  ckEditorHeader = ClassicEditor;
+  config = {
+    toolbar: ['undo', 'redo', '|', 'fontFamily', 'fontSize', 'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
+      'alignment:left', 'alignment:right', 'alignment:center', 'alignment:justify', '|', 'link', 'bulletedList', 'numberedList', 'outdent', 'indent', 'removeformat'
+    ],
+    plugins: [
+      Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Link, List, Indent, IndentBlock, RemoveFormat, Clipboard, GeneralHtmlSupport, Underline
+    ],
+    htmlSupport: {
+      allow: [
+        {
+          name: /.*/,
+          attributes: true,
+          classes: true,
+          styles: true
+        }
+      ]
+    }
+  } as any;
 
   getFormStatus(): boolean {
     this.announcementForm.markAllAsTouched();
@@ -228,8 +254,19 @@ export class AnnouncementComponent implements OnInit {
       for (let template of this.selectedNoticeTemplates) {
         this.announcement.notice += template.text + "<br>";
       }
+      this.initialNoticeValue = this.announcement.notice;
       this.noticeChangeFunction();
     }
+  }
+
+  onNoticeChange(event: ChangeEvent) {
+    this.announcement.notice = event.editor.getData();
+    this.noticeChangeFunction();
+  }
+
+  onNoticeHeaderChange(event: ChangeEvent) {
+    this.announcement.noticeHeader = event.editor.getData();
+    this.noticeChangeFunction();
   }
 
   noticeChangeFunction() {
