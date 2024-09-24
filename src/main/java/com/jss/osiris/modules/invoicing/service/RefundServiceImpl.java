@@ -280,7 +280,8 @@ public class RefundServiceImpl implements RefundService {
                                 refund.getRefundIban().replaceAll(" ", ""),
                                 completeRefund.getRefundBic().replaceAll(" ", ""),
                                 StringUtils.substring((refund.getId() + " - " + refund.getRefundLabel()), 0,
-                                        139)));
+                                        139),
+                                false));
 
                 if (!completeRefund.getIsAlreadyExported()) {
                     accountingRecordGenerationService.generateAccountingRecordsForRefundExport(completeRefund);
