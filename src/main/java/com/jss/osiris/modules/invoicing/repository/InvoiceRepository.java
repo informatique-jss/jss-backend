@@ -104,7 +104,4 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null and billingLabelType=:billingLabelType   ")
         List<Invoice> findInvoiceForCustomReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatusSend,
                         @Param("billingLabelType") BillingLabelType billingLabelType);
-
-        Invoice findByManualAccountingDocumentNumber(String manualAccountingDocumentNumber);
-
 }
