@@ -147,8 +147,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getId() != null)
             throw new OsirisClientMessageException("Impossible de modifier une facture");
 
-        // check if AccountingDocumentNumber already exists
-        if (invoice.getManualAccountingDocumentNumber() != null && invoice.getProvider() != null) {
+        // check if AccountingDocumentNumber already exists for a provider, only for new
+        // invoice
+        if (invoice.getId() == null && invoice.getManualAccountingDocumentNumber() != null
+                && invoice.getProvider() != null) {
             List<Invoice> duplicateInvoices = invoiceRepository
                     .findByProviderAndManualAccountingDocumentNumberIgnoreCase(invoice.getProvider(),
                             invoice.getManualAccountingDocumentNumber());
