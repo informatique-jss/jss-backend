@@ -267,7 +267,8 @@ public class PricingHelper {
                                 + additionnalFees);
             }
         } else if (billingItem.getBillingType().getId()
-                .equals(constantService.getBillingTypeShippingCosts().getId())) {
+                .equals(constantService.getBillingTypeShippingCosts().getId())
+                && provision.getAnnouncement().getConfrere() != null) {
             invoiceItem.setPreTaxPrice(0f);
             Integer nbr = getPublicationPaperNbr(provision);
             Confrere confrere = provision.getAnnouncement().getConfrere();
