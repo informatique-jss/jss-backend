@@ -126,7 +126,8 @@
           <td>
             <generic-datepicker [(model)]="invoice.manualAccountingDocumentDate" label="Date de la pièce comptable"
               [form]="invoiceForm" propertyName="manualAccountingDocumentDate" [isMandatory]="false"
-              [isDisabled]="!editMode || !isManualInvoice()"></generic-datepicker>
+              [isDisabled]="!editMode || !isManualInvoice()" [minDate]="minDate"
+              [maxDate]="maxDate"></generic-datepicker>
           </td>
           <td>
             <single-attachment *ngIf="invoice.id && !invoice.isCreditNote && !invoice.provider" [entity]="invoice"
