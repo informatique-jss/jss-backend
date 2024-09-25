@@ -764,7 +764,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional(rollbackFor = Exception.class)
     public Payment addOutboundPaymentForProvision(Payment payment, Provision provision)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-        if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())
+        if (payment.getId() == null
+                && payment.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId())
                 && payment.getCheckNumber() != null) {
             Payment duplicateCheckPayment = paymentRepository.findByCheckNumber(payment.getCheckNumber());
             if (duplicateCheckPayment != null)
