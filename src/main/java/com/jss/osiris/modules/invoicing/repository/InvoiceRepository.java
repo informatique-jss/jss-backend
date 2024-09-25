@@ -92,7 +92,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Invoice> findByCustomerOrderForInboundInvoiceId(Integer customerOrderId);
 
-        List<Invoice> findByProviderAndManualAccountingDocumentNumber(Provider provider,
+        List<Invoice> findByProviderAndManualAccountingDocumentNumberIgnoreCase(Provider provider,
                         String manualDocumentNumber);
 
         List<Invoice> findByProviderAndManualAccountingDocumentNumberContainingIgnoreCase(

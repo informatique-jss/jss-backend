@@ -150,7 +150,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         // check if AccountingDocumentNumber already exists
         if (invoice.getManualAccountingDocumentNumber() != null && invoice.getProvider() != null) {
             List<Invoice> duplicateInvoices = invoiceRepository
-                    .findByProviderAndManualAccountingDocumentNumber(invoice.getProvider(),
+                    .findByProviderAndManualAccountingDocumentNumberIgnoreCase(invoice.getProvider(),
                             invoice.getManualAccountingDocumentNumber());
             if (duplicateInvoices != null && duplicateInvoices.size() > 0)
                 throw new OsirisValidationException("N° de pièce comptable existante");
@@ -728,7 +728,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<Invoice> findByProviderAndManualDocumentNumber(Provider provider,
             String manualDocumentNumber) {
-        return invoiceRepository.findByProviderAndManualAccountingDocumentNumber(provider,
+        return invoiceRepository.findByProviderAndManualAccountingDocumentNumberIgnoreCase(provider,
                 manualDocumentNumber);
     }
 
