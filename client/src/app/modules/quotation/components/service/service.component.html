@@ -61,17 +61,6 @@
       </ng-container>
     </div>
   </ng-container>
-
-  <div style="width: 100%;text-align: right;">
-    <button matTooltip="Télécharger tous les documents" mat-fab color="accent" (click)="downloadAllFiles()"
-      *ngIf="!editMode">
-      <mat-icon>download</mat-icon>
-    </button>
-    <button mat-fab color="accent" matTooltip="Ajouter un nouveau type de document" *ngIf="editMode"
-      (click)="addNewDocumentType(service)">
-      <mat-icon>post_add</mat-icon>
-    </button>
-  </div>
   <div *ngIf="service.assoServiceFieldTypes ">
     <table class="full-width">
       <ng-container *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
@@ -110,5 +99,19 @@
         </tr>
       </ng-container>
     </table>
+  </div>
+  <div style="width: 100%;text-align: right;margin-top:10px;">
+    <button matTooltip="Télécharger tous les documents" mat-fab color="accent" (click)="downloadAllFiles()"
+      *ngIf="!editMode">
+      <mat-icon>download</mat-icon>
+    </button>
+    <button mat-fab color="accent" style="margin-right:15px;" matTooltip="Ajouter un nouveau type de document"
+      *ngIf="editMode" (click)="addNewDocumentType(service)">
+      <mat-icon>post_add</mat-icon>
+    </button>
+    <button mat-fab color="accent" matTooltip="Ajouter un champ d'informations complémentaires" *ngIf="editMode"
+      (click)="addFurtherInformationField()">
+      <mat-icon>add_comment</mat-icon>
+    </button>
   </div>
 </ng-container>

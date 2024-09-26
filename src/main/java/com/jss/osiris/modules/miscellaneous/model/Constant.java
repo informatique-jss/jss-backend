@@ -15,6 +15,7 @@ import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
+import com.jss.osiris.modules.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -804,6 +805,8 @@ public class Constant implements Serializable, IId {
 
 	private LocalDate dateAccountingClosureForAccountant;
 	private LocalDate dateAccountingClosureForAll;
+
+	private ServiceFieldType furtherInformationServiceFieldType;
 
 	public Integer getId() {
 		return id;
@@ -2368,6 +2371,14 @@ public class Constant implements Serializable, IId {
 
 	public void setProvisionTypeRegistrationAct(ProvisionType provisionTypeRegistrationAct) {
 		this.provisionTypeRegistrationAct = provisionTypeRegistrationAct;
+	}
+
+	public ServiceFieldType getFurtherInformationServiceFieldType() {
+		return furtherInformationServiceFieldType;
+	}
+
+	public void setFurtherInformationServiceFieldType(ServiceFieldType furtherInformationServiceFieldType) {
+		this.furtherInformationServiceFieldType = furtherInformationServiceFieldType;
 	}
 
 }
