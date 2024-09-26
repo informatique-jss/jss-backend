@@ -11,6 +11,7 @@ import { DomiciliationContractType } from "../../quotation/model/DomiciliationCo
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
 import { ProvisionType } from '../../quotation/model/ProvisionType';
+import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
 import { ServiceType } from '../../quotation/model/ServiceType';
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
 import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials/TypeFormalite';
@@ -39,12 +40,6 @@ import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
-import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
-<<<<<<< HEAD
-=======
-import { ActiveDirectoryGroup } from './ActiveDirectoryGroup';
-import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
->>>>>>> a0cb8e7bb (add an optional field for user to write Further information in the service)
 
 export interface Constant {
   id: number;
