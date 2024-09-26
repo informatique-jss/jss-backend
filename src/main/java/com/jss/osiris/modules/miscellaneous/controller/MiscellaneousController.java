@@ -429,6 +429,8 @@ public class MiscellaneousController {
             validationHelper.validateReferential(constant, true, "constant");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
                 "BillingLabelTypeCodeAffaire");
+        validationHelper.validateReferential(constant.getFurtherInformationServiceFieldType(), true,
+                "ServiceFieldType");
         validationHelper.validateReferential(constant.getTiersCategoryPresse(), true, "tiersCategoryPresse");
         validationHelper.validateReferential(constant.getRffFrequencyAnnual(), true, "RffFrequencyAnnual");
         validationHelper.validateReferential(constant.getRffFrequencyMonthly(), true, "RffFrequencyMonthly");
