@@ -39,6 +39,12 @@ import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
+import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
+<<<<<<< HEAD
+=======
+import { ActiveDirectoryGroup } from './ActiveDirectoryGroup';
+import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
+>>>>>>> a0cb8e7bb (add an optional field for user to write Further information in the service)
 
 export interface Constant {
   id: number;
@@ -234,4 +240,5 @@ export interface Constant {
   dateAccountingClosureForAccountant: Date;
   activeDirectoryGroupFormalites: ActiveDirectoryGroup;
   activeDirectoryGroupFacturation: ActiveDirectoryGroup;
+  furtherInformationServiceFieldType: ServiceFieldType;
 }

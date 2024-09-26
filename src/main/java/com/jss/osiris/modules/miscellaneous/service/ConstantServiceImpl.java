@@ -40,6 +40,7 @@ import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
+import com.jss.osiris.modules.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -1060,5 +1061,10 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() throws OsirisException {
         return this.getConstants().getActiveDirectoryGroupFacturation();
+    }
+
+    @Override
+    public ServiceFieldType getFurtherInformationServiceFieldType() throws OsirisException {
+        return this.getConstants().getFurtherInformationServiceFieldType();
     }
 }

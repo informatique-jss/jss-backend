@@ -16,6 +16,8 @@ import { Service } from '../../model/Service';
 import { ServiceType } from '../../model/ServiceType';
 import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
 import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
+import { ServiceFieldType } from '../../model/ServiceFieldType';
 
 @Component({
   selector: 'service',
@@ -50,6 +52,8 @@ export class ServiceComponent implements OnInit {
   otherServiceType: ServiceType = this.constantService.getServiceTypeOther();
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
   formatBytes = formatBytes;
+  furtherInformationServiceFieldType: ServiceFieldType = this.constantService.getFurtherInformationServiceFieldType();
+  newAssos: AssoServiceFieldType[] = [];
 
   ngOnInit() {
   }
@@ -175,4 +179,19 @@ export class ServiceComponent implements OnInit {
     return found;
   }
 
+  addFurtherInformationField() {
+    if (this.service) {
+      if (!this.service.assoServiceFieldTypes)
+        this.service.assoServiceFieldTypes = [];
+      for (let asso of this.service.assoServiceFieldTypes) {
+        if (asso.serviceFieldType.code == this.furtherInformationServiceFieldType.code) {
+          return;
+        }
+      }
+      let newFurtherInfoAssoServiceFieldType = {} as AssoServiceFieldType;
+      newFurtherInfoAssoServiceFieldType.isMandatory = false;
+      newFurtherInfoAssoServiceFieldType.serviceFieldType = this.furtherInformationServiceFieldType;
+      this.service.assoServiceFieldTypes.push(newFurtherInfoAssoServiceFieldType);
+    }
+  }
 }
