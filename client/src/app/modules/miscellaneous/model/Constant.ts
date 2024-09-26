@@ -39,6 +39,7 @@ import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
 import { ActiveDirectoryGroup } from './ActiveDirectoryGroup';
+import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
 
 export interface Constant {
   id: number;
@@ -235,4 +236,5 @@ export interface Constant {
   dateAccountingClosureForAccountant: Date;
   activeDirectoryGroupFormalites: ActiveDirectoryGroup;
   activeDirectoryGroupFacturation: ActiveDirectoryGroup;
+  furtherInformationServiceFieldType: ServiceFieldType;
 }
