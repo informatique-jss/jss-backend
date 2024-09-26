@@ -43,17 +43,16 @@ export class AddInvoiceComponent implements OnInit {
   invoiceItem: InvoiceItem = {} as InvoiceItem;
   isEditing: boolean = false;
   editMode = true;
-
   countryFrance: Country = this.contantService.getCountryFrance();
   billingLableTypeOther = this.contantService.getBillingLabelTypeOther();
-
   saveObservableSubscription: Subscription = new Subscription;
+  minDate: Date = new Date();
+  maxDate: Date = new Date();
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
     private invoiceService: InvoiceService,
     private activatedRoute: ActivatedRoute,
-    private tiersService: TiersService,
     private cityService: CityService,
     private responsableService: ResponsableService,
     private customerOrderService: CustomerOrderService,
@@ -88,6 +87,8 @@ export class AddInvoiceComponent implements OnInit {
     let idCompetentAuhority = this.activatedRoute.snapshot.params.idCompetentAuhority;
 
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+
+    this.setManualAccountingDocumentDateInterval();
 
     if (url != undefined && url != null && url[2] != undefined && url[1].path == "azure" && this.inIdProvision) {
       this.invoiceService.createInvoiceFromAzureInvoice(idInvoice, this.inIdProvision).subscribe(generatedInvoice => {
@@ -376,5 +377,12 @@ export class AddInvoiceComponent implements OnInit {
       }
     }
     return outProvisions;
+  }
+
+  setManualAccountingDocumentDateInterval() {
+    this.minDate.setFullYear(this.minDate.getFullYear() - 1);
+    this.minDate.setMonth(0);
+    this.minDate.setDate(1);
+    this.maxDate.setFullYear(this.maxDate.getFullYear() + 1);
   }
 }

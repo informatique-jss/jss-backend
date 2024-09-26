@@ -21,6 +21,8 @@ export class AddAccountingRecordComponent implements OnInit {
   accountingRecords: AccountingRecord[] = new Array<AccountingRecord>;
   accountingRecord: AccountingRecord = {} as AccountingRecord;
   isEditing: boolean = false;
+  minDate: Date = new Date();
+  maxDate: Date = new Date();
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
@@ -47,6 +49,8 @@ export class AddAccountingRecordComponent implements OnInit {
     this.addAccountingRecord();
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
     let temporaryOperationId = this.activatedRoute.snapshot.params.temporaryOperationId;
+
+    this.setOperationDateInterval();
 
     // Column init
     this.displayedColumns = [];
@@ -169,5 +173,12 @@ export class AddAccountingRecordComponent implements OnInit {
     } else {
       this.appService.displaySnackBar("Veuillez saisir au moins une opération valide", true, 15);
     }
+  }
+
+  setOperationDateInterval() {
+    this.minDate.setFullYear(this.minDate.getFullYear() - 1);
+    this.minDate.setMonth(0);
+    this.minDate.setDate(1);
+    this.maxDate.setFullYear(this.maxDate.getFullYear() + 1);
   }
 }
