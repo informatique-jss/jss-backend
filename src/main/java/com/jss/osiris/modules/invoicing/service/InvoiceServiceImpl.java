@@ -147,6 +147,17 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getId() != null)
             throw new OsirisClientMessageException("Impossible de modifier une facture");
 
+        // check if AccountingDocumentNumber already exists for a provider, only for new
+        // invoice
+        if (invoice.getId() == null && invoice.getManualAccountingDocumentNumber() != null
+                && invoice.getProvider() != null) {
+            List<Invoice> duplicateInvoices = invoiceRepository
+                    .findByProviderAndManualAccountingDocumentNumberIgnoreCase(invoice.getProvider(),
+                            invoice.getManualAccountingDocumentNumber());
+            if (duplicateInvoices != null && duplicateInvoices.size() > 0)
+                throw new OsirisValidationException("N° de pièce comptable existante");
+        }
+
         // Define booleans
         if (invoice.getIsCreditNote() == null)
             invoice.setIsCreditNote(false);
@@ -719,7 +730,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<Invoice> findByProviderAndManualDocumentNumber(Provider provider,
             String manualDocumentNumber) {
-        return invoiceRepository.findByProviderAndManualAccountingDocumentNumber(provider,
+        return invoiceRepository.findByProviderAndManualAccountingDocumentNumberIgnoreCase(provider,
                 manualDocumentNumber);
     }
 
