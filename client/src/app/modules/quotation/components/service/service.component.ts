@@ -52,8 +52,6 @@ export class ServiceComponent implements OnInit {
   otherServiceType: ServiceType = this.constantService.getServiceTypeOther();
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
   formatBytes = formatBytes;
-  furtherInformationServiceFieldType: ServiceFieldType = this.constantService.getFurtherInformationServiceFieldType();
-  newAssos: AssoServiceFieldType[] = [];
 
   ngOnInit() {
   }
@@ -184,13 +182,13 @@ export class ServiceComponent implements OnInit {
       if (!this.service.assoServiceFieldTypes)
         this.service.assoServiceFieldTypes = [];
       for (let asso of this.service.assoServiceFieldTypes) {
-        if (asso.serviceFieldType.code == this.furtherInformationServiceFieldType.code) {
+        if (asso.serviceFieldType.code == this.constantService.getFurtherInformationServiceFieldType().code) {
           return;
         }
       }
       let newFurtherInfoAssoServiceFieldType = {} as AssoServiceFieldType;
       newFurtherInfoAssoServiceFieldType.isMandatory = false;
-      newFurtherInfoAssoServiceFieldType.serviceFieldType = this.furtherInformationServiceFieldType;
+      newFurtherInfoAssoServiceFieldType.serviceFieldType = this.constantService.getFurtherInformationServiceFieldType();;
       this.service.assoServiceFieldTypes.push(newFurtherInfoAssoServiceFieldType);
     }
   }
