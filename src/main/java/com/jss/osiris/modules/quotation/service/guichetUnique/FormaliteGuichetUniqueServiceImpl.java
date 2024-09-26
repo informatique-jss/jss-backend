@@ -125,6 +125,15 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Override
     public FormaliteGuichetUnique addOrUpdateFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique) {
+        ArrayList<Cart> cartToRemove = new ArrayList<Cart>();
+        if (formaliteGuichetUnique.getCarts() != null)
+            for (Cart cart : formaliteGuichetUnique.getCarts())
+                if (!cart.getStatus().equals(cartStatusPayed) && !cart.getStatus().equals(cartStatusRefund))
+                    cartToRemove.add(cart);
+
+        if (cartToRemove.size() > 0)
+            formaliteGuichetUnique.getCarts().removeAll(cartToRemove);
+
         return formaliteGuichetUniqueRepository.save(formaliteGuichetUnique);
     }
 

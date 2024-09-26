@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
-import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, RemoveFormat, Underline, Undo } from 'ckeditor5';
+import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
@@ -180,7 +180,7 @@ export class AnnouncementComponent implements OnInit {
       'alignment:left', 'alignment:right', 'alignment:center', 'alignment:justify', '|', 'link', 'bulletedList', 'numberedList', 'outdent', 'indent', 'removeformat'
     ],
     plugins: [
-      Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Link, List, Indent, IndentBlock, RemoveFormat, Clipboard, GeneralHtmlSupport, Underline
+      Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Link, List, Indent, IndentBlock, RemoveFormat, Clipboard, GeneralHtmlSupport, Underline, PasteFromOffice
     ],
     htmlSupport: {
       allow: [
