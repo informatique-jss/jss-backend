@@ -11,6 +11,7 @@ import { DomiciliationContractType } from "../../quotation/model/DomiciliationCo
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
 import { ProvisionType } from '../../quotation/model/ProvisionType';
+import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
 import { ServiceType } from '../../quotation/model/ServiceType';
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
 import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials/TypeFormalite';
@@ -234,4 +235,5 @@ export interface Constant {
   dateAccountingClosureForAccountant: Date;
   activeDirectoryGroupFormalites: ActiveDirectoryGroup;
   activeDirectoryGroupFacturation: ActiveDirectoryGroup;
+  furtherInformationServiceFieldType: ServiceFieldType;
 }
