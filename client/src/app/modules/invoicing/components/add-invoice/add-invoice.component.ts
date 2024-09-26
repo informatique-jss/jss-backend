@@ -383,6 +383,6 @@ export class AddInvoiceComponent implements OnInit {
     this.minDate.setFullYear(this.minDate.getFullYear() - 1);
     this.minDate.setMonth(0);
     this.minDate.setDate(1);
-    this.maxDate.setFullYear(this.maxDate.getFullYear() + 1);
+    this.maxDate.setDate(this.maxDate.getDate() + 1);
   }
 }
