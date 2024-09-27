@@ -644,6 +644,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         if (cartRate.getAmount() > 0 && amount < 0)
             amount = -amount;
 
+        if (cartRate.getQuantity() > 1)
+            amount *= cartRate.getQuantity();
+
         invoiceItem.setPreTaxPrice(Float.parseFloat(amount + "") / 100f);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 
