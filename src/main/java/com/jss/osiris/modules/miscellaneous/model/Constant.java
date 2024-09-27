@@ -806,6 +806,8 @@ public class Constant implements Serializable, IId {
 	private LocalDate dateAccountingClosureForAccountant;
 	private LocalDate dateAccountingClosureForAll;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_further_information_service_field_type")
 	private ServiceFieldType furtherInformationServiceFieldType;
 
 	public Integer getId() {

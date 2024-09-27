@@ -54,9 +54,9 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 import { IQuotation } from './../../model/IQuotation';
-import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 
 @Component({
   selector: 'quotation',
@@ -728,7 +728,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                   let incomingProvision = serviceIncoming.provisions[i];
                   for (let j = 0; j < serviceTarget.provisions.length; j++) {
                     let targetProvision = serviceTarget.provisions[j];
-                    if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id && assoIncoming.affaire.id == assoTarget.affaire.id)
+                    if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id && assoIncoming.affaire.id == assoTarget.affaire.id && serviceIncoming.id == serviceIncoming.id)
                       targetProvision.invoiceItems = incomingProvision.invoiceItems;
                     else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id && assoIncoming.affaire.id == assoTarget.affaire.id)
                       targetProvision.invoiceItems = incomingProvision.invoiceItems;
