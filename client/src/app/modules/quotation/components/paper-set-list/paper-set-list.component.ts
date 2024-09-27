@@ -49,6 +49,9 @@ export class PaperSetListComponent implements OnInit {
     this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "servicesLabel", fieldName: "servicesLabel", label: "Service(s)" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "creationComment", fieldName: "creationComment", label: "Commentaire" } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé ?", valueFonction: (element: PaperSetResult | PaperSetResult) => { if (element.isCancelled) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSetResult | PaperSetResult>);
+    this.displayedColumns.push({ id: "isValidated", fieldName: "isValidated", label: "Validé ?", valueFonction: (element: PaperSetResult | PaperSetResult) => { if (element.isValidated) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSetResult | PaperSetResult>);
+
     this.displayedColumns.push({
       id: "isDone", fieldName: "isDone", label: "Statut action", valueFonction: (element: PaperSetResult, column: SortTableColumn<PaperSetResult>) => {
         if (element && column)
@@ -105,9 +108,7 @@ export class PaperSetListComponent implements OnInit {
                 }
               });
               dialogRef.afterClosed().subscribe(dialogResultComment => {
-                if (dialogResultComment) {
-                  this.paperSetService.validatePaperSet(element.id, dialogResultComment).subscribe(response => this.searchPaperSets());
-                }
+                this.paperSetService.validatePaperSet(element.id, dialogResultComment).subscribe(response => this.searchPaperSets());
               });
             }
           });
@@ -138,9 +139,7 @@ export class PaperSetListComponent implements OnInit {
                 }
               });
               dialogRef.afterClosed().subscribe(dialogResult => {
-                if (dialogResult) {
-                  this.paperSetService.cancelPaperSet(element.id, dialogResult).subscribe(response => this.searchPaperSets());
-                }
+                this.paperSetService.cancelPaperSet(element.id, dialogResult).subscribe(response => this.searchPaperSets());
               });
             }
           });
