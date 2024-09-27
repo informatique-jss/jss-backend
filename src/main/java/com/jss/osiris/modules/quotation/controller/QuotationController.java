@@ -446,7 +446,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/paper-set/cancel")
   public ResponseEntity<PaperSet> cancelPaperSet(
-      @RequestParam Integer paperSetId, @RequestBody String paperSetComment)
+      @RequestParam Integer paperSetId, @RequestBody(required = false) String paperSetComment)
       throws OsirisValidationException, OsirisException {
     PaperSet paperSet = paperSetService.getPaperSet(paperSetId);
 
@@ -460,7 +460,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/paper-set/validate")
   public ResponseEntity<PaperSet> validatePaperSet(
-      @RequestParam Integer paperSetId, @RequestBody String paperSetComment)
+      @RequestParam Integer paperSetId, @RequestBody(required = false) String paperSetComment)
       throws OsirisValidationException, OsirisException {
     PaperSet paperSet = paperSetService.getPaperSet(paperSetId);
 
