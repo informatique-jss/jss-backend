@@ -35,10 +35,10 @@ public class PostServiceImpl implements PostService {
     TagService tagService;
 
     @Value("${wordpress.category.interview.id}")
-    private Integer categoryInterviewId;
+    private Integer categoryInterviewId; // TODO à passser en constante
 
     @Value("${wordpress.category.podcast.id}")
-    private Integer categoryPodcastId;
+    private Integer categoryPodcastId; // TODO à passser en constante
 
     @Override
     @Cacheable(value = "wordpress-posts")
