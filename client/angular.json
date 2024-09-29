@@ -100,10 +100,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "osiris:build:production"
+              "buildTarget": "osiris:build:production"
             },
             "development": {
-              "browserTarget": "osiris:build:development"
+              "buildTarget": "osiris:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -111,7 +111,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "osiris:build"
+            "buildTarget": "osiris:build"
           }
         },
         "test": {
