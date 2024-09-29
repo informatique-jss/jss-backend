@@ -1,6 +1,6 @@
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { registerLocaleData } from '@angular/common';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import localeFr from '@angular/common/locales/fr';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -48,15 +48,14 @@ registerLocaleData(localeFr, 'fr');
     MyProfilComponent,
     PaymentDetailsDialogComponent
   ],
-  imports: [
-    // Core modules
+  exports: [],
+  bootstrap: [AppComponent], imports: [
     BrowserModule,
     RoutingModule,
     DragDropModule,
     MatTreeModule,
     MatDialogModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     FormsModule,
     NgProgressModule.withConfig({
       color: "#0082ad",
@@ -89,25 +88,19 @@ registerLocaleData(localeFr, 'fr');
     InvoicingModule,
     DashboardModule,
     ReportingModule,
-    MonitoringModule
-  ],
-  exports: [
-  ],
-  providers: [{
-    provide: HTTP_INTERCEPTORS,
-    useClass: HttpErrorInterceptor,
-    multi: true
-  },
-  { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
-  { provide: LOCALE_ID, useValue: 'fr' },
-  {
-    provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-    useValue: {
-      subscriptSizing: 'dynamic'
-    }
-  }
-  ],
-  bootstrap: [AppComponent]
+    MonitoringModule], providers: [{
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    },
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+    { provide: LOCALE_ID, useValue: 'fr' },
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: {
+        subscriptSizing: 'dynamic'
+      }
+    }, provideHttpClient(withInterceptorsFromDi())]
 })
 export class AppModule { }
 
