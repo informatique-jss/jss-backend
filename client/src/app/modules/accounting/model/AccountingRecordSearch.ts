@@ -10,11 +10,11 @@ export interface AccountingRecordSearch {
   endDate: Date | undefined;
   hideLettered: boolean;
   tiersId: number;
-  confrereId: number;
   idPayment: number;
   idCustomerOrder: number;
   idInvoice: number;
   idRefund: number;
   idBankTransfert: number;
   isFromAs400: boolean;
+  isManual: boolean;
 }

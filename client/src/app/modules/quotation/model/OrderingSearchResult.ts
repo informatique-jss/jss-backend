@@ -10,7 +10,6 @@ export interface OrderingSearchResult {
   customerOrderId: number;
   responsableId: number;
   tiersId: number;
-  confrereId: number;
   affaireLabel: string;
   totalPrice: number;
   depositTotalAmount: number;

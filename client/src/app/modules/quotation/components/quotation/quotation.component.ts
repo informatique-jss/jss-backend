@@ -13,22 +13,21 @@ import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
+import { Responsable } from 'src/app/modules/tiers/model/Responsable';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../../../../libs/Constants';
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
-import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -55,6 +54,7 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 import { IQuotation } from './../../model/IQuotation';
 
@@ -128,7 +128,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private invoiceSearchResultService: InvoiceSearchResultService,
     private habilitationsService: HabilitationsService,
     public associatePaymentDialog: MatDialog,
-    private userNoteService2: UserNoteService,
     private userPreferenceService: UserPreferenceService,
     private serviceService: ServiceService,
     private changeDetectorRef: ChangeDetectorRef) { }
@@ -279,12 +278,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                 userList.push(provision.assignedTo);
             }
           if (userList.length == 0) {
-            let tiers: ITiers | undefined = this.quotation.responsable ?? this.quotation.tiers ?? this.quotation.confrere;
-            if (tiers) {
-              if (tiers.formalisteEmployee)
-                userList.push(tiers.formalisteEmployee);
-              if (tiers.insertionEmployee)
-                userList.push(tiers.insertionEmployee);
+            let responsable: Responsable | undefined = this.quotation.responsable;
+            if (responsable) {
+              if (responsable.formalisteEmployee)
+                userList.push(responsable.formalisteEmployee);
+              else if (responsable.tiers.formalisteEmployee)
+                userList.push(responsable.tiers.formalisteEmployee);
+              if (responsable.insertionEmployee)
+                userList.push(responsable.insertionEmployee);
+              else if (responsable.tiers.insertionEmployee)
+                userList.push(responsable.tiers.insertionEmployee);
             }
           }
           let chooseUserDialogRef = this.chooseUserDialog.open(ChooseAssignedUserDialogComponent, {
@@ -412,7 +415,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (asso && !asso.services)
       asso.services = [] as Array<Service>;
 
-    let dialogRef = this.selectAttachmentTypeDialog.open(SelectServiceTypeDialogComponent, {
+    let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
       width: '50%',
     });
     dialogRef.componentInstance.affaire = asso.affaire;
@@ -503,7 +506,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
         // Check if another quotation / affaire already exists
         let orderingSearch = {} as OrderingSearch;
-        orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
+        orderingSearch.customerOrders = [this.quotation.responsable as any as Tiers];
         orderingSearch.affaire = asso.affaire;
         orderingSearch.customerOrderStatus = [];
         let d = new Date();
@@ -591,6 +594,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     service.provisions.splice(service.provisions.indexOf(provision), 1);
   }
 
+  duplicateProvision(service: Service, provision: Provision): Provision {
+    let newProvisionDuplicated = {} as Provision;
+    newProvisionDuplicated.provisionFamilyType = provision.provisionFamilyType;
+    newProvisionDuplicated.provisionType = provision.provisionType;
+    newProvisionDuplicated.assignedTo = provision.assignedTo;
+    service.provisions.push(newProvisionDuplicated);
+    return newProvisionDuplicated;
+  }
 
   changeStatus(targetStatus: QuotationStatus) {
     this.isStatusOpen = true;
@@ -717,7 +728,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                   let incomingProvision = serviceIncoming.provisions[i];
                   for (let j = 0; j < serviceTarget.provisions.length; j++) {
                     let targetProvision = serviceTarget.provisions[j];
-                    if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id && assoIncoming.affaire.id == assoTarget.affaire.id)
+                    if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id && assoIncoming.affaire.id == assoTarget.affaire.id && serviceIncoming.id == serviceIncoming.id)
                       targetProvision.invoiceItems = incomingProvision.invoiceItems;
                     else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id && assoIncoming.affaire.id == assoTarget.affaire.id)
                       targetProvision.invoiceItems = incomingProvision.invoiceItems;

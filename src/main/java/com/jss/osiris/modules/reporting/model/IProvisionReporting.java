@@ -17,6 +17,8 @@ public interface IProvisionReporting {
 
     String getProvisionFamilyTypeLabel();
 
+    String getProvisionTypeLabel();
+
     String getAggregateProvisionTypeLabel();
 
     Integer getProvisionNumber();

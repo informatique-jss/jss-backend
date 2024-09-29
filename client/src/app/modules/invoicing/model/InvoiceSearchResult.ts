@@ -8,8 +8,8 @@ export interface InvoiceSearchResult {
   customerOrderLabel: string;
   providerLabel: string;
   tiersLabel: string;
-  confrereId: number;
   responsableId: number;
+  salesEmployeeId: number;
   tiersId: number;
   responsableLabel: string;
   affaireLabel: string;

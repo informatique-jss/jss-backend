@@ -12,6 +12,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
   styleUrls: ['./../generic-referential/generic-referential.component.css']
 })
 export class ReferentialAttachmentTypeComponent extends GenericReferentialComponent<AttachmentType> implements OnInit {
+
   constructor(private attachmentTypeService: AttachmentTypeService,
     private formBuilder2: FormBuilder,
     private appService2: AppService,) {
@@ -34,5 +35,9 @@ export class ReferentialAttachmentTypeComponent extends GenericReferentialCompon
   }
   getGetObservable(): Observable<AttachmentType[]> {
     return this.attachmentTypeService.getAttachmentTypes();
+  }
+
+  updateAttachments($event: import("../../../../miscellaneous/model/AttachmentType").AttachmentType) {
+    throw new Error('Method not implemented.');
   }
 }

@@ -26,6 +26,14 @@ editor {
   right: 0px;
 }
 
+.read-icon {
+  padding: 0px;
+  position: absolute;
+  top: 0px;
+  right: 24px;
+  color: var(--accent-color);
+}
+
 .speech-wrapper {
   .bubble-for-myself {
     border-color: var(--warn-color) !important;
@@ -84,6 +92,10 @@ editor {
     .bubble-arrow-for-myself:after {
       border-top-color: var(--warn-color) !important;
     }
-
   }
+}
+
+
+:host ::ng-deep .ck-editor__editable_inline {
+  min-height: 100px;
 }

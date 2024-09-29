@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaperSetType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -35,6 +36,14 @@ public class PaperSet implements Serializable, IId {
 	private Integer locationNumber;
 
 	private Boolean isCancelled;
+
+	private Boolean isValidated;
+
+	@Column(columnDefinition = "TEXT")
+	private String creationComment;
+
+	@Column(columnDefinition = "TEXT")
+	private String validationComment;
 
 	public Integer getId() {
 		return id;
@@ -74,6 +83,30 @@ public class PaperSet implements Serializable, IId {
 
 	public void setIsCancelled(Boolean isCancelled) {
 		this.isCancelled = isCancelled;
+	}
+
+	public Boolean getIsValidated() {
+		return isValidated;
+	}
+
+	public void setIsValidated(Boolean isValidated) {
+		this.isValidated = isValidated;
+	}
+
+	public String getCreationComment() {
+		return creationComment;
+	}
+
+	public void setCreationComment(String creationComment) {
+		this.creationComment = creationComment;
+	}
+
+	public String getValidationComment() {
+		return validationComment;
+	}
+
+	public void setValidationComment(String validationComment) {
+		this.validationComment = validationComment;
 	}
 
 }

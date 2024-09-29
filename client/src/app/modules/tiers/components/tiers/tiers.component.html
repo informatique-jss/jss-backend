@@ -60,7 +60,8 @@
         <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
       </ng-template>
     </mat-tab>
-    <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable">
+    <mat-tab label="Comptes"
+      *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable && tiers.id">
       <ng-template matTabContent>
         <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
       </ng-template>
@@ -84,7 +85,7 @@
     </mat-tab>
   </mat-tab-group>
 </div>
-<div [hidden]="(tiers.id!=undefined && tiers.id!=null)">
+<div [hidden]="(tiers.id!=undefined && tiers.id!=null)" *ngIf="!editMode">
   <tiers-list></tiers-list>
 </div>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">

@@ -46,8 +46,6 @@ public interface AccountingRecordSearchResult {
 
   Integer getPaymentId();
 
-  Integer getContrePasseOperationId();
-
   String getAffaireLabel();
 
   String getResponsable();
@@ -55,4 +53,6 @@ public interface AccountingRecordSearchResult {
   Boolean getIsTemporary();
 
   Boolean getIsFromAs400();
+
+  Boolean getIsManual();
 }

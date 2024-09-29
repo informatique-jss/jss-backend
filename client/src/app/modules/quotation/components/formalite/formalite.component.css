@@ -1,0 +1,13 @@
+.mini-fab-add {
+  margin: 5px
+}
+
+.form-div {
+  padding-bottom: 65px;
+}
+
+.row-field-container {
+  flex-direction: row;
+  display: flex;
+}
+

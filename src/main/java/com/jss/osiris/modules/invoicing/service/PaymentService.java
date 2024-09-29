@@ -14,15 +14,14 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
-import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
-import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface PaymentService {
@@ -47,8 +46,7 @@ public interface PaymentService {
 
         public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment,
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,
-                        Affaire affaireRefund, Tiers tiersRefund,
-                        Confrere confrereRefund, ITiers tiersOrder, List<Float> byPassAmount)
+                        Affaire affaireRefund, Tiers tiersRefund, Responsable responsable, List<Float> byPassAmount)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
@@ -87,7 +85,8 @@ public interface PaymentService {
                         String label)
                         throws OsirisException;
 
-        public Payment generateNewDirectDebitPayment(Float paymentAmount, String label) throws OsirisException;
+        public Payment generateNewDirectDebitPayment(Float paymentAmount, String label,
+                        DirectDebitTransfert directDebitTransfert) throws OsirisException;
 
         public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
@@ -107,18 +106,15 @@ public interface PaymentService {
 
         public void cancelAppoint(Payment payment) throws OsirisException, OsirisValidationException;
 
-        public Payment generateNewRefundPayment(Refund refund, Float paymentAmount, ITiers tiersToRefund,
+        public Payment generateNewRefundPayment(Refund refund, Float paymentAmount, Tiers tiersToRefund,
                         Payment paymentToRefund)
                         throws OsirisException;
 
         public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, Float paymentAmount,
-                        IGenericTiers tiersToPay)
+                        Provider tiersToPay)
                         throws OsirisException;
 
         public Payment getOriginalPaymentOfPayment(Payment payment);
-
-        public void putPaymentInCompetentAuthorityAccount(Payment payment, CompetentAuthority competentAuthority)
-                        throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
         public void putPaymentInAccount(Payment payment, AccountingAccount accountingAccount)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;

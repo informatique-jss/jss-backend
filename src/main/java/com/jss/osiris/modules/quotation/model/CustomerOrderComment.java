@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -63,7 +67,11 @@ public class CustomerOrderComment implements Serializable, IId {
 	private List<ActiveDirectoryGroup> activeDirectoryGroups;
 
 	@Column(nullable = false)
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime createdDateTime;
+
+	private Boolean isRead;
 
 	public Integer getId() {
 		return id;
@@ -129,4 +137,11 @@ public class CustomerOrderComment implements Serializable, IId {
 		this.employee = employee;
 	}
 
+	public Boolean getIsRead() {
+		return isRead;
+	}
+
+	public void setIsRead(Boolean isRead) {
+		this.isRead = isRead;
+	}
 }

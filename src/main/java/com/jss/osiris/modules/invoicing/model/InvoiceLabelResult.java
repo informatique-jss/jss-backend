@@ -12,7 +12,6 @@ public class InvoiceLabelResult {
     private String billingLabelComplementCedex;
     private City billingLabelCity;
     private Country billingLabelCountry;
-    private Boolean billingLabelIsIndividual;
     private BillingLabelType billingLabelType;
     private Boolean isResponsableOnBilling;
     private String billingLabelIntercommunityVat;
@@ -58,14 +57,6 @@ public class InvoiceLabelResult {
 
     public void setBillingLabelCountry(Country billingLabelCountry) {
         this.billingLabelCountry = billingLabelCountry;
-    }
-
-    public Boolean getBillingLabelIsIndividual() {
-        return billingLabelIsIndividual;
-    }
-
-    public void setBillingLabelIsIndividual(Boolean billingLabelIsIndividual) {
-        this.billingLabelIsIndividual = billingLabelIsIndividual;
     }
 
     public BillingLabelType getBillingLabelType() {

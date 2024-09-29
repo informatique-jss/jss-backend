@@ -44,10 +44,8 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
-import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Service
@@ -130,22 +128,21 @@ public class RefundServiceImpl implements RefundService {
     }
 
     @Override
-    public Refund refundPayment(Tiers tiersRefund, Affaire affaireRefund, Confrere confrereRefund, ITiers tiersOrder,
-            Payment payment,
+    public Refund refundPayment(Tiers tiersRefund, Affaire affaireRefund, Tiers tiersOrder, Payment payment,
             Float amount, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (payment == null)
             throw new OsirisClientMessageException("Paiment annulé");
+
+        if (tiersOrder == null)
+            throw new OsirisClientMessageException("Tiers non trouvé");
 
         Refund refund = new Refund();
         Document refundDocument = null;
         refund.setCustomerOrder(customerOrder);
         refund.setRefundType(constantService.getRefundTypeVirement());
 
-        if (confrereRefund != null) {
-            refund.setConfrere(confrereRefund);
-            refundDocument = documentService.getRefundDocument(confrereRefund.getDocuments());
-        } else if (tiersRefund != null) {
+        if (tiersRefund != null) {
             refund.setTiers(tiersRefund);
             refundDocument = documentService.getRefundDocument(tiersRefund.getDocuments());
         }
@@ -153,18 +150,11 @@ public class RefundServiceImpl implements RefundService {
             refund.setAffaire(affaireRefund);
             refund.setRefundIBAN(affaireRefund.getPaymentIban());
             refund.setRefundBic(affaireRefund.getPaymentBic());
-            if (tiersOrder instanceof Tiers)
-                refund.setTiers((Tiers) tiersOrder);
+            refund.setTiers(tiersOrder);
         } else if (refundDocument != null) {
             refund.setRefundType(refundDocument.getRefundType());
-            if (refundDocument.getRegie() != null && refundDocument.getRegie().getIban() != null
-                    && !refundDocument.getRegie().getIban().equals("")) {
-                refund.setRefundIBAN(refundDocument.getRegie().getIban());
-                refund.setRefundBic(refundDocument.getRegie().getBic());
-            } else {
-                refund.setRefundIBAN(refundDocument.getRefundIBAN());
-                refund.setRefundBic(refundDocument.getRefundBic());
-            }
+            refund.setRefundIBAN(refundDocument.getRefundIBAN());
+            refund.setRefundBic(refundDocument.getRefundBic());
         }
 
         if (refund.getRefundIBAN() == null || refund.getRefundBic() == null)
@@ -187,8 +177,8 @@ public class RefundServiceImpl implements RefundService {
 
         if (refund.getCustomerOrder() != null && refund.getCustomerOrder().getAssoAffaireOrders() != null) {
             Affaire affaire = refund.getCustomerOrder().getAssoAffaireOrders().get(0).getAffaire();
-            refund.setLabel(refund.getLabel() + " / " + (affaire.getDenomination() != null ? affaire.getDenomination()
-                    : (affaire.getFirstname() + " " + affaire.getLastname())));
+            refund.setLabel((affaire.getDenomination() != null ? affaire.getDenomination()
+                    : (affaire.getFirstname() + " " + affaire.getLastname())) + " / " + refund.getLabel());
         }
 
         refund.setRefundAmount(amount);
@@ -198,7 +188,7 @@ public class RefundServiceImpl implements RefundService {
         this.addOrUpdateRefund(refund);
 
         refund.setPayments(new ArrayList<Payment>());
-        refund.getPayments().add(paymentService.generateNewRefundPayment(refund, -amount, tiersOrder, payment));
+        refund.getPayments().add(paymentService.generateNewRefundPayment(refund, -amount, refund.getTiers(), payment));
         if (customerOrder == null) // If it's a payment / appoint refund
             paymentService.cancelAppoint(payment);
 
@@ -280,7 +270,8 @@ public class RefundServiceImpl implements RefundService {
                                 refund.getRefundIban().replaceAll(" ", ""),
                                 completeRefund.getRefundBic().replaceAll(" ", ""),
                                 StringUtils.substring((refund.getId() + " - " + refund.getRefundLabel()), 0,
-                                        139)));
+                                        139),
+                                false));
 
                 if (!completeRefund.getIsAlreadyExported()) {
                     accountingRecordGenerationService.generateAccountingRecordsForRefundExport(completeRefund);

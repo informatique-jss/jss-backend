@@ -19,7 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
-import { EditorModule } from '@tinymce/tinymce-angular';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/invoicing.module';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
@@ -74,11 +74,11 @@ import { ReferentialPrincipalAccountingAccountComponent } from '../referentials/
 import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
 import { ReferentialQuotationAbandonReasonComponent } from '../referentials/referential-quotation-abandon-reason/referential-quotation-abandon-reason';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
-import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
 import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
 import { ReferentialServiceFamilyGroupComponent } from '../referentials/referential-service-family-group/referential-service-family-group.component';
 import { ReferentialServiceFamilyComponent } from '../referentials/referential-service-family/referential-service-family.component';
+import { ReferentialServiceFieldTypeComponent } from '../referentials/referential-service-field-type/referential-service-field-type.component';
 import { ReferentialServiceTypeComponent } from '../referentials/referential-service/referential-service-type.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
@@ -110,7 +110,6 @@ const routes: Routes = [
     CommonModule,
     MatTabsModule,
     FormsModule,
-    EditorModule,
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
@@ -132,6 +131,7 @@ const routes: Routes = [
     QuotationModule,
     AccountingModule,
     MatDividerModule,
+    CKEditorModule,
     InvoicingModule,
   ],
   declarations: [AdministrationComponent,
@@ -182,7 +182,6 @@ const routes: Routes = [
     ReferentialDepartmentComponent,
     ConstantComponent,
     ReferentialBillingTypeComponent,
-    ReferentialRegieComponent,
     ReferentialAccountingJournalComponent,
     ReferentialInvoiceStatusComponent,
     ReferentialPrincipalAccountingAccountComponent,
@@ -204,6 +203,7 @@ const routes: Routes = [
     ReferentialCustomerOrderFrequencyComponent,
     ReferentialActiveDirectoryGroupComponent,
     ReferentialPaperSetTypeComponent,
+    ReferentialServiceFieldTypeComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

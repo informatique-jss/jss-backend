@@ -24,7 +24,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
-import { EditorModule } from '@tinymce/tinymce-angular';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
@@ -42,16 +42,19 @@ import { CustomerOrderPaymentComponent } from '../customer-order-payment/custome
 import { DebourComponent } from '../debour/debour.component';
 import { DomiciliationFeesComponent } from '../domiciliation-fees/domiciliation-fees.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
+import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 import { FormaliteComponent } from '../formalite/formalite.component';
 import { ContentComponent } from '../guichet-unique/content/content.component';
 import { EntrepriseComponent } from '../guichet-unique/entreprise/entreprise.component';
 import { IdentiteComponent } from '../guichet-unique/identite/identite.component';
 import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
 import { PersonnePhysiqueComponent } from '../guichet-unique/personne-physique/personne-physique.component';
+import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { MissingAttachmentQueriesComponent } from '../missing-attachment-queries/missing-attachment-queries.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
+import { OrderingListTaggedComponent } from '../ordering-list-tagged/ordering-list-tagged.component';
 import { OrderingListComponent } from '../ordering-list/ordering-list.component';
 import { PaperSetListComponent } from '../paper-set-list/paper-set-list.component';
 import { PaperSetComponent } from '../paper-set/paper-set.component';
@@ -72,8 +75,8 @@ import { RefundPaymentDialogComponent } from '../refund-payment-dialog/refund-pa
 import { SelectAccountingAccountDialogComponent } from '../select-accounting-account-dialog/select-accounting-account-dialog.component';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
-import { SelectCompetentAuthorityDialogComponent } from '../select-competent-authority-dialog/select-competent-authority-dialog.component';
 import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
 import { SelectServiceDialogComponent } from '../select-service-dialog/select-service-dialog.component';
 import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
@@ -90,6 +93,7 @@ const routes: Routes = [
   { path: 'provision', component: ProvisionListComponent },
   { path: 'provisions/:employeeId', component: ProvisionListComponent },
   { path: 'provision/:id', component: ProvisionComponent },
+  { path: 'service/:idService', component: ProvisionComponent },
   { path: 'provision/:id/:idProvision', component: ProvisionComponent },
   { path: 'affaire', component: AffaireListComponent },
   { path: 'affaire/:id', component: AffaireComponent },
@@ -100,7 +104,6 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
-    EditorModule,
     FormsModule,
     ReactiveFormsModule,
     MatStepperModule,
@@ -125,6 +128,7 @@ const routes: Routes = [
     MatMenuModule,
     MatDatepickerModule,
     MatCardModule,
+    CKEditorModule,
   ],
   declarations: [QuotationComponent,
     QuotationAbandonReasonDialog,
@@ -165,7 +169,6 @@ const routes: Routes = [
     IdentiteComponent,
     EntrepriseComponent,
     GuichetUniqueStatusComponent,
-    SelectCompetentAuthorityDialogComponent,
     DebourComponent,
     ActeDepositComponent,
     ServiceComponent,
@@ -181,6 +184,10 @@ const routes: Routes = [
     PaperSetListComponent,
     PaperSetComponent,
     SelectPaperSetTypeDialogComponent,
+    OrderingListTaggedComponent,
+    FormaliteAssociateDialog,
+    InfogreffeStatusComponent,
+    SelectMultiServiceTypeDialogComponent
   ],
   exports: [
     OrderingListComponent,
@@ -191,6 +198,8 @@ const routes: Routes = [
     AnnouncementListComponent,
     DirectDebitTransfertListComponent,
     QuotationComponent,
+    OrderingListTaggedComponent,
+    InfogreffeStatusComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

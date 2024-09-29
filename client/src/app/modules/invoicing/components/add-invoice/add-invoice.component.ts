@@ -15,7 +15,6 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
 import { Provision } from 'src/app/modules/quotation/model/Provision';
@@ -39,22 +38,21 @@ import { InvoiceService } from '../../services/invoice.service';
 })
 export class AddInvoiceComponent implements OnInit {
 
-  invoice: Invoice = { isInvoiceFromProvider: true, manualPaymentType: this.contantService.getPaymentTypeVirement() } as Invoice;
+  invoice: Invoice = { manualPaymentType: this.contantService.getPaymentTypeVirement() } as Invoice;
   invoiceItems: InvoiceItem[] = new Array<InvoiceItem>;
   invoiceItem: InvoiceItem = {} as InvoiceItem;
   isEditing: boolean = false;
   editMode = true;
-
   countryFrance: Country = this.contantService.getCountryFrance();
   billingLableTypeOther = this.contantService.getBillingLabelTypeOther();
-
   saveObservableSubscription: Subscription = new Subscription;
+  minDate: Date = new Date();
+  maxDate: Date = new Date();
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
     private invoiceService: InvoiceService,
     private activatedRoute: ActivatedRoute,
-    private tiersService: TiersService,
     private cityService: CityService,
     private responsableService: ResponsableService,
     private customerOrderService: CustomerOrderService,
@@ -89,6 +87,8 @@ export class AddInvoiceComponent implements OnInit {
     let idCompetentAuhority = this.activatedRoute.snapshot.params.idCompetentAuhority;
 
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+
+    this.setManualAccountingDocumentDateInterval();
 
     if (url != undefined && url != null && url[2] != undefined && url[1].path == "azure" && this.inIdProvision) {
       this.invoiceService.createInvoiceFromAzureInvoice(idInvoice, this.inIdProvision).subscribe(generatedInvoice => {
@@ -131,26 +131,21 @@ export class AddInvoiceComponent implements OnInit {
         this.invoice.invoiceItems = [{} as InvoiceItem];
         this.invoiceItems = this.invoice.invoiceItems;
         this.selectInvoiceItem(this.invoiceItems[0]);
-        this.invoice.isInvoiceFromProvider = false;
-        this.invoice.isProviderCreditNote = true;
+        this.invoice.isCreditNote = true;
         this.invoice.manualPaymentType = this.contantService.getPaymentTypeVirement();
-        if (response.competentAuthority)
-          this.invoice.competentAuthority = response.competentAuthority;
-        if (response.provider)
-          this.invoice.provider = response.provider;
-        if (response && response.competentAuthority)
-          this.invoice.competentAuthority = response.competentAuthority;
         if (response && response.provider)
           this.invoice.provider = response.provider;
-        if (response && response.confrere)
-          this.invoice.confrere = response.confrere;
         this.appService.changeHeaderTitle("Saisir un avoir sur la facture n°" + this.idInvoiceForCreditNote);
       });
     } else {
       this.addInvoiceItem();
-      this.invoice.isInvoiceFromProvider = true;
       if (idCompetentAuhority)
-        this.competentAuthorityService.getCompetentAuthorityById(idCompetentAuhority).subscribe(competentAuthority => this.invoice.competentAuthority = competentAuthority);
+        this.competentAuthorityService.getCompetentAuthorityById(idCompetentAuhority).subscribe(competentAuthority => {
+          if (competentAuthority.provider) {
+            //  this.invoice.competentAuthority = competentAuthority; // TODO refonte
+            this.invoice.provider = competentAuthority.provider;
+          }
+        });
 
       if (idCustomerOrder) {
         this.indexEntityService.getCustomerOrdersByKeyword(idCustomerOrder).subscribe(indexEntity => {
@@ -199,11 +194,6 @@ export class AddInvoiceComponent implements OnInit {
     return "0 €";
   }
 
-  emptyProvider() {
-    if (this.invoice && this.invoice.isInvoiceFromProvider == false)
-      this.invoice.provider = undefined;
-  }
-
   getTotalPriceValue(element: any): number {
     let total = 0;
     if (element && element.preTaxPrice) {
@@ -245,7 +235,7 @@ export class AddInvoiceComponent implements OnInit {
   }
 
   saveInvoice() {
-    if (this.invoiceForm.valid && (this.invoiceItems && this.invoiceItems.length > 0 || this.invoice.competentAuthority != null && this.invoice.customerOrderForInboundInvoice != null) || this.invoice.id) {
+    if (this.invoiceForm.valid && (this.invoiceItems && this.invoiceItems.length > 0) || this.invoice.id) {
       if (this.invoice.manualAccountingDocumentDate && !this.habilitationsService.canAddNewInvoiceForPreviousExercize()) {
         let limitDateInvocing = new Date();
         limitDateInvocing.setMonth(0);
@@ -281,53 +271,24 @@ export class AddInvoiceComponent implements OnInit {
     }
   }
 
-
-  fillTiers(tiers: IndexEntity) {
-    this.tiersService.getTiers(tiers.entityId).subscribe(response => {
-      this.invoice.tiers = response;
-      this.invoice.responsable = undefined;
-      this.invoice.confrere = undefined;
-      this.invoice.provider = undefined;
-      this.invoice.competentAuthority = undefined;
-    })
-  }
-
-  fillConfrere(confrere: Confrere) {
-    this.invoice.confrere = confrere;
-    this.invoice.tiers = undefined;
-    this.invoice.responsable = undefined;
-    this.invoice.competentAuthority = undefined;
-    if (this.invoice.isInvoiceFromProvider && confrere.paymentType)
-      this.invoice.manualPaymentType = confrere.paymentType;
-  }
-
   fillProvider(provider: Provider) {
     this.invoice.provider = provider;
-    this.invoice.confrere = undefined;
-    this.invoice.tiers = undefined;
     this.invoice.responsable = undefined;
-    this.invoice.competentAuthority = undefined;
-    if (this.invoice.isInvoiceFromProvider && provider.paymentType)
+    //  this.invoice.competentAuthority = undefined; // TODO refonte
+    if (this.invoice.provider && provider.paymentType)
       this.invoice.manualPaymentType = provider.paymentType;
   }
 
   fillCompetentAuthority(competentAuthority: CompetentAuthority) {
-    this.invoice.competentAuthority = competentAuthority;
-    this.invoice.provider = undefined;
-    this.invoice.confrere = undefined;
-    this.invoice.tiers = undefined;
-    this.invoice.responsable = undefined;
-    if (this.invoice.isInvoiceFromProvider && competentAuthority.defaultPaymentType)
-      this.invoice.manualPaymentType = competentAuthority.defaultPaymentType;
+    //  this.invoice.competentAuthority = competentAuthority;// TODO refonte
+    this.fillProvider(competentAuthority.provider);
   }
 
   fillResponsable(responsable: IndexEntity) {
     this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
       this.invoice.responsable = response;
-      this.invoice.competentAuthority = undefined;
+      //this.invoice.competentAuthority = undefined;// TODO refonte
       this.invoice.provider = undefined;
-      this.invoice.confrere = undefined;
-      this.invoice.tiers = undefined;
     })
   }
 
@@ -402,7 +363,7 @@ export class AddInvoiceComponent implements OnInit {
   }
 
   fillPreTaxPricedReinvoiced(invoiceItem: InvoiceItem, invoice: Invoice) {
-    if (invoice.isInvoiceFromProvider)
+    if (invoice.provider)
       invoiceItem.preTaxPriceReinvoiced = invoiceItem.preTaxPrice;
   }
 
@@ -416,5 +377,12 @@ export class AddInvoiceComponent implements OnInit {
       }
     }
     return outProvisions;
+  }
+
+  setManualAccountingDocumentDateInterval() {
+    this.minDate.setFullYear(this.minDate.getFullYear() - 1);
+    this.minDate.setMonth(0);
+    this.minDate.setDate(1);
+    this.maxDate.setDate(this.maxDate.getDate() + 1);
   }
 }

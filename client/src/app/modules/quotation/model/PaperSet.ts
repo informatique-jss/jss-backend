@@ -7,4 +7,7 @@ export interface PaperSet {
   customerOrder: CustomerOrder;
   locationNumber: number;
   isCancelled: boolean;
+  isValidated: boolean;
+  creationComment: string;
+  validationComment: string;
 }

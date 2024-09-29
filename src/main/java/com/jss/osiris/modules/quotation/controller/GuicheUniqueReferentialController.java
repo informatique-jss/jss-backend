@@ -229,6 +229,7 @@ public class GuicheUniqueReferentialController {
             @RequestBody TypeDocument attachmentTypes) throws OsirisValidationException, OsirisException {
         validationHelper.validateString(attachmentTypes.getCode(), true, 20, "code");
         validationHelper.validateString(attachmentTypes.getLabel(), true, 100, "label");
+        validationHelper.validateString(attachmentTypes.getCustomLabel(), true, 100, "label");
         validationHelper.validateReferential(attachmentTypes.getAttachmentType(),
                 attachmentTypes.getIsToDownloadOnProvision(), "attachmentType");
 

@@ -35,6 +35,7 @@ import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-aut
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
+import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 
 @Component({
@@ -51,15 +52,16 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   editMode: boolean = false;
   isStatusOpen: boolean = false;
   inputProvisionId: number = 0;
+  inputServiceId: number = 0;
 
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
-
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
+  registrationAct = this.constantService.getProvisionTypeRegistrationAct();
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -103,8 +105,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.idAffaire = this.activatedRoute.snapshot.params.id != "null" ? this.activatedRoute.snapshot.params.id : null;
 
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
+    this.inputServiceId = this.activatedRoute.snapshot.params.idService;
 
-    if (!this.inputProvisionId)
+    if (!this.inputProvisionId && !this.inputServiceId)
       this.inputProvisionId = this.userPreferenceService.getUserExpensionPanelSelectionId("provision");
 
     this.refreshAffaire();
@@ -125,6 +128,23 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     });
   }
 
+  generateRegistrationAct() {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Générer l'enregistrement d'acte ?",
+        closeActionText: "Annuler",
+        validationActionText: "Valider"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult == true) {
+        this.provisionService.getRegistrationActPdf(this.inputProvisionId);;
+      }
+    });
+  }
+
   ngOnDestroy() {
     this.saveObservableSubscription.unsubscribe();
   }
@@ -141,8 +161,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     let promise: Observable<AssoAffaireOrder> | undefined;
     if (this.idAffaire)
       promise = this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire);
-    else if (this.inputProvisionId)
+    else if (this.inputProvisionId && this.inputProvisionId > 0)
       promise = this.assoAffaireOrderService.getAssoAffaireOrderFromProvision(this.inputProvisionId);
+    else if (this.inputServiceId && this.inputServiceId > 0)
+      promise = this.assoAffaireOrderService.getAssoAffaireOrderFromService(this.inputServiceId);
+
     if (promise)
       promise.subscribe(response => {
         this.asso = response;
@@ -224,7 +247,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (asso && !asso.services)
       asso.services = [] as Array<Service>;
 
-    let dialogRef = this.selectAttachmentTypeDialog.open(SelectServiceTypeDialogComponent, {
+    let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
       width: '50%',
     });
     dialogRef.componentInstance.affaire = asso.affaire;
@@ -269,6 +292,16 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     let provision = {} as Provision;
     service.provisions.push(provision);
     return provision;
+  }
+
+
+  duplicateProvision(service: Service, provision: Provision): Provision {
+    let newProvisionDuplicated = {} as Provision;
+    newProvisionDuplicated.provisionFamilyType = provision.provisionFamilyType;
+    newProvisionDuplicated.provisionType = provision.provisionType;
+    newProvisionDuplicated.assignedTo = provision.assignedTo;
+    service.provisions.push(newProvisionDuplicated);
+    return newProvisionDuplicated;
   }
 
   editAsso() {
@@ -494,7 +527,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     }
     if (provision.formalite) {
       if (status.code == FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY &&
-        (!provision.formalite.competentAuthorityServiceProvider || provision.formalite.competentAuthorityServiceProvider.id != this.constantService.getCompetentAuthorityInpi().id)) {
+        (!provision.formalite.formalitesGuichetUnique && !provision.formalite.formalitesInfogreffe)) {
         saveAsso = false;
         const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseCompetentAuthorityDialogComponent, {
           maxWidth: "400px",
@@ -539,7 +572,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (saveAsso)
       this.saveAsso();
   }
-
 
   setCurrentProvisionWorkflow(provision: Provision) {
     this.currentProvisionWorkflow = provision;
@@ -646,10 +678,12 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     })
   }
 
-  computeProvisionLabel(provision: Provision): string {
-    let label = provision.provisionType.label;
+  public computeProvisionLabel(service: Service, provision: Provision, doNotDisplayService: boolean): string {
+    let label = provision.provisionType ? (provision.provisionFamilyType.label + ' - ' + provision.provisionType.label) : '';
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
+    if (!doNotDisplayService)
+      label = this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther()) + " - " + label;
     return label;
   }
 

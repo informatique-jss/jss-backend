@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { AppService } from 'src/app/services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { PaperSet } from '../../model/PaperSet';
 import { PaperSetService } from '../../services/paper.set.service';
@@ -21,19 +22,24 @@ export class PaperSetComponent implements OnInit {
 
   constructor(
     public selectPaperSetTypeDialogComponent: MatDialog,
-    private paperSetService: PaperSetService
+    private paperSetService: PaperSetService,
+    private appService: AppService,
   ) { }
 
   ngOnInit() {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "paperSetType", fieldName: "paperSetType.label", label: "Action à réaliser" } as SortTableColumn<PaperSet>);
     this.displayedColumns.push({ id: "locationNumber", fieldName: "locationNumber", label: "Emplacement" } as SortTableColumn<PaperSet>);
+    this.displayedColumns.push({ id: "creationComment", fieldName: "creationComment", label: "Commentaire" } as SortTableColumn<PaperSet>);
+    this.displayedColumns.push({ id: "validationComment", fieldName: "validationComment", label: "Commentaire de validation/annulation" } as SortTableColumn<PaperSet>);
+    this.displayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé ?", valueFonction: (element: PaperSet | PaperSet) => { if (element.isCancelled) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSet | PaperSet>);
+    this.displayedColumns.push({ id: "isValidated", fieldName: "isValidated", label: "Validé ?", valueFonction: (element: PaperSet | PaperSet) => { if (element.isValidated) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSet | PaperSet>);
     this.refreshPaperSets();
   }
 
   refreshPaperSets() {
     if (this.customerOrder && this.customerOrder.paperSets && this.customerOrder.paperSets.length > 0) {
-      this.displayedPaperSets = this.customerOrder.paperSets.filter(paperSet => !paperSet.isCancelled);
+      this.displayedPaperSets = this.customerOrder.paperSets;
       this.refreshPaperSetTable.next();
     }
   }
@@ -46,17 +52,19 @@ export class PaperSetComponent implements OnInit {
       if (this.customerOrder.paperSets)
         dialogRef.componentInstance.excludedPaperSetTypes = this.customerOrder.paperSets.filter(paperSet => !paperSet.isCancelled).map(paperSet => paperSet.paperSetType);
 
-      dialogRef.afterClosed().subscribe(response => {
-        if (response != null && this.customerOrder) {
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult != null && this.customerOrder) {
           let paperSet = {} as PaperSet;
           paperSet.customerOrder = this.customerOrder;
-          paperSet.paperSetType = response;
+          paperSet.paperSetType = dialogResult.paperSetType;
+          paperSet.creationComment = dialogResult.creationComment;
           this.paperSetService.addOrUpdatePaperSet(paperSet).subscribe(newPaperSet => {
-            this.customerOrder!.paperSets.push(newPaperSet);
             this.refreshPaperSets();
+            if (this.customerOrder)
+              this.appService.openRoute(null, '/order/' + this.customerOrder.id, null);
           })
         }
-      })
+      });
     }
   }
 

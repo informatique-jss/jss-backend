@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -14,7 +16,6 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Tiers;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -49,25 +50,26 @@ public class Quotation implements IQuotation {
 	@IndexedField
 	private Employee assignedTo;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_tiers")
-	@IndexedField
-	private Tiers tiers;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "id_tiers")
+	// @IndexedField
+	// private Tiers tiers;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_confrere")
-	private Confrere confrere;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "id_confrere")
+	// private Confrere confrere;
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
 	private LocalDateTime createdDate;
 
@@ -75,6 +77,8 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_quotation_status")
 	private QuotationStatus quotationStatus;
 
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime lastStatusUpdate;
 
 	@Column(columnDefinition = "TEXT") // TODO : delete when new website
@@ -111,8 +115,16 @@ public class Quotation implements IQuotation {
 	@JsonIgnore // For client-side performance purpose
 	private List<CustomerOrder> customerOrders;
 
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime firstReminderDateTime;
+
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime secondReminderDateTime;
+
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime thirdReminderDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -129,14 +141,6 @@ public class Quotation implements IQuotation {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Tiers getTiers() {
-		return tiers;
-	}
-
-	public void setTiers(Tiers tiers) {
-		this.tiers = tiers;
 	}
 
 	public Responsable getResponsable() {
@@ -193,14 +197,6 @@ public class Quotation implements IQuotation {
 
 	public void setIsQuotation(Boolean isQuotation) {
 		this.isQuotation = isQuotation;
-	}
-
-	public Confrere getConfrere() {
-		return confrere;
-	}
-
-	public void setConfrere(Confrere confrere) {
-		this.confrere = confrere;
 	}
 
 	public List<CustomerOrder> getCustomerOrders() {

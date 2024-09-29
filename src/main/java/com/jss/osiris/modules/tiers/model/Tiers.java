@@ -16,7 +16,7 @@ import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
+import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
@@ -44,7 +44,7 @@ import jakarta.persistence.Table;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(indexes = { @Index(name = "idx_tiers_commercial", columnList = "id_commercial"),
 })
-public class Tiers implements ITiers, IAttachment, IGenericTiers {
+public class Tiers implements IAttachment, IId {
 
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
@@ -57,7 +57,7 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	@IndexedField
 	private TiersType tiersType;
 
-	@Column(length = 60)
+	@Column(length = 80)
 	@IndexedField
 	private String denomination;
 
@@ -213,16 +213,20 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 	private List<Competitor> competitors;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_accounting_account_provider")
-	private AccountingAccount accountingAccountProvider;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_account_litigious")
+	private AccountingAccount accountingAccountLitigious;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_account_suspicious")
+	private AccountingAccount accountingAccountSuspicious;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_rff_frequency")
@@ -508,14 +512,6 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 		this.tiersFollowups = tiersFollowups;
 	}
 
-	public AccountingAccount getAccountingAccountProvider() {
-		return accountingAccountProvider;
-	}
-
-	public void setAccountingAccountProvider(AccountingAccount accountingAccountProvider) {
-		this.accountingAccountProvider = accountingAccountProvider;
-	}
-
 	public AccountingAccount getAccountingAccountCustomer() {
 		return accountingAccountCustomer;
 	}
@@ -600,7 +596,6 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
 	}
 
-	@Override
 	public String getLabel() {
 		if (getDenomination() != null)
 			return getDenomination();
@@ -637,6 +632,22 @@ public class Tiers implements ITiers, IAttachment, IGenericTiers {
 
 	public void setRffMail(String rffMail) {
 		this.rffMail = rffMail;
+	}
+
+	public AccountingAccount getAccountingAccountLitigious() {
+		return accountingAccountLitigious;
+	}
+
+	public void setAccountingAccountLitigious(AccountingAccount accountingAccountLitigious) {
+		this.accountingAccountLitigious = accountingAccountLitigious;
+	}
+
+	public AccountingAccount getAccountingAccountSuspicious() {
+		return accountingAccountSuspicious;
+	}
+
+	public void setAccountingAccountSuspicious(AccountingAccount accountingAccountSuspicious) {
+		this.accountingAccountSuspicious = accountingAccountSuspicious;
 	}
 
 }

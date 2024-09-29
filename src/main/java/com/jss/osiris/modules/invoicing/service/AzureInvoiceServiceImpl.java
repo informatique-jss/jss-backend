@@ -114,22 +114,25 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         azureInvoice = getAzureInvoice(azureInvoice.getId());
         currentProvision = provisionService.getProvision(currentProvision.getId());
 
-        if (azureInvoice.getCompetentAuthority() != null
-                && azureInvoice.getCompetentAuthority().getDefaultPaymentType() == null)
-            throw new OsirisClientMessageException(
-                    "Type de paiement par défaut non renseigné sur l'autorité compétente");
+        if (azureInvoice.getCompetentAuthority() != null) {
+            if (azureInvoice.getCompetentAuthority().getProvider() == null)
+                throw new OsirisClientMessageException("Fournisseur non renseigné sur l'autorité compétente");
+            if (azureInvoice.getCompetentAuthority().getProvider().getPaymentType() == null)
+                throw new OsirisClientMessageException("Type de paiement non renseigné sur l'autorité compétente");
+        }
 
         Invoice invoice = new Invoice();
-        invoice.setCompetentAuthority(azureInvoice.getCompetentAuthority());
+        // invoice.setCompetentAuthority(azureInvoice.getCompetentAuthority());
+        // TODO refonte
+        invoice.setProvider(azureInvoice.getCompetentAuthority().getProvider());
         invoice.setCustomerOrderForInboundInvoice(
                 currentProvision.getService().getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(azureInvoice.getInvoiceId());
-        invoice.setIsInvoiceFromProvider(true);
-        invoice.setIsProviderCreditNote(false);
+        invoice.setIsCreditNote(false);
         invoice.setAzureInvoice(azureInvoice);
         invoice.setManualAccountingDocumentDate(azureInvoice.getInvoiceDate());
-        if (azureInvoice.getCompetentAuthority() != null)
-            invoice.setManualPaymentType(azureInvoice.getCompetentAuthority().getDefaultPaymentType());
+        if (azureInvoice.getCompetentAuthority() != null && azureInvoice.getCompetentAuthority().getProvider() != null)
+            invoice.setManualPaymentType(azureInvoice.getCompetentAuthority().getProvider().getPaymentType());
 
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
 
@@ -141,9 +144,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
 
-        invoiceItem.setLabel(invoiceItem.getBillingItem().getBillingType().getLabel()
-                + (invoice.getCompetentAuthority() != null ? (" - " + invoice.getCompetentAuthority().getLabel())
-                        : ""));
+        invoiceItem.setLabel(
+                invoiceItem.getBillingItem().getBillingType().getLabel() + (invoice.getProvider().getLabel()));
         invoiceItem.setPreTaxPrice(Math.round(azureInvoice.getInvoicePreTaxTotal() * 100f) / 100f);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         if (azureInvoice.getCompetentAuthority() != null)
@@ -161,8 +163,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoiceItem2.setVat(constantService.getVatZero());
 
         invoiceItem2.setLabel(invoiceItem2.getBillingItem().getBillingType().getLabel()
-                + (invoice.getCompetentAuthority() != null ? (" - " + invoice.getCompetentAuthority().getLabel())
-                        : ""));
+                + (invoice.getProvider().getLabel()));
         invoiceItem2.setPreTaxPrice(Math.round(azureInvoice.getInvoiceNonTaxableTotal() * 100f) / 100f);
         invoiceItem2.setPreTaxPriceReinvoiced(invoiceItem2.getPreTaxPrice());
         if (azureInvoice.getCompetentAuthority() != null)

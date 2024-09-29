@@ -2,7 +2,7 @@ import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
+import { AppService } from 'src/app/services/app.service';
 import { ConstantService } from '../../../services/constant.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
 
@@ -16,9 +16,8 @@ export class AutocompleteServiceTypeComponent extends GenericLocalAutocompleteCo
   types: ServiceType[] = [] as Array<ServiceType>;
 
   constructor(private formBuild: UntypedFormBuilder, private serviceTypeService: ServiceTypeService,
-    private constantService: ConstantService,
-    private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+    private constantService: ConstantService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -39,12 +38,11 @@ export class AutocompleteServiceTypeComponent extends GenericLocalAutocompleteCo
 
   displayLabel(object: ServiceType): string {
     let label = "";
-    if (object)
+    if (object) {
       if (object.serviceFamily && object.serviceFamily.serviceFamilyGroup)
         label += object.serviceFamily.serviceFamilyGroup.label + " - ";
-    if (object.serviceFamily)
-      label += object.serviceFamily.label + " - ";
-    label += object.label;
+      label += object.label;
+    }
     return label;
   }
 }

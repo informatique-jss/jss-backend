@@ -38,4 +38,6 @@ public interface ITiersReporting {
     String getLastTiersFollowupDate();
 
     String getLastResponsableFollowupDate();
+
+    Integer getNbrCustomerOrder();
 }

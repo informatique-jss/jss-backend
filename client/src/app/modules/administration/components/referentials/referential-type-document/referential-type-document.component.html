@@ -36,17 +36,31 @@
           </tr>
           <tr>
             <td>
+              <generic-input [(model)]="selectedEntity.customLabel" label="Nom affiché" [maxLength]="200"
+                [form]="entityForm" propertyName="customLabel" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-toggle [(model)]="selectedEntity.isToDownloadOnProvision"
                 label="Télécharger automatiquement la pièce-jointe sur la prestation ?" [form]="entityForm"
                 propertyName="isToDownloadOnProvision"></generic-toggle>
             </td>
           </tr>
           <tr>
-            <td *ngIf="selectedEntity.isToDownloadOnProvision">
+            <td>
               <select-attachment-type [(model)]="selectedEntity.attachmentType"
                 label="Type de pièce jointe correspondante" [form]="entityForm" propertyName="attachmentType"
                 [isMandatory]="selectedEntity.isToDownloadOnProvision"
                 [isDisabled]="!editMode"></select-attachment-type>
+            </td>
+          </tr>
+          <tr *ngIf="selectedEntity.code">
+            <td>
+              <single-attachment [entity]="selectedEntity" [entityType]="TYPE_DOCUMENT_ATTACHMENT_TYPE.entityType"
+                [editMode]="true" [attachmentTypeToDisplay]="attachmentTypeTemplate"
+                (onUploadedFile)="updateAttachments($event)"></single-attachment>
             </td>
           </tr>
         </table>

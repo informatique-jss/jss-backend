@@ -84,6 +84,9 @@ public class Provision implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "provision", "originProviderInvoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 
+	@Transient
+	private List<InvoiceItem> invoiceItemsGrouped;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
 	@IndexedField
@@ -184,6 +187,9 @@ public class Provision implements IId, IAttachment {
 
 	@Column(nullable = false)
 	private Boolean isCorrespondenceFees;
+
+	@Column(nullable = false)
+	private Boolean isSupplyFullBeCopy;
 
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
@@ -610,4 +616,19 @@ public class Provision implements IId, IAttachment {
 		this.customerOrderComments = customerOrderComments;
 	}
 
+	public Boolean getIsSupplyFullBeCopy() {
+		return isSupplyFullBeCopy;
+	}
+
+	public void setIsSupplyFullBeCopy(Boolean isSupplyFullBeCopy) {
+		this.isSupplyFullBeCopy = isSupplyFullBeCopy;
+	}
+
+	public List<InvoiceItem> getInvoiceItemsGrouped() {
+		return invoiceItemsGrouped;
+	}
+
+	public void setInvoiceItemsGrouped(List<InvoiceItem> invoiceItemsGrouped) {
+		this.invoiceItemsGrouped = invoiceItemsGrouped;
+	}
 }

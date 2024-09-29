@@ -161,8 +161,9 @@
                                                                 style="padding-left:10px;padding-right:10px;width:100%;">
                                                                 <p>Cher Confrère,</p>
                                                                 <p>Nous vous prions de trouver en pièce jointe le texte
-                                                                    d'insertion légale à faire paraître dans votre
-                                                                    prochaine édition en composition économique :</p>
+                                                                    d'insertion légale à faire paraître le <span
+                                                                        th:text="${announcementPublicationDate}"></span>
+                                                                    en composition économique :</p>
                                                                 <ul>
                                                                     <li>
                                                                         Société : <span
@@ -195,10 +196,11 @@
                                                                                     th:text="${provision.assignedTo.mail}"></span></span></a>
                                                                     </li>
                                                                     <li>Un justificatif électronique</li>
-                                                                    <li th:if="${publicationPaperNumber>0}"></li>
-                                                                    <span th:text="${publicationPaperNumber}"></span>
-                                                                    exemplaire(s) justificatifs papiers avec le nom
-                                                                    de l'affaire et la page de parution
+                                                                    <li th:if="${publicationPaperNumber>0}">
+                                                                        <span
+                                                                            th:text="${publicationPaperNumber}"></span>
+                                                                        exemplaire(s) justificatifs papiers avec le nom
+                                                                        de l'affaire et la page de parution
                                                                     </li>
                                                                     <li th:if="${provision.isPublicationReceipt} ">La
                                                                         version PDF du journal ou la version PDF de la

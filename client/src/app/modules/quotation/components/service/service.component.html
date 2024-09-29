@@ -20,7 +20,7 @@
       <ng-container *ngFor="let document of service.assoServiceDocuments;let index= index">
         <mat-card class="document-card" *ngIf="!searchText || searchText.length==0 || documentContainsSearch(document)">
           <mat-card-header>
-            <mat-card-title>{{document.typeDocument.label}}</mat-card-title>
+            <mat-card-title>{{document.typeDocument.customLabel}}</mat-card-title>
             <mat-card-subtitle
               matTooltip="Commentaire du formaliste">{{document.formalisteComment?document.formalisteComment :
               "&nbsp;"}}</mat-card-subtitle>
@@ -61,11 +61,57 @@
       </ng-container>
     </div>
   </ng-container>
-
-  <div style="width: 100%;text-align: right;" *ngIf="editMode">
-    <button matTooltip="Changer de statut" mat-fab color="accent" matTooltip="Ajouter un nouveau type de document"
-      (click)="addNewDocumentType(service)">
+  <div *ngIf="service.assoServiceFieldTypes ">
+    <table class="full-width">
+      <ng-container *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
+        <tr>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
+            <generic-input [(model)]="assoServiceFieldType.stringValue"
+              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+              [propertyName]='"stringFieldType"+i' [isDisabled]="!editMode"
+              [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255"></generic-input>
+          </td>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
+            <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+              [propertyName]='"textAreaFieldType"+i' [isDisabled]="!editMode"
+              [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
+          </td>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
+            <generic-datepicker [(model)]="assoServiceFieldType.dateValue"
+              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+              [propertyName]='"dateFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+              [isDisabled]="!editMode"></generic-datepicker>
+          </td>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
+            <generic-input [(model)]="assoServiceFieldType.integerValue"
+              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+              [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+              [isDisabled]=" !editMode" type="number"></generic-input>
+          </td>
+          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
+            <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+              [propertyName]='"selectFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+              [isMandatory]="assoServiceFieldType.isMandatory"
+              [isDisabled]="!editMode"></select-value-service-field-type>
+          </td>
+        </tr>
+      </ng-container>
+    </table>
+  </div>
+  <div style="width: 100%;text-align: right;margin-top:10px;">
+    <button matTooltip="Télécharger tous les documents" mat-fab color="accent" (click)="downloadAllFiles()"
+      *ngIf="!editMode">
+      <mat-icon>download</mat-icon>
+    </button>
+    <button mat-fab color="accent" style="margin-right:15px;" matTooltip="Ajouter un nouveau type de document"
+      *ngIf="editMode" (click)="addNewDocumentType(service)">
       <mat-icon>post_add</mat-icon>
+    </button>
+    <button mat-fab color="accent" matTooltip="Ajouter un champ d'informations complémentaires" *ngIf="editMode"
+      (click)="addFurtherInformationField()">
+      <mat-icon>add_comment</mat-icon>
     </button>
   </div>
 </ng-container>

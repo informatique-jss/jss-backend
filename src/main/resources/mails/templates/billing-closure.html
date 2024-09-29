@@ -160,9 +160,11 @@
                                                                 <div style="font-family: Arial, sans-serif">
                                                                     <div
                                                                         style="font-size: 22px;font-weight: 700; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: rgb(196, 174, 139); line-height: 1.2;text-align: center;">
-                                                                        <span>Client n°<span
-                                                                                th:text="${tiers.id}"></span>
-                                                                        </span></span>
+                                                                        <span>Client n°<span th:text="${tiers.id}"> -
+                                                                            </span>
+                                                                            <span
+                                                                                th:text="${tiers.denomination}"></span>
+                                                                        </span>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -194,9 +196,9 @@
                                                                     compte client n°<span th:text="${tiers.id}">.</span>
                                                                 </p>
                                                                 <p>Vous disposez de plusieurs moyens de règlement :</p>
-                                                                <p>➡️ <strong>Virement : <br />IBAN /
-                                                                        BIC : <span th:text="${ibanJss}"></span> / <span
-                                                                            th:text="${bicJss}"></span></p>
+                                                                <p>➡️ <strong>Virement : </strong><br />IBAN /
+                                                                    BIC : <span th:text="${ibanJss}"></span> / <span
+                                                                        th:text="${bicJss}"></span></p>
                                                                 <p>➡️ <strong>Carte bancaire</strong> en utilisant les
                                                                     liens présents dans le relevé.</p>
                                                             </td>

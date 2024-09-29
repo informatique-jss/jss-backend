@@ -6,17 +6,19 @@
           <table class="full-width">
             <tr>
               <td>
-                <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
-                  propertyName="confrere" [isMandatory]="false" [isDisabled]="!editMode"
-                  [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()">
-                </autocomplete-confrere>
+                <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
+                  propertyName="department" [isMandatory]="true" label="Département" [isDisabled]="!editMode"
+                  (onOptionSelected)="updateConfrereAndCharacterPrice()"
+                  [filterAvailableEntities]="announcement.confrere?announcement.confrere.departments:undefined"
+                  [conditionnalRequired]=" !isStatusOpen">
+                </autocomplete-department>
               </td>
               <td>
-                <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
-                  propertyName="department" [isMandatory]="false" [isDisabled]="!editMode" label="Département"
-                  [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()"
-                  [filterAvailableEntities]="announcement.confrere?announcement.confrere.departments:undefined">
-                </autocomplete-department>
+                <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
+                  propertyName="confrere" [isMandatory]="true" [isDisabled]="!editMode" *ngIf="announcement.department"
+                  [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()"
+                  [hint]="getPublicationDays(announcement.confrere)">
+                </autocomplete-confrere>
               </td>
             </tr>
           </table>
@@ -154,21 +156,9 @@
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.noticeHeader | trustHtml" class="announce-container"></span>
                 </div>
-                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
-                  formControlName="noticeHeader" [disabled]="!editMode" [(ngModel)]="announcement.noticeHeader" [init]="{
-                    height: 500,
-                    menubar: true,
-                    entity_encoding : 'raw',
-                    language: 'fr_FR',
-                    plugins: [
-                      'table','fullscreen', 'lists', 'advlist'
-                    ],
-                    font_formats:'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino;Calibri=Calibri;  Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
-                    toolbar:
-                    'undo redo | styleselect  | fontselect  | fontsize | bold italic underline forecolor backcolor | \
-                    alignleft aligncenter alignright alignjustify | numlist bullist | \
-                    bullist numlist outdent indent | removeformat | fullscreen |  table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
-                  }"></editor>
+                <ckeditor *ngIf="editMode" [editor]="ckEditorHeader" [config]="config" [data]="initialHeaderValue"
+                  (change)="onNoticeHeaderChange($event)">
+                </ckeditor>
               </td>
             </tr>
             <tr>
@@ -176,21 +166,9 @@
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
                 </div>
-                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
-                  formControlName="notice" [disabled]="!editMode" [(ngModel)]="announcement.notice" [init]="{
-     height: 500,
-     menubar: true,
-     entity_encoding : 'raw',
-     language: 'fr_FR',
-     plugins: [
-       'table','fullscreen', 'lists', 'advlist'
-     ],
-     font_formats:'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino;Calibri=Calibri;  Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
-     toolbar:
-     'undo redo | styleselect  | fontselect  | fontsize | bold italic underline forecolor backcolor | \
-     alignleft aligncenter alignright alignjustify | numlist bullist | \
-     bullist numlist outdent indent | removeformat | fullscreen |  table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
-   }"></editor>
+                <ckeditor *ngIf="editMode" [editor]="ckEditorNotice" [config]="config" [data]="initialNoticeValue"
+                  (change)="onNoticeChange($event)">
+                </ckeditor>
               </td>
             </tr>
           </table>

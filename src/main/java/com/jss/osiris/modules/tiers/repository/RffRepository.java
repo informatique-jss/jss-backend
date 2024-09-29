@@ -80,9 +80,7 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         "             date_range_year ), " +
                         "         ii as ( " +
                         "         select " +
-                        "             i.id_tiers, " +
                         "             i.id_responsable, " +
-                        "             i.id_confrere , " +
                         "             bt_al.id as id_al, " +
                         "             bt_for.id as id_for, " +
                         "             coalesce (ii.pre_tax_price , " +
@@ -124,11 +122,10 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         "             qd.end_date) as endDate, rff.id as rffId " +
                         "         from " +
                         "             tiers r " +
-                        "         left join responsable r2 on " +
+                        "         join responsable r2 on " +
                         "             r.id = r2.id_tiers " +
                         "         left join ii on " +
                         "             ii.id_responsable = r2.id " +
-                        "             or ii.id_tiers = r.id " +
                         "         left join year_dates yd on " +
                         "             (r.id_rff_frequency = :rffFrequencyAnnual " +
                         "                 or r.id_rff_frequency is null) " +
@@ -157,12 +154,12 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         "             select " +
                         "                 id_tiers " +
                         "             from " +
-                        "                 responsable r3 " +
+                        "                 responsable r3 join tiers ti on ti.id = r3.id_tiers " +
                         "             where  " +
-                        "                 coalesce (r3.rff_formalite_rate, " +
-                        "                 r3.rff_insertion_rate ) is not null " +
-                        "               and  coalesce (r3.rff_formalite_rate, " +
-                        "                 r3.rff_insertion_rate )  >0 ) " +
+                        "                 coalesce (ti.rff_formalite_rate, " +
+                        "                 ti.rff_insertion_rate ) is not null " +
+                        "               and  coalesce (ti.rff_formalite_rate, " +
+                        "                 ti.rff_insertion_rate )  >0 ) " +
                         "                   and  ( :idTiers =0 or r.id = :idTiers) " +
                         "                   and  ( :idResponsable =0 or r2.id = :idResponsable) " +
                         "                   and  ( :idSalesEmployee =0 or r.id_commercial = :idSalesEmployee  or r2.id_commercial = :idSalesEmployee) "
@@ -179,9 +176,9 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         "         select " +
                         "             r.id as tiersId, " +
                         "             r2.id as responsableId,  " +
-                        "             sum(case when ii.id_al is not null and r2.rff_insertion_rate is not null and r2.rff_insertion_rate>0 then r2.rff_insertion_rate else 0 end / 100 * ii.pre_tax_price) as rffAl , "
+                        "             sum(case when ii.id_al is not null and r.rff_insertion_rate is not null and r.rff_insertion_rate>0 then r.rff_insertion_rate else 0 end / 100 * ii.pre_tax_price) as rffAl , "
                         +
-                        "             sum(case when ii.id_for is not null and r2.rff_formalite_rate is not null and r2.rff_formalite_rate>0 then r2.rff_formalite_rate else 0 end / 100 * ii.pre_tax_price) as rffFor, "
+                        "             sum(case when ii.id_for is not null and r.rff_formalite_rate is not null and r.rff_formalite_rate>0 then r.rff_formalite_rate else 0 end / 100 * ii.pre_tax_price) as rffFor, "
                         +
                         "              yd.start_date as startDate, " +
                         "             yd.end_date as endDate, rff.id as rffId " +
@@ -198,10 +195,10 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         "           left join rff on rff.id_tiers = r.id and rff.id_responsable =r2.id and rff.start_date = yd.start_date and rff.end_date =  yd.end_date"
                         +
                         "         where " +
-                        "             coalesce (r2.rff_formalite_rate, " +
-                        "             r2.rff_insertion_rate ) is not null " +
-                        "             and coalesce (r2.rff_formalite_rate, " +
-                        "             r2.rff_insertion_rate ) >0 " +
+                        "             coalesce (r.rff_formalite_rate, " +
+                        "             r.rff_insertion_rate ) is not null " +
+                        "             and coalesce (r.rff_formalite_rate, " +
+                        "             r.rff_insertion_rate ) >0 " +
                         "             and yd.start_date is not null and   yd.start_date >= :startDate and yd.end_date <= :endDate "
                         +
                         "                   and  ( :idTiers =0 or r.id = :idTiers) " +

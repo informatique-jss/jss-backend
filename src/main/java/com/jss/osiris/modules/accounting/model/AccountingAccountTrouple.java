@@ -4,6 +4,8 @@ public class AccountingAccountTrouple {
     private AccountingAccount accountingAccountProvider;
     private AccountingAccount accountingAccountCustomer;
     private AccountingAccount accountingAccountDeposit;
+    private AccountingAccount accountingAccountLitigious;
+    private AccountingAccount accountingAccountSuspicious;
 
     public AccountingAccount getAccountingAccountProvider() {
         return accountingAccountProvider;
@@ -29,4 +31,19 @@ public class AccountingAccountTrouple {
         this.accountingAccountDeposit = accountingAccountDeposit;
     }
 
+    public AccountingAccount getAccountingAccountLitigious() {
+        return accountingAccountLitigious;
+    }
+
+    public void setAccountingAccountLitigious(AccountingAccount accountingAccountLitigious) {
+        this.accountingAccountLitigious = accountingAccountLitigious;
+    }
+
+    public AccountingAccount getAccountingAccountSuspicious() {
+        return accountingAccountSuspicious;
+    }
+
+    public void setAccountingAccountSuspicious(AccountingAccount accountingAccountSuspicious) {
+        this.accountingAccountSuspicious = accountingAccountSuspicious;
+    }
 }

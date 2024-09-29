@@ -11,4 +11,7 @@ export interface PaperSetResult {
   affaireLabel: string;
   servicesLabel: string;
   locationNumber: number;
+  isValidated: boolean;
+  isCancelled: boolean;
+  creationComment: string;
 }

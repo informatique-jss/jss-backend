@@ -6,7 +6,6 @@ import { ConfrereService } from '../../../quotation/services/confrere.service';
 import { Department } from '../../model/Department';
 import { SortTableColumn } from '../../model/SortTableColumn';
 import { SortTableElement } from '../../model/SortTableElement';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'confreres-dialog',
@@ -37,16 +36,7 @@ export class ConfrereDialogComponent implements OnInit {
 
     this.displayedColumns = [];
     this.confrereService.getConfreres().subscribe(response => {
-      this.confreres = response.sort((a, b) => {
-        if (!a.boardGrade && !b.boardGrade)
-          return 0;
-        if (!a.boardGrade && b.boardGrade)
-          return -1;
-        if (a.boardGrade && !b.boardGrade)
-          return 1;
-        return (a.boardGrade).localeCompare(b.boardGrade)
-      }
-      ).filter(confrere => this.journalType == undefined || this.journalType.id == confrere.journalType.id);
+      this.confreres = response.filter(confrere => this.journalType == undefined || this.journalType.id == confrere.journalType.id);
 
       if (this.filteredDepartments) {
         let filteredConfrere = [];
@@ -102,24 +92,8 @@ export class ConfrereDialogComponent implements OnInit {
       return;
     });
 
-    if (outConfrere.doNotUse) {
-      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-        maxWidth: "400px",
-        data: {
-          title: "Confrère non autorisé !",
-          content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
-          closeActionText: "Annuler",
-          validationActionText: "Choisir"
-        }
-      });
 
-      dialogRef.afterClosed().subscribe(dialogResult => {
-        if (dialogResult)
-          this.confreresDialogRef.close(outConfrere!);
-      });
-    } else {
-      this.confreresDialogRef.close(outConfrere!);
-    }
+    this.confreresDialogRef.close(outConfrere!);
   }
 
   closeDialog() {

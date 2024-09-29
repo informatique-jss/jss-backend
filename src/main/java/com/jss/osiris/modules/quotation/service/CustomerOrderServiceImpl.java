@@ -1,8 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -30,8 +28,8 @@ import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
-import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.JacksonTimestampMillisecondDeserializer;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -49,6 +47,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -64,15 +63,18 @@ import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
-import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.quotation.model.OrderingSearchTagged;
+import com.jss.osiris.modules.quotation.model.PaperSet;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
@@ -80,8 +82,6 @@ import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
-import com.jss.osiris.modules.tiers.model.ITiers;
-import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 import jakarta.persistence.EntityManager;
@@ -229,8 +229,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Set default customer order assignation to sales employee if not set
         if (customerOrder.getAssignedTo() == null)
-            customerOrder.setAssignedTo(
-                    quotationService.getCustomerOrderOfQuotation(customerOrder).getDefaultCustomerOrderEmployee());
+            if (customerOrder.getResponsable().getDefaultCustomerOrderEmployee() != null)
+                customerOrder.setAssignedTo(customerOrder.getResponsable().getDefaultCustomerOrderEmployee());
+            else
+                customerOrder
+                        .setAssignedTo(customerOrder.getResponsable().getTiers().getDefaultCustomerOrderEmployee());
 
         if (customerOrder.getIsGifted() == null)
             customerOrder.setIsGifted(false);
@@ -244,12 +247,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 document.setCustomerOrder(customerOrder);
             }
 
+        // If from recurring, reset parent customerOrder, because field @JsonIgnore in
+        // customerOrder entity
+        if (customerOrder.getRecurringStartDate() != null && !isNewCustomerOrder) {
+            CustomerOrder currentCustomerOrder = getCustomerOrder(customerOrder.getId());
+            customerOrder.setCustomerOrderParentRecurring(currentCustomerOrder.getCustomerOrderParentRecurring());
+        }
+
         // Complete provisions
         boolean oneNewProvision = false;
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
                 assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
+                if (assoAffaireOrder.getId() != null)
+                    batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, assoAffaireOrder.getId());
                 for (Service service : assoAffaireOrder.getServices())
                     for (Provision provision : service.getProvisions())
                         if (provision.getId() == null)
@@ -270,9 +282,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             comment.setCreatedDateTime(LocalDateTime.now());
             comment.setCustomerOrder(customerOrder);
 
-            Tiers tiers = customerOrder.getTiers();
-            if (customerOrder.getResponsable() != null)
-                tiers = customerOrder.getResponsable().getTiers();
+            Tiers tiers = customerOrder.getResponsable().getTiers();
             if (tiers != null && (tiers.getInstructions() != null || tiers.getObservations() != null)) {
                 comment.setComment("<p>Intructions du tiers : "
                         + (tiers.getInstructions() != null ? tiers.getInstructions() : "") + "</p>" +
@@ -368,23 +378,23 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         boolean checkAllProvisionEnded = false;
 
         // Determine if deposit is mandatory or not
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+        if ((customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+                || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
                 && (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
                         || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))) {
             Float remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
 
-            ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
+            Tiers tiers = customerOrder.getResponsable().getTiers();
             boolean isDepositMandatory = false;
             boolean isPaymentTypePrelevement = false;
-            if (tiers instanceof Responsable)
-                tiers = ((Responsable) tiers).getTiers();
             isDepositMandatory = tiers.getIsProvisionalPaymentMandatory();
 
             if (tiers instanceof Tiers)
                 isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType().getId()
                         .equals(constantService.getPaymentTypePrelevement().getId());
 
-            if (!isDepositMandatory || remainingToPay <= 0 || isPaymentTypePrelevement) {
+            if (!isDepositMandatory && !targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)
+                    || remainingToPay <= 0 || isPaymentTypePrelevement) {
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
                 mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
             } else {
@@ -408,7 +418,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             resetDeboursInvoiceItems(customerOrder);
             // Confirm deposit taken into account or customer order starting and only if not
             // from to billed
-            if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
+            if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)
+                    && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)) {
                 if (customerOrder.getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
@@ -432,6 +443,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : BILLED => generate invoice
         if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
+
+            // If no closed paper set
+            if (customerOrder.getPaperSets() != null) {
+                for (PaperSet paperSet : customerOrder.getPaperSets()) {
+                    if ((paperSet.getIsCancelled() == null || paperSet.getIsCancelled() == false)
+                            && (paperSet.getIsValidated() == null || paperSet.getIsValidated() == false)) {
+                        throw new OsirisClientMessageException(
+                                "Impossible de facturer la commande, des actions documentaires sont encore en cours");
+                    }
+                }
+            }
             // save once customer order to recompute invoice item before set it in stone...
             this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
 
@@ -583,22 +605,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private Invoice generateInvoice(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Generate blank invoice
-        ITiers orderingCustomer = quotationService.getCustomerOrderOfQuotation(customerOrder);
         Invoice invoice = new Invoice();
 
         invoice.setIsCreditNote(false);
-        invoice.setIsProviderCreditNote(false);
-        invoice.setIsInvoiceFromProvider(false);
-
-        if (orderingCustomer instanceof Tiers)
-            invoice.setTiers((Tiers) orderingCustomer);
-
-        if (orderingCustomer instanceof Responsable)
-            invoice.setResponsable((Responsable) orderingCustomer);
-
-        if (orderingCustomer instanceof Confrere)
-            invoice.setConfrere((Confrere) orderingCustomer);
-
+        invoice.setResponsable(customerOrder.getResponsable());
         invoice.setCustomerOrder(customerOrder);
 
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
@@ -613,30 +623,54 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 }
         }
         invoiceService.addOrUpdateInvoiceFromUser(invoice);
+        return invoice;
+    }
 
-        // Create invoice PDF and attach it to customerOrder and invoice
-        File invoicePdf = generatePdfDelegate.generateInvoicePdf(customerOrder, invoice, null);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-        try {
-            List<Attachment> attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
-                    customerOrder.getId(),
-                    CustomerOrder.class.getSimpleName(),
-                    constantService.getAttachmentTypeInvoice(),
-                    "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                    false, "Facture n°" + invoice.getId(), null, null, null);
-
-            for (Attachment attachment : attachments)
-                if (attachment.getDescription().contains(invoice.getId() + "")) {
-                    attachment.setInvoice(invoice);
-                    attachmentService.addOrUpdateAttachment(attachment);
-                }
-        } catch (FileNotFoundException e) {
-            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
-        } finally {
-            invoicePdf.delete();
+    @Override
+    public List<IOrderingSearchTaggedResult> searchOrdersTagged(OrderingSearchTagged orderingSearchTagged) {
+        ArrayList<Integer> statusId = new ArrayList<Integer>();
+        if (orderingSearchTagged.getCustomerOrderStatus() != null
+                && orderingSearchTagged.getCustomerOrderStatus().size() > 0) {
+            for (CustomerOrderStatus customerOrderStatus : orderingSearchTagged.getCustomerOrderStatus())
+                if (customerOrderStatus != null)
+                    statusId.add(customerOrderStatus.getId());
+        } else {
+            statusId.add(0);
         }
 
-        return invoice;
+        ArrayList<Integer> salesEmployeeId = new ArrayList<Integer>();
+        if (orderingSearchTagged.getSalesEmployee() != null) {
+            for (Employee employee : employeeService.getMyHolidaymaker(orderingSearchTagged.getSalesEmployee()))
+                salesEmployeeId.add(employee.getId());
+        } else {
+            salesEmployeeId.add(0);
+        }
+
+        ArrayList<Integer> assignedToEmployeeId = new ArrayList<Integer>();
+        if (orderingSearchTagged.getAssignedToEmployee() != null) {
+            for (Employee employee : employeeService.getMyHolidaymaker(orderingSearchTagged.getAssignedToEmployee()))
+                assignedToEmployeeId.add(employee.getId());
+        } else {
+            assignedToEmployeeId.add(0);
+        }
+
+        if (orderingSearchTagged.getActiveDirectoryGroup() == null) {
+            orderingSearchTagged.setActiveDirectoryGroup(new ActiveDirectoryGroup());
+            orderingSearchTagged.getActiveDirectoryGroup().setId(0);
+        }
+
+        if (orderingSearchTagged.getStartDate() == null)
+            orderingSearchTagged.setStartDate(LocalDateTime.now().minusYears(100));
+
+        if (orderingSearchTagged.getEndDate() == null)
+            orderingSearchTagged.setEndDate(LocalDateTime.now().plusYears(100));
+
+        List<IOrderingSearchTaggedResult> customerOrders = customerOrderRepository.findTaggedCustomerOrders(statusId,
+                salesEmployeeId, assignedToEmployeeId, orderingSearchTagged.getActiveDirectoryGroup().getId(),
+                orderingSearchTagged.getIsOnlyDisplayUnread(),
+                orderingSearchTagged.getStartDate().withHour(0).withMinute(0),
+                orderingSearchTagged.getEndDate().withHour(23).withMinute(59));
+        return customerOrders;
     }
 
     @Override
@@ -668,7 +702,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (orderingSearch.getCustomerOrders() != null && orderingSearch.getCustomerOrders().size() > 0) {
-            for (ITiers tiers : orderingSearch.getCustomerOrders())
+            for (Tiers tiers : orderingSearch.getCustomerOrders())
                 customerOrderId.add(tiers.getId());
         } else {
             customerOrderId.add(0);
@@ -733,9 +767,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
-        CustomerOrder customerOrder = new CustomerOrder(quotation.getAssignedTo(), quotation.getTiers(),
+        CustomerOrder customerOrder = new CustomerOrder(quotation.getAssignedTo(),
+                quotation.getResponsable().getTiers(),
                 quotation.getResponsable(),
-                quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
+                /* quotation.getConfrere(), */ quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getDescription(), null,
                 quotation.getDocuments(), quotation.getAssoAffaireOrders(), null, false,
                 null, quotation.getCustomerOrderComments());
@@ -744,7 +779,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
         simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
         simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
-        simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
         simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
         objectMapper.registerModule(simpleModule);
         Hibernate5JakartaModule module = new Hibernate5JakartaModule();
@@ -797,7 +832,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     if (service.getAssoServiceDocuments() != null)
                         for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
                             assoServiceDocument.setId(null);
-                            assoServiceDocument.setAttachments(null);
+                            assoServiceDocument.setAttachments(null); // TODO AGN ...
+                        }
+                    if (service.getAssoServiceFieldTypes() != null && service.getAssoServiceFieldTypes().size() > 0)
+                        for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+                            assoServiceFieldType.setId(null);
                         }
                     for (Provision provision : service.getProvisions()) {
                         provision.setId(null);
@@ -1253,9 +1292,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         CustomerOrderStatus statusOpen = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
         CustomerOrder customerOrder = new CustomerOrder(customerOrderRecurring.getAssignedTo(),
-                customerOrderRecurring.getTiers(),
+                customerOrderRecurring.getResponsable().getTiers(),
                 customerOrderRecurring.getResponsable(),
-                customerOrderRecurring.getConfrere(), customerOrderRecurring.getSpecialOffers(), LocalDateTime.now(),
+                /* customerOrderRecurring.getConfrere(), */customerOrderRecurring.getSpecialOffers(),
+                LocalDateTime.now(),
                 statusOpen, customerOrderRecurring.getDescription(), null,
                 customerOrderRecurring.getDocuments(), customerOrderRecurring.getAssoAffaireOrders(), null, false,
                 null, null);
@@ -1264,7 +1304,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
         simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
         simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
-        simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
         simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
         objectMapper.registerModule(simpleModule);
         Hibernate5JakartaModule module = new Hibernate5JakartaModule();

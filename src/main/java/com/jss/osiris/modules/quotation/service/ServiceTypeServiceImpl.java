@@ -7,6 +7,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.modules.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.quotation.model.AssoServiceTypeDocument;
 import com.jss.osiris.modules.quotation.model.ServiceType;
@@ -32,6 +33,11 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
     }
 
     @Override
+    public ServiceType getServiceTypeByCode(String code) {
+        return serviceTypeRepository.findByCode(code);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public ServiceType addOrUpdateServiceType(
             ServiceType serviceType) {
@@ -41,6 +47,10 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
 
         if (serviceType.getAssoServiceTypeDocuments() != null)
             for (AssoServiceTypeDocument asso : serviceType.getAssoServiceTypeDocuments())
+                asso.setServiceType(serviceType);
+
+        if (serviceType.getAssoServiceTypeFieldTypes() != null)
+            for (AssoServiceTypeFieldType asso : serviceType.getAssoServiceTypeFieldTypes())
                 asso.setServiceType(serviceType);
 
         return serviceTypeRepository.save(serviceType);

@@ -5,6 +5,8 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
+import { ServiceService } from 'src/app/modules/quotation/services/service.service';
+import { ConstantService } from '../../modules/miscellaneous/services/constant.service';
 import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';
 import { IndexEntity } from './IndexEntity';
@@ -22,6 +24,7 @@ export const DOMICILIATION_ENTITY_TYPE: EntityType = { entityType: 'Domiciliatio
 export const ANNOUNCEMENT_ENTITY_TYPE: EntityType = { entityType: 'Announcement', tabName: 'Announcement', entryPoint: 'quotation/announcement' };
 export const FORMALITE_ENTITY_TYPE: EntityType = { entityType: 'Formalite', tabName: 'Formalité', entryPoint: 'formalite' };
 export const PROVISION_ENTITY_TYPE: EntityType = { entityType: 'Provision', tabName: 'Prestation', entryPoint: 'provision/null' };
+export const SERVICE_ENTITY_TYPE: EntityType = { entityType: 'Service', tabName: 'Service', entryPoint: 'service' };
 export const ASSO_AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'AssoAffaireOrder', tabName: 'Prestations', entryPoint: 'provision' };
 export const AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'Affaire', tabName: 'Affaires', entryPoint: 'affaire' };
 export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName: 'Factures', entryPoint: 'invoicing/view' };
@@ -33,6 +36,7 @@ export const REFUND_ENTITY_TYPE: EntityType = { entityType: 'Refund', tabName: '
 export const BANK_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'BankTransfert', tabName: 'Virements', entryPoint: 'invoicing/bankTransfert' };
 export const DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'DirectDebitTransfert', tabName: 'Prélèvements', entryPoint: 'invoicing/directDebit' };
 export const ASSO_SERVICE_DOCUMENT_ENTITY_TYPE: EntityType = { entityType: 'AssoServiceDocument', tabName: 'Documents du service', entryPoint: 'quotation/service' };
+export const TYPE_DOCUMENT_ATTACHMENT_TYPE: EntityType = { entityType: 'TypeDocument', tabName: 'Type de document', entryPoint: 'administration/type-document' };
 
 @Component({
   selector: 'app-search',
@@ -45,6 +49,8 @@ export class SearchComponent implements OnInit {
   constructor(private searchDialogRef: MatDialogRef<SearchComponent>,
     protected indexEntityService: IndexEntityService,
     private appService: AppService,
+    private serviceService: ServiceService,
+    private constantService: ConstantService,
     protected formBuilder: UntypedFormBuilder,
     private router: Router) { }
 
@@ -210,14 +216,16 @@ export class SearchComponent implements OnInit {
 
   getProvisionLabel(entity: any) {
     let out = [];
-    if (entity.text.provisions && entity.text.customerOrder) {
-      for (let provision of entity.text.provisions)
-        out.push((provision.provisionFamilyType ? provision.provisionFamilyType.label : "")
-          + " - " + (provision.provisionType ? provision.provisionType.label : "")
-          + " - " + (provision.assignedTo ? provision.assignedTo.firstname + " " + provision.assignedTo.lastname : "")
-          + (provision.simpleProvision && provision.simpleProvision.simpleProvisionStatus ? " - " + provision.simpleProvision.simpleProvisionStatus.label : "")
-          + (provision.formalite && provision.formalite.formaliteStatus ? " - " + provision.formalite.formaliteStatus.label : "")
-        );
+    if (entity.text.services && entity.text.customerOrder) {
+      for (let service of entity.text.services) {
+        if (service.serviceType)
+          out.push(service.serviceType.label);
+        for (let provision of service.provisions)
+          out.push((provision.assignedTo ? provision.assignedTo.firstname + " " + provision.assignedTo.lastname : "")
+            + (provision.simpleProvision && provision.simpleProvision.simpleProvisionStatus ? " - " + provision.simpleProvision.simpleProvisionStatus.label : "")
+            + (provision.formalite && provision.formalite.formaliteStatus ? " - " + provision.formalite.formaliteStatus.label : "")
+          );
+      }
       return out.join(" / ") + " / Commande " + entity.text.customerOrder.id;
     }
     return "";

@@ -195,7 +195,7 @@ export class ReportingComponent implements OnInit {
           return key;
       }
     }
-    return '';
+    return label;
   }
 
   getCurrentSettings() {

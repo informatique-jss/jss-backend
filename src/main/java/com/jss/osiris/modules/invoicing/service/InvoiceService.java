@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.invoicing.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -10,7 +9,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 
@@ -19,11 +18,15 @@ public interface InvoiceService {
 
         public Invoice getInvoice(Integer id);
 
-        public List<Invoice> findByCompetentAuthorityAndManualDocumentNumber(CompetentAuthority competentAuthority,
+        public Invoice generateInvoicePdf(Invoice invoice, CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
+
+        public List<Invoice> findByProviderAndManualDocumentNumber(Provider provider,
                         String manualDocumentNumber);
 
-        public List<Invoice> findByCompetentAuthorityAndManualDocumentNumberContains(
-                        CompetentAuthority competentAuthority, String manualDocumentNumber);
+        public List<Invoice> findByProviderAndManualDocumentNumberContains(
+                        Provider provider, String manualDocumentNumber);
 
         public Invoice addOrUpdateInvoice(Invoice invoice) throws OsirisException;
 
@@ -57,7 +60,7 @@ public interface InvoiceService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public void sendRemindersForInvoices(LocalDate startDate, LocalDate endDate, BillingLabelType billingLabelType)
+        public void sendRemindersForInvoices(BillingLabelType billingLabelType)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void remindInvoice(Invoice invoice)

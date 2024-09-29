@@ -25,13 +25,6 @@ public class GuichetUniquePaymentServiceImpl implements GuichetUniquePaymentServ
     public void payFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique)
             throws OsirisException, OsirisClientMessageException {
         guichetUniqueDelegateService.payFormaliteGuichetUnique(formaliteGuichetUnique);
-        if (formaliteGuichetUnique.getFormalite() != null
-                && formaliteGuichetUnique.getIsAuthorizedToSign() != null
-                && formaliteGuichetUnique.getIsAuthorizedToSign()) {
-            formaliteGuichetUnique.setIsAuthorizedToSign(false);
-            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
-        }
-
         batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE, formaliteGuichetUnique.getId());
     }
 }

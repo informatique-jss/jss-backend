@@ -6,19 +6,26 @@ import { TypeDocument } from '../../quotation/model/guichet-unique/referentials/
 import { Attachment } from '../model/Attachment';
 import { AttachmentType } from '../model/AttachmentType';
 import { IAttachment } from '../model/IAttachment';
+import { IAttachmentCode } from '../model/IAttachmentCode';
+import { instanceOfIAttachmentCode } from 'src/app/libs/TypeHelper';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UploadAttachmentService extends AppRestService<IAttachment>{
+export class UploadAttachmentService extends AppRestService<IAttachment> {
 
   constructor(http: HttpClient) {
     super(http, "miscellaneous");
   }
 
-  uploadAttachment(file: File, entity: IAttachment, entityType: string, attachmentType: AttachmentType, filename: string, replaceExistingAttachementType: boolean, pageSelection: string | null, typeDocument: TypeDocument | null): Observable<HttpEvent<any>> {
+  uploadAttachment(file: File, entity: IAttachment | IAttachmentCode, entityType: string, attachmentType: AttachmentType, filename: string,
+    replaceExistingAttachementType: boolean, pageSelection: string | null, typeDocument: TypeDocument | null): Observable<HttpEvent<any>> {
     let formData = new FormData();
-    formData.append("idEntity", entity.id + "");
+    if (instanceOfIAttachmentCode(entity)) {
+      formData.append("codeEntity", entity.code + "");
+    } else {
+      formData.append("idEntity", entity.id + "");
+    }
     formData.append("entityType", entityType);
     formData.append("idAttachmentType", attachmentType.id + "");
     formData.append("filename", filename);

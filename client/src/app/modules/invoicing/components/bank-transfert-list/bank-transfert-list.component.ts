@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, Provider } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -28,8 +28,6 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
   tableAction: SortTableAction<BankTransfertSearchResult>[] = [];
   bookmark: BankTransfertSearch | undefined;
 
-
-
   constructor(
     private bankTransfertSearchResultService: BankTransfertSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -39,7 +37,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     public editCommentDialog: MatDialog,
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -136,7 +134,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     }
   }
 
-  exportTransferts() {
-    this.bankTransfertSearchResultService.exportTransferts(this.transfertSearch);
+  exportTransferts(isOverrideExecutionDate: boolean) {
+    this.bankTransfertSearchResultService.exportTransferts(this.transfertSearch, isOverrideExecutionDate);
   }
 }

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { PeriodiciteVersementService } from 'src/app/modules/miscellaneous/services/guichet-unique/periodicite.versement.service';
 import { PeriodiciteVersement } from 'src/app/modules/quotation/model/guichet-unique/referentials/PeriodiciteVersement';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-periodicite-versement',
@@ -14,8 +14,8 @@ export class RadioGroupPeriodiciteVersementComponent extends GenericRadioGroupCo
   types: PeriodiciteVersement[] = [] as Array<PeriodiciteVersement>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private PeriodiciteVersementService: PeriodiciteVersementService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private PeriodiciteVersementService: PeriodiciteVersementService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

@@ -1,0 +1,20 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-grid #chipListServiceType>
+    <mat-chip-row *ngFor="let serviceType of model" (removed)="removeElement(serviceType)">
+      {{serviceType.label}}
+      <button matChipRemove *ngIf="!isDisabled">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip-row>
+    <input matInput placeholder="Choisir un type de service" [formControlName]="propertyName" #serviceTypeInput
+      [matChipInputFor]="chipListServiceType" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+      [disabled]="isDisabled" [matAutocomplete]="autoComplete">
+  </mat-chip-grid>
+  <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
+    (optionSelected)="addServiceType($event)">
+    <mat-option *ngFor="let serviceType of filteredServiceTypes | async" [value]="serviceType">
+      {{displayLabel(serviceType)}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

@@ -3,6 +3,10 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,12 +19,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-
 @Entity
 public class ServiceType implements Serializable, IId {
+	public static String SERVICE_TYPE_OTHER = "OTHER";
 
 	@Id
 	@SequenceGenerator(name = "asso_service_type_sequence", sequenceName = "asso_service_type_sequence", allocationSize = 1)
@@ -28,6 +29,7 @@ public class ServiceType implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
+	@IndexedField
 	private String label;
 
 	private String code;
@@ -44,6 +46,10 @@ public class ServiceType implements Serializable, IId {
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
 	private List<AssoServiceTypeDocument> assoServiceTypeDocuments;
+
+	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
+	private List<AssoServiceTypeFieldType> assoServiceTypeFieldTypes;
 
 	public Integer getId() {
 		return id;
@@ -91,6 +97,14 @@ public class ServiceType implements Serializable, IId {
 
 	public void setAssoServiceTypeDocuments(List<AssoServiceTypeDocument> assoServiceTypeDocuments) {
 		this.assoServiceTypeDocuments = assoServiceTypeDocuments;
+	}
+
+	public List<AssoServiceTypeFieldType> getAssoServiceTypeFieldTypes() {
+		return assoServiceTypeFieldTypes;
+	}
+
+	public void setAssoServiceTypeFieldTypes(List<AssoServiceTypeFieldType> assoServiceTypeFieldType) {
+		this.assoServiceTypeFieldTypes = assoServiceTypeFieldType;
 	}
 
 }

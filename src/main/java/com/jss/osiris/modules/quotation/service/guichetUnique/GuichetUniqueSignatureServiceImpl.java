@@ -100,7 +100,6 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
     private void downloadUnsignedDocumentsToWorkFolder(List<FormaliteGuichetUnique> formalites,
             HashMap<FormaliteGuichetUnique, String[]> documentFilenameList)
             throws OsirisException, OsirisClientMessageException {
-
         for (FormaliteGuichetUnique formaliteGuichetUnique : formalites) {
             if (formaliteGuichetUnique.getContent().getPiecesJointes() != null
                     && formaliteGuichetUnique.getContent().getPiecesJointes().size() > 0) {
@@ -112,7 +111,7 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
                             .equals(TypeDocument.UNSIGNED_SYNTHESES_DOCUMENT_CODE)) {
                         if (lastSynthesis == null || LocalDateTime.parse(lastSynthesis.getCreated().substring(0, 19),
                                 JacksonLocalDateTimeDeserializer.formatter)
-                                .isAfter(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
+                                .isBefore(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
                                         JacksonLocalDateTimeDeserializer.formatter)))
                             lastSynthesis = piecesJointe;
                     }
@@ -120,7 +119,7 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
                             .equals(TypeDocument.UNSIGNED_BE_DOCUMENT_CODE)) {
                         if (lastBe == null || LocalDateTime.parse(lastBe.getCreated().substring(0, 19),
                                 JacksonLocalDateTimeDeserializer.formatter)
-                                .isAfter(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
+                                .isBefore(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
                                         JacksonLocalDateTimeDeserializer.formatter)))
                             lastBe = piecesJointe;
                     }
@@ -221,6 +220,9 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
                 signedSynthesisBePieceJointe);
         formalite.setStatus(formaliteGuichetUniqueStatusService
                 .getFormaliteGuichetUniqueStatus(FormaliteGuichetUniqueStatus.SIGNED));
+        formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
+
+        formalite.setIsAuthorizedToSign(false);
         formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
     }
 

@@ -12,7 +12,6 @@ import { VatCollectionType } from "./VatCollectionType";
 export interface Provider extends IReferential, IAttachment {
   id: number;
   label: string;
-  accountingAccountCustomer: AccountingAccount;
   accountingAccountProvider: AccountingAccount;
   accountingAccountDeposit: AccountingAccount;
   defaultBillingItem: BillingItem;
@@ -32,4 +31,5 @@ export interface Provider extends IReferential, IAttachment {
   siret: string;
   city: City;
   idAs400: number;
+  isRemindProviderInvoice: boolean;
 }

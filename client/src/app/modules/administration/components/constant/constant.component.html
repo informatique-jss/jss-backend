@@ -165,6 +165,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeQuotation"
+                label="Type de pièce-jointe - Devis PDF" [form]="constantForm" propertyName="attachmentTypeQuotation"
+                [isMandatory]="true" [isDisabled]="!editMode" [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeCni" label="Type de pièce-jointe - CNI"
                 [form]="constantForm" propertyName="attachmentTypeCni" [isMandatory]="true" [isDisabled]="!editMode"
                 [byPassAttachmentHiddenFilter]="true">
@@ -201,6 +209,24 @@
               <select-attachment-type [(model)]="constant.attachmentTypeProviderInvoice"
                 label="Type de pièce-jointe - Facture fournisseur" [form]="constantForm"
                 propertyName="attachmentTypeProviderInvoice" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeRefusInfogreffe"
+                label="Type de pièce-jointe - Refus Infogreffe" [form]="constantForm"
+                propertyName="attachmentTypeRefusInfogreffe" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeAutreInfogreffe"
+                label="Type de pièce-jointe - Autre Infogreffe" [form]="constantForm"
+                propertyName="attachmentTypeAutreInfogreffe" [isMandatory]="true" [isDisabled]="!editMode"
                 [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
@@ -323,6 +349,15 @@
               <select-attachment-type [(model)]="constant.attachmentTypeContract" label="Type de pièce-jointe - contrat"
                 [form]="constantForm" propertyName="attachmentTypeContract" [isMandatory]="true"
                 [isDisabled]="!editMode" [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeTemplate"
+                label="Type de pièce-jointe - modèle de document" [form]="constantForm"
+                propertyName="attachmentTypeTemplate" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
               </select-attachment-type>
             </td>
           </tr>
@@ -691,6 +726,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeSupplyFullBeCopy"
+                label="Type de poste de facturation - Copie intégrale des BE" [form]="constantForm"
+                propertyName="billingTypeSupplyFullCopy" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-input [(model)]="constant.stringNantissementDepositFormeJuridiqueCode "
                 label="Code de forme juridique - Depot de nantissement" [form]="constantForm"
                 propertyName="stringNantissementDepositFormeJuridiqueCode " [isMandatory]="true"
@@ -808,6 +851,22 @@
                 label="Contrat de domiciliation - conservation du courrier" [form]="constantForm"
                 propertyName="domiciliationContractTypeKeepMail" [isMandatory]="true" [isDisabled]="!editMode">
               </select-contract-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupFacturation"
+                label="Groupe Active Directory - Facturation" [form]="constantForm"
+                propertyName="activeDirectoryGroupFacturation" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-active-directory-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupFormalites"
+                label="Groupe Active Directory - Formalites" [form]="constantForm"
+                propertyName="activeDirectoryGroupFormalites" [isMandatory]=" true"
+                [isDisabled]="!editMode"></select-active-directory-group>
             </td>
           </tr>
           <tr>
@@ -1265,6 +1324,22 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountLitigious"
+                [form]="constantForm" propertyName="principalAccountingAccountLitigious" [isMandatory]="true"
+                label="Compte comptable principal - Litigieux"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountSuspicious"
+                [form]="constantForm" propertyName="principalAccountingAccountSuspicious" [isMandatory]="true"
+                label="Compte comptable principal - Douteux"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountDepositProvider"
                 [form]="constantForm" propertyName="principalAccountingAccountDepositProvider" [isMandatory]="true"
                 label="Compte comptable principal - Acompte fournisseur"
@@ -1399,9 +1474,37 @@
           </tr>
           <tr>
             <td>
-              <select-provision-type [(model)]="constant.provisionTypeBilanPublication"
+              <select-service-field-type [(model)]="constant.furtherInformationServiceFieldType"
+                label="Type de champ du service - Informations complémentaires" [form]="constantForm"
+                propertyName="furtherInformationServiceFieldType" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-field-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="constant.dateAccountingClosureForAll"
+                label="Date - cloture comptable pour les non comptables" [form]="constantForm"
+                propertyName="dateAccountingClosureForAll" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
+            </td>
+          </tr>
+          <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeBilanPublication"
                 label="Type de prestation - Bilan" [form]="constantForm" propertyName="provisionTypeBilanPublication"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type>
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type></td>
+          </tr>
+          <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeRegistrationAct"
+                label="Type de prestation - Enregistrement, Acte au TP" [form]="constantForm"
+                propertyName="provisionTypeRegistrationAct" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-provision-type></td>
+          </tr>
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="constant.dateAccountingClosureForAccountant"
+                label="Date - cloture comptable pour les comptables" [form]="constantForm"
+                propertyName="dateAccountingClosureForAccountant" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
             </td>
           </tr>
         </table>

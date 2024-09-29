@@ -32,6 +32,7 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " ' ', " +
                         " e.lastname) as provisionAssignedToLabel, " +
                         "     pft.label as provisionFamilyTypeLabel, " +
+                        "     pt.label as provisionTypeLabel, " +
                         "     count(distinct p.id) as provisionNumber, " +
                         "     coalesce(as2.label, " +
                         " sps.label, " +
@@ -74,6 +75,8 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " left join billing_type bt on  bt.id = bi.id_billing_type                          " +
                         " left join provision_family_type pft on " +
                         "     pft.id = p.id_provision_family_type " +
+                        " left join provision_type pt on " +
+                        "     pt.id = p.id_provision_type " +
                         " left join employee e on " +
                         "     e.id = p.id_employee " +
                         " left join announcement a on " +
@@ -115,6 +118,7 @@ public interface ProvisionReportingRepository extends CrudRepository<Quotation, 
                         " ' ', " +
                         " e.lastname) , " +
                         "     pft.label,  " +
+                        "     pt.label,  " +
                         "     coalesce(as2.label, " +
                         " sps.label, " +
                         " fst.label, " +

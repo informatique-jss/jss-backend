@@ -3,6 +3,16 @@ package com.jss.osiris.modules.tiers.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.miscellaneous.model.Gift;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.Affaire;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,17 +24,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.jss.osiris.libs.JacksonLocalDateSerializer;
-import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.miscellaneous.model.Gift;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.quotation.model.Affaire;
-import com.jss.osiris.modules.quotation.model.Confrere;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_followup_tiers", columnList = "id_tiers"),
@@ -49,12 +48,6 @@ public class TiersFollowup implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
 	@JsonIgnore
 	private Responsable responsable;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_confrere")
-	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
-	@JsonIgnore
-	private Confrere confrere;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
@@ -151,14 +144,6 @@ public class TiersFollowup implements Serializable, IId {
 
 	public void setObservations(String observations) {
 		this.observations = observations;
-	}
-
-	public Confrere getConfrere() {
-		return confrere;
-	}
-
-	public void setConfrere(Confrere confrere) {
-		this.confrere = confrere;
 	}
 
 	public Invoice getInvoice() {

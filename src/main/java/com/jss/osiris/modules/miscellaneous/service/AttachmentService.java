@@ -13,19 +13,21 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
+import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 
 public interface AttachmentService {
         public List<Attachment> getAttachments();
 
         public Attachment getAttachment(Integer id);
 
-        public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
+        public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String codeEntity,
+                        String entityType,
                         AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
                         String pageSelection, TypeDocument typeDocument)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
+        public List<Attachment> addAttachment(InputStream file, Integer idEntity, String codeEntity, String entityType,
                         AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
                         String description, PiecesJointe piecesJointe, String pageSelection, TypeDocument typeDocument)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
@@ -40,5 +42,7 @@ public interface AttachmentService {
         public List<Attachment> sortAttachmentByDateDesc(List<Attachment> attachments);
 
         public Attachment cloneAttachment(Attachment attachment) throws OsirisException;
+
+        public List<Attachment> findByDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe);
 
 }

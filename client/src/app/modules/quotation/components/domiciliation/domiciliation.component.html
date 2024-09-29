@@ -145,7 +145,7 @@
             <td>
               <generic-textarea [(model)]="domiciliation.accountingRecordDomiciliation"
                 label="Lieu de conservation des documents comptables" [form]="domiciliationForm"
-                propertyName="accountingRecordDomiciliation" [isMandatory]="true"
+                propertyName="accountingRecordDomiciliation" [isMandatory]="true" [maxLength]="600"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
               </generic-textarea>
             </td>

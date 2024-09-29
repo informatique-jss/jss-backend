@@ -2,6 +2,8 @@ package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
 
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,8 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
-
-import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
 public class BillingType implements Serializable, IId {
@@ -68,6 +68,8 @@ public class BillingType implements Serializable, IId {
 
 	private Boolean isUsedForInsertionRff;
 	private Boolean isUsedForFormaliteRff;
+	private Boolean isVacation;
+	private Boolean isTraitement;
 
 	public Integer getId() {
 		return id;
@@ -203,6 +205,22 @@ public class BillingType implements Serializable, IId {
 
 	public void setIsUsedForFormaliteRff(Boolean isUsedForFormaliteRff) {
 		this.isUsedForFormaliteRff = isUsedForFormaliteRff;
+	}
+
+	public Boolean getIsVacation() {
+		return isVacation;
+	}
+
+	public void setIsVacation(Boolean isVacation) {
+		this.isVacation = isVacation;
+	}
+
+	public Boolean getIsTraitement() {
+		return isTraitement;
+	}
+
+	public void setIsTraitement(Boolean isTraitement) {
+		this.isTraitement = isTraitement;
 	}
 
 }

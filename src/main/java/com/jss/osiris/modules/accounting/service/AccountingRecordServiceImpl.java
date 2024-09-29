@@ -23,9 +23,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
-import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceSearch;
-import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
@@ -34,6 +32,7 @@ import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Refund;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -47,9 +46,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   AccountingJournalService accountingJournalService;
-
-  @Autowired
-  AccountingBalanceHelper accountingBalanceHelper;
 
   @Autowired
   AccountingExportHelper accountingExportHelper;
@@ -72,6 +68,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Autowired
   BatchService batchService;
 
+  @Autowired
+  ConstantService constantService;
+
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
     Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
@@ -81,12 +80,30 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord) {
+  public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer temporaryOperationId) {
+    return accountingRecordRepository.findByTemporaryOperationId(temporaryOperationId);
+  }
+
+  @Override
+  public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord,
+      boolean byPassOperationDateTimeCheck) throws OsirisException {
     // Do not save null or 0 € records
     if (accountingRecord.getId() == null
         && (accountingRecord.getCreditAmount() == null || accountingRecord.getCreditAmount() == 0f)
         && (accountingRecord.getDebitAmount() == null || accountingRecord.getDebitAmount() == 0f))
       return null;
+
+    if (!byPassOperationDateTimeCheck)
+      if (accountingRecord.getOperationDateTime().toLocalDate()
+          .isBefore(constantService.getDateAccountingClosureForAccountant())) {
+        throw new OsirisException(null, "Impossible to write accounting record, it's before closure all date");
+      } else if (accountingRecord.getOperationDateTime().toLocalDate()
+          .isBefore(constantService.getDateAccountingClosureForAll())
+          && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP)) {
+        throw new OsirisException(null,
+            "Impossible to write accounting record, it's before closure accounting date. It can only be done by accounting responsible");
+      }
+
     return accountingRecordRepository.save(accountingRecord);
   }
 
@@ -102,7 +119,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords) {
+  public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
+      throws OsirisException {
     Integer operationId = getNewTemporaryOperationId();
     for (AccountingRecord accountingRecord : accountingRecords) {
       if (accountingRecord.getOperationDateTime() == null)
@@ -110,14 +128,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       accountingRecord.setTemporaryOperationId(operationId);
       accountingRecord.setIsTemporary(true);
       accountingRecord.setIsANouveau(false);
-      addOrUpdateAccountingRecord(accountingRecord);
+      accountingRecord.setIsManual(true);
+      addOrUpdateAccountingRecord(accountingRecord, false);
     }
     return accountingRecords;
   }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void dailyAccountClosing() {
+  public void dailyAccountClosing() throws OsirisException {
     List<AccountingJournal> journals = accountingJournalService.getAccountingJournals();
 
     Integer maxIdOperation = accountingRecordRepository
@@ -157,7 +176,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             accountingRecord.setAccountingId(maxIdAccounting);
             accountingRecord.setOperationId(definitiveIdOperation.get(accountingRecord.getTemporaryOperationId()));
             accountingRecord.setIsTemporary(false);
-            addOrUpdateAccountingRecord(accountingRecord);
+            addOrUpdateAccountingRecord(accountingRecord, true);
             maxIdAccounting++;
           }
         }
@@ -212,11 +231,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getIsFromAs400() == null)
       accountingRecordSearch.setIsFromAs400(false);
 
+    if (accountingRecordSearch.getIsManual() == null)
+      accountingRecordSearch.setIsManual(false);
+
     if (accountingRecordSearch.getTiersId() == null)
       accountingRecordSearch.setTiersId(0);
-
-    if (accountingRecordSearch.getConfrereId() == null)
-      accountingRecordSearch.setConfrereId(0);
 
     if (accountingRecordSearch.getStartDate() == null)
       accountingRecordSearch.setStartDate(LocalDateTime.now().minusYears(100));
@@ -237,7 +256,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     return accountingRecordRepository.searchAccountingRecords(accountingAccountId, accountingClass, journalId,
         accountingRecordSearch.getTiersId(),
-        accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
         accountingRecordSearch.getIsFromAs400(),
         accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
@@ -308,39 +326,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate) {
-    List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
-            endDate.minusYears(1).toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    ArrayList<AccountingBalanceViewTitle> outBilan = new ArrayList<AccountingBalanceViewTitle>();
-
-    outBilan.add(accountingBalanceHelper.getBilanActif(accountingRecords, accountingRecordsN1));
-    outBilan.add(accountingBalanceHelper.getBilanPassif(accountingRecords, accountingRecordsN1));
-
-    return outBilan;
-  }
-
-  @Override
-  public List<AccountingBalanceViewTitle> getProfitAndLost(LocalDateTime startDate, LocalDateTime endDate) {
-    List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
-            endDate.minusYears(1).toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    return accountingBalanceHelper.getProfitAndLost(accountingRecords, accountingRecordsN1);
-  }
-
-  @Override
   public File getGrandLivreExport(AccountingRecordSearch accountingRecordSearch) throws OsirisException {
     return accountingExportHelper.getGrandLivre(searchAccountingRecords(accountingRecordSearch, true),
         accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate());
@@ -362,36 +347,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
-    return accountingExportHelper.getProfitAndLost(this.getProfitAndLost(startDate, endDate));
-  }
-
-  @Override
-  public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
-    List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.toLocalDate(), endDate.toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1).toLocalDate(),
-            endDate.minusYears(1).toLocalDate(),
-            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
-
-    ArrayList<AccountingBalanceViewTitle> outBilanActif = new ArrayList<AccountingBalanceViewTitle>();
-
-    outBilanActif.add(accountingBalanceHelper.getBilanActif(accountingRecords, accountingRecordsN1));
-
-    ArrayList<AccountingBalanceViewTitle> outBilanPassif = new ArrayList<AccountingBalanceViewTitle>();
-
-    outBilanPassif.add(accountingBalanceHelper.getBilanPassif(accountingRecords, accountingRecordsN1));
-
-    return accountingExportHelper.getBilan(outBilanActif, outBilanPassif);
-  }
-
-  @Override
   public File getAccountingBalanceExport(AccountingBalanceSearch accountingRecordSearch)
       throws OsirisException {
-    return accountingExportHelper.getBalance(searchAccountingBalanceGenerale(accountingRecordSearch), false,
+    return accountingExportHelper.getBalance(searchAccountingBalance(accountingRecordSearch), false,
         accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate());
   }
 
@@ -415,9 +373,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Transactional(rollbackFor = Exception.class)
   @Override
-  public File getBillingClosureReceiptFile(Integer tiersId, boolean downloadFile)
+  public File getBillingClosureReceiptFile(Integer tiersId, Integer responsableId, boolean downloadFile)
       throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-    return billingClosureReceiptDelegate.getBillingClosureReceiptFile(tiersId, downloadFile);
+    return billingClosureReceiptDelegate.getBillingClosureReceiptFile(tiersId, responsableId, downloadFile);
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -447,7 +405,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Transactional(rollbackFor = Exception.class)
   @Override
   public Boolean letterRecordsForAs400(List<AccountingRecord> accountingRecords)
-      throws OsirisValidationException, OsirisClientMessageException {
+      throws OsirisValidationException, OsirisClientMessageException, OsirisException {
 
     Integer lastAccountId = null;
     Float balance = 0f;
@@ -486,10 +444,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     for (AccountingRecord accountingRecord : fetchRecords) {
       accountingRecord.setLetteringDateTime(LocalDateTime.now());
       accountingRecord.setLetteringNumber(maxLetteringNumber);
-      addOrUpdateAccountingRecord(accountingRecord);
+      addOrUpdateAccountingRecord(accountingRecord, true);
     }
 
     return true;
   }
-
 }

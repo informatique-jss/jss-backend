@@ -83,6 +83,18 @@
         <table class="full-width">
           <tr>
             <td>
+              <generic-toggle [(model)]="selectedEntity.isVacation" label="Est une vacation ?" [form]="entityForm"
+                propertyName="isVacation"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isTraitement" label="Est un traitement ?" [form]="entityForm"
+                propertyName="isTraitement"></generic-toggle>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
               <generic-toggle [(model)]="selectedEntity.isUsedForFormaliteRff"
                 label="Est utilisé dans le calcul des RFF de formalités ?" [form]="entityForm"
                 propertyName="isUsedForFormaliteRff"></generic-toggle>

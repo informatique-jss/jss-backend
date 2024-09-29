@@ -31,10 +31,10 @@ export interface AccountingRecordSearchResult {
   * only used in fronted
   */
   balance: number;
-  contrePasseOperationId: number;
   affaireLabel: string;
   responsable: string;
   isTemporary: boolean;
   temporaryOperationId: number;
   isFromAs400: boolean;
+  isManual: boolean;
 }

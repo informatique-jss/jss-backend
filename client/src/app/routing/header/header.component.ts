@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/services/app.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 
 @Component({
   selector: 'app-header',
@@ -14,8 +13,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(protected appService: AppService,
     private location: Location,
-    private router: Router,
-    private userNoteService: UserNoteService) { }
+    private router: Router,) { }
 
   title: string = "titre";
   titleSubscription: Subscription = new Subscription;
@@ -39,9 +37,5 @@ export class HeaderComponent implements OnInit {
 
   goBack() {
     this.location.back();
-  }
-
-  addToNotes() {
-    this.userNoteService.addToNotes(undefined, this.title, this.router.url, true);
   }
 }

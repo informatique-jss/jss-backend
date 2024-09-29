@@ -60,6 +60,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
@@ -67,9 +68,13 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Service;
 import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.quotation.model.infoGreffe.EvenementInfogreffe;
+import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.ServiceService;
+import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Rff;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -158,6 +163,10 @@ public class MailHelper {
 
     @Autowired
     ResponsableService responsableService;
+
+    @Autowired
+    ServiceService serviceService;
+    FormaliteInfogreffeService formaliteInfogreffeService;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -411,7 +420,7 @@ public class MailHelper {
             ctx.setVariable("invoiceLabelResult",
                     invoiceHelper.computeInvoiceLabelResult(
                             documentService.getBillingDocument(quotation.getDocuments()),
-                            quotation, quotationService.getCustomerOrderOfQuotation(quotation)));
+                            quotation, quotation.getResponsable()));
         }
 
         // Compute deposit amount
@@ -443,7 +452,11 @@ public class MailHelper {
         ctx.setVariable("ibanJss", ibanJss);
         ctx.setVariable("bicJss", bicJss);
         ctx.setVariable("cbLink", mail.getCbLink());
-        ctx.setVariable("mailComputeResult", mail.getMailComputeResult());
+
+        if (mail.getCustomerOrder() != null || mail.getQuotation() != null)
+            ctx.setVariable("mailComputeResultInvoice",
+                    mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
+                            mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation()));
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());
@@ -483,10 +496,26 @@ public class MailHelper {
             setQuotationPrice(quotation, ctx);
 
         if (mail.getMissingAttachmentQuery() != null) {
-            for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
-                if (asso.getFormalisteComment() != null)
-                    asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
-            ctx.setVariable("assoServiceDocuments", mail.getMissingAttachmentQuery().getAssoServiceDocument());
+            if (mail.getMissingAttachmentQuery().getAssoServiceDocument() != null
+                    && mail.getMissingAttachmentQuery().getAssoServiceDocument().size() > 0) {
+                for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
+                    if (asso.getFormalisteComment() != null)
+                        asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
+                ctx.setVariable("assoServiceDocuments", mail.getMissingAttachmentQuery().getAssoServiceDocument());
+            } else
+                ctx.setVariable("assoServiceDocuments", null);
+
+            if (mail.getMissingAttachmentQuery().getAssoServiceFieldType() != null
+                    && mail.getMissingAttachmentQuery().getAssoServiceFieldType().size() > 0) {
+                for (AssoServiceFieldType asso : mail.getMissingAttachmentQuery().getAssoServiceFieldType())
+                    if (asso.getFormalisteComment() != null)
+                        asso.setFormalisteComment(asso.getFormalisteComment().replaceAll("\r?\n", "<br/>"));
+                ctx.setVariable("assoServiceFieldTypes", mail.getMissingAttachmentQuery().getAssoServiceFieldType());
+            } else
+                ctx.setVariable("assoServiceFieldTypes", null);
+
+            ctx.setVariable("serviceLabel",
+                    serviceService.getServiceLabel(mail.getMissingAttachmentQuery().getService()));
         }
 
         ctx.setVariable("isLastReminder", mail.getIsLastReminder() != null && mail.getIsLastReminder());
@@ -585,11 +614,6 @@ public class MailHelper {
                 customerName = customerOrder.getResponsable().getCivility().getLabel() + " "
                         + customerOrder.getResponsable().getFirstname() + " "
                         + customerOrder.getResponsable().getLastname();
-            } else if (customerOrder.getTiers() != null
-                    && customerOrder.getTiers().getIsIndividual() == true) {
-                customerName = customerOrder.getTiers().getCivility().getLabel() + " "
-                        + customerOrder.getTiers().getFirstname() + " "
-                        + customerOrder.getTiers().getLastname();
             }
         }
         return customerName;
@@ -610,7 +634,7 @@ public class MailHelper {
         return emailTemplateEngine().process("model", ctx);
     }
 
-    private void setQuotationPrice(IQuotation quotation, Context ctx)
+    public void setQuotationPrice(IQuotation quotation, Context ctx)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         // Compute prices
         Float preTaxPriceTotal = 0f;
@@ -696,7 +720,7 @@ public class MailHelper {
         mail.setCustomerOrder(customerOrder);
 
         MailComputeResult mailComputeResult = mailComputeHelper
-                .computeMailForCustomerOrderCreationConfirmation(customerOrder);
+                .computeMailForDepositRequest(customerOrder);
 
         mail.setHeaderPicture("images/mails/waiting-deposit.png");
 
@@ -726,11 +750,12 @@ public class MailHelper {
     @Transactional(rollbackFor = Exception.class)
     public void generateQuotationMail(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        quotation = quotationService.getQuotation(quotation.getId());
         sendQuotationToCustomer(quotation, true);
     }
 
     public void sendQuotationToCustomer(Quotation quotation, boolean sendToMe)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+            throws OsirisClientMessageException, OsirisException {
         CustomerMail mail = new CustomerMail();
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/mails/waiting-quotation-validation.jpg");
@@ -738,6 +763,17 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationMail(quotation));
 
+        if (quotation.getAttachments() != null && quotation.getAttachments().size() > 0) {
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(quotation.getAttachments())) {
+                if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeQuotation().getId())) {
+                    if (mail.getAttachments() == null)
+                        mail.setAttachments(new ArrayList<Attachment>());
+                    mail.getAttachments().add(attachment);
+                    break;
+                }
+            }
+        }
         mail.setSubject("Votre devis n°" + quotation.getId());
         mail.setMailTemplate(CustomerMail.TEMPLATE_WAITING_QUOTATION_VALIDATION);
 
@@ -785,6 +821,7 @@ public class MailHelper {
 
     @Transactional
     public void sendCustomerOrderAttachmentsToCustomer(CustomerOrder customerOrder, AssoAffaireOrder asso,
+            Provision provision,
             boolean sendToMe, List<Attachment> attachmentsToSend)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
@@ -804,7 +841,11 @@ public class MailHelper {
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_ATTACHMENTS);
         mail.setAttachments(finalAttachments);
         mail.setHeaderPicture("images/mails/send-attanchments.png");
-        mail.setReplyTo(asso.getAssignedTo());
+        if (provision != null) {
+            mail.setReplyTo(provision.getAssignedTo());
+        } else {
+            mail.setReplyTo(asso.getAssignedTo());
+        }
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
         mail.setSubject("Vos pièces numériques - commande n°" + customerOrder.getId() + " - "
@@ -1015,7 +1056,7 @@ public class MailHelper {
             }
 
         mail.setAttachments(attachments);
-        mail.setReplyTo(asso.getAssignedTo());
+        mail.setReplyTo(provision.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setProvision(provision);
         mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));
@@ -1148,7 +1189,8 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public void sendBillingClosureToCustomer(List<Attachment> attachments, Tiers tiers, boolean sendToMe)
+    public void sendBillingClosureToCustomer(List<Attachment> attachments, Tiers tiers, Responsable responsable,
+            boolean sendToMe)
             throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
@@ -1159,9 +1201,10 @@ public class MailHelper {
         mail.setAttachments(attachments);
         mail.setReplyToMail(constantService.getStringAccountingSharedMaiblox() + "");
         mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForBillingClosure(tiers));
+        mail.setMailComputeResult(mailComputeHelper.computeMailForBillingClosure(tiers, responsable));
         mail.setSubject("Votre relevé de compte client n°" + tiers.getId());
         mail.setTiers(tiers);
+        mail.setResponsable(responsable);
 
         mailService.addMailToQueue(mail);
     }
@@ -1173,7 +1216,7 @@ public class MailHelper {
         mail.setHeaderPicture("images/mails/renew-password.png");
         mail.setReplyToMail(constantService.getStringSalesSharedMailbox() + "");
         mail.setSendToMe(false);
-        mail.setExplaination(password);
+        mail.setExplaination(responsable.getLoginWeb() + " / " + password);
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
 
@@ -1231,14 +1274,31 @@ public class MailHelper {
         if (query.getComment() != null)
             mail.setExplaination(query.getComment().replaceAll("\r?\n", "<br/>"));
 
-        mail.setReplyTo(query.getService().getAssoAffaireOrder().getAssignedTo());
+        Employee sendToEmployee = employeeService.getCurrentEmployee();
+        if (sendToEmployee == null)
+            sendToEmployee = query.getService().getAssoAffaireOrder().getAssignedTo();
+        mail.setReplyTo(sendToEmployee);
         mail.setSendToMe(query.getSendToMe());
-        mail.setMailComputeResult(mailComputeHelper.computeMailForGenericDigitalDocument(customerOrder));
+        mail.setMailComputeResult(mailComputeHelper.computeMailForMissingAttachmentQueryToCustomer(customerOrder));
         mail.setIsLastReminder(isLastReminder);
 
         if (query.getCopyToMe()) {
             mail.setCopyToMe(true);
         }
+
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        if (mail.getMissingAttachmentQuery() != null
+                && mail.getMissingAttachmentQuery().getAssoServiceDocument() != null
+                && mail.getMissingAttachmentQuery().getAssoServiceDocument().size() > 0) {
+            for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
+                if (asso.getTypeDocument() != null)
+                    if (asso.getTypeDocument().getAttachments() != null
+                            && asso.getTypeDocument().getAttachments().size() > 0)
+                        for (Attachment attachment : asso.getTypeDocument().getAttachments())
+                            attachments.add(attachment);
+        }
+
+        mail.setAttachments(attachments);
 
         mail.setSubject("Pièces manquantes concernant la commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, null));
@@ -1339,6 +1399,20 @@ public class MailHelper {
                 if (liasseList.size() > 0)
                     label += " / liasse(s) GU " + String.join(", ", liasseList);
             }
+            if (provision.getFormalite() != null && provision.getFormalite().getFormalitesInfogreffe() != null) {
+                ArrayList<String> liasseList = new ArrayList<String>();
+                for (FormaliteInfogreffe formaliteInfogreffe : provision.getFormalite()
+                        .getFormalitesInfogreffe()) {
+                    EvenementInfogreffe evenementInfogreffe = formaliteInfogreffeService
+                            .getLastEvenementInfogreffe(formaliteInfogreffe, true);
+                    if (evenementInfogreffe != null && (evenementInfogreffe.getCodeEtat().equals("ENVOYE_AU_GRF")
+                            || evenementInfogreffe.getCodeEtat().equals("RECU_PAR_LE_GRF"))) {
+                        liasseList.add(formaliteInfogreffe.getReferenceTechnique());
+                    }
+                }
+                if (liasseList.size() > 0)
+                    label += " / liasse(s) Infogreffe " + String.join(", ", liasseList);
+            }
             provisionDetails.add(label);
         }
 
@@ -1383,7 +1457,8 @@ public class MailHelper {
         }
 
         if (attachments.size() > 0)
-            sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), sendToMe,
+            sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), null,
+                    sendToMe,
                     attachments);
     }
 }

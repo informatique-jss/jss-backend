@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
@@ -11,14 +12,15 @@ import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { Responsable } from 'src/app/modules/tiers/model/Responsable';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { instanceOfConfrere } from '../../../../libs/TypeHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordSearch } from '../../model/AccountingRecordSearch';
 import { AccountingRecordSearchResult } from '../../model/AccountingRecordSearchResult';
+import { AccountingAccountService } from '../../services/accounting.account.service';
 import { AccountingRecordSearchResultService } from '../../services/accounting.record.search.result.service';
 import { AccountingRecordService } from '../../services/accounting.record.service';
 
@@ -30,7 +32,8 @@ import { AccountingRecordService } from '../../services/accounting.record.servic
 export class AccountingRecordComponent implements OnInit {
 
   // Used for integration in tiers and responsable component
-  @Input() tiersToDisplay: ITiers | undefined;
+  @Input() tiersToDisplay: Tiers | undefined;
+  @Input() responsableToDisplay: Responsable | undefined;
   @Input() accountingRecordSearch: AccountingRecordSearch = {} as AccountingRecordSearch;
 
   constructor(
@@ -44,6 +47,8 @@ export class AccountingRecordComponent implements OnInit {
     private paymentDetailsDialogService: PaymentDetailsDialogService,
     public confirmationDialog: MatDialog,
     private constantService: ConstantService,
+    private activatedRoute: ActivatedRoute,
+    private accountingAccountService: AccountingAccountService
   ) { }
 
   accountingRecords: AccountingRecordSearchResult[] | undefined;
@@ -56,6 +61,8 @@ export class AccountingRecordComponent implements OnInit {
   tableActionToLetterValues: SortTableAction<AccountingRecordSearchResult>[] = [] as Array<SortTableAction<AccountingRecordSearchResult>>;
   bookmark: AccountingRecordSearch | undefined;
   refreshLetteringTable: Subject<void> = new Subject<void>();
+  accountingAccountId: string | undefined;
+
 
   canAddNewAccountingRecord() {
     return this.habilitationService.canAddNewAccountingRecord();
@@ -86,10 +93,7 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "payment", fieldName: "paymentId", label: "Paiement", actionFunction: (element: AccountingRecordSearchResult) => this.paymentDetailsDialogService.displayPaymentDetailsDialog({ id: element.paymentId } as Payment), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn<AccountingRecordSearchResult>);
 
     if (this.tiersToDisplay && this.tiersToDisplay.id) {
-      if (instanceOfConfrere(this.tiersToDisplay))
-        this.accountingRecordSearch.confrereId = this.tiersToDisplay.id;
-      else
-        this.accountingRecordSearch.tiersId = this.tiersToDisplay.id;
+      this.accountingRecordSearch.tiersId = this.tiersToDisplay.id;
       this.accountingRecordSearch.hideLettered = true;
       this.searchRecords();
     } else if (this.accountingRecordSearch && this.accountingRecordSearch.idPayment)
@@ -115,6 +119,17 @@ export class AccountingRecordComponent implements OnInit {
             if (this.toLetteredValues.indexOf(element) < 0 && element.letteringNumber == null)
               this.toLetteredValues.push(element);
             this.refreshLetteringTable.next();
+          }
+        }, display: true,
+      } as SortTableAction<AccountingRecordSearchResult>);
+
+    if (this.habilitationService.canUpdateAccountingRecordsOnBilanJournal())
+      this.tableAction.push({
+        actionIcon: 'edit', actionName: "Modifier l'écriture", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
+          if (element.isManual) {
+            this.appService.openRoute(event, '/accounting/edit/' + element.temporaryOperationId, undefined);
+          } else {
+            this.appService.displaySnackBar("La modification n'est possible sur ces lignes", true, 10);
           }
         }, display: true,
       } as SortTableAction<AccountingRecordSearchResult>);
@@ -151,6 +166,16 @@ export class AccountingRecordComponent implements OnInit {
       }, display: true,
     } as SortTableAction<AccountingRecordSearchResult>);
 
+    let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+    this.accountingAccountId = this.activatedRoute.snapshot.params.accountingAccountId;
+    if (url[1].path == "view" && this.accountingAccountId) {
+      this.accountingAccountService.getAccountingAccountById(parseInt(this.accountingAccountId)).subscribe(response => {
+        this.accountingRecordSearch.accountingAccount = response;
+        this.accountingRecordSearch.hideLettered = true;
+        this.setCurentFiscalYear();
+        this.searchRecords();
+      });
+    }
   }
 
   letterSelectedRecords() {
@@ -232,7 +257,7 @@ export class AccountingRecordComponent implements OnInit {
 
   searchRecords() {
     this.restoreTotalDivPosition();
-    if (!this.accountingRecordSearch.tiersId && !this.accountingRecordSearch.confrereId && !this.accountingRecordSearch.idPayment) {
+    if (!this.accountingRecordSearch.tiersId && !this.accountingRecordSearch.idPayment) {
       if (this.tiersToDisplay == undefined && (!this.accountingRecordSearch.startDate || !this.accountingRecordSearch.endDate)) {
         this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
         return;
@@ -241,7 +266,7 @@ export class AccountingRecordComponent implements OnInit {
     if (this.accountingRecordSearch.startDate)
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
 
-    if (!this.tiersToDisplay && !this.accountingRecordSearch.idPayment)
+    if (!this.tiersToDisplay && !this.accountingRecordSearch.idPayment && !this.accountingAccountId)
       this.userPreferenceService.setUserSearchBookmark(this.accountingRecordSearch, "accounting-record");
     this.accountingRecordSearchService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
       this.accountingRecords = response;
@@ -315,7 +340,7 @@ export class AccountingRecordComponent implements OnInit {
 
   downloadBillingClosureReceipt() {
     if (this.tiersToDisplay)
-      this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay);
+      this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay, this.responsableToDisplay);
   }
 
   sendBillingClosureReceipt() {
@@ -331,8 +356,8 @@ export class AccountingRecordComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(dialogResult => {
-        if (dialogResult)
-          this.accountingRecordService.sendBillingClosureReceipt(this.tiersToDisplay!).subscribe(res => { });
+        if (dialogResult && this.tiersToDisplay)
+          this.accountingRecordService.sendBillingClosureReceipt(this.tiersToDisplay, this.responsableToDisplay).subscribe(res => { });
       });
     }
   }

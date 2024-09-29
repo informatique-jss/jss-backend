@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MineurNationaliteService } from 'src/app/modules/miscellaneous/services/guichet-unique/mineur.nationalite.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { MineurNationalite } from '../../../../../quotation/model/guichet-unique/referentials/MineurNationalite';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-mineur-nationalite',
@@ -14,8 +14,8 @@ export class AutocompleteMineurNationaliteComponent extends GenericLocalAutocomp
 
   types: MineurNationalite[] = [] as Array<MineurNationalite>;
 
-  constructor(private formBuild: UntypedFormBuilder, private MineurNationaliteService: MineurNationaliteService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private MineurNationaliteService: MineurNationaliteService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: MineurNationalite[], value: string): MineurNationalite[] {

@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.accounting.repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
-import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
@@ -45,7 +43,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " with invoice_label as (select i.id, string_agg(ii.label, ', ' order by ii.id) as label " +
                         " from invoice i  " +
                         " join invoice_item ii on ii.id_invoice = i.id " +
-                        " where i.is_invoice_from_provider and i.created_date between :startDate and :endDate " +
+                        " where i.id_provider is not null and i.created_date between :startDate and :endDate " +
                         " group by i.id) " +
                         " select  " +
                         " r.id as recordId, " +
@@ -74,7 +72,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " r.id_payment as paymentId, " +
                         " r.is_temporary as isTemporary, " +
                         " r.is_from_as400 as isFromAs400, " +
-                        " r2.operation_id as contrePasseOperationId, " +
+                        " r.is_manual as isManual, " +
                         " (select STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')',', ' order by 1) as affaireLabel from asso_affaire_order asso join affaire af on af.id = asso.id_affaire left join city on city.id = af.id_city where  asso.id_customer_order = i.customer_order_id or asso.id_customer_order = r.id_customer_order)  as affaireLabel,"
                         +
                         " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable "
@@ -83,19 +81,19 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " left join accounting_journal j on j.id = r.id_accounting_journal " +
                         " join accounting_account a on a.id = r.id_accounting_account " +
                         " join principal_accounting_account pa on pa.id = a.id_principal_accounting_account " +
-                        " left join tiers t on (t.id_accounting_account_customer = r.id_accounting_account  or t.id_accounting_account_deposit=r.id_accounting_account) "
-                        + " left join confrere cf on (cf.id_accounting_account_customer = r.id_accounting_account  or cf.id_accounting_account_deposit=r.id_accounting_account or cf.id_accounting_account_provider = r.id_accounting_account) "
-                        + " left join accounting_record r2 on r2.id = r.id_contre_passe " +
+                        " left join tiers t on (t.id_accounting_account_customer = r.id_accounting_account  or t.id_accounting_account_deposit=r.id_accounting_account)  and t.id = :tiersId "
+                        +
                         " left join invoice i on i.id = r.id_invoice left join invoice_label il on il.id = i.id " +
+                        " left join provider pr on (pr.id_accounting_account_provider = r.id_accounting_account or pr.id_accounting_account_deposit = r.id_accounting_account)  and pr.id = :tiersId "
+                        +
                         " left join customer_order co on co.id = r.id_customer_order " +
                         " left join responsable re1 on re1.id = i.id_responsable " +
-                        " left join responsable re2 on r2.id = co.id_responsable " +
+                        " left join responsable re2 on re2.id = co.id_responsable " +
                         " where ( COALESCE(:accountingAccountIds) =0 or r.id_accounting_account in (:accountingAccountIds)) "
                         +
                         " and (:journalId =0 or r.id_accounting_journal = :journalId) " +
-                        " and (:confrereId =0 or cf.id is not null and cf.id =:confrereId ) "
+                        " and (:tiersId =0  or coalesce(t.id, pr.id) is not null) "
                         +
-                        " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or coalesce(r.lettering_date_time,:endDate)>=:endDate ) " +
                         " and (:isFromAs400 = false or r.is_from_as400=true ) " +
                         " and (coalesce(r.manual_accounting_document_date, r.operation_date_time)>= :startDate or coalesce(r.manual_accounting_document_date, r.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and r.lettering_number  is  null) and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
@@ -114,7 +112,6 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("journalId") Integer journalId,
                         @Param("tiersId") Integer tiersId,
-                        @Param("confrereId") Integer confrereId,
                         @Param("hideLettered") Boolean hideLettered,
                         @Param("isFromAs400") Boolean isFromAs400,
                         @Param("startDate") LocalDateTime startDate,
@@ -131,7 +128,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         "select  round(cast(sum(case "
                         + "            when record.isanouveau=false or record.is_from_as400=true then record.credit_amount "
                         + "        end)  as numeric), 2) as creditAmount," + "        round(cast(sum(case "
-                        + "            when record.isanouveau=false or record.is_from_as400=true then record.debit_amount "
+                        + "            when record.isanouveau=false or record.is_from_as400=true then round(cast(record.debit_amount as numeric), 2) "
                         + "        end) as numeric), 2) as debitAmount,"
                         + "		accounting.label as accountingAccountLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
@@ -155,7 +152,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
-                        " group by aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') order by pa.code   "
+                        " group by aac.code, aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') order by aac.code, pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0')    "
                         +
                         "")
         List<AccountingBalance> searchAccountingBalance(
@@ -174,8 +171,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "        end) as numeric), 2) as debitAmount," + "	 "
                         + "		aac.label as accountingAccountClassLabel,"
                         + "		pa.code as principalAccountingAccountCode,"
-                        + "		case when pa.code in ('401', '411', '4091', '4191') then pa.label else accounting.label end as principalAccountingAccountLabel,"
-                        + "		case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') ||'' end as accountingAccountSubNumber,"
+                        + "		case when pa.code in ('401', '411', '4091', '4191','4161','4162') then pa.label else accounting.label end as principalAccountingAccountLabel,"
+                        + "		case when pa.code in ('401','411','4091','4191','4161','4162') then lpad('',8-length(pa.code),'0') ||'' else lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') ||'' end as accountingAccountSubNumber,"
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '30 day') then i.total_price  end) as echoir30, "
                         + "		sum(case when i.due_date>now() and i.due_date<= (now() +INTERVAL '60 day') and i.due_date> (now() +INTERVAL '30 day')  then i.total_price  end) as echoir60, "
                         + "		sum(case when  i.due_date>now() and i.due_date> (now() +INTERVAL '60 day')  then i.total_price  end) as echoir90, "
@@ -194,9 +191,9 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
-                        " group by aac.label,pa.code,case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') ||'' end, case when pa.code in ('401', '411', '4091', '4191') then pa.label else accounting.label end  "
+                        " group by aac.code, aac.label,pa.code,case when pa.code in ('401','411','4091','4191','4161','4162') then lpad('',8-length(pa.code),'0') ||'' else lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') ||'' end, case when pa.code in ('401', '411', '4091', '4191','4161','4162') then pa.label else accounting.label end  "
                         +
-                        " order by pa.code, case when pa.code in ('401','411','4091','4191') then '' else lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') ||'' end ")
+                        " order by aac.code, pa.code, case when pa.code in ('401','411','4091','4191','4161','4162') then lpad('',8-length(pa.code),'0') ||'' else lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') ||'' end ")
         List<AccountingBalance> searchAccountingBalanceGenerale(
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("accountingAccountId") Integer accountingAccountId,
@@ -205,19 +202,6 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("endDate") LocalDateTime endDate,
                         @Param("canViewRestricted") boolean canViewRestricted,
                         @Param("isFromAs400") Boolean isFromAs400);
-
-        @Query("select sum(a.creditAmount) as creditAmount, " +
-                        " sum(a.debitAmount) as debitAmount, pa.code as accountingAccountNumber "
-                        +
-                        " from AccountingRecord a  JOIN a.accountingAccount aa  JOIN aa.principalAccountingAccount pa  where "
-                        +
-                        "(a.accountingDateTime is null or (coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) >=:startDate and coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) <=:endDate ))   "
-                        + " and (:canViewRestricted=true or aa.isViewRestricted=false)  " +
-                        " group by pa.code ")
-        List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate,
-                        @Param("canViewRestricted") boolean canViewRestricted);
 
         List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccountCustomer,
                         Invoice invoice);

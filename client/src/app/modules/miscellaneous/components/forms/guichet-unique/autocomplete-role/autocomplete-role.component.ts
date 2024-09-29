@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { RoleService } from 'src/app/modules/miscellaneous/services/guichet-unique/role.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Role } from '../../../../../quotation/model/guichet-unique/referentials/Role';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-role',
@@ -14,8 +14,8 @@ export class AutocompleteRoleComponent extends GenericLocalAutocompleteComponent
 
   types: Role[] = [] as Array<Role>;
 
-  constructor(private formBuild: UntypedFormBuilder, private RoleService: RoleService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private RoleService: RoleService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: Role[], value: string): Role[] {

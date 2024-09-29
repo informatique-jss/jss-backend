@@ -257,11 +257,6 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-invoice-status>
-        <referential-regie *ngIf="selectedReferential==BILLING_REGIE"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-regie>
         <referential-principal-accounting-account *ngIf="selectedReferential==PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
@@ -330,8 +325,12 @@
         <referential-paper-set-type *ngIf="selectedReferential==PAPER_SET_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()"></referential-paper-set-type>
+        <referential-service-field-type *ngIf="selectedReferential==SERVICE_FIELD_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
-        </referential-paper-set-type>
+        </referential-service-field-type>
         <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
           (click)="saveEntity()">
           <mat-icon>save</mat-icon>

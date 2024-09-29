@@ -21,7 +21,6 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -33,9 +32,7 @@ import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.ServiceService;
 import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
-import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class NotificationServiceImpl implements NotificationService {
@@ -129,7 +126,7 @@ public class NotificationServiceImpl implements NotificationService {
     private Notification genericNotificationForQuotation(Quotation quotation, String notificationType,
             boolean isFromHuman)
             throws OsirisException, OsirisClientMessageException {
-        ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
+        Responsable responsable = quotation.getResponsable();
 
         boolean createdByMe = false;
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
@@ -140,17 +137,8 @@ public class NotificationServiceImpl implements NotificationService {
                     createdByMe = true;
 
         String customerOrderName = "";
-        if (customerOrder instanceof Responsable)
-            customerOrderName = ((Responsable) customerOrder).getCivility().getLabel() + " "
-                    + ((Responsable) customerOrder).getFirstname() + " " + ((Responsable) customerOrder).getLastname();
-        if (customerOrder instanceof Tiers)
-            if (((Tiers) customerOrder).getDenomination() != null)
-                customerOrderName = ((Tiers) customerOrder).getDenomination();
-            else
-                customerOrderName = ((Tiers) customerOrder).getCivility().getLabel() + " "
-                        + ((Tiers) customerOrder).getFirstname() + " " + ((Tiers) customerOrder).getLastname();
-        if (customerOrder instanceof Confrere)
-            customerOrderName = ((Confrere) customerOrder).getLabel();
+        customerOrderName = responsable.getCivility().getLabel() + " "
+                + responsable.getFirstname() + " " + responsable.getLastname();
 
         if (!createdByMe)
             return generateNewNotification(!isFromHuman ? null : employeeService.getCurrentEmployee(),
@@ -196,7 +184,7 @@ public class NotificationServiceImpl implements NotificationService {
     private List<Notification> genericNotificationForCustomerOrder(CustomerOrder customerOrder, String notificationType,
             boolean notifyAffaireResponsibles, boolean notifySalesEmployee, boolean notifiyBillingResponsible,
             boolean isFromHuman) throws OsirisException {
-        ITiers customerOrderTiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
+        Responsable responsable = customerOrder.getResponsable();
 
         ArrayList<Notification> notifications = new ArrayList<Notification>();
 
@@ -204,19 +192,9 @@ public class NotificationServiceImpl implements NotificationService {
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
 
         String customerOrderName = "";
-        if (customerOrderTiers instanceof Responsable)
-            customerOrderName = ((Responsable) customerOrderTiers).getCivility().getLabel() + " "
-                    + ((Responsable) customerOrderTiers).getFirstname() + " "
-                    + ((Responsable) customerOrderTiers).getLastname();
-        if (customerOrderTiers instanceof Tiers)
-            if (((Tiers) customerOrderTiers).getDenomination() != null)
-                customerOrderName = ((Tiers) customerOrderTiers).getDenomination();
-            else
-                customerOrderName = ((Tiers) customerOrderTiers).getCivility().getLabel() + " "
-                        + ((Tiers) customerOrderTiers).getFirstname() + " "
-                        + ((Tiers) customerOrderTiers).getLastname();
-        if (customerOrderTiers instanceof Confrere)
-            customerOrderName = ((Confrere) customerOrderTiers).getLabel();
+        customerOrderName = responsable.getCivility().getLabel() + " "
+                + responsable.getFirstname() + " "
+                + responsable.getLastname();
 
         if (notifySalesEmployee) {
             if (compareEmployee != null)
@@ -421,31 +399,19 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification notifyTiersDepositMandatory(Tiers tiers, Responsable responsable, Invoice invoice)
+    public Notification notifyTiersDepositMandatory(Responsable responsable, Invoice invoice)
             throws OsirisException {
         boolean createdByMe = false;
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
         Employee salesEmployee = null;
 
         String customerOrderName = "";
-        IId entity = tiers;
-        if (tiers != null) {
-            if (tiers.getDenomination() != null)
-                customerOrderName = tiers.getDenomination();
-            else
-                customerOrderName = tiers.getCivility().getLabel() + " "
-                        + tiers.getFirstname() + " "
-                        + tiers.getLastname();
-            customerOrderName += " (" + tiers.getId() + ")";
-            salesEmployee = tiers.getSalesEmployee();
-        } else if (responsable != null) {
-            entity = responsable;
-            customerOrderName = responsable.getCivility().getLabel() + " "
-                    + responsable.getFirstname() + " "
-                    + responsable.getLastname();
-            customerOrderName += " (" + responsable.getId() + ")";
-            salesEmployee = responsable.getSalesEmployee();
-        }
+        IId entity = responsable;
+        customerOrderName = responsable.getCivility().getLabel() + " "
+                + responsable.getFirstname() + " "
+                + responsable.getLastname();
+        customerOrderName += " (" + responsable.getId() + ")";
+        salesEmployee = responsable.getSalesEmployee();
 
         if (salesEmployee != null) {
             if (compareEmployee != null)

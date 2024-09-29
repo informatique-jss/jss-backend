@@ -38,6 +38,8 @@ import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
+import { ActiveDirectoryGroup } from './ActiveDirectoryGroup';
+import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
 
 export interface Constant {
   id: number;
@@ -80,6 +82,10 @@ export interface Constant {
   attachmentTypeAnnouncement: AttachmentType;
   attachmentTypeComplexAnnouncement: AttachmentType;
   attachmentTypeContract: AttachmentType;
+  attachmentTypeTemplate: AttachmentType;
+  attachmentTypeQuotation: AttachmentType;
+  attachmentTypeRefusInfogreffe: AttachmentType;
+  attachmentTypeAutreInfogreffe: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeDeboursNonTaxable: BillingType;
@@ -125,6 +131,7 @@ export interface Constant {
   billingTypeDomiciliationContractTypeRouteEmail: BillingType;
   billingTypeDomiciliationContractTypeRouteMail: BillingType;
   billingTypeDomiciliationContractTypeRouteEmailAndMail: BillingType;
+  billingTypeSupplyFullBeCopy: BillingType;
   stringNantissementDepositFormeJuridiqueCode: string;
   strinSocialShareNantissementRedactionFormeJuridiqueCode: string;
   stringBusinnessNantissementRedactionFormeJuridiqueCode: string;
@@ -202,6 +209,8 @@ export interface Constant {
   principalAccountingAccountProvider: PrincipalAccountingAccount;
   principalAccountingAccountCustomer: PrincipalAccountingAccount;
   principalAccountingAccountDeposit: PrincipalAccountingAccount;
+  principalAccountingAccountSuspicious: PrincipalAccountingAccount;
+  principalAccountingAccountLitigious: PrincipalAccountingAccount;
   principalAccountingAccountDepositProvider: PrincipalAccountingAccount;
   principalAccountingAccountProduct: PrincipalAccountingAccount;
   principalAccountingAccountCharge: PrincipalAccountingAccount;
@@ -222,4 +231,10 @@ export interface Constant {
   rffFrequencyMonthly: RffFrequency;
   serviceTypeOther: ServiceType;
   provisionTypeBilanPublication: ProvisionType;
+  provisionTypeRegistrationAct: ProvisionType;
+  dateAccountingClosureForAll: Date;
+  dateAccountingClosureForAccountant: Date;
+  activeDirectoryGroupFormalites: ActiveDirectoryGroup;
+  activeDirectoryGroupFacturation: ActiveDirectoryGroup;
+  furtherInformationServiceFieldType: ServiceFieldType;
 }

@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { City } from '../../../model/City';
 import { CityService } from '../../../services/city.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-postal-code',
@@ -13,8 +13,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompletePostalCodeComponent extends GenericAutocompleteComponent<string, City> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   @Input() byPassAutocompletValidator: boolean = true;

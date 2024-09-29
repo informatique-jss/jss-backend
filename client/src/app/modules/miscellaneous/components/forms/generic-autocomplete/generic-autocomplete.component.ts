@@ -3,8 +3,8 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from '../../../../../services/app.service';
 
 @Directive()
 export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComponent implements OnInit {
@@ -41,9 +41,9 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   @Input() fieldToCheckAgainstForValidation: string = "id";
 
-  constructor(private formBuilder3: UntypedFormBuilder,
-    private userNoteService3: UserNoteService) {
-    super(formBuilder3, userNoteService3);
+  constructor(private formBuilder3: UntypedFormBuilder, private appService2: AppService
+  ) {
+    super(formBuilder3, appService2);
   }
 
   callOnNgInit(): void {
@@ -78,9 +78,11 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
         this.isLoading = false;
         if (!this.isDisabled && !this.doNotOpenTwice)
           this.trigger?.openPanel();
+        this.checkPreviewIconAvailable();
       });
       this.form.get(this.propertyName)?.setValue(this.model);
       this.callOnNgInit();
+      this.checkPreviewIconAvailable();
     }
   }
 
@@ -135,5 +137,9 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
       this.form.markAllAsTouched();
       this.form.updateValueAndValidity();
     }
+  }
+
+  override getPreviewActionLinkFunction(entity: T): string[] | undefined {
+    return undefined;
   }
 }

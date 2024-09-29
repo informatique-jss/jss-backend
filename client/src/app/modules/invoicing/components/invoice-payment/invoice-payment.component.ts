@@ -67,7 +67,7 @@ export class InvoicePaymentComponent implements OnInit, AfterContentChecked {
         this.openAssociationDialog(element as any);
       }, display: true,
     } as SortTableAction<Payment>);
-    if (this.invoice && !this.invoice.isProviderCreditNote) {
+    if (this.invoice && !this.invoice.isCreditNote && this.invoice.responsable) {
       this.paymentService.getAdvisedPayment(this.invoice).subscribe(response => {
         this.advisedPayment = response;
       })

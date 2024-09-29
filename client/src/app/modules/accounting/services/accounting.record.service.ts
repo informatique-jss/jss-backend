@@ -2,7 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { AccountingRecord } from '../../accounting/model/AccountingRecord';
-import { ITiers } from '../../tiers/model/ITiers';
+import { Responsable } from '../../tiers/model/Responsable';
+import { Tiers } from '../../tiers/model/Tiers';
 import { AccountingRecordSearch } from '../model/AccountingRecordSearch';
 import { AccountingRecordSearchResult } from '../model/AccountingRecordSearchResult';
 
@@ -19,27 +20,31 @@ export class AccountingRecordService extends AppRestService<AccountingRecord> {
   }
 
   exportGrandLivre(accountingRecordSearch: AccountingRecordSearch) {
-    this.downloadPost("grand-livre/export", accountingRecordSearch as any as AccountingRecord);
+    this.downloadPost(new HttpParams(), "grand-livre/export", accountingRecordSearch as any as AccountingRecord);
   }
 
   exportJournal(accountingRecordSearch: AccountingRecordSearch) {
-    this.downloadPost("journal/export", accountingRecordSearch as any as AccountingRecord);
+    this.downloadPost(new HttpParams(), "journal/export", accountingRecordSearch as any as AccountingRecord);
   }
 
   exportAccountingAccount(accountingRecordSearch: AccountingRecordSearch) {
-    this.downloadPost("accounting-account/export", accountingRecordSearch as any as AccountingRecord);
+    this.downloadPost(new HttpParams(), "accounting-account/export", accountingRecordSearch as any as AccountingRecord);
   }
 
-  downloadBillingClosureReceipt(tiers: ITiers) {
-    this.downloadGet(new HttpParams().set("tiersId", tiers.id), "billing-closure-receipt/download");
+  downloadBillingClosureReceipt(tiers: Tiers, responsable: Responsable | undefined) {
+    this.downloadGet(new HttpParams().set("tiersId", tiers.id).set("responsableId", responsable ? responsable.id : 'null'), "billing-closure-receipt/download");
   }
 
-  sendBillingClosureReceipt(tiers: ITiers) {
-    return this.get(new HttpParams().set("tiersId", tiers.id), "billing-closure-receipt/send", "Relevé(s) de compte envoyé(s) aux tiers / responsables");
+  sendBillingClosureReceipt(tiers: Tiers, responsable: Responsable | undefined) {
+    return this.get(new HttpParams().set("tiersId", tiers.id).set("responsableId", responsable ? responsable.id : 'null'), "billing-closure-receipt/send", "Relevé(s) de compte envoyé(s) aux tiers / responsables");
   }
 
   deleteRecords(accountingRecord: AccountingRecordSearchResult) {
     return this.get(new HttpParams().set("accountingRecordId", accountingRecord.recordId), "accounting-record/delete");
+  }
+
+  getAccountingRecordsByTemporaryOperationId(temporaryOperationId: number) {
+    return this.getList(new HttpParams().set("temporaryOperationId", temporaryOperationId), "accounting-record/temporary-operation-id");
   }
 
   letterRecordsForAs400(accountingRecords: AccountingRecordSearchResult[]) {

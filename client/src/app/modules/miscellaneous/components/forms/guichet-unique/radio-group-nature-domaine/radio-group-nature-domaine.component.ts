@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { NatureDomaineService } from 'src/app/modules/miscellaneous/services/guichet-unique/nature.domaine.service';
 import { NatureDomaine } from 'src/app/modules/quotation/model/guichet-unique/referentials/NatureDomaine';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericRadioGroupComponent } from '../../generic-radio-group/generic-radio-group.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'radio-group-nature-domaine',
@@ -14,8 +14,8 @@ export class RadioGroupNatureDomaineComponent extends GenericRadioGroupComponent
   types: NatureDomaine[] = [] as Array<NatureDomaine>;
 
   constructor(
-    private formBuild: UntypedFormBuilder, private NatureDomaineService: NatureDomaineService, private userNoteService2: UserNoteService) {
-    super(formBuild, userNoteService2);
+    private formBuild: UntypedFormBuilder, private NatureDomaineService: NatureDomaineService, private appService3: AppService) {
+    super(formBuild, appService3);
   }
 
   initTypes(): void {

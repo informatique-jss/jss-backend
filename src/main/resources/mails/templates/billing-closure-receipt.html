@@ -50,6 +50,8 @@
         <tr>
             <td style="text-align: left;">
                 <span th:if="${tiersReference!=null}">N° client : <span th:text="${tiersReference}"></span><br /></span>
+                <span th:if="${clientReference!=null}">Référence client : <span
+                        th:text="${clientReference}"></span><br /></span>
                 <p th:if="${commandNumber!=null}">Votre référence annuelle :<span th:text="${commandNumber}"></span>
                 </p>
                 <p>Paris le <span th:text="${currentDate}"></span></p>
@@ -86,8 +88,14 @@
             <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
                 th:if="${values.eventDescription!=null} and ${values.eventDateString!=null}"
                 style="border-right: solid;border-color: rgb(0,83,159)">
-                <span th:utext="${values.eventDescription}"></span> <span th:if="${values.eventCbLink!=null}"> (payer <a
+                <span th:utext="${values.eventDescription}"></span> <span
+                    th:if="${values.eventCbLink!=null} and ${values.directDebitTransfertDate==null}"> (payer <a
                         th:href="${values.eventCbLink}">ici</a>)</span>
+                <br>
+                <span th:if="${values.directDebitTransfertDate!=null}"><strong> Date d'exécution du prélèvement : <span
+                            th:text="${#temporals.format(values.directDebitTransfertDate, 'dd/MM/yyyy')}">
+                        </span></strong></span>
+                </br>
             </td>
             <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
                 th:if="${values.eventDescription!=null} and ${values.eventDateString==null}"
@@ -109,7 +117,7 @@
     </table>
     <p style="margin-top: 10px;">&#160;</p>
     <table
-        style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;border-collapse: collapse;break-inside: avoid;">
+        style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;border-collapse: collapse;break-inside: avoid; transform: translateY(2px);">
         <tr>
             <td class="td-date "></td>
             <td style="text-align: right;padding-right: 10px;border-right: solid; border-color: rgb(0,83,159);">

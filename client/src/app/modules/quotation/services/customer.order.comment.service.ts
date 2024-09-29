@@ -6,7 +6,7 @@ import { CustomerOrderComment } from '../../quotation/model/CustomerOrderComment
 @Injectable({
   providedIn: 'root'
 })
-export class CustomerOrderCommentService extends AppRestService<CustomerOrderComment>{
+export class CustomerOrderCommentService extends AppRestService<CustomerOrderComment> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
@@ -15,9 +15,13 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
   getCustomerOrderComments() {
     return this.getList(new HttpParams(), "customer-order-comments");
   }
-  
-   addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {
+
+  addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {
     return this.addOrUpdate(new HttpParams(), "customer-order-comment", customerOrderComment, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
+  toggleCustomerOrderCommentIsRead(customerOrderComment: CustomerOrderComment) {
+    return this.get(new HttpParams().set('customerOrderCommentId', customerOrderComment.id), "customer-order-comment/toggle-read", (customerOrderComment.isRead) ? "Commentaire marqué comme non-lu" : "Commentaire marqué comme lu", "Erreur lors de l'enregistrement");
   }
 
 }

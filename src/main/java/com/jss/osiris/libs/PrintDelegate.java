@@ -78,10 +78,9 @@ public class PrintDelegate {
               .replaceAll("\\p{C}", "").toUpperCase()
           +
           "    "
-          + (customerOrder.getTiers() != null ? StringUtils.stripAccents(
-              (customerOrder.getTiers().getIntercom() != null ? customerOrder.getTiers().getIntercom()
-                  : ""))
-              .replaceAll("\\p{C}", "").toUpperCase() + " " : "")
+          + (StringUtils.stripAccents((customerOrder.getResponsable().getTiers().getIntercom() != null
+              ? customerOrder.getResponsable().getTiers().getIntercom()
+              : "")).replaceAll("\\p{C}", "").toUpperCase() + " ")
           +
           (customerOrder.getResponsable() != null ? (customerOrder.getResponsable().getBuilding() != null
               ? (" | " + customerOrder.getResponsable().getBuilding())

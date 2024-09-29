@@ -6,7 +6,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.invoicing.model.ICreatedDate;
@@ -49,7 +51,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	public CustomerOrder() {
 	}
 
-	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, Confrere confrere,
+	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, /* Confrere confrere, */
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
 			String description, List<Attachment> attachments,
 			List<Document> documents,
@@ -57,9 +59,9 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			List<Quotation> quotations, Boolean isQuotation,
 			List<Invoice> invoices, List<CustomerOrderComment> customerOrderComments) {
 		this.assignedTo = assignedTo;
-		this.tiers = tiers;
 		this.responsable = responsable;
-		this.confrere = confrere;
+		// this.confrere = confrere;
+		// TODO refonte
 		this.specialOffers = specialOffers;
 		this.createdDate = createdDate;
 		this.customerOrderStatus = customerOrderStatus;
@@ -85,24 +87,20 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private Employee assignedTo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_tiers")
-	@IndexedField
-	private Tiers tiers;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_confrere")
-	private Confrere confrere;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "id_confrere")
+	// private Confrere confrere;
 
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
 	private LocalDateTime createdDate;
 
@@ -125,6 +123,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@IndexedField
 	private List<Document> documents;
 
 	@OneToMany(targetEntity = PaperSet.class, mappedBy = "customerOrder", cascade = CascadeType.REMOVE)
@@ -204,28 +203,12 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.id = id;
 	}
 
-	public Tiers getTiers() {
-		return tiers;
-	}
-
-	public void setTiers(Tiers tiers) {
-		this.tiers = tiers;
-	}
-
 	public Responsable getResponsable() {
 		return responsable;
 	}
 
 	public void setResponsable(Responsable responsable) {
 		this.responsable = responsable;
-	}
-
-	public Confrere getConfrere() {
-		return confrere;
-	}
-
-	public void setConfrere(Confrere confrere) {
-		this.confrere = confrere;
 	}
 
 	public List<SpecialOffer> getSpecialOffers() {
@@ -483,5 +466,4 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	public void setPaperSets(List<PaperSet> paperSets) {
 		this.paperSets = paperSets;
 	}
-
 }

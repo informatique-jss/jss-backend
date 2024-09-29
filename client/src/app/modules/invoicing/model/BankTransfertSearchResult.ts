@@ -7,7 +7,6 @@ export interface BankTransfertSearchResult {
   transfertIban: string;
   isAlreadyExported: boolean;
   isSelectedForExport: boolean;
-  competentAuthorityLabel: string;
   invoiceBillingLabel: string;
   affaireLabel: string;
   comment: string;

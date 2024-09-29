@@ -78,7 +78,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   ACCOUNTING_JOURNAL_REFERENTIAL = "Journal comptable";
   INVOICE_STAUTS_REFERENTIAL = "Statut de facture";
   PAYMENT_WAY_REFERENTIAL = "Sens de paiement";
-  BILLING_REGIE = "Régie";
   PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL = "Compte comptable principal";
   CUSTOMER_ORDER_ORIGIN_REFERENTIAL = "Origine des commandes";
   DEPARTMENT_VAT_SETTING_REFERENTIAL = "TVA par département";
@@ -93,6 +92,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   CUSTOMER_ORDER_FREQUENCY_REFERENTIAL = "Fréquence des commandes récurrentes";
   ACTIVE_DIRECTORY_GROUP_REFERENTIAL = "Groupes Active Directory";
   PAPER_SET_TYPE_REFERENTIAL = "Types d'action documentaire";
+  SERVICE_FIELD_TYPE_REFERENTIAL = "Types de champs de service";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -158,7 +158,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.ACCOUNTING_JOURNAL_REFERENTIAL);
     this.referentials.push(this.INVOICE_STAUTS_REFERENTIAL);
     this.referentials.push(this.PAYMENT_WAY_REFERENTIAL);
-    this.referentials.push(this.BILLING_REGIE);
     this.referentials.push(this.PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL);
     this.referentials.push(this.CUSTOMER_ORDER_ORIGIN_REFERENTIAL);
     this.referentials.push(this.DEPARTMENT_VAT_SETTING_REFERENTIAL);
@@ -169,6 +168,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.QUOTATION_ABANDON_REASON_REFERENTIAL);
     this.referentials.push(this.SERVICE_FAMILY_REFERENTIAL);
     this.referentials.push(this.SERVICE_FAMILY_GROUP_REFERENTIAL);
+    this.referentials.push(this.SERVICE_FIELD_TYPE_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

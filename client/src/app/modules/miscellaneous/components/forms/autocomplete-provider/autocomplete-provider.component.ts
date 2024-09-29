@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
+import { AppService } from 'src/app/services/app.service';
 import { Provider } from '../../../model/Provider';
 import { ProviderService } from '../../../services/provider.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
@@ -14,8 +14,8 @@ export class AutocompleteProviderComponent extends GenericLocalAutocompleteCompo
 
   types: Provider[] = [] as Array<Provider>;
 
-  constructor(private formBuild: UntypedFormBuilder, private providerService: ProviderService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private providerService: ProviderService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: Provider[], value: string): Provider[] {
@@ -25,5 +25,9 @@ export class AutocompleteProviderComponent extends GenericLocalAutocompleteCompo
 
   initTypes(): void {
     this.providerService.getProviders().subscribe(response => this.types = response);
+  }
+
+  getPreviewActionLinkFunction(entity: Provider): string[] | undefined {
+    return ['/administration/provider', entity.id + ""];
   }
 }

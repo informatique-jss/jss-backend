@@ -103,6 +103,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
+  canUpdateAccountingRecordsOnBilanJournal() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canDeleteAccountingRecordsOnBilanJournal() {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
@@ -112,7 +116,7 @@ export class HabilitationsService {
   }
 
   canManuallyLetterAccountingRecords() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING_RESPONSIBLE])
   }
 
   canAddNewAzureInvoice() {
@@ -156,7 +160,7 @@ export class HabilitationsService {
   }
 
   canPutInAnyAccountingAccount() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
   canCutPayment() {
@@ -180,10 +184,6 @@ export class HabilitationsService {
   }
 
   canByPassMultipleCustomerOrderOnAssociationCheck() {
-    return this.loginService.hasGroup([ADMINISTRATEURS]);
-  }
-
-  canPutNegativePaymentIntoAccount() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
 

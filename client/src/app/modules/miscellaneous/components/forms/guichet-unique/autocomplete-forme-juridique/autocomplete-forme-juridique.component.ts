@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { FormeJuridiqueService } from 'src/app/modules/miscellaneous/services/guichet-unique/forme.juridique.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { FormeJuridique } from '../../../../../quotation/model/guichet-unique/referentials/FormeJuridique';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-forme-juridique',
@@ -14,8 +14,8 @@ export class AutocompleteFormeJuridiqueComponent extends GenericLocalAutocomplet
 
   types: FormeJuridique[] = [] as Array<FormeJuridique>;
 
-  constructor(private formBuild: UntypedFormBuilder, private FormeJuridiqueService: FormeJuridiqueService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private FormeJuridiqueService: FormeJuridiqueService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: FormeJuridique[], value: string): FormeJuridique[] {

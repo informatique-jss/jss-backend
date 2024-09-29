@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
 import { PrincipalAccountingAccount } from 'src/app/modules/accounting/model/PrincipalAccountingAccount';
 import { AccountingAccountService } from 'src/app/modules/accounting/services/accounting.account.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
+import { AppService } from '../../../../../services/app.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
@@ -24,8 +24,8 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
  */
   @Input() filteredAccountPrincipal: PrincipalAccountingAccount | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private accountingAccountService: AccountingAccountService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private accountingAccountService: AccountingAccountService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<AccountingAccount[]> {
@@ -60,5 +60,10 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
       this.accountingAccountService.getAccountingAccountByLabel("-" + this.filteredAccountSubNumber).subscribe(response => {
         this.filteredTypes = this.mapResponse(response);
       })
+  }
+
+
+  override getPreviewActionLinkFunction(entity: AccountingAccount): string[] | undefined {
+    return ['/accounting/view', entity.id + ""];
   }
 }

@@ -11,13 +11,13 @@
               {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
             </td>
           </tr>
-          <ng-container *ngFor="let service of asso.services">
+          <ng-container *ngFor="let service of asso.services ">
+            <tr *ngIf="service  ">
+              <td class="affaire " colspan="2">
+                <strong>{{getServiceLabel(service)}}</strong>
+              </td>
+            </tr>
             <ng-container *ngFor="let provision of service.provisions">
-              <tr *ngIf="service ">
-                <td class="affaire " colspan="2">
-                  <strong>{{getServiceLabel(service)}}</strong>
-                </td>
-              </tr>
               <tr *ngIf="provision.provisionType">
                 <td class="affaire " colspan="2">
                   {{provision.provisionType.label}}
@@ -97,7 +97,18 @@
 
   <mat-sidenav-content class="padding-bottom">
     <div *ngIf="!editMode && !quotation.id && !isQuotationUrl && !idQuotation">
-      <ordering-list></ordering-list>
+      <mat-tab-group animationDuration="0ms">
+        <mat-tab label="Commandes">
+          <ng-template matTabContent>
+            <ordering-list></ordering-list>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Commandes taggées">
+          <ng-template matTabContent>
+            <ordering-list-tagged></ordering-list-tagged>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
     </div>
     <div *ngIf="!editMode && !quotation.id && isQuotationUrl && !idQuotation">
       <quotation-list></quotation-list>
@@ -109,7 +120,7 @@
           </ordering-customer>
         </mat-tab>
         <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-          <mat-tab label="Prestations" *ngIf="(quotation.tiers || quotation.responsable  || quotation.confrere)  ">
+          <mat-tab label="Prestations" *ngIf="(quotation.responsable)  ">
             <div class="mat-elevation-z2 form-div" *ngIf="quotation.assoAffaireOrders">
               <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndexAsso"
                 (selectedTabChange)="changeTabAsso($event)">
@@ -198,6 +209,9 @@
                                 <mat-icon color="accent" *ngIf="editMode" matTooltip="Supprimer la prestation"
                                   (click)="deleteProvision(service,provision);$event.stopPropagation()" class="pointer">
                                   delete</mat-icon>
+                                <mat-icon color="accent" *ngIf="editMode" matTooltip="Dupliquer la prestation"
+                                  (click)="duplicateProvision(service,provision)" class="pointer">
+                                  content_copy</mat-icon>
                               </mat-panel-description>
                             </mat-expansion-panel-header>
                             <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"
@@ -277,7 +291,7 @@
   <mat-icon>save</mat-icon>
 </button>
 <button matTooltip="Ajouter une affaire / prestation" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode  &&  (quotation.tiers || quotation.responsable || quotation.confrere) " (click)="addAffaire()">
+  *ngIf="editMode  &&  (quotation.responsable) " (click)="addAffaire()">
   <mat-icon>person_add</mat-icon>
 </button>
 <button [matTooltip]="instanceOfCustomerOrder?'Modifier la commande' : 'Modifier le devis'" mat-fab color="accent"

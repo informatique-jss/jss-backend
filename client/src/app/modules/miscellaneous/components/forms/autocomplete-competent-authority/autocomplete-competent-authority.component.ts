@@ -1,10 +1,7 @@
-
-
-
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { UserNoteService } from 'src/app/services/user.notes.service';
+import { AppService } from 'src/app/services/app.service';
 import { CompetentAuthority } from '../../../model/CompetentAuthority';
 import { CompetentAuthorityType } from '../../../model/CompetentAuthorityType';
 import { Department } from '../../../model/Department';
@@ -38,8 +35,8 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
 */
   @Input() filteredCompetentAuthority: CompetentAuthority[] | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private competentauthorityService: CompetentAuthorityService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private competentauthorityService: CompetentAuthorityService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   searchEntities(value: string): Observable<CompetentAuthority[]> {
@@ -61,5 +58,9 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
         return false;
       });
     return [] as Array<CompetentAuthority>;
+  }
+
+  getPreviewActionLinkFunction(entity: CompetentAuthority): string[] | undefined {
+    return ['/administration/competent/authority', entity.id + ""];
   }
 }

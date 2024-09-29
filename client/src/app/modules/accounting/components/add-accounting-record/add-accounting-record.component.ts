@@ -10,7 +10,7 @@ import { AppService } from 'src/app/services/app.service';
 import { AccountingJournal } from '../../model/AccountingJournal';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordService } from '../../services/accounting.record.service';
-
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 @Component({
   selector: 'add-accounting-record',
   templateUrl: './add-accounting-record.component.html',
@@ -21,11 +21,14 @@ export class AddAccountingRecordComponent implements OnInit {
   accountingRecords: AccountingRecord[] = new Array<AccountingRecord>;
   accountingRecord: AccountingRecord = {} as AccountingRecord;
   isEditing: boolean = false;
+  minDate: Date = new Date();
+  maxDate: Date = new Date();
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
     private accountingRecordService: AccountingRecordService,
     private constantService: ConstantService,
+    private activatedRoute: ActivatedRoute,
     private location: Location,
   ) {
   }
@@ -44,6 +47,10 @@ export class AddAccountingRecordComponent implements OnInit {
 
   ngOnInit() {
     this.addAccountingRecord();
+    let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+    let temporaryOperationId = this.activatedRoute.snapshot.params.temporaryOperationId;
+
+    this.setOperationDateInterval();
 
     // Column init
     this.displayedColumns = [];
@@ -53,6 +60,7 @@ export class AddAccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "accountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° de pièce justificative" } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "accountingDocumentDate", fieldName: "manualAccountingDocumentDate", label: "Date pièce justificative", valueFonction: formatDateForSortTable } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "manualAccountingDocumentDeadline", fieldName: "manualAccountingDocumentDeadline", label: "Date limite de paiement", valueFonction: formatDateForSortTable } as SortTableColumn<AccountingRecord>);
+    this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date de l'opération", valueFonction: formatDateForSortTable } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: formatEurosForSortTable } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: formatEurosForSortTable } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn<AccountingRecord>);
@@ -70,6 +78,12 @@ export class AddAccountingRecordComponent implements OnInit {
       if (response)
         this.saveOperations();
     });
+
+    if (url[1].path == "edit" && temporaryOperationId) {
+      this.accountingRecordService.getAccountingRecordsByTemporaryOperationId(temporaryOperationId).subscribe(response => {
+        this.accountingRecords = response;
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -137,6 +151,10 @@ export class AddAccountingRecordComponent implements OnInit {
       let journalId = 0;
 
       for (let record of this.accountingRecords) {
+        if (record.operationDateTime) {
+          record.operationDateTime = new Date(record.operationDateTime);
+          record.operationDateTime.setHours(12);
+        }
         if (journalId > 0 && journalId != record.accountingJournal.id) {
           this.appService.displaySnackBar("Le journal doit être identique sur l'ensemble des lignes", true, 10);
           return;
@@ -155,5 +173,12 @@ export class AddAccountingRecordComponent implements OnInit {
     } else {
       this.appService.displaySnackBar("Veuillez saisir au moins une opération valide", true, 15);
     }
+  }
+
+  setOperationDateInterval() {
+    this.minDate.setFullYear(this.minDate.getFullYear() - 1);
+    this.minDate.setMonth(0);
+    this.minDate.setDate(1);
+    this.maxDate.setDate(this.maxDate.getDate() + 1);
   }
 }

@@ -58,7 +58,7 @@ public class DomiciliationServiceImpl implements DomiciliationService {
         try {
             provision.setAttachments(
                     attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                            provision.getId(),
+                            provision.getId(), null,
                             Provision.class.getSimpleName(),
                             constantService.getAttachmentTypeContract(),
                             "Domiciliation_contract_" + formatter.format(LocalDateTime.now()) + ".pdf",

@@ -1,11 +1,11 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +15,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -39,6 +40,7 @@ import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
+import com.jss.osiris.modules.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.quotation.model.ServiceType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -65,15 +67,23 @@ public class ConstantServiceImpl implements ConstantService {
 
     @Override
     public Constant getConstants() throws OsirisException {
-        if (cachedConstant == null || lastFetchedConstant == null
-                || lastFetchedConstant.isBefore(LocalDateTime.now().minusSeconds(5))) {
-            List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
-            if (constants == null || constants.size() != 1)
-                throw new OsirisException(null, "Constants not defined or multiple");
-            cachedConstant = (Constant) Hibernate.unproxy(constants.get(0));
-            lastFetchedConstant = LocalDateTime.now();
-        }
-        return cachedConstant;
+        // TODO : erreur proxy, sur pricingHelper par exemple...
+        /*
+         * if (cachedConstant == null || lastFetchedConstant == null
+         * || lastFetchedConstant.isBefore(LocalDateTime.now().minusSeconds(5))) {
+         * List<Constant> constants =
+         * IterableUtils.toList(constantRepository.findAll());
+         * if (constants == null || constants.size() != 1)
+         * throw new OsirisException(null, "Constants not defined or multiple");
+         * cachedConstant = (Constant) Hibernate.unproxy(constants.get(0));
+         * lastFetchedConstant = LocalDateTime.now();
+         * }
+         * return cachedConstant;
+         */
+        List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
+        if (constants == null || constants.size() != 1)
+            throw new OsirisException(null, "Constants not defined or multiple");
+        return constants.get(0);
     }
 
     @Override
@@ -289,6 +299,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeTemplate() throws OsirisException {
+        return getConstants().getAttachmentTypeTemplate();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeQuotation() throws OsirisException {
+        return getConstants().getAttachmentTypeQuotation();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
@@ -459,6 +479,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ProvisionType getProvisionTypeRegistrationAct() throws OsirisException {
+        return getConstants().getProvisionTypeRegistrationAct();
+    }
+
+    @Override
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException {
         return getConstants().getBillingTypeInfogreffeDebour();
     }
@@ -516,6 +541,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingTypeDomiciliationContractTypeRouteEmailAndMail() throws OsirisException {
         return getConstants().getBillingTypeDomiciliationContractTypeRouteEmailAndMail();
+    }
+
+    @Override
+    public BillingType getBillingTypeSupplyFullBeCopy() throws OsirisException {
+        return getConstants().getBillingTypeSupplyFullBeCopy();
     }
 
     @Override
@@ -904,6 +934,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountLitigious() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountLitigious();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountSuspicious() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountSuspicious();
+    }
+
+    @Override
     public PrincipalAccountingAccount getPrincipalAccountingAccountProduct() throws OsirisException {
         return getConstants().getPrincipalAccountingAccountProduct();
     }
@@ -996,5 +1036,40 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ServiceType getServiceTypeOther() throws OsirisException {
         return getConstants().getServiceTypeOther();
+    }
+
+    @Override
+    public LocalDate getDateAccountingClosureForAll() throws OsirisException {
+        return this.getConstants().getDateAccountingClosureForAll();
+    }
+
+    @Override
+    public LocalDate getDateAccountingClosureForAccountant() throws OsirisException {
+        return this.getConstants().getDateAccountingClosureForAccountant();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeRefusInfogreffe() throws OsirisException {
+        return this.getConstants().getAttachmentTypeRefusInfogreffe();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeAutreInfogreffe() throws OsirisException {
+        return this.getConstants().getAttachmentTypeAutreInfogreffe();
+    }
+
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupFormalites();
+    }
+
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupFacturation();
+    }
+
+    @Override
+    public ServiceFieldType getFurtherInformationServiceFieldType() throws OsirisException {
+        return this.getConstants().getFurtherInformationServiceFieldType();
     }
 }

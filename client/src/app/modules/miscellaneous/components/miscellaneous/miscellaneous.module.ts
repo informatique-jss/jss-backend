@@ -55,13 +55,13 @@ import { AutocompleteCustomerOrderComponent } from '../forms/autocomplete-custom
 import { AutocompleteDepartmentComponent } from '../forms/autocomplete-department/autocomplete-department.component';
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
 import { AutocompleteGuichetUniqueFormaliteComponent } from '../forms/autocomplete-formalite-guichet-unique/autocomplete-formalite-guichet-unique.component';
+import { AutocompleteInfogreffeFormaliteComponent } from '../forms/autocomplete-formalite-infogreffe/autocomplete-formalite-infogreffe.component';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/autocomplete-payment.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
 import { AutocompletePrincipalAccountingAccountComponent } from '../forms/autocomplete-principal-accounting-account/autocomplete-principal-accounting-account.component';
 import { AutocompleteProviderComponent } from '../forms/autocomplete-provider/autocomplete-provider.component';
 import { AutocompleteProvisionTypeComponent } from '../forms/autocomplete-provision-type/autocomplete-provision-type.component';
-import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomplete-regie.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
 import { AutocompleteRnaComponent } from '../forms/autocomplete-rna/autocomplete-rna.component';
@@ -80,6 +80,7 @@ import { ChipsPaymentTypeComponent } from '../forms/chips-payment-type/chips-pay
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
 import { ChipsPrincipalAccountingAccountComponent } from '../forms/chips-principal-accounting-account/chips-principal-accounting-account.component';
 import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-family/chips-provision-family.component';
+import { ChipsServiceTypeComponent } from '../forms/chips-service-type/chips-service-type.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
 import { ChipsTypeDocumentComponent } from '../forms/chips-type-document/chips-type-document.component';
 import { GenericCheckboxComponent } from '../forms/generic-checkbox/generic-checkbox.component';
@@ -197,13 +198,13 @@ import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/
 import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
+import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-directory-group/select-active-directory-group.component';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
 import { SelectBatchCategoryComponent } from '../forms/select-batch-category/select-batch-category.component';
 import { SelectBatchSettingsComponent } from '../forms/select-batch-settings/select-batch-settings.component';
 import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-batch-status.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
-import { SelectBillingTypeDebourComponent } from '../forms/select-billing-type-debour/select-billing-type-debour.component';
 import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
@@ -217,6 +218,7 @@ import { SelectDepartmentComponent } from '../forms/select-department/select-dep
 import { SelectDepartmentsComponent } from '../forms/select-departments/select-departments.component';
 import { SelectDocumentTypeComponent } from '../forms/select-document-type/select-document-type.component';
 import { SelectFollowupComponent } from '../forms/select-followup/select-followup.component';
+import { SelectFormaliteInfogreffeStatusComponent } from '../forms/select-formalite-infogreffe-status/select-formalite-infogreffe-status.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
 import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-one/select-invoice-status-one.component';
@@ -243,11 +245,14 @@ import { SelectResponsableComponent } from '../forms/select-responsable/select-r
 import { SelectRffFrequencyComponent } from '../forms/select-rff-frequency/select-rff-frequency.component';
 import { SelectServiceFamilyGroupComponent } from '../forms/select-service-family-group/select-service-family-group.component';
 import { SelectServiceFamilyComponent } from '../forms/select-service-family/select-service-family.component';
+import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
+import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 import { SelectServiceTypeComponent } from '../forms/select-service-type/select-service-type.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
 import { SelectTypeDocumentComponent } from '../forms/select-type-document/select-type-document.component';
+import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component';
 import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
 import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
@@ -355,11 +360,9 @@ const routes: Routes = [
     SelectAssignationTypeComponent,
     RadioGroupRecordTypeComponent,
     AutocompleteCityComponent,
-    SelectBillingTypeDebourComponent,
     SelectVatComponent,
     SelectRegionsComponent,
     AutocompleteRegionComponent,
-    AutocompleteRegieComponent,
     SelectFundTypeComponent,
     ChipsCityComponent,
     AutocompleteDepartmentComponent,
@@ -535,6 +538,14 @@ const routes: Routes = [
     SelectBillingTypeComponent,
     SelectPaperSetTypeComponent,
     ChipsPrincipalAccountingAccountComponent,
+    SelectServiceFieldTypeComponent,
+    SelectServiceFieldTypeComponent,
+    SelectValueServiceFieldTypeComponent,
+    SelectServiceFieldDataTypeComponent,
+    SelectActiveDirectoryGroupComponent,
+    AutocompleteInfogreffeFormaliteComponent,
+    SelectFormaliteInfogreffeStatusComponent,
+    ChipsServiceTypeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -587,7 +598,6 @@ const routes: Routes = [
     SelectDepartmentsComponent,
     SelectCompetentAuthorityTypeComponent,
     SelectRegionsComponent,
-    SelectBillingTypeDebourComponent,
     AutocompleteAffaireComponent,
     SelectDocumentTypeComponent,
     SelectAttachmentTypeComponent,
@@ -630,7 +640,6 @@ const routes: Routes = [
     SortTableComponent,
     EditCommentDialogComponent,
     SelectInvoiceStatusComponent,
-    AutocompleteRegieComponent,
     SelectAssignationTypeComponent,
     ChipsProvisionFamilyTypeComponent,
     AutocompleteBillingItemComponent,
@@ -769,6 +778,14 @@ const routes: Routes = [
     SelectBillingTypeComponent,
     SelectPaperSetTypeComponent,
     ChipsPrincipalAccountingAccountComponent,
+    SelectServiceFieldTypeComponent,
+    SelectServiceFieldTypeComponent,
+    SelectValueServiceFieldTypeComponent,
+    SelectServiceFieldDataTypeComponent,
+    SelectActiveDirectoryGroupComponent,
+    AutocompleteInfogreffeFormaliteComponent,
+    SelectFormaliteInfogreffeStatusComponent,
+    ChipsServiceTypeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'generic-input',
@@ -36,10 +36,9 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
   @Input() hint: string = "";
 
   constructor(
-    private formBuilder2: UntypedFormBuilder,
-    private userNoteService2: UserNoteService,
+    private formBuilder2: UntypedFormBuilder, private appService2: AppService
   ) {
-    super(formBuilder2, userNoteService2);
+    super(formBuilder2, appService2);
   }
 
   callOnNgInit(): void {
@@ -58,5 +57,9 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
       this.onFormChange.emit(this.model);
       this.form.get(this.propertyName)?.setValue(this.model);
     }
+  }
+
+  getPreviewActionLinkFunction(entity: any): string[] | undefined {
+    return undefined;
   }
 }

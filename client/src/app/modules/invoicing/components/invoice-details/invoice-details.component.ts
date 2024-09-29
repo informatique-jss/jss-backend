@@ -12,14 +12,14 @@ import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
 import { ServiceService } from 'src/app/modules/quotation/services/service.service';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
-import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
+import { instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceService } from '../../services/invoice.service';
-import { getAffaireList, getAffaireListArray, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getProviderLabelForInvoice, getRemainingToPay, getResponsableName } from '../invoice-tools';
+import { getAffaireList, getAffaireListArray, getCustomerOrderNameForInvoice, getLetteringDate, getRemainingToPay, getResponsableName } from '../invoice-tools';
 
 @Component({
   selector: 'invoice-details',
@@ -79,7 +79,7 @@ export class InvoiceDetailsComponent implements OnInit {
         this.invoice = response;
         this.restoreTab();
         if (!this.isForIntegration)
-          this.appService.changeHeaderTitle((this.invoice.isCreditNote || this.invoice.isProviderCreditNote ? "Avoir" : "Facture") + " n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
+          this.appService.changeHeaderTitle((this.invoice.isCreditNote ? "Avoir" : "Facture") + " n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
       })
     }
   }
@@ -92,15 +92,14 @@ export class InvoiceDetailsComponent implements OnInit {
   });
 
   getCustomerOrderName = getCustomerOrderNameForInvoice;
-  getProviderName = getProviderLabelForInvoice;
 
   getCustomerOrder(invoice: Invoice): any {
     if (invoice) {
       if (invoice.provider)
         return invoice.provider
-      return getCustomerOrderForInvoice(invoice);
+      return invoice.responsable;
     }
-    return {} as ITiers;
+    return {} as Tiers;
   }
 
   openCustomerOrderLink(event: any) {
@@ -114,8 +113,6 @@ export class InvoiceDetailsComponent implements OnInit {
           link = ['/tiers', tiers.id + ""];
         if (instanceOfResponsable(tiers))
           link = ['/tiers/responsable', tiers.id + ""];
-        if (instanceOfConfrere(tiers))
-          link = ['/confrere', tiers.id + ""];
       }
 
       this.appService.openRoute(event, link.join("/"), null);

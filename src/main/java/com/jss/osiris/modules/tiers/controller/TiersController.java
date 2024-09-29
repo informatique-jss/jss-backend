@@ -41,7 +41,6 @@ import com.jss.osiris.modules.miscellaneous.service.SalesComplainProblemService;
 import com.jss.osiris.modules.miscellaneous.service.SalesComplainService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
@@ -331,18 +330,6 @@ public class TiersController {
       throw new OsirisValidationException("Responsable");
 
     tiersFollowup.setResponsable(responsable);
-    return saveTiersFollomUp(tiersFollowup);
-  }
-
-  @PostMapping(inputEntryPoint + "/tiers-followup/confrere")
-  public ResponseEntity<List<TiersFollowup>> addTiersFollowupForConfrere(@RequestBody TiersFollowup tiersFollowup,
-      @RequestParam Integer idConfrere)
-      throws OsirisValidationException, OsirisException {
-    Confrere confrere = confrereService.getConfrere(idConfrere);
-    if (confrere == null)
-      throw new OsirisValidationException("Confrere");
-
-    tiersFollowup.setConfrere(confrere);
     return saveTiersFollomUp(tiersFollowup);
   }
 
@@ -655,7 +642,7 @@ public class TiersController {
     } else {
       tiers.setFirstname(null);
       tiers.setLastname(null);
-      validationHelper.validateString(tiers.getDenomination(), true, 60, "Denomination");
+      validationHelper.validateString(tiers.getDenomination(), true, 80, "Denomination");
       if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 20)
         throw new OsirisValidationException("IntercommunityVat");
     }
@@ -809,15 +796,6 @@ public class TiersController {
         if (responsable.getRffMail() != null && responsable.getRffMail().length() > 0
             && !validationHelper.validateMail(responsable.getRffMail()))
           throw new OsirisValidationException("Mails rff");
-
-        boolean tiersGotRff = tiers.getRffFormaliteRate() != null && tiers.getRffFormaliteRate() > 0
-            || tiers.getRffInsertionRate() != null && tiers.getRffInsertionRate() > 0;
-
-        if (tiersGotRff || tiers.getTiersCategory() != null
-            && tiers.getTiersCategory().getId().equals(constantService.getTiersCategoryPresse().getId())) {
-          responsable.setRffFormaliteRate(null);
-          responsable.setRffInsertionRate(null);
-        }
 
         if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
           for (Document document : responsable.getDocuments()) {

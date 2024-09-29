@@ -1,6 +1,7 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from "@angular/core";
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { UserNoteService } from "src/app/services/user.notes.service";
+import { Observable } from "rxjs";
+import { AppService } from '../../../../services/app.service';
 
 @Directive()
 export abstract class GenericFormComponent implements OnInit {
@@ -55,15 +56,19 @@ export abstract class GenericFormComponent implements OnInit {
  */
   @Output() onFormBlur: EventEmitter<void> = new EventEmitter();
 
+  isDisplayPreviewShortcut: boolean = false;
+  previewActionLink: string[] | undefined;
+
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private userNoteService: UserNoteService,
+    private appService: AppService
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
       this.modelChange.emit(this.model);
+      this.checkPreviewIconAvailable();
     }
     if (changes.isDisabled) {
       if (this.isDisabled) {
@@ -101,9 +106,11 @@ export abstract class GenericFormComponent implements OnInit {
           this.model = newValue;
           this.modelChange.emit(this.model);
           this.onFormChange.emit(this.model);
+          this.checkPreviewIconAvailable();
         }
       )
       this.callOnNgInit();
+      this.checkPreviewIconAvailable();
       this.form.get(this.propertyName)?.setValue(this.model);
     }
   }
@@ -135,18 +142,29 @@ export abstract class GenericFormComponent implements OnInit {
     };
   }
 
-  addToNotes(event: any) {
-    let isHeader = false;
-    if (event && event.ctrlKey)
-      isHeader = true;
-    this.userNoteService.addToNotes(this.label, this.displayLabel(this.model), undefined, isHeader);
-  }
-
   displayLabel(object: any): string {
     if (object && object.label)
       return object.label;
     if (typeof object === "string")
       return object;
     return "";
+  }
+
+  abstract getPreviewActionLinkFunction(entity: any): string[] | undefined;
+
+  clickOnPreviewIcon() {
+    if (this.model)
+      this.previewActionLink = this.getPreviewActionLinkFunction(this.model);
+
+    if (this.previewActionLink && this.model)
+      this.appService.openRoute(event, this.previewActionLink.join("/"), undefined);
+  }
+
+  checkPreviewIconAvailable() {
+    if (this.model) {
+      let previewActionLink = this.getPreviewActionLinkFunction(this.model);
+      if (previewActionLink)
+        this.isDisplayPreviewShortcut = true;
+    }
   }
 }

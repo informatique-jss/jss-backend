@@ -4,9 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
+import { AppService } from 'src/app/services/app.service';
 import { Department } from '../../../model/Department';
-import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../../confreres-dialog/confreres-dialog.component';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
@@ -30,9 +29,8 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
   constructor(private formBuild: UntypedFormBuilder,
     private confrereService: ConfrereService,
     public confrereDialog: MatDialog,
-    private userNoteService2: UserNoteService,
-    public confirmationDialog: MatDialog,) {
-    super(formBuild, userNoteService2)
+    public confirmationDialog: MatDialog, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   displayLabel(object: Confrere): string {
@@ -56,27 +54,7 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
     });
   }
 
-  override optionSelected(type: Confrere): void {
-
-    if (type.doNotUse) {
-      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-        maxWidth: "400px",
-        data: {
-          title: "Confrère non autorisé !",
-          content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
-          closeActionText: "Annuler",
-          validationActionText: "Choisir"
-        }
-      });
-
-      dialogRef.afterClosed().subscribe(dialogResult => {
-        if (dialogResult)
-          super.optionSelected(type);
-        else
-          super.clearField();
-      });
-    } else {
-      super.optionSelected(type);
-    }
+  getPreviewActionLinkFunction(entity: Confrere): string[] | undefined {
+    return ['/confrere', entity.id + ""];
   }
 }

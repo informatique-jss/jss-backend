@@ -267,7 +267,8 @@ public class PricingHelper {
                                 + additionnalFees);
             }
         } else if (billingItem.getBillingType().getId()
-                .equals(constantService.getBillingTypeShippingCosts().getId())) {
+                .equals(constantService.getBillingTypeShippingCosts().getId())
+                && provision.getAnnouncement().getConfrere() != null) {
             invoiceItem.setPreTaxPrice(0f);
             Integer nbr = getPublicationPaperNbr(provision);
             Confrere confrere = provision.getAnnouncement().getConfrere();
@@ -283,8 +284,9 @@ public class PricingHelper {
         // First one => double price for base
         if (provision.getDomiciliation() != null && quotation.getId() != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
-            CustomerOrder masterCustomerOrder = customerOrder.getIsRecurring() ? customerOrder
-                    : customerOrder.getCustomerOrderParentRecurring();
+            CustomerOrder masterCustomerOrder = (customerOrder.getIsRecurring() != null
+                    && customerOrder.getIsRecurring()) ? customerOrder
+                            : customerOrder.getCustomerOrderParentRecurring();
             if (masterCustomerOrder != null && masterCustomerOrder.getCustomerOrderFrequency() != null)
                 if (billingItem.getBillingType().getId()
                         .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
@@ -298,7 +300,7 @@ public class PricingHelper {
                     invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
                             * masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber());
 
-            if (customerOrder.getIsRecurring())
+            if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring())
                 invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice() * 2);
         }
 
@@ -346,8 +348,8 @@ public class PricingHelper {
             // If billed, do not change items
             if (provision.getInvoiceItems().size() > 0)
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                    if (invoiceItem.getInvoice() != null && invoiceItem.getInvoice().getIsInvoiceFromProvider() == false
-                            && invoiceItem.getInvoice().getIsProviderCreditNote() == false
+                    if (invoiceItem.getInvoice() != null && invoiceItem.getInvoice().getProvider() == null
+                            && invoiceItem.getInvoice().getIsCreditNote() == false
                             && (invoiceItem.getInvoice().getInvoiceStatus().getId()
                                     .equals(constantService.getInvoiceStatusSend().getId())
                                     || invoiceItem.getInvoice().getInvoiceStatus().getId()
@@ -362,6 +364,19 @@ public class PricingHelper {
                     if (billingItem != null && billingType.getAccountingAccountProduct() != null
                             && (!billingItem.getBillingType().getIsOptionnal()
                                     || hasOption(billingItem.getBillingType(), provision))) {
+
+                        // If vacation multiple option, bypass vacation and traitement billing type
+                        if (provision.getIsVacationMultipleModification() != null
+                                && provision.getIsVacationMultipleModification() && billingType.getIsVacation() != null
+                                && billingType.getIsVacation()) {
+                            continue;
+                        }
+                        if (provision.getIsTreatmentMultipleModiciation() != null
+                                && provision.getIsTreatmentMultipleModiciation()
+                                && billingType.getIsTraitement() != null
+                                && billingType.getIsTraitement()) {
+                            continue;
+                        }
 
                         InvoiceItem invoiceItem = null;
 
@@ -484,27 +499,17 @@ public class PricingHelper {
         if (provision != null) {
             if (provision.getProviderInvoices() != null) {
                 for (Invoice invoice : provision.getProviderInvoices()) {
-                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusCancelled().getId())
+                    if (!invoice.getInvoiceStatus().getId().equals(
+                            constantService.getInvoiceStatusCancelled().getId()) && invoice.getProvider() != null
                             && !idInvoiceAlreadyDone.contains(invoice.getId()) && invoice.getInvoiceItems() != null) {
                         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                             InvoiceItem newInvoiceItem = invoiceItemService.cloneInvoiceItem(invoiceItem);
                             newInvoiceItem.setOriginProviderInvoice(invoice);
                             newInvoiceItem.setInvoice(null);
                             newInvoiceItem.setIsOverridePrice(false);
-                            if (invoice.getCompetentAuthority() != null) {
-                                if (invoice.getCompetentAuthority().getId()
-                                        .equals(constantService.getCompetentAuthorityInpi().getId())) {
-                                    newInvoiceItem.setLabel(invoiceItem.getLabel().replace("<", ""));
-                                } else {
-                                    newInvoiceItem.setLabel(invoice.getCompetentAuthority().getLabel() + " - "
-                                            + invoiceItem.getBillingItem().getBillingType().getLabel());
-                                }
-                            } else if (invoice.getProvider() != null) {
-                                newInvoiceItem.setLabel(invoiceItem.getBillingItem().getBillingType().getLabel());
-                            } else if (invoice.getConfrere() != null) {
-                                newInvoiceItem.setLabel(invoice.getConfrere().getLabel() + " -  "
-                                        + invoiceItem.getBillingItem().getBillingType().getLabel());
-                            }
+                            newInvoiceItem.setLabel(invoiceItem.getLabel().replace("<", ""));
+                            newInvoiceItem.setLabel(invoice.getProvider().getLabel() + " - "
+                                    + invoiceItem.getBillingItem().getBillingType().getLabel());
                             newInvoiceItem.setProvision(provision);
                             newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPriceReinvoiced());
                             if (invoiceItem.getVat().getRate() > 0)
@@ -718,6 +723,9 @@ public class PricingHelper {
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeShippingCosts().getId())
                 && getPublicationPaperNbr(provision) > 0)
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeSupplyFullBeCopy().getId())
+                && provision.getIsSupplyFullBeCopy() != null && provision.getIsSupplyFullBeCopy())
             return true;
 
         // Domiciliation pricing

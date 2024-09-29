@@ -44,15 +44,17 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeDocument;
+import com.jss.osiris.modules.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AssoServiceDocumentService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
+import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.guichetUnique.referentials.TypeDocumentService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -125,16 +127,19 @@ public class AttachmentServiceImpl implements AttachmentService {
     NotificationService notificationService;
 
     @Autowired
-    CustomerOrderStatusService customerOrderStatusService;
-
-    @Autowired
     BatchService batchService;
 
     @Autowired
     AssoServiceDocumentService assoServiceDocumentService;
 
     @Autowired
+    TypeDocumentService typeDocumentService;
+
+    @Autowired
     PdfTools pdfTools;
+
+    @Autowired
+    MissingAttachmentQueryService missingAttachmentQueryService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -151,12 +156,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
+    public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String codeEntity, String entityType,
             AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
             String pageSelection, TypeDocument typeDocument)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         try {
-            return addAttachment(file.getInputStream(), idEntity, entityType, attachmentType, filename,
+            return addAttachment(file.getInputStream(), idEntity, codeEntity, entityType, attachmentType, filename,
                     replaceExistingAttachementType, filename, null, pageSelection, typeDocument);
         } catch (IOException e) {
             throw new OsirisException(e, "Error when reading file");
@@ -164,7 +169,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
+    public List<Attachment> addAttachment(InputStream file, Integer idEntity, String codeEntity, String entityType,
             AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType, String description,
             PiecesJointe piecesJointe, String pageSelection, TypeDocument typeDocument)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
@@ -185,10 +190,10 @@ public class AttachmentServiceImpl implements AttachmentService {
         String absoluteFilePath = storageFileService.saveFile(file, filename,
                 entityType + File.separator + idEntity);
 
-        List<Attachment> attachments = getAttachmentForEntityType(entityType, idEntity);
+        List<Attachment> attachments = getAttachmentForEntityType(entityType, idEntity, codeEntity);
 
         if (replaceExistingAttachementType) {
-            attachments = getAttachmentForEntityType(entityType, idEntity);
+            attachments = getAttachmentForEntityType(entityType, idEntity, codeEntity);
 
             if (attachments != null && attachments.size() > 0) {
                 for (Attachment attachment : attachments) {
@@ -236,8 +241,14 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (quotation == null)
                 return new ArrayList<Attachment>();
             attachment.setQuotation(quotation);
+        } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
+            TypeDocument typeDocumentAttachment = typeDocumentService.getTypeDocumentByCode(codeEntity);
+            if (typeDocumentAttachment == null)
+                return new ArrayList<Attachment>();
+            attachment.setTypeDocumentAttachment(typeDocumentAttachment);
         } else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
             AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
+            missingAttachmentQueryService.checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
             if (assoServiceDocument == null)
                 return new ArrayList<Attachment>();
             attachment.setAssoServiceDocument(assoServiceDocument);
@@ -253,11 +264,27 @@ public class AttachmentServiceImpl implements AttachmentService {
                 addOrUpdateAttachment(attachment);
                 mailHelper.sendCustomerOrderAttachmentsToCustomer(
                         provision.getService().getAssoAffaireOrder().getCustomerOrder(),
-                        provision.getService().getAssoAffaireOrder(), false, Arrays.asList(attachment));
+                        provision.getService().getAssoAffaireOrder(), provision, false, Arrays.asList(attachment));
             }
 
             // Notify user
             notificationService.notifyAttachmentAddToProvision(provision, attachment);
+
+            // Attached publication flag to service
+            if (attachment.getAttachmentType().getId()
+                    .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
+                if (provision.getService().getAssoServiceDocuments() != null
+                        && provision.getService().getAssoServiceDocuments().size() > 0) {
+                    for (AssoServiceDocument assoServiceDocument : provision.getService().getAssoServiceDocuments()) {
+                        if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
+                                && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
+                                        .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
+                            attachment.setAssoServiceDocument(assoServiceDocument);
+                        }
+                    }
+                }
+            }
+
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)
@@ -303,7 +330,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             }
         }
 
-        return getAttachmentForEntityType(entityType, idEntity);
+        return getAttachmentForEntityType(entityType, idEntity, codeEntity);
     }
 
     @Override
@@ -317,6 +344,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public Attachment addOrUpdateAttachment(Attachment attachment) {
         if (attachment != null && attachment.getIsAlreadySent() == null)
             attachment.setIsAlreadySent(false);
+
         return attachmentRepository.save(attachment);
     }
 
@@ -327,7 +355,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         addOrUpdateAttachment(attachment);
     }
 
-    private List<Attachment> getAttachmentForEntityType(String entityType, Integer idEntity) {
+    private List<Attachment> getAttachmentForEntityType(String entityType, Integer idEntity, String codeEntity) {
         List<Attachment> attachments = new ArrayList<Attachment>();
         if (entityType.equals(Tiers.class.getSimpleName())) {
             attachments = attachmentRepository.findByTiersId(idEntity);
@@ -351,6 +379,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByProviderId(idEntity);
         } else if (entityType.equals(CompetentAuthority.class.getSimpleName())) {
             attachments = attachmentRepository.findByCompetentAuthorityId(idEntity);
+        } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
+            attachments = attachmentRepository.findByTypeDocumentCode(codeEntity);
         }
         return attachments;
     }
@@ -396,5 +426,10 @@ public class AttachmentServiceImpl implements AttachmentService {
         newAttachment.setAssoServiceDocument(attachment.getAssoServiceDocument());
         newAttachment.setUploadedFile(attachment.getUploadedFile());
         return newAttachment;
+    }
+
+    @Override
+    public List<Attachment> findByDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe) {
+        return attachmentRepository.findByDocumentAssocieInfogreffe(documentAssocieInfogreffe.getUrlTelechargement());
     }
 }

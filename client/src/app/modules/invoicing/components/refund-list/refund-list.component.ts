@@ -9,6 +9,9 @@ import { UserPreferenceService } from 'src/app/services/user.preference.service'
 import { RefundSearch } from '../../model/RefundSearch';
 import { RefundSearchResult } from '../../model/RefundSearchResult';
 import { RefundSearchResultService } from '../../services/refund.search.result.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EditRefundLabelDialogComponent } from 'src/app/modules/miscellaneous/components/edit-refund-label-dialog/edit-refund-label-dialog.component';
+import { RefundService } from '../../services/refund.service';
 
 @Component({
   selector: 'refund-list',
@@ -29,10 +32,12 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
   constructor(
     private refundSearchResultService: RefundSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
+    private refundService: RefundService,
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    public editRefundLabelDialog: MatDialog,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -46,10 +51,26 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "refundAmount", fieldName: "refundAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "refundTiersLabel", fieldName: "refundTiersLabel", label: "Tiers remboursé" } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "refundLabel", fieldName: "refundLabel", label: "Libellé" } as SortTableColumn<RefundSearchResult>);
+    this.availableColumns.push({ id: "refundIban", fieldName: "refundIban", label: "IBAN" } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "isMatched", fieldName: "isMatched", label: "Est rapproché", valueFonction: (element: RefundSearchResult, column: SortTableColumn<RefundSearchResult>) => { return (element.isMatched) ? "Oui" : "Non" } } as SortTableColumn<RefundSearchResult>);
     this.availableColumns.push({ id: "isAlreadyExported", fieldName: "isAlreadyExported", label: "A été exporté", valueFonction: (element: RefundSearchResult, column: SortTableColumn<RefundSearchResult>) => { return (element.isAlreadyExported) ? "Oui" : "Non" } } as SortTableColumn<RefundSearchResult>);
+    this.tableAction.push({
+      actionIcon: 'edit', actionName: "Modifier le libellé", actionClick: (column: SortTableAction<RefundSearchResult>, element: RefundSearchResult, event: any) => {
+        if (element) {
+          const dialogRef = this.editRefundLabelDialog.open(EditRefundLabelDialogComponent, { maxWidth: "400px" });
+          dialogRef.componentInstance.refundLabel = element.refundLabel;
 
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult) {
+              this.refundService.modifyRefundLabel(element.id, dialogResult).subscribe(response => {
+                this.searchRefunds();
+              });
+            }
+          });
+        }
+      }, display: true,
+    } as SortTableAction<RefundSearchResult>);
     this.setColumns();
 
     this.refundSearch.isHideExportedRefunds = true;

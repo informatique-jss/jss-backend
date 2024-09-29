@@ -8,14 +8,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
+import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
@@ -42,7 +41,7 @@ import jakarta.persistence.Table;
 		@Index(name = "idx_responsable_commercial", columnList = "id_commercial"),
 		@Index(name = "idx_responsable_login_web", columnList = "loginWeb", unique = true) })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Responsable implements ITiers, IAttachment, IGenericTiers {
+public class Responsable implements IAttachment, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
@@ -134,9 +133,6 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	private Float rffFormaliteRate;
-	private Float rffInsertionRate;
-
 	@Column(length = 40)
 	@JsonProperty("rffIban")
 	private String rffIban;
@@ -195,10 +191,6 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_rff_frequency")
-	private RffFrequency rffFrequency;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -432,48 +424,6 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 		this.subscriptionPeriodType = subscriptionPeriodType;
 	}
 
-	@Override
-	public Boolean getIsIndividual() {
-		return true;
-	}
-
-	@Override
-	public AccountingAccount getAccountingAccountProvider() {
-		if (this.getTiers() != null)
-			return this.getTiers().getAccountingAccountProvider();
-		return null;
-	}
-
-	@Override
-	public AccountingAccount getAccountingAccountCustomer() {
-		if (this.getTiers() != null)
-			return this.getTiers().getAccountingAccountCustomer();
-		return null;
-	}
-
-	@Override
-	public AccountingAccount getAccountingAccountDeposit() {
-		if (this.getTiers() != null)
-			return this.getTiers().getAccountingAccountDeposit();
-		return null;
-	}
-
-	public Float getRffFormaliteRate() {
-		return rffFormaliteRate;
-	}
-
-	public void setRffFormaliteRate(Float rffFormaliteRate) {
-		this.rffFormaliteRate = rffFormaliteRate;
-	}
-
-	public Float getRffInsertionRate() {
-		return rffInsertionRate;
-	}
-
-	public void setRffInsertionRate(Float rffInsertionRate) {
-		this.rffInsertionRate = rffInsertionRate;
-	}
-
 	public String getCedexComplement() {
 		return cedexComplement;
 	}
@@ -544,14 +494,12 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 		return null;
 	}
 
-	@Override
 	public Boolean getIsProvisionalPaymentMandatory() {
 		if (getTiers() != null)
 			return getTiers().getIsProvisionalPaymentMandatory();
 		return null;
 	}
 
-	@Override
 	public String getLabel() {
 		return getFirstname() + " " + getLastname();
 	}
@@ -570,14 +518,6 @@ public class Responsable implements ITiers, IAttachment, IGenericTiers {
 
 	public void setRffBic(String rffBic) {
 		this.rffBic = rffBic;
-	}
-
-	public RffFrequency getRffFrequency() {
-		return rffFrequency;
-	}
-
-	public void setRffFrequency(RffFrequency rffFrequency) {
-		this.rffFrequency = rffFrequency;
 	}
 
 	public String getRffMail() {

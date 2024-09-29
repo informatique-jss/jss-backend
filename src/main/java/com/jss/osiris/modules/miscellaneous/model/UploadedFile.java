@@ -3,15 +3,17 @@ package com.jss.osiris.modules.miscellaneous.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 
 @Entity
 public class UploadedFile implements Serializable, IId {
@@ -28,6 +30,7 @@ public class UploadedFile implements Serializable, IId {
 	private String checksum;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime creationDate;
 
 	private String createdBy;

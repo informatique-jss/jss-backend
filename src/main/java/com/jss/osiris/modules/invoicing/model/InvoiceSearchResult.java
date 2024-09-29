@@ -23,9 +23,9 @@ public interface InvoiceSearchResult {
 
     public String getTiersLabel();
 
-    public Integer getConfrereId();
-
     public Integer getResponsableId();
+
+    public Integer getSalesEmployeeId();
 
     public Integer getTiersId();
 

@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
+import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { formatDateTimeFrance } from 'src/app/libs/FormatHelper';
 import { copyObject, copyObjectList } from 'src/app/libs/GenericHelper';
 import { ActiveDirectoryGroup } from 'src/app/modules/miscellaneous/model/ActiveDirectoryGroup';
@@ -32,6 +34,7 @@ export class CustomerOrderCommentComponent implements OnInit {
   currentEmployee: Employee | undefined;
   adGroups: ActiveDirectoryGroup[] = [];
   isDisplayCommentInput: boolean = false;
+  initialCommentValue: string = "";
 
   constructor(
     private activeDirectoryGroupService: ActiveDirectoryGroupService,
@@ -192,11 +195,45 @@ export class CustomerOrderCommentComponent implements OnInit {
   editComment(comment: CustomerOrderComment) {
     this.isDisplayCommentInput = true;
     this.newComment = comment;
+    this.initialCommentValue = this.newComment.comment;
   }
 
   canEditComment(comment: CustomerOrderComment) {
-    if (this.currentEmployee)
+    if (this.currentEmployee && comment.employee)
       return comment.employee.id == this.currentEmployee.id || this.habilitationService.canEditAllCustomerOrderComments();
     return false;
+  }
+
+  confirmReading(comment: CustomerOrderComment) {
+    if (comment) {
+      this.customerOrderCommentService.toggleCustomerOrderCommentIsRead(comment).subscribe(response => {
+        comment.isRead = response.isRead;
+      });
+    }
+  }
+
+
+  ckEditorComment = ClassicEditor;
+  config = {
+    toolbar: ['undo', 'redo', '|', 'fontFamily', 'fontSize', 'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
+      'alignment:left', 'alignment:right', 'alignment:center', 'alignment:justify', '|', 'link', 'bulletedList', 'numberedList', 'outdent', 'indent', 'removeformat'
+    ],
+    plugins: [
+      Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Link, List, Indent, IndentBlock, RemoveFormat, Clipboard, GeneralHtmlSupport, Underline, PasteFromOffice
+    ],
+    htmlSupport: {
+      allow: [
+        {
+          name: /.*/,
+          attributes: true,
+          classes: true,
+          styles: true
+        }
+      ]
+    }
+  } as any;
+
+  onCommentChange(event: ChangeEvent) {
+    this.newComment.comment = event.editor.getData();
   }
 }

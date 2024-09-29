@@ -60,12 +60,9 @@ import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
-import com.jss.osiris.modules.miscellaneous.model.IGenericTiers;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.quotation.repository.DirectDebitTransfertRepository;
 import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Service
 public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertService {
@@ -160,35 +157,26 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
     public DirectDebitTransfert generateDirectDebitTransfertForOutboundInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException {
 
-        IGenericTiers tiers = invoiceHelper.getCustomerOrder(invoice);
+        Responsable responsable = invoice.getResponsable();
         Integer sepaReference = null;
         LocalDate sepaDate = null;
         String customerOrderLabel = "";
-        if (tiers instanceof Responsable) {
-            sepaReference = ((Responsable) tiers).getTiers().getId();
-            sepaDate = ((Responsable) tiers).getTiers().getSepaMandateSignatureDate();
-            customerOrderLabel = ((Responsable) tiers).getTiers().getDenomination() != null
-                    ? ((Responsable) tiers).getTiers().getDenomination()
-                    : ((Responsable) tiers).getTiers().getFirstname() + " "
-                            + ((Responsable) tiers).getTiers().getLastname();
-        } else if (tiers instanceof Tiers) {
-            sepaReference = ((Tiers) tiers).getId();
-            sepaDate = ((Tiers) tiers).getSepaMandateSignatureDate();
-            customerOrderLabel = ((Tiers) tiers).getDenomination() != null
-                    ? ((Tiers) tiers).getDenomination()
-                    : ((Tiers) tiers).getFirstname() + " "
-                            + ((Tiers) tiers).getLastname();
-        } else if (tiers instanceof Confrere) {
-            sepaReference = ((Confrere) tiers).getId();
-            sepaDate = ((Confrere) tiers).getSepaMandateSignatureDate();
-            customerOrderLabel = ((Confrere) tiers).getLabel();
-        }
+        sepaReference = responsable.getTiers().getId();
+        sepaDate = responsable.getTiers().getSepaMandateSignatureDate();
+        customerOrderLabel = responsable.getTiers().getDenomination() != null
+                ? responsable.getTiers().getDenomination()
+                : responsable.getTiers().getFirstname() + " "
+                        + responsable.getTiers().getLastname();
 
         if (sepaReference == null)
             throw new OsirisClientMessageException("Référence du mandat SEPA non trouvée sur le donneur d'ordre");
 
         if (sepaDate == null)
             throw new OsirisClientMessageException("Date du mandat SEPA non trouvée sur le donneur d'ordre");
+
+        if (invoice.getResponsable().getTiers().getPaymentIban() == null
+                || invoice.getResponsable().getTiers().getPaymentBic() == null)
+            throw new OsirisClientMessageException("IBAN / BIC non trouvée sur le donneur d'ordre");
 
         DirectDebitTransfert directDebitTransfert = new DirectDebitTransfert();
         directDebitTransfert.setLabel("Facture " + invoice.getId() + " / Journal Spécial des Sociétés / "
@@ -197,8 +185,8 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
         Float totalPrice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
         directDebitTransfert.setTransfertAmount(totalPrice);
         directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
-        directDebitTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));
-        directDebitTransfert.setTransfertBic(invoiceHelper.getBicOfOrderingCustomer(invoice));
+        directDebitTransfert.setTransfertIban(invoice.getResponsable().getTiers().getPaymentIban());
+        directDebitTransfert.setTransfertBic(invoice.getResponsable().getTiers().getPaymentBic());
 
         if (directDebitTransfert.getTransfertIban() == null || directDebitTransfert.getTransfertBic() == null)
             throw new OsirisException(null, "IBAN or BIC not found for direct debit transfert");
@@ -368,11 +356,11 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                     addOrUpdateDirectDebitTransfert(completeTransfert);
 
                     Payment payment = paymentService.generateNewDirectDebitPayment(
-                            completeTransfert.getTransfertAmount(), completeTransfert.getLabel());
+                            completeTransfert.getTransfertAmount(), completeTransfert.getLabel(), completeTransfert);
                     accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
 
                     paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
-                            Arrays.asList(completeTransfert.getInvoices().get(0)), null, null, null, null, null,
+                            Arrays.asList(completeTransfert.getInvoices().get(0)), null, null, null, null,
                             null);
                 }
                 addOrUpdateDirectDebitTransfert(completeTransfert);

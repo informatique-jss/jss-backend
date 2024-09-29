@@ -32,6 +32,11 @@
             [form]="affaireSearchForm" propertyName="formaliteGuichetUniqueStatus" [isMandatory]="false"
             [isDisabled]="false"></select-status>
         </td>
+        <td>
+          <select-formalite-infogreffe-status [(model)]="affaireSearch.formaliteInfogreffeStatusCode"
+            label="Statut Infogreffe" [form]="affaireSearchForm" propertyName="formaliteInfogreffeStatusCode"
+            [isMandatory]="false" [isDisabled]="false"></select-formalite-infogreffe-status>
+        </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchAffaires()" class="add-button">
             <mat-icon>search</mat-icon>

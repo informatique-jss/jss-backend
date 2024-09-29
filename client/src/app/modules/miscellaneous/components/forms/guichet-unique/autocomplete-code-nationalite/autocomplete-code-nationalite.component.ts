@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CodeNationaliteService } from 'src/app/modules/miscellaneous/services/guichet-unique/code.nationalite.service';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { CodeNationalite } from '../../../../../quotation/model/guichet-unique/referentials/CodeNationalite';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-code-nationalite',
@@ -14,8 +14,8 @@ export class AutocompleteCodeNationaliteComponent extends GenericLocalAutocomple
 
   types: CodeNationalite[] = [] as Array<CodeNationalite>;
 
-  constructor(private formBuild: UntypedFormBuilder, private CodeNationaliteService: CodeNationaliteService, private userNoteService2: UserNoteService,) {
-    super(formBuild, userNoteService2)
+  constructor(private formBuild: UntypedFormBuilder, private CodeNationaliteService: CodeNationaliteService, private appService3: AppService) {
+    super(formBuild, appService3)
   }
 
   filterEntities(types: CodeNationalite[], value: string): CodeNationalite[] {

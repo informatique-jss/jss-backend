@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { UserNoteService } from 'src/app/services/user.notes.service';
 import { CustomerOrderFrequency } from '../../../model/CustomerOrderFrequency';
 import { CustomerOrderFrequencyService } from '../../../services/customer.order.frequency.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { AppService } from 'src/app/services/app.service';
+import { A } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'select-customer-order-frequency',
@@ -15,10 +16,9 @@ export class SelectCustomerOrderFrequencyComponent extends GenericSelectComponen
   types: CustomerOrderFrequency[] = [] as Array<CustomerOrderFrequency>;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private userNoteService2: UserNoteService,
-    private customerOrderFrequencyService: CustomerOrderFrequencyService
+    private customerOrderFrequencyService: CustomerOrderFrequencyService, private appService3: AppService
   ) {
-    super(formBuild, userNoteService2)
+    super(formBuild, appService3)
   }
 
   initTypes(): void {

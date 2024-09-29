@@ -190,6 +190,14 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.attachmentTypeContract;
   }
 
+  getAttachmentTypeTemplate() {
+    return this.constant.attachmentTypeTemplate;
+  }
+
+  getAttachmentTypeQuotation() {
+    return this.constant.attachmentTypeQuotation;
+  }
+
   getCountryFrance() {
     return this.constant.countryFrance;
   }
@@ -330,6 +338,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.provisionTypeBilanPublication;
   }
 
+  getProvisionTypeRegistrationAct() {
+    return this.constant.provisionTypeRegistrationAct;
+  }
+
   getBillingTypeInfogreffeDebour() {
     return this.constant.billingTypeInfogreffeDebour;
   }
@@ -376,6 +388,10 @@ export class ConstantService extends AppRestService<Constant> {
 
   getBillingTypeDomiciliationContractTypeRouteEmailAndMail() {
     return this.constant.billingTypeDomiciliationContractTypeRouteEmailAndMail;
+  }
+
+  getBillingTypeSupplyFullBeCopy() {
+    return this.constant.billingTypeSupplyFullBeCopy;
   }
 
   getStringNantissementDepositFormeJuridiqueCode() {
@@ -680,6 +696,14 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.principalAccountingAccountDeposit;
   }
 
+  getPrincipalAccountingAccountLitigious() {
+    return this.constant.principalAccountingAccountLitigious;
+  }
+
+  getPrincipalAccountingAccountSuspicious() {
+    return this.constant.principalAccountingAccountSuspicious;
+  }
+
   getPrincipalAccountingAccountDepositProvider() {
     return this.constant.principalAccountingAccountDepositProvider;
   }
@@ -754,5 +778,24 @@ export class ConstantService extends AppRestService<Constant> {
 
   getServiceTypeOther() {
     return this.constant.serviceTypeOther;
+  }
+
+  getDateAccountingClosureForAll() {
+    return this.constant.dateAccountingClosureForAll;
+  }
+
+  getDateAccountingClosureForAccountant() {
+    return this.constant.dateAccountingClosureForAccountant;
+  }
+
+  getActiveDirectoryGroupFormalites() {
+    return this.constant.activeDirectoryGroupFormalites;
+  }
+
+  getActiveDirectoryGroupFacturation() {
+    return this.constant.activeDirectoryGroupFacturation;
+  }
+  getFurtherInformationServiceFieldType() {
+    return this.constant.furtherInformationServiceFieldType;
   }
 }

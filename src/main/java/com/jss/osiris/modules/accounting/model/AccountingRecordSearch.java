@@ -9,7 +9,6 @@ public class AccountingRecordSearch {
   private LocalDateTime startDate;
   private LocalDateTime endDate;
   private Boolean hideLettered;
-  private Integer confrereId;
   private Integer tiersId;
 
   private Integer idPayment;
@@ -18,6 +17,7 @@ public class AccountingRecordSearch {
   private Integer idRefund;
   private Integer idBankTransfert;
   private Boolean isFromAs400;
+  private Boolean isManual;
 
   public AccountingAccountClass getAccountingClass() {
     return accountingClass;
@@ -75,14 +75,6 @@ public class AccountingRecordSearch {
     this.hideLettered = hideLettered;
   }
 
-  public Integer getConfrereId() {
-    return confrereId;
-  }
-
-  public void setConfrereId(Integer confrereId) {
-    this.confrereId = confrereId;
-  }
-
   public Integer getIdPayment() {
     return idPayment;
   }
@@ -131,4 +123,11 @@ public class AccountingRecordSearch {
     this.isFromAs400 = isFromAs400;
   }
 
+  public Boolean getIsManual() {
+    return isManual;
+  }
+
+  public void setIsManual(Boolean isManual) {
+    this.isManual = isManual;
+  }
 }

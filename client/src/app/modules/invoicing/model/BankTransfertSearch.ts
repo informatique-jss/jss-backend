@@ -1,3 +1,4 @@
+import { Provider } from "@angular/core";
 
 export interface BankTransfertSearch {
   startDate: Date | undefined;
@@ -8,4 +9,5 @@ export interface BankTransfertSearch {
   isHideExportedBankTransfert: boolean;
   isDisplaySelectedForExportBankTransfert: boolean;
   idBankTransfert: number;
+  provider: Provider;
 }

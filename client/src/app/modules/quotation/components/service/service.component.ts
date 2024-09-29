@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
@@ -15,6 +16,8 @@ import { Service } from '../../model/Service';
 import { ServiceType } from '../../model/ServiceType';
 import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
 import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
+import { ServiceFieldType } from '../../model/ServiceFieldType';
 
 @Component({
   selector: 'service',
@@ -22,11 +25,17 @@ import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialo
   styleUrls: ['./service.component.css']
 })
 export class ServiceComponent implements OnInit {
+  [x: string]: any;
 
   @Input() service: Service | undefined;
   @Input() quotation: IQuotation | undefined;
   @Input() editMode: boolean = false;
   searchText: string = "";
+  SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
+  SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
+  SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
+  SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
+  SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,7 +59,11 @@ export class ServiceComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.service && this.service) {
       if (this.service.assoServiceDocuments && this.service.assoServiceDocuments.length > 0)
-        this.service.assoServiceDocuments.sort((a: AssoServiceDocument, b: AssoServiceDocument) => a.typeDocument.label.localeCompare(b.typeDocument.label));
+        this.service.assoServiceDocuments.sort((a: AssoServiceDocument, b: AssoServiceDocument) => {
+          let aLabel = ((a.isMandatory) ? "0" : "1") + a.typeDocument.customLabel;
+          let bLabel = ((b.isMandatory) ? "0" : "1") + b.typeDocument.customLabel;
+          return aLabel.localeCompare(bLabel)
+        });
     }
   }
 
@@ -73,7 +86,7 @@ export class ServiceComponent implements OnInit {
       maxWidth: "400px",
       data: {
         title: "Supprimer le type de document",
-        content: "Êtes-vous sûr de vouloir supprimer le type de document " + document.typeDocument.label + " ? Cela effacera toutes les pièces jointes associées.",
+        content: "Êtes-vous sûr de vouloir supprimer le type de document " + document.typeDocument.customLabel + " ? Cela effacera toutes les pièces jointes associées.",
         closeActionText: "Annuler",
         validationActionText: "Supprimer"
       }
@@ -117,6 +130,15 @@ export class ServiceComponent implements OnInit {
     this.uploadAttachmentService.downloadAttachment(attachment);
   }
 
+  downloadAllFiles() {
+    if (this.service)
+      if (this.service.assoServiceDocuments && this.service.assoServiceDocuments.length > 0)
+        for (let assoServiceDocument of this.service.assoServiceDocuments)
+          if (assoServiceDocument.attachments)
+            for (let attachment of assoServiceDocument.attachments)
+              this.uploadAttachmentService.downloadAttachment(attachment);
+  }
+
   addNewDocumentType(service: Service) {
     const dialogRef = this.selectedDocumentTypeDialog.open(SelectDocumentTypeDialogComponent, {
       maxWidth: "400px",
@@ -143,7 +165,7 @@ export class ServiceComponent implements OnInit {
   documentContainsSearch(document: AssoServiceDocument) {
     let found = false;
     if (this.searchText && document) {
-      found = document.typeDocument.label.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0;
+      found = document.typeDocument.customLabel.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0;
       if (!found && document.attachments && document.attachments.length > 0) {
         for (let attachment of document.attachments)
           if (attachment.uploadedFile.filename.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0) {
@@ -155,4 +177,19 @@ export class ServiceComponent implements OnInit {
     return found;
   }
 
+  addFurtherInformationField() {
+    if (this.service) {
+      if (!this.service.assoServiceFieldTypes)
+        this.service.assoServiceFieldTypes = [];
+      for (let asso of this.service.assoServiceFieldTypes) {
+        if (asso.serviceFieldType.code == this.constantService.getFurtherInformationServiceFieldType().code) {
+          return;
+        }
+      }
+      let newFurtherInfoAssoServiceFieldType = {} as AssoServiceFieldType;
+      newFurtherInfoAssoServiceFieldType.isMandatory = false;
+      newFurtherInfoAssoServiceFieldType.serviceFieldType = this.constantService.getFurtherInformationServiceFieldType();;
+      this.service.assoServiceFieldTypes.push(newFurtherInfoAssoServiceFieldType);
+    }
+  }
 }

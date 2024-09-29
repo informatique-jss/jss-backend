@@ -3,6 +3,10 @@ package com.jss.osiris.modules.quotation.model;
 public interface IPaperSetResult {
 	Integer getId();
 
+	Boolean getIsValidated();
+
+	Boolean getIsCancelled();
+
 	String getPaperSetTypeLabel();
 
 	Integer getCustomerOrderId();
@@ -22,4 +26,6 @@ public interface IPaperSetResult {
 	String getServicesLabel();
 
 	Integer getLocationNumber();
+
+	String getCreationComment();
 }

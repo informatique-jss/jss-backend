@@ -3,6 +3,10 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,10 +20,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_service_asso_affaire_order", columnList = "id_asso_affaire_order") })
@@ -43,6 +43,7 @@ public class Service implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_type")
+	@IndexedField
 	private ServiceType serviceType;
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -52,6 +53,10 @@ public class Service implements Serializable, IId {
 	@OneToMany(targetEntity = MissingAttachmentQuery.class, mappedBy = "service", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
 	private List<MissingAttachmentQuery> missingAttachmentQueries;
+
+	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
+	private List<AssoServiceFieldType> assoServiceFieldTypes;
 
 	public List<AssoServiceDocument> getAssoServiceDocuments() {
 		return assoServiceDocuments;
@@ -120,6 +125,14 @@ public class Service implements Serializable, IId {
 
 	public void setMissingAttachmentQueries(List<MissingAttachmentQuery> missingAttachmentQueries) {
 		this.missingAttachmentQueries = missingAttachmentQueries;
+	}
+
+	public List<AssoServiceFieldType> getAssoServiceFieldTypes() {
+		return assoServiceFieldTypes;
+	}
+
+	public void setAssoServiceFieldTypes(List<AssoServiceFieldType> assoServiceFieldTypes) {
+		this.assoServiceFieldTypes = assoServiceFieldTypes;
 	}
 
 }

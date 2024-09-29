@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.quotation.model.PaperSet;
 import com.jss.osiris.modules.quotation.repository.PaperSetRepository;
@@ -17,6 +20,12 @@ public class PaperSetServiceImpl implements PaperSetService {
 
     @Autowired
     PaperSetRepository paperSetRepository;
+
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public List<PaperSet> getPaperSets() {
@@ -33,8 +42,7 @@ public class PaperSetServiceImpl implements PaperSetService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PaperSet addOrUpdatePaperSet(
-            PaperSet paperSet) {
+    public PaperSet addOrUpdatePaperSet(PaperSet paperSet) {
         if (paperSet.getLocationNumber() == null) {
             // Allocate new location number
             List<PaperSet> paperSets = paperSetRepository.findAllByOrderByLocationNumberAsc();
@@ -49,17 +57,44 @@ public class PaperSetServiceImpl implements PaperSetService {
                 }
             }
             paperSet.setLocationNumber(location);
+            if (paperSet.getIsCancelled() == null)
+                paperSet.setIsCancelled(false);
+            if (paperSet.getIsValidated() == null)
+                paperSet.setIsValidated(false);
         }
         return paperSetRepository.save(paperSet);
     }
 
-    public List<IPaperSetResult> searchPaperSets() {
-        return paperSetRepository.findPaperSets();
+    public List<IPaperSetResult> searchPaperSets(String textSearch, Boolean isDisplayValidated,
+            Boolean isDisplayCancelled) {
+        return paperSetRepository.findPaperSets(textSearch, isDisplayValidated, isDisplayCancelled);
     }
 
-    public PaperSet cancelPaperSet(PaperSet paperSet) {
+    public PaperSet cancelPaperSet(PaperSet paperSet) throws OsirisException {
         paperSet = getPaperSet(paperSet.getId());
         paperSet.setIsCancelled(true);
+        CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                paperSet.getCustomerOrder(),
+                "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
+                        + " a été annulée (emplacement n°" + paperSet.getLocationNumber() + "). "
+                        + paperSet.getValidationComment());
+
+        customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                constantService.getActiveDirectoryGroupFormalites());
+        return addOrUpdatePaperSet(paperSet);
+    }
+
+    public PaperSet validatePaperSet(PaperSet paperSet) throws OsirisException {
+        paperSet = getPaperSet(paperSet.getId());
+        paperSet.setIsValidated(true);
+        CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
+                paperSet.getCustomerOrder(),
+                "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
+                        + " a été effectuée (emplacement n°" + paperSet.getLocationNumber() + "). "
+                        + paperSet.getValidationComment());
+
+        customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
+                constantService.getActiveDirectoryGroupFormalites());
         return addOrUpdatePaperSet(paperSet);
     }
 }
