@@ -6,7 +6,7 @@ import { MyJssCategory } from '../model/MyJssCategory';
 @Injectable({
   providedIn: 'root'
 })
-export class MyJssCategoryService extends AppRestService<MyJssCategory>{
+export class MyJssCategoryService extends AppRestService<MyJssCategory> {
 
   constructor(http: HttpClient) {
     super(http, "wordpress");
