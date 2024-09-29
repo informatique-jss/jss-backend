@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common';
-import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import localeFr from '@angular/common/locales/fr';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -11,25 +11,17 @@ import { routes } from './app.routes';
 import { MainModule } from './main/components/main/main.module';
 registerLocaleData(localeFr, 'fr');
 
-@NgModule({
-  declarations: [
-    AppComponent,
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    FormsModule,
-    RouterModule,
-    MainModule
-  ],
-  exports: [
-  ],
-  providers: [provideRouter(routes),
-  provideClientHydration(),
-  provideHttpClient(withFetch()),
-  { provide: LOCALE_ID, useValue: 'fr' }],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+    ],
+    exports: [],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        RouterModule,
+        MainModule], providers: [provideRouter(routes),
+        provideClientHydration(),
+        provideHttpClient(withFetch()),
+        { provide: LOCALE_ID, useValue: 'fr' }, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }
 
