@@ -307,7 +307,7 @@ public class OsirisScheduller {
 			batchService.declareNewBatch(Batch.UPDATE_COMPETENT_AUTHORITY, null);
 	}
 
-	// @Scheduled(cron = "${schedulling.affaire.rne.update}")
+	@Scheduled(cron = "${schedulling.affaire.rne.update}")
 	private void updateAffaireFromRne() {
 		try {
 			if (nodeService.shouldIBatch())
