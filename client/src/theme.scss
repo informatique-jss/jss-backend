@@ -150,7 +150,7 @@ $mat-primary: (
     darker: $dark-primary-text,
   )
 );
-$theme-primary: mat.define-palette($mat-primary, main, lighter, darker);
+$theme-primary: mat.m2-define-palette($mat-primary, main, lighter, darker);
 
 
 body {
@@ -173,7 +173,7 @@ $mat-accent: (
   )
 );
 
-$theme-accent: mat.define-palette($mat-accent, main, lighter, darker);
+$theme-accent: mat.m2-define-palette($mat-accent, main, lighter, darker);
 
 
 body {
@@ -196,9 +196,9 @@ $mat-warn: (
     darker: $light-primary-text,
   )
 );
-$theme-warn: mat.define-palette($mat-warn, main, lighter, darker);
+$theme-warn: mat.m2-define-palette($mat-warn, main, lighter, darker);
 
-$light-theme: mat.define-light-theme((color: (primary:$theme-primary,
+$light-theme: mat.m2-define-light-theme((color: (primary:$theme-primary,
         accent: $theme-accent,
         warn: $theme-warn,
       ),
@@ -213,7 +213,7 @@ $light-theme: map.merge($light-theme,
     (color: $color-light,
     ));
 
-$dark-theme: mat.define-dark-theme((color: (primary:$theme-primary,
+$dark-theme: mat.m2-define-dark-theme((color: (primary:$theme-primary,
         accent: $theme-accent,
         warn: $theme-warn,
       ),
@@ -229,19 +229,19 @@ $dark-theme: map.merge($dark-theme,
     ));
 
 $fontConfig: (
-  headline-1: mat.define-typography-level(112px, 112px, 700, 'Lato', -0.0134em),
-  headline-2: mat.define-typography-level(56px, 56px, 800, 'Lato', -0.0089em),
-  headline-3: mat.define-typography-level(45px, 48px, 800, 'Lato', 0.0000em),
-  headline-4: mat.define-typography-level(34px, 40px, 800, 'Lato', 0.0074em),
-  headline-5: mat.define-typography-level(24px, 32px, 800, 'Lato', 0.0000em),
-  headline-6: mat.define-typography-level(20px, 32px, 900, 'Lato', 0.0075em),
-  subtitle-1: mat.define-typography-level(16px, 28px, 800, 'Lato', 0.0094em),
-  subtitle-2: mat.define-typography-level(15px, 24px, 900, 'Lato', 0.0067em),
-  body-1: mat.define-typography-level(14px, 24px, 700, 'Lato', 0.0134em),
-  body-2: mat.define-typography-level(14px, 20px, 700, 'Lato', 0.0134em),
-  caption: mat.define-typography-level(12px, 20px, 800, 'Lato', 0.0333em),
-  button: mat.define-typography-level(14px, 14px, 900, 'Lato', 0.0893em),
-  overline: mat.define-typography-level(14px, 14px, 900, 'Lato', 0.0893em),
+  headline-1: mat.m2-define-typography-level(112px, 112px, 700, 'Lato', -0.0134em),
+  headline-2: mat.m2-define-typography-level(56px, 56px, 800, 'Lato', -0.0089em),
+  headline-3: mat.m2-define-typography-level(45px, 48px, 800, 'Lato', 0.0000em),
+  headline-4: mat.m2-define-typography-level(34px, 40px, 800, 'Lato', 0.0074em),
+  headline-5: mat.m2-define-typography-level(24px, 32px, 800, 'Lato', 0.0000em),
+  headline-6: mat.m2-define-typography-level(20px, 32px, 900, 'Lato', 0.0075em),
+  subtitle-1: mat.m2-define-typography-level(16px, 28px, 800, 'Lato', 0.0094em),
+  subtitle-2: mat.m2-define-typography-level(15px, 24px, 900, 'Lato', 0.0067em),
+  body-1: mat.m2-define-typography-level(14px, 24px, 700, 'Lato', 0.0134em),
+  body-2: mat.m2-define-typography-level(14px, 20px, 700, 'Lato', 0.0134em),
+  caption: mat.m2-define-typography-level(12px, 20px, 800, 'Lato', 0.0333em),
+  button: mat.m2-define-typography-level(14px, 14px, 900, 'Lato', 0.0893em),
+  overline: mat.m2-define-typography-level(14px, 14px, 900, 'Lato', 0.0893em),
 );
 
 @include mat.all-component-typographies($fontConfig);
@@ -280,23 +280,23 @@ $fontConfig: (
 }
 
 .light mat-icon:hover {
-  color: darken(mat.get-color-from-palette($mat-accent, main), 30%) !important;
+  color: darken(mat.m2-get-color-from-palette($mat-accent, main), 30%) !important;
 }
 
 .dark mat-icon:hover {
-  color: lighten(mat.get-color-from-palette($mat-accent, main), 30%) !important;
+  color: lighten(mat.m2-get-color-from-palette($mat-accent, main), 30%) !important;
 }
 
 .color-warn {
-  color: mat.get-color-from-palette($mat-warn, main) !important;
+  color: mat.m2-get-color-from-palette($mat-warn, main) !important;
 }
 
 .mdc-tab--active {
-  background-color: mat.get-color-from-palette($mat-primary, main) !important;
+  background-color: mat.m2-get-color-from-palette($mat-primary, main) !important;
 }
 
 .payment-tree-active {
-  background-color: mat.get-color-from-palette($mat-primary, main) !important;
+  background-color: mat.m2-get-color-from-palette($mat-primary, main) !important;
 }
 
 .mdc-tab--active .mdc-tab__text-label {
@@ -304,7 +304,7 @@ $fontConfig: (
 }
 
 .remise {
-  color: mat.get-color-from-palette($mat-warn, main) !important;
+  color: mat.m2-get-color-from-palette($mat-warn, main) !important;
 }
 
 .light .form-div {
@@ -316,7 +316,7 @@ $fontConfig: (
 }
 
 .rounded-div-icon {
-  background: mat.get-color-from-palette($mat-accent, main) !important;
+  background: mat.m2-get-color-from-palette($mat-accent, main) !important;
   color: white !important;
 }
 
@@ -325,19 +325,19 @@ mat-tab-header {
 }
 
 .light .mat-mdc-table thead {
-  background-color: mat.get-color-from-palette($mat-accent, lighter);
+  background-color: mat.m2-get-color-from-palette($mat-accent, lighter);
 }
 
 .dark .mat-mdc-table thead {
-  background-color: mat.get-color-from-palette($mat-accent, darker);
+  background-color: mat.m2-get-color-from-palette($mat-accent, darker);
 }
 
 tr.table-row:hover {
-  background: mat.get-color-from-palette($mat-accent, lighter) !important;
+  background: mat.m2-get-color-from-palette($mat-accent, lighter) !important;
 }
 
 tr.selected-mat-row {
-  background: mat.get-color-from-palette($mat-accent, lighter) !important;
+  background: mat.m2-get-color-from-palette($mat-accent, lighter) !important;
 }
 
 .light .mat-mdc-card {
@@ -362,13 +362,13 @@ tr.selected-mat-row {
 }
 
 .upload-label {
-  background-color: mat.get-color-from-palette($mat-warn, main) !important;
+  background-color: mat.m2-get-color-from-palette($mat-warn, main) !important;
   color: white;
 }
 
 .mdc-checkbox .mdc-checkbox__native-control:checked~.mdc-checkbox__background {
-  border-color: mat.get-color-from-palette($mat-accent, main);
-  background-color: mat.get-color-from-palette($mat-accent, main);
+  border-color: mat.m2-get-color-from-palette($mat-accent, main);
+  background-color: mat.m2-get-color-from-palette($mat-accent, main);
 }
 
 // global isDisabled new color
