@@ -31,8 +31,8 @@ dependencies {
     implementation 'org.springframework.security:spring-security-ldap:6.3.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.3.4'
     implementation 'org.springframework.boot:spring-boot-starter-cache:3.3.4'
-    implementation 'com.hazelcast:hazelcast-all:4.2.8'
-    implementation 'com.hazelcast:hazelcast-hibernate53:5.2.0'
+    implementation 'com.hazelcast:hazelcast-all:4.2.7'
+    implementation 'com.hazelcast:hazelcast-hibernate53:5.0.0'
 
     // Database
     implementation 'org.hibernate.orm:hibernate-c3p0:6.6.1.Final'

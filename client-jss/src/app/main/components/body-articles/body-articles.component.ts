@@ -37,7 +37,8 @@ export class BodyArticlesComponent implements OnInit {
       if (podcasts && podcasts.length > 0)
         this.podcasts = podcasts;
       const event = new Event("RefreshThemeFunctions");
-      document.dispatchEvent(event);
+      if (document)
+        document.dispatchEvent(event);
     })
   }
 
