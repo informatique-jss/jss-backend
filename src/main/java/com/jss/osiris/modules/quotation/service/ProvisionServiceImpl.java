@@ -70,4 +70,9 @@ public class ProvisionServiceImpl implements ProvisionService {
         return generatePdfDelegate.generateRegistrationActPdf(provision);
     }
 
+    @Override
+    public File getTrackingSheetPdf(Provision provision) throws OsirisException {
+        return generatePdfDelegate.generateTrackingSheetPdf(provision);
+    }
+
 }

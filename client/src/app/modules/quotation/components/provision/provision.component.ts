@@ -697,4 +697,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   generateDomiciliationContract(provision: Provision) {
     this.domiciliationService.generateDomiciliationContract(provision).subscribe(response => { this.saveAsso() });
   }
+
+  downloadTrackingSheet(provision: Provision) {
+    this.provisionService.downloadTrackingSheet(provision.id);
+  }
 }

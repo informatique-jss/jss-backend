@@ -975,6 +975,35 @@ public class QuotationController {
     return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/provision/generate/tracking-sheet")
+  public ResponseEntity<byte[]> getTrackingSheetPdf(@RequestParam("idProvision") Integer idProvision)
+      throws OsirisException {
+    byte[] data = null;
+    HttpHeaders headers = null;
+    if (idProvision == null)
+      throw new OsirisValidationException("idProvision");
+
+    Provision provision = provisionService.getProvision(idProvision);
+    File trackingSheetFile = provisionService.getTrackingSheetPdf(provision);
+
+    if (trackingSheetFile != null) {
+      try {
+        data = Files.readAllBytes(trackingSheetFile.toPath());
+      } catch (IOException e) {
+        throw new OsirisException(e, "Unable to read file " + trackingSheetFile.toPath());
+      }
+
+      headers = new HttpHeaders();
+      headers.add("filename",
+          "Fiche de suivi de prestation.pdf");
+      headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+      headers.setContentLength(data.length);
+      headers.set("content-type", "application/pdf");
+      trackingSheetFile.delete();
+    }
+    return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/mail/generate/invoice")
   public ResponseEntity<CustomerOrder> generateInvoiceMail(@RequestParam Integer customerOrderId)
       throws OsirisValidationException, OsirisClientMessageException {

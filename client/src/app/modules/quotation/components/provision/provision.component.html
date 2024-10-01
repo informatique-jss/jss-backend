@@ -247,3 +247,7 @@
     <span>Recevoir le mail d'envoi au confrère</span>
   </button>
 </mat-menu>
+<button matTooltip="Générer le PDF Fiche de suivi" mat-fab color="accent" class="second-fab-button"
+  *ngIf="currentProvisionWorkflow" (click)="downloadTrackingSheet(currentProvisionWorkflow)">
+  <mat-icon>download</mat-icon>
+</button>
