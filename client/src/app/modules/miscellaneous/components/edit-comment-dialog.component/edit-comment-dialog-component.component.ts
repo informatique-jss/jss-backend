@@ -10,7 +10,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class EditCommentDialogComponent implements OnInit {
   title: string = "Editer le commentaire"
   comment: string = "";
-  isMandatory: boolean = true;
+  isMandatory: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<EditCommentDialogComponent>,
