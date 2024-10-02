@@ -18,4 +18,6 @@ public interface ProvisionService {
     public Provision addOrUpdateProvision(Provision provision);
 
     public File getRegistrationActPdf(Provision provision) throws OsirisException;
+
+    public File getTrackingSheetPdf(Provision provision) throws OsirisException;
 }

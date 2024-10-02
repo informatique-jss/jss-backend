@@ -187,7 +187,7 @@ const routes: Routes = [
     OrderingListTaggedComponent,
     FormaliteAssociateDialog,
     InfogreffeStatusComponent,
-    SelectMultiServiceTypeDialogComponent
+    SelectMultiServiceTypeDialogComponent,
   ],
   exports: [
     OrderingListComponent,

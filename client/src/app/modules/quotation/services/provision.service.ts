@@ -19,4 +19,8 @@ export class ProvisionService extends AppRestService<Provision> {
   getRegistrationActPdf(idProvision: number) {
     this.downloadGet(new HttpParams().set("idProvision", idProvision), "provision/generate/registration-act", "Enregistrement d'acte généré", "Erreur lors du téléchargement");
   }
+
+  downloadTrackingSheet(idProvision: number) {
+    this.downloadGet(new HttpParams().set("idProvision", idProvision), "provision/generate/tracking-sheet", "Fiche de suivi générée", "Erreur lors du téléchargement");
+  }
 }
