@@ -48,6 +48,15 @@
           </fieldset>
         </tr>
       </table>
+      <table class="full-width" *ngIf="quotation.description">
+        <tr>
+          <td>
+            <generic-input [(model)]="quotation.description" label="Description de la demande"
+              [form]="orderingCustomerForm" propertyName="description" [isMandatory]="false"
+              [isDisabled]="true"></generic-input>
+          </td>
+        </tr>
+      </table>
       <table class="full-width" *ngIf="quotation">
         <tr>
           <td>
