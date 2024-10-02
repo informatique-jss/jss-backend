@@ -56,30 +56,41 @@
             </td>
         </tr>
     </table>
-    <table style=" width: 100%; align-self: center;">
+    <table style="width: 100%">
         <tr>
             <td>
-                <h2>FICHE DE SUIVI</h2>
+                <h2 style="text-align: center;">FICHE DE SUIVI</h2>
             </td>
         </tr>
         <tr>
             <td>
-                <p>Paris le <span th:text="${currentDate}"></span></p>
+                <h3 style="text-align: center;" th:if="${affaireCompetentAuthority!=null}"
+                    th:text="${affaireCompetentAuthority}"> </h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p style="text-align: center;">Paris, le <span th:text="${currentDate}"></span></p>
             </td>
         </tr>
     </table>
     <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
         <tr>
-            <td style="text-align: left;">
-                <span th:if="${provision.assignedTo!=null}">Prestation suivie par : <span
-                        th:text="${provision.assignedTo}"></span><br /></span>
-                <span th:if="${provision.id!=null}">Dossier n° : <span th:text="${provision.id}"></span><br /></span>
-                <span th:if="${affaireDenomination!=null}">Désignation de l'affaire : <span
-                        th:text="${affaireDenomination}"></span><br /></span>
-                <span th:if="${provision!=null}">Formalité demandée : <span
-                        th:text="${affaireDenomination}"></span><br /></span>
-                <span th:if="${affaireDenomination!=null}"> Date de dépôt : <span
-                        th:text="${affaireDenomination}"></span><br /></span>
+            <td style="text-align: left;margin-left:40px;">
+                <span style="font-weight: bold;" th:if="${employee!=null}">Prestation suivie par : <span
+                        style="font-weight:normal;" th:text="${employee}"></span></span><br />
+
+                <span style="font-weight: bold;" th:if="${provision.id!=null}">Dossier n° : <span
+                        style="font-weight:normal;" th:text="${provision.id}"></span></span> <br />
+
+                <span style="font-weight: bold;" th:if="${affaireDenomination!=null}">Désignation de l'affaire : <span
+                        style="font-weight:normal;" th:text="${affaireDenomination}"></span></span><br />
+
+                <span style="font-weight: bold;" th:if="${provision!=null}">Formalité demandée : <span
+                        style="font-weight:normal;" th:text="${provision.service.customLabel}"></span></span><br />
+
+                <span style="font-weight: bold;" th:if="${currentDate!=null}"> Date de dépôt : <span
+                        style="font-weight:normal;" th:text="${currentDate}"></span></span><br />
 
             </td>
         </tr>

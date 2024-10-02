@@ -1397,10 +1397,19 @@ public class GeneratePdfDelegate {
         if (provision != null) {
             ctx.setVariable("provision", provision);
 
+            if (provision.getAssignedTo() != null)
+                ctx.setVariable("employee", provision.getAssignedTo().getFirstname() + ' ' +
+                        provision.getAssignedTo().getLastname()
+                        + String.join(provision.getAssignedTo().getLastname(), " / ")
+                        + provision.getAssignedTo().getMail());
+
             if (provision.getService() != null && provision.getService().getAssoAffaireOrder() != null
                     && provision.getService().getAssoAffaireOrder().getAffaire() != null)
                 ctx.setVariable("affaireDenomination",
                         provision.getService().getAssoAffaireOrder().getAffaire().getDenomination());
+            if (provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority() != null)
+                ctx.setVariable("affaireCompetentAuthority",
+                        provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority().getLabel());
         }
 
         final String htmlContent = StringEscapeUtils

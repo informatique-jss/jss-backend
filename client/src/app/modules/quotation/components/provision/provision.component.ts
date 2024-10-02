@@ -35,6 +35,7 @@ import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-aut
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
+import { SelectCompetentAuthorityDialogComponent } from '../select-competent-authority-dialog/select-competent-authority-dialog.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 
@@ -699,6 +700,20 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   downloadTrackingSheet(provision: Provision) {
-    this.provisionService.downloadTrackingSheet(provision.id);
+    if (!this.asso.affaire.competentAuthority) {
+      const dialogRef = this.attachmentsDialog.open(SelectCompetentAuthorityDialogComponent, {
+        maxWidth: "1000px",
+      });
+
+      dialogRef.afterClosed().subscribe(selectedCompetentAuthority => {
+        if (selectedCompetentAuthority && this.currentProvisionWorkflow) {
+          this.asso.affaire.competentAuthority = selectedCompetentAuthority;
+          this.affaireService.addOrUpdateAffaire(this.asso.affaire).subscribe(response => { });
+          this.provisionService.downloadTrackingSheet(provision.id);
+        }
+      });
+    }
+    else
+      this.provisionService.downloadTrackingSheet(provision.id);
   }
 }

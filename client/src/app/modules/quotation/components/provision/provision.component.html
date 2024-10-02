@@ -230,7 +230,7 @@
     <span>Recevoir le mail de témoin de publication</span>
   </button>
   <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.provisionType.code==registrationAct.code"
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.provisionType && registrationAct && currentProvisionWorkflow.provisionType.code==registrationAct.code"
     (click)="generateRegistrationAct()">
     <span>Télécharger l'acte d'enregistrement</span> </button>
   <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="generateAttachmentsMail()">
@@ -247,7 +247,27 @@
     <span>Recevoir le mail d'envoi au confrère</span>
   </button>
 </mat-menu>
-<button matTooltip="Générer le PDF Fiche de suivi" mat-fab color="accent" class="second-fab-button"
-  *ngIf="currentProvisionWorkflow" (click)="downloadTrackingSheet(currentProvisionWorkflow)">
-  <mat-icon>download</mat-icon>
+
+<button matTooltip="Générer une fiche de suivi" mat-fab color="accent" class="fourth-fab-button"
+  (click)="setCurrentProvisionWorkflow(asso.services[0].provisions[0])"
+  *ngIf="editMode==false && asso  && onlyOneProvision()" [matMenuTriggerFor]="menu6">
+  <mat-icon>file_download</mat-icon>
 </button>
+<button matTooltip="Générer une fiche de suivi" mat-fab color="accent" class="fourth-fab-button"
+  *ngIf="editMode==false && asso  && !onlyOneProvision()" [matMenuTriggerFor]="menu7">
+  <mat-icon>file_download</mat-icon>
+  <mat-menu #menu7="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+    <ng-container *ngFor="let service of asso.services">
+      <button mat-menu-item [matMenuTriggerFor]="menu6" (mouseover)="setCurrentProvisionWorkflow(provision)"
+        *ngFor="let provision of service.provisions"><span
+          style="color:#c4ae8b">{{computeServiceLabel(service,false)}}</span>
+        {{computeProvisionLabel(service, provision, true)}}</button>
+    </ng-container>
+  </mat-menu>
+</button>
+<mat-menu #menu6="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+  <button mat-menu-item (click)="downloadTrackingSheet(currentProvisionWorkflow)" *ngIf="currentProvisionWorkflow">
+    <span>Générer la fiche de suivi</span>
+  </button>
+  <mat-divider></mat-divider>
+</mat-menu>
