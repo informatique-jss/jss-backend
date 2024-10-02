@@ -49,7 +49,7 @@
           </td>
         </tr>
       </table>
-      <table class="full-width" *ngIf="quotation">
+      <table class="full-width" *ngIf="quotation && quotation.responsable">
         <tr>
           <td>
             <chips-mail [(model)]="quotation.responsable.mails" label="Mails" [form]="orderingCustomerForm"
