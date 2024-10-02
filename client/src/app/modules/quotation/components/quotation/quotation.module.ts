@@ -83,7 +83,6 @@ import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
-import { SelectCompetentAuthorityDialogComponent } from '../select-competent-authority-dialog/select-competent-authority-dialog.component';
 
 const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
@@ -189,7 +188,6 @@ const routes: Routes = [
     FormaliteAssociateDialog,
     InfogreffeStatusComponent,
     SelectMultiServiceTypeDialogComponent,
-    SelectCompetentAuthorityDialogComponent
   ],
   exports: [
     OrderingListComponent,

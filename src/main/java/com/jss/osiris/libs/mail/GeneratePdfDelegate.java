@@ -1399,14 +1399,18 @@ public class GeneratePdfDelegate {
 
             if (provision.getAssignedTo() != null)
                 ctx.setVariable("employee", provision.getAssignedTo().getFirstname() + ' ' +
-                        provision.getAssignedTo().getLastname()
-                        + String.join(provision.getAssignedTo().getLastname(), " / ")
-                        + provision.getAssignedTo().getMail());
+                        provision.getAssignedTo().getLastname() + " / " + provision.getAssignedTo().getMail());
 
             if (provision.getService() != null && provision.getService().getAssoAffaireOrder() != null
-                    && provision.getService().getAssoAffaireOrder().getAffaire() != null)
-                ctx.setVariable("affaireDenomination",
-                        provision.getService().getAssoAffaireOrder().getAffaire().getDenomination());
+                    && provision.getService().getAssoAffaireOrder().getAffaire() != null) {
+                if (provision.getService().getAssoAffaireOrder().getAffaire().getDenomination() != null)
+                    ctx.setVariable("affaireDenomination",
+                            provision.getService().getAssoAffaireOrder().getAffaire().getDenomination());
+                else
+                    ctx.setVariable("affaireDenomination",
+                            provision.getService().getAssoAffaireOrder().getAffaire().getFirstname() + ' '
+                                    + provision.getService().getAssoAffaireOrder().getAffaire().getLastname());
+            }
             if (provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority() != null)
                 ctx.setVariable("affaireCompetentAuthority",
                         provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority().getLabel());
