@@ -282,6 +282,13 @@ public class InvoiceServiceImpl implements InvoiceService {
             attachment.setInvoice(invoice);
             attachmentService.addOrUpdateAttachment(attachment);
         }
+
+        // If it's a provider invoice on a customer order, resave the customer order to
+        // regenerate reinvoiced invoice items
+        if (invoice.getIsInvoiceFromProvider() != null && invoice.getIsInvoiceFromProvider()
+                && invoice.getCustomerOrder() != null)
+            customerOrderService.addOrUpdateCustomerOrder(invoice.getCustomerOrder(), true, false);
+
         return invoice;
     }
 
