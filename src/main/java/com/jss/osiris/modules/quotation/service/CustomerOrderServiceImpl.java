@@ -548,6 +548,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         if (provision.getInvoiceItems() != null)
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())
                                 invoiceItemService.deleteInvoiceItem(invoiceItem);
+        addOrUpdateCustomerOrder(customerOrder, true, false);
     }
 
     @Override
