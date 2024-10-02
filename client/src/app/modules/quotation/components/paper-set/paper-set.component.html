@@ -7,7 +7,8 @@
     </div>
     <sort-table [refreshTable]="refreshPaperSetTable.asObservable()" [columns]="displayedColumns"
       *ngIf="customerOrder && customerOrder.paperSets && customerOrder.paperSets.length>0" [displayTotalLines]="false"
-      [values]="displayedPaperSets" tableName="Gestion des documents disponibles" [noPaddingBottom]="true">
+      [values]="displayedPaperSets" tableName="Gestion des documents disponibles" [noPaddingBottom]="true"
+      [actions]="tableAction">
     </sort-table>
   </div>
 </div>
