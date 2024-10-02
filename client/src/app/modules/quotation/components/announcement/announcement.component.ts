@@ -285,13 +285,11 @@ export class AnnouncementComponent implements OnInit {
     if (this.announcement.notice) {
       this.announcement.notice = this.announcement.notice.replace(/<img[^>]*>/g, "");
       this.announcement.notice = this.announcement.notice.replace(/&quot;/g, "'");
-      this.announcement.notice = this.announcement.notice.replace(/<br>/g, "");
       this.announcement.notice = this.announcement.notice.replace(/<wbr>/g, "");
     }
     if (this.announcement.noticeHeader) {
       this.announcement.noticeHeader = this.announcement.noticeHeader.replace(/<img[^>]*>/g, "");
       this.announcement.notice = this.announcement.notice.replace(/&quot;/g, "'");
-      this.announcement.notice = this.announcement.notice.replace(/<br>/g, "");
       this.announcement.notice = this.announcement.notice.replace(/<wbr>/g, "");
     }
   }
