@@ -191,6 +191,11 @@ public class Responsable implements IAttachment, IId, IMyJssResponsable, IOsiris
 
 	private Boolean canViewAllTiersInWeb;
 
+	private String salt; // TODO : delete
+
+	@Column(length = 300)
+	private String password; // TODO : delete
+
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
@@ -446,6 +451,22 @@ public class Responsable implements IAttachment, IId, IMyJssResponsable, IOsiris
 
 	public void setLoginWeb(String loginWeb) {
 		this.loginWeb = loginWeb;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public Integer getIdAs400() {
