@@ -27,7 +27,7 @@ export class OrderingListTaggedComponent implements OnInit {
   @Input() isForPaymentAssocationIntegration: boolean = false;
   orders: OrderingSearchTaggedResult[] | undefined;
   availableColumns: SortTableColumn<OrderingSearchTaggedResult>[] = [];
-  columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "serviceTypeLabel", "createdDate", "lastStatusUpdate", "taggedGroup"];
+  columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "serviceTypeLabel", "createdDate", "lastStatusUpdate", "activeDirectoryGroupLabel"];
   displayedColumns: SortTableColumn<OrderingSearchTaggedResult>[] = [];
   tableAction: SortTableAction<OrderingSearchTaggedResult>[] = [];
   bookmark: OrderingSearchTagged | undefined;
