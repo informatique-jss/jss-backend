@@ -34,15 +34,10 @@ export class AutocompleteInfogreffeFormaliteComponent extends GenericAutocomplet
   }
 
   displayLabel(object: FormaliteInfogreffe): string {
-    if (object && object.entreprise && object.greffeDestinataire)
-      return object.referenceTechnique + " - " + object.greffeDestinataire.typeTribunalReel + " - " + object.greffeDestinataire.nom
-        + " - " + object.entreprise.denomination + " - " + object.entreprise.siren;
-    else if (object && object.greffeDestinataire)
-      return object.referenceTechnique + " - " + object.greffeDestinataire.typeTribunalReel + " - " + object.greffeDestinataire.nom;
-    else if (object && object.entreprise)
-      return object.referenceTechnique + " - " + object.entreprise.denomination + " - " + object.entreprise.siren;
-    else if (object.referenceTechnique)
-      return object.referenceTechnique;
-    return "";
+    return (object && object.entreprise && object.greffeDestinataire ?
+      object.referenceTechnique + " - " + object.greffeDestinataire.typeTribunalReel + " - " + object.greffeDestinataire.nom + " - " + object.entreprise.denomination + " - " + object.entreprise.siren : (object && object.greffeDestinataire ?
+        object.referenceTechnique + " - " + object.greffeDestinataire.typeTribunalReel + " - " + object.greffeDestinataire.nom : (object && object.entreprise ?
+          object.referenceTechnique + " - " + object.entreprise.denomination + " - " + object.entreprise.siren : (object ?
+            object.referenceTechnique : ""))));
   }
 }
