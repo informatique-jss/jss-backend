@@ -37,6 +37,12 @@ export class AutocompleteInfogreffeFormaliteComponent extends GenericAutocomplet
     if (object && object.entreprise && object.greffeDestinataire)
       return object.referenceTechnique + " - " + object.greffeDestinataire.typeTribunalReel + " - " + object.greffeDestinataire.nom
         + " - " + object.entreprise.denomination + " - " + object.entreprise.siren;
+    else if (object && object.greffeDestinataire)
+      return object.referenceTechnique + " - " + object.greffeDestinataire.typeTribunalReel + " - " + object.greffeDestinataire.nom;
+    else if (object && object.entreprise)
+      return object.referenceTechnique + " - " + object.entreprise.denomination + " - " + object.entreprise.siren;
+    else if (object.referenceTechnique)
+      return object.referenceTechnique;
     return "";
   }
 }
