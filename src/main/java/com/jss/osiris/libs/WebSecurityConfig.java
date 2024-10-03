@@ -53,6 +53,7 @@ public class WebSecurityConfig {
 			http.authorizeHttpRequests((auth) -> auth.requestMatchers(HttpMethod.OPTIONS).permitAll()
 					.requestMatchers("/profile/login").permitAll()
 					.requestMatchers("/myjss/profile/login").permitAll()
+					.requestMatchers("/myjss/profile/token/send").permitAll()
 					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
 					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
 					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()

@@ -2,8 +2,11 @@ package com.jss.osiris.modules.myjss.profile.controller;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,6 +48,11 @@ public class MyJssProfileController {
 	@Autowired
 	ResponsableService responsableService;
 
+	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
+	private final long rateLimit = 10;
+	private LocalDateTime lastFloodFlush = LocalDateTime.now();
+	private int floodFlushDelayMinute = 1;
+
 	@GetMapping(inputEntryPoint + "/login/check")
 	public ResponseEntity<Boolean> checkLogin() {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -56,18 +64,32 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/login/token/send")
-	public ResponseEntity<Boolean> sendTokenToResponsable(@RequestParam Integer userId)
+	public ResponseEntity<String> sendTokenToResponsable(@RequestParam Integer userId, HttpServletRequest request)
 			throws OsirisException {
+		ResponseEntity<String> isFlood = detectFlood(request);
+		if (isFlood != null)
+			return isFlood;
+
 		Responsable responsable = responsableService.getResponsable(userId);
-		if (responsable == null)
-			throw new OsirisClientMessageException("Identifiant incorrect");
+		if (responsable == null) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Location", "/login/token/send/error");
+			return new ResponseEntity<String>(headers, HttpStatus.FOUND);
+		}
 		employeeService.sendTokenToResponsable(responsable);
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", "/login/token/send/success");
+		return new ResponseEntity<String>(headers, HttpStatus.FOUND);
 	}
 
 	@GetMapping(inputEntryPoint + "/login")
-	public ResponseEntity<Boolean> login(@RequestParam Integer userId, @RequestParam String aToken,
+	public ResponseEntity<String> login(@RequestParam Integer userId, @RequestParam String aToken,
 			HttpServletRequest request) {
+
+		ResponseEntity<String> isFlood = detectFlood(request);
+		if (isFlood != null)
+			return isFlood;
+
 		try {
 			Responsable responsable = responsableService.getResponsable(userId);
 			if (responsable == null)
@@ -91,13 +113,17 @@ public class MyJssProfileController {
 				responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().minusSeconds(1));
 				responsableService.addOrUpdateResponsable(responsable);
 
-				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+				HttpHeaders headers = new HttpHeaders();
+				headers.add("Location", "/login/success");
+				return new ResponseEntity<String>(headers, HttpStatus.FOUND);
 			}
 			SecurityContextHolder.getContext().setAuthentication(null);
-			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Location", "/login/error");
+			return new ResponseEntity<String>(headers, HttpStatus.FOUND);
 		} catch (Exception e) {
 			SecurityContextHolder.getContext().setAuthentication(null);
-			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+			return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -105,5 +131,23 @@ public class MyJssProfileController {
 	public ResponseEntity<Collection<? extends GrantedAuthority>> getUserRoles() {
 		return new ResponseEntity<Collection<? extends GrantedAuthority>>(activeDirectoryHelper.getUserRoles(),
 				HttpStatus.OK);
+	}
+
+	private ResponseEntity<String> detectFlood(HttpServletRequest request) {
+		if (lastFloodFlush.isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
+			requestCount.clear();
+		else
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+
+		String ipAddress = request.getRemoteAddr();
+		AtomicLong count = requestCount.computeIfAbsent(ipAddress, k -> new AtomicLong());
+
+		if (count.incrementAndGet() > rateLimit) {
+			return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.TOO_MANY_REQUESTS);
+		}
+		return null;
 	}
 }
