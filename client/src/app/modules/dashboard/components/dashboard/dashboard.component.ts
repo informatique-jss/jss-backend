@@ -29,7 +29,6 @@ import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { ActiveDirectoryGroupService } from '../../../miscellaneous/services/active.directory.group.service';
-import { ActiveDirectoryGroup } from '../../../miscellaneous/model/ActiveDirectoryGroup';
 
 @Component({
   selector: 'dashboard',
@@ -59,7 +58,6 @@ export class DashboardComponent implements OnInit {
   itemsSize: Array<string> = [];
   checkboxes: any = [];
   boxSizesSelected: any = [];
-  activeDirectoryGroups: ActiveDirectoryGroup[] = [];
 
   AFFAIRE_IN_PROGRESS = "Mes prestations en cours";
   AFFAIRE_TO_DO = "Mes prestations à faire";
@@ -216,8 +214,8 @@ export class DashboardComponent implements OnInit {
 
         this.orderingSearchTagged.assignedToEmployee = this.currentEmployee!;
         this.activeDirectoryGroupService.getActiveDirectoryGroups().subscribe(response => {
-          this.activeDirectoryGroups = response;
-          for (let activeDirectoryGroup of this.activeDirectoryGroups) {
+          let activeDirectoryGroups = response;
+          for (let activeDirectoryGroup of activeDirectoryGroups) {
             if (this.orderingSearchTagged.assignedToEmployee.adPath.includes(activeDirectoryGroup.activeDirectoryPath))
               this.orderingSearchTagged.activeDirectoryGroup = activeDirectoryGroup;
           }
