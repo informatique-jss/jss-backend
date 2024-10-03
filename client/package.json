@@ -29,7 +29,7 @@
     "jquery-ui-dist": "^1.13.3",
     "mat-table-exporter": "^15.0.0",
     "ngx-echarts": "^18.0.0",
-    "ngx-progressbar": "^12.0.2",
+    "ngx-progressbar": "^9.0.0",
     "pivottable": "^2.23.0",
     "rxjs": "^7.8.1",
     "tslib": "^2.5.0",
@@ -47,6 +47,6 @@
     "karma-coverage": "^2.0.3",
     "karma-jasmine": "^4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
-    "typescript": "^5.4.5"
+    "typescript": "~5.4.5"
   }
 }

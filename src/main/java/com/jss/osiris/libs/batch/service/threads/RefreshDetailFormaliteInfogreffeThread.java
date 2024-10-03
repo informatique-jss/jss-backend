@@ -9,8 +9,8 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.quotation.model.infoGreffe.FormaliteInfogreffe;
-import com.jss.osiris.modules.quotation.service.infoGreffe.FormaliteInfogreffeService;
+import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.FormaliteInfogreffe;
+import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.FormaliteInfogreffeService;
 
 @Service
 public class RefreshDetailFormaliteInfogreffeThread implements IOsirisThread {

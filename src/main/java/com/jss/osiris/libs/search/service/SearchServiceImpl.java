@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @Service
 public class SearchServiceImpl implements SearchService {

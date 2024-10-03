@@ -16,6 +16,7 @@ export interface IQuotation extends IAttachment, IDocument {
   // confrere: Confrere | undefined;
   specialOffers: SpecialOffer[] | undefined;
   createdDate: Date;
+  description: string;
   isQuotation: boolean;
   assoAffaireOrders: AssoAffaireOrder[];
   firstReminderDateTime: Date;

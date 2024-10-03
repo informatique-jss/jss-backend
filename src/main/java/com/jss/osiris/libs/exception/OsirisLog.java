@@ -15,8 +15,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_osiris_log_read", columnList = "is_read") })

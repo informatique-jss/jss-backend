@@ -9,9 +9,9 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.quotation.model.Formalite;
-import com.jss.osiris.modules.quotation.service.ActeDepositService;
-import com.jss.osiris.modules.quotation.service.FormaliteService;
+import com.jss.osiris.modules.osiris.quotation.model.Formalite;
+import com.jss.osiris.modules.osiris.quotation.service.ActeDepositService;
+import com.jss.osiris.modules.osiris.quotation.service.FormaliteService;
 
 @Service
 public class DeclareActeDepositFormaliteGuicherUniqueThread implements IOsirisThread {

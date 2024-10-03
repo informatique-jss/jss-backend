@@ -723,17 +723,22 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         for (let assoTarget of targetQuotation.assoAffaireOrders) {
           for (let serviceIncoming of assoIncoming.services) {
             for (let serviceTarget of assoTarget.services) {
-              if (serviceIncoming.provisions && serviceTarget.provisions)
-                for (let i = 0; i < serviceIncoming.provisions.length; i++) {
-                  let incomingProvision = serviceIncoming.provisions[i];
-                  for (let j = 0; j < serviceTarget.provisions.length; j++) {
-                    let targetProvision = serviceTarget.provisions[j];
-                    if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id && assoIncoming.affaire.id == assoTarget.affaire.id && serviceIncoming.id == serviceIncoming.id)
-                      targetProvision.invoiceItems = incomingProvision.invoiceItems;
-                    else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id && assoIncoming.affaire.id == assoTarget.affaire.id)
-                      targetProvision.invoiceItems = incomingProvision.invoiceItems;
+              if (serviceIncoming.provisions && serviceTarget.provisions) {
+                for (let incomingProvision of serviceIncoming.provisions) {
+                  for (let targetProvision of serviceTarget.provisions) {
+                    if (incomingProvision.invoiceItems && targetProvision.invoiceItems) {
+                      for (let i = 0; i < incomingProvision.invoiceItems.length; i++) {
+                        const incomingInvoiceItem = incomingProvision.invoiceItems[i];
+                        for (let j = 0; j < targetProvision.invoiceItems.length; j++) {
+                          const targetInvoiceItem = targetProvision.invoiceItems[j];
+                          if (incomingInvoiceItem.id == targetInvoiceItem.id)
+                            targetProvision.invoiceItems[j] = incomingProvision.invoiceItems[i];
+                        }
+                      }
+                    }
                   }
                 }
+              }
             }
           }
         }

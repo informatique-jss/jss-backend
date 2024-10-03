@@ -9,7 +9,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 
 @Service
 public class AutomatchPaymentThread implements IOsirisThread {

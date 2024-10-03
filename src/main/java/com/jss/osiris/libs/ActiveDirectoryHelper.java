@@ -15,8 +15,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 
 @Service
 public class ActiveDirectoryHelper {

@@ -106,8 +106,8 @@
                   <td class="mat-mdc-cell mdc-data-table__cell "
                     *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
                     <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
-                      [propertyName]='"preTaxPrice"+indexInvoiceItem+indexProvision+indexAsso' [isMandatory]="true"
-                      type="number" step="0,01" (onFormBlur)="itemChange(invoiceItem)"
+                      [propertyName]='"preTaxPrice"+indexInvoiceItem+indexProvision+indexAsso+indexService'
+                      [isMandatory]="true" type="number" step="0,01" (onFormBlur)="itemChange(invoiceItem)"
                       hint="Laisser vide pour recalculer le prix">
                     </generic-input>
                   </td>

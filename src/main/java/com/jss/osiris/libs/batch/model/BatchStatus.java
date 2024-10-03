@@ -1,6 +1,6 @@
 package com.jss.osiris.libs.batch.model;
 
-import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

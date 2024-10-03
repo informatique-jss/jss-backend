@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.service.BankTransfertService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
 
 @Service
 public class IndexBankTransfertThread extends IndexThread {

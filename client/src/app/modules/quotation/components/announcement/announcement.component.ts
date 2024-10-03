@@ -282,10 +282,16 @@ export class AnnouncementComponent implements OnInit {
 
   cleanNotice() {
     // remove img tag
-    if (this.announcement.notice)
+    if (this.announcement.notice) {
       this.announcement.notice = this.announcement.notice.replace(/<img[^>]*>/g, "");
-    if (this.announcement.noticeHeader)
+      this.announcement.notice = this.announcement.notice.replace(/&quot;/g, "'");
+      this.announcement.notice = this.announcement.notice.replace(/<wbr>/g, "");
+    }
+    if (this.announcement.noticeHeader) {
       this.announcement.noticeHeader = this.announcement.noticeHeader.replace(/<img[^>]*>/g, "");
+      this.announcement.notice = this.announcement.notice.replace(/&quot;/g, "'");
+      this.announcement.notice = this.announcement.notice.replace(/<wbr>/g, "");
+    }
   }
 
   updateHeaderFree() {

@@ -47,32 +47,32 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.LetterModel;
 import com.jss.osiris.libs.mail.model.VatMail;
-import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
-import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.invoicing.model.Payment;
-import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
-import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
-import com.jss.osiris.modules.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.invoicing.service.PaymentService;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.miscellaneous.service.DocumentService;
-import com.jss.osiris.modules.miscellaneous.service.VatService;
-import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.quotation.model.Announcement;
-import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Domiciliation;
-import com.jss.osiris.modules.quotation.model.NoticeType;
-import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.Service;
-import com.jss.osiris.modules.quotation.service.ProvisionService;
-import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue;
+import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.Announcement;
+import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
+import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class GeneratePdfDelegate {
@@ -1386,6 +1386,59 @@ public class GeneratePdfDelegate {
             outputStream.close();
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for registration act");
+        }
+        return tempFile;
+    }
+
+    public File generateTrackingSheetPdf(Provision provision) throws OsirisException {
+        final Context ctx = new Context();
+
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        if (provision != null) {
+            ctx.setVariable("provision", provision);
+
+            if (provision.getAssignedTo() != null)
+                ctx.setVariable("employee", provision.getAssignedTo().getFirstname() + ' ' +
+                        provision.getAssignedTo().getLastname() + " / " + provision.getAssignedTo().getMail());
+
+            if (provision.getService() != null && provision.getService().getAssoAffaireOrder() != null
+                    && provision.getService().getAssoAffaireOrder().getAffaire() != null) {
+                if (provision.getService().getAssoAffaireOrder().getAffaire().getDenomination() != null)
+                    ctx.setVariable("affaireDenomination",
+                            provision.getService().getAssoAffaireOrder().getAffaire().getDenomination());
+                else
+                    ctx.setVariable("affaireDenomination",
+                            provision.getService().getAssoAffaireOrder().getAffaire().getFirstname() + ' '
+                                    + provision.getService().getAssoAffaireOrder().getAffaire().getLastname());
+            }
+            if (provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority() != null)
+                ctx.setVariable("affaireCompetentAuthority",
+                        provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority().getLabel());
+        }
+
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(mailHelper.emailTemplateEngine().process("tracking-sheet", ctx));
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("Fiche de suivi", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for tracking sheet document");
         }
         return tempFile;
     }

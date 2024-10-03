@@ -1,6 +1,6 @@
 package com.jss.osiris.libs.mail.model;
 
-import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 
 public class InvoiceException extends Exception {
 

@@ -22,8 +22,8 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisLogRepository;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {

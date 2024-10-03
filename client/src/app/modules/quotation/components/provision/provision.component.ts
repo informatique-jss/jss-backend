@@ -697,4 +697,24 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   generateDomiciliationContract(provision: Provision) {
     this.domiciliationService.generateDomiciliationContract(provision).subscribe(response => { this.saveAsso() });
   }
+
+  downloadTrackingSheet(provision: Provision) {
+    if (!this.asso.affaire.competentAuthority) {
+      const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseCompetentAuthorityDialogComponent, {
+
+      });
+      dialogRef.componentInstance.title = "Autorité compétente manquante";
+      dialogRef.componentInstance.label = "Choisir une autorité compétente pour l'affaire associée à la prestation";
+      dialogRef.afterClosed().subscribe(selectedCompetentAuthority => {
+        if (selectedCompetentAuthority && this.currentProvisionWorkflow) {
+          this.asso.affaire.competentAuthority = selectedCompetentAuthority;
+          this.affaireService.addOrUpdateAffaire(this.asso.affaire).subscribe(response => {
+            this.provisionService.downloadTrackingSheet(provision.id);
+          });
+        }
+      });
+    }
+    else
+      this.provisionService.downloadTrackingSheet(provision.id);
+  }
 }
