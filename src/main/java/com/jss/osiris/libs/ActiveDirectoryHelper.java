@@ -53,9 +53,12 @@ public class ActiveDirectoryHelper {
             + ActiveDirectoryHelper.ACCOUNTING_GROUP + "')";
     public static final String ACCOUNTING_RESPONSIBLE = "@activeDirectoryHelper.isUserHasGroup('"
             + ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP + "')";
+    public static final String MYJSS_USER = "@activeDirectoryHelper.isUserHasGroup('"
+            + ActiveDirectoryHelper.MYJSS_USER_GROUP + "')";
     public static final String ADMINISTRATEUR_GROUP = "ROLE_OSIRIS_ADMINISTRATEURS";
     public static final String ACCOUNTING_GROUP = "ROLE_OSIRIS_COMPTABILITÉ";
     public static final String ACCOUNTING_RESPONSIBLE_GROUP = "ROLE_OSIRIS_RESPONSABLE_COMPTABILITÉ";
+    public static final String MYJSS_USER_GROUP = "ROLE_MYJSS_USER";
 
     public String getCurrentUsername() {
         if (devMode)

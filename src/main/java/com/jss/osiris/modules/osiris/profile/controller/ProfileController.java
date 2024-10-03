@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.model.User;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -60,8 +62,11 @@ public class ProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/user")
-	public ResponseEntity<Employee> getMyUsername() {
-		return new ResponseEntity<Employee>(employeeService.getCurrentEmployee(), HttpStatus.OK);
+	public ResponseEntity<Employee> getMyUsername() throws OsirisClientMessageException {
+		IOsirisUser employee = employeeService.getCurrentEmployee();
+		if (employee instanceof Responsable)
+			throw new OsirisClientMessageException("wrong id type");
+		return new ResponseEntity<Employee>((Employee) employeeService.getCurrentEmployee(), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/login")

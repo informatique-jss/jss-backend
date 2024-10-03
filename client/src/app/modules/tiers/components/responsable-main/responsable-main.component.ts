@@ -115,7 +115,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     this.displayedColumns.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn<Responsable>);
-    this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "mail", fieldName: "mail.mail", label: "Mail" } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "formalisteEmployee", fieldName: "formalisteEmployee", label: "Formaliste", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.formalisteEmployee) ? element.formalisteEmployee.firstname + " " + element.formalisteEmployee.lastname : "" } } as SortTableColumn<Responsable>);
@@ -292,15 +292,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       status = status && this.principalForm.valid && (documentSettlementBillingFormStatus! || this.isResponsableTypeProspect());
     }
     return status;
-  }
-
-  renewPassword() {
-    if (!this.selectedResponsable || !this.selectedResponsable.mails || this.selectedResponsable.mails.length == 0) {
-      this.appService.displaySnackBar("Aucune adresse mail disponible pour ce responsable !", true, 20);
-      return;
-    }
-
-    this.employeeService.renewResponsablePassword(this.selectedResponsable!).subscribe(response => { });
   }
 
   //Tabs management

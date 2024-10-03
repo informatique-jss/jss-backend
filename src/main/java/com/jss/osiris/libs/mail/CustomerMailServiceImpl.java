@@ -28,6 +28,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -108,7 +110,10 @@ public class CustomerMailServiceImpl implements CustomerMailService {
     public void addMailToQueue(CustomerMail mail) throws OsirisException {
         mail.setCreatedDateTime(LocalDateTime.now());
         mail.setIsSent(false);
-        mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
+
+        IOsirisUser employee = employeeService.getCurrentEmployee();
+        if (employee != null && employee instanceof Employee)
+            mail.setSendToMeEmployee((Employee) employee);
         addOrUpdateCustomerMail(mail);
 
         if (mail.getAttachments() != null)

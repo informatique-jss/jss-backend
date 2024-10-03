@@ -207,8 +207,8 @@ public class TiersServiceImpl implements TiersService {
                     responsable.setDefaultCustomerOrderEmployee(responsable.getSalesEmployee());
 
                 // If mails already exists, get their ids
-                if (responsable.getMails() != null && responsable.getMails().size() > 0)
-                    mailService.populateMailIds(responsable.getMails());
+                if (responsable.getMail() != null)
+                    mailService.populateMailId(responsable.getMail());
 
                 // If phones already exists, get their ids
                 if (responsable.getPhones() != null && responsable.getPhones().size() > 0) {
@@ -343,7 +343,7 @@ public class TiersServiceImpl implements TiersService {
                 invoiceSearch.setCustomerOrders(Arrays.asList(dummyTiers));
                 invoices = invoiceService.searchInvoices(invoiceSearch);
 
-                responsable.setMails(null);
+                responsable.setMail(null);
                 responsable.setPhones(null);
             }
         }

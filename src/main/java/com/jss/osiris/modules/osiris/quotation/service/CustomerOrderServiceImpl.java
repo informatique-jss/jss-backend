@@ -277,20 +277,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Generate first comment
         if (isNewCustomerOrder && isFromUser) {
-            CustomerOrderComment comment = new CustomerOrderComment();
-            comment.setEmployee(employeeService.getCurrentEmployee());
-            comment.setCreatedDateTime(LocalDateTime.now());
-            comment.setCustomerOrder(customerOrder);
-
+            String comment = "";
             Tiers tiers = customerOrder.getResponsable().getTiers();
             if (tiers != null && (tiers.getInstructions() != null || tiers.getObservations() != null)) {
-                comment.setComment("<p>Intructions du tiers : "
+                comment = "<p>Intructions du tiers : "
                         + (tiers.getInstructions() != null ? tiers.getInstructions() : "") + "</p>" +
                         "<p>Observations du tiers : " + (tiers.getObservations() != null ? tiers.getObservations() : "")
                         + "</p>" +
                         "<p>Description de la demande : "
-                        + (customerOrder.getDescription() != null ? customerOrder.getDescription() : "") + "</p>");
-                customerOrderCommentService.addOrUpdateCustomerOrderComment(comment);
+                        + (customerOrder.getDescription() != null ? customerOrder.getDescription() : "") + "</p>";
+                customerOrderCommentService.createCustomerOrderComment(customerOrder, comment);
             }
         }
 

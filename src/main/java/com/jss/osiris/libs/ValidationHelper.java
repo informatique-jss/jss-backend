@@ -341,6 +341,12 @@ public class ValidationHelper {
         return true;
     }
 
+    public boolean validateMail(Mail mail) {
+        if (!validateMail(mail.getMail()))
+            return false;
+        return true;
+    }
+
     public boolean validateMail(String mail) {
         EmailValidator emailvalidator = EmailValidator.getInstance(true);
         if (mail != null) {

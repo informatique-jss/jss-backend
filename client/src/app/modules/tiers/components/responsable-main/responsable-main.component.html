@@ -165,8 +165,8 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <chips-mail label="Mails" [(model)]="selectedResponsable.mails" [form]="principalForm"
-                      propertyName="mails" [isDisabled]="!editMode"></chips-mail>
+                    <single-chips-mail label="Mails" [(model)]="selectedResponsable.mail" [form]="principalForm"
+                      propertyName="mails" [isDisabled]="!editMode"></single-chips-mail>
                   </td>
                   <td>
                     <chips-phone label="Téléphones" [(model)]="selectedResponsable.phones" [form]="principalForm"
@@ -184,12 +184,6 @@
               </table>
             </fieldset>
           </div>
-          <button
-            [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
-            mat-fab color="accent" class="second-fab-button" *ngIf="!editMode && selectedResponsable"
-            (click)="renewPassword()">
-            <mat-icon>password</mat-icon>
-          </button>
         </mat-tab>
         <mat-tab label="Pièces et facturation" *ngIf="isResponsableTypeProspect()==false">
           <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>

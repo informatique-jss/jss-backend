@@ -61,7 +61,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@Id
 	@IndexedField
-	@GenericGenerator(name = "invoice_id", strategy = "com.jss.osiris.modules.invoicing.model.InvoiceKeyGenerator")
+	@GenericGenerator(name = "invoice_id", strategy = "com.jss.osiris.modules.osiris.invoicing.model.InvoiceKeyGenerator")
 	@GeneratedValue(generator = "invoice_id")
 	private Integer id;
 

@@ -55,6 +55,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
@@ -101,6 +102,9 @@ public class MailHelper {
 
     @Value("${payment.cb.entry.point}")
     private String paymentCbEntryPoint;
+
+    @Value("${login.token.entry.point}")
+    private String loginTokenEntryPoint;
 
     @Value("${jss.iban}")
     private String ibanJss;
@@ -524,6 +528,12 @@ public class MailHelper {
         if (mail.getCompetentAuthority() != null) {
             ctx.setVariable("competentAuthority", mail.getCompetentAuthority());
             ctx.setVariable("provisionDetails", mail.getExplaination().split("removeme"));
+        }
+
+        if (mail.getResponsable() != null) {
+            ctx.setVariable("tokenLink",
+                    loginTokenEntryPoint + "?userId=" + mail.getResponsable().getId() + "&aToken="
+                            + mail.getResponsable().getLoginToken());
         }
 
     }
@@ -1209,7 +1219,25 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public void sendNewPasswordMail(Responsable responsable, String password) throws OsirisException {
+    public void sendNewTokenMail(Responsable responsable) throws OsirisException {
+        CustomerMail mail = new CustomerMail();
+        mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_TOKEN);
+        mail.setHeaderPicture("images/mails/renew-password.png");
+        mail.setReplyToMail(constantService.getStringSalesSharedMailbox() + "");
+        mail.setSendToMe(false);
+        mail.setResponsable(responsable);
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
+
+        mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
+        mail.setMailComputeResult(mailComputeResult);
+
+        mail.setSubject("Votre lien de connexion à MyJSS");
+
+        mailService.addMailToQueue(mail);
+    }
+
+    public void sendNewPasswordMail(Responsable responsable, String password) throws OsirisException { // TODO delete
         responsableService.getResponsable(responsable.getId());
         CustomerMail mail = new CustomerMail();
         mail.setMailTemplate(CustomerMail.TEMPLATE_RENEW_PASSWORD);
@@ -1220,9 +1248,7 @@ public class MailHelper {
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
 
-        for (Mail mailResponsable : responsable.getMails()) {
-            mailComputeResult.getRecipientsMailTo().add(mailResponsable);
-        }
+        mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
         mail.setMailComputeResult(mailComputeResult);
 
         mail.setSubject("Votre nouveau mot de passe");
@@ -1274,10 +1300,12 @@ public class MailHelper {
         if (query.getComment() != null)
             mail.setExplaination(query.getComment().replaceAll("\r?\n", "<br/>"));
 
-        Employee sendToEmployee = employeeService.getCurrentEmployee();
+        IOsirisUser sendToEmployee = employeeService.getCurrentEmployee();
         if (sendToEmployee == null)
             sendToEmployee = query.getService().getAssoAffaireOrder().getAssignedTo();
-        mail.setReplyTo(sendToEmployee);
+
+        if (sendToEmployee instanceof Employee)
+            mail.setReplyTo((Employee) sendToEmployee);
         mail.setSendToMe(query.getSendToMe());
         mail.setMailComputeResult(mailComputeHelper.computeMailForMissingAttachmentQueryToCustomer(customerOrder));
         mail.setIsLastReminder(isLastReminder);

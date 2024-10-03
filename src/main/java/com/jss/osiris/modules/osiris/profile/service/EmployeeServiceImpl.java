@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.profile.service;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +9,7 @@ import java.util.Optional;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +20,7 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.model.User;
 import com.jss.osiris.modules.osiris.profile.repository.EmployeeRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -39,6 +43,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     CustomerOrderOriginService customerOrderOriginService;
+
+    private final SecureRandom random = new SecureRandom();
+
+    private final long TOKEN_EXPIRATION_LENGTH_MINUTES = 15;
 
     @Override
     public Employee getEmployee(Integer id) {
@@ -109,11 +117,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee getCurrentEmployee() {
+    public IOsirisUser getCurrentEmployee() {
         String username = activeDirectoryHelper.getCurrentUsername();
+        IOsirisUser employee = null;
         if (username != null)
-            return employeeRepository.findByUsernameIgnoreCase(username);
-        return null;
+            employee = employeeRepository.findByUsernameIgnoreCase(username);
+
+        if (employee == null)
+            employee = responsableService.getResponsable(Integer.parseInt(username));
+        return employee;
     }
 
     /**
@@ -137,7 +149,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return holidaymakers;
     }
 
-    @Override
+    @Override // TODO delete
     public Responsable loginWebsiteUser(User user, boolean isIntrospection) {
         Responsable responsable = responsableService.getResponsableByLoginWeb(user.getUsername());
         if (responsable != null) {
@@ -154,7 +166,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return null;
     }
 
-    @Override
+    @Override // TODO delete
     @Transactional(rollbackFor = Exception.class)
     public boolean renewResponsablePassword(Responsable responsable) throws OsirisException {
         String salt = SSLHelper.randomPassword(20);
@@ -168,7 +180,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return true;
     }
 
-    @Override
+    @Override // TODO delete
     @Transactional(rollbackFor = Exception.class)
     public boolean modifyResponsablePassword(Responsable responsable, String newPassword) throws OsirisException {
         String salt = SSLHelper.randomPassword(20);
@@ -185,8 +197,21 @@ public class EmployeeServiceImpl implements EmployeeService {
         return true;
     }
 
-    private String diggestPassword(String clearPassword, String salt) {
+    private String diggestPassword(String clearPassword, String salt) { // TODO : delete
         return DigestUtils.sha256Hex(salt + clearPassword + salt);
+    }
+
+    @Override
+    public void sendTokenToResponsable(Responsable responsable) throws OsirisException {
+        responsable = responsableService.getResponsable(responsable.getId());
+
+        byte bytes[] = new byte[512];
+        random.nextBytes(bytes);
+        String token = String.valueOf(Hex.encode(bytes));
+
+        responsable.setLoginToken(token);
+        responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
+        mailHelper.sendNewTokenMail(responsable);
     }
 
 }

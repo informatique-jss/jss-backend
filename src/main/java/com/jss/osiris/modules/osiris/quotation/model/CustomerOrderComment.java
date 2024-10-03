@@ -12,6 +12,7 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,6 +47,10 @@ public class CustomerOrderComment implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
 	private Employee employee;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_responsable")
+	private Responsable currentCustomer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
@@ -143,5 +148,13 @@ public class CustomerOrderComment implements Serializable, IId {
 
 	public void setIsRead(Boolean isRead) {
 		this.isRead = isRead;
+	}
+
+	public Responsable getCurrentCustomer() {
+		return currentCustomer;
+	}
+
+	public void setCurrentCustomer(Responsable currentCustomer) {
+		this.currentCustomer = currentCustomer;
 	}
 }

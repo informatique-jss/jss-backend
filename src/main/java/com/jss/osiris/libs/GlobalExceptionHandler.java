@@ -23,7 +23,9 @@ import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisLogRepository;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -123,9 +125,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             osirisLog.setIsRead(false);
             osirisLog.setLogType(logType);
 
-            Employee employee = employeeService.getCurrentEmployee();
-            if (employee != null)
-                osirisLog.setCurrentUser(employee);
+            IOsirisUser employee = employeeService.getCurrentEmployee();
+            if (employee != null) {
+                if (employee instanceof Employee)
+                    osirisLog.setCurrentUser((Employee) employee);
+                if (employee instanceof Responsable)
+                    osirisLog.setCurrentCustomer((Responsable) employee);
+            }
 
             osirisLog.setCreatedDateTime(LocalDateTime.now());
             osirisLogRepository.save(osirisLog);

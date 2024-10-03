@@ -96,6 +96,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.VatCollectionTypeServ
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.WeekDayService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
@@ -396,22 +397,27 @@ public class MiscellaneousController {
         if (notification == null)
             throw new OsirisValidationException("notification");
 
-        List<Employee> backupEmployee = employeeService
-                .getMyHolidaymaker(employeeService.getCurrentEmployee());
+        IOsirisUser employee = employeeService.getCurrentEmployee();
 
-        if (notification.getNotificationType().equals(Notification.PERSONNAL)) {
-            backupEmployee = new ArrayList<Employee>();
-            backupEmployee.add(employeeService.getCurrentEmployee());
-        }
+        List<Employee> backupEmployee = null;
+        if (employee instanceof Employee) {
+            employeeService.getMyHolidaymaker((Employee) employee);
 
-        boolean found = false;
-
-        for (Employee employee : backupEmployee)
-            if (notification.getEmployee().getId().equals(employee.getId())) {
-                found = true;
+            if (notification.getNotificationType().equals(Notification.PERSONNAL)) {
+                backupEmployee = new ArrayList<Employee>();
+                backupEmployee.add((Employee) employee);
             }
-        if (!found)
-            throw new OsirisValidationException("employee");
+
+            boolean found = false;
+
+            if (backupEmployee != null)
+                for (Employee employeeLoop : backupEmployee)
+                    if (notification.getEmployee().getId().equals(employeeLoop.getId())) {
+                        found = true;
+                    }
+            if (!found)
+                throw new OsirisValidationException("employee");
+        }
 
         notificationService.deleteNotification(notification);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);

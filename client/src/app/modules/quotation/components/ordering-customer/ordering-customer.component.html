@@ -52,8 +52,8 @@
       <table class="full-width" *ngIf="quotation && quotation.responsable">
         <tr>
           <td>
-            <chips-mail [(model)]="quotation.responsable.mails" label="Mails" [form]="orderingCustomerForm"
-              propertyName="mails" [isDisabled]="true"></chips-mail>
+            <single-chips-mail [(model)]="quotation.responsable.mail" label="Mail" [form]="orderingCustomerForm"
+              propertyName="mail" [isDisabled]="true"></single-chips-mail>
           </td>
           <td>
             <chips-phone [(model)]="quotation.responsable.phones" label="Téléphones" [form]="orderingCustomerForm"

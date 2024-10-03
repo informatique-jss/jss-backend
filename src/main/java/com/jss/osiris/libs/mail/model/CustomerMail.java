@@ -59,7 +59,8 @@ public class CustomerMail {
     public static String TEMPLATE_BILLING_CLOSURE = "billing-closure";
     public static String TEMPLATE_INVOICE_REMINDER = "invoice-reminder";
     public static String TEMPLATE_MISSING_ATTACHMENT = "missing-attachment";
-    public static String TEMPLATE_RENEW_PASSWORD = "renew-password";
+    public static String TEMPLATE_RENEW_PASSWORD = "renew-password"; // TODO : delete
+    public static String TEMPLATE_SEND_TOKEN = "send-token";
     public static String TEMPLATE_REQUEST_RIB = "request-rib";
     public static String TEMPLATE_SEND_RFF = "send-rff";
     public static String TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = "send-competent-authority-reminder";

@@ -17,9 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": {
-              "base": "dist/osiris"
-            },
+            "outputPath": "dist/osiris",
             "index": "src/index.html",
             "polyfills": [
               "zone.js"
@@ -90,8 +88,7 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -100,10 +97,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "osiris:build:production"
+              "browserTarget": "osiris:build:production"
             },
             "development": {
-              "buildTarget": "osiris:build:development"
+              "browserTarget": "osiris:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -111,7 +108,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "osiris:build"
+            "browserTarget": "osiris:build"
           }
         },
         "test": {

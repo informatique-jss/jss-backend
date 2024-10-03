@@ -11,10 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderCommentRepository;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentService {
@@ -50,7 +53,12 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
         customerOrderComment.setComment(contentComment);
-        customerOrderComment.setEmployee(employeeService.getCurrentEmployee());
+
+        IOsirisUser employee = employeeService.getCurrentEmployee();
+        if (employee instanceof Employee)
+            customerOrderComment.setEmployee((Employee) employee);
+        if (employee instanceof Responsable)
+            customerOrderComment.setCurrentCustomer((Responsable) employee);
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);
 

@@ -41,7 +41,7 @@ export interface Responsable extends IDocument, IAttachment {
   cedexComplement: string;
   city: City;
   country: Country;
-  mails: Mail[];
+  mail: Mail;
   phones: Phone[];
   tiersFollowups: TiersFollowup[];
   observations: string;

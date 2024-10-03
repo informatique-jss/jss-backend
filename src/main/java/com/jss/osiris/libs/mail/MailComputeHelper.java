@@ -194,17 +194,15 @@ public class MailComputeHelper {
                 }
                 if (hasAlreadyAddMails && !quotationDocument.getAddToClientMailList()) {
                     // do nothing
-                } else if (responsable.getMails() != null
-                        && responsable.getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(responsable.getMails());
-                    mailComputeResult.setMailToClientOrigin("mails du responsable");
+                } else if (responsable.getMail() != null) {
+                    mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
+                    mailComputeResult.setMailToClientOrigin("mail du responsable");
                 } else if (responsable.getTiers().getMails() != null
                         && responsable.getTiers().getMails().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(responsable.getTiers().getMails());
                     mailComputeResult.setMailToClientOrigin("mails du tiers associé au responsable");
-                } else if (responsable.getMails() != null
-                        && responsable.getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(responsable.getMails());
+                } else if (responsable.getMail() != null) {
+                    mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
                     mailComputeResult.setMailToClientOrigin("mails du tiers");
                 } else
                     throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
@@ -267,10 +265,9 @@ public class MailComputeHelper {
             mailComputeResult.getRecipientsMailTo().addAll(billingClosureDocument.getMailsClient());
             mailComputeResult.setMailToClientOrigin("mails Autres du paramétrage du relevé de compte");
         } else if (responsable != null
-                && responsable.getMails() != null
-                && responsable.getMails().size() > 0) {
-            mailComputeResult.getRecipientsMailTo().addAll(responsable.getMails());
-            mailComputeResult.setMailToClientOrigin("mails du responsable");
+                && responsable.getMail() != null) {
+            mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
+            mailComputeResult.setMailToClientOrigin("mail du responsable");
         } else if (responsable != null
                 && responsable.getTiers().getMails() != null
                 && responsable.getTiers().getMails().size() > 0) {

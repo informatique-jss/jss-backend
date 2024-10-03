@@ -24,7 +24,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class Employee implements Serializable, IId, AttributesMapper<Employee> {
+public class Employee implements Serializable, IId, AttributesMapper<Employee>, IOsirisUser {
 
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)

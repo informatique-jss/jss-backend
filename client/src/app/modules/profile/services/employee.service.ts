@@ -31,8 +31,8 @@ export class EmployeeService extends AppRestService<Employee> {
     return this.get(new HttpParams().set("idResponsable", responsable.id), "responsable/password", "Mot de passe renouvelé et envoyé", "Erreur lors du renouvellement du mot de passe");
   }
 
-  getEmployeeBackgoundColor(employee: Employee | undefined): string {
-    if (employee) {
+  getEmployeeBackgoundColor(employee: Employee | Responsable | undefined): string {
+    if (employee && employee.firstname) {
       const name = employee.firstname + employee.lastname;
       var hash = 0;
       for (var i = 0; i < name.length; i++) {

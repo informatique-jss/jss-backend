@@ -63,7 +63,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture) {
-        Employee currentEmployee = employeeService.getCurrentEmployee();
+        Employee currentEmployee = (Employee) employeeService.getCurrentEmployee();
         if (currentEmployee == null)
             return null;
         return notificationRepository
@@ -129,7 +129,8 @@ public class NotificationServiceImpl implements NotificationService {
         Responsable responsable = quotation.getResponsable();
 
         boolean createdByMe = false;
-        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        List<Employee> compareEmployee = employeeService
+                .getMyHolidaymaker((Employee) employeeService.getCurrentEmployee());
 
         if (compareEmployee != null)
             for (Employee employee : compareEmployee)
@@ -141,7 +142,7 @@ public class NotificationServiceImpl implements NotificationService {
                 + responsable.getFirstname() + " " + responsable.getLastname();
 
         if (!createdByMe)
-            return generateNewNotification(!isFromHuman ? null : employeeService.getCurrentEmployee(),
+            return generateNewNotification(!isFromHuman ? null : (Employee) employeeService.getCurrentEmployee(),
                     quotation.getAssignedTo(),
                     notificationType,
                     quotation, customerOrderName, null, false);
@@ -189,7 +190,8 @@ public class NotificationServiceImpl implements NotificationService {
         ArrayList<Notification> notifications = new ArrayList<Notification>();
 
         boolean createdByMe = false;
-        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        List<Employee> compareEmployee = employeeService
+                .getMyHolidaymaker((Employee) employeeService.getCurrentEmployee());
 
         String customerOrderName = "";
         customerOrderName = responsable.getCivility().getLabel() + " "
@@ -206,7 +208,7 @@ public class NotificationServiceImpl implements NotificationService {
                 notifications.add(
                         generateNewNotification(
                                 isFromHuman && employeeService.getCurrentEmployee() != null
-                                        ? employeeService.getCurrentEmployee()
+                                        ? (Employee) employeeService.getCurrentEmployee()
                                         : null,
                                 customerOrder.getAssignedTo(),
                                 notificationType, customerOrder, customerOrderName, null, false));
@@ -222,7 +224,7 @@ public class NotificationServiceImpl implements NotificationService {
                 notifications.add(
                         generateNewNotification(
                                 isFromHuman && employeeService.getCurrentEmployee() != null
-                                        ? employeeService.getCurrentEmployee()
+                                        ? (Employee) employeeService.getCurrentEmployee()
                                         : null,
                                 constantService.getEmployeeBillingResponsible(),
                                 notificationType, customerOrder, customerOrderName, null, false));
@@ -240,7 +242,7 @@ public class NotificationServiceImpl implements NotificationService {
                         notifications.add(
                                 generateNewNotification(
                                         isFromHuman && employeeService.getCurrentEmployee() != null
-                                                ? employeeService.getCurrentEmployee()
+                                                ? (Employee) employeeService.getCurrentEmployee()
                                                 : null,
                                         asso.getAssignedTo(),
                                         notificationType, customerOrder, customerOrderName, null, false));
@@ -301,12 +303,12 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional(rollbackFor = Exception.class)
     public Notification addOrUpdatePersonnalNotification(Notification notification) {
         if (notification != null) {
-            notification.setEmployee(employeeService.getCurrentEmployee());
+            notification.setEmployee((Employee) employeeService.getCurrentEmployee());
             notification.setEntityId(null);
             notification.setEntityType(null);
             if (notification.getIsRead() == null)
                 notification.setIsRead(false);
-            notification.setCreatedBy(employeeService.getCurrentEmployee());
+            notification.setCreatedBy((Employee) employeeService.getCurrentEmployee());
             notification.setNotificationType(Notification.PERSONNAL);
             return addOrUpdateNotification(notification);
         }
@@ -342,7 +344,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException {
         boolean createdByMe = false;
-        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        List<Employee> compareEmployee = employeeService
+                .getMyHolidaymaker((Employee) employeeService.getCurrentEmployee());
         provision = provisionService.getProvision(provision.getId());
 
         if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
@@ -363,7 +366,7 @@ public class NotificationServiceImpl implements NotificationService {
                             + provision.getProvisionType().getLabel();
                 details += " - ";
                 details += attachment.getAttachmentType().getLabel() + " (" + attachment.getDescription() + ")";
-                generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                generateNewNotification((Employee) employeeService.getCurrentEmployee(), provision.getAssignedTo(),
                         Notification.PROVISION_ADD_ATTACHMENT, provision, details, null, false);
             }
         }
@@ -372,7 +375,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyAttachmentAddToService(Service service, Attachment attachment) throws OsirisException {
         boolean createdByMe = false;
-        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        List<Employee> compareEmployee = employeeService
+                .getMyHolidaymaker((Employee) employeeService.getCurrentEmployee());
         service = serviceService.getService(service.getId());
 
         if (compareEmployee != null)
@@ -393,7 +397,8 @@ public class NotificationServiceImpl implements NotificationService {
                     : service.getServiceType().getLabel();
             details += " - ";
             details += attachment.getAttachmentType().getLabel() + " (" + attachment.getDescription() + ")";
-            generateNewNotification(employeeService.getCurrentEmployee(), service.getAssoAffaireOrder().getAssignedTo(),
+            generateNewNotification((Employee) employeeService.getCurrentEmployee(),
+                    service.getAssoAffaireOrder().getAssignedTo(),
                     Notification.SERVICE_ADD_ATTACHMENT, service, details, null, false);
         }
     }
@@ -402,7 +407,8 @@ public class NotificationServiceImpl implements NotificationService {
     public Notification notifyTiersDepositMandatory(Responsable responsable, Invoice invoice)
             throws OsirisException {
         boolean createdByMe = false;
-        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        List<Employee> compareEmployee = employeeService
+                .getMyHolidaymaker((Employee) employeeService.getCurrentEmployee());
         Employee salesEmployee = null;
 
         String customerOrderName = "";
@@ -420,7 +426,7 @@ public class NotificationServiceImpl implements NotificationService {
                         createdByMe = true;
 
             if (!createdByMe)
-                return generateNewNotification(employeeService.getCurrentEmployee(), salesEmployee,
+                return generateNewNotification((Employee) employeeService.getCurrentEmployee(), salesEmployee,
                         Notification.TIERS_DEPOSIT_MANDATORY, entity,
                         "Le tiers " + customerOrderName + " a été relancé pour payer la facture " + invoice.getId()
                                 + ".",
@@ -483,7 +489,7 @@ public class NotificationServiceImpl implements NotificationService {
 
                 details += "nouveau statut : " + status.getLabel();
 
-                generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                generateNewNotification((Employee) employeeService.getCurrentEmployee(), provision.getAssignedTo(),
                         Notification.PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, provision, details, null, false);
             }
         }

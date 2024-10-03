@@ -10,4 +10,6 @@ public interface MailService {
     public Mail getMail(Integer id);
 
     public List<Mail> populateMailIds(List<Mail> mails);
+
+    public Mail populateMailId(Mail mail);
 }

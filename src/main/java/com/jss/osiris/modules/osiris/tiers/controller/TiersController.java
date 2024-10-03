@@ -755,8 +755,8 @@ public class TiersController {
     if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
       for (Responsable responsable : tiers.getResponsables()) {
 
-        if (responsable.getMails() != null && responsable.getMails().size() > 0) {
-          if (!validationHelper.validateMailList(responsable.getMails()))
+        if (responsable.getMail() != null) {
+          if (!validationHelper.validateMail(responsable.getMail()))
             throw new OsirisValidationException("Mails");
         }
 

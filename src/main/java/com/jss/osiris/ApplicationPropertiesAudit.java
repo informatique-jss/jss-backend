@@ -112,6 +112,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("infogreffe.url");
         isOk = isOk && checkProperty("schedulling.infogreffe.refresh.all");
         isOk = isOk && checkProperty("schedulling.infogreffe.refresh.last.day");
+        isOk = isOk && checkProperty("login.token.entry.point");
 
         if (!isOk)
             System.exit(-1);

@@ -28,8 +28,24 @@
     <div class="speech-wrapper">
       <div class="bubble" *ngFor="let comment of comments" [class.bubble-for-myself]="comment.isCurrentUserInGroup">
         <div class="txt">
-          <p class="name" [ngStyle]="{ 'color': getEmployeeBackgoundColor(comment.employee) }" style="display : flex">
-            <span *ngIf="comment.employee">{{comment.employee.firstname}} {{comment.employee.lastname}}</span> <span
+          <p *ngIf="comment.employee" class="name" [ngStyle]="{ 'color': getEmployeeBackgoundColor(comment.employee) }"
+            style="display : flex">
+            <span>{{comment.employee.firstname}} {{comment.employee.lastname}}</span> <span *ngIf="comment.provision"
+              style="color :#b3b3b3; padding-left: 3px;">
+              {{getProvisionLabel(comment.provision)}}</span> <span style=" display : flex"
+              *ngIf="comment.activeDirectoryGroups && comment.activeDirectoryGroups.length>0"><chips-status
+                style="margin-left : 5px;" *ngFor="let group of comment.activeDirectoryGroups"
+                [status]="isEmployeeInGroupList(currentEmployee, [group])?'EMPHASIZED' : ''"
+                [value]="'@'+group.label"></chips-status></span>
+          </p>
+          <p *ngIf="comment.currentCustomer" class="name"
+            [ngStyle]="{ 'color': getEmployeeBackgoundColor(comment.currentCustomer) }" style="display : flex">
+            <span>{{comment.currentCustomer.firstname}} {{comment.currentCustomer.lastname}} (responsable
+              n°{{comment.currentCustomer.id}})</span> <span *ngIf="comment.provision"
+              style="color :#b3b3b3; padding-left: 3px;">
+              {{getProvisionLabel(comment.provision)}}</span>
+          </p>
+          <p> <span *ngIf="comment.employee">{{comment.employee.firstname}} {{comment.employee.lastname}}</span> <span
               *ngIf="comment.provision" style="color :#b3b3b3; padding-left: 3px;">
               {{getProvisionLabel(comment.provision)}}</span> <span style=" display : flex"
               *ngIf="comment.activeDirectoryGroups && comment.activeDirectoryGroups.length>0"><chips-status

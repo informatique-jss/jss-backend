@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.tiers.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.myjss.profile.model.IMyJssResponsable;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
@@ -19,6 +21,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -41,7 +44,12 @@ import jakarta.persistence.Table;
 		@Index(name = "idx_responsable_commercial", columnList = "id_commercial"),
 		@Index(name = "idx_responsable_login_web", columnList = "loginWeb", unique = true) })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Responsable implements IAttachment, IId {
+public class Responsable implements IAttachment, IId, IMyJssResponsable, IOsirisUser {
+	@Override
+	public String getUsername() {
+		return getId() + "";
+	}
+
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
@@ -146,9 +154,9 @@ public class Responsable implements IAttachment, IId {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	@ManyToMany
-	@JoinTable(name = "asso_responsable_mail", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
-	private List<Mail> mails;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_mail")
+	private Mail mail;
 
 	@ManyToMany
 	@JoinTable(name = "asso_responsable_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
@@ -183,14 +191,14 @@ public class Responsable implements IAttachment, IId {
 
 	private Boolean canViewAllTiersInWeb;
 
-	private String salt;
-
-	@Column(length = 300)
-	private String password;
-
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
+
+	@Column(length = 1024)
+	private String loginToken;
+
+	private LocalDateTime loginTokenExpirationDateTime;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -352,12 +360,12 @@ public class Responsable implements IAttachment, IId {
 		this.observations = observations;
 	}
 
-	public List<Mail> getMails() {
-		return mails;
+	public Mail getMail() {
+		return mail;
 	}
 
-	public void setMails(List<Mail> mails) {
-		this.mails = mails;
+	public void setMail(Mail mail) {
+		this.mail = mail;
 	}
 
 	public List<Phone> getPhones() {
@@ -440,22 +448,6 @@ public class Responsable implements IAttachment, IId {
 		this.loginWeb = loginWeb;
 	}
 
-	public String getSalt() {
-		return salt;
-	}
-
-	public void setSalt(String salt) {
-		this.salt = salt;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public Integer getIdAs400() {
 		return idAs400;
 	}
@@ -528,4 +520,19 @@ public class Responsable implements IAttachment, IId {
 		this.rffMail = rffMail;
 	}
 
+	public String getLoginToken() {
+		return loginToken;
+	}
+
+	public void setLoginToken(String loginToken) {
+		this.loginToken = loginToken;
+	}
+
+	public LocalDateTime getLoginTokenExpirationDateTime() {
+		return loginTokenExpirationDateTime;
+	}
+
+	public void setLoginTokenExpirationDateTime(LocalDateTime loginTokenExpirationDateTime) {
+		this.loginTokenExpirationDateTime = loginTokenExpirationDateTime;
+	}
 }
