@@ -1389,4 +1389,57 @@ public class GeneratePdfDelegate {
         }
         return tempFile;
     }
+
+    public File generateTrackingSheetPdf(Provision provision) throws OsirisException {
+        final Context ctx = new Context();
+
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        if (provision != null) {
+            ctx.setVariable("provision", provision);
+
+            if (provision.getAssignedTo() != null)
+                ctx.setVariable("employee", provision.getAssignedTo().getFirstname() + ' ' +
+                        provision.getAssignedTo().getLastname() + " / " + provision.getAssignedTo().getMail());
+
+            if (provision.getService() != null && provision.getService().getAssoAffaireOrder() != null
+                    && provision.getService().getAssoAffaireOrder().getAffaire() != null) {
+                if (provision.getService().getAssoAffaireOrder().getAffaire().getDenomination() != null)
+                    ctx.setVariable("affaireDenomination",
+                            provision.getService().getAssoAffaireOrder().getAffaire().getDenomination());
+                else
+                    ctx.setVariable("affaireDenomination",
+                            provision.getService().getAssoAffaireOrder().getAffaire().getFirstname() + ' '
+                                    + provision.getService().getAssoAffaireOrder().getAffaire().getLastname());
+            }
+            if (provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority() != null)
+                ctx.setVariable("affaireCompetentAuthority",
+                        provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority().getLabel());
+        }
+
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(mailHelper.emailTemplateEngine().process("tracking-sheet", ctx));
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("Fiche de suivi", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for tracking sheet document");
+        }
+        return tempFile;
+    }
 }
