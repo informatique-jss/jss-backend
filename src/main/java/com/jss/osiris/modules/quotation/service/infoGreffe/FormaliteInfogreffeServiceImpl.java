@@ -252,7 +252,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             formaliteInfogreffe.getFormalite()
                                     .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " rejetée par "
+                            "Formalité Infogreffe n°" + formaliteInfogreffe.getReferenceTechnique() + " rejetée par "
                                     + (formaliteInfogreffe.getGreffeDestinataire() != null
                                             ? formaliteInfogreffe.getGreffeDestinataire().getNom()
                                             : ""));
@@ -268,7 +268,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             formaliteInfogreffe.getFormalite()
                                     .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
-                            "Formalité Infogreffe n°" + formaliteInfogreffe.getNumeroLiasse() + " validée par "
+                            "Formalité Infogreffe n°" + formaliteInfogreffe.getReferenceTechnique() + " validée par "
                                     + (formaliteInfogreffe.getGreffeDestinataire() != null
                                             ? formaliteInfogreffe.getGreffeDestinataire().getNom()
                                             : ""));
