@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.quotation.service.DirectDebitTransfertService;
 
 @Service
 public class IndexDirectDebitBankTransfertThread extends IndexThread {

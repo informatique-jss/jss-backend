@@ -22,15 +22,15 @@ import com.azure.ai.formrecognizer.documentanalysis.models.AnalyzedDocument;
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.util.BinaryData;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.invoicing.model.AzureInvoice;
-import com.jss.osiris.modules.invoicing.model.AzureReceipt;
-import com.jss.osiris.modules.invoicing.model.AzureReceiptInvoice;
-import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
-import com.jss.osiris.modules.invoicing.service.AzureReceiptService;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
-import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
-import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
+import com.jss.osiris.modules.osiris.invoicing.model.AzureInvoice;
+import com.jss.osiris.modules.osiris.invoicing.model.AzureReceipt;
+import com.jss.osiris.modules.osiris.invoicing.model.AzureReceiptInvoice;
+import com.jss.osiris.modules.osiris.invoicing.service.AzureInvoiceService;
+import com.jss.osiris.modules.osiris.invoicing.service.AzureReceiptService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 
 @Service
 public class FormRecognizerServiceImpl implements FormRecognizerService {

@@ -2,6 +2,8 @@ package com.jss.osiris.libs.mail.model;
 
 import java.util.List;
 
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,8 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
-
-import com.jss.osiris.modules.miscellaneous.model.Mail;
 
 @Entity
 public class MailComputeResult {

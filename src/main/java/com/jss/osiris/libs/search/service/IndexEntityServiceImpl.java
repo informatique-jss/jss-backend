@@ -29,8 +29,8 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 
 @Service
 public class IndexEntityServiceImpl implements IndexEntityService {

@@ -1,13 +1,13 @@
 package com.jss.osiris.libs.batch.model;
 
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
-
-import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
 public class BatchCategory implements IId {

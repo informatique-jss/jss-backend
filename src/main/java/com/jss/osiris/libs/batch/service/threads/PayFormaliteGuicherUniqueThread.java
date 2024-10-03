@@ -9,9 +9,9 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.quotation.model.guichetUnique.FormaliteGuichetUnique;
-import com.jss.osiris.modules.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
-import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniquePaymentService;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
+import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.GuichetUniquePaymentService;
 
 @Service
 public class PayFormaliteGuicherUniqueThread implements IOsirisThread {

@@ -28,8 +28,8 @@ import com.jss.osiris.libs.batch.service.BatchStatusService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.osiris.tiers.service.BillingLabelTypeService;
 
 @RestController
 public class BatchController {

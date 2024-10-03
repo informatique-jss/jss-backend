@@ -21,7 +21,7 @@ import com.jss.osiris.libs.node.model.Node;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
-import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 @Service
 public class AuditEntityInterceptor implements Interceptor {

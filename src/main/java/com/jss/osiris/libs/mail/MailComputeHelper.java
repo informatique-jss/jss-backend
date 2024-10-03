@@ -10,21 +10,21 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
-import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
-import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.DocumentType;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.miscellaneous.service.DocumentService;
-import com.jss.osiris.modules.miscellaneous.service.MailService;
-import com.jss.osiris.modules.quotation.model.Affaire;
-import com.jss.osiris.modules.quotation.model.Announcement;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.IQuotation;
-import com.jss.osiris.modules.quotation.service.QuotationService;
-import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Rff;
-import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
+import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.Announcement;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Rff;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @Service
 public class MailComputeHelper {

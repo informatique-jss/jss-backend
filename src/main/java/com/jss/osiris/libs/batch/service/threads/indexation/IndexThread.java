@@ -10,7 +10,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
-import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 @Service
 public abstract class IndexThread implements IOsirisThread {

@@ -1,0 +1,22 @@
+package com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials;
+
+import java.util.List;
+
+import org.apache.commons.collections4.IterableUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.CodifNorme;
+import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.CodifNormeRepository;
+
+@Service
+public class CodifNormeServiceImpl implements CodifNormeService {
+
+    @Autowired
+    CodifNormeRepository CodifNormeRepository;
+
+    @Override
+    public List<CodifNorme> getCodifNorme() {
+        return IterableUtils.toList(CodifNormeRepository.findAll());
+    }
+}
