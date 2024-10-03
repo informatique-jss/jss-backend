@@ -9,7 +9,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 
 @Service
 public class ActiveDirectoryUserUpdateThread implements IOsirisThread {

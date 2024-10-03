@@ -9,8 +9,8 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.invoicing.service.AzureInvoiceService;
-import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.osiris.invoicing.service.AzureInvoiceService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 
 @Service
 public class DoOcrOnInvoiceThread implements IOsirisThread {

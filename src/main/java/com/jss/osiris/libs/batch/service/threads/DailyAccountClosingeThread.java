@@ -9,7 +9,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 
 @Service
 public class DailyAccountClosingeThread implements IOsirisThread {

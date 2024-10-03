@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
-import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 
 @Service
 public class PrintDelegate {

@@ -1,8 +1,0 @@
-package com.jss.osiris.modules.tiers.repository;
-
-import com.jss.osiris.libs.QueryCacheCrudRepository;
-
-import com.jss.osiris.modules.tiers.model.TiersType;
-
-public interface TiersTypeRepository extends QueryCacheCrudRepository<TiersType, Integer> {
-}

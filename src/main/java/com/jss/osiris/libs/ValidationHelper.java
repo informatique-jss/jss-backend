@@ -19,9 +19,9 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.miscellaneous.model.ICode;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
 import fr.marcwrobel.jbanking.bic.Bic;
 import fr.marcwrobel.jbanking.iban.Iban;
