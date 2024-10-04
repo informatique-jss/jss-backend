@@ -1039,9 +1039,11 @@ public class InvoicingController {
     @PostMapping(inputEntryPoint + "/invoice/label/compute")
     public ResponseEntity<InvoiceLabelResult> computeInvoiceLabelForCustomerOrder(
             @RequestBody CustomerOrder customerOrder) throws OsirisException {
+        if (customerOrder.getResponsable() == null)
+            throw new OsirisValidationException("responsable");
         return new ResponseEntity<InvoiceLabelResult>(invoiceHelper.computeInvoiceLabelResult(
                 documentService.getBillingDocument(customerOrder.getDocuments()), customerOrder,
-                customerOrder.getResponsable()), HttpStatus.OK);
+                responsableService.getResponsable(customerOrder.getResponsable().getId())), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/paper/label/compute")
