@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.myjss.profile.model.IMyJssResponsable;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
@@ -44,7 +43,7 @@ import jakarta.persistence.Table;
 		@Index(name = "idx_responsable_commercial", columnList = "id_commercial"),
 		@Index(name = "idx_responsable_login_web", columnList = "loginWeb", unique = true) })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Responsable implements IAttachment, IId, IMyJssResponsable, IOsirisUser {
+public class Responsable implements IAttachment, IId, IOsirisUser {
 	@Override
 	public String getUsername() {
 		return getId() + "";
