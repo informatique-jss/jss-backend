@@ -3,7 +3,7 @@ package com.jss.osiris.modules.myjss.wordpress.model;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 
 public class Media {
     private Integer id;

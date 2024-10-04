@@ -6,8 +6,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
@@ -45,11 +47,13 @@ import jakarta.persistence.Table;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Responsable implements IAttachment, IId, IOsirisUser {
 	@Override
+	@JsonView(JacksonViews.MyJssView.class)
 	public String getUsername() {
 		return getId() + "";
 	}
 
 	@Override
+	@JsonView(JacksonViews.MyJssView.class)
 	public void setUsername(String username) {
 		setId(Integer.parseInt(username));
 	}
@@ -58,6 +62,7 @@ public class Responsable implements IAttachment, IId, IOsirisUser {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -95,10 +100,12 @@ public class Responsable implements IAttachment, IId, IOsirisUser {
 
 	@Column(length = 40)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String firstname;
 
 	@Column(length = 40)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String lastname;
 
 	@ManyToOne(fetch = FetchType.LAZY)

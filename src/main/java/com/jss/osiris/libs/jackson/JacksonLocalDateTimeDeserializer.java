@@ -1,4 +1,4 @@
-package com.jss.osiris.libs;
+package com.jss.osiris.libs.jackson;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -8,17 +8,17 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-public class JacksonLocalDateTimeGmtDeserializer extends StdDeserializer<LocalDateTime> {
+public class JacksonLocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 
     private static final long serialVersionUID = 1355852411036457107L;
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX");
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-    public JacksonLocalDateTimeGmtDeserializer() {
+    public JacksonLocalDateTimeDeserializer() {
         this(null);
     }
 
-    protected JacksonLocalDateTimeGmtDeserializer(Class<LocalDateTime> type) {
+    protected JacksonLocalDateTimeDeserializer(Class<LocalDateTime> type) {
         super(type);
     }
 

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.jss.osiris.libs.JacksonLocalDateTimeGmtDeserializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtDeserializer;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CentralPayPaymentRequest {

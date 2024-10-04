@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.jss.osiris.libs.JacksonLocalDateTimeGmtDeserializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtDeserializer;
 
 public class CentralPayBreakdown {
     public String paymentRequestBreakdownId;

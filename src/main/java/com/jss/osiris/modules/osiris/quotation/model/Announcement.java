@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;

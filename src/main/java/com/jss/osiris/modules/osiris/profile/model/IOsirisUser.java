@@ -1,8 +1,8 @@
 package com.jss.osiris.modules.osiris.profile.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 
-@JsonSerialize(as = IOsirisUser.class)
 public interface IOsirisUser {
     public Integer getId();
 
@@ -12,12 +12,16 @@ public interface IOsirisUser {
 
     public String getLastname();
 
+    @JsonView(JacksonViews.MyJssView.class)
     public void setId(Integer id);
 
+    @JsonView(JacksonViews.MyJssView.class)
     public void setUsername(String username);
 
+    @JsonView(JacksonViews.MyJssView.class)
     public void setFirstname(String firstname);
 
+    @JsonView(JacksonViews.MyJssView.class)
     public void setLastname(String lastname);
 
 }

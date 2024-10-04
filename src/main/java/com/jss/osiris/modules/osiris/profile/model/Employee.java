@@ -9,6 +9,8 @@ import javax.naming.directory.Attributes;
 import org.springframework.ldap.core.AttributesMapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
@@ -29,17 +31,21 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee>, 
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(length = 20)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String firstname;
 
 	@Column(length = 20)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String lastname;
 
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String username;
 
 	private String mail;

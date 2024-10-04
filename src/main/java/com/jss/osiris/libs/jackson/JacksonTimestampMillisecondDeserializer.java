@@ -1,4 +1,4 @@
-package com.jss.osiris.libs;
+package com.jss.osiris.libs.jackson;
 
 import java.io.IOException;
 import java.time.Instant;

@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -59,6 +61,7 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/user")
+	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<IOsirisUser> getMyUsername() throws OsirisClientMessageException {
 		return new ResponseEntity<IOsirisUser>(employeeService.getCurrentEmployee(), HttpStatus.OK);
 	}

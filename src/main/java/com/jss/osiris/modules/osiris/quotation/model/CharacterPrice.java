@@ -15,7 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 

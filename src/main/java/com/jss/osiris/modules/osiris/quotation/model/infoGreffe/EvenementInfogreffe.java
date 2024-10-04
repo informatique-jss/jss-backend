@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.jss.osiris.libs.JacksonTimestampMillisecondDeserializer;
+import com.jss.osiris.libs.jackson.JacksonTimestampMillisecondDeserializer;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

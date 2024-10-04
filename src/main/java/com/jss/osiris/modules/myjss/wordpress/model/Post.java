@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 
 public class Post {
     private Integer id;
