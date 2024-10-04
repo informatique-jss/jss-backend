@@ -59,7 +59,8 @@
             <chips-phone [(model)]="quotation.responsable.phones" label="Téléphones" [form]="orderingCustomerForm"
               propertyName="phones" [isDisabled]="true"></chips-phone>
           </td>
-          <td style="vertical-align: middle;"><span *ngIf="quotation.responsable">Adresse :
+          <td style="vertical-align: middle;"><span *ngIf="quotation.responsable && quotation.responsable.tiers">Adresse
+              :
               {{quotation.responsable.tiers.address}}
               {{quotation.responsable.tiers.postalCode}}
               {{quotation.responsable.tiers.city?quotation.responsable.tiers.city.label:""}}
