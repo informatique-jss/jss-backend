@@ -12,4 +12,12 @@ public interface IOsirisUser {
 
     public String getLastname();
 
+    public void setId(Integer id);
+
+    public void setUsername(String username);
+
+    public void setFirstname(String firstname);
+
+    public void setLastname(String lastname);
+
 }

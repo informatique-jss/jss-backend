@@ -50,6 +50,11 @@ public class Responsable implements IAttachment, IId, IMyJssResponsable, IOsiris
 		return getId() + "";
 	}
 
+	@Override
+	public void setUsername(String username) {
+		setId(Integer.parseInt(username));
+	}
+
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
