@@ -27,7 +27,7 @@ public class CharacterPrice implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "character_price_sequence")
 	private Integer id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, precision = 3)
 	private Float price;
 
 	@OneToMany(targetEntity = Department.class)

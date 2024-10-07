@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -19,10 +20,16 @@ public class RubriqueInfogreffe {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rubrique_montant_formalite_infogreffe_sequence")
     private Integer id;
     private String code;
+
+    @Column(precision = 2)
     @JsonProperty("montantHT")
     private Float montantHt;
+
+    @Column(precision = 2)
     @JsonProperty("montantTva")
     private Float montantTva;
+
+    @Column(precision = 2)
     @JsonProperty("montantTtc")
     private Float montantTtc;
 

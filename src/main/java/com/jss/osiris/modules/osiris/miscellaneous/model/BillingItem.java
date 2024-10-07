@@ -28,6 +28,7 @@ public class BillingItem implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type")
 	BillingType billingType;
 
+	@Column(precision = 2)
 	private Float preTaxPrice;
 
 	@Column(nullable = false)

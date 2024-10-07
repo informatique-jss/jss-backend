@@ -68,7 +68,11 @@ public class AccountingRecord implements Serializable, IId {
 
 	@Column(nullable = false, length = 1000)
 	private String label;
+
+	@Column(precision = 2)
 	private Float creditAmount;
+
+	@Column(precision = 2)
 	private Float debitAmount;
 
 	@ManyToOne(fetch = FetchType.LAZY)

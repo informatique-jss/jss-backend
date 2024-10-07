@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +27,9 @@ public class ComptesAnnuels {
     private boolean petiteEntreprise;
     private boolean associeUniquePresident;
     private boolean activiteCreditOuAssurance;
+    @Column(precision = 2)
     private Double montantCAAnneePrecedente;
+    @Column(precision = 2)
     private Double montantTotalBilanAnneePrecedente;
     private boolean activiteProspection;
     private boolean activiteSansConfidentialite;

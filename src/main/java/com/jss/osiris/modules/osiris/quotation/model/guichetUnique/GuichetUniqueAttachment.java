@@ -5,6 +5,7 @@ import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -22,6 +23,7 @@ public class GuichetUniqueAttachment {
     @JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
     private FormaliteGuichetUnique formaliteGuichetUnique;
 
+    @Column(precision = 2)
     private Double size;
     private boolean regularisable;
     private String status;

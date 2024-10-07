@@ -53,8 +53,11 @@ public class Rff implements Serializable, IId {
 	@Transient
 	private Integer responsableId;
 
+	@Column(precision = 2)
 	private Float rffInsertion;
+	@Column(precision = 2)
 	private Float rffFormalite;
+	@Column(precision = 2)
 	private Float rffTotal;
 
 	@Column(length = 100)

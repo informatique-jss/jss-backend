@@ -35,6 +35,8 @@ public class AzureInvoice {
 
     @Column(length = 2500)
     private String modelUsed;
+
+    @Column(precision = 2)
     private Float globalDocumentConfidence;
 
     @Column(length = 2500)
@@ -47,22 +49,36 @@ public class AzureInvoice {
     @Column(length = 2500)
     @IndexedField
     private String invoiceId;
+
+    @Column(precision = 2)
     private Float invoiceTotal;
+    @Column(precision = 2)
     private Float invoicePreTaxTotal;
+    @Column(precision = 2)
     private Float invoiceTaxTotal;
+    @Column(precision = 2)
     private Float invoiceNonTaxableTotal;
 
     @Column(length = 2500)
     private String vendorTaxId;
 
+    @Column(precision = 2)
     private Float customerIdConfidence;
+    @Column(precision = 2)
     private Float referenceConfidence;
+    @Column(precision = 2)
     private Float invoiceDateConfidence;
+    @Column(precision = 2)
     private Float invoiceIdConfidence;
+    @Column(precision = 2)
     private Float invoiceTotalConfidence;
+    @Column(precision = 2)
     private Float invoicePreTaxTotalConfidence;
+    @Column(precision = 2)
     private Float invoiceTaxTotalConfidence;
+    @Column(precision = 2)
     private Float invoiceNonTaxableTotalConfidence;
+    @Column(precision = 2)
     private Float vendorTaxIdConfidence;
 
     @OneToMany(mappedBy = "azureInvoice")

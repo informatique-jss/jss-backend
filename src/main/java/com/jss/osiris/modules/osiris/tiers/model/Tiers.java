@@ -182,7 +182,9 @@ public class Tiers implements IAttachment, IId {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
+	@Column(precision = 2)
 	private Float rffFormaliteRate;
+	@Column(precision = 2)
 	private Float rffInsertionRate;
 
 	@Column(columnDefinition = "TEXT")

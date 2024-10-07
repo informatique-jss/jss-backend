@@ -109,6 +109,7 @@ public class Affaire implements IId, IAttachment {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
+	@Column(precision = 2)
 	private Float shareCapital;
 
 	@Column(length = 40, name = "payment_iban")

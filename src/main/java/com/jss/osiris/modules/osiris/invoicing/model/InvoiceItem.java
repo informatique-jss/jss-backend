@@ -47,12 +47,13 @@ public class InvoiceItem implements Serializable, IId {
 
 	private Boolean isGifted;
 
+	@Column(precision = 2)
 	private Float preTaxPrice;
-
+	@Column(precision = 2)
 	private Float preTaxPriceReinvoiced;
-
+	@Column(precision = 2)
 	private Float vatPrice;
-
+	@Column(precision = 2)
 	private Float discountAmount;
 
 	@ManyToOne(fetch = FetchType.LAZY)

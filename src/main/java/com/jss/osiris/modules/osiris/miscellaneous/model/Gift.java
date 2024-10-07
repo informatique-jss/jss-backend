@@ -30,6 +30,7 @@ public class Gift implements Serializable, IId {
 
 	private Integer stock;
 
+	@Column(precision = 2)
 	private Float preTaxPrice;
 
 	@ManyToOne(fetch = FetchType.LAZY)

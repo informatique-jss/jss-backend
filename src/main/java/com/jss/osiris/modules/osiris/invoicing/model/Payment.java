@@ -59,7 +59,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@IndexedField
 	private LocalDateTime paymentDate;
 
-	@Column(nullable = false)
+	@Column(nullable = false, precision = 2)
 	@IndexedField
 	private Float paymentAmount;
 

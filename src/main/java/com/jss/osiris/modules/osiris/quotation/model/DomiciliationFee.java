@@ -9,6 +9,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -40,6 +41,7 @@ public class DomiciliationFee implements Serializable, IId {
     @JoinColumn(name = "id_billing_type")
     private BillingType billingType;
 
+    @Column(precision = 2)
     private Float amount;
 
     private LocalDate feeDate;

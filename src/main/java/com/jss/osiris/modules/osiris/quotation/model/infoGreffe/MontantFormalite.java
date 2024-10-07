@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ public class MontantFormalite {
     @SequenceGenerator(name = "montant_formalite_infogreffe_sequence", sequenceName = "montant_formalite_infogreffe_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "montant_formalite_infogreffe_sequence")
     private Integer id;
+    @Column(precision = 2)
     private Float montantTotal;
     private String typePaiement;
 

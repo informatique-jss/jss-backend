@@ -28,6 +28,7 @@ public class Vat implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
+	@Column(precision = 2)
 	private Float rate;
 
 	@ManyToOne(fetch = FetchType.LAZY)

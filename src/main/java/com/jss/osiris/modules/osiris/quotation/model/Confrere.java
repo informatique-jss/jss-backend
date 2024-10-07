@@ -87,12 +87,13 @@ public class Confrere implements IId {
 	@Column(length = 20)
 	private String boardGrade;
 
+	@Column(precision = 2)
 	private Float shippingCosts;
-
+	@Column(precision = 2)
 	private Float administrativeFees;
 
 	private Integer numberOfPrint;
-
+	@Column(precision = 2)
 	private Float paperPrice;
 
 	private Integer discountRate;

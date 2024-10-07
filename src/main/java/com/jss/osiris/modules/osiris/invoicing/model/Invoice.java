@@ -137,7 +137,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@Column(length = 40)
 	private String commandNumber;
 
-	@Column(name = "total_price")
+	@Column(name = "total_price", precision = 2)
 	private Float totalPrice;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)

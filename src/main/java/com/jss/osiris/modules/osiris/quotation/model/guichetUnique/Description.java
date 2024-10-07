@@ -48,6 +48,7 @@ public class Description implements Serializable, IId {
 
     private Boolean capitalVariable;
 
+    @Column(precision = 2)
     private Float montantCapital;
 
     private Integer capitalMinimum;
