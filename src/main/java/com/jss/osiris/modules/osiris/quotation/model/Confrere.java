@@ -93,8 +93,8 @@ public class Confrere implements IId {
 	private Float administrativeFees;
 
 	private Integer numberOfPrint;
-	@Column(precision = 2)
-	private Float paperPrice;
+	@Column(scale = 2)
+	private Double paperPrice;
 
 	private Integer discountRate;
 
@@ -277,11 +277,11 @@ public class Confrere implements IId {
 		this.numberOfPrint = numberOfPrint;
 	}
 
-	public Float getPaperPrice() {
+	public Double getPaperPrice() {
 		return paperPrice;
 	}
 
-	public void setPaperPrice(Float paperPrice) {
+	public void setPaperPrice(Double paperPrice) {
 		this.paperPrice = paperPrice;
 	}
 

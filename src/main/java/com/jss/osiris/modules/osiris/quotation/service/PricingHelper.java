@@ -185,7 +185,7 @@ public class PricingHelper {
         if (billingItem.getBillingType().getIsPriceBasedOnCharacterNumber()) {
             CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
             if (characterPrice != null) {
-                Float price = characterPrice.getPrice()
+                Double price = characterPrice.getPrice()
                         * characterPriceService.getCharacterNumber(provision, false);
                 invoiceItem.setPreTaxPrice(price);
 
@@ -224,7 +224,7 @@ public class PricingHelper {
                             invoiceItem.getLabel() + " - " + provision.getAnnouncement().getDepartment().getCode());
 
             } else {
-                invoiceItem.setPreTaxPrice(0f);
+                invoiceItem.setPreTaxPrice(0.0);
             }
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypePublicationPaper().getId())) {
@@ -239,7 +239,7 @@ public class PricingHelper {
                 .equals(constantService.getBillingTypeConfrereFees().getId())) {
             // If it's an announcement published by a Confrere, apply additionnal fees and
             // JSS markup
-            invoiceItem.setPreTaxPrice(0f);
+            invoiceItem.setPreTaxPrice(0.0);
 
             // Check if we have a character based price announcement
             boolean hasPriceBasedProvisionType = false;
@@ -250,32 +250,32 @@ public class PricingHelper {
 
             if (isNotJssConfrere(provision) && hasPriceBasedProvisionType) {
                 CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
-                Float price = 0f;
+                Double price = 0.0;
                 if (characterPrice != null) {
                     price = characterPrice.getPrice()
                             * characterPriceService.getCharacterNumber(provision, false);
                 }
 
-                Float additionnalFees = 0f;
+                Double additionnalFees = 0.0;
                 Confrere confrere = provision.getAnnouncement().getConfrere();
                 if (confrere.getAdministrativeFees() != null)
                     additionnalFees += confrere.getAdministrativeFees();
 
                 invoiceItem.setPreTaxPrice(
                         (price != null ? price : 0f)
-                                * ((confrere.getReinvoicing() != null ? confrere.getReinvoicing() : 0f) / 100)
+                                * ((confrere.getReinvoicing() != null ? confrere.getReinvoicing() : 0.0) / 100)
                                 + additionnalFees);
             }
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypeShippingCosts().getId())
                 && provision.getAnnouncement().getConfrere() != null) {
-            invoiceItem.setPreTaxPrice(0f);
+            invoiceItem.setPreTaxPrice(0.0);
             Integer nbr = getPublicationPaperNbr(provision);
             Confrere confrere = provision.getAnnouncement().getConfrere();
             if (nbr > 0)
                 invoiceItem.setPreTaxPrice(Math
-                        .round(((confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f)) * 100f)
-                        / 100f);
+                        .round(((confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0.0)) * 100.0)
+                        / 100.0);
         } else {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
         }
@@ -305,11 +305,11 @@ public class PricingHelper {
         }
 
         if (invoiceItem.getPreTaxPrice() != null)
-            invoiceItem.setPreTaxPrice(Math.round(invoiceItem.getPreTaxPrice() * 100f) / 100f);
+            invoiceItem.setPreTaxPrice(Math.round(invoiceItem.getPreTaxPrice() * 100.0) / 100.0);
 
         if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
-            invoiceItem.setPreTaxPrice(0f);
-            invoiceItem.setDiscountAmount(0f);
+            invoiceItem.setPreTaxPrice(0.0);
+            invoiceItem.setDiscountAmount(0.0);
             invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
         }
 
@@ -420,7 +420,7 @@ public class PricingHelper {
                         computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
 
                         if (invoiceItem.getPreTaxPrice() == null)
-                            invoiceItem.setPreTaxPrice(0f);
+                            invoiceItem.setPreTaxPrice(0.0);
 
                         if (persistInvoiceItem)
                             invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
@@ -544,7 +544,7 @@ public class PricingHelper {
 
                 if (tempInvoiceItem.getOriginProviderInvoice() != null) {
                     if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
-                        invoiceItem.setPreTaxPrice(0f);
+                        invoiceItem.setPreTaxPrice(0.0);
                         if (!invoiceItem.getLabel().contains("(offert)"))
                             invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
                         vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
@@ -590,13 +590,13 @@ public class PricingHelper {
                                 invoiceItem.setIsOverridePrice(true);
                             setInvoiceItemPreTaxPriceAndLabel(invoiceItem, invoiceItem.getBillingItem(), provision,
                                     quotation);
-                            Float preTaxPrice = domiciliationFee.getAmount();
+                            Double preTaxPrice = domiciliationFee.getAmount();
                             if (domiciliationFee.getBillingType().getIsOverrideVat() != null
                                     && domiciliationFee.getBillingType().getIsOverrideVat()) {
                                 if (domiciliationFee.getBillingType().getVat() != null
                                         && domiciliationFee.getBillingType().getVat().getRate() > 0)
                                     preTaxPrice = preTaxPrice
-                                            / (1f + domiciliationFee.getBillingType().getVat().getRate() / 100f);
+                                            / (1 + domiciliationFee.getBillingType().getVat().getRate() / 100);
                             } else {
                                 preTaxPrice = preTaxPrice / 1.2f;
                             }
@@ -759,14 +759,14 @@ public class PricingHelper {
             if (assoSpecialOfferBillingType.getDiscountAmount() != null
                     && assoSpecialOfferBillingType.getDiscountAmount() > 0)
                 invoiceItem
-                        .setDiscountAmount(Math.round(assoSpecialOfferBillingType.getDiscountAmount() * 100f) / 100f);
+                        .setDiscountAmount(Math.round(assoSpecialOfferBillingType.getDiscountAmount() * 100) / 100.0);
             if (assoSpecialOfferBillingType.getDiscountRate() != null
                     && assoSpecialOfferBillingType.getDiscountRate() > 0)
                 invoiceItem.setDiscountAmount(Math.round(
-                        invoiceItem.getPreTaxPrice() * assoSpecialOfferBillingType.getDiscountRate() / 100f * 100f)
-                        / 100f);
+                        invoiceItem.getPreTaxPrice() * assoSpecialOfferBillingType.getDiscountRate() / 100 * 100.0)
+                        / 100.0);
         } else {
-            invoiceItem.setDiscountAmount(0f);
+            invoiceItem.setDiscountAmount(0.0);
         }
 
         invoiceItem.setVat(invoiceItem.getBillingItem().getBillingType().getVat());

@@ -41,9 +41,9 @@ public class Refund implements Serializable, IId {
 	@IndexedField
 	private String label;
 
-	@Column(precision = 2)
+	@Column(scale = 2)
 	@IndexedField
-	private Float refundAmount;
+	private Double refundAmount;
 
 	@IndexedField
 	private LocalDateTime refundDateTime;
@@ -106,11 +106,11 @@ public class Refund implements Serializable, IId {
 		this.label = label;
 	}
 
-	public Float getRefundAmount() {
+	public Double getRefundAmount() {
 		return refundAmount;
 	}
 
-	public void setRefundAmount(Float refundAmount) {
+	public void setRefundAmount(Double refundAmount) {
 		this.refundAmount = refundAmount;
 	}
 

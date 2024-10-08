@@ -93,9 +93,9 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public Float getTotalForCustomerOrder(IQuotation customerOrder);
+        public Double getTotalForCustomerOrder(IQuotation customerOrder);
 
-        public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
+        public Double getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
 
         public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrders, boolean printLabel,
                         boolean printLetters)

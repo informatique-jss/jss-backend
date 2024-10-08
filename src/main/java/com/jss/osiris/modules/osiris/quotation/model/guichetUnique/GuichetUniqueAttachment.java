@@ -23,7 +23,7 @@ public class GuichetUniqueAttachment {
     @JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
     private FormaliteGuichetUnique formaliteGuichetUnique;
 
-    @Column(precision = 2)
+    @Column(scale = 2)
     private Double size;
     private boolean regularisable;
     private String status;

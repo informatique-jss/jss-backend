@@ -129,7 +129,7 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public Refund refundPayment(Tiers tiersRefund, Affaire affaireRefund, Tiers tiersOrder, Payment payment,
-            Float amount, CustomerOrder customerOrder)
+            Double amount, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (payment == null)
             throw new OsirisClientMessageException("Paiment annulé");

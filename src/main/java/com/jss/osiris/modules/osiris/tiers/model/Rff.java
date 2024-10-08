@@ -53,12 +53,12 @@ public class Rff implements Serializable, IId {
 	@Transient
 	private Integer responsableId;
 
-	@Column(precision = 2)
-	private Float rffInsertion;
-	@Column(precision = 2)
-	private Float rffFormalite;
-	@Column(precision = 2)
-	private Float rffTotal;
+	@Column(scale = 2)
+	private Double rffInsertion;
+	@Column(scale = 2)
+	private Double rffFormalite;
+	@Column(scale = 2)
+	private Double rffTotal;
 
 	@Column(length = 100)
 	private String rffMail;
@@ -104,19 +104,19 @@ public class Rff implements Serializable, IId {
 		this.responsable = responsable;
 	}
 
-	public Float getRffInsertion() {
+	public Double getRffInsertion() {
 		return rffInsertion;
 	}
 
-	public void setRffInsertion(Float rffInsertion) {
+	public void setRffInsertion(Double rffInsertion) {
 		this.rffInsertion = rffInsertion;
 	}
 
-	public Float getRffFormalite() {
+	public Double getRffFormalite() {
 		return rffFormalite;
 	}
 
-	public void setRffFormalite(Float rffFormalite) {
+	public void setRffFormalite(Double rffFormalite) {
 		this.rffFormalite = rffFormalite;
 	}
 
@@ -212,11 +212,11 @@ public class Rff implements Serializable, IId {
 		this.rffBic = rffBic;
 	}
 
-	public Float getRffTotal() {
+	public Double getRffTotal() {
 		return rffTotal;
 	}
 
-	public void setRffTotal(Float rffTotal) {
+	public void setRffTotal(Double rffTotal) {
 		this.rffTotal = rffTotal;
 	}
 

@@ -28,8 +28,8 @@ public class Vat implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
-	@Column(precision = 2)
-	private Float rate;
+	@Column(scale = 2)
+	private Double rate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account")
@@ -51,11 +51,11 @@ public class Vat implements Serializable, IId {
 		this.label = label;
 	}
 
-	public Float getRate() {
+	public Double getRate() {
 		return rate;
 	}
 
-	public void setRate(Float rate) {
+	public void setRate(Double rate) {
 		this.rate = rate;
 	}
 

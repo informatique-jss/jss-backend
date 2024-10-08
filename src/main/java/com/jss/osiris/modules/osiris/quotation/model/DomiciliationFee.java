@@ -41,8 +41,8 @@ public class DomiciliationFee implements Serializable, IId {
     @JoinColumn(name = "id_billing_type")
     private BillingType billingType;
 
-    @Column(precision = 2)
-    private Float amount;
+    @Column(scale = 2)
+    private Double amount;
 
     private LocalDate feeDate;
 
@@ -74,11 +74,11 @@ public class DomiciliationFee implements Serializable, IId {
         this.billingType = billingType;
     }
 
-    public Float getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Float amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

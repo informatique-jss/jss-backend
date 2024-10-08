@@ -14,7 +14,7 @@ public class PaymentAssociate {
     private Affaire affaireRefund;
     private Tiers tiersRefund;
     private Responsable responsableOrder;
-    private List<Float> byPassAmount;
+    private List<Double> byPassAmount;
 
     public Payment getPayment() {
         return payment;
@@ -48,11 +48,11 @@ public class PaymentAssociate {
         this.affaireRefund = affaire;
     }
 
-    public List<Float> getByPassAmount() {
+    public List<Double> getByPassAmount() {
         return byPassAmount;
     }
 
-    public void setByPassAmount(List<Float> byPassAmount) {
+    public void setByPassAmount(List<Double> byPassAmount) {
         this.byPassAmount = byPassAmount;
     }
 

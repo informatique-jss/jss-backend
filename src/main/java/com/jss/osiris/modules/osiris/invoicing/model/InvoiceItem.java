@@ -47,14 +47,14 @@ public class InvoiceItem implements Serializable, IId {
 
 	private Boolean isGifted;
 
-	@Column(precision = 2)
-	private Float preTaxPrice;
-	@Column(precision = 2)
-	private Float preTaxPriceReinvoiced;
-	@Column(precision = 2)
-	private Float vatPrice;
-	@Column(precision = 2)
-	private Float discountAmount;
+	@Column(scale = 2)
+	private Double preTaxPrice;
+	@Column(scale = 2)
+	private Double preTaxPriceReinvoiced;
+	@Column(scale = 2)
+	private Double vatPrice;
+	@Column(scale = 2)
+	private Double discountAmount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
@@ -103,27 +103,27 @@ public class InvoiceItem implements Serializable, IId {
 		this.billingItem = billingItem;
 	}
 
-	public Float getPreTaxPrice() {
+	public Double getPreTaxPrice() {
 		return preTaxPrice;
 	}
 
-	public void setPreTaxPrice(Float preTaxPrice) {
+	public void setPreTaxPrice(Double preTaxPrice) {
 		this.preTaxPrice = preTaxPrice;
 	}
 
-	public Float getVatPrice() {
+	public Double getVatPrice() {
 		return vatPrice;
 	}
 
-	public void setVatPrice(Float vatPrice) {
+	public void setVatPrice(Double vatPrice) {
 		this.vatPrice = vatPrice;
 	}
 
-	public Float getDiscountAmount() {
+	public Double getDiscountAmount() {
 		return discountAmount;
 	}
 
-	public void setDiscountAmount(Float discountAmount) {
+	public void setDiscountAmount(Double discountAmount) {
 		this.discountAmount = discountAmount;
 	}
 
@@ -167,11 +167,11 @@ public class InvoiceItem implements Serializable, IId {
 		this.isGifted = isGifted;
 	}
 
-	public Float getPreTaxPriceReinvoiced() {
+	public Double getPreTaxPriceReinvoiced() {
 		return preTaxPriceReinvoiced;
 	}
 
-	public void setPreTaxPriceReinvoiced(Float preTaxPriceReinvoiced) {
+	public void setPreTaxPriceReinvoiced(Double preTaxPriceReinvoiced) {
 		this.preTaxPriceReinvoiced = preTaxPriceReinvoiced;
 	}
 

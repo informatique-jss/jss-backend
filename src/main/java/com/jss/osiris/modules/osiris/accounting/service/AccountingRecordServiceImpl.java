@@ -386,7 +386,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         .findByTemporaryOperationId(inAccountingRecord.getTemporaryOperationId());
 
     if (accountingRecords != null) {
-      Float balance = 0f;
+      Double balance = 0.0;
       for (AccountingRecord accountingRecord : accountingRecords) {
         if (accountingRecord.getCreditAmount() != null)
           balance += accountingRecord.getCreditAmount();
@@ -394,7 +394,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           balance -= accountingRecord.getDebitAmount();
       }
 
-      if (Math.abs(Math.round(balance * 100f)) > 1)
+      if (Math.abs(Math.round(balance * 100.0)) > 1)
         throw new OsirisValidationException("Balance not null");
 
       accountingRecordRepository.deleteAll(accountingRecords);
@@ -408,7 +408,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       throws OsirisValidationException, OsirisClientMessageException, OsirisException {
 
     Integer lastAccountId = null;
-    Float balance = 0f;
+    Double balance = 0.0;
     ArrayList<AccountingRecord> fetchRecords = new ArrayList<AccountingRecord>();
 
     for (AccountingRecord record : accountingRecords) {

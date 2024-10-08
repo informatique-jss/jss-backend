@@ -3,13 +3,19 @@ package com.jss.osiris.modules.osiris.accounting.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+
 public class BillingClosureReceiptValue {
     private LocalDateTime eventDateTime;
     private String eventDateString;
     private String eventDescription;
     private String eventCbLink;
-    private Float creditAmount;
-    private Float debitAmount;
+
+    @Column(scale = 2)
+    private Double creditAmount;
+    @Column(scale = 2)
+    private Double debitAmount;
+
     private boolean displayBottomBorder;
     private LocalDate directDebitTransfertDate;
 
@@ -44,19 +50,19 @@ public class BillingClosureReceiptValue {
         this.eventCbLink = eventCbLink;
     }
 
-    public Float getCreditAmount() {
+    public Double getCreditAmount() {
         return creditAmount;
     }
 
-    public void setCreditAmount(Float creditAmount) {
+    public void setCreditAmount(Double creditAmount) {
         this.creditAmount = creditAmount;
     }
 
-    public Float getDebitAmount() {
+    public Double getDebitAmount() {
         return debitAmount;
     }
 
-    public void setDebitAmount(Float debitAmount) {
+    public void setDebitAmount(Double debitAmount) {
         this.debitAmount = debitAmount;
     }
 

@@ -22,18 +22,18 @@ public class InvoiceHelper {
 
     public Invoice setPriceTotal(Invoice invoice) {
         if (invoice != null) {
-            invoice.setTotalPrice(Math.round(this.getPriceTotal(invoice) * 100f) / 100f);
+            invoice.setTotalPrice(Math.round(this.getPriceTotal(invoice) * 100.0) / 100.0);
         }
         return invoice;
     }
 
-    public Float getPriceTotal(Invoice invoice) {
-        Float total = this.getPreTaxPriceTotal(invoice) - this.getDiscountTotal(invoice) + this.getVatTotal(invoice);
+    public Double getPriceTotal(Invoice invoice) {
+        Double total = this.getPreTaxPriceTotal(invoice) - this.getDiscountTotal(invoice) + this.getVatTotal(invoice);
         return total;
     }
 
-    public Float getDiscountTotal(Invoice invoice) {
-        Float discountTotal = 0f;
+    public Double getDiscountTotal(Invoice invoice) {
+        Double discountTotal = 0.0;
         if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                 if (invoiceItem.getDiscountAmount() != null)
@@ -43,15 +43,15 @@ public class InvoiceHelper {
         return discountTotal;
     }
 
-    public Float getTotalForInvoiceItem(InvoiceItem invoiceItem) {
+    public Double getTotalForInvoiceItem(InvoiceItem invoiceItem) {
         return (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f)
                 + (invoiceItem.getVatPrice() != null ? invoiceItem.getVatPrice() : 0f)
                 - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
                         : 0f);
     }
 
-    public Float getPreTaxPriceTotal(Invoice invoice) {
-        Float preTaxTotal = 0f;
+    public Double getPreTaxPriceTotal(Invoice invoice) {
+        Double preTaxTotal = 0.0;
         if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                 preTaxTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
@@ -60,8 +60,8 @@ public class InvoiceHelper {
         return preTaxTotal;
     }
 
-    public Float getVatTotal(Invoice invoice) {
-        Float vatTotal = 0f;
+    public Double getVatTotal(Invoice invoice) {
+        Double vatTotal = 0.0;
         if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                 if (invoiceItem.getVatPrice() != null)

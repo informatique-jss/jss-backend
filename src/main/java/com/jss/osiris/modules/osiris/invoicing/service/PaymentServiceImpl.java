@@ -232,7 +232,7 @@ public class PaymentServiceImpl implements PaymentService {
                     payment.setBankId(transaction.id());
                     payment.setIsExternallyAssociated(false);
                     payment.setLabel(transaction.name() + " " + transaction.memo());
-                    payment.setPaymentAmount(transaction.amount().floatValue());
+                    payment.setPaymentAmount(transaction.amount().doubleValue());
                     payment.setPaymentDate(transaction.datePosted().atStartOfDay());
                     payment.setPaymentType(constantService.getPaymentTypeVirement());
                     payment.setIsAppoint(false);
@@ -308,7 +308,7 @@ public class PaymentServiceImpl implements PaymentService {
                 return;
             }
 
-            Float remainingMoney = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+            Double remainingMoney = Math.round(payment.getPaymentAmount() * 100) / 100.0;
 
             // Quotation waiting customer answer found
             // Transform them to customer order
@@ -358,7 +358,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             // Associate automatically only if we have enough item to put all money
-            Float totalItemsAmount = 0f;
+            Double totalItemsAmount = 0.0;
             if (correspondingInvoices.size() > 0)
                 for (Invoice invoice : correspondingInvoices)
                     totalItemsAmount += invoiceService.getRemainingAmountToPayForInvoice(invoice);
@@ -461,12 +461,12 @@ public class PaymentServiceImpl implements PaymentService {
     public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment, List<Invoice> correspondingInvoices,
             List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, Tiers tiersRefund,
             Responsable responsable,
-            List<Float> byPassAmount)
+            List<Double> byPassAmount)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         payment = getPayment(payment.getId());
 
-        float remainingMoney = payment.getPaymentAmount();
+        double remainingMoney = payment.getPaymentAmount();
 
         if (payment.getPaymentAmount() >= 0) {
             // Invoices to payed found
@@ -504,9 +504,9 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    private Float associateInboundPaymentAndCustomerOrders(Payment payment,
+    private Double associateInboundPaymentAndCustomerOrders(Payment payment,
             List<CustomerOrder> correspondingCustomerOrder, List<Invoice> correspondingInvoice,
-            List<Float> byPassAmount, float remainingMoney, boolean isMovedFromInvoice)
+            List<Double> byPassAmount, double remainingMoney, boolean isMovedFromInvoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         int amountIndex = 0;
@@ -514,16 +514,16 @@ public class PaymentServiceImpl implements PaymentService {
             amountIndex = correspondingInvoice.size() - 1 + 1;
 
         if (Math.round(remainingMoney * 100) == 0)
-            return 0f;
+            return 0.0;
 
         // if no by pass, put all on last customer order even if there is too much
         // money
         for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
-            Float remainingToPayForCustomerOrder = Math.max(Math.round(
+            Double remainingToPayForCustomerOrder = Math.max(Math.round(
                     customerOrderService.getRemainingAmountToPayForCustomerOrder(correspondingCustomerOrder.get(i))
-                            * 100f)
-                    / 100f, 0);
-            Float effectivePayment;
+                            * 100.0)
+                    / 100.0, 0);
+            Double effectivePayment;
             if (byPassAmount != null) {
                 effectivePayment = byPassAmount.get(amountIndex);
                 amountIndex++;
@@ -557,17 +557,17 @@ public class PaymentServiceImpl implements PaymentService {
             // Unlocked customer order if necessary
             customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
-            if (Math.round(remainingMoney * 100f) / 100f == 0f)
-                return 0f;
+            if (Math.round(remainingMoney * 100.0) / 100 == 0)
+                return 0.0;
         }
-        return Math.round(remainingMoney * 100f) / 100f;
+        return Math.round(remainingMoney * 100) / 100.0;
     }
 
-    private Float associateInboundPaymentAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
-            List<Float> byPassAmount, boolean isMovedFromCustomerOrder)
+    private Double associateInboundPaymentAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
+            List<Double> byPassAmount, boolean isMovedFromCustomerOrder)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         int amountIndex = 0;
-        Float remainingMoney = payment.getPaymentAmount();
+        Double remainingMoney = payment.getPaymentAmount();
 
         // If payment is not over total of remaining to pay on all invoices
         if (remainingMoney >= 0f) {
@@ -577,7 +577,7 @@ public class PaymentServiceImpl implements PaymentService {
                     Float remainingToPayForCurrentInvoice = Math.round(
                             invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i)) * 100f)
                             / 100f;
-                    Float effectivePayment = 0f;
+                    Double effectivePayment = 0.0;
 
                     if (remainingToPayForCurrentInvoice < 0)
                         continue;
@@ -611,8 +611,8 @@ public class PaymentServiceImpl implements PaymentService {
                         .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
                     if (Math.round(
                             invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i))
-                                    * 100f) != (Math.round(payment
-                                            .getPaymentAmount() * 100f)))
+                                    * 100) != (Math.round(payment
+                                            .getPaymentAmount() * 100)))
                         throw new OsirisException(null,
                                 "Wrong amount to pay on invoice " + correspondingInvoices.get(i).getId()
                                         + " and payment bank id " + payment.getBankId() + " " + payment.getId());
@@ -625,11 +625,11 @@ public class PaymentServiceImpl implements PaymentService {
 
                     associatePaymentAndInvoice(newPayment, correspondingInvoices.get(i), false,
                             isMovedFromCustomerOrder);
-                    remainingMoney = 0f;
+                    remainingMoney = 0.0;
                 }
             }
         }
-        return Math.round(remainingMoney * 100f) / 100f;
+        return Math.round(remainingMoney * 100.0) / 100.0;
     }
 
     private Float associateOutboundPaymentAndInvoice(Payment payment, Invoice correspondingInvoice)
@@ -805,7 +805,7 @@ public class PaymentServiceImpl implements PaymentService {
         refundService.refundPayment(tiers, affaire, tiers, payment, payment.getPaymentAmount(), null);
     }
 
-    private Payment generateNewPaymentFromPayment(Payment payment, Float paymentAmount, Boolean isDeposit,
+    private Payment generateNewPaymentFromPayment(Payment payment, Double paymentAmount, Boolean isDeposit,
             AccountingAccount targetAccountingAccount)
             throws OsirisException {
         if (!payment.getIsCancelled())
@@ -836,7 +836,7 @@ public class PaymentServiceImpl implements PaymentService {
         return addOrUpdatePayment(newPayment);
     }
 
-    private Payment generateNewAppointPayment(Float paymentAmount, Tiers tiersToGiveAppoint, Invoice invoice)
+    private Payment generateNewAppointPayment(Double paymentAmount, Tiers tiersToGiveAppoint, Invoice invoice)
             throws OsirisException {
         Payment newPayment = new Payment();
         newPayment.setIsAppoint(true);
@@ -860,7 +860,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment generateNewRefundPayment(Refund refund, Float paymentAmount, Tiers tiersToRefund,
+    public Payment generateNewRefundPayment(Refund refund, Double paymentAmount, Tiers tiersToRefund,
             Payment paymentToRefund)
             throws OsirisException {
         Payment newPayment = new Payment();
@@ -885,7 +885,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, Float paymentAmount,
+    public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, Double paymentAmount,
             Provider providerToPay)
             throws OsirisException {
         Payment newPayment = new Payment();
@@ -906,7 +906,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount sourceDepositAccountingAccount,
+    public Payment generateNewAccountPayment(Double paymentAmount, AccountingAccount sourceDepositAccountingAccount,
             AccountingAccount targetAccountingAccount,
             String label)
             throws OsirisException {
@@ -927,7 +927,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment generateNewDirectDebitPayment(Float paymentAmount, String label,
+    public Payment generateNewDirectDebitPayment(Double paymentAmount, String label,
             DirectDebitTransfert directDebitTransfert) throws OsirisException {
 
         Payment payment = new Payment();
@@ -971,7 +971,7 @@ public class PaymentServiceImpl implements PaymentService {
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFacturation());
                 }
-                Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+                Double remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
                 // Handle appoint
                 if (checkForAppoint && Math.abs(remainingToPayForCurrentInvoice) > 0
                         && Math.abs(remainingToPayForCurrentInvoice) <= Integer.parseInt(payementLimitRefundInEuros)) {
@@ -1035,7 +1035,7 @@ public class PaymentServiceImpl implements PaymentService {
         InvoiceItem invoiceItem = new InvoiceItem();
         invoiceItem.setBillingItem(
                 pricingHelper.getAppliableBillingItem(constantService.getBillingTypeCentralPayFees(), null));
-        invoiceItem.setDiscountAmount(0f);
+        invoiceItem.setDiscountAmount(0.0);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
 
@@ -1056,7 +1056,7 @@ public class PaymentServiceImpl implements PaymentService {
         CentralPayTransaction transaction = centralPayDelegateService.getTransaction(centralPayPaymentRequest);
         Float commission = (transaction.getCommission() != null ? transaction.getCommission() : 0f) / 100f;
 
-        invoiceItem.setPreTaxPrice(Math.round(commission * 100f) / 100f);
+        invoiceItem.setPreTaxPrice(Math.round(commission * 100) / 100.0);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         invoice.getInvoiceItems().add(invoiceItem);
         vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
@@ -1125,7 +1125,7 @@ public class PaymentServiceImpl implements PaymentService {
             if (labelResult != null && labelResult.getBillingLabel() != null)
                 payment.setLabel(payment.getLabel() + " - " + labelResult.getBillingLabel());
         }
-        payment.setPaymentAmount(centralPayPaymentRequest.getTotalAmount() / 100f);
+        payment.setPaymentAmount(centralPayPaymentRequest.getTotalAmount() / 100.0);
         payment.setPaymentDate(centralPayPaymentRequest.getCreationDate());
         payment.setPaymentType(constantService.getPaymentTypeCB());
         payment.setIsCancelled(isForDepostit);
@@ -1343,9 +1343,9 @@ public class PaymentServiceImpl implements PaymentService {
             }
             // If no match by name, attempt by amount
             if (advisedPayments.size() == 0) {
-                Float totalRound = customerOrderService.getTotalForCustomerOrder(customerOrder);
+                Double totalRound = customerOrderService.getTotalForCustomerOrder(customerOrder);
                 for (Payment payment : payments) {
-                    Float paymentRound = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+                    Double paymentRound = Math.round(payment.getPaymentAmount() * 100) / 100.0;
                     if (paymentRound.equals(totalRound)) {
                         advisedPayments.add(payment);
                     }
@@ -1401,7 +1401,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Payment cutPayment(Payment payment, Float amount)
+    public Payment cutPayment(Payment payment, Double amount)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         cancelPayment(payment);
         Payment newPayment1 = null;

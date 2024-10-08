@@ -622,7 +622,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     private InvoiceItem getInvoiceItemForCartRate(CartRate cartRate, Cart cart) throws OsirisException {
         InvoiceItem invoiceItem = new InvoiceItem();
         extractVatFromCartRate(invoiceItem, cartRate);
-        invoiceItem.setDiscountAmount(0f);
+        invoiceItem.setDiscountAmount(0.0);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
 
@@ -649,7 +649,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         if (cartRate.getQuantity() > 1)
             amount *= cartRate.getQuantity();
 
-        invoiceItem.setPreTaxPrice(Float.parseFloat(amount + "") / 100f);
+        invoiceItem.setPreTaxPrice(Float.parseFloat(amount + "") / 100.0);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 
         return invoiceItem;
@@ -658,12 +658,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     private void extractVatFromCartRate(InvoiceItem invoiceItem, CartRate cartRate) throws OsirisException {
         if (Math.abs(cartRate.getAmount()) == Math.abs(cartRate.getHtAmount())) {
             invoiceItem.setVat(constantService.getVatZero());
-            invoiceItem.setVatPrice(0f);
+            invoiceItem.setVatPrice(0.0);
             invoiceItem.setBillingItem(
                     pricingHelper.getAppliableBillingItem(constantService.getBillingTypeDeboursNonTaxable(), null));
         } else {
-            Float vatRate = (cartRate.getAmount() - cartRate.getHtAmount()) * 1.0f / cartRate.getHtAmount() * 100f;
-            vatRate = Math.round(vatRate * 10f) / 10f;
+            Double vatRate = (cartRate.getAmount() - cartRate.getHtAmount()) * 1.0 / cartRate.getHtAmount() * 100.0;
+            vatRate = Math.round(vatRate * 10) / 10.0;
             Vat vat = null;
             invoiceItem.setBillingItem(pricingHelper
                     .getAppliableBillingItem(constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));
@@ -691,7 +691,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         }
     }
 
-    private boolean isVatEqual(Float vat1, Float vat2) {
+    private boolean isVatEqual(Double vat1, Double vat2) {
         return Math.abs(vat1 - vat2) < 1;
     }
 

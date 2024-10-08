@@ -280,6 +280,11 @@ public class ValidationHelper {
             throw new OsirisValidationException(fieldName);
     }
 
+    public void validateDouble(Double value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
+        if ((value == null) && isMandatory)
+            throw new OsirisValidationException(fieldName);
+    }
+
     public void validateString(String value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
         validateString(value, isMandatory, null, fieldName);
     }

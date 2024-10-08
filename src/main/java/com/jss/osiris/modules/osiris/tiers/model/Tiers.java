@@ -182,10 +182,10 @@ public class Tiers implements IAttachment, IId {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	@Column(precision = 2)
-	private Float rffFormaliteRate;
-	@Column(precision = 2)
-	private Float rffInsertionRate;
+	@Column(scale = 2)
+	private Double rffFormaliteRate;
+	@Column(scale = 2)
+	private Double rffInsertionRate;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -534,19 +534,19 @@ public class Tiers implements IAttachment, IId {
 		return paymentIban;
 	}
 
-	public Float getRffFormaliteRate() {
+	public Double getRffFormaliteRate() {
 		return rffFormaliteRate;
 	}
 
-	public void setRffFormaliteRate(Float rffFormaliteRate) {
+	public void setRffFormaliteRate(Double rffFormaliteRate) {
 		this.rffFormaliteRate = rffFormaliteRate;
 	}
 
-	public Float getRffInsertionRate() {
+	public Double getRffInsertionRate() {
 		return rffInsertionRate;
 	}
 
-	public void setRffInsertionRate(Float rffInsertionRate) {
+	public void setRffInsertionRate(Double rffInsertionRate) {
 		this.rffInsertionRate = rffInsertionRate;
 	}
 

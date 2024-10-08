@@ -31,9 +31,9 @@ public class DirectDebitTransfert implements Serializable, IId {
 	@IndexedField
 	private String label;
 
-	@Column(precision = 2)
+	@Column(scale = 2)
 	@IndexedField
-	private Float transfertAmount;
+	private Double transfertAmount;
 
 	@IndexedField
 	private LocalDateTime transfertDateTime;
@@ -76,11 +76,11 @@ public class DirectDebitTransfert implements Serializable, IId {
 		this.label = label;
 	}
 
-	public Float getTransfertAmount() {
+	public Double getTransfertAmount() {
 		return transfertAmount;
 	}
 
-	public void setTransfertAmount(Float transfertAmount) {
+	public void setTransfertAmount(Double transfertAmount) {
 		this.transfertAmount = transfertAmount;
 	}
 

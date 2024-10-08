@@ -132,14 +132,14 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
     }
 
     @Override
-    public CentralPayPaymentRequest generatePayPaymentRequest(Float amount, String mail, String entityId,
+    public CentralPayPaymentRequest generatePayPaymentRequest(Double amount, String mail, String entityId,
             String subject) {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         // Convert in cents
-        Integer finalAmount = Math.round(amount * 100);
+        Integer finalAmount = (int) Math.round(amount * 100);
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
         map.add("paymentMethod[]", "TRANSACTION");
@@ -167,5 +167,4 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
         }
         return null;
     }
-
 }

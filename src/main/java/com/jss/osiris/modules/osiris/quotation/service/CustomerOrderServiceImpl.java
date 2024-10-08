@@ -378,7 +378,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
                 && (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
                         || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))) {
-            Float remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
+            Double remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
 
             Tiers tiers = customerOrder.getResponsable().getTiers();
             boolean isDepositMandatory = false;
@@ -977,7 +977,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
-        Float remainingToPay = 0f;
+        Double remainingToPay = 0.0;
 
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
             if (customerOrder.getInvoices() != null)
@@ -1088,8 +1088,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public Float getTotalForCustomerOrder(IQuotation customerOrder) {
-        Float total = 0f;
+    public Double getTotalForCustomerOrder(IQuotation customerOrder) {
+        Double total = 0.0;
         if (customerOrder != null)
             if (customerOrder.getAssoAffaireOrders() != null)
                 for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
@@ -1102,18 +1102,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
+    public Double getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
         customerOrder = getCustomerOrder(customerOrder.getId());
         if (customerOrder != null) {
-            Float total = getTotalForCustomerOrder(customerOrder);
+            Double total = getTotalForCustomerOrder(customerOrder);
             if (customerOrder.getPayments() != null)
                 for (Payment payment : customerOrder.getPayments())
                     if (!payment.getIsCancelled())
                         total -= payment.getPaymentAmount();
 
-            return Math.round(total * 100f) / 100f;
+            return Math.round(total * 100.0) / 100.0;
         }
-        return 0f;
+        return 0.0;
     }
 
     @Override

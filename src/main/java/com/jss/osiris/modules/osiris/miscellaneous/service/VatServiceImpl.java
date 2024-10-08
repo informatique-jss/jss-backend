@@ -342,7 +342,7 @@ public class VatServiceImpl implements VatService {
                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f))
                     * invoiceItem.getVat().getRate() / 100f);
         else
-            invoiceItem.setVatPrice(0f);
+            invoiceItem.setVatPrice(0.0);
     }
 
     @Override
@@ -366,7 +366,7 @@ public class VatServiceImpl implements VatService {
                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f))
                     * invoiceItem.getVat().getRate() / 100f);
         else
-            invoiceItem.setVatPrice(0f);
+            invoiceItem.setVatPrice(0.0);
     }
 
     private void chooseCorrectVatDeductibleCollected(InvoiceItem invoiceItem, boolean isPurschases)

@@ -172,7 +172,7 @@ public class RffServiceImpl implements RffService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Rff sendRff(Rff rff, Float amount, boolean sendToMe) throws OsirisException, OsirisClientMessageException {
+    public Rff sendRff(Rff rff, Double amount, boolean sendToMe) throws OsirisException, OsirisClientMessageException {
         rff = getRff(rff.getId());
         if (!sendToMe) {
             rff.setIsSent(true);
@@ -199,7 +199,7 @@ public class RffServiceImpl implements RffService {
 
         InvoiceItem invoiceItem = new InvoiceItem();
         invoiceItem.setBillingItem(pricingHelper.getAppliableBillingItem(constantService.getBillingTypeRff(), null));
-        invoiceItem.setDiscountAmount(0f);
+        invoiceItem.setDiscountAmount(0.0);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
 
@@ -213,7 +213,7 @@ public class RffServiceImpl implements RffService {
                 + StringUtils.leftPad(rff.getStartDate().getMonthValue() + "", 2, "0") + " - " + (tiersLabel);
         invoiceItem.setLabel(invoiceLabel);
 
-        invoiceItem.setPreTaxPrice(Math.round(rff.getRffTotal() * 100f) / 100f);
+        invoiceItem.setPreTaxPrice(Math.round(rff.getRffTotal() * 100.0) / 100.0);
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         invoice.getInvoiceItems().add(invoiceItem);
         vatService.completeVatOnInvoiceItem(invoiceItem, invoice);

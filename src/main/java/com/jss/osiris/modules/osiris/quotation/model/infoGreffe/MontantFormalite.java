@@ -20,7 +20,7 @@ public class MontantFormalite {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "montant_formalite_infogreffe_sequence")
     private Integer id;
     @Column(precision = 2)
-    private Float montantTotal;
+    private Double montantTotal;
     private String typePaiement;
 
     @OneToMany(mappedBy = "montantInfogreffe", fetch = FetchType.LAZY)
@@ -35,11 +35,11 @@ public class MontantFormalite {
         this.id = id;
     }
 
-    public Float getMontantTotal() {
+    public Double getMontantTotal() {
         return montantTotal;
     }
 
-    public void setMontantTotal(Float montantTotal) {
+    public void setMontantTotal(Double montantTotal) {
         this.montantTotal = montantTotal;
     }
 

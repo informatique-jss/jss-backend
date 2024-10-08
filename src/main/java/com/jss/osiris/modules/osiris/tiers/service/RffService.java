@@ -23,6 +23,6 @@ public interface RffService {
     public Invoice generateInvoiceForRff(Rff rff)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
-    public Rff sendRff(Rff rff, Float amount, boolean sendToMe) throws OsirisException, OsirisClientMessageException;
+    public Rff sendRff(Rff rff, Double amount, boolean sendToMe) throws OsirisException, OsirisClientMessageException;
 
 }

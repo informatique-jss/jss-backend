@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.invoicing.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +31,9 @@ public class AzureReceiptInvoice implements IId {
     private AzureReceipt azureReceipt;
 
     private String invoiceId;
-    private Float invoiceTotal;
+
+    @Column(scale = 2)
+    private Double invoiceTotal;
     private Boolean isReconciliated;
 
     public Integer getId() {
@@ -49,11 +52,11 @@ public class AzureReceiptInvoice implements IId {
         this.invoiceId = invoiceId;
     }
 
-    public Float getInvoiceTotal() {
+    public Double getInvoiceTotal() {
         return invoiceTotal;
     }
 
-    public void setInvoiceTotal(Float invoiceTotal) {
+    public void setInvoiceTotal(Double invoiceTotal) {
         this.invoiceTotal = invoiceTotal;
     }
 

@@ -346,9 +346,9 @@ public class GeneratePdfDelegate {
             ctx.setVariable("tiersReference", billingTiers.getId()
                     + (billingTiers.getIdAs400() != null ? ("/" + billingTiers.getIdAs400()) : ""));
 
-        Float balance = 0f;
-        Float creditBalance = 0f;
-        Float debitBalance = 0f;
+        Double balance = 0.0;
+        Double creditBalance = 0.0;
+        Double debitBalance = 0.0;
 
         if (billingClosureValues != null && billingClosureValues.size() > 0)
             for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
@@ -472,7 +472,7 @@ public class GeneratePdfDelegate {
                                 ? invoiceHelper.getDiscountTotal(invoice)
                                 : 0f));
         ArrayList<VatMail> vats = null;
-        Float vatTotal = 0f;
+        Double vatTotal = 0.0;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
             if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null) {
                 vatTotal += invoiceItem.getVatPrice();
@@ -539,7 +539,7 @@ public class GeneratePdfDelegate {
 
             ctx.setVariable("customerOrder", customerOrder);
 
-            Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            Double remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
             ArrayList<Payment> invoicePayment = new ArrayList<Payment>();
             if (invoice.getPayments() != null)
                 for (Payment payment : invoice.getPayments()) {
@@ -569,7 +569,7 @@ public class GeneratePdfDelegate {
                             ? customerOrder.getQuotations().get(0)
                             : null);
         } else {
-            Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            Double remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
             if (remainingToPay != null && remainingToPay >= 0
                     && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))
                 ctx.setVariable("remainingToPay", remainingToPay);
@@ -639,7 +639,7 @@ public class GeneratePdfDelegate {
                             if (invoiceItemNonTaxable == null) {
                                 invoiceItemNonTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
                                 if (invoiceItemNonTaxable.getDiscountAmount() == null)
-                                    invoiceItemNonTaxable.setDiscountAmount(0f);
+                                    invoiceItemNonTaxable.setDiscountAmount(0.0);
                             } else {
                                 invoiceItemNonTaxable.setPreTaxPrice(
                                         invoiceItemNonTaxable.getPreTaxPrice() + invoiceItem.getPreTaxPrice());
@@ -652,7 +652,7 @@ public class GeneratePdfDelegate {
                                 invoiceItemTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
                                 ;
                                 if (invoiceItemTaxable.getDiscountAmount() == null)
-                                    invoiceItemTaxable.setDiscountAmount(0f);
+                                    invoiceItemTaxable.setDiscountAmount(0.0);
                             } else {
                                 invoiceItemTaxable.setPreTaxPrice(
                                         invoiceItemTaxable.getPreTaxPrice() + invoiceItem.getPreTaxPrice());

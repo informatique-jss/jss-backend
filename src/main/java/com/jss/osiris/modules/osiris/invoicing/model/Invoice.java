@@ -137,8 +137,8 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@Column(length = 40)
 	private String commandNumber;
 
-	@Column(name = "total_price", precision = 2)
-	private Float totalPrice;
+	@Column(name = "total_price", scale = 2)
+	private Double totalPrice;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder", "originPayment",
@@ -343,11 +343,11 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 		this.dueDate = dueDate;
 	}
 
-	public Float getTotalPrice() {
+	public Double getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(Float totalPrice) {
+	public void setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 

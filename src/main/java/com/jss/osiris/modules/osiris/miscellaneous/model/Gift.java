@@ -30,8 +30,8 @@ public class Gift implements Serializable, IId {
 
 	private Integer stock;
 
-	@Column(precision = 2)
-	private Float preTaxPrice;
+	@Column(scale = 2)
+	private Double preTaxPrice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account")
@@ -77,11 +77,11 @@ public class Gift implements Serializable, IId {
 		this.code = code;
 	}
 
-	public Float getPreTaxPrice() {
+	public Double getPreTaxPrice() {
 		return preTaxPrice;
 	}
 
-	public void setPreTaxPrice(Float preTaxPrice) {
+	public void setPreTaxPrice(Double preTaxPrice) {
 		this.preTaxPrice = preTaxPrice;
 	}
 

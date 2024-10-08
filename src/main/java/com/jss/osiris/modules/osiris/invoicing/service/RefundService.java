@@ -26,7 +26,7 @@ public interface RefundService {
         public void reindexRefunds() throws OsirisException;
 
         public Refund refundPayment(Tiers tiersRefund, Affaire affaireRefund, Tiers tiersOrder,
-                        Payment payment, Float amount, CustomerOrder customerOrder)
+                        Payment payment, Double amount, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public File getRefundExport(RefundSearch refundSearch)

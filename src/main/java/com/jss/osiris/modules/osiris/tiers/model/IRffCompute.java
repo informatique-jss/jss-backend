@@ -9,9 +9,9 @@ public interface IRffCompute {
 
     Integer getRffId();
 
-    Float getRffAl();
+    Double getRffAl();
 
-    Float getRffFor();
+    Double getRffFor();
 
     LocalDate getStartDate();
 

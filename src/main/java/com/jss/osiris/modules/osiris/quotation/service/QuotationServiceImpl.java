@@ -384,7 +384,7 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
 
-        Float remainingToPay = computeQuotationTotalPrice(quotation);
+        Double remainingToPay = computeQuotationTotalPrice(quotation);
 
         if (remainingToPay > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
@@ -444,17 +444,17 @@ public class QuotationServiceImpl implements QuotationService {
         return quotation;
     }
 
-    private Float computeQuotationTotalPrice(IQuotation quotation) {
+    private Double computeQuotationTotalPrice(IQuotation quotation) {
         // Compute prices
-        Float preTaxPriceTotal = 0f;
-        Float discountTotal = null;
-        Float vatTotal = 0f;
+        Double preTaxPriceTotal = 0.0;
+        Double discountTotal = null;
+        Double vatTotal = 0.0;
 
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
             for (Service service : asso.getServices())
                 for (Provision provision : service.getProvisions()) {
                     for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
+                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0;
                         if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
                             if (discountTotal == null)
                                 discountTotal = invoiceItem.getDiscountAmount();

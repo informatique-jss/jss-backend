@@ -86,7 +86,8 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
 
         AzureInvoice azureInvoice = new AzureInvoice();
         azureInvoice.setIsDisabled(false);
-        azureInvoice.setGlobalDocumentConfidence(analyzeResult.getDocuments().get(0).getConfidence());
+        azureInvoice.setGlobalDocumentConfidence(
+                Double.parseDouble(Float.toString(analyzeResult.getDocuments().get(0).getConfidence())));
         azureInvoice.setModelUsed(analyzeResult.getDocuments().get(0).getDocType());
         azureInvoice.setToCheck(true);
         mapInvoice(azureInvoice, analyzedDocument);
@@ -115,11 +116,11 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
             if (key.equals("CustomerId")) {
                 if (documentField.getValue() != null)
                     azureInvoice.setCustomerId((String) documentField.getValue());
-                azureInvoice.setCustomerIdConfidence(documentField.getConfidence());
+                azureInvoice.setCustomerIdConfidence(Double.parseDouble(Float.toString(documentField.getConfidence())));
             } else if (key.equals("Reference")) {
                 if (documentField.getValue() != null)
                     azureInvoice.setReference((String) documentField.getValue());
-                azureInvoice.setReferenceConfidence(documentField.getConfidence());
+                azureInvoice.setReferenceConfidence(Double.parseDouble(Float.toString(documentField.getConfidence())));
             } else if (key.equals("InvoiceDate")) {
                 LocalDate invoiceDate = null;
                 if (documentField.getValue() != null) {
@@ -148,42 +149,49 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                     }
                 }
                 azureInvoice.setInvoiceDate(invoiceDate);
-                azureInvoice.setInvoiceDateConfidence(invoiceDate != null ? documentField.getConfidence() : 0f);
+                azureInvoice.setInvoiceDateConfidence(
+                        invoiceDate != null ? Double.parseDouble(Float.toString(documentField.getConfidence())) : 0.f);
             } else if (key.equals("InvoiceId")) {
                 if (documentField.getValue() != null)
                     azureInvoice
                             .setInvoiceId(((String) documentField.getValue()).toUpperCase().trim().replaceAll(" ", ""));
-                azureInvoice.setInvoiceIdConfidence(documentField.getConfidence());
+                azureInvoice.setInvoiceIdConfidence(Double.parseDouble(Float.toString(documentField.getConfidence())));
             } else if (key.equals("InvoiceTotal")) {
                 Float invoiceTotal = 0f;
                 if (documentField.getValue() != null) {
                     invoiceTotal = ((Double) documentField.getValue()).floatValue();
                 }
-                azureInvoice.setInvoiceTotal(invoiceTotal);
-                azureInvoice.setInvoiceTotalConfidence(invoiceTotal != null ? documentField.getConfidence() : 0f);
+                azureInvoice.setInvoiceTotal(Double.parseDouble(Float.toString(invoiceTotal)));
+                azureInvoice.setInvoiceTotalConfidence(
+                        invoiceTotal != null ? Double.parseDouble(Float.toString(documentField.getConfidence())) : 0f);
             } else if (key.equals("InvoicePreTaxTotal")) {
                 Float invoicePreTaxTotal = 0f;
                 if (documentField.getValue() != null) {
                     invoicePreTaxTotal = ((Double) documentField.getValue()).floatValue();
                 }
-                azureInvoice.setInvoicePreTaxTotal(invoicePreTaxTotal);
+                azureInvoice.setInvoicePreTaxTotal(Double.parseDouble(Float.toString(invoicePreTaxTotal)));
                 azureInvoice.setInvoicePreTaxTotalConfidence(
-                        invoicePreTaxTotal != null ? documentField.getConfidence() : 0f);
+                        invoicePreTaxTotal != null ? Double.parseDouble(Float.toString(documentField.getConfidence()))
+                                : 0f);
             } else if (key.equals("InvoiceTaxTotal")) {
                 Float invoiceTaxTotal = 0f;
                 if (documentField.getValue() != null) {
                     invoiceTaxTotal = ((Double) documentField.getValue()).floatValue();
                 }
-                azureInvoice.setInvoiceTaxTotal(invoiceTaxTotal);
-                azureInvoice.setInvoiceTaxTotalConfidence(invoiceTaxTotal != null ? documentField.getConfidence() : 0f);
+                azureInvoice.setInvoiceTaxTotal(Double.parseDouble(Float.toString(invoiceTaxTotal)));
+                azureInvoice.setInvoiceTaxTotalConfidence(
+                        invoiceTaxTotal != null ? Double.parseDouble(Float.toString(documentField.getConfidence()))
+                                : 0f);
             } else if (key.equals("InvoiceNonTaxableTotal")) {
                 Float invoiceNonTaxableTotal = 0f;
                 if (documentField.getValue() != null) {
                     invoiceNonTaxableTotal = ((Double) documentField.getValue()).floatValue();
                 }
-                azureInvoice.setInvoiceNonTaxableTotal(invoiceNonTaxableTotal);
+                azureInvoice.setInvoiceNonTaxableTotal(Double.parseDouble(Float.toString(invoiceNonTaxableTotal)));
                 azureInvoice.setInvoiceNonTaxableTotalConfidence(
-                        invoiceNonTaxableTotal != null ? documentField.getConfidence() : 0f);
+                        invoiceNonTaxableTotal != null
+                                ? Double.parseDouble(Float.toString(documentField.getConfidence()))
+                                : 0f);
             } else if (key.equals("VendorTaxId")) {
                 if (documentField.getValue() != null) {
                     azureInvoice.setVendorTaxId(
@@ -202,7 +210,9 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                         azureInvoice.setCompetentAuthority(competentAuthority);
                 }
                 azureInvoice.setVendorTaxIdConfidence(
-                        azureInvoice.getCompetentAuthority() != null ? documentField.getConfidence() : 0f);
+                        azureInvoice.getCompetentAuthority() != null
+                                ? Double.parseDouble(Float.toString(documentField.getConfidence()))
+                                : 0f);
             }
         });
         return azureInvoice;
@@ -300,7 +310,8 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
 
         AzureReceipt azureReceipt = new AzureReceipt();
         azureReceipt.setModelUsed(analyzeResult.getDocuments().get(0).getDocType());
-        azureReceipt.setGlobalDocumentConfidence(analyzeResult.getDocuments().get(0).getConfidence());
+        azureReceipt.setGlobalDocumentConfidence(
+                Double.parseDouble(Float.toString(analyzeResult.getDocuments().get(0).getConfidence())));
         azureReceipt.setAzureReceiptInvoices(new ArrayList<AzureReceiptInvoice>());
         analyzedDocument.getFields().forEach((key, documentField) -> {
             if (key.equals("Invoices")) {
@@ -326,7 +337,7 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
 
                         if (keyMap.equals("InvoiceTotal") && fieldMap.get(keyMap).getValue() != null) {
                             currentInvoiceTotal = ((Double) fieldMap.get(keyMap).getValue()).floatValue();
-                            receiptInvoice.setInvoiceTotal(currentInvoiceTotal);
+                            receiptInvoice.setInvoiceTotal(Double.parseDouble(Float.toString(currentInvoiceTotal)));
                         } else if (keyMap.equals("InvoiceId") && fieldMap.get(keyMap).getValue() != null) {
                             currentInvoiceId = ((String) fieldMap.get(keyMap).getValue()).toUpperCase().trim()
                                     .replaceAll(" ",

@@ -59,9 +59,9 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@IndexedField
 	private LocalDateTime paymentDate;
 
-	@Column(nullable = false, precision = 2)
+	@Column(nullable = false, scale = 2)
 	@IndexedField
-	private Float paymentAmount;
+	private Double paymentAmount;
 
 	@OneToMany(mappedBy = "payment")
 	@JsonIgnoreProperties(value = { "payment" }, allowSetters = true)
@@ -170,11 +170,11 @@ public class Payment implements Serializable, IId, ICreatedDate {
 		this.paymentDate = paymentDate;
 	}
 
-	public Float getPaymentAmount() {
+	public Double getPaymentAmount() {
 		return paymentAmount;
 	}
 
-	public void setPaymentAmount(Float paymentAmount) {
+	public void setPaymentAmount(Double paymentAmount) {
 		this.paymentAmount = paymentAmount;
 	}
 

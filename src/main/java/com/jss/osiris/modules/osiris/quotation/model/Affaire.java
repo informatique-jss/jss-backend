@@ -109,8 +109,8 @@ public class Affaire implements IId, IAttachment {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	@Column(precision = 2)
-	private Float shareCapital;
+	@Column(scale = 2)
+	private Double shareCapital;
 
 	@Column(length = 40, name = "payment_iban")
 	private String paymentIban;
@@ -299,11 +299,11 @@ public class Affaire implements IId, IAttachment {
 		this.observations = observations;
 	}
 
-	public Float getShareCapital() {
+	public Double getShareCapital() {
 		return shareCapital;
 	}
 
-	public void setShareCapital(Float shareCapital) {
+	public void setShareCapital(Double shareCapital) {
 		this.shareCapital = shareCapital;
 	}
 

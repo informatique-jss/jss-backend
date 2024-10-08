@@ -27,9 +27,9 @@ public class ComptesAnnuels {
     private boolean petiteEntreprise;
     private boolean associeUniquePresident;
     private boolean activiteCreditOuAssurance;
-    @Column(precision = 2)
+    @Column(scale = 2)
     private Double montantCAAnneePrecedente;
-    @Column(precision = 2)
+    @Column(scale = 2)
     private Double montantTotalBilanAnneePrecedente;
     private boolean activiteProspection;
     private boolean activiteSansConfidentialite;

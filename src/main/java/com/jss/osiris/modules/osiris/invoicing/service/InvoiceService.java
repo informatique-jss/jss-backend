@@ -43,7 +43,7 @@ public interface InvoiceService {
         public void sendRemindersForInvoices()
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException;
+        public Double getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException;
 
         public List<InvoiceSearchResult> getProviderInvoiceForCustomerOrder(Integer customerOrderId)
                         throws OsirisException;

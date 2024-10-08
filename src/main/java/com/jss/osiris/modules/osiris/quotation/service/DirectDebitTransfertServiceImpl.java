@@ -182,7 +182,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
         directDebitTransfert.setLabel("Facture " + invoice.getId() + " / Journal Spécial des Sociétés / "
                 + (invoice.getCustomerOrder() != null ? invoice.getCustomerOrder().getId() : ""));
         directDebitTransfert.setIsAlreadyExported(false);
-        Float totalPrice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+        Double totalPrice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
         directDebitTransfert.setTransfertAmount(totalPrice);
         directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         directDebitTransfert.setTransfertIban(invoice.getResponsable().getTiers().getPaymentIban());

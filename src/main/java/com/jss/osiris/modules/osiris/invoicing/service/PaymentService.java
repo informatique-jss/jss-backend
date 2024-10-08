@@ -46,7 +46,7 @@ public interface PaymentService {
 
         public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment,
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,
-                        Affaire affaireRefund, Tiers tiersRefund, Responsable responsable, List<Float> byPassAmount)
+                        Affaire affaireRefund, Tiers tiersRefund, Responsable responsable, List<Double> byPassAmount)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
@@ -80,12 +80,12 @@ public interface PaymentService {
                         Invoice invoice)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
-        public Payment generateNewAccountPayment(Float paymentAmount, AccountingAccount sourceDepositAccountingAccount,
+        public Payment generateNewAccountPayment(Double paymentAmount, AccountingAccount sourceDepositAccountingAccount,
                         AccountingAccount targetAccountingAccount,
                         String label)
                         throws OsirisException;
 
-        public Payment generateNewDirectDebitPayment(Float paymentAmount, String label,
+        public Payment generateNewDirectDebitPayment(Double paymentAmount, String label,
                         DirectDebitTransfert directDebitTransfert) throws OsirisException;
 
         public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
@@ -106,11 +106,11 @@ public interface PaymentService {
 
         public void cancelAppoint(Payment payment) throws OsirisException, OsirisValidationException;
 
-        public Payment generateNewRefundPayment(Refund refund, Float paymentAmount, Tiers tiersToRefund,
+        public Payment generateNewRefundPayment(Refund refund, Double paymentAmount, Tiers tiersToRefund,
                         Payment paymentToRefund)
                         throws OsirisException;
 
-        public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, Float paymentAmount,
+        public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, Double paymentAmount,
                         Provider tiersToPay)
                         throws OsirisException;
 
@@ -119,6 +119,6 @@ public interface PaymentService {
         public void putPaymentInAccount(Payment payment, AccountingAccount accountingAccount)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
-        public Payment cutPayment(Payment payment, Float amount)
+        public Payment cutPayment(Payment payment, Double amount)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 }

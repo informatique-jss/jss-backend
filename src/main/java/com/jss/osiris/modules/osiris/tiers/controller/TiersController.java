@@ -229,7 +229,7 @@ public class TiersController {
   }
 
   @GetMapping(inputEntryPoint + "/rff/send")
-  public ResponseEntity<Rff> sendRff(@RequestParam Integer idRff, @RequestParam Float amount,
+  public ResponseEntity<Rff> sendRff(@RequestParam Integer idRff, @RequestParam Double amount,
       @RequestParam boolean sendToMe)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     if (idRff == null)

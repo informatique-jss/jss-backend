@@ -609,9 +609,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException {
+    public Double getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException {
         if (invoice != null) {
-            Float total = invoice.getTotalPrice();
+            Double total = invoice.getTotalPrice();
 
             if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
                 for (Payment payment : invoice.getPayments())
@@ -621,9 +621,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                         else
                             total -= payment.getPaymentAmount();
 
-            return Math.round(total * 100f) / 100f;
+            return Math.round(total * 100.0) / 100.0;
         }
-        return 0f;
+        return 0.0;
     }
 
     private Invoice cloneInvoice(Invoice invoice) {

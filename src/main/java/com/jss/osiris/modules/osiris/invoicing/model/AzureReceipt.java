@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +23,9 @@ public class AzureReceipt {
     private Integer id;
 
     private String modelUsed;
-    private Float globalDocumentConfidence;
+
+    @Column(scale = 2)
+    private Double globalDocumentConfidence;
 
     @OneToMany(mappedBy = "azureReceipt", cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = { "azureReceipt" }, allowSetters = true)
@@ -50,11 +53,11 @@ public class AzureReceipt {
         this.modelUsed = modelUsed;
     }
 
-    public Float getGlobalDocumentConfidence() {
+    public Double getGlobalDocumentConfidence() {
         return globalDocumentConfidence;
     }
 
-    public void setGlobalDocumentConfidence(Float globalDocumentConfidence) {
+    public void setGlobalDocumentConfidence(Double globalDocumentConfidence) {
         this.globalDocumentConfidence = globalDocumentConfidence;
     }
 

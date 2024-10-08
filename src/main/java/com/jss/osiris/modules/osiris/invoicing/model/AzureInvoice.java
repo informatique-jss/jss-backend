@@ -36,8 +36,8 @@ public class AzureInvoice {
     @Column(length = 2500)
     private String modelUsed;
 
-    @Column(precision = 2)
-    private Float globalDocumentConfidence;
+    @Column(scale = 2)
+    private Double globalDocumentConfidence;
 
     @Column(length = 2500)
     private String customerId;
@@ -50,36 +50,36 @@ public class AzureInvoice {
     @IndexedField
     private String invoiceId;
 
-    @Column(precision = 2)
-    private Float invoiceTotal;
-    @Column(precision = 2)
-    private Float invoicePreTaxTotal;
-    @Column(precision = 2)
-    private Float invoiceTaxTotal;
-    @Column(precision = 2)
-    private Float invoiceNonTaxableTotal;
+    @Column(scale = 2)
+    private Double invoiceTotal;
+    @Column(scale = 2)
+    private Double invoicePreTaxTotal;
+    @Column(scale = 2)
+    private Double invoiceTaxTotal;
+    @Column(scale = 2)
+    private Double invoiceNonTaxableTotal;
 
     @Column(length = 2500)
     private String vendorTaxId;
 
-    @Column(precision = 2)
-    private Float customerIdConfidence;
-    @Column(precision = 2)
-    private Float referenceConfidence;
-    @Column(precision = 2)
-    private Float invoiceDateConfidence;
-    @Column(precision = 2)
-    private Float invoiceIdConfidence;
-    @Column(precision = 2)
-    private Float invoiceTotalConfidence;
-    @Column(precision = 2)
-    private Float invoicePreTaxTotalConfidence;
-    @Column(precision = 2)
-    private Float invoiceTaxTotalConfidence;
-    @Column(precision = 2)
-    private Float invoiceNonTaxableTotalConfidence;
-    @Column(precision = 2)
-    private Float vendorTaxIdConfidence;
+    @Column(scale = 2)
+    private Double customerIdConfidence;
+    @Column(scale = 2)
+    private Double referenceConfidence;
+    @Column(scale = 2)
+    private Double invoiceDateConfidence;
+    @Column(scale = 2)
+    private Double invoiceIdConfidence;
+    @Column(scale = 2)
+    private Double invoiceTotalConfidence;
+    @Column(scale = 2)
+    private Double invoicePreTaxTotalConfidence;
+    @Column(scale = 2)
+    private Double invoiceTaxTotalConfidence;
+    @Column(scale = 2)
+    private Double invoiceNonTaxableTotalConfidence;
+    @Column(scale = 2)
+    private Double vendorTaxIdConfidence;
 
     @OneToMany(mappedBy = "azureInvoice")
     @JsonIgnoreProperties(value = { "attachments", "provision", "customerOrderForInboundInvoice", "accountingRecords",
@@ -138,35 +138,35 @@ public class AzureInvoice {
         this.invoiceId = invoiceId;
     }
 
-    public Float getInvoiceTotal() {
+    public Double getInvoiceTotal() {
         return invoiceTotal;
     }
 
-    public void setInvoiceTotal(Float invoiceTotal) {
+    public void setInvoiceTotal(Double invoiceTotal) {
         this.invoiceTotal = invoiceTotal;
     }
 
-    public Float getInvoicePreTaxTotal() {
+    public Double getInvoicePreTaxTotal() {
         return invoicePreTaxTotal;
     }
 
-    public void setInvoicePreTaxTotal(Float invoicePreTaxTotal) {
+    public void setInvoicePreTaxTotal(Double invoicePreTaxTotal) {
         this.invoicePreTaxTotal = invoicePreTaxTotal;
     }
 
-    public Float getInvoiceTaxTotal() {
+    public Double getInvoiceTaxTotal() {
         return invoiceTaxTotal;
     }
 
-    public void setInvoiceTaxTotal(Float invoiceTaxTotal) {
+    public void setInvoiceTaxTotal(Double invoiceTaxTotal) {
         this.invoiceTaxTotal = invoiceTaxTotal;
     }
 
-    public Float getInvoiceNonTaxableTotal() {
+    public Double getInvoiceNonTaxableTotal() {
         return invoiceNonTaxableTotal;
     }
 
-    public void setInvoiceNonTaxableTotal(Float invoiceNonTaxableTotal) {
+    public void setInvoiceNonTaxableTotal(Double invoiceNonTaxableTotal) {
         this.invoiceNonTaxableTotal = invoiceNonTaxableTotal;
     }
 
@@ -178,75 +178,75 @@ public class AzureInvoice {
         this.vendorTaxId = vendorTaxId;
     }
 
-    public Float getCustomerIdConfidence() {
+    public Double getCustomerIdConfidence() {
         return customerIdConfidence;
     }
 
-    public void setCustomerIdConfidence(Float customerIdConfidence) {
+    public void setCustomerIdConfidence(Double customerIdConfidence) {
         this.customerIdConfidence = customerIdConfidence;
     }
 
-    public Float getReferenceConfidence() {
+    public Double getReferenceConfidence() {
         return referenceConfidence;
     }
 
-    public void setReferenceConfidence(Float referenceConfidence) {
+    public void setReferenceConfidence(Double referenceConfidence) {
         this.referenceConfidence = referenceConfidence;
     }
 
-    public Float getInvoiceDateConfidence() {
+    public Double getInvoiceDateConfidence() {
         return invoiceDateConfidence;
     }
 
-    public void setInvoiceDateConfidence(Float invoiceDateConfidence) {
+    public void setInvoiceDateConfidence(Double invoiceDateConfidence) {
         this.invoiceDateConfidence = invoiceDateConfidence;
     }
 
-    public Float getInvoiceIdConfidence() {
+    public Double getInvoiceIdConfidence() {
         return invoiceIdConfidence;
     }
 
-    public void setInvoiceIdConfidence(Float invoiceIdConfidence) {
+    public void setInvoiceIdConfidence(Double invoiceIdConfidence) {
         this.invoiceIdConfidence = invoiceIdConfidence;
     }
 
-    public Float getInvoiceTotalConfidence() {
+    public Double getInvoiceTotalConfidence() {
         return invoiceTotalConfidence;
     }
 
-    public void setInvoiceTotalConfidence(Float invoiceTotalConfidence) {
+    public void setInvoiceTotalConfidence(Double invoiceTotalConfidence) {
         this.invoiceTotalConfidence = invoiceTotalConfidence;
     }
 
-    public Float getInvoicePreTaxTotalConfidence() {
+    public Double getInvoicePreTaxTotalConfidence() {
         return invoicePreTaxTotalConfidence;
     }
 
-    public void setInvoicePreTaxTotalConfidence(Float invoicePreTaxTotalConfidence) {
+    public void setInvoicePreTaxTotalConfidence(Double invoicePreTaxTotalConfidence) {
         this.invoicePreTaxTotalConfidence = invoicePreTaxTotalConfidence;
     }
 
-    public Float getInvoiceTaxTotalConfidence() {
+    public Double getInvoiceTaxTotalConfidence() {
         return invoiceTaxTotalConfidence;
     }
 
-    public void setInvoiceTaxTotalConfidence(Float invoiceTaxTotalConfidence) {
+    public void setInvoiceTaxTotalConfidence(Double invoiceTaxTotalConfidence) {
         this.invoiceTaxTotalConfidence = invoiceTaxTotalConfidence;
     }
 
-    public Float getInvoiceNonTaxableTotalConfidence() {
+    public Double getInvoiceNonTaxableTotalConfidence() {
         return invoiceNonTaxableTotalConfidence;
     }
 
-    public void setInvoiceNonTaxableTotalConfidence(Float invoiceNonTaxableTotalConfidence) {
+    public void setInvoiceNonTaxableTotalConfidence(Double invoiceNonTaxableTotalConfidence) {
         this.invoiceNonTaxableTotalConfidence = invoiceNonTaxableTotalConfidence;
     }
 
-    public Float getVendorTaxIdConfidence() {
+    public Double getVendorTaxIdConfidence() {
         return vendorTaxIdConfidence;
     }
 
-    public void setVendorTaxIdConfidence(Float vendorTaxIdConfidence) {
+    public void setVendorTaxIdConfidence(Double vendorTaxIdConfidence) {
         this.vendorTaxIdConfidence = vendorTaxIdConfidence;
     }
 
@@ -274,11 +274,11 @@ public class AzureInvoice {
         this.modelUsed = modelUsed;
     }
 
-    public Float getGlobalDocumentConfidence() {
+    public Double getGlobalDocumentConfidence() {
         return globalDocumentConfidence;
     }
 
-    public void setGlobalDocumentConfidence(Float globalDocumentConfidence) {
+    public void setGlobalDocumentConfidence(Double globalDocumentConfidence) {
         this.globalDocumentConfidence = globalDocumentConfidence;
     }
 

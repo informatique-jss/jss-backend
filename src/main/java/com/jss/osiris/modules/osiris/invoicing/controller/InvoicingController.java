@@ -295,9 +295,9 @@ public class InvoicingController {
 
     @GetMapping(inputEntryPoint + "/payment/cut")
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Payment> cutPayment(@RequestParam Integer paymentId, @RequestParam Float amount)
+    public ResponseEntity<Payment> cutPayment(@RequestParam Integer paymentId, @RequestParam Double amount)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        validationHelper.validateFloat(amount, true, "amount");
+        validationHelper.validateDouble(amount, true, "amount");
         Payment payment = paymentService.getPayment(paymentId);
         if (payment != null) {
             if (payment.getIsCancelled() || payment.getIsExternallyAssociated())
@@ -627,12 +627,12 @@ public class InvoicingController {
 
         // Check all money used
 
-        Float totalAmount = 0f;
+        Double totalAmount = 0.0;
         if (paymentAssociate.getByPassAmount() != null)
-            for (Float amount : paymentAssociate.getByPassAmount()) {
+            for (Double amount : paymentAssociate.getByPassAmount()) {
                 totalAmount += amount;
             }
-        totalAmount = Math.round(totalAmount * 100f) / 100f;
+        totalAmount = Math.round(totalAmount * 100.0) / 100.0;
 
         // If incoming, appoint or refund needed, if outgoing, must match
         if (totalAmount != 0) {
@@ -713,7 +713,7 @@ public class InvoicingController {
         cashPayment.setIsDeposit(false);
         cashPayment.setIsAppoint(false);
 
-        Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+        Double remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
         if (remainingToPay == null || remainingToPay < cashPayment.getPaymentAmount())
             throw new OsirisValidationException("paymentAmount");
 
@@ -965,11 +965,11 @@ public class InvoicingController {
                 if (invoiceItem.getId() != null)
                     validationHelper.validateReferential(invoiceItem, true, "invoiceItem");
                 if (invoiceItem.getDiscountAmount() == null)
-                    invoiceItem.setDiscountAmount(0f);
+                    invoiceItem.setDiscountAmount(0.0);
                 if (invoiceItem.getPreTaxPrice() == null)
-                    invoiceItem.setPreTaxPrice(0f);
+                    invoiceItem.setPreTaxPrice(0.0);
                 if (invoiceItem.getVatPrice() == null)
-                    invoiceItem.setVatPrice(0f);
+                    invoiceItem.setVatPrice(0.0);
                 if (invoiceItem.getPreTaxPriceReinvoiced() == null)
                     invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 

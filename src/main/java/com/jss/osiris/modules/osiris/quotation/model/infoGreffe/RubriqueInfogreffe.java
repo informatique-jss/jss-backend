@@ -21,17 +21,17 @@ public class RubriqueInfogreffe {
     private Integer id;
     private String code;
 
-    @Column(precision = 2)
+    @Column(scale = 2)
     @JsonProperty("montantHT")
-    private Float montantHt;
+    private Double montantHt;
 
-    @Column(precision = 2)
+    @Column(scale = 2)
     @JsonProperty("montantTva")
-    private Float montantTva;
+    private Double montantTva;
 
-    @Column(precision = 2)
+    @Column(scale = 2)
     @JsonProperty("montantTtc")
-    private Float montantTtc;
+    private Double montantTtc;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_montant_formalite_infogreffe")
@@ -62,27 +62,27 @@ public class RubriqueInfogreffe {
         this.montantInfogreffe = montantInfogreffe;
     }
 
-    public Float getMontantHt() {
+    public Double getMontantHt() {
         return montantHt;
     }
 
-    public void setMontantHt(Float montantHt) {
+    public void setMontantHt(Double montantHt) {
         this.montantHt = montantHt;
     }
 
-    public Float getMontantTva() {
+    public Double getMontantTva() {
         return montantTva;
     }
 
-    public void setMontantTva(Float montantTva) {
+    public void setMontantTva(Double montantTva) {
         this.montantTva = montantTva;
     }
 
-    public Float getMontantTtc() {
+    public Double getMontantTtc() {
         return montantTtc;
     }
 
-    public void setMontantTtc(Float montantTtc) {
+    public void setMontantTtc(Double montantTtc) {
         this.montantTtc = montantTtc;
     }
 

@@ -27,8 +27,8 @@ public class CharacterPrice implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "character_price_sequence")
 	private Integer id;
 
-	@Column(nullable = false, precision = 3)
-	private Float price;
+	@Column(nullable = false, scale = 3)
+	private Double price;
 
 	@OneToMany(targetEntity = Department.class)
 	@JoinTable(name = "asso_character_price_department", joinColumns = @JoinColumn(name = "id_character_price"), inverseJoinColumns = @JoinColumn(name = "id_department"))
@@ -53,11 +53,11 @@ public class CharacterPrice implements Serializable, IId {
 		this.startDate = startDate;
 	}
 
-	public Float getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Float price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 

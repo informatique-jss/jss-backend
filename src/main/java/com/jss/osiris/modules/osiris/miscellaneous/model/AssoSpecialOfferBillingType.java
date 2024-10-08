@@ -36,11 +36,11 @@ public class AssoSpecialOfferBillingType implements Serializable, IId {
 	@JoinColumn(name = "id_billingType")
 	private BillingType billingType;
 
-	@Column(precision = 2)
-	private Float discountRate;
+	@Column(scale = 2)
+	private Double discountRate;
 
-	@Column(precision = 2)
-	private Float discountAmount;
+	@Column(scale = 2)
+	private Double discountAmount;
 
 	public Integer getId() {
 		return id;
@@ -66,19 +66,19 @@ public class AssoSpecialOfferBillingType implements Serializable, IId {
 		this.billingType = billingType;
 	}
 
-	public Float getDiscountRate() {
+	public Double getDiscountRate() {
 		return discountRate;
 	}
 
-	public void setDiscountRate(Float discountRate) {
+	public void setDiscountRate(Double discountRate) {
 		this.discountRate = discountRate;
 	}
 
-	public Float getDiscountAmount() {
+	public Double getDiscountAmount() {
 		return discountAmount;
 	}
 
-	public void setDiscountAmount(Float discountAmount) {
+	public void setDiscountAmount(Double discountAmount) {
 		this.discountAmount = discountAmount;
 	}
 

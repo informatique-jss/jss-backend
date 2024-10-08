@@ -58,8 +58,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     private AccountingRecord generateNewAccountingRecord(LocalDateTime operationDatetime, Integer operationId,
             String manualAccountingDocumentNumber, LocalDate manualAccountingDocumentDate, String label,
-            Float creditAmount,
-            Float debitAmount, AccountingAccount accountingAccount, InvoiceItem invoiceItem, Invoice invoice,
+            Double creditAmount,
+            Double debitAmount, AccountingAccount accountingAccount, InvoiceItem invoiceItem, Invoice invoice,
             CustomerOrder customerOrder, AccountingJournal journal, Payment payment, Refund refund,
             BankTransfert bankTransfert) throws OsirisClientMessageException, OsirisException {
         AccountingRecord accountingRecord = new AccountingRecord();
@@ -118,7 +118,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         return accountingRecordService.addOrUpdateAccountingRecord(newAccountingRecord, false);
     }
 
-    private void checkBalance(Float balance) throws OsirisValidationException {
+    private void checkBalance(Double balance) throws OsirisValidationException {
         if (Math.abs(Math.round(balance * 100f)) > 1)
             throw new OsirisValidationException("Balance not null");
     }
@@ -144,7 +144,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         List<AccountingRecord> accountingRecords = accountingRecordService
                 .findByAccountingAccountAndRefund(account, refund);
 
-        Float balance = 0f;
+        Double balance = 0.0;
 
         if (accountingRecords != null && accountingRecords.size() > 0) {
             for (AccountingRecord accountingRecord : accountingRecords) {
@@ -187,7 +187,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         List<AccountingRecord> accountingRecords = accountingRecordService
                 .findByAccountingAccountAndInvoice(accountingAccount, invoice);
 
-        Float balance = 0f;
+        Double balance = 0.0;
 
         if (accountingRecords != null && accountingRecords.size() > 0) {
             for (AccountingRecord accountingRecord : accountingRecords) {
@@ -307,13 +307,14 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         AccountingAccount accountingAccountCustomer = invoice.getResponsable().getTiers()
                 .getAccountingAccountCustomer();
-        Float balance = 0f;
+        Double balance = 0.0;
         Integer operationId = getNewTemporaryOperationId();
 
         // One write on customer account for all invoice
         generateNewAccountingRecord(getInvoiceOperationDateTime(invoice),
                 operationId, invoice.getManualAccountingDocumentNumber(),
-                invoice.getManualAccountingDocumentDate(), labelPrefix, null, invoiceHelper.getPriceTotal(invoice),
+                invoice.getManualAccountingDocumentDate(), labelPrefix, null,
+                invoiceHelper.getPriceTotal(invoice).doubleValue(),
                 accountingAccountCustomer, null, invoice, null, salesJournal, null, null, null);
 
         balance += invoiceHelper.getPriceTotal(invoice);
@@ -332,7 +333,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                         "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
 
             if (invoiceItem.getPreTaxPrice() == null)
-                invoiceItem.setPreTaxPrice(0f);
+                invoiceItem.setPreTaxPrice(0.0);
 
             AccountingAccount producAccountingAccount = invoiceItem.getBillingItem().getBillingType()
                     .getAccountingAccountProduct();
@@ -341,7 +342,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 throw new OsirisException(null, "No product accounting account defined in billing type n°"
                         + invoiceItem.getBillingItem().getBillingType().getId());
 
-            Float billingItemPrice = invoiceItem.getPreTaxPrice()
+            Double billingItemPrice = invoiceItem.getPreTaxPrice()
                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
 
             balance -= billingItemPrice;
@@ -419,7 +420,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 : (invoice.getResponsable().getTiers().getFirstname() + " "
                         + invoice.getResponsable().getTiers().getLastname()));
 
-        Float balance = 0f;
+        Double balance = 0.0;
         Integer operationId = getNewTemporaryOperationId();
 
         if (invoice.getAccountingRecords() != null)
@@ -458,7 +459,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         AccountingAccount accountingAccountProvider = invoice.getProvider().getAccountingAccountProvider();
 
-        Float balance = 0f;
+        Double balance = 0.0;
         Integer operationId = getNewTemporaryOperationId();
 
         // One write on customer account for all invoice
@@ -482,7 +483,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                         "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
 
             if (invoiceItem.getPreTaxPrice() == null)
-                invoiceItem.setPreTaxPrice(0f);
+                invoiceItem.setPreTaxPrice(0.0);
 
             AccountingAccount chargeAccountingAccount = invoiceItem.getBillingItem().getBillingType()
                     .getAccountingAccountCharge();
@@ -491,8 +492,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 throw new OsirisException(null, "No charge accounting account defined in billing type n°"
                         + invoiceItem.getBillingItem().getBillingType().getId());
 
-            Float billingItemPrice = invoiceItem.getPreTaxPrice()
-                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
+            Double billingItemPrice = invoiceItem.getPreTaxPrice()
+                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0.0);
 
             generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
                     invoice.getManualAccountingDocumentNumber(),
@@ -538,7 +539,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             accountingAccountProvider = invoice.getResponsable().getTiers().getAccountingAccountCustomer();
         accountingAccountProvider = invoice.getProvider().getAccountingAccountProvider();
 
-        Float balance = 0f;
+        Double balance = 0.0;
         balance += invoiceHelper.getPriceTotal(invoice);
         Integer operationId = getNewTemporaryOperationId();
 
@@ -566,8 +567,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 throw new OsirisException(null, "No charge accounting account defined in billing type n°"
                         + invoiceItem.getBillingItem().getBillingType().getId());
 
-            Float billingItemPrice = invoiceItem.getPreTaxPrice()
-                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
+            Double billingItemPrice = invoiceItem.getPreTaxPrice()
+                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0.0);
 
             generateNewAccountingRecord(getInvoiceOperationDateTime(invoice), operationId,
                     invoice.getManualAccountingDocumentNumber(),
@@ -621,7 +622,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
         labelPrefix += " - " + invoice.getProvider().getLabel();
 
-        Float balance = 0f;
+        Double balance = 0.0;
         Integer operationId = getNewTemporaryOperationId();
 
         if (invoice.getAccountingRecords() != null)
@@ -743,7 +744,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         }
 
         Integer operationId = getNewTemporaryOperationId();
-        Float balance = 0f;
+        Double balance = 0.0;
 
         if (payment.getAccountingRecords() == null)
             payment.setAccountingRecords(new ArrayList<AccountingRecord>());

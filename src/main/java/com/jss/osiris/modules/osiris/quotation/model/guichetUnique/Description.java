@@ -48,8 +48,8 @@ public class Description implements Serializable, IId {
 
     private Boolean capitalVariable;
 
-    @Column(precision = 2)
-    private Float montantCapital;
+    @Column(scale = 2)
+    private Double montantCapital;
 
     private Integer capitalMinimum;
 
@@ -205,11 +205,11 @@ public class Description implements Serializable, IId {
         this.capitalVariable = capitalVariable;
     }
 
-    public Float getMontantCapital() {
+    public Double getMontantCapital() {
         return montantCapital;
     }
 
-    public void setMontantCapital(Float montantCapital) {
+    public void setMontantCapital(Double montantCapital) {
         this.montantCapital = montantCapital;
     }
 

@@ -647,18 +647,18 @@ public class MailHelper {
     public void setQuotationPrice(IQuotation quotation, Context ctx)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         // Compute prices
-        Float preTaxPriceTotal = 0f;
-        Float discountTotal = null;
-        Float preTaxPriceTotalWithDicount = null;
+        Double preTaxPriceTotal = 0.0;
+        Double discountTotal = null;
+        Double preTaxPriceTotalWithDicount = null;
         ArrayList<VatMail> vats = null;
-        Float vatTotal = 0f;
-        Float priceTotal = null;
+        Double vatTotal = 0.0;
+        Double priceTotal = null;
 
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
             for (Service service : asso.getServices())
                 for (Provision provision : service.getProvisions()) {
                     for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
+                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0.0;
                         if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
                             if (discountTotal == null)
                                 discountTotal = invoiceItem.getDiscountAmount();
