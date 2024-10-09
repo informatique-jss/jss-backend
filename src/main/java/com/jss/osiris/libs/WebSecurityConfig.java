@@ -49,25 +49,20 @@ public class WebSecurityConfig {
 
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-		if (devMode == null || devMode == false) {
-			http.authorizeHttpRequests((auth) -> auth.requestMatchers(HttpMethod.OPTIONS).permitAll()
-					.requestMatchers("/profile/login").permitAll()
-					.requestMatchers("/myjss/profile/login").permitAll()
-					.requestMatchers("/myjss/profile/token/send").permitAll()
-					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
-					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
-					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()
-					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/quotation/deposit/validate").permitAll()
-					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/invoice").permitAll()
-					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/invoice/validate").permitAll()
-					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/validate").permitAll()
-					.anyRequest().authenticated()).cors((cors) -> cors
-							.configurationSource(customConfigurationSource()))
-					.csrf((csrf -> csrf.disable()));
-		} else {
-			http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll()).cors((cors) -> cors
-					.configurationSource(customConfigurationSource())).csrf((csrf -> csrf.disable()));
-		}
+		http.authorizeHttpRequests((auth) -> auth.requestMatchers(HttpMethod.OPTIONS).permitAll()
+				.requestMatchers("/profile/login").permitAll()
+				.requestMatchers("/myjss/profile/login").permitAll()
+				.requestMatchers("/myjss/profile/login/token/send").permitAll()
+				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
+				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
+				.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()
+				.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/quotation/deposit/validate").permitAll()
+				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/invoice").permitAll()
+				.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/invoice/validate").permitAll()
+				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/validate").permitAll()
+				.anyRequest().authenticated()).cors((cors) -> cors
+						.configurationSource(customConfigurationSource()))
+				.csrf((csrf -> csrf.disable()));
 		return http.build();
 	}
 

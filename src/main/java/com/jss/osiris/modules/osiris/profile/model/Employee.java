@@ -149,4 +149,14 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee>, 
 		this.backups = backups;
 	}
 
+	@Override
+	public String getEmail() {
+		return this.mail;
+	}
+
+	@Override
+	public void setEmail(String mail) {
+		this.setMail(mail);
+	}
+
 }

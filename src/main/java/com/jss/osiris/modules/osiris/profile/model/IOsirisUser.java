@@ -12,6 +12,8 @@ public interface IOsirisUser {
 
     public String getLastname();
 
+    public String getEmail();
+
     @JsonView(JacksonViews.MyJssView.class)
     public void setId(Integer id);
 
@@ -23,5 +25,8 @@ public interface IOsirisUser {
 
     @JsonView(JacksonViews.MyJssView.class)
     public void setLastname(String lastname);
+
+    @JsonView(JacksonViews.MyJssView.class)
+    public void setEmail(String mail);
 
 }

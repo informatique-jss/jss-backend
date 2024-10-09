@@ -76,6 +76,11 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
+    public Responsable getResponsableByMail(String mail) {
+        return responsableRepository.findFirst1ByMail_MailIgnoreCase(mail);
+    }
+
+    @Override
     public List<IResponsableSearchResult> searchResponsables(TiersSearch tiersSearch) throws OsirisException {
         Integer tiersId = 0;
         if (tiersSearch.getTiers() != null)

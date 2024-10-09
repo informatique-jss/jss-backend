@@ -567,4 +567,15 @@ public class Responsable implements IAttachment, IId, IOsirisUser {
 	public void setLoginTokenExpirationDateTime(LocalDateTime loginTokenExpirationDateTime) {
 		this.loginTokenExpirationDateTime = loginTokenExpirationDateTime;
 	}
+
+	@Override
+	public void setEmail(String mail) {
+	}
+
+	@Override
+	public String getEmail() {
+		if (this.mail != null)
+			return this.mail.getMail();
+		return "";
+	}
 }

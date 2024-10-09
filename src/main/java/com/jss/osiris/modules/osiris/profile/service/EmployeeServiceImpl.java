@@ -123,7 +123,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (username != null)
             employee = employeeRepository.findByUsernameIgnoreCase(username);
 
-        if (employee == null)
+        if (employee == null && username != null && !username.equals("ANONYMOUSUSER") && !username.equals("OSIRIS"))
             employee = responsableService.getResponsable(Integer.parseInt(username));
         return employee;
     }

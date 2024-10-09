@@ -18,5 +18,7 @@ public interface ResponsableService {
 
     public Responsable getResponsableByLoginWeb(String loginWeb);
 
+    public Responsable getResponsableByMail(String mail);
+
     public List<IResponsableSearchResult> searchResponsables(TiersSearch tiersSearch) throws OsirisException;
 }

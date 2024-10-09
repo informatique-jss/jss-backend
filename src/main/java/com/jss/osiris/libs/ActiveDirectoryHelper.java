@@ -61,13 +61,6 @@ public class ActiveDirectoryHelper {
     public static final String MYJSS_USER_GROUP = "ROLE_MYJSS_USER";
 
     public String getCurrentUsername() {
-        if (devMode)
-            if (SecurityContextHolder.getContext() == null
-                    || SecurityContextHolder.getContext().getAuthentication() == null
-                    || SecurityContextHolder.getContext().getAuthentication().getName() == null
-                    || SecurityContextHolder.getContext().getAuthentication().getName().toUpperCase()
-                            .equals("ANONYMOUSUSER"))
-                return "COANET";
         if (SecurityContextHolder.getContext() == null
                 || SecurityContextHolder.getContext().getAuthentication() == null
                 || SecurityContextHolder.getContext().getAuthentication().getName() == null)

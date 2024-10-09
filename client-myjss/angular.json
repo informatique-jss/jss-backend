@@ -32,6 +32,11 @@
             "styles": [
               "src/styles.scss",
               {
+                "input": "src/assets/css/swiper.min.css",
+                "inject": true,
+                "bundleName": "swiper.min.css"
+              },
+              {
                 "input": "src/assets/css/theme.min.css",
                 "inject": true,
                 "bundleName": "theme.min.css"
@@ -44,21 +49,16 @@
                 "bundleName": "cleave.min.js"
               },
               {
-                "input": "src/assets/js/theme.min.js",
-                "inject": true,
-                "bundleName": "theme.min.js"
-              },
-              {
                 "input": "src/assets/js/theme-switcher.js",
                 "inject": true,
                 "bundleName": "theme-switcher.js"
+              },
+              {
+                "input": "src/assets/js/swiper.min.js",
+                "inject": true,
+                "bundleName": "swiper.min.js"
               }
-            ],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            ]
           },
           "configurations": {
             "production": {

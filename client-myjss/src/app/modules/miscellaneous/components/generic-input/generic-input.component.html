@@ -1,0 +1,9 @@
+<div [formGroup]="form!" class="needs-validation">
+  <i class="ai-mail fs-lg position-absolute top-50 start-0 translate-middle-y ms-3"
+    [ngClass]="{'icon-with-error':errorMessage && form!.controls[propertyName].hasError('notFilled')}"></i>
+  <input class="form-control form-control-lg ps-5" type="text" [id]="'fl-text'+uniqueId" [maxlength]="maxLength+''"
+    [minlength]="minLength+''" [formControlName]="propertyName" [placeholder]="label" (blur)="blurForm()"
+    [type]="type=='number'?'text':type" (change)="parse($event)">
+  <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0">{{label}}</label>
+  <div class="error" *ngIf="errorMessage && form!.controls[propertyName].hasError('notFilled')">{{errorMessage}}</div>
+</div>

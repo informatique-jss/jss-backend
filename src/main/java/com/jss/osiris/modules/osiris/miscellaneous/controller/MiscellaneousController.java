@@ -400,7 +400,7 @@ public class MiscellaneousController {
         IOsirisUser employee = employeeService.getCurrentEmployee();
 
         List<Employee> backupEmployee = null;
-        if (employee instanceof Employee) {
+        if (employee != null && employee instanceof Employee) {
             employeeService.getMyHolidaymaker((Employee) employee);
 
             if (notification.getNotificationType().equals(Notification.PERSONNAL)) {

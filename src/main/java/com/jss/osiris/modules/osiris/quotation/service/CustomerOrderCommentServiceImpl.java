@@ -55,9 +55,9 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         customerOrderComment.setComment(contentComment);
 
         IOsirisUser employee = employeeService.getCurrentEmployee();
-        if (employee instanceof Employee)
+        if (employee != null && employee instanceof Employee)
             customerOrderComment.setEmployee((Employee) employee);
-        if (employee instanceof Responsable)
+        if (employee != null && employee instanceof Responsable)
             customerOrderComment.setCurrentCustomer((Responsable) employee);
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);

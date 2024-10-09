@@ -210,7 +210,8 @@ public class ReportingController {
 		if (userReporting == null)
 			throw new OsirisValidationException("userReportingId");
 
-		if (!userReporting.getEmployee().getId().equals(employeeService.getCurrentEmployee().getId())
+		if (employeeService.getCurrentEmployee() != null
+				&& !userReporting.getEmployee().getId().equals(employeeService.getCurrentEmployee().getId())
 				&& activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP))
 			throw new OsirisValidationException("forbidden");
 

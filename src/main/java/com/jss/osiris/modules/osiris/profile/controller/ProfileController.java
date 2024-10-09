@@ -64,7 +64,7 @@ public class ProfileController {
 	@GetMapping(inputEntryPoint + "/user")
 	public ResponseEntity<Employee> getMyUsername() throws OsirisClientMessageException {
 		IOsirisUser employee = employeeService.getCurrentEmployee();
-		if (employee instanceof Responsable)
+		if (employee == null || employee instanceof Responsable)
 			throw new OsirisClientMessageException("wrong id type");
 		return new ResponseEntity<Employee>(employeeService.getEmployee(employee.getId()), HttpStatus.OK);
 	}

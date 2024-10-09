@@ -55,11 +55,6 @@ public class MyJssProfileController {
 	private LocalDateTime lastFloodFlush = LocalDateTime.now();
 	private int floodFlushDelayMinute = 1;
 
-	@GetMapping(inputEntryPoint + "/login/check")
-	public ResponseEntity<Boolean> checkLogin() {
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/user")
 	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<IOsirisUser> getMyUsername() throws OsirisClientMessageException {
@@ -67,67 +62,68 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/login/token/send")
-	public ResponseEntity<String> sendTokenToResponsable(@RequestParam Integer userId, HttpServletRequest request)
+	public ResponseEntity<String> sendTokenToResponsable(@RequestParam String mail, HttpServletRequest request)
 			throws OsirisException {
 		ResponseEntity<String> isFlood = detectFlood(request);
 		if (isFlood != null)
 			return isFlood;
 
-		Responsable responsable = responsableService.getResponsable(userId);
-		if (responsable == null) {
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("Location", "/login/token/send/error");
-			return new ResponseEntity<String>(headers, HttpStatus.FOUND);
-		}
+		Responsable responsable = responsableService.getResponsableByMail(mail);
+
+		if (responsable == null)
+			return new ResponseEntity<String>("", HttpStatus.OK);
+
 		employeeService.sendTokenToResponsable(responsable);
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Location", "/login/token/send/success");
-		return new ResponseEntity<String>(headers, HttpStatus.FOUND);
+		return new ResponseEntity<String>("", HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/login/signout")
+	public ResponseEntity<String> signOut(HttpServletRequest request)
+			throws OsirisException {
+		SecurityContextHolder.getContext().setAuthentication(null);
+		HttpSession session = request.getSession();
+		session.invalidate();
+		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/login")
 	public ResponseEntity<String> login(@RequestParam Integer userId, @RequestParam String aToken,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws OsirisClientMessageException {
 
 		ResponseEntity<String> isFlood = detectFlood(request);
 		if (isFlood != null)
 			return isFlood;
 
-		try {
-			Responsable responsable = responsableService.getResponsable(userId);
-			if (responsable == null)
-				throw new OsirisClientMessageException("Identifiant incorrect");
+		if (employeeService.getCurrentEmployee() != null)
+			return new ResponseEntity<String>("", HttpStatus.OK);
 
-			if (responsable.getLoginTokenExpirationDateTime().isBefore(LocalDateTime.now()))
-				throw new OsirisClientMessageException(
-						"Identification expirée, veuillez renouveler votre demande de connexion");
+		Responsable responsable = responsableService.getResponsable(userId);
+		if (responsable == null)
+			throw new OsirisClientMessageException("Identifiant incorrect");
 
-			String token = responsable.getLoginToken();
-			if (aToken.equals(token)) {
-				Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null,
-						AuthorityUtils.createAuthorityList(ActiveDirectoryHelper.MYJSS_USER_GROUP));
+		if (responsable.getLoginTokenExpirationDateTime().isBefore(LocalDateTime.now()))
+			throw new OsirisClientMessageException(
+					"Identification expirée, veuillez renouveler votre demande de connexion");
 
-				SecurityContext securityContext = SecurityContextHolder.getContext();
-				securityContext.setAuthentication(authentication);
+		String token = responsable.getLoginToken();
+		if (aToken.equals(token)) {
+			Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null,
+					AuthorityUtils.createAuthorityList(ActiveDirectoryHelper.MYJSS_USER_GROUP));
 
-				HttpSession session = request.getSession(true);
-				session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+			SecurityContext securityContext = SecurityContextHolder.getContext();
+			securityContext.setAuthentication(authentication);
 
-				responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().minusSeconds(1));
-				responsableService.addOrUpdateResponsable(responsable);
+			HttpSession session = request.getSession(true);
+			session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
-				HttpHeaders headers = new HttpHeaders();
-				headers.add("Location", "/login/success");
-				return new ResponseEntity<String>(headers, HttpStatus.FOUND);
-			}
-			SecurityContextHolder.getContext().setAuthentication(null);
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("Location", "/login/error");
-			return new ResponseEntity<String>(headers, HttpStatus.FOUND);
-		} catch (Exception e) {
-			SecurityContextHolder.getContext().setAuthentication(null);
-			return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.BAD_REQUEST);
+			responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().minusSeconds(1));
+			responsableService.addOrUpdateResponsable(responsable);
+
+			return new ResponseEntity<String>("", HttpStatus.OK);
 		}
+		SecurityContextHolder.getContext().setAuthentication(null);
+		throw new OsirisClientMessageException(
+				"Identification expirée, veuillez renouveler votre demande de connexion");
 	}
 
 	@GetMapping(inputEntryPoint + "/login/roles")
