@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingItem;
@@ -47,14 +48,14 @@ public class InvoiceItem implements Serializable, IId {
 
 	private Boolean isGifted;
 
-	@Column(scale = 2)
-	private Double preTaxPrice;
-	@Column(scale = 2)
-	private Double preTaxPriceReinvoiced;
-	@Column(scale = 2)
-	private Double vatPrice;
-	@Column(scale = 2)
-	private Double discountAmount;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal preTaxPrice;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal preTaxPriceReinvoiced;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal vatPrice;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal discountAmount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
@@ -103,27 +104,27 @@ public class InvoiceItem implements Serializable, IId {
 		this.billingItem = billingItem;
 	}
 
-	public Double getPreTaxPrice() {
+	public BigDecimal getPreTaxPrice() {
 		return preTaxPrice;
 	}
 
-	public void setPreTaxPrice(Double preTaxPrice) {
+	public void setPreTaxPrice(BigDecimal preTaxPrice) {
 		this.preTaxPrice = preTaxPrice;
 	}
 
-	public Double getVatPrice() {
+	public BigDecimal getVatPrice() {
 		return vatPrice;
 	}
 
-	public void setVatPrice(Double vatPrice) {
+	public void setVatPrice(BigDecimal vatPrice) {
 		this.vatPrice = vatPrice;
 	}
 
-	public Double getDiscountAmount() {
+	public BigDecimal getDiscountAmount() {
 		return discountAmount;
 	}
 
-	public void setDiscountAmount(Double discountAmount) {
+	public void setDiscountAmount(BigDecimal discountAmount) {
 		this.discountAmount = discountAmount;
 	}
 
@@ -167,11 +168,11 @@ public class InvoiceItem implements Serializable, IId {
 		this.isGifted = isGifted;
 	}
 
-	public Double getPreTaxPriceReinvoiced() {
+	public BigDecimal getPreTaxPriceReinvoiced() {
 		return preTaxPriceReinvoiced;
 	}
 
-	public void setPreTaxPriceReinvoiced(Double preTaxPriceReinvoiced) {
+	public void setPreTaxPriceReinvoiced(BigDecimal preTaxPriceReinvoiced) {
 		this.preTaxPriceReinvoiced = preTaxPriceReinvoiced;
 	}
 

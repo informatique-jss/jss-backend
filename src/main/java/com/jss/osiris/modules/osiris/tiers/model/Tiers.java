@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.tiers.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -182,10 +183,10 @@ public class Tiers implements IAttachment, IId {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	@Column(scale = 2)
-	private Double rffFormaliteRate;
-	@Column(scale = 2)
-	private Double rffInsertionRate;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal rffFormaliteRate;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal rffInsertionRate;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -534,19 +535,19 @@ public class Tiers implements IAttachment, IId {
 		return paymentIban;
 	}
 
-	public Double getRffFormaliteRate() {
+	public BigDecimal getRffFormaliteRate() {
 		return rffFormaliteRate;
 	}
 
-	public void setRffFormaliteRate(Double rffFormaliteRate) {
+	public void setRffFormaliteRate(BigDecimal rffFormaliteRate) {
 		this.rffFormaliteRate = rffFormaliteRate;
 	}
 
-	public Double getRffInsertionRate() {
+	public BigDecimal getRffInsertionRate() {
 		return rffInsertionRate;
 	}
 
-	public void setRffInsertionRate(Double rffInsertionRate) {
+	public void setRffInsertionRate(BigDecimal rffInsertionRate) {
 		this.rffInsertionRate = rffInsertionRate;
 	}
 

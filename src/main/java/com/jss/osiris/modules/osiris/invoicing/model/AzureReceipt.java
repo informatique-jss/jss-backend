@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,8 +25,8 @@ public class AzureReceipt {
 
     private String modelUsed;
 
-    @Column(scale = 2)
-    private Double globalDocumentConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal globalDocumentConfidence;
 
     @OneToMany(mappedBy = "azureReceipt", cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = { "azureReceipt" }, allowSetters = true)
@@ -53,11 +54,11 @@ public class AzureReceipt {
         this.modelUsed = modelUsed;
     }
 
-    public Double getGlobalDocumentConfidence() {
+    public BigDecimal getGlobalDocumentConfidence() {
         return globalDocumentConfidence;
     }
 
-    public void setGlobalDocumentConfidence(Double globalDocumentConfidence) {
+    public void setGlobalDocumentConfidence(BigDecimal globalDocumentConfidence) {
         this.globalDocumentConfidence = globalDocumentConfidence;
     }
 

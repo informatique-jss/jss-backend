@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.osiris.accounting.service;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
@@ -89,8 +91,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       boolean byPassOperationDateTimeCheck) throws OsirisException {
     // Do not save null or 0 € records
     if (accountingRecord.getId() == null
-        && (accountingRecord.getCreditAmount() == null || accountingRecord.getCreditAmount() == 0f)
-        && (accountingRecord.getDebitAmount() == null || accountingRecord.getDebitAmount() == 0f))
+        && (accountingRecord.getCreditAmount() == null
+            || accountingRecord.getCreditAmount().compareTo(BigDecimal.ZERO) == 0)
+        && (accountingRecord.getDebitAmount() == null
+            || accountingRecord.getDebitAmount().compareTo(BigDecimal.ZERO) == 0))
       return null;
 
     if (!byPassOperationDateTimeCheck)
@@ -386,15 +390,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         .findByTemporaryOperationId(inAccountingRecord.getTemporaryOperationId());
 
     if (accountingRecords != null) {
-      Double balance = 0.0;
+      BigDecimal balance = new BigDecimal(0);
       for (AccountingRecord accountingRecord : accountingRecords) {
         if (accountingRecord.getCreditAmount() != null)
-          balance += accountingRecord.getCreditAmount();
+          balance = balance.add(accountingRecord.getCreditAmount());
         if (accountingRecord.getDebitAmount() != null)
-          balance -= accountingRecord.getDebitAmount();
+          balance = balance.subtract(accountingRecord.getDebitAmount());
       }
 
-      if (Math.abs(Math.round(balance * 100.0)) > 1)
+      if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).abs()
+          .compareTo(new BigDecimal(1)) > 0)
         throw new OsirisValidationException("Balance not null");
 
       accountingRecordRepository.deleteAll(accountingRecords);
@@ -408,7 +413,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       throws OsirisValidationException, OsirisClientMessageException, OsirisException {
 
     Integer lastAccountId = null;
-    Double balance = 0.0;
+    BigDecimal balance = new BigDecimal(0);
     ArrayList<AccountingRecord> fetchRecords = new ArrayList<AccountingRecord>();
 
     for (AccountingRecord record : accountingRecords) {
@@ -423,12 +428,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
       lastAccountId = fetchRecord.getAccountingAccount().getId();
       if (record.getCreditAmount() != null)
-        balance += record.getCreditAmount();
+        balance = balance.add(record.getCreditAmount());
       if (record.getDebitAmount() != null)
-        balance -= record.getDebitAmount();
+        balance = balance.subtract(record.getDebitAmount());
 
     }
-    if (Math.abs(Math.round(balance * 100f)) > 1)
+    if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).abs().compareTo(new BigDecimal(1)) > 0)
       throw new OsirisValidationException("Balance not null");
 
     // Lettering

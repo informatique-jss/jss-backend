@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,9 +60,9 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@IndexedField
 	private LocalDateTime paymentDate;
 
-	@Column(nullable = false, scale = 2)
+	@Column(nullable = false, precision = 15, scale = 2)
 	@IndexedField
-	private Double paymentAmount;
+	private BigDecimal paymentAmount;
 
 	@OneToMany(mappedBy = "payment")
 	@JsonIgnoreProperties(value = { "payment" }, allowSetters = true)
@@ -170,11 +171,11 @@ public class Payment implements Serializable, IId, ICreatedDate {
 		this.paymentDate = paymentDate;
 	}
 
-	public Double getPaymentAmount() {
+	public BigDecimal getPaymentAmount() {
 		return paymentAmount;
 	}
 
-	public void setPaymentAmount(Double paymentAmount) {
+	public void setPaymentAmount(BigDecimal paymentAmount) {
 		this.paymentAmount = paymentAmount;
 	}
 

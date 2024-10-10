@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public Refund refundPayment(Tiers tiersRefund, Affaire affaireRefund, Tiers tiersOrder, Payment payment,
-            Double amount, CustomerOrder customerOrder)
+            BigDecimal amount, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (payment == null)
             throw new OsirisClientMessageException("Paiment annulé");
@@ -188,7 +189,8 @@ public class RefundServiceImpl implements RefundService {
         this.addOrUpdateRefund(refund);
 
         refund.setPayments(new ArrayList<Payment>());
-        refund.getPayments().add(paymentService.generateNewRefundPayment(refund, -amount, refund.getTiers(), payment));
+        refund.getPayments()
+                .add(paymentService.generateNewRefundPayment(refund, amount.negate(), refund.getTiers(), payment));
         if (customerOrder == null) // If it's a payment / appoint refund
             paymentService.cancelAppoint(payment);
 

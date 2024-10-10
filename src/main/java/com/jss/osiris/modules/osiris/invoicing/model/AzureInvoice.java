@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,8 +37,8 @@ public class AzureInvoice {
     @Column(length = 2500)
     private String modelUsed;
 
-    @Column(scale = 2)
-    private Double globalDocumentConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+    private BigDecimal globalDocumentConfidence;
 
     @Column(length = 2500)
     private String customerId;
@@ -50,36 +51,36 @@ public class AzureInvoice {
     @IndexedField
     private String invoiceId;
 
-    @Column(scale = 2)
-    private Double invoiceTotal;
-    @Column(scale = 2)
-    private Double invoicePreTaxTotal;
-    @Column(scale = 2)
-    private Double invoiceTaxTotal;
-    @Column(scale = 2)
-    private Double invoiceNonTaxableTotal;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoiceTotal;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoicePreTaxTotal;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoiceTaxTotal;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoiceNonTaxableTotal;
 
     @Column(length = 2500)
     private String vendorTaxId;
 
-    @Column(scale = 2)
-    private Double customerIdConfidence;
-    @Column(scale = 2)
-    private Double referenceConfidence;
-    @Column(scale = 2)
-    private Double invoiceDateConfidence;
-    @Column(scale = 2)
-    private Double invoiceIdConfidence;
-    @Column(scale = 2)
-    private Double invoiceTotalConfidence;
-    @Column(scale = 2)
-    private Double invoicePreTaxTotalConfidence;
-    @Column(scale = 2)
-    private Double invoiceTaxTotalConfidence;
-    @Column(scale = 2)
-    private Double invoiceNonTaxableTotalConfidence;
-    @Column(scale = 2)
-    private Double vendorTaxIdConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal customerIdConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal referenceConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoiceDateConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoiceIdConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoiceTotalConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoicePreTaxTotalConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoiceTaxTotalConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoiceNonTaxableTotalConfidence;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal vendorTaxIdConfidence;
 
     @OneToMany(mappedBy = "azureInvoice")
     @JsonIgnoreProperties(value = { "attachments", "provision", "customerOrderForInboundInvoice", "accountingRecords",
@@ -138,35 +139,35 @@ public class AzureInvoice {
         this.invoiceId = invoiceId;
     }
 
-    public Double getInvoiceTotal() {
+    public BigDecimal getInvoiceTotal() {
         return invoiceTotal;
     }
 
-    public void setInvoiceTotal(Double invoiceTotal) {
+    public void setInvoiceTotal(BigDecimal invoiceTotal) {
         this.invoiceTotal = invoiceTotal;
     }
 
-    public Double getInvoicePreTaxTotal() {
+    public BigDecimal getInvoicePreTaxTotal() {
         return invoicePreTaxTotal;
     }
 
-    public void setInvoicePreTaxTotal(Double invoicePreTaxTotal) {
+    public void setInvoicePreTaxTotal(BigDecimal invoicePreTaxTotal) {
         this.invoicePreTaxTotal = invoicePreTaxTotal;
     }
 
-    public Double getInvoiceTaxTotal() {
+    public BigDecimal getInvoiceTaxTotal() {
         return invoiceTaxTotal;
     }
 
-    public void setInvoiceTaxTotal(Double invoiceTaxTotal) {
+    public void setInvoiceTaxTotal(BigDecimal invoiceTaxTotal) {
         this.invoiceTaxTotal = invoiceTaxTotal;
     }
 
-    public Double getInvoiceNonTaxableTotal() {
+    public BigDecimal getInvoiceNonTaxableTotal() {
         return invoiceNonTaxableTotal;
     }
 
-    public void setInvoiceNonTaxableTotal(Double invoiceNonTaxableTotal) {
+    public void setInvoiceNonTaxableTotal(BigDecimal invoiceNonTaxableTotal) {
         this.invoiceNonTaxableTotal = invoiceNonTaxableTotal;
     }
 
@@ -178,75 +179,75 @@ public class AzureInvoice {
         this.vendorTaxId = vendorTaxId;
     }
 
-    public Double getCustomerIdConfidence() {
+    public BigDecimal getCustomerIdConfidence() {
         return customerIdConfidence;
     }
 
-    public void setCustomerIdConfidence(Double customerIdConfidence) {
+    public void setCustomerIdConfidence(BigDecimal customerIdConfidence) {
         this.customerIdConfidence = customerIdConfidence;
     }
 
-    public Double getReferenceConfidence() {
+    public BigDecimal getReferenceConfidence() {
         return referenceConfidence;
     }
 
-    public void setReferenceConfidence(Double referenceConfidence) {
+    public void setReferenceConfidence(BigDecimal referenceConfidence) {
         this.referenceConfidence = referenceConfidence;
     }
 
-    public Double getInvoiceDateConfidence() {
+    public BigDecimal getInvoiceDateConfidence() {
         return invoiceDateConfidence;
     }
 
-    public void setInvoiceDateConfidence(Double invoiceDateConfidence) {
+    public void setInvoiceDateConfidence(BigDecimal invoiceDateConfidence) {
         this.invoiceDateConfidence = invoiceDateConfidence;
     }
 
-    public Double getInvoiceIdConfidence() {
+    public BigDecimal getInvoiceIdConfidence() {
         return invoiceIdConfidence;
     }
 
-    public void setInvoiceIdConfidence(Double invoiceIdConfidence) {
+    public void setInvoiceIdConfidence(BigDecimal invoiceIdConfidence) {
         this.invoiceIdConfidence = invoiceIdConfidence;
     }
 
-    public Double getInvoiceTotalConfidence() {
+    public BigDecimal getInvoiceTotalConfidence() {
         return invoiceTotalConfidence;
     }
 
-    public void setInvoiceTotalConfidence(Double invoiceTotalConfidence) {
+    public void setInvoiceTotalConfidence(BigDecimal invoiceTotalConfidence) {
         this.invoiceTotalConfidence = invoiceTotalConfidence;
     }
 
-    public Double getInvoicePreTaxTotalConfidence() {
+    public BigDecimal getInvoicePreTaxTotalConfidence() {
         return invoicePreTaxTotalConfidence;
     }
 
-    public void setInvoicePreTaxTotalConfidence(Double invoicePreTaxTotalConfidence) {
+    public void setInvoicePreTaxTotalConfidence(BigDecimal invoicePreTaxTotalConfidence) {
         this.invoicePreTaxTotalConfidence = invoicePreTaxTotalConfidence;
     }
 
-    public Double getInvoiceTaxTotalConfidence() {
+    public BigDecimal getInvoiceTaxTotalConfidence() {
         return invoiceTaxTotalConfidence;
     }
 
-    public void setInvoiceTaxTotalConfidence(Double invoiceTaxTotalConfidence) {
+    public void setInvoiceTaxTotalConfidence(BigDecimal invoiceTaxTotalConfidence) {
         this.invoiceTaxTotalConfidence = invoiceTaxTotalConfidence;
     }
 
-    public Double getInvoiceNonTaxableTotalConfidence() {
+    public BigDecimal getInvoiceNonTaxableTotalConfidence() {
         return invoiceNonTaxableTotalConfidence;
     }
 
-    public void setInvoiceNonTaxableTotalConfidence(Double invoiceNonTaxableTotalConfidence) {
+    public void setInvoiceNonTaxableTotalConfidence(BigDecimal invoiceNonTaxableTotalConfidence) {
         this.invoiceNonTaxableTotalConfidence = invoiceNonTaxableTotalConfidence;
     }
 
-    public Double getVendorTaxIdConfidence() {
+    public BigDecimal getVendorTaxIdConfidence() {
         return vendorTaxIdConfidence;
     }
 
-    public void setVendorTaxIdConfidence(Double vendorTaxIdConfidence) {
+    public void setVendorTaxIdConfidence(BigDecimal vendorTaxIdConfidence) {
         this.vendorTaxIdConfidence = vendorTaxIdConfidence;
     }
 
@@ -274,11 +275,11 @@ public class AzureInvoice {
         this.modelUsed = modelUsed;
     }
 
-    public Double getGlobalDocumentConfidence() {
+    public BigDecimal getGlobalDocumentConfidence() {
         return globalDocumentConfidence;
     }
 
-    public void setGlobalDocumentConfidence(Double globalDocumentConfidence) {
+    public void setGlobalDocumentConfidence(BigDecimal globalDocumentConfidence) {
         this.globalDocumentConfidence = globalDocumentConfidence;
     }
 

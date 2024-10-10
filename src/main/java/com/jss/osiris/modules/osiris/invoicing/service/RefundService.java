@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -26,7 +27,7 @@ public interface RefundService {
         public void reindexRefunds() throws OsirisException;
 
         public Refund refundPayment(Tiers tiersRefund, Affaire affaireRefund, Tiers tiersOrder,
-                        Payment payment, Double amount, CustomerOrder customerOrder)
+                        Payment payment, BigDecimal amount, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public File getRefundExport(RefundSearch refundSearch)

@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -21,17 +23,17 @@ public class RubriqueInfogreffe {
     private Integer id;
     private String code;
 
-    @Column(scale = 2)
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
     @JsonProperty("montantHT")
-    private Double montantHt;
+    private BigDecimal montantHt;
 
-    @Column(scale = 2)
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
     @JsonProperty("montantTva")
-    private Double montantTva;
+    private BigDecimal montantTva;
 
-    @Column(scale = 2)
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
     @JsonProperty("montantTtc")
-    private Double montantTtc;
+    private BigDecimal montantTtc;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_montant_formalite_infogreffe")
@@ -62,27 +64,27 @@ public class RubriqueInfogreffe {
         this.montantInfogreffe = montantInfogreffe;
     }
 
-    public Double getMontantHt() {
+    public BigDecimal getMontantHt() {
         return montantHt;
     }
 
-    public void setMontantHt(Double montantHt) {
+    public void setMontantHt(BigDecimal montantHt) {
         this.montantHt = montantHt;
     }
 
-    public Double getMontantTva() {
+    public BigDecimal getMontantTva() {
         return montantTva;
     }
 
-    public void setMontantTva(Double montantTva) {
+    public void setMontantTva(BigDecimal montantTva) {
         this.montantTva = montantTva;
     }
 
-    public Double getMontantTtc() {
+    public BigDecimal getMontantTtc() {
         return montantTtc;
     }
 
-    public void setMontantTtc(Double montantTtc) {
+    public void setMontantTtc(BigDecimal montantTtc) {
         this.montantTtc = montantTtc;
     }
 

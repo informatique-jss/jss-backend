@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
@@ -32,8 +34,8 @@ public class AzureReceiptInvoice implements IId {
 
     private String invoiceId;
 
-    @Column(scale = 2)
-    private Double invoiceTotal;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal invoiceTotal;
     private Boolean isReconciliated;
 
     public Integer getId() {
@@ -52,11 +54,11 @@ public class AzureReceiptInvoice implements IId {
         this.invoiceId = invoiceId;
     }
 
-    public Double getInvoiceTotal() {
+    public BigDecimal getInvoiceTotal() {
         return invoiceTotal;
     }
 
-    public void setInvoiceTotal(Double invoiceTotal) {
+    public void setInvoiceTotal(BigDecimal invoiceTotal) {
         this.invoiceTotal = invoiceTotal;
     }
 

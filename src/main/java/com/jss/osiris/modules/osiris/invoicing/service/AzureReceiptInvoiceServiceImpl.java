@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,8 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 
 @Service
 public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceService {
+
+    BigDecimal oneHundredConstant = new BigDecimal(100);
 
     @Autowired
     AzureReceiptInvoiceRepository azureReceiptInvoiceRepository;
@@ -79,8 +82,9 @@ public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceServic
         List<Invoice> finalInvoices = new ArrayList<Invoice>();
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices)
-                if ((Math.round(invoice.getTotalPrice() * 100f)
-                        / 100f) == (Math.round(azureReceiptInvoice.getInvoiceTotal() * 100f) / 100f))
+                if (((invoice.getTotalPrice().multiply(oneHundredConstant)).setScale(0).divide(
+                        oneHundredConstant)) == ((azureReceiptInvoice.getInvoiceTotal().multiply(oneHundredConstant))
+                                .setScale(0).divide(oneHundredConstant)))
                     finalInvoices.add(invoice);
 
         status.setInvoices(finalInvoices);
@@ -100,8 +104,10 @@ public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceServic
         List<AzureInvoice> finalAzureInvoices = new ArrayList<AzureInvoice>();
         if (azureInvoices != null && azureInvoices.size() > 0)
             for (AzureInvoice invoice : azureInvoices)
-                if (invoice.getIsDisabled() == false && (Math.round(invoice.getInvoiceTotal() * 100f)
-                        / 100f) == (Math.round(azureReceiptInvoice.getInvoiceTotal() * 100f) / 100f))
+                if (invoice.getIsDisabled() == false
+                        && (((invoice.getInvoiceTotal().multiply(oneHundredConstant)).divide(oneHundredConstant))
+                                .setScale(0) == ((azureReceiptInvoice.getInvoiceTotal().multiply(oneHundredConstant))
+                                        .setScale(0)).divide(oneHundredConstant)))
                     finalAzureInvoices.add(invoice);
 
         status.setAzureInvoices(finalAzureInvoices);

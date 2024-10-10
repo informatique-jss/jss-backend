@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -76,6 +77,10 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class GeneratePdfDelegate {
+
+    private BigDecimal oneHundredValue = new BigDecimal(100);
+    private BigDecimal zeroValue = new BigDecimal(0);
+
     @Autowired
     PictureHelper pictureHelper;
 
@@ -352,11 +357,18 @@ public class GeneratePdfDelegate {
 
         if (billingClosureValues != null && billingClosureValues.size() > 0)
             for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
-                balance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount() : 0;
-                creditBalance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount()
+                balance += billingClosureValue.getCreditAmount() != null
+                        ? billingClosureValue.getCreditAmount().doubleValue()
                         : 0;
-                balance -= billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
-                debitBalance += billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
+                creditBalance += billingClosureValue.getCreditAmount() != null
+                        ? billingClosureValue.getCreditAmount().doubleValue()
+                        : 0;
+                balance -= billingClosureValue.getDebitAmount() != null
+                        ? billingClosureValue.getDebitAmount().doubleValue()
+                        : 0;
+                debitBalance += billingClosureValue.getDebitAmount() != null
+                        ? billingClosureValue.getDebitAmount().doubleValue()
+                        : 0;
             }
         ctx.setVariable("balance", balance);
         ctx.setVariable("creditBalance", creditBalance);
@@ -440,7 +452,8 @@ public class GeneratePdfDelegate {
             throw new OsirisException("null invoice");
 
         ctx.setVariable("preTaxPriceTotal", invoiceHelper.getPreTaxPriceTotal(invoice));
-        if (Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0)
+        if (invoiceHelper.getDiscountTotal(invoice).multiply(oneHundredValue).setScale(0).divide(oneHundredValue)
+                .compareTo(zeroValue) > 0)
             ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
 
         // Group debouts for asso invoice item debours
@@ -466,16 +479,17 @@ public class GeneratePdfDelegate {
             ctx.setVariable("invoiceItems", invoice.getInvoiceItems());
         }
 
-        ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getPreTaxPriceTotal(invoice)
-                - (invoiceHelper.getDiscountTotal(invoice) != null
-                        && Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0
-                                ? invoiceHelper.getDiscountTotal(invoice)
-                                : 0f));
+        ctx.setVariable("preTaxPriceTotalWithDicount",
+                invoiceHelper.getPreTaxPriceTotal(invoice).subtract(invoiceHelper.getDiscountTotal(invoice)) != null
+                        && invoiceHelper.getDiscountTotal(invoice).multiply(oneHundredValue).setScale(0)
+                                .divide(oneHundredValue).compareTo(zeroValue) > 0
+                                        ? invoiceHelper.getDiscountTotal(invoice)
+                                        : zeroValue);
         ArrayList<VatMail> vats = null;
         Double vatTotal = 0.0;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
             if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null) {
-                vatTotal += invoiceItem.getVatPrice();
+                vatTotal += invoiceItem.getVatPrice().doubleValue();
                 if (vats == null)
                     vats = new ArrayList<VatMail>();
                 boolean vatFound = false;
@@ -485,11 +499,13 @@ public class GeneratePdfDelegate {
                         if (vatMail.getTotal() == null && invoiceItem.getVatPrice() != null) {
                             vatMail.setTotal(invoiceItem.getVatPrice());
                             vatMail.setBase(invoiceItem.getPreTaxPrice()
-                                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
+                                    .subtract(invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                                            : zeroValue));
                         } else if (invoiceItem.getVatPrice() != null) {
-                            vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
-                            vatMail.setBase(vatMail.getBase() + invoiceItem.getPreTaxPrice()
-                                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
+                            vatMail.setTotal(vatMail.getTotal().add(invoiceItem.getVatPrice()));
+                            vatMail.setBase(vatMail.getBase().add(invoiceItem.getPreTaxPrice())
+                                    .subtract((invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                                            : zeroValue)));
                         }
                     }
                 }
@@ -498,14 +514,16 @@ public class GeneratePdfDelegate {
                     vatmail.setTotal(invoiceItem.getVatPrice());
                     vatmail.setLabel(invoiceItem.getVat().getLabel());
                     vatmail.setBase(invoiceItem.getPreTaxPrice()
-                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
+                            .subtract(invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                                    : zeroValue));
                     vats.add(vatmail);
                 }
             }
         }
 
         ctx.setVariable("vats", vats);
-        ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
+        ctx.setVariable("priceTotal",
+                invoiceHelper.getPriceTotal(invoice).multiply(oneHundredValue).setScale(0).divide(oneHundredValue));
         ctx.setVariable("invoice", invoice);
         ctx.setVariable("isPrelevementType", false);
         if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId()))
@@ -539,7 +557,7 @@ public class GeneratePdfDelegate {
 
             ctx.setVariable("customerOrder", customerOrder);
 
-            Double remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            BigDecimal remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
             ArrayList<Payment> invoicePayment = new ArrayList<Payment>();
             if (invoice.getPayments() != null)
                 for (Payment payment : invoice.getPayments()) {
@@ -551,7 +569,7 @@ public class GeneratePdfDelegate {
                 for (Payment payment : customerOrder.getPayments())
                     if (!payment.getIsCancelled()) {
                         invoicePayment.add(payment);
-                        remainingToPay -= payment.getPaymentAmount();
+                        remainingToPay = remainingToPay.subtract(payment.getPaymentAmount());
                     }
 
             if (invoicePayment.size() > 0)
@@ -560,8 +578,8 @@ public class GeneratePdfDelegate {
             if (invoice.getCustomerOrder() != null && invoice.getCustomerOrder().getRefunds() != null)
                 ctx.setVariable("refunds", invoice.getCustomerOrder().getRefunds());
 
-            if (remainingToPay != null && remainingToPay >= 0
-                    && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))
+            if (remainingToPay != null && remainingToPay.compareTo(zeroValue) >= 0
+                    && remainingToPay.compareTo(BigDecimal.valueOf(Float.parseFloat(payementLimitRefundInEuros))) >= 0)
                 ctx.setVariable("remainingToPay", remainingToPay);
 
             ctx.setVariable("quotation",
@@ -569,9 +587,9 @@ public class GeneratePdfDelegate {
                             ? customerOrder.getQuotations().get(0)
                             : null);
         } else {
-            Double remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
-            if (remainingToPay != null && remainingToPay >= 0
-                    && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))
+            BigDecimal remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            if (remainingToPay != null && remainingToPay.compareTo(zeroValue) >= 0
+                    && remainingToPay.compareTo(BigDecimal.valueOf(Float.parseFloat(payementLimitRefundInEuros))) > 0)
                 ctx.setVariable("remainingToPay", remainingToPay);
         }
 
@@ -639,26 +657,26 @@ public class GeneratePdfDelegate {
                             if (invoiceItemNonTaxable == null) {
                                 invoiceItemNonTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
                                 if (invoiceItemNonTaxable.getDiscountAmount() == null)
-                                    invoiceItemNonTaxable.setDiscountAmount(0.0);
+                                    invoiceItemNonTaxable.setDiscountAmount(zeroValue);
                             } else {
                                 invoiceItemNonTaxable.setPreTaxPrice(
-                                        invoiceItemNonTaxable.getPreTaxPrice() + invoiceItem.getPreTaxPrice());
+                                        invoiceItemNonTaxable.getPreTaxPrice().add(invoiceItem.getPreTaxPrice()));
                                 if (invoiceItem.getDiscountAmount() != null)
                                     invoiceItemNonTaxable.setDiscountAmount(invoiceItemNonTaxable.getDiscountAmount()
-                                            + invoiceItem.getDiscountAmount());
+                                            .add(invoiceItem.getDiscountAmount()));
                             }
                         } else {
                             if (invoiceItemTaxable == null) {
                                 invoiceItemTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
                                 ;
                                 if (invoiceItemTaxable.getDiscountAmount() == null)
-                                    invoiceItemTaxable.setDiscountAmount(0.0);
+                                    invoiceItemTaxable.setDiscountAmount(zeroValue);
                             } else {
                                 invoiceItemTaxable.setPreTaxPrice(
-                                        invoiceItemTaxable.getPreTaxPrice() + invoiceItem.getPreTaxPrice());
+                                        invoiceItemTaxable.getPreTaxPrice().add(invoiceItem.getPreTaxPrice()));
                                 if (invoiceItem.getDiscountAmount() != null)
                                     invoiceItemTaxable.setDiscountAmount(invoiceItemTaxable.getDiscountAmount()
-                                            + invoiceItem.getDiscountAmount());
+                                            .add(invoiceItem.getDiscountAmount()));
                             }
                         }
                     } else {

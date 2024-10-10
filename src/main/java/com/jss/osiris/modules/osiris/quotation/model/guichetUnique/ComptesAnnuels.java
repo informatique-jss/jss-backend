@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.math.BigDecimal;
+
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
 import jakarta.persistence.CascadeType;
@@ -27,10 +29,12 @@ public class ComptesAnnuels {
     private boolean petiteEntreprise;
     private boolean associeUniquePresident;
     private boolean activiteCreditOuAssurance;
-    @Column(scale = 2)
-    private Double montantCAAnneePrecedente;
-    @Column(scale = 2)
-    private Double montantTotalBilanAnneePrecedente;
+
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal montantCAAnneePrecedente;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal montantTotalBilanAnneePrecedente;
+
     private boolean activiteProspection;
     private boolean activiteSansConfidentialite;
     private Integer nbSalarie;
@@ -220,19 +224,19 @@ public class ComptesAnnuels {
         this.dateFinExerciceComptable = dateFinExerciceComptable;
     }
 
-    public Double getMontantCAAnneePrecedente() {
+    public BigDecimal getMontantCAAnneePrecedente() {
         return montantCAAnneePrecedente;
     }
 
-    public void setMontantCAAnneePrecedente(Double montantCAAnneePrecedente) {
+    public void setMontantCAAnneePrecedente(BigDecimal montantCAAnneePrecedente) {
         this.montantCAAnneePrecedente = montantCAAnneePrecedente;
     }
 
-    public Double getMontantTotalBilanAnneePrecedente() {
+    public BigDecimal getMontantTotalBilanAnneePrecedente() {
         return montantTotalBilanAnneePrecedente;
     }
 
-    public void setMontantTotalBilanAnneePrecedente(Double montantTotalBilanAnneePrecedente) {
+    public void setMontantTotalBilanAnneePrecedente(BigDecimal montantTotalBilanAnneePrecedente) {
         this.montantTotalBilanAnneePrecedente = montantTotalBilanAnneePrecedente;
     }
 

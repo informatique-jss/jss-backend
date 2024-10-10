@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -46,7 +47,8 @@ public interface PaymentService {
 
         public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment,
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,
-                        Affaire affaireRefund, Tiers tiersRefund, Responsable responsable, List<Double> byPassAmount)
+                        Affaire affaireRefund, Tiers tiersRefund, Responsable responsable,
+                        List<BigDecimal> byPassAmount)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
@@ -80,12 +82,13 @@ public interface PaymentService {
                         Invoice invoice)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
-        public Payment generateNewAccountPayment(Double paymentAmount, AccountingAccount sourceDepositAccountingAccount,
+        public Payment generateNewAccountPayment(BigDecimal paymentAmount,
+                        AccountingAccount sourceDepositAccountingAccount,
                         AccountingAccount targetAccountingAccount,
                         String label)
                         throws OsirisException;
 
-        public Payment generateNewDirectDebitPayment(Double paymentAmount, String label,
+        public Payment generateNewDirectDebitPayment(BigDecimal paymentAmount, String label,
                         DirectDebitTransfert directDebitTransfert) throws OsirisException;
 
         public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
@@ -106,11 +109,11 @@ public interface PaymentService {
 
         public void cancelAppoint(Payment payment) throws OsirisException, OsirisValidationException;
 
-        public Payment generateNewRefundPayment(Refund refund, Double paymentAmount, Tiers tiersToRefund,
+        public Payment generateNewRefundPayment(Refund refund, BigDecimal paymentAmount, Tiers tiersToRefund,
                         Payment paymentToRefund)
                         throws OsirisException;
 
-        public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, Double paymentAmount,
+        public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, BigDecimal paymentAmount,
                         Provider tiersToPay)
                         throws OsirisException;
 
@@ -119,6 +122,6 @@ public interface PaymentService {
         public void putPaymentInAccount(Payment payment, AccountingAccount accountingAccount)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
-        public Payment cutPayment(Payment payment, Double amount)
+        public Payment cutPayment(Payment payment, BigDecimal amount)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 }

@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +34,9 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class AzureInvoiceServiceImpl implements AzureInvoiceService {
+
+    private BigDecimal zeroValue = new BigDecimal(0);
+    private BigDecimal oneHundredValue = new BigDecimal(100);
 
     @Autowired
     AzureInvoiceRepository azureInvoiceRepository;
@@ -140,13 +145,14 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         InvoiceItem invoiceItem = new InvoiceItem();
         invoiceItem.setBillingItem(
                 pricingHelper.getAppliableBillingItem(constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));
-        invoiceItem.setDiscountAmount(0.0);
+        invoiceItem.setDiscountAmount(zeroValue);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
 
         invoiceItem.setLabel(
                 invoiceItem.getBillingItem().getBillingType().getLabel() + (invoice.getProvider().getLabel()));
-        invoiceItem.setPreTaxPrice(Math.round(azureInvoice.getInvoicePreTaxTotal() * 100.0) / 100.0);
+        invoiceItem.setPreTaxPrice(azureInvoice.getInvoicePreTaxTotal().multiply(oneHundredValue)
+                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         if (azureInvoice.getCompetentAuthority() != null)
             vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
@@ -157,14 +163,15 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         InvoiceItem invoiceItem2 = new InvoiceItem();
         invoiceItem2.setBillingItem(
                 pricingHelper.getAppliableBillingItem(constantService.getBillingTypeDeboursNonTaxable(), null));
-        invoiceItem2.setDiscountAmount(0.0);
+        invoiceItem2.setDiscountAmount(zeroValue);
         invoiceItem2.setIsGifted(false);
         invoiceItem2.setIsOverridePrice(false);
         invoiceItem2.setVat(constantService.getVatZero());
 
         invoiceItem2.setLabel(invoiceItem2.getBillingItem().getBillingType().getLabel()
                 + (invoice.getProvider().getLabel()));
-        invoiceItem2.setPreTaxPrice(Math.round(azureInvoice.getInvoiceNonTaxableTotal() * 100.0) / 100.0);
+        invoiceItem2.setPreTaxPrice(azureInvoice.getInvoiceNonTaxableTotal().multiply(oneHundredValue)
+                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue));
         invoiceItem2.setPreTaxPriceReinvoiced(invoiceItem2.getPreTaxPrice());
         if (azureInvoice.getCompetentAuthority() != null)
             vatService.completeVatOnInvoiceItem(invoiceItem2, invoice);

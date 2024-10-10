@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 
@@ -28,8 +29,8 @@ public class Vat implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
-	@Column(scale = 2)
-	private Double rate;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal rate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account")
@@ -51,11 +52,11 @@ public class Vat implements Serializable, IId {
 		this.label = label;
 	}
 
-	public Double getRate() {
+	public BigDecimal getRate() {
 		return rate;
 	}
 
-	public void setRate(Double rate) {
+	public void setRate(BigDecimal rate) {
 		this.rate = rate;
 	}
 

@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.invoicing.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -254,7 +255,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
 
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
-                Payment payment = paymentService.generateNewAccountPayment(-invoice.getTotalPrice(),
+                Payment payment = paymentService.generateNewAccountPayment(invoice.getTotalPrice().negate(),
                         invoice.getProvider().getAccountingAccountDeposit(),
                         invoice.getProvider().getAccountingAccountProvider(),
                         "Paiement pour la facture " + invoice.getId() + " / Fournisseur : "
@@ -602,28 +603,29 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private boolean hasAtLeastOneInvoiceItemNotNull(Invoice invoice) {
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems())
-            if (invoiceItem.getPreTaxPrice() > 0) {
+            if (invoiceItem.getPreTaxPrice().compareTo(BigDecimal.ZERO) > 0) {
                 return true;
             }
         return false;
     }
 
     @Override
-    public Double getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException {
+    public BigDecimal getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException {
         if (invoice != null) {
-            Double total = invoice.getTotalPrice();
+            BigDecimal total = invoice.getTotalPrice();
+            BigDecimal oneHundredValue = new BigDecimal(100);
 
             if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
                 for (Payment payment : invoice.getPayments())
                     if (!payment.getIsCancelled())
                         if (invoice.getProvider() != null)
-                            total -= Math.abs(payment.getPaymentAmount());
+                            total = total.subtract(payment.getPaymentAmount().abs());
                         else
-                            total -= payment.getPaymentAmount();
+                            total = total.subtract(payment.getPaymentAmount());
 
-            return Math.round(total * 100.0) / 100.0;
+            return total.multiply(oneHundredValue).setScale(0).divide(oneHundredValue);
         }
-        return 0.0;
+        return BigDecimal.ZERO;
     }
 
     private Invoice cloneInvoice(Invoice invoice) {

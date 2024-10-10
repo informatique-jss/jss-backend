@@ -786,7 +786,7 @@ public class MiscellaneousController {
         validationHelper.validateReferential(vat.getAccountingAccount(), true, "AccountingAccount");
         validationHelper.validateString(vat.getCode(), true, 20, "Code");
         validationHelper.validateString(vat.getLabel(), true, 100, "Label");
-        validationHelper.validateDouble(vat.getRate(), true, "Rate");
+        validationHelper.validateBigDecimal(vat.getRate(), true, "Rate");
 
         return new ResponseEntity<Vat>(vatService.addOrUpdateVat(vat), HttpStatus.OK);
     }

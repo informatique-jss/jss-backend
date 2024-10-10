@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -28,8 +29,8 @@ public class BillingItem implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type")
 	BillingType billingType;
 
-	@Column(scale = 2)
-	private Double preTaxPrice;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal preTaxPrice;
 
 	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
@@ -51,11 +52,11 @@ public class BillingItem implements Serializable, IId {
 		this.billingType = billingType;
 	}
 
-	public Double getPreTaxPrice() {
+	public BigDecimal getPreTaxPrice() {
 		return preTaxPrice;
 	}
 
-	public void setPreTaxPrice(Double preTaxPrice) {
+	public void setPreTaxPrice(BigDecimal preTaxPrice) {
 		this.preTaxPrice = preTaxPrice;
 	}
 

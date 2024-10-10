@@ -1,13 +1,15 @@
 package com.jss.osiris.libs.mail.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 
 public class VatMail {
     String label;
-    @Column(scale = 2)
-    Double total;
-    @Column(scale = 2)
-    Double base;
+    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+    BigDecimal total;
+    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+    BigDecimal base;
     CustomerMail customerMail;
 
     public String getLabel() {
@@ -18,19 +20,19 @@ public class VatMail {
         this.label = label;
     }
 
-    public Double getTotal() {
+    public BigDecimal getTotal() {
         return total;
     }
 
-    public void setTotal(Double total) {
+    public void setTotal(BigDecimal total) {
         this.total = total;
     }
 
-    public Double getBase() {
+    public BigDecimal getBase() {
         return base;
     }
 
-    public void setBase(Double base) {
+    public void setBase(BigDecimal base) {
         this.base = base;
     }
 
