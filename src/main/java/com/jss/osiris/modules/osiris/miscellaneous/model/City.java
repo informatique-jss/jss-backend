@@ -2,6 +2,10 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.search.model.IndexedField;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,8 +18,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import com.jss.osiris.libs.search.model.IndexedField;
-
 @Entity
 @Table(indexes = { @Index(name = "idx_city_country", columnList = "id_country") })
 public class City implements Serializable, IId {
@@ -25,17 +27,21 @@ public class City implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "city_sequence", sequenceName = "city_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "city_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
 	@Column(nullable = false, length = 20)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
 
 	@Column(length = 10)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String postalCode;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -44,6 +50,7 @@ public class City implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Country country;
 
 	public Integer getId() {

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT } from '../modules/my-account/model/AccountMenuItem';
+import { ResponsableService } from '../modules/profile/services/responsable.service';
+import { UserScopeService } from '../modules/profile/services/user.scope.service';
 import { Toast } from './toast/Toast';
 
 @Injectable({
@@ -14,6 +16,8 @@ export class AppService {
 
   constructor(
     private router: Router,
+    private userScopeService: UserScopeService,
+    private responsableService: ResponsableService
   ) { }
 
   displayToast(message: string, isError: boolean, title: string, delayInMili: number) {
@@ -50,7 +54,14 @@ export class AppService {
 
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
-    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Vue d'ensemble", iconClass: "ai-user-check", route: "/account/overview" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Tableau de bord", iconClass: "ai-user-check", route: "/account/overview" } as AccountMenuItem);
+
+
+    // Display only if I have more than one responsible potential
+    this.responsableService.getPotentialUserScope().subscribe(response => {
+      if (response.length > 1)
+        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Vue d'ensemble", iconClass: "ai-grid", route: "/account/scope" } as AccountMenuItem);
+    })
     return menuItem;
   }
 

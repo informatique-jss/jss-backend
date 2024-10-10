@@ -3,6 +3,10 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,20 +15,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Entity
 public class SpecialOffer implements Serializable, IId {
 
 	@Id
 	@SequenceGenerator(name = "special_offer_sequence", sequenceName = "special_offer_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "special_offer_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
 	@Column(nullable = false, length = 20)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
 
 	@OneToMany(targetEntity = AssoSpecialOfferBillingType.class, mappedBy = "specialOffer")

@@ -135,66 +135,30 @@
         <a class="nav-link text-body-secondary fs-sm fw-normal ps-0 pe-2 py-2 me-4" href="#">Privacy</a>
         <a class="nav-link text-body-secondary fs-sm fw-normal ps-0 pe-2 py-2 me-sm-4" href="#">Terms of use</a>
       </nav>
-
-      <!-- Language / currency switcher -->
-      <div class="dropdown mb-4">
-        <button class="btn btn-outline-secondary dropdown-toggle px-4" type="button" data-bs-toggle="dropdown"
-          data-bs-auto-close="outside" aria-expanded="false"><img class="me-2" src="assets/img/flags/en.png" width="18"
-            alt="English / USD">Eng / USD</button>
-        <div class="dropdown-menu dropdown-menu-end my-1">
-          <div class="dropdown-item">
-            <select class="form-select form-select-sm">
-              <option value="usd">$ USD</option>
-              <option value="eur">€ EUR</option>
-              <option value="ukp">£ UKP</option>
-              <option value="jpy">¥ JPY</option>
-            </select>
-          </div>
-          <a class="dropdown-item pb-1" href="#">
-            <img class="me-2" src="assets/img/flags/fr.png" width="18" alt="Français">
-            Français
-          </a>
-          <a class="dropdown-item pb-1" href="#">
-            <img class="me-2" src="assets/img/flags/de.png" width="18" alt="Deutsch">
-            Deutsch
-          </a>
-          <a class="dropdown-item" href="#">
-            <img class="me-2" src="assets/img/flags/it.png" width="18" alt="Italiano">
-            Italiano
-          </a>
-        </div>
-      </div>
     </div>
 
     <!-- Logo + Socials + Cards -->
     <div class="d-sm-flex align-items-center pt-4">
       <div class="d-sm-flex align-items-center pe-sm-2">
-        <a class="navbar-brand d-inline-flex align-items-center me-sm-5 mb-4 mb-sm-0" href="index.html">
-          <span class="text-primary flex-shrink-0 me-2">
-            <svg version="1.1" width="35" height="32" viewBox="0 0 36 33" xmlns="http://www.w3.org/2000/svg">
-              <path fill="currentColor"
-                d="M35.6,29c-1.1,3.4-5.4,4.4-7.9,1.9c-2.3-2.2-6.1-3.7-9.4-3.7c-3.1,0-7.5,1.8-10,4.1c-2.2,2-5.8,1.5-7.3-1.1c-1-1.8-1.2-4.1,0-6.2l0.6-1.1l0,0c0.6-0.7,4.4-5.2,12.5-5.7c0.5,1.8,2,3.1,3.9,3.1c2.2,0,4.1-1.9,4.1-4.2s-1.8-4.2-4.1-4.2c-2,0-3.6,1.4-4,3.3H7.7c-0.8,0-1.3-0.9-0.9-1.6l5.6-9.8c2.5-4.5,8.8-4.5,11.3,0L35.1,24C36,25.7,36.1,27.5,35.6,29z">
-              </path>
-            </svg>
-          </span>
-          <span class="text-light opacity-90">Around</span>
+        <a class="navbar-brand d-inline-flex align-items-center me-sm-5 mb-4 mb-sm-0" href="/">
+          <img class="navbar-brand" ui-sref='main.tiers' [src]="logoJss" width="60" />
         </a>
         <div class="d-flex mb-4 mb-sm-0">
           <a class="btn btn-icon btn-sm btn-secondary btn-telegram rounded-circle mx-2 ms-sm-0 me-sm-3" href="#"
-            aria-label="Telegram">
-            <i class="ai-telegram"></i>
+            aria-label="Facebook">
+            <i class="ai-facebook"></i>
           </a>
           <a class="btn btn-icon btn-sm btn-secondary btn-instagram rounded-circle mx-2 ms-sm-0 me-sm-3" href="#"
             aria-label="Instagram">
             <i class="ai-instagram"></i>
           </a>
           <a class="btn btn-icon btn-sm btn-secondary btn-facebook rounded-circle mx-2 ms-sm-0 me-sm-3" href="#"
-            aria-label="Facebook">
-            <i class="ai-facebook"></i>
+            aria-label="LinkedIn">
+            <i class="ai-linkedin"></i>
           </a>
           <a class="btn btn-icon btn-sm btn-secondary btn-pinterest rounded-circle mx-2 ms-sm-0 me-sm-3" href="#"
-            aria-label="Piterest">
-            <i class="ai-pinterest"></i>
+            aria-label="X">
+            <i class="ai-x"></i>
           </a>
         </div>
       </div>

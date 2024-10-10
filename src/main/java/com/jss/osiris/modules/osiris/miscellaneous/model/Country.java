@@ -2,6 +2,9 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,12 +18,15 @@ public class Country implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "country_sequence", sequenceName = "country_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "country_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
 	@Column(nullable = false, length = 20)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
 
 	public Integer getId() {

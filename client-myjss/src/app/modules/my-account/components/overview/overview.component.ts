@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
-import { IOsirisUser } from '../../../profile/model/IOsirisUser';
+import { capitalizeName } from '../../../../libs/FormatHelper';
+import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 
 @Component({
@@ -11,18 +12,19 @@ import { LoginService } from '../../../profile/services/login.service';
 })
 export class OverviewComponent implements OnInit {
 
-  currentUser: IOsirisUser | undefined;
+  currentUser: Responsable | undefined;
 
   constructor(private route: ActivatedRoute,
     private appService: AppService,
     private loginService: LoginService
   ) { }
 
+  capitalizeName = capitalizeName;
+
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       // I'm coming to login in, ok
       if (params["aToken"] && params["userId"]) {
-        console.log("tt");
         this.loginService.logUser(parseInt(params["userId"]), params["aToken"]).subscribe(response => {
           this.appService.openRoute(null, "account/overview", undefined);
         });

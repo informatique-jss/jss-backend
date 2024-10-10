@@ -96,7 +96,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.VatCollectionTypeServ
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.WeekDayService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
@@ -397,10 +396,10 @@ public class MiscellaneousController {
         if (notification == null)
             throw new OsirisValidationException("notification");
 
-        IOsirisUser employee = employeeService.getCurrentEmployee();
+        Employee employee = employeeService.getCurrentEmployee();
 
         List<Employee> backupEmployee = null;
-        if (employee != null && employee instanceof Employee) {
+        if (employee != null) {
             employeeService.getMyHolidaymaker((Employee) employee);
 
             if (notification.getNotificationType().equals(Notification.PERSONNAL)) {

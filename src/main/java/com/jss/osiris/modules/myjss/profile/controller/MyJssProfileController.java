@@ -1,7 +1,9 @@
 package com.jss.osiris.modules.myjss.profile.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -17,6 +19,8 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +29,8 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
+import com.jss.osiris.modules.myjss.profile.model.UserScope;
+import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
@@ -50,6 +55,9 @@ public class MyJssProfileController {
 	@Autowired
 	ResponsableService responsableService;
 
+	@Autowired
+	UserScopeService userScopeService;
+
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 10;
 	private LocalDateTime lastFloodFlush = LocalDateTime.now();
@@ -57,8 +65,8 @@ public class MyJssProfileController {
 
 	@GetMapping(inputEntryPoint + "/user")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<IOsirisUser> getMyUsername() throws OsirisClientMessageException {
-		return new ResponseEntity<IOsirisUser>(employeeService.getCurrentEmployee(), HttpStatus.OK);
+	public ResponseEntity<Responsable> getMyUsername() throws OsirisClientMessageException {
+		return new ResponseEntity<Responsable>(employeeService.getCurrentMyJssUser(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/login/token/send")
@@ -130,6 +138,32 @@ public class MyJssProfileController {
 	public ResponseEntity<Collection<? extends GrantedAuthority>> getUserRoles() {
 		return new ResponseEntity<Collection<? extends GrantedAuthority>>(activeDirectoryHelper.getUserRoles(),
 				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/user/scope")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<UserScope>> getUserScope() {
+		return new ResponseEntity<List<UserScope>>(userScopeService.getUserScope(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/user/scope/possible")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Responsable>> getPotentialUserScope() {
+		return new ResponseEntity<List<Responsable>>(userScopeService.getPotentialUserScope(), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/user/scope/add")
+	public ResponseEntity<Boolean> addToUserScope(@RequestBody List<Responsable> responsables) {
+		List<Responsable> responsablesToAdd = new ArrayList<Responsable>();
+		if (responsables != null && responsables.size() > 0) {
+			for (Responsable responsable : responsables) {
+				Responsable responsableToAdd = responsableService.getResponsable(responsable.getId());
+				if (responsableToAdd != null)
+					responsablesToAdd.add(responsableToAdd);
+			}
+		}
+		userScopeService.addResponsableToCurrentUserScope(responsablesToAdd);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	private ResponseEntity<String> detectFlood(HttpServletRequest request) {

@@ -22,7 +22,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -43,21 +42,10 @@ import jakarta.persistence.Table;
 @Entity
 @Table(indexes = { @Index(name = "idx_responsable_tiers", columnList = "id_tiers"),
 		@Index(name = "idx_responsable_commercial", columnList = "id_commercial"),
+		@Index(name = "idx_responsable_mail", columnList = "id_mail"),
 		@Index(name = "idx_responsable_login_web", columnList = "loginWeb", unique = true) })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Responsable implements IAttachment, IId, IOsirisUser {
-	@Override
-	@JsonView(JacksonViews.MyJssView.class)
-	public String getUsername() {
-		return getId() + "";
-	}
-
-	@Override
-	@JsonView(JacksonViews.MyJssView.class)
-	public void setUsername(String username) {
-		setId(Integer.parseInt(username));
-	}
-
+public class Responsable implements IAttachment, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
@@ -69,6 +57,7 @@ public class Responsable implements IAttachment, IId, IOsirisUser {
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
 	@JsonIgnoreProperties(value = { "responsables" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssView.class)
 	private Tiers tiers;
 
 	@Column(nullable = false)
@@ -96,6 +85,7 @@ public class Responsable implements IAttachment, IId, IOsirisUser {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Civility civility;
 
 	@Column(length = 40)
@@ -111,6 +101,7 @@ public class Responsable implements IAttachment, IId, IOsirisUser {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_commercial")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Employee salesEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -167,10 +158,12 @@ public class Responsable implements IAttachment, IId, IOsirisUser {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Mail mail;
 
 	@ManyToMany
 	@JoinTable(name = "asso_responsable_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<Phone> phones;
 
 	@OneToMany(mappedBy = "responsable", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -566,16 +559,5 @@ public class Responsable implements IAttachment, IId, IOsirisUser {
 
 	public void setLoginTokenExpirationDateTime(LocalDateTime loginTokenExpirationDateTime) {
 		this.loginTokenExpirationDateTime = loginTokenExpirationDateTime;
-	}
-
-	@Override
-	public void setEmail(String mail) {
-	}
-
-	@Override
-	public String getEmail() {
-		if (this.mail != null)
-			return this.mail.getMail();
-		return "";
 	}
 }

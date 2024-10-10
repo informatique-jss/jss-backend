@@ -31,7 +31,7 @@
         <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
         <div class="ps-2">
           <div class="fs-xs lh-1 opacity-60">Bonjour,</div>
-          <div class="fs-sm dropdown-toggle">{{currentUser.firstname}} {{currentUser.lastname}}</div>
+          <div class="fs-sm dropdown-toggle">{{capitalizeName(currentUser.firstname + " " +currentUser.lastname)}}</div>
         </div>
       </a>
       <div class="dropdown-menu dropdown-menu-end my-1">
@@ -43,7 +43,7 @@
           </a>
         </ng-container>
         <div class="dropdown-divider"></div>
-        <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Dashboard</h6>
+        <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de bord</h6>
         <ng-container *ngFor="let menuItem of menuItems">
           <a class="dropdown-item" [routerLink]="menuItem.route" *ngIf="menuItem.mainItem==MAIN_ITEM_DASHBOARD">
             <i class="fs-lg opacity-70 me-2" [ngClass]="menuItem.iconClass"></i>

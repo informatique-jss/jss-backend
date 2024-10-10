@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
@@ -50,6 +52,7 @@ public class Tiers implements IAttachment, IId {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -59,6 +62,7 @@ public class Tiers implements IAttachment, IId {
 
 	@Column(length = 80)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String denomination;
 
 	@Column(nullable = false)
@@ -82,6 +86,7 @@ public class Tiers implements IAttachment, IId {
 
 	@ManyToMany
 	@JoinTable(name = "asso_tiers_special_offer", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<SpecialOffer> specialOffers;
 
 	@Column(columnDefinition = "TEXT")
@@ -132,10 +137,12 @@ public class Tiers implements IAttachment, IId {
 
 	@Column(length = 40)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String firstname;
 
 	@Column(length = 40)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String lastname;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -164,22 +171,27 @@ public class Tiers implements IAttachment, IId {
 
 	@Column(length = 100, nullable = false)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String address;
 
 	@Column(length = 10)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String postalCode;
 
 	@Column(length = 20)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String cedexComplement;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private City city;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Country country;
 
 	private Float rffFormaliteRate;
@@ -190,10 +202,12 @@ public class Tiers implements IAttachment, IId {
 
 	@ManyToMany
 	@JoinTable(name = "asso_tiers_mail", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<Mail> mails;
 
 	@ManyToMany
 	@JoinTable(name = "asso_tiers_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<Phone> phones;
 
 	@OneToMany(mappedBy = "tiers", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

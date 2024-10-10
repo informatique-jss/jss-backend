@@ -26,7 +26,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class Employee implements Serializable, IId, AttributesMapper<Employee>, IOsirisUser {
+public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
@@ -48,10 +48,15 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee>, 
 	@JsonView(JacksonViews.MyJssView.class)
 	private String username;
 
+	@JsonView(JacksonViews.MyJssView.class)
 	private String mail;
+
+	@JsonView(JacksonViews.MyJssView.class)
 	private String title;
+
 	@Column(length = 1000)
 	private String adPath;
+
 	private Boolean isActive;
 
 	@OneToMany(targetEntity = Employee.class, fetch = FetchType.LAZY)
@@ -148,15 +153,4 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee>, 
 	public void setBackups(List<Employee> backups) {
 		this.backups = backups;
 	}
-
-	@Override
-	public String getEmail() {
-		return this.mail;
-	}
-
-	@Override
-	public void setEmail(String mail) {
-		this.setMail(mail);
-	}
-
 }

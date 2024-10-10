@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.model.User;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
@@ -17,7 +16,9 @@ public interface EmployeeService {
 
     public void updateUserFromActiveDirectory();
 
-    public IOsirisUser getCurrentEmployee();
+    public Employee getCurrentEmployee();
+
+    public Responsable getCurrentMyJssUser();
 
     public Employee addOrUpdateEmployee(Employee employee);
 

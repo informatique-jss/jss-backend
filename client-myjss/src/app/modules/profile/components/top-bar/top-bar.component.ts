@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../../../../libs/app.service';
+import { capitalizeName } from '../../../../libs/FormatHelper';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
-import { IOsirisUser } from '../../model/IOsirisUser';
+import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
 
 @Component({
@@ -12,7 +13,7 @@ import { LoginService } from '../../services/login.service';
 export class TopBarComponent implements OnInit {
 
   logoJss: string = '/assets/images/logo.png';
-  currentUser: IOsirisUser | undefined;
+  currentUser: Responsable | undefined;
 
 
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
@@ -22,6 +23,8 @@ export class TopBarComponent implements OnInit {
   constructor(private loginService: LoginService,
     private appService: AppService,
   ) { }
+
+  capitalizeName = capitalizeName;
 
   ngOnInit() {
     this.loginService.currentUserChangeMessage.subscribe(response => {
@@ -35,7 +38,6 @@ export class TopBarComponent implements OnInit {
   refreshCurrentUser() {
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
-      console.log(this.currentUser);
     });
   }
 

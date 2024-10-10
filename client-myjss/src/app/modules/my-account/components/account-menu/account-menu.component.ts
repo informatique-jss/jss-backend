@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
-import { IOsirisUser } from '../../../profile/model/IOsirisUser';
+import { capitalizeName } from '../../../../libs/FormatHelper';
+import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 
@@ -16,14 +18,21 @@ export class AccountMenuComponent implements OnInit {
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
   MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
 
-  currentUser: IOsirisUser | undefined;
+  currentUser: Responsable | undefined;
 
   constructor(private appService: AppService,
     private loginService: LoginService,
+    private router: Router
   ) { }
+
+  capitalizeName = capitalizeName;
 
   ngOnInit() {
     this.loginService.getCurrentUser().subscribe(reponse => this.currentUser = reponse);
+  }
+
+  getCurrentRoute(): string {
+    return this.router.url;
   }
 
 }

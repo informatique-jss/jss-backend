@@ -27,7 +27,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.model.User;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -63,8 +62,8 @@ public class ProfileController {
 
 	@GetMapping(inputEntryPoint + "/user")
 	public ResponseEntity<Employee> getMyUsername() throws OsirisClientMessageException {
-		IOsirisUser employee = employeeService.getCurrentEmployee();
-		if (employee == null || employee instanceof Responsable)
+		Employee employee = employeeService.getCurrentEmployee();
+		if (employee == null)
 			throw new OsirisClientMessageException("wrong id type");
 		return new ResponseEntity<Employee>(employeeService.getEmployee(employee.getId()), HttpStatus.OK);
 	}

@@ -54,6 +54,7 @@ registerLocaleData(localeFr, 'fr');
     RoutingModule,
     DragDropModule,
     MatTreeModule,
+    FormsModule,
     MatDialogModule,
     BrowserAnimationsModule,
     FormsModule,

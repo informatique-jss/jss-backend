@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.Column;
@@ -19,13 +21,16 @@ public class Civility implements Serializable, IId {
     @Id
     @SequenceGenerator(name = "civility_sequence", sequenceName = "civility_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "civility_sequence")
+    @JsonView(JacksonViews.MyJssView.class)
     private Integer id;
 
     @Column(nullable = false)
     @IndexedField
+    @JsonView(JacksonViews.MyJssView.class)
     private String label;
 
     @Column(nullable = false, length = 20)
+    @JsonView(JacksonViews.MyJssView.class)
     private String code;
 
     public Integer getId() {

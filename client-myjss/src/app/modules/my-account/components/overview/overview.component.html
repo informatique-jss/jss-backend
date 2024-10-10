@@ -15,12 +15,12 @@
       <div class="d-sm-flex align-items-center">
         <avatar class="avatar-select" [user]="currentUser" [size]="70"></avatar>
         <div class="pt-3 pt-sm-0 ps-sm-3">
-          <h3 class="h5 mb-2">{{currentUser.firstname}} {{currentUser.lastname}}<i
+          <h3 class="h5 mb-2">{{capitalizeName(currentUser.firstname + " " +currentUser.lastname)}}<i
               class="ai-circle-check-filled fs-base text-success ms-2"></i></h3>
           <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-iteems-center">
             <div class="d-flex align-items-center me-3">
               <i class="ai-mail me-1"></i>
-              {{currentUser.email}}
+              {{currentUser.mail.mail}}
             </div>
             <div class="d-flex align-items-center text-nowrap">
               <i class="ai-map-pin me-1"></i>

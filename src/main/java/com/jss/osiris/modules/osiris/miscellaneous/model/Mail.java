@@ -2,6 +2,9 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,9 +21,11 @@ public class Mail implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "mail_sequence", sequenceName = "mail_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mail_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String mail;
 
 	public Integer getId() {

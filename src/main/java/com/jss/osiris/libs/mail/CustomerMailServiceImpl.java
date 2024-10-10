@@ -29,7 +29,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -111,8 +110,8 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         mail.setCreatedDateTime(LocalDateTime.now());
         mail.setIsSent(false);
 
-        IOsirisUser employee = employeeService.getCurrentEmployee();
-        if (employee != null && employee instanceof Employee)
+        Employee employee = employeeService.getCurrentEmployee();
+        if (employee != null)
             mail.setSendToMeEmployee((Employee) employee);
         addOrUpdateCustomerMail(mail);
 

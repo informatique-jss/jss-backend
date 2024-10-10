@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AppService } from '../../../libs/app.service';
 import { AppRestService } from '../../../libs/appRest.service';
-import { IOsirisUser } from '../model/IOsirisUser';
+import { Responsable } from '../model/Responsable';
 
 export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
 export const ACCOUNTING: string = 'ROLE_OSIRIS_COMPTABILITÉ';
@@ -12,13 +12,13 @@ export const ACCOUNTING_RESPONSIBLE: string = 'ROLE_OSIRIS_RESPONSABLE_COMPTABIL
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService extends AppRestService<IOsirisUser> {
+export class LoginService extends AppRestService<Responsable> {
 
   constructor(http: HttpClient, private appService: AppService) {
     super(http, "profile");
   }
 
-  currentUser: IOsirisUser | undefined;
+  currentUser: Responsable | undefined;
   private currentUserChange = new BehaviorSubject<boolean>(true);
   currentUserChangeMessage = this.currentUserChange.asObservable();
 
@@ -58,8 +58,8 @@ export class LoginService extends AppRestService<IOsirisUser> {
     return this.getList(new HttpParams(), "login/roles");
   }
 
-  getCurrentUser(): Observable<IOsirisUser> {
-    return new Observable<IOsirisUser>(observer => {
+  getCurrentUser(): Observable<Responsable> {
+    return new Observable<Responsable>(observer => {
       if (this.currentUser) {
         observer.next(this.currentUser);
         observer.complete();

@@ -55,7 +55,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
@@ -1300,12 +1299,11 @@ public class MailHelper {
         if (query.getComment() != null)
             mail.setExplaination(query.getComment().replaceAll("\r?\n", "<br/>"));
 
-        IOsirisUser sendToEmployee = employeeService.getCurrentEmployee();
+        Employee sendToEmployee = employeeService.getCurrentEmployee();
         if (sendToEmployee == null)
             sendToEmployee = query.getService().getAssoAffaireOrder().getAssignedTo();
 
-        if (sendToEmployee instanceof Employee)
-            mail.setReplyTo((Employee) sendToEmployee);
+        mail.setReplyTo((Employee) sendToEmployee);
         mail.setSendToMe(query.getSendToMe());
         mail.setMailComputeResult(mailComputeHelper.computeMailForMissingAttachmentQueryToCustomer(customerOrder));
         mail.setIsLastReminder(isLastReminder);

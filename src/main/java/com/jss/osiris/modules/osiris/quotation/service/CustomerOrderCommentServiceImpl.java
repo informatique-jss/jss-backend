@@ -12,12 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderCommentRepository;
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentService {
@@ -54,11 +52,12 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         customerOrderComment.setCustomerOrder(customerOrder);
         customerOrderComment.setComment(contentComment);
 
-        IOsirisUser employee = employeeService.getCurrentEmployee();
-        if (employee != null && employee instanceof Employee)
-            customerOrderComment.setEmployee((Employee) employee);
-        if (employee != null && employee instanceof Responsable)
-            customerOrderComment.setCurrentCustomer((Responsable) employee);
+        Employee employee = employeeService.getCurrentEmployee();
+        if (employee != null)
+            customerOrderComment.setEmployee(employee);
+        else {
+            customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
+        }
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);
 

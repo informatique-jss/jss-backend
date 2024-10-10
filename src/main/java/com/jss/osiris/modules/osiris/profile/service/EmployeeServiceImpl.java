@@ -20,7 +20,6 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.model.IOsirisUser;
 import com.jss.osiris.modules.osiris.profile.model.User;
 import com.jss.osiris.modules.osiris.profile.repository.EmployeeRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -117,15 +116,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public IOsirisUser getCurrentEmployee() {
+    public Employee getCurrentEmployee() {
         String username = activeDirectoryHelper.getCurrentUsername();
-        IOsirisUser employee = null;
         if (username != null)
-            employee = employeeRepository.findByUsernameIgnoreCase(username);
+            return employeeRepository.findByUsernameIgnoreCase(username);
 
-        if (employee == null && username != null && !username.equals("ANONYMOUSUSER") && !username.equals("OSIRIS"))
-            employee = responsableService.getResponsable(Integer.parseInt(username));
-        return employee;
+        return null;
+    }
+
+    @Override
+    public Responsable getCurrentMyJssUser() {
+        String username = activeDirectoryHelper.getCurrentUsername();
+        if (username != null && !username.equals("ANONYMOUSUSER") && !username.equals("OSIRIS"))
+            return responsableService.getResponsable(Integer.parseInt(username));
+        return null;
     }
 
     /**

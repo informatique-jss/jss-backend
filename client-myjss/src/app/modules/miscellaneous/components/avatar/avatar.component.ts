@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { IOsirisUser } from '../../../profile/model/IOsirisUser';
+import { Responsable } from '../../../profile/model/Responsable';
 
 @Component({
   selector: 'avatar',
@@ -8,7 +8,7 @@ import { IOsirisUser } from '../../../profile/model/IOsirisUser';
 })
 export class AvatarComponent implements OnInit {
 
-  @Input() user: IOsirisUser | undefined;
+  @Input() user: Responsable | undefined;
   initials: string = "";
   @Input() size: number = 40;
   @Input() centerAvatar: boolean = true;

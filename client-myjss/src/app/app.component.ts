@@ -14,7 +14,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngOnInit() {
-    console.log("toto");
   }
 
   ngAfterViewInit() {
