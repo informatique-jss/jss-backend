@@ -286,7 +286,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         // If it's a provider invoice on a customer order, resave the customer order to
         // regenerate reinvoiced invoice items
         if (invoice.getProvider() != null && invoice.getCustomerOrder() != null)
-            customerOrderService.addOrUpdateCustomerOrder(invoice.getCustomerOrder(), true, false);
+            customerOrderService.addOrUpdateCustomerOrder(
+                    customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), true, false);
 
         return invoice;
     }

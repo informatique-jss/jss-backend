@@ -541,10 +541,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 for (Service service : asso.getServices())
                     for (Provision provision : service.getProvisions())
-                        if (provision.getInvoiceItems() != null)
+                        if (provision.getInvoiceItems() != null) {
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())
                                 invoiceItemService.deleteInvoiceItem(invoiceItem);
-        addOrUpdateCustomerOrder(customerOrder, true, false);
+                            provision.setInvoiceItems(null);
+                        }
+
+        addOrUpdateCustomerOrder(getCustomerOrder(customerOrder.getId()), true, false);
     }
 
     @Override
