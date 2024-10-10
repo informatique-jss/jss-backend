@@ -288,7 +288,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         // regenerate reinvoiced invoice items
         if (invoice.getIsInvoiceFromProvider() != null && invoice.getIsInvoiceFromProvider()
                 && invoice.getCustomerOrder() != null)
-            customerOrderService.addOrUpdateCustomerOrder(invoice.getCustomerOrder(), true, false);
+            customerOrderService.addOrUpdateCustomerOrder(
+                    customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), true, false);
 
         return invoice;
     }
