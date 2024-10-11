@@ -1,8 +1,11 @@
 package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -19,12 +22,18 @@ public class RubriqueInfogreffe {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rubrique_montant_formalite_infogreffe_sequence")
     private Integer id;
     private String code;
+
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
     @JsonProperty("montantHT")
-    private Float montantHt;
+    private BigDecimal montantHt;
+
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
     @JsonProperty("montantTva")
-    private Float montantTva;
+    private BigDecimal montantTva;
+
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
     @JsonProperty("montantTtc")
-    private Float montantTtc;
+    private BigDecimal montantTtc;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_montant_formalite_infogreffe")
@@ -55,27 +64,27 @@ public class RubriqueInfogreffe {
         this.montantInfogreffe = montantInfogreffe;
     }
 
-    public Float getMontantHt() {
+    public BigDecimal getMontantHt() {
         return montantHt;
     }
 
-    public void setMontantHt(Float montantHt) {
+    public void setMontantHt(BigDecimal montantHt) {
         this.montantHt = montantHt;
     }
 
-    public Float getMontantTva() {
+    public BigDecimal getMontantTva() {
         return montantTva;
     }
 
-    public void setMontantTva(Float montantTva) {
+    public void setMontantTva(BigDecimal montantTva) {
         this.montantTva = montantTva;
     }
 
-    public Float getMontantTtc() {
+    public BigDecimal getMontantTtc() {
         return montantTtc;
     }
 
-    public void setMontantTtc(Float montantTtc) {
+    public void setMontantTtc(BigDecimal montantTtc) {
         this.montantTtc = montantTtc;
     }
 

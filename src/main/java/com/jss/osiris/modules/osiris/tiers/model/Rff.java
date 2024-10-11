@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.tiers.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -53,9 +54,12 @@ public class Rff implements Serializable, IId {
 	@Transient
 	private Integer responsableId;
 
-	private Float rffInsertion;
-	private Float rffFormalite;
-	private Float rffTotal;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal rffInsertion;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal rffFormalite;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal rffTotal;
 
 	@Column(length = 100)
 	private String rffMail;
@@ -101,19 +105,19 @@ public class Rff implements Serializable, IId {
 		this.responsable = responsable;
 	}
 
-	public Float getRffInsertion() {
+	public BigDecimal getRffInsertion() {
 		return rffInsertion;
 	}
 
-	public void setRffInsertion(Float rffInsertion) {
+	public void setRffInsertion(BigDecimal rffInsertion) {
 		this.rffInsertion = rffInsertion;
 	}
 
-	public Float getRffFormalite() {
+	public BigDecimal getRffFormalite() {
 		return rffFormalite;
 	}
 
-	public void setRffFormalite(Float rffFormalite) {
+	public void setRffFormalite(BigDecimal rffFormalite) {
 		this.rffFormalite = rffFormalite;
 	}
 
@@ -209,11 +213,11 @@ public class Rff implements Serializable, IId {
 		this.rffBic = rffBic;
 	}
 
-	public Float getRffTotal() {
+	public BigDecimal getRffTotal() {
 		return rffTotal;
 	}
 
-	public void setRffTotal(Float rffTotal) {
+	public void setRffTotal(BigDecimal rffTotal) {
 		this.rffTotal = rffTotal;
 	}
 

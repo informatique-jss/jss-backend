@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -109,7 +110,8 @@ public class Affaire implements IId, IAttachment {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	private Float shareCapital;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal shareCapital;
 
 	@Column(length = 40, name = "payment_iban")
 	private String paymentIban;
@@ -298,11 +300,11 @@ public class Affaire implements IId, IAttachment {
 		this.observations = observations;
 	}
 
-	public Float getShareCapital() {
+	public BigDecimal getShareCapital() {
 		return shareCapital;
 	}
 
-	public void setShareCapital(Float shareCapital) {
+	public void setShareCapital(BigDecimal shareCapital) {
 		this.shareCapital = shareCapital;
 	}
 

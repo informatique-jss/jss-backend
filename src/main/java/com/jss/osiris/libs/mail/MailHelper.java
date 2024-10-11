@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -86,6 +88,8 @@ import jakarta.mail.internet.MimeMessage;
 
 @org.springframework.stereotype.Service
 public class MailHelper {
+
+    private BigDecimal oneHundredValue = new BigDecimal(100);
 
     @Value("${mail.smtp.host}")
     private String mailHost;
@@ -429,8 +433,8 @@ public class MailHelper {
         // Compute deposit amount
         ctx.setVariable("depositAmount",
                 quotation != null
-                        ? Math.round(customerOrderService.getTotalForCustomerOrder(quotation) * 100f)
-                                / 100f
+                        ? customerOrderService.getTotalForCustomerOrder(quotation).multiply(oneHundredValue)
+                                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue)
                         : "");
 
         // Compute remaining to pay on invoice
@@ -447,7 +451,8 @@ public class MailHelper {
                     creditNote = invoiceCo.getCreditNote();
             }
             ctx.setVariable("remainingToPay",
-                    Math.round(invoiceService.getRemainingAmountToPayForInvoice(invoice) * 100f) / 100f);
+                    invoiceService.getRemainingAmountToPayForInvoice(invoice).multiply(oneHundredValue)
+                            .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue));
             ctx.setVariable("invoice", invoice);
             ctx.setVariable("creditNote", creditNote);
         }
@@ -646,29 +651,32 @@ public class MailHelper {
     public void setQuotationPrice(IQuotation quotation, Context ctx)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         // Compute prices
-        Float preTaxPriceTotal = 0f;
-        Float discountTotal = null;
-        Float preTaxPriceTotalWithDicount = null;
+        Double preTaxPriceTotal = 0.0;
+        Double discountTotal = null;
+        Double preTaxPriceTotalWithDicount = null;
         ArrayList<VatMail> vats = null;
-        Float vatTotal = 0f;
-        Float priceTotal = null;
+        Double vatTotal = 0.0;
+        Double priceTotal = null;
 
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
             for (Service service : asso.getServices())
                 for (Provision provision : service.getProvisions()) {
                     for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
-                        if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
+                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null
+                                ? invoiceItem.getPreTaxPrice().doubleValue()
+                                : 0.0;
+                        if (invoiceItem.getDiscountAmount() != null
+                                && invoiceItem.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
                             if (discountTotal == null)
-                                discountTotal = invoiceItem.getDiscountAmount();
+                                discountTotal = invoiceItem.getDiscountAmount().doubleValue();
                             else
-                                discountTotal += invoiceItem.getDiscountAmount();
+                                discountTotal += invoiceItem.getDiscountAmount().doubleValue();
                         }
                         if (vats == null)
                             vats = new ArrayList<VatMail>();
                         if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                                && invoiceItem.getVatPrice() > 0) {
-                            vatTotal += invoiceItem.getVatPrice();
+                                && invoiceItem.getVatPrice().compareTo(BigDecimal.ZERO) > 0) {
+                            vatTotal += invoiceItem.getVatPrice().doubleValue();
                             boolean vatFound = false;
                             for (VatMail vatMail : vats) {
                                 if (vatMail.getLabel().equals(invoiceItem.getVat().getLabel())) {
@@ -677,15 +685,16 @@ public class MailHelper {
                                         vatMail.setTotal(invoiceItem.getVatPrice());
                                         vatMail.setBase(
                                                 invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
-                                                        : 0f);
+                                                        : BigDecimal.ZERO);
                                     } else {
-                                        vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
+                                        vatMail.setTotal(vatMail.getTotal().add(invoiceItem.getVatPrice()));
                                         vatMail.setBase(vatMail.getBase()
-                                                + (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
-                                                        : 0f)
-                                                - (invoiceItem.getDiscountAmount() != null
+                                                .add((invoiceItem.getPreTaxPrice() != null
+                                                        ? invoiceItem.getPreTaxPrice()
+                                                        : BigDecimal.ZERO))
+                                                .subtract(invoiceItem.getDiscountAmount() != null
                                                         ? invoiceItem.getDiscountAmount()
-                                                        : 0f));
+                                                        : BigDecimal.ZERO));
                                     }
                                 }
                             }
@@ -694,10 +703,10 @@ public class MailHelper {
                                 vatmail.setTotal(invoiceItem.getVatPrice());
                                 vatmail.setLabel(invoiceItem.getVat().getLabel());
                                 vatmail.setBase(
-                                        (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f)
-                                                - (invoiceItem.getDiscountAmount() != null
+                                        (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
+                                                : BigDecimal.ZERO).subtract(invoiceItem.getDiscountAmount() != null
                                                         ? invoiceItem.getDiscountAmount()
-                                                        : 0f));
+                                                        : BigDecimal.ZERO));
                                 vats.add(vatmail);
                             }
                         }

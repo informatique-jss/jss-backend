@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -132,14 +134,14 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
     }
 
     @Override
-    public CentralPayPaymentRequest generatePayPaymentRequest(Float amount, String mail, String entityId,
+    public CentralPayPaymentRequest generatePayPaymentRequest(BigDecimal amount, String mail, String entityId,
             String subject) {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         // Convert in cents
-        Integer finalAmount = Math.round(amount * 100);
+        Integer finalAmount = amount.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).intValue();
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
         map.add("paymentMethod[]", "TRANSACTION");
@@ -167,5 +169,4 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
         }
         return null;
     }
-
 }

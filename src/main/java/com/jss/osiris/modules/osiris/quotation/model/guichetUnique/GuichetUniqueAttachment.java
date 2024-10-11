@@ -1,10 +1,13 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -22,7 +25,8 @@ public class GuichetUniqueAttachment {
     @JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
     private FormaliteGuichetUnique formaliteGuichetUnique;
 
-    private Double size;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal size;
     private boolean regularisable;
     private String status;
     private boolean hasValidSignature;
@@ -72,11 +76,11 @@ public class GuichetUniqueAttachment {
         this.id = id;
     }
 
-    public Double getSize() {
+    public BigDecimal getSize() {
         return size;
     }
 
-    public void setSize(Double size) {
+    public void setSize(BigDecimal size) {
         this.size = size;
     }
 

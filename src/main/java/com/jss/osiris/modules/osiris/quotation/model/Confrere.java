@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -87,13 +88,15 @@ public class Confrere implements IId {
 	@Column(length = 20)
 	private String boardGrade;
 
+	@Column(precision = 2)
 	private Float shippingCosts;
-
+	@Column(precision = 2)
 	private Float administrativeFees;
 
 	private Integer numberOfPrint;
 
-	private Float paperPrice;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal paperPrice;
 
 	private Integer discountRate;
 
@@ -276,11 +279,11 @@ public class Confrere implements IId {
 		this.numberOfPrint = numberOfPrint;
 	}
 
-	public Float getPaperPrice() {
+	public BigDecimal getPaperPrice() {
 		return paperPrice;
 	}
 
-	public void setPaperPrice(Float paperPrice) {
+	public void setPaperPrice(BigDecimal paperPrice) {
 		this.paperPrice = paperPrice;
 	}
 

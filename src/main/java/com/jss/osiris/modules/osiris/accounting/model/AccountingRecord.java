@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.accounting.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -68,8 +69,12 @@ public class AccountingRecord implements Serializable, IId {
 
 	@Column(nullable = false, length = 1000)
 	private String label;
-	private Float creditAmount;
-	private Float debitAmount;
+
+	@Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+	private BigDecimal creditAmount;
+
+	@Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+	private BigDecimal debitAmount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account")
@@ -207,19 +212,19 @@ public class AccountingRecord implements Serializable, IId {
 		this.label = label;
 	}
 
-	public Float getCreditAmount() {
+	public BigDecimal getCreditAmount() {
 		return creditAmount;
 	}
 
-	public void setCreditAmount(Float creditAmount) {
+	public void setCreditAmount(BigDecimal creditAmount) {
 		this.creditAmount = creditAmount;
 	}
 
-	public Float getDebitAmount() {
+	public BigDecimal getDebitAmount() {
 		return debitAmount;
 	}
 
-	public void setDebitAmount(Float debitAmount) {
+	public void setDebitAmount(BigDecimal debitAmount) {
 		this.debitAmount = debitAmount;
 	}
 

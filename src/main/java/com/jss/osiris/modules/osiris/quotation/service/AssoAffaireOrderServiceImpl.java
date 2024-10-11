@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +63,8 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
+
+    private BigDecimal oneHundredValue = new BigDecimal(100);
 
     @Autowired
     AssoAffaireOrderRepository assoAffaireOrderRepository;
@@ -536,11 +540,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 for (Invoice invoice : originalProvision.getProviderInvoices()) {
                                     if (invoice.getInvoiceStatus().getId()
                                             .equals(constantService.getInvoiceStatusReceived().getId())) {
-                                        if (Math.round(
-                                                invoice.getTotalPrice()
-                                                        * 100f) == (Math
-                                                                .round(-payment.getPaymentAmount()
-                                                                        * 100f))) {
+                                        if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0,
+                                                RoundingMode.HALF_UP) == payment.getPaymentAmount().negate()
+                                                        .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)) {
                                             if (invoiceFound != null)
                                                 continue outerloop;
                                             invoiceFound = invoice;

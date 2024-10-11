@@ -1,11 +1,14 @@
 package com.jss.osiris.modules.osiris.quotation.model.centralPay;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtDeserializer;
+
+import jakarta.persistence.Column;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CentralPayPaymentRequest {
@@ -27,7 +30,8 @@ public class CentralPayPaymentRequest {
     public String merchantPaymentRequestId;
     public String description;
     public String currency;
-    public Float totalAmount;
+    @Column(scale = 2)
+    public BigDecimal totalAmount;
     public String paymentRequestStatus;
     public String paymentStatus;
     public boolean createCustomer;
@@ -125,11 +129,11 @@ public class CentralPayPaymentRequest {
         this.currency = currency;
     }
 
-    public Float getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Float totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 

@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.tiers.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -23,6 +24,7 @@ public interface RffService {
     public Invoice generateInvoiceForRff(Rff rff)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
-    public Rff sendRff(Rff rff, Float amount, boolean sendToMe) throws OsirisException, OsirisClientMessageException;
+    public Rff sendRff(Rff rff, BigDecimal amount, boolean sendToMe)
+            throws OsirisException, OsirisClientMessageException;
 
 }

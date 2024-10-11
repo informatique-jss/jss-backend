@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,8 +28,8 @@ public class CharacterPrice implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "character_price_sequence")
 	private Integer id;
 
-	@Column(nullable = false)
-	private Float price;
+	@Column(nullable = false, precision = 15, scale = 3)
+	private BigDecimal price;
 
 	@OneToMany(targetEntity = Department.class)
 	@JoinTable(name = "asso_character_price_department", joinColumns = @JoinColumn(name = "id_character_price"), inverseJoinColumns = @JoinColumn(name = "id_department"))
@@ -53,11 +54,11 @@ public class CharacterPrice implements Serializable, IId {
 		this.startDate = startDate;
 	}
 
-	public Float getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(Float price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 

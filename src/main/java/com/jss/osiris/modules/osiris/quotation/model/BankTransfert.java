@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,8 +35,9 @@ public class BankTransfert implements Serializable, IId {
 	@IndexedField
 	private String label;
 
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
 	@IndexedField
-	private Float transfertAmount;
+	private BigDecimal transfertAmount;
 
 	@IndexedField
 	private LocalDateTime transfertDateTime;
@@ -89,11 +91,11 @@ public class BankTransfert implements Serializable, IId {
 		this.label = label;
 	}
 
-	public Float getTransfertAmount() {
+	public BigDecimal getTransfertAmount() {
 		return transfertAmount;
 	}
 
-	public void setTransfertAmount(Float transfertAmount) {
+	public void setTransfertAmount(BigDecimal transfertAmount) {
 		this.transfertAmount = transfertAmount;
 	}
 

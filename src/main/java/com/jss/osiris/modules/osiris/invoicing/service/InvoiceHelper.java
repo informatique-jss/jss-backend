@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,52 +22,57 @@ public class InvoiceHelper {
     @Autowired
     ConstantService constantService;
 
+    BigDecimal oneHundredConstant = new BigDecimal(100);
+
     public Invoice setPriceTotal(Invoice invoice) {
         if (invoice != null) {
-            invoice.setTotalPrice(Math.round(this.getPriceTotal(invoice) * 100f) / 100f);
+            invoice.setTotalPrice(
+                    (this.getPriceTotal(invoice).multiply(oneHundredConstant)).setScale(0).divide(oneHundredConstant));
         }
         return invoice;
     }
 
-    public Float getPriceTotal(Invoice invoice) {
-        Float total = this.getPreTaxPriceTotal(invoice) - this.getDiscountTotal(invoice) + this.getVatTotal(invoice);
+    public BigDecimal getPriceTotal(Invoice invoice) {
+        BigDecimal total = this.getPreTaxPriceTotal(invoice).subtract(this.getDiscountTotal(invoice))
+                .add(this.getVatTotal(invoice));
         return total;
     }
 
-    public Float getDiscountTotal(Invoice invoice) {
-        Float discountTotal = 0f;
+    public BigDecimal getDiscountTotal(Invoice invoice) {
+        BigDecimal discountTotal = BigDecimal.ZERO;
         if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                 if (invoiceItem.getDiscountAmount() != null)
-                    discountTotal += invoiceItem.getDiscountAmount();
+                    discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
             }
         }
         return discountTotal;
     }
 
-    public Float getTotalForInvoiceItem(InvoiceItem invoiceItem) {
-        return (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f)
-                + (invoiceItem.getVatPrice() != null ? invoiceItem.getVatPrice() : 0f)
-                - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
-                        : 0f);
+    public BigDecimal getTotalForInvoiceItem(InvoiceItem invoiceItem) {
+        return (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : BigDecimal.ZERO)
+                .add((invoiceItem.getVatPrice() != null ? invoiceItem.getVatPrice() : BigDecimal.ZERO))
+                .subtract(invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                        : BigDecimal.ZERO);
     }
 
-    public Float getPreTaxPriceTotal(Invoice invoice) {
-        Float preTaxTotal = 0f;
+    public BigDecimal getPreTaxPriceTotal(Invoice invoice) {
+        BigDecimal preTaxTotal = BigDecimal.ZERO;
         if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                preTaxTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f;
+                preTaxTotal = preTaxTotal
+                        .add(invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : BigDecimal.ZERO);
             }
         }
         return preTaxTotal;
     }
 
-    public Float getVatTotal(Invoice invoice) {
-        Float vatTotal = 0f;
+    public BigDecimal getVatTotal(Invoice invoice) {
+        BigDecimal vatTotal = BigDecimal.ZERO;
         if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
             for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
                 if (invoiceItem.getVatPrice() != null)
-                    vatTotal += invoiceItem.getVatPrice();
+                    vatTotal = vatTotal.add(invoiceItem.getVatPrice());
             }
         }
         return vatTotal;
