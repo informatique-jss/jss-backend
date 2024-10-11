@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.tiers.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -229,7 +230,7 @@ public class TiersController {
   }
 
   @GetMapping(inputEntryPoint + "/rff/send")
-  public ResponseEntity<Rff> sendRff(@RequestParam Integer idRff, @RequestParam Double amount,
+  public ResponseEntity<Rff> sendRff(@RequestParam Integer idRff, @RequestParam BigDecimal amount,
       @RequestParam boolean sendToMe)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     if (idRff == null)
@@ -666,8 +667,8 @@ public class TiersController {
     validationHelper.validateString(tiers.getIntercom(), false, 12, "Intercom");
 
     validationHelper.validateReferential(tiers.getRffFrequency(),
-        tiers.getRffFormaliteRate() != null && tiers.getRffFormaliteRate() > 0
-            || tiers.getRffInsertionRate() != null && tiers.getRffInsertionRate() > 0,
+        tiers.getRffFormaliteRate() != null && tiers.getRffFormaliteRate().compareTo(BigDecimal.ZERO) > 0
+            || tiers.getRffInsertionRate() != null && tiers.getRffInsertionRate().compareTo(BigDecimal.ZERO) > 0,
         "rffFrequency");
 
     if (tiers.getRffFrequency() != null

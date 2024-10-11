@@ -1549,7 +1549,7 @@ public class QuotationController {
       validationHelper.validateReferential(domiciliationFee, true, "domiciliationFee");
     validationHelper.validateReferential(domiciliationFee.getBillingType(), true, "BillingType");
     validationHelper.validateReferential(domiciliationFee.getDomiciliation(), true, "Domiciliation");
-    validationHelper.validateDouble(domiciliationFee.getAmount(), true, "amount");
+    validationHelper.validateBigDecimal(domiciliationFee.getAmount(), true, "amount");
     validationHelper.validateDateMax(domiciliationFee.getFeeDate(), true, LocalDate.now(), "feeDate");
 
     return new ResponseEntity<DomiciliationFee>(

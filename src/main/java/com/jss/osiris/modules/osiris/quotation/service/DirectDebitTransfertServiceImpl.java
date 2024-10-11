@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -182,7 +183,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
         directDebitTransfert.setLabel("Facture " + invoice.getId() + " / Journal Spécial des Sociétés / "
                 + (invoice.getCustomerOrder() != null ? invoice.getCustomerOrder().getId() : ""));
         directDebitTransfert.setIsAlreadyExported(false);
-        Double totalPrice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+        BigDecimal totalPrice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
         directDebitTransfert.setTransfertAmount(totalPrice);
         directDebitTransfert.setTransfertDateTime(invoice.getDueDate().atTime(12, 0));
         directDebitTransfert.setTransfertIban(invoice.getResponsable().getTiers().getPaymentIban());

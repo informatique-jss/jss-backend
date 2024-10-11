@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.invoicing.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -86,6 +88,8 @@ import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 public class InvoicingController {
 
     private static final String inputEntryPoint = "/invoicing";
+    private BigDecimal zeroValue = new BigDecimal(0);
+    private BigDecimal oneHundredValue = new BigDecimal(100);
 
     @Autowired
     ValidationHelper validationHelper;
@@ -178,7 +182,7 @@ public class InvoicingController {
         if (rff == null)
             throw new OsirisValidationException("Rff");
 
-        if (rff.getRffTotal() == null || rff.getRffTotal() <= 0f)
+        if (rff.getRffTotal() == null || rff.getRffTotal().compareTo(null) <= 0f)
             throw new OsirisValidationException("Rff");
 
         if (rff.getIsCancelled() == true || rff.getIsSent() == false
@@ -295,9 +299,9 @@ public class InvoicingController {
 
     @GetMapping(inputEntryPoint + "/payment/cut")
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-    public ResponseEntity<Payment> cutPayment(@RequestParam Integer paymentId, @RequestParam Double amount)
+    public ResponseEntity<Payment> cutPayment(@RequestParam Integer paymentId, @RequestParam BigDecimal amount)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        validationHelper.validateDouble(amount, true, "amount");
+        validationHelper.validateBigDecimal(amount, true, "amount");
         Payment payment = paymentService.getPayment(paymentId);
         if (payment != null) {
             if (payment.getIsCancelled() || payment.getIsExternallyAssociated())
@@ -559,8 +563,9 @@ public class InvoicingController {
                 .size() != (paymentAssociate.getInvoices() == null ? 0 : paymentAssociate.getInvoices().size())
                         + (paymentAssociate.getCustomerOrders() == null ? 0
                                 : paymentAssociate.getCustomerOrders().size()))
-            if (paymentAssociate.getPayment().getPaymentAmount() < 0 || paymentAssociate.getAffaireRefund() == null
-                    && paymentAssociate.getTiersRefund() == null)
+            if (paymentAssociate.getPayment().getPaymentAmount().compareTo(zeroValue) < 0
+                    || paymentAssociate.getAffaireRefund() == null
+                            && paymentAssociate.getTiersRefund() == null)
                 throw new OsirisValidationException("wrong associate number");
 
         paymentAssociate.setAffaireRefund(
@@ -569,8 +574,9 @@ public class InvoicingController {
                 (Tiers) validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "Tiers"));
 
         Responsable responsableOrder = null;
-        if (paymentAssociate.getPayment().getPaymentAmount() > 0 && (paymentAssociate.getInvoices() == null
-                || paymentAssociate.getInvoices().get(0).getIsCreditNote() == false)) {
+        if (paymentAssociate.getPayment().getPaymentAmount().compareTo(zeroValue) > 0
+                && (paymentAssociate.getInvoices() == null
+                        || paymentAssociate.getInvoices().get(0).getIsCreditNote() == false)) {
             if (paymentAssociate.getResponsableOrder() == null
                     && paymentAssociate.getResponsableOrder().getId() == null)
                 throw new OsirisValidationException("no responsable order set");
@@ -612,14 +618,16 @@ public class InvoicingController {
 
                     if (invoice.getInvoiceStatus().getId()
                             .equals(constantService.getInvoiceStatusCreditNoteReceived().getId()))
-                        if (Math.round(invoice.getTotalPrice() * 100f) != Math
-                                .round(paymentAssociate.getPayment().getPaymentAmount() * 100f))
+                        if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0,
+                                RoundingMode.HALF_UP) != paymentAssociate.getPayment().getPaymentAmount()
+                                        .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP))
                             throw new OsirisValidationException("Wrong payment amount");
 
                     if (invoice.getInvoiceStatus().getId()
                             .equals(constantService.getInvoiceStatusReceived().getId())) {
-                        if (-Math.round(invoice.getTotalPrice() * 100f) != Math
-                                .round(paymentAssociate.getPayment().getPaymentAmount() * 100f))
+                        if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
+                                .negate() != paymentAssociate.getPayment().getPaymentAmount().multiply(oneHundredValue)
+                                        .setScale(0, RoundingMode.HALF_UP))
                             throw new OsirisValidationException("Wrong payment amount");
                     }
                 }
@@ -627,23 +635,24 @@ public class InvoicingController {
 
         // Check all money used
 
-        Double totalAmount = 0.0;
+        BigDecimal totalAmount = new BigDecimal(0);
         if (paymentAssociate.getByPassAmount() != null)
-            for (Double amount : paymentAssociate.getByPassAmount()) {
-                totalAmount += amount;
+            for (BigDecimal amount : paymentAssociate.getByPassAmount()) {
+                totalAmount = totalAmount.add(amount);
             }
-        totalAmount = Math.round(totalAmount * 100.0) / 100.0;
+        totalAmount = totalAmount.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
 
         // If incoming, appoint or refund needed, if outgoing, must match
-        if (totalAmount != 0) {
-            if (totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount())) {
-                if (paymentAssociate.getPayment().getPaymentAmount() >= 0) {
-                    if (paymentAssociate.getPayment().getPaymentAmount() > totalAmount
-                            && (Math.abs(totalAmount)
-                                    - paymentAssociate.getPayment().getPaymentAmount()) > paymentLimitRefundInEuros)
+        if (totalAmount.compareTo(zeroValue) != 0) {
+            if (totalAmount != paymentAssociate.getPayment().getPaymentAmount().setScale(0, RoundingMode.HALF_UP)) {
+                if (paymentAssociate.getPayment().getPaymentAmount().compareTo(zeroValue) >= 0) {
+                    if (paymentAssociate.getPayment().getPaymentAmount().compareTo(totalAmount) > 0
+                            && totalAmount.abs().subtract(paymentAssociate.getPayment().getPaymentAmount())
+                                    .compareTo(BigDecimal.valueOf(paymentLimitRefundInEuros)) > 0)
                         if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaireRefund() == null)
                             throw new OsirisValidationException("not all payment used and no refund tiers set");
-                } else if (totalAmount != Math.round(paymentAssociate.getPayment().getPaymentAmount() * 100f) / 100f)
+                } else if (totalAmount != paymentAssociate.getPayment().getPaymentAmount().multiply(oneHundredValue)
+                        .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue))
                     throw new OsirisValidationException("not all payment used");
             }
         }
@@ -651,7 +660,7 @@ public class InvoicingController {
         // Check same customer order for incoming payment
         if (responsableOrder != null) {
             Tiers commonCustomerOrder = responsableOrder.getTiers();
-            if (paymentAssociate.getPayment().getPaymentAmount() >= 0
+            if (paymentAssociate.getPayment().getPaymentAmount().compareTo(zeroValue) >= 0
                     && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)) {
                 if (paymentAssociate.getInvoices() != null) {
                     for (Invoice invoice : paymentAssociate.getInvoices()) {
@@ -707,14 +716,14 @@ public class InvoicingController {
             throw new OsirisValidationException("payment");
 
         cashPayment.setPaymentType(constantService.getPaymentTypeEspeces());
-        cashPayment.setPaymentAmount(Math.abs(cashPayment.getPaymentAmount()));
+        cashPayment.setPaymentAmount(cashPayment.getPaymentAmount().abs());
         validationHelper.validateString(cashPayment.getLabel(), true, 250, "paymentType");
         validationHelper.validateDateTimeMax(cashPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentType");
         cashPayment.setIsDeposit(false);
         cashPayment.setIsAppoint(false);
 
-        Double remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
-        if (remainingToPay == null || remainingToPay < cashPayment.getPaymentAmount())
+        BigDecimal remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+        if (remainingToPay == null || remainingToPay.compareTo(cashPayment.getPaymentAmount()) < 0)
             throw new OsirisValidationException("paymentAmount");
 
         this.paymentService.addCashPaymentForCustomerInvoice(cashPayment, invoice);
@@ -737,7 +746,7 @@ public class InvoicingController {
             throw new OsirisValidationException("payment");
 
         cashPayment.setPaymentType(constantService.getPaymentTypeEspeces());
-        cashPayment.setPaymentAmount(Math.abs(cashPayment.getPaymentAmount()));
+        cashPayment.setPaymentAmount(cashPayment.getPaymentAmount().abs());
         validationHelper.validateString(cashPayment.getLabel(), true, 250, "paymentLabel");
         validationHelper.validateDateTimeMax(cashPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentDate");
         cashPayment.setIsDeposit(true);
@@ -756,7 +765,7 @@ public class InvoicingController {
             throw new OsirisValidationException("payment");
 
         checkPayment.setPaymentType(constantService.getPaymentTypeCheques());
-        checkPayment.setPaymentAmount(Math.abs(checkPayment.getPaymentAmount()));
+        checkPayment.setPaymentAmount(checkPayment.getPaymentAmount().abs());
         validationHelper.validateString(checkPayment.getLabel(), true, 250, "paymentType");
         validationHelper.validateDateTimeMax(checkPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentType");
         checkPayment.setIsDeposit(false);
@@ -780,7 +789,7 @@ public class InvoicingController {
                 && !provisonPayment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
             throw new OsirisClientMessageException("Type de paiement non autorisé");
 
-        provisonPayment.setPaymentAmount(-Math.abs(provisonPayment.getPaymentAmount()));
+        provisonPayment.setPaymentAmount(provisonPayment.getPaymentAmount().abs().negate());
         validationHelper.validateString(provisonPayment.getLabel(), true, 250, "paymentType");
         validationHelper.validateDateTimeMax(provisonPayment.getPaymentDate(), true, LocalDateTime.now(),
                 "paymentType");
@@ -965,11 +974,11 @@ public class InvoicingController {
                 if (invoiceItem.getId() != null)
                     validationHelper.validateReferential(invoiceItem, true, "invoiceItem");
                 if (invoiceItem.getDiscountAmount() == null)
-                    invoiceItem.setDiscountAmount(0.0);
+                    invoiceItem.setDiscountAmount(zeroValue);
                 if (invoiceItem.getPreTaxPrice() == null)
-                    invoiceItem.setPreTaxPrice(0.0);
+                    invoiceItem.setPreTaxPrice(zeroValue);
                 if (invoiceItem.getVatPrice() == null)
-                    invoiceItem.setVatPrice(0.0);
+                    invoiceItem.setVatPrice(zeroValue);
                 if (invoiceItem.getPreTaxPriceReinvoiced() == null)
                     invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 

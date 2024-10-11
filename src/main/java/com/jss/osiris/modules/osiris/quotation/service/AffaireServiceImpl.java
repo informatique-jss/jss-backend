@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -362,12 +363,13 @@ public class AffaireServiceImpl implements AffaireService {
                         rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale().getCode()));
         }
 
-        if ((affaire.getShareCapital() == null || affaire.getShareCapital() <= 0f)
+        if ((affaire.getShareCapital() == null || affaire.getShareCapital().compareTo(new BigDecimal(0)) <= 0)
                 && personneMorale.getIdentite() != null
                 && personneMorale.getIdentite().getDescription() != null
                 && personneMorale.getIdentite().getDescription().getMontantCapital() != null)
             if (affaire.getShareCapital() == null || affaire.getShareCapital().equals(0f))
-                affaire.setShareCapital(personneMorale.getIdentite().getDescription().getMontantCapital() * 1.0f);
+                affaire.setShareCapital(
+                        personneMorale.getIdentite().getDescription().getMontantCapital().multiply(new BigDecimal(1)));
 
         if ((affaire.getAcronym() == null || affaire.getAcronym().length() == 0)
                 && personneMorale.getIdentite() != null && personneMorale.getIdentite().getDescription() != null

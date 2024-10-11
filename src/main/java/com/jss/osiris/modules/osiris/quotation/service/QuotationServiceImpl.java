@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -384,9 +385,9 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
 
-        Double remainingToPay = computeQuotationTotalPrice(quotation);
+        BigDecimal remainingToPay = computeQuotationTotalPrice(quotation);
 
-        if (remainingToPay > 0) {
+        if (remainingToPay.compareTo(BigDecimal.ZERO) > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
                     remainingToPay, mail,
                     quotation.getId() + "", subject);
@@ -444,32 +445,35 @@ public class QuotationServiceImpl implements QuotationService {
         return quotation;
     }
 
-    private Double computeQuotationTotalPrice(IQuotation quotation) {
+    private BigDecimal computeQuotationTotalPrice(IQuotation quotation) {
         // Compute prices
-        Double preTaxPriceTotal = 0.0;
-        Double discountTotal = null;
-        Double vatTotal = 0.0;
+        BigDecimal preTaxPriceTotal = new BigDecimal(0);
+        BigDecimal discountTotal = null;
+        BigDecimal vatTotal = new BigDecimal(0);
+        BigDecimal zeroValue = new BigDecimal(0);
 
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
             for (Service service : asso.getServices())
                 for (Provision provision : service.getProvisions()) {
                     for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0;
-                        if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
+                        preTaxPriceTotal = preTaxPriceTotal
+                                .add(invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : zeroValue);
+                        if (invoiceItem.getDiscountAmount() != null
+                                && invoiceItem.getDiscountAmount().compareTo(zeroValue) > 0) {
                             if (discountTotal == null)
                                 discountTotal = invoiceItem.getDiscountAmount();
                             else
-                                discountTotal += invoiceItem.getDiscountAmount();
+                                discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
                         }
                         if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                                && invoiceItem.getVatPrice() > 0) {
-                            vatTotal += invoiceItem.getVatPrice();
+                                && invoiceItem.getVatPrice().compareTo(zeroValue) > 0) {
+                            vatTotal = vatTotal.add(invoiceItem.getVatPrice());
                         }
                     }
                 }
         }
 
-        return preTaxPriceTotal - (discountTotal != null ? discountTotal : 0) + vatTotal;
+        return preTaxPriceTotal.subtract(discountTotal != null ? discountTotal : zeroValue).add(vatTotal);
     }
 
     @Transactional(rollbackFor = Exception.class)
