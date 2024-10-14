@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common';
-import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import localeFr from '@angular/common/locales/fr';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -15,15 +15,21 @@ registerLocaleData(localeFr, 'fr');
   declarations: [
     AppComponent,
   ],
-  exports: [],
-  bootstrap: [AppComponent], imports: [BrowserModule,
+  imports: [
+    BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     FormsModule,
     RouterModule,
-    MainModule], providers: [provideRouter(routes),
-    provideClientHydration(),
-    provideHttpClient(withFetch()),
-    { provide: LOCALE_ID, useValue: 'fr' }, provideHttpClient(withInterceptorsFromDi())]
+    MainModule
+  ],
+  exports: [
+  ],
+  providers: [provideRouter(routes),
+  provideClientHydration(),
+  provideHttpClient(withFetch()),
+  { provide: LOCALE_ID, useValue: 'fr' }],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
 
