@@ -28,7 +28,7 @@
     "jquery-ui": "^1.13.2",
     "jquery-ui-dist": "^1.13.2",
     "mat-table-exporter": "^15.0.0",
-    "ngx-echarts": "^18.0.0",
+    "ngx-echarts": "^15.0.3",
     "ngx-progressbar": "^9.0.0",
     "pivottable": "^2.23.0",
     "rxjs": "^7.8.1",
