@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.invoicing.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -9,16 +10,32 @@ import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 @Service
 public class InvoiceHelper {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    DocumentService documentService;
+
+    @Autowired
+    ResponsableService responsableService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
+
+    @Autowired
+    QuotationService quotationService;
 
     public Invoice setPriceTotal(Invoice invoice) {
         if (invoice != null) {
@@ -71,8 +88,22 @@ public class InvoiceHelper {
         return vatTotal;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public InvoiceLabelResult computeInvoiceLabelResult(Document billingDocument, IQuotation customerOrder,
             Responsable orderingCustomer) throws OsirisException {
+
+        if (billingDocument.getId() != null)
+            billingDocument = documentService.getDocument(billingDocument.getId());
+
+        orderingCustomer = responsableService.getResponsable(orderingCustomer.getId());
+
+        if (customerOrder.getId() != null) {
+            if (customerOrder instanceof CustomerOrder)
+                customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
+            else
+                customerOrder = quotationService.getQuotation(customerOrder.getId());
+        }
+
         InvoiceLabelResult invoiceLabelResult = new InvoiceLabelResult();
         if (billingDocument.getBillingLabelType() == null)
             return invoiceLabelResult;

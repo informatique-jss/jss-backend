@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +15,11 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +46,7 @@ import com.jss.osiris.libs.jackson.JacksonTimestampMillisecondDeserializer;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -50,6 +57,7 @@ import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
+import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
@@ -82,6 +90,7 @@ import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderRepository;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 import jakarta.persistence.EntityManager;
@@ -188,6 +197,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    UserScopeService userScopeService;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -1091,20 +1103,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public Float getTotalForCustomerOrder(IQuotation customerOrder) {
-        Float total = 0f;
-        if (customerOrder != null)
-            if (customerOrder.getAssoAffaireOrders() != null)
-                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                    for (Service service : assoAffaireOrder.getServices())
-                        for (Provision provision : service.getProvisions())
-                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                                for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                                    total += invoiceHelper.getTotalForInvoiceItem(invoiceItem);
-        return total;
-    }
-
-    @Override
     public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
         customerOrder = getCustomerOrder(customerOrder.getId());
         if (customerOrder != null) {
@@ -1393,5 +1391,186 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         addOrUpdateCustomerOrder(customerOrder2, false, true);
 
         return customerOrder2;
+    }
+
+    public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
+            String sortBy) {
+        List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
+        boolean displayPayed = false;
+
+        if (customerOrderStatus != null && customerOrderStatus.size() > 0) {
+            for (String customerOrderStatusCode : customerOrderStatus) {
+                if (customerOrderStatusCode.equals(CustomerOrderStatus.PAYED)) {
+                    displayPayed = true;
+                    continue;
+                }
+                CustomerOrderStatus customerOrderStatusFetched = customerOrderStatusService
+                        .getCustomerOrderStatusByCode(customerOrderStatusCode);
+                if (customerOrderStatusFetched != null)
+                    customerOrderStatusToFilter.add(customerOrderStatusFetched);
+            }
+
+            CustomerOrderStatus customerOrderStatusBilled = customerOrderStatusService
+                    .getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED);
+
+            List<Responsable> responsablesToFilter = userScopeService.getUserScopeResponsables();
+
+            if (customerOrderStatusToFilter.size() > 0 && responsablesToFilter != null
+                    && responsablesToFilter.size() > 0) {
+
+                Order order = new Order(Direction.DESC, "createdDate");
+
+                if (sortBy.equals("createdDateAsc"))
+                    order = new Order(Direction.ASC, "createdDate");
+
+                if (sortBy.equals("statusAsc"))
+                    order = new Order(Direction.ASC, "customerOrderStatus");
+
+                Sort sort = Sort.by(Arrays.asList(order));
+                Pageable pageableRequest = PageRequest.of(page, 50, sort);
+                return populateTransientField(customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
+                        customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed));
+            }
+        }
+
+        return null;
+    }
+
+    private List<CustomerOrder> populateTransientField(List<CustomerOrder> customerOrders) {
+        if (customerOrders != null && customerOrders.size() > 0)
+            for (CustomerOrder customerOrder : customerOrders) {
+                List<String> affaireLabels = new ArrayList<String>();
+                List<String> serviceLabels = new ArrayList<String>();
+                customerOrder.setHasMissingInformations(false);
+                if (customerOrder.getAssoAffaireOrders() != null)
+                    for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+                        String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
+                        if (affaireDenomination == null || affaireDenomination.length() == 0)
+                            affaireDenomination = assoAffaireOrder.getAffaire().getFirstname() + " "
+                                    + assoAffaireOrder.getAffaire().getLastname();
+                        if (affaireLabels.indexOf(affaireDenomination) < 0)
+                            affaireLabels.add(affaireDenomination);
+
+                        if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0)
+                            for (Service service : assoAffaireOrder.getServices()) {
+                                String serviceLabel = service.getCustomLabel();
+                                if (serviceLabel == null || serviceLabel.length() == 0)
+                                    serviceLabel = service.getServiceType().getLabel();
+                                if (serviceLabels.indexOf(serviceLabel) < 0)
+                                    serviceLabels.add(serviceLabel);
+                            }
+
+                        if (assoAffaireOrder.getServices() != null)
+                            for (Service service : assoAffaireOrder.getServices()) {
+                                if (assoAffaireOrderService.isServiceHasMissingInformations(service)) {
+                                    customerOrder.setHasMissingInformations(true);
+                                }
+                            }
+                    }
+
+                if (affaireLabels.size() > 0)
+                    customerOrder.setAffairesList(String.join(" / ", affaireLabels));
+                customerOrder.setServicesList(String.join(" / ", serviceLabels));
+            }
+
+        return customerOrders;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Payment> getApplicablePaymentsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        List<Payment> payments = new ArrayList<Payment>();
+
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
+                && customerOrder.getInvoices() != null) {
+            for (Invoice invoice : customerOrder.getInvoices())
+                if (invoice.getResponsable() != null
+                        && (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                                || invoice.getInvoiceStatus().getId()
+                                        .equals(constantService.getInvoiceStatusPayed().getId()))) {
+                    if (invoice.getPayments() != null) {
+                        for (Payment payment : invoice.getPayments()) {
+                            // We hide appoint from customer
+                            if ((payment.getIsCancelled() == null || payment.getIsCancelled() == false)
+                                    && (payment.getIsAppoint() == null || payment.getIsAppoint() == false))
+                                payments.add(payment);
+                        }
+                    }
+                }
+        }
+        // If not billed, all payments are on the customer order,
+        // If billed, took only refund
+        if (customerOrder.getPayments() != null) {
+            for (Payment payment : customerOrder.getPayments()) {
+                if ((payment.getIsCancelled() == null || payment.getIsCancelled() == false)
+                        && (payment.getIsAppoint() == null || payment.getIsAppoint() == false))
+                    if (payment.getRefund() != null
+                            || !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
+                        payments.add(payment);
+            }
+        }
+        return payments;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public InvoicingSummary getInvoicingSummaryForCustomerOrder(CustomerOrder customerOrder) throws OsirisException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        InvoicingSummary invoicingSummary = new InvoicingSummary();
+
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
+                && customerOrder.getInvoices() != null) {
+            for (Invoice invoice : customerOrder.getInvoices())
+                if (invoice.getResponsable() != null
+                        && (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
+                                || invoice.getInvoiceStatus().getId()
+                                        .equals(constantService.getInvoiceStatusPayed().getId()))) {
+                    if (invoice.getPayments() != null) {
+                        for (Payment payment : invoice.getPayments()) {
+                            // We hide appoint from customer
+                            if ((payment.getIsCancelled() == null || payment.getIsCancelled() == false)
+                                    && (payment.getIsAppoint() == null || payment.getIsAppoint() == false)) {
+
+                            }
+
+                        }
+                    }
+                }
+        } else {
+            BigDecimal totalPrice = new BigDecimal(0);
+            BigDecimal discountTotal = new BigDecimal(0);
+            BigDecimal preTaxPriceTotal = new BigDecimal(0);
+            BigDecimal vatTotal = new BigDecimal(0);
+            if (customerOrder != null)
+                if (customerOrder.getAssoAffaireOrders() != null)
+                    for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                        for (Service service : assoAffaireOrder.getServices())
+                            for (Provision provision : service.getProvisions())
+                                if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                                        if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
+                                            preTaxPriceTotal
+                                                    .add(new BigDecimal(invoiceItem.getPreTaxPriceReinvoiced()));
+                                        } else if (invoiceItem.getPreTaxPrice() != null
+                                                && invoiceItem.getPreTaxPrice() > 0) {
+                                            preTaxPriceTotal
+                                                    .add(new BigDecimal(invoiceItem.getPreTaxPrice()));
+
+                                        }
+
+                                        if (invoiceItem.getVatPrice() != null) {
+                                            // vatTotal.add(new BigDecimal(invoiceItem.get))
+                                        }
+                                    }
+            return null;
+        }
+        return null;
+    }
+
+    @Override
+    public Float getTotalForCustomerOrder(IQuotation customerOrder) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTotalForCustomerOrder'");
     }
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.CascadeType;
@@ -26,12 +28,14 @@ public class CompetentAuthority implements IAttachment, IId {
 	@Id
 	@SequenceGenerator(name = "competent_authority_sequence", sequenceName = "competent_authority_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "competent_authority_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	private String apiId;
 
 	@Column(nullable = false, length = 200)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
 	@ManyToOne(fetch = FetchType.LAZY)

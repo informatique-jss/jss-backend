@@ -54,6 +54,8 @@ public class DomiciliationStatus implements Serializable, IId {
 
 	private String aggregateStatus;
 
+	private Integer servicePriority;
+
 	public static String getDOMICILIATION_NEW() {
 		return DOMICILIATION_NEW;
 	}
@@ -132,6 +134,38 @@ public class DomiciliationStatus implements Serializable, IId {
 
 	public void setAggregateStatus(String aggregateLabel) {
 		this.aggregateStatus = aggregateLabel;
+	}
+
+	public static String getDOMICILIATION_IN_PROGRESS() {
+		return DOMICILIATION_IN_PROGRESS;
+	}
+
+	public static void setDOMICILIATION_IN_PROGRESS(String dOMICILIATION_IN_PROGRESS) {
+		DOMICILIATION_IN_PROGRESS = dOMICILIATION_IN_PROGRESS;
+	}
+
+	public static String getDOMICILIATION_WAITING_FOR_DOCUMENTS() {
+		return DOMICILIATION_WAITING_FOR_DOCUMENTS;
+	}
+
+	public static void setDOMICILIATION_WAITING_FOR_DOCUMENTS(String dOMICILIATION_WAITING_FOR_DOCUMENTS) {
+		DOMICILIATION_WAITING_FOR_DOCUMENTS = dOMICILIATION_WAITING_FOR_DOCUMENTS;
+	}
+
+	public static String getDOMICILIATION_DONE() {
+		return DOMICILIATION_DONE;
+	}
+
+	public static void setDOMICILIATION_DONE(String dOMICILIATION_DONE) {
+		DOMICILIATION_DONE = dOMICILIATION_DONE;
+	}
+
+	public Integer getServicePriority() {
+		return servicePriority;
+	}
+
+	public void setServicePriority(Integer servicePriority) {
+		this.servicePriority = servicePriority;
 	}
 
 }

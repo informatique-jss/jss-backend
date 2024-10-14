@@ -31,6 +31,8 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.profile.model.UserScope;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
@@ -57,6 +59,9 @@ public class MyJssProfileController {
 
 	@Autowired
 	UserScopeService userScopeService;
+
+	@Autowired
+	ConstantService constantService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 10;
@@ -182,5 +187,11 @@ public class MyJssProfileController {
 			return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.TOO_MANY_REQUESTS);
 		}
 		return null;
+	}
+
+	@GetMapping(inputEntryPoint + "/constants")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Constant> getConstants() throws OsirisException {
+		return new ResponseEntity<Constant>(constantService.getConstants(), HttpStatus.OK);
 	}
 }

@@ -1,21 +1,39 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 
 public class InvoiceLabelResult {
+    @JsonView(JacksonViews.MyJssView.class)
     private String billingLabel;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private String billingLabelAddress;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private String cedexComplement;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private String billingLabelPostalCode;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private String billingLabelComplementCedex;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private City billingLabelCity;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private Country billingLabelCountry;
+
     private BillingLabelType billingLabelType;
     private Boolean isResponsableOnBilling;
     private String billingLabelIntercommunityVat;
     private Boolean isCommandNumberMandatory;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private String commandNumber;
     private String labelOrigin;
 

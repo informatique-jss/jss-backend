@@ -19,4 +19,5 @@ export interface CustomerOrder extends IQuotation {
   recurringStartDate: Date;
   recurringEndDate: Date;
   paperSets: PaperSet[];
+  isPayed: boolean;
 }

@@ -57,6 +57,8 @@ public class SimpleProvisionStatus implements Serializable, IId {
 
 	private String aggregateStatus;
 
+	private Integer servicePriority;
+
 	public static String getSIMPLE_PROVISION_NEW() {
 		return SIMPLE_PROVISION_NEW;
 	}
@@ -168,6 +170,14 @@ public class SimpleProvisionStatus implements Serializable, IId {
 	public static void setSIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY(
 			String sIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY) {
 		SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY = sIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY;
+	}
+
+	public Integer getServicePriority() {
+		return servicePriority;
+	}
+
+	public void setServicePriority(Integer servicePriority) {
+		this.servicePriority = servicePriority;
 	}
 
 }

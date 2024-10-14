@@ -60,6 +60,8 @@ public class AnnouncementStatus implements Serializable, IId {
 
 	private String aggregateStatus;
 
+	private Integer servicePriority;
+
 	public Integer getId() {
 		return id;
 	}
@@ -130,6 +132,86 @@ public class AnnouncementStatus implements Serializable, IId {
 
 	public void setAggregateStatus(String aggregateStatus) {
 		this.aggregateStatus = aggregateStatus;
+	}
+
+	public static String getANNOUNCEMENT_NEW() {
+		return ANNOUNCEMENT_NEW;
+	}
+
+	public static void setANNOUNCEMENT_NEW(String aNNOUNCEMENT_NEW) {
+		ANNOUNCEMENT_NEW = aNNOUNCEMENT_NEW;
+	}
+
+	public static String getANNOUNCEMENT_IN_PROGRESS() {
+		return ANNOUNCEMENT_IN_PROGRESS;
+	}
+
+	public static void setANNOUNCEMENT_IN_PROGRESS(String aNNOUNCEMENT_IN_PROGRESS) {
+		ANNOUNCEMENT_IN_PROGRESS = aNNOUNCEMENT_IN_PROGRESS;
+	}
+
+	public static String getANNOUNCEMENT_WAITING_DOCUMENT() {
+		return ANNOUNCEMENT_WAITING_DOCUMENT;
+	}
+
+	public static void setANNOUNCEMENT_WAITING_DOCUMENT(String aNNOUNCEMENT_WAITING_DOCUMENT) {
+		ANNOUNCEMENT_WAITING_DOCUMENT = aNNOUNCEMENT_WAITING_DOCUMENT;
+	}
+
+	public static String getANNOUNCEMENT_WAITING_CONFRERE() {
+		return ANNOUNCEMENT_WAITING_CONFRERE;
+	}
+
+	public static void setANNOUNCEMENT_WAITING_CONFRERE(String aNNOUNCEMENT_WAITING_CONFRERE) {
+		ANNOUNCEMENT_WAITING_CONFRERE = aNNOUNCEMENT_WAITING_CONFRERE;
+	}
+
+	public static String getANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED() {
+		return ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED;
+	}
+
+	public static void setANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED(String aNNOUNCEMENT_WAITING_CONFRERE_PUBLISHED) {
+		ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED = aNNOUNCEMENT_WAITING_CONFRERE_PUBLISHED;
+	}
+
+	public static String getANNOUNCEMENT_DONE() {
+		return ANNOUNCEMENT_DONE;
+	}
+
+	public static void setANNOUNCEMENT_DONE(String aNNOUNCEMENT_DONE) {
+		ANNOUNCEMENT_DONE = aNNOUNCEMENT_DONE;
+	}
+
+	public static String getANNOUNCEMENT_WAITING_READ_CUSTOMER() {
+		return ANNOUNCEMENT_WAITING_READ_CUSTOMER;
+	}
+
+	public static void setANNOUNCEMENT_WAITING_READ_CUSTOMER(String aNNOUNCEMENT_WAITING_READ_CUSTOMER) {
+		ANNOUNCEMENT_WAITING_READ_CUSTOMER = aNNOUNCEMENT_WAITING_READ_CUSTOMER;
+	}
+
+	public static String getANNOUNCEMENT_WAITING_CONFRERE_INVOICE() {
+		return ANNOUNCEMENT_WAITING_CONFRERE_INVOICE;
+	}
+
+	public static void setANNOUNCEMENT_WAITING_CONFRERE_INVOICE(String aNNOUNCEMENT_WAITING_CONFRERE_INVOICE) {
+		ANNOUNCEMENT_WAITING_CONFRERE_INVOICE = aNNOUNCEMENT_WAITING_CONFRERE_INVOICE;
+	}
+
+	public static String getANNOUNCEMENT_PUBLISHED() {
+		return ANNOUNCEMENT_PUBLISHED;
+	}
+
+	public static void setANNOUNCEMENT_PUBLISHED(String aNNOUNCEMENT_PUBLISHED) {
+		ANNOUNCEMENT_PUBLISHED = aNNOUNCEMENT_PUBLISHED;
+	}
+
+	public Integer getServicePriority() {
+		return servicePriority;
+	}
+
+	public void setServicePriority(Integer servicePriority) {
+		this.servicePriority = servicePriority;
 	}
 
 }

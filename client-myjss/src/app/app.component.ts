@@ -1,5 +1,6 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ConstantService } from './libs/constant.service';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +11,13 @@ import { Router } from '@angular/router';
 export class AppComponent implements AfterViewInit {
   title = 'myjss';
 
-  constructor(private router: Router) {
+  constructor(private router: Router,
+    private constantService: ConstantService,
+  ) {
   }
 
   ngOnInit() {
+    this.constantService.initConstant();
   }
 
   ngAfterViewInit() {

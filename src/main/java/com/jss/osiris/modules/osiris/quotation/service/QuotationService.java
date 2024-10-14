@@ -71,4 +71,7 @@ public interface QuotationService {
 
         public Quotation generateQuotationPdf(Quotation quotation) throws OsirisClientMessageException,
                         OsirisValidationException, OsirisDuplicateException, OsirisException;
+
+        public List<Quotation> searchQuotationsForCurrentUser(List<String> quotationStatus, Integer page,
+                        String sortBy);
 }

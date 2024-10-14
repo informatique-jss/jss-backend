@@ -13,6 +13,11 @@ import java.util.UUID;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
@@ -24,6 +29,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -52,6 +58,7 @@ import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.QuotationRepository;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
@@ -116,6 +123,9 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     AttachmentService attachmentService;
+
+    @Autowired
+    UserScopeService userScopeService;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -270,7 +280,7 @@ public class QuotationServiceImpl implements QuotationService {
                         false, "Devis n°" + quotation.getId(), null, null, null);
 
             for (Attachment attachment : attachments)
-                if (attachment.getDescription().contains(quotation.getId() + "")) {
+                if (quotation != null && attachment.getDescription().contains(quotation.getId() + "")) {
                     attachment.setQuotation(quotation);
                     attachmentService.addOrUpdateAttachment(attachment);
                 }
@@ -601,6 +611,73 @@ public class QuotationServiceImpl implements QuotationService {
         quotation.setQuotationStatus(
                 quotationStatusService.getQuotationStatusByCode(QuotationStatus.VALIDATED_BY_CUSTOMER));
         return addOrUpdateQuotation(quotation);
+    }
+
+    public List<Quotation> searchQuotationsForCurrentUser(List<String> customerOrderStatus, Integer page,
+            String sortBy) {
+        List<QuotationStatus> quotationStatusToFilter = new ArrayList<QuotationStatus>();
+
+        if (customerOrderStatus != null && customerOrderStatus.size() > 0) {
+            for (String customerOrderStatusCode : customerOrderStatus) {
+                QuotationStatus customerOrderStatusFetched = quotationStatusService
+                        .getQuotationStatusByCode(customerOrderStatusCode);
+                if (customerOrderStatusFetched != null)
+                    quotationStatusToFilter.add(customerOrderStatusFetched);
+            }
+
+            List<Responsable> responsablesToFilter = userScopeService.getUserScopeResponsables();
+
+            if (quotationStatusToFilter.size() > 0 && responsablesToFilter != null
+                    && responsablesToFilter.size() > 0) {
+
+                Order order = new Order(Direction.DESC, "createdDate");
+
+                if (sortBy.equals("createdDateAsc"))
+                    order = new Order(Direction.ASC, "createdDate");
+
+                if (sortBy.equals("statusAsc"))
+                    order = new Order(Direction.ASC, "customerOrderStatus");
+
+                Sort sort = Sort.by(Arrays.asList(order));
+                Pageable pageableRequest = PageRequest.of(page, 50, sort);
+                return populateTransientField(quotationRepository.searchQuotationsForCurrentUser(responsablesToFilter,
+                        quotationStatusToFilter, pageableRequest));
+            }
+        }
+
+        return null;
+    }
+
+    private List<Quotation> populateTransientField(List<Quotation> quotations) {
+        if (quotations != null && quotations.size() > 0)
+            for (Quotation quotation : quotations) {
+                List<String> affaireLabels = new ArrayList<String>();
+                List<String> serviceLabels = new ArrayList<String>();
+                if (quotation.getAssoAffaireOrders() != null)
+                    for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+                        String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
+                        if (affaireDenomination == null || affaireDenomination.length() == 0)
+                            affaireDenomination = assoAffaireOrder.getAffaire().getFirstname() + " "
+                                    + assoAffaireOrder.getAffaire().getLastname();
+                        if (affaireLabels.indexOf(affaireDenomination) < 0)
+                            affaireLabels.add(affaireDenomination);
+
+                        if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0)
+                            for (Service service : assoAffaireOrder.getServices()) {
+                                String serviceLabel = service.getCustomLabel();
+                                if (serviceLabel == null || serviceLabel.length() == 0)
+                                    serviceLabel = service.getServiceType().getLabel();
+                                if (serviceLabels.indexOf(serviceLabel) < 0)
+                                    serviceLabels.add(serviceLabel);
+                            }
+                    }
+
+                if (affaireLabels.size() > 0)
+                    quotation.setAffairesList(String.join(" / ", affaireLabels));
+                quotation.setServicesList(String.join(" / ", serviceLabels));
+            }
+
+        return quotations;
     }
 
 }

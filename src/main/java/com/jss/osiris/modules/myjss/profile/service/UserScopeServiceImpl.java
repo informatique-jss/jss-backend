@@ -89,6 +89,16 @@ public class UserScopeServiceImpl implements UserScopeService {
         return null;
     }
 
+    @Override
+    public List<Responsable> getUserScopeResponsables() {
+        List<UserScope> currentScopes = getUserScope();
+        List<Responsable> responsables = new ArrayList<Responsable>();
+        for (UserScope userScope : currentScopes)
+            responsables.add(userScope.getResponsableViewed());
+
+        return responsables;
+    }
+
     private void checkUserScope(Responsable responsable) {
         List<Responsable> potentialScope = getPotentialUserScope();
         if (potentialScope == null || potentialScope.size() <= 1)

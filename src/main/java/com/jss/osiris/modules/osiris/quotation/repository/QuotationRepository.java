@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -12,6 +13,7 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.QueryHint;
 
@@ -70,4 +72,10 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
 
         @Query(value = "select q.* from quotation q where exists (select 1 from asso_affaire_order a join service on service.id_asso_affaire_order = a.id join provision p on p.id_service = service.id where a.id_quotation = q.id and  p.id_announcement = :announcementId)", nativeQuery = true)
         Optional<Quotation> findQuotationForAnnouncement(@Param("announcementId") Integer announcementId);
+
+        @Query("select q from Quotation q where responsable in :responsableToFilter and quotationStatus in :quotationStatusToFilter")
+        List<Quotation> searchQuotationsForCurrentUser(
+                        @Param("responsableToFilter") List<Responsable> responsablesToFilter,
+                        @Param("quotationStatusToFilter") List<QuotationStatus> quotationStatusToFilter,
+                        Pageable pageableRequest);
 }

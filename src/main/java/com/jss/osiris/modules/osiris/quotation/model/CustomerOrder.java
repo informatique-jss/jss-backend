@@ -6,10 +6,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -79,6 +81,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -89,6 +92,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Responsable responsable;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
@@ -97,15 +101,18 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_status")
+	@JsonView(JacksonViews.MyJssView.class)
 	private CustomerOrderStatus customerOrderStatus;
 
 	private LocalDateTime lastStatusUpdate;
@@ -115,6 +122,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private QuotationAbandonReason abandonReason;
 
 	@Column(columnDefinition = "TEXT") // TODO : delete when new website
+	@JsonView(JacksonViews.MyJssView.class)
 	private String description;
 
 	@OneToMany(mappedBy = "customerOrder")
@@ -184,16 +192,37 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private LocalDate recurringPeriodStartDate;
 	private LocalDate recurringPeriodEndDate;
 
+	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDate recurringStartDate;
+
+	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDate recurringEndDate;
+
+	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean isRecurring;
 	private Boolean isRecurringAutomaticallyBilled;
 
+	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean isGifted;
+
+	@JsonView(JacksonViews.MyJssView.class)
+	private Boolean isPayed;
 
 	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "customerOrder", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<CustomerOrderComment> customerOrderComments;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	public String affairesList;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	public String servicesList;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	public Boolean hasMissingInformations;
 
 	public Integer getId() {
 		return id;
@@ -466,4 +495,37 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	public void setPaperSets(List<PaperSet> paperSets) {
 		this.paperSets = paperSets;
 	}
+
+	public Boolean getIsPayed() {
+		return isPayed;
+	}
+
+	public void setIsPayed(Boolean isPayed) {
+		this.isPayed = isPayed;
+	}
+
+	public String getAffairesList() {
+		return affairesList;
+	}
+
+	public void setAffairesList(String affairesList) {
+		this.affairesList = affairesList;
+	}
+
+	public String getServicesList() {
+		return servicesList;
+	}
+
+	public void setServicesList(String servicesList) {
+		this.servicesList = servicesList;
+	}
+
+	public Boolean getHasMissingInformations() {
+		return hasMissingInformations;
+	}
+
+	public void setHasMissingInformations(Boolean hasMissingInformations) {
+		this.hasMissingInformations = hasMissingInformations;
+	}
+
 }

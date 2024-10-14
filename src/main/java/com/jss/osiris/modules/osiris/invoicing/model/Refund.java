@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -35,6 +37,7 @@ public class Refund implements Serializable, IId {
 	@IndexedField
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false)
@@ -42,9 +45,11 @@ public class Refund implements Serializable, IId {
 	private String label;
 
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Float refundAmount;
 
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDateTime refundDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -70,9 +75,11 @@ public class Refund implements Serializable, IId {
 	private CustomerOrder customerOrder;
 
 	@Column(length = 40)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String refundIBAN;
 
 	@Column(length = 40)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String refundBic;
 
 	private Boolean isMatched;

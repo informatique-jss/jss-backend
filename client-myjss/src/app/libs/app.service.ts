@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { AccountMenuItem, MAIN_ITEM_ACCOUNT } from '../modules/my-account/model/AccountMenuItem';
+import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../modules/my-account/model/AccountMenuItem';
 import { ResponsableService } from '../modules/profile/services/responsable.service';
 import { UserScopeService } from '../modules/profile/services/user.scope.service';
 import { Toast } from './toast/Toast';
@@ -55,6 +55,8 @@ export class AppService {
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Tableau de bord", iconClass: "ai-user-check", route: "/account/overview" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Devis", iconClass: "ai-slider", route: "/account/quotations" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Commandes", iconClass: "ai-cart", route: "/account/orders" } as AccountMenuItem);
 
 
     // Display only if I have more than one responsible potential

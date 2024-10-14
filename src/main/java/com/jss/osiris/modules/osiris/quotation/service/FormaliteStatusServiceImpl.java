@@ -48,27 +48,27 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
         @Transactional(rollbackFor = Exception.class)
         public void updateStatusReferential() throws OsirisException {
                 updateStatus(FormaliteStatus.FORMALITE_NEW, "Nouveau", "auto_awesome", true, false,
-                                AggregateStatus.AGGREGATE_STATUS_NEW);
+                                AggregateStatus.AGGREGATE_STATUS_NEW, 2);
                 updateStatus(FormaliteStatus.FORMALITE_IN_PROGRESS, "En cours", "autorenew", false, false,
-                                AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
+                                AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS, 5);
                 updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, "En attente de documents",
                                 "hourglass_top", false,
                                 false,
-                                AggregateStatus.AGGREGATE_STATUS_WAITING);
+                                AggregateStatus.AGGREGATE_STATUS_WAITING, 20);
                 updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
                                 "En attente de l'autorité compétente", "pending",
                                 false, false,
-                                AggregateStatus.AGGREGATE_STATUS_WAITING);
+                                AggregateStatus.AGGREGATE_STATUS_WAITING, 15);
 
                 updateStatus(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED, "Rejeté par l'autorité compétente",
                                 "gpp_bad", false,
-                                false, AggregateStatus.AGGREGATE_STATUS_WAITING);
+                                false, AggregateStatus.AGGREGATE_STATUS_WAITING, 11);
                 updateStatus(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED, "Validé par l'autorité compétente",
                                 "approval",
-                                false, false, AggregateStatus.AGGREGATE_STATUS_WAITING);
+                                false, false, AggregateStatus.AGGREGATE_STATUS_WAITING, 10);
 
                 updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true,
-                                AggregateStatus.AGGREGATE_STATUS_DONE);
+                                AggregateStatus.AGGREGATE_STATUS_DONE, 1);
 
                 setSuccessor(FormaliteStatus.FORMALITE_NEW, FormaliteStatus.FORMALITE_IN_PROGRESS);
                 setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS,
@@ -103,7 +103,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
         }
 
         protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState,
-                        String aggregateLabel) {
+                        String aggregateLabel, Integer servicePriority) {
                 FormaliteStatus formaliteStatus = getFormaliteStatusByCode(code);
                 if (getFormaliteStatusByCode(code) == null)
                         formaliteStatus = new FormaliteStatus();
@@ -115,6 +115,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                 formaliteStatus.setIsCloseState(isCloseState);
                 formaliteStatus.setIsOpenState(isOpenState);
                 formaliteStatus.setAggregateStatus(aggregateLabel);
+                formaliteStatus.setServicePriority(servicePriority);
                 addOrUpdateFormaliteStatus(formaliteStatus);
         }
 

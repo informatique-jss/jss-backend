@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
@@ -20,6 +22,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_service_asso_affaire_order", columnList = "id_asso_affaire_order") })
@@ -29,6 +32,7 @@ public class Service implements Serializable, IId {
 	@SequenceGenerator(name = "service_sequence", sequenceName = "service_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_sequence")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@OneToMany(targetEntity = Provision.class, mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -44,10 +48,12 @@ public class Service implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_type")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private ServiceType serviceType;
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<AssoServiceDocument> assoServiceDocuments;
 
 	@OneToMany(targetEntity = MissingAttachmentQuery.class, mappedBy = "service", fetch = FetchType.LAZY)
@@ -56,20 +62,27 @@ public class Service implements Serializable, IId {
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<AssoServiceFieldType> assoServiceFieldTypes;
 
-	public List<AssoServiceDocument> getAssoServiceDocuments() {
-		return assoServiceDocuments;
-	}
-
-	public void setAssoServiceDocuments(List<AssoServiceDocument> assoServiceDocuments) {
-		this.assoServiceDocuments = assoServiceDocuments;
-	}
-
+	@JsonView(JacksonViews.MyJssView.class)
 	private String customLabel;
 
 	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssView.class)
 	private String customerComment;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	private boolean hasMissingInformations;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	private String serviceStatus;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	private Float servicePrice;
 
 	public Integer getId() {
 		return id;
@@ -133,6 +146,38 @@ public class Service implements Serializable, IId {
 
 	public void setAssoServiceFieldTypes(List<AssoServiceFieldType> assoServiceFieldTypes) {
 		this.assoServiceFieldTypes = assoServiceFieldTypes;
+	}
+
+	public List<AssoServiceDocument> getAssoServiceDocuments() {
+		return assoServiceDocuments;
+	}
+
+	public void setAssoServiceDocuments(List<AssoServiceDocument> assoServiceDocuments) {
+		this.assoServiceDocuments = assoServiceDocuments;
+	}
+
+	public boolean isHasMissingInformations() {
+		return hasMissingInformations;
+	}
+
+	public void setHasMissingInformations(boolean hasMissingInformations) {
+		this.hasMissingInformations = hasMissingInformations;
+	}
+
+	public String getServiceStatus() {
+		return serviceStatus;
+	}
+
+	public void setServiceStatus(String serviceStatus) {
+		this.serviceStatus = serviceStatus;
+	}
+
+	public Float getServicePrice() {
+		return servicePrice;
+	}
+
+	public void setServicePrice(Float servicePrice) {
+		this.servicePrice = servicePrice;
 	}
 
 }

@@ -48,6 +48,7 @@ import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
@@ -136,6 +137,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     ServiceService serviceService;
+
+    @Autowired
+    QuotationService quotationService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -684,5 +688,108 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         .getId(),
                 formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT).getId(),
                 commercialId, formaliteGuichetUniqueStatusCode, formaliteInfogreffeStatusCode);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public List<AssoAffaireOrder> getAssoAffaireOrderForCustomerOrder(CustomerOrder customerOrder) {
+        customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
+        return populateTransientField(assoAffaireOrderRepository.findByCustomerOrderOrderByAffaire(customerOrder));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public List<AssoAffaireOrder> getAssoAffaireOrderForQuotation(Quotation quotation) {
+        quotation = quotationService.getQuotation(quotation.getId());
+        return populateTransientField(assoAffaireOrderRepository.findByQuotationOrderByAffaire(quotation));
+    }
+
+    private List<AssoAffaireOrder> populateTransientField(List<AssoAffaireOrder> assoAffaireOrders) {
+        if (assoAffaireOrders != null && assoAffaireOrders.size() > 0)
+            for (AssoAffaireOrder assoAffaireOrder : assoAffaireOrders) {
+                if (assoAffaireOrder.getServices() != null)
+                    for (Service service : assoAffaireOrder.getServices()) {
+                        service.setHasMissingInformations(false);
+                        if (isServiceHasMissingInformations(service)) {
+                            service.setHasMissingInformations(true);
+                        }
+                        service.setServiceStatus(getServiceStatusLabel(service));
+                        service.setServicePrice(getServicePrice(service));
+                        if (service.getServicePrice() <= 0f)
+                            service.setServicePrice(null);
+
+                    }
+            }
+
+        return assoAffaireOrders;
+    }
+
+    @Override
+    public boolean isServiceHasMissingInformations(Service service) {
+        if (service.getMissingAttachmentQueries() != null
+                && service.getMissingAttachmentQueries().size() > 0) {
+            if (service.getProvisions() != null)
+                for (Provision provision : service.getProvisions()) {
+                    if (provision.getSimpleProvision() != null
+                            && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
+                                    .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
+                            ||
+                            provision.getFormalite() != null
+                                    && provision.getFormalite().getFormaliteStatus().getCode()
+                                            .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT)) {
+                        return true;
+                    }
+                }
+        }
+        return false;
+    }
+
+    private String getServiceStatusLabel(Service service) {
+        Integer currentPriority = -1;
+        String currentStatus = "";
+        if (service.getProvisions() != null)
+            for (Provision provision : service.getProvisions()) {
+                if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus()
+                        .getServicePriority() > currentPriority) {
+                    currentPriority = provision.getAnnouncement().getAnnouncementStatus().getServicePriority();
+                    currentStatus = provision.getAnnouncement().getAnnouncementStatus().getLabel();
+                } else if (provision.getSimpleProvision() != null && provision.getSimpleProvision()
+                        .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
+                    currentPriority = provision.getSimpleProvision().getSimpleProvisionStatus()
+                            .getServicePriority();
+                    currentStatus = provision.getSimpleProvision().getSimpleProvisionStatus().getLabel();
+                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus()
+                        .getServicePriority() > currentPriority) {
+                    currentPriority = provision.getFormalite().getFormaliteStatus().getServicePriority();
+                    currentStatus = provision.getFormalite().getFormaliteStatus().getLabel();
+                } else if (provision.getDomiciliation() != null
+                        && provision.getDomiciliation().getDomiciliationStatus()
+                                .getServicePriority() > currentPriority) {
+                    currentPriority = provision.getDomiciliation().getDomiciliationStatus().getServicePriority();
+                    currentStatus = provision.getDomiciliation().getDomiciliationStatus().getLabel();
+                }
+            }
+        return currentStatus;
+    }
+
+    private Float getServicePrice(Service service) {
+        float totalPrice = 0;
+        if (service.getProvisions() != null)
+            for (Provision provision : service.getProvisions()) {
+                if (provision.getInvoiceItems() != null) {
+                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                        if (invoiceItem.getPreTaxPriceReinvoiced() != null)
+                            totalPrice += invoiceItem.getPreTaxPriceReinvoiced();
+                        else if (invoiceItem.getPreTaxPrice() != null)
+                            totalPrice += invoiceItem.getPreTaxPrice();
+
+                        if (invoiceItem.getDiscountAmount() != null)
+                            totalPrice -= invoiceItem.getDiscountAmount();
+                        if (invoiceItem.getVatPrice() != null)
+                            totalPrice += invoiceItem.getVatPrice();
+                    }
+                }
+            }
+        return totalPrice;
     }
 }

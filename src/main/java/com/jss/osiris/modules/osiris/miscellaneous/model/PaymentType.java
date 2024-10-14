@@ -2,6 +2,10 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.search.model.IndexedField;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,21 +13,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 
-import com.jss.osiris.libs.search.model.IndexedField;
-
 @Entity
 public class PaymentType implements Serializable, IId {
 
 	@Id
 	@SequenceGenerator(name = "payment_type_sequence", sequenceName = "payment_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_type_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
 	@Column(nullable = false, length = 20)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
 
 	@Column(length = 20)

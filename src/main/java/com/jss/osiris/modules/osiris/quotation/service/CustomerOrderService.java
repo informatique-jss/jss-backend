@@ -9,6 +9,8 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -117,5 +119,12 @@ public interface CustomerOrderService {
 
         public void generateRecurringCustomerOrders() throws OsirisException, OsirisClientMessageException,
                         OsirisValidationException, OsirisDuplicateException;
+
+        public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
+                        String sortBy);
+
+        public List<Payment> getApplicablePaymentsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
+
+        public InvoicingSummary getInvoicingSummaryForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
 }

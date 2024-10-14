@@ -2,6 +2,8 @@ package com.jss.osiris.libs.mail.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
 import jakarta.persistence.Entity;
@@ -22,10 +24,12 @@ public class MailComputeResult {
 
     @ManyToMany
     @JoinTable(name = "asso_mail_compute_result_to", joinColumns = @JoinColumn(name = "id_mail_compute_result"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+    @JsonView(JacksonViews.MyJssView.class)
     private List<Mail> recipientsMailTo;
 
     @ManyToMany
     @JoinTable(name = "asso_mail_compute_result_cc", joinColumns = @JoinColumn(name = "id_mail_compute_result"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+    @JsonView(JacksonViews.MyJssView.class)
     private List<Mail> recipientsMailCc;
 
     Boolean isSendToClient;

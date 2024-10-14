@@ -21,10 +21,14 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Rff;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class MailComputeHelper {
@@ -33,10 +37,13 @@ public class MailComputeHelper {
     DocumentService documentService;
 
     @Autowired
-    QuotationService quotationService;
+    ConstantService constantService;
 
     @Autowired
-    ConstantService constantService;
+    CustomerOrderService customerOrderService;
+
+    @Autowired
+    QuotationService quotationService;
 
     @Autowired
     MailService mailService;
@@ -71,8 +78,15 @@ public class MailComputeHelper {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
     }
 
+    @Transactional(rollbackOn = Exception.class)
     public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
+        if (quotation.getId() != null) {
+            if (quotation instanceof CustomerOrder)
+                quotation = customerOrderService.getCustomerOrder(quotation.getId());
+            if (quotation instanceof Quotation)
+                quotation = quotationService.getQuotation(quotation.getId());
+        }
         return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
     }
 
@@ -293,7 +307,7 @@ public class MailComputeHelper {
         return mailComputeResult;
     }
 
-    public InvoiceLabelResult computePaperLabelResult(CustomerOrder customerOrder)
+    public InvoiceLabelResult computePaperLabelResult(IQuotation customerOrder)
             throws OsirisException, OsirisClientMessageException {
         Document paperDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
                 constantService.getDocumentTypePaper());

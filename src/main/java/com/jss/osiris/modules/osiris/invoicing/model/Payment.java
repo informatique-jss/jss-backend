@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
@@ -46,6 +48,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@IndexedField
@@ -53,14 +56,17 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@Column(nullable = false, columnDefinition = "TEXT")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
 	@Column(nullable = false)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDateTime paymentDate;
 
 	@Column(nullable = false)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Float paymentAmount;
 
 	@OneToMany(mappedBy = "payment")
@@ -83,6 +89,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund")
 	@JsonIgnoreProperties(value = { "accountingRecords", "payments" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssView.class)
 	private Refund refund;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -101,6 +108,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentType;
 
 	@ManyToOne(fetch = FetchType.LAZY)

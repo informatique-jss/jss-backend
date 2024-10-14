@@ -27,6 +27,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 
 @Service
 public class AccountingRecordGenerationServiceImpl implements AccountingRecordGenerationService {
@@ -51,6 +52,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Autowired
     AccountingRecordService accountingRecordService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
 
     private Integer getNewTemporaryOperationId() {
         return ThreadLocalRandom.current().nextInt(1, 1000000000);
@@ -126,6 +130,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
         if (letterInvoice(invoice)) {
             invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+            if (invoice.getCustomerOrder() != null) {
+                invoice.getCustomerOrder().setIsPayed(true);
+                customerOrderService.addOrUpdateCustomerOrder(invoice.getCustomerOrder(), false, false);
+            }
             invoiceService.addOrUpdateInvoice(invoice);
         }
     }
@@ -255,6 +263,10 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 accountingRecordService.addOrUpdateAccountingRecord(accountingRecord, true);
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
+        if (invoice.getCustomerOrder() != null) {
+            invoice.getCustomerOrder().setIsPayed(false);
+            customerOrderService.addOrUpdateCustomerOrder(invoice.getCustomerOrder(), false, false);
+        }
         invoiceService.addOrUpdateInvoice(invoice);
     }
 

@@ -3,6 +3,11 @@ package com.jss.osiris.modules.osiris.quotation.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,9 +20,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
-
 @Entity
 @Table(indexes = { @Index(name = "idx_asso_service_field_type_service", columnList = "id_service") })
 public class AssoServiceFieldType implements Serializable, IId {
@@ -25,6 +27,7 @@ public class AssoServiceFieldType implements Serializable, IId {
     @Id
     @SequenceGenerator(name = "asso_service_field_type_sequence", sequenceName = "asso_service_field_type_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_service_field_type_sequence")
+    @JsonView(JacksonViews.MyJssView.class)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,26 +37,34 @@ public class AssoServiceFieldType implements Serializable, IId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_field_type")
+    @JsonView(JacksonViews.MyJssView.class)
     @IndexedField
     private ServiceFieldType serviceFieldType;
 
+    @JsonView(JacksonViews.MyJssView.class)
     private String stringValue;
 
+    @JsonView(JacksonViews.MyJssView.class)
     private Integer integerValue;
 
+    @JsonView(JacksonViews.MyJssView.class)
     private LocalDate dateValue;
 
     @ManyToOne
     @JoinColumn(name = "id_service_field_type_possible_value")
     @IndexedField
+    @JsonView(JacksonViews.MyJssView.class)
     private ServiceTypeFieldTypePossibleValue selectValue;
 
     @Column(columnDefinition = "TEXT")
+    @JsonView(JacksonViews.MyJssView.class)
     private String textAreaValue;
 
+    @JsonView(JacksonViews.MyJssView.class)
     private Boolean isMandatory;
 
     @Column(columnDefinition = "TEXT")
+    @JsonView(JacksonViews.MyJssView.class)
     private String formalisteComment;
 
     public Integer getId() {

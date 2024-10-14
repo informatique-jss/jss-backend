@@ -11,7 +11,10 @@ import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.Service;
 
 public interface AssoAffaireOrderService {
         public List<AssoAffaireOrder> getAssoAffaireOrders();
@@ -36,5 +39,11 @@ public interface AssoAffaireOrderService {
                         Boolean isFromUser)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
+
+        public List<AssoAffaireOrder> getAssoAffaireOrderForCustomerOrder(CustomerOrder customerOrder);
+
+        public boolean isServiceHasMissingInformations(Service service);
+
+        public List<AssoAffaireOrder> getAssoAffaireOrderForQuotation(Quotation quotation);
 
 }

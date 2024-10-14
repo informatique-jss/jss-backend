@@ -3,6 +3,8 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
@@ -47,6 +49,7 @@ public class Constant implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -402,30 +405,37 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_type_prelevement")
+	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypePrelevement;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_type_virement")
+	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeVirement;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_type_cb")
+	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeCB;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_type_especes")
+	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeEspeces;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_type_cheques")
+	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeCheques;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_type_account")
+	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeAccount;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_refund_type_virement")
+	@JsonView(JacksonViews.MyJssView.class)
 	private RefundType refundTypeVirement;
 
 	@ManyToOne(fetch = FetchType.EAGER)

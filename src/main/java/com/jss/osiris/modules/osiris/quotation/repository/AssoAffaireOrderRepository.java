@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 
 public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<AssoAffaireOrder, Integer> {
 
@@ -118,4 +120,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         @Param("commercialId") Integer commercialId,
                         @Param("formaliteGuichetUniqueStatusCode") String formaliteGuichetUniqueStatusCode,
                         @Param("formaliteInfogreffeStatusCode") String formaliteInfogreffeStatusCode);
+
+        List<AssoAffaireOrder> findByCustomerOrderOrderByAffaire(CustomerOrder customerOrder);
+
+        List<AssoAffaireOrder> findByQuotationOrderByAffaire(Quotation quotation);
 }

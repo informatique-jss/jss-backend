@@ -48,14 +48,14 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
     @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
         updateStatus(DomiciliationStatus.DOMICILIATION_NEW, "Nouveau", "auto_awesome", true, false,
-                AggregateStatus.AGGREGATE_STATUS_NEW);
+                AggregateStatus.AGGREGATE_STATUS_NEW, 2);
         updateStatus(DomiciliationStatus.DOMICILIATION_IN_PROGRESS, "En cours", "autorenew", false, false,
-                AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
+                AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS, 5);
         updateStatus(DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS, "En attente de documents",
                 "hourglass_top", false, false,
-                AggregateStatus.AGGREGATE_STATUS_WAITING);
+                AggregateStatus.AGGREGATE_STATUS_WAITING, 20);
         updateStatus(DomiciliationStatus.DOMICILIATION_DONE, "Terminé", "check_small", false, true,
-                AggregateStatus.AGGREGATE_STATUS_DONE);
+                AggregateStatus.AGGREGATE_STATUS_DONE, 1);
 
         setSuccessor(DomiciliationStatus.DOMICILIATION_NEW, DomiciliationStatus.DOMICILIATION_IN_PROGRESS);
         setSuccessor(DomiciliationStatus.DOMICILIATION_IN_PROGRESS,
@@ -69,7 +69,7 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
     }
 
     protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState,
-            String aggregateLabel) {
+            String aggregateLabel, Integer servicePriority) {
         DomiciliationStatus domiciliationStatus = getDomiciliationStatusByCode(code);
         if (getDomiciliationStatusByCode(code) == null)
             domiciliationStatus = new DomiciliationStatus();
@@ -81,6 +81,7 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
         domiciliationStatus.setIsCloseState(isCloseState);
         domiciliationStatus.setIsOpenState(isOpenState);
         domiciliationStatus.setAggregateStatus(aggregateLabel);
+        domiciliationStatus.setServicePriority(servicePriority);
         addOrUpdateDomiciliationStatus(domiciliationStatus);
     }
 

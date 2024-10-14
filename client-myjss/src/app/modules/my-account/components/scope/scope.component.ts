@@ -19,6 +19,7 @@ export class ScopeComponent implements OnInit {
   currentScope: UserScope[] | undefined;
   responsableStatus: boolean[] = [];
   currentUser: Responsable | undefined;
+  isLoading: boolean = false;
 
   constructor(
     private responsableService: ResponsableService,
@@ -34,6 +35,7 @@ export class ScopeComponent implements OnInit {
   }
 
   initCurrentScope() {
+    this.isLoading = true;
     this.responsableService.getPotentialUserScope().subscribe(response => {
       this.potentialResponsables = response;
 
@@ -43,6 +45,7 @@ export class ScopeComponent implements OnInit {
             this.allTiers.push(potentialResponsable.tiers);
 
       this.allTiers.sort((a: Tiers, b: Tiers) => this.getTiersLabel(a).localeCompare(this.getTiersLabel(b)));
+      this.isLoading = false;
     })
 
     this.userScopeService.getUserScope().subscribe(response => {
@@ -50,6 +53,7 @@ export class ScopeComponent implements OnInit {
       if (this.currentScope)
         for (let scope of this.currentScope)
           this.responsableStatus[scope.responsableViewed.id] = this.isInScope(scope.responsableViewed);
+      this.isLoading = false;
     });
   }
 

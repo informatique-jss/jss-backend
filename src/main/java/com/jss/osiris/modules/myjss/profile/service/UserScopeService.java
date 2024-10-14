@@ -13,5 +13,7 @@ public interface UserScopeService {
 
     public List<UserScope> getUserScope();
 
+    public List<Responsable> getUserScopeResponsables();
+
     public void addResponsableToCurrentUserScope(List<Responsable> responsablesToAdd);
 }

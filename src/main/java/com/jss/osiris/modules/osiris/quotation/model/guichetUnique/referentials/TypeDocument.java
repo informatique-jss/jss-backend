@@ -3,6 +3,8 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
@@ -35,6 +37,7 @@ public class TypeDocument implements ICode, IAttachment {
     public static String SIGNED_BE_DOCUMENT_CODE = "PJ_120";
 
     @Id
+    @JsonView(JacksonViews.MyJssView.class)
     private String code;
 
     private Boolean isToDownloadOnProvision;
@@ -44,9 +47,11 @@ public class TypeDocument implements ICode, IAttachment {
     private AttachmentType attachmentType;
 
     @Column(columnDefinition = "TEXT")
+    @JsonView(JacksonViews.MyJssView.class)
     private String label;
 
     @Column(columnDefinition = "TEXT")
+    @JsonView(JacksonViews.MyJssView.class)
     private String customLabel;
 
     @OneToMany(mappedBy = "typeDocumentAttachment", fetch = FetchType.LAZY)

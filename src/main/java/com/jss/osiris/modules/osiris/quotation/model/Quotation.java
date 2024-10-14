@@ -5,10 +5,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
@@ -32,6 +34,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_quotation_status", columnList = "id_quotation_status"),
@@ -43,6 +46,7 @@ public class Quotation implements IQuotation {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -58,6 +62,7 @@ public class Quotation implements IQuotation {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Responsable responsable;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
@@ -66,15 +71,18 @@ public class Quotation implements IQuotation {
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation_status")
+	@JsonView(JacksonViews.MyJssView.class)
 	private QuotationStatus quotationStatus;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
@@ -82,6 +90,7 @@ public class Quotation implements IQuotation {
 	private LocalDateTime lastStatusUpdate;
 
 	@Column(columnDefinition = "TEXT") // TODO : delete when new website
+	@JsonView(JacksonViews.MyJssView.class)
 	private String description;
 
 	@OneToMany(mappedBy = "quotation")
@@ -94,6 +103,7 @@ public class Quotation implements IQuotation {
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
 	@Column(length = 40)
@@ -134,6 +144,14 @@ public class Quotation implements IQuotation {
 	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "quotation", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<CustomerOrderComment> customerOrderComments;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	public String affairesList;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	public String servicesList;
 
 	public Integer getId() {
 		return id;
@@ -301,6 +319,22 @@ public class Quotation implements IQuotation {
 
 	public void setCustomerOrderComments(List<CustomerOrderComment> customerOrderComments) {
 		this.customerOrderComments = customerOrderComments;
+	}
+
+	public String getAffairesList() {
+		return affairesList;
+	}
+
+	public void setAffairesList(String affairesList) {
+		this.affairesList = affairesList;
+	}
+
+	public String getServicesList() {
+		return servicesList;
+	}
+
+	public void setServicesList(String servicesList) {
+		this.servicesList = servicesList;
 	}
 
 }

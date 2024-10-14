@@ -57,6 +57,8 @@ public class FormaliteStatus implements Serializable, IId {
 
 	private String aggregateStatus;
 
+	private Integer servicePriority;
+
 	public static String getFORMALITE_NEW() {
 		return FORMALITE_NEW;
 	}
@@ -135,6 +137,62 @@ public class FormaliteStatus implements Serializable, IId {
 
 	public void setAggregateStatus(String aggregateLabel) {
 		this.aggregateStatus = aggregateLabel;
+	}
+
+	public static String getFORMALITE_IN_PROGRESS() {
+		return FORMALITE_IN_PROGRESS;
+	}
+
+	public static void setFORMALITE_IN_PROGRESS(String fORMALITE_IN_PROGRESS) {
+		FORMALITE_IN_PROGRESS = fORMALITE_IN_PROGRESS;
+	}
+
+	public static String getFORMALITE_WAITING_DOCUMENT() {
+		return FORMALITE_WAITING_DOCUMENT;
+	}
+
+	public static void setFORMALITE_WAITING_DOCUMENT(String fORMALITE_WAITING_DOCUMENT) {
+		FORMALITE_WAITING_DOCUMENT = fORMALITE_WAITING_DOCUMENT;
+	}
+
+	public static String getFORMALITE_WAITING_DOCUMENT_AUTHORITY() {
+		return FORMALITE_WAITING_DOCUMENT_AUTHORITY;
+	}
+
+	public static void setFORMALITE_WAITING_DOCUMENT_AUTHORITY(String fORMALITE_WAITING_DOCUMENT_AUTHORITY) {
+		FORMALITE_WAITING_DOCUMENT_AUTHORITY = fORMALITE_WAITING_DOCUMENT_AUTHORITY;
+	}
+
+	public static String getFORMALITE_AUTHORITY_REJECTED() {
+		return FORMALITE_AUTHORITY_REJECTED;
+	}
+
+	public static void setFORMALITE_AUTHORITY_REJECTED(String fORMALITE_AUTHORITY_REJECTED) {
+		FORMALITE_AUTHORITY_REJECTED = fORMALITE_AUTHORITY_REJECTED;
+	}
+
+	public static String getFORMALITE_AUTHORITY_VALIDATED() {
+		return FORMALITE_AUTHORITY_VALIDATED;
+	}
+
+	public static void setFORMALITE_AUTHORITY_VALIDATED(String fORMALITE_AUTHORITY_VALIDATED) {
+		FORMALITE_AUTHORITY_VALIDATED = fORMALITE_AUTHORITY_VALIDATED;
+	}
+
+	public static String getFORMALITE_DONE() {
+		return FORMALITE_DONE;
+	}
+
+	public static void setFORMALITE_DONE(String fORMALITE_DONE) {
+		FORMALITE_DONE = fORMALITE_DONE;
+	}
+
+	public Integer getServicePriority() {
+		return servicePriority;
+	}
+
+	public void setServicePriority(Integer servicePriority) {
+		this.servicePriority = servicePriority;
 	}
 
 }

@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
@@ -14,10 +16,13 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.QueryHint;
 
-public interface CustomerOrderRepository extends QueryCacheCrudRepository<CustomerOrder, Integer> {
+public interface CustomerOrderRepository
+                extends QueryCacheCrudRepository<CustomerOrder, Integer>,
+                PagingAndSortingRepository<CustomerOrder, Integer> {
 
         @Query(nativeQuery = true, value = "select "
                         + "  r.firstname || ' '||r.lastname as customerOrderLabel,"
@@ -171,5 +176,13 @@ public interface CustomerOrderRepository extends QueryCacheCrudRepository<Custom
                         @Param("abandonnedStatus") CustomerOrderStatus abandonnedStatus);
 
         List<CustomerOrder> findByCustomerOrderParentRecurringOrderByRecurringEndDateDesc(CustomerOrder customerOrder);
+
+        @Query("select c from CustomerOrder c where responsable in :responsableToFilter and (customerOrderStatus in :customerorderStatusToFilter and coalesce(c.isPayed,false)=false or customerOrderStatus=:customerOrderStatusBilled and coalesce(c.isPayed,false)=true and :displayPayed=true)")
+        List<CustomerOrder> searchOrdersForCurrentUser(
+                        @Param("responsableToFilter") List<Responsable> responsablesToFilter,
+                        @Param("customerorderStatusToFilter") List<CustomerOrderStatus> customerOrderStatusToFilter,
+                        Pageable pageableRequest,
+                        @Param("customerOrderStatusBilled") CustomerOrderStatus customerOrderStatusBilled,
+                        @Param("displayPayed") boolean displayPayed);
 
 }

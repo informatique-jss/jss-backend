@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
@@ -38,17 +40,21 @@ public class Affaire implements IId, IAttachment {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Civility civility;
 
 	@Column(length = 150)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String denomination;
 
 	@Column(length = 150)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String acronym;
 
 	@Column(nullable = false)
@@ -56,51 +62,63 @@ public class Affaire implements IId, IAttachment {
 
 	@Column(length = 50)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String firstname;
 
 	@Column(length = 50)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String lastname;
 
 	@Column(length = 9)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String siren;
 
 	@Column(length = 14)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String siret;
 
 	@Column(length = 10)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String rna;
 
 	@Column(length = 10)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String postalCode;
 
 	@Column(length = 20)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String cedexComplement;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private City city;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Country country;
 
 	@Column(length = 100, nullable = false)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String address;
 
 	@ManyToMany
 	@JoinTable(name = "asso_affaire_mail", joinColumns = @JoinColumn(name = "id_affaire"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<Mail> mails;
 
 	@ManyToMany
 	@JoinTable(name = "asso_affaire_phone", joinColumns = @JoinColumn(name = "id_affaire"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<Phone> phones;
 
 	@Column(length = 60)
@@ -125,16 +143,19 @@ public class Affaire implements IId, IAttachment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_forme_juridique")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private FormeJuridique legalForm;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_forme_exercice")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private FormeExerciceActivitePrincipal mainActivity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private CompetentAuthority competentAuthority;
 
 	@OneToMany(mappedBy = "affaire")
@@ -145,6 +166,7 @@ public class Affaire implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "affaire" }, allowSetters = true)
 	private List<Attachment> attachments;
 
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer employeeNumber;
 
 	private LocalDate lastRneUpdate;
@@ -152,6 +174,7 @@ public class Affaire implements IId, IAttachment {
 	private Boolean isMainOffice;
 
 	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssView.class)
 	private String apeCodes;
 
 	public String getPaymentIban() {

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,16 +29,20 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 	public static String WAITING_DEPOSIT = "WAITING_DEPOSIT";
 	public static String BEING_PROCESSED = "BEING_PROCESSED";
 	public static String TO_BILLED = "TO_BILLED";
+	public static String PAYED = "PAYED";
 
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
 	@Column(nullable = false, length = 100)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
 
 	private String icon;
