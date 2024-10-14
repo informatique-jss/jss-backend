@@ -1353,7 +1353,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder) {
+    public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder) throws OsirisException {
         customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
         List<Payment> advisedPayments = new ArrayList<Payment>();
@@ -1374,7 +1374,8 @@ public class PaymentServiceImpl implements PaymentService {
             }
             // If no match by name, attempt by amount
             if (advisedPayments.size() == 0) {
-                BigDecimal totalRound = customerOrderService.getTotalForCustomerOrder(customerOrder);
+                BigDecimal totalRound = customerOrderService.getInvoicingSummaryForCustomerOrder(customerOrder)
+                        .getTotalPrice();
                 for (Payment payment : payments) {
                     BigDecimal paymentRound = payment.getPaymentAmount().multiply(oneHundredValue)
                             .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);

@@ -96,9 +96,7 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public BigDecimal getTotalForCustomerOrder(IQuotation customerOrder);
-
-        public BigDecimal getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
+        public BigDecimal getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
         public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrders, boolean printLabel,
                         boolean printLetters)
@@ -126,6 +124,6 @@ public interface CustomerOrderService {
 
         public List<Payment> getApplicablePaymentsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
-        public InvoicingSummary getInvoicingSummaryForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
+        public InvoicingSummary getInvoicingSummaryForCustomerOrder(IQuotation customerOrder) throws OsirisException;
 
 }

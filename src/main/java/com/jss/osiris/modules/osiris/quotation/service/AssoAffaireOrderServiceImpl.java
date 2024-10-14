@@ -717,7 +717,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         }
                         service.setServiceStatus(getServiceStatusLabel(service));
                         service.setServicePrice(getServicePrice(service));
-                        if (service.getServicePrice() <= 0f)
+                        if (service.getServicePrice().compareTo(new BigDecimal(0)) <= 0f)
                             service.setServicePrice(null);
 
                     }
@@ -774,21 +774,21 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         return currentStatus;
     }
 
-    private Float getServicePrice(Service service) {
-        float totalPrice = 0;
+    private BigDecimal getServicePrice(Service service) {
+        BigDecimal totalPrice = new BigDecimal(0);
         if (service.getProvisions() != null)
             for (Provision provision : service.getProvisions()) {
                 if (provision.getInvoiceItems() != null) {
                     for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
                         if (invoiceItem.getPreTaxPriceReinvoiced() != null)
-                            totalPrice += invoiceItem.getPreTaxPriceReinvoiced();
+                            totalPrice.add(invoiceItem.getPreTaxPriceReinvoiced());
                         else if (invoiceItem.getPreTaxPrice() != null)
-                            totalPrice += invoiceItem.getPreTaxPrice();
+                            totalPrice.add(invoiceItem.getPreTaxPrice());
 
                         if (invoiceItem.getDiscountAmount() != null)
-                            totalPrice -= invoiceItem.getDiscountAmount();
+                            totalPrice.add(invoiceItem.getDiscountAmount());
                         if (invoiceItem.getVatPrice() != null)
-                            totalPrice += invoiceItem.getVatPrice();
+                            totalPrice.add(invoiceItem.getVatPrice());
                     }
                 }
             }

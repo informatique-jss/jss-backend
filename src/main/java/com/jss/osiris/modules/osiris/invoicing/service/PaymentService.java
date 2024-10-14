@@ -43,7 +43,7 @@ public interface PaymentService {
 
         public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
 
-        public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder);
+        public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
         public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment,
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,

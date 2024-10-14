@@ -824,7 +824,7 @@ public class InvoicingController {
 
     @GetMapping(inputEntryPoint + "/payments/advise/order")
     public ResponseEntity<List<Payment>> getPaymentAdvisedForCustomerOrder(@RequestParam Integer customerOrderId)
-            throws OsirisValidationException {
+            throws OsirisException {
         CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
         if (customerOrder == null)
             throw new OsirisValidationException("customerOrder");

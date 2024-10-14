@@ -1107,25 +1107,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
     }
 
-    public BigDecimal getTotalForCustomerOrder(IQuotation customerOrder) {
-        BigDecimal total = new BigDecimal(0);
-        if (customerOrder != null)
-            if (customerOrder.getAssoAffaireOrders() != null)
-                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                    for (Service service : assoAffaireOrder.getServices())
-                        for (Provision provision : service.getProvisions())
-                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                                for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                                    total = total.add(invoiceHelper.getTotalForInvoiceItem(invoiceItem));
-        return total;
-    }
-
     @Override
-    public BigDecimal getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
+    public BigDecimal getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) throws OsirisException {
         customerOrder = getCustomerOrder(customerOrder.getId());
 
         if (customerOrder != null) {
-            BigDecimal total = getTotalForCustomerOrder(customerOrder);
+            BigDecimal total = getInvoicingSummaryForCustomerOrder(customerOrder).getTotalPrice();
             if (customerOrder.getPayments() != null)
                 for (Payment payment : customerOrder.getPayments())
                     if (!payment.getIsCancelled())
@@ -1534,57 +1521,58 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public InvoicingSummary getInvoicingSummaryForCustomerOrder(CustomerOrder customerOrder) throws OsirisException {
+    public InvoicingSummary getInvoicingSummaryForCustomerOrder(IQuotation customerOrder) throws OsirisException {
         customerOrder = getCustomerOrder(customerOrder.getId());
         InvoicingSummary invoicingSummary = new InvoicingSummary();
+        List<InvoiceItem> invoiceItemsToConsider = new ArrayList<InvoiceItem>();
 
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
-                && customerOrder.getInvoices() != null) {
-            for (Invoice invoice : customerOrder.getInvoices())
+        if (customerOrder instanceof CustomerOrder
+                && ((CustomerOrder) customerOrder).getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
+                && ((CustomerOrder) customerOrder).getInvoices() != null) {
+            for (Invoice invoice : ((CustomerOrder) customerOrder).getInvoices())
                 if (invoice.getResponsable() != null
                         && (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                                 || invoice.getInvoiceStatus().getId()
                                         .equals(constantService.getInvoiceStatusPayed().getId()))) {
-                    if (invoice.getPayments() != null) {
-                        for (Payment payment : invoice.getPayments()) {
-                            // We hide appoint from customer
-                            if ((payment.getIsCancelled() == null || payment.getIsCancelled() == false)
-                                    && (payment.getIsAppoint() == null || payment.getIsAppoint() == false)) {
-
-                            }
-
-                        }
-                    }
+                    invoiceItemsToConsider = invoice.getInvoiceItems();
                 }
         } else {
-            BigDecimal totalPrice = new BigDecimal(0);
-            BigDecimal discountTotal = new BigDecimal(0);
-            BigDecimal preTaxPriceTotal = new BigDecimal(0);
-            BigDecimal vatTotal = new BigDecimal(0);
             if (customerOrder != null)
                 if (customerOrder.getAssoAffaireOrders() != null)
                     for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
                         for (Service service : assoAffaireOrder.getServices())
                             for (Provision provision : service.getProvisions())
                                 if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                                    // for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                                    // if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
-                                    // preTaxPriceTotal
-                                    // .add(new BigDecimal(invoiceItem.getPreTaxPriceReinvoiced()));
-                                    // } else if (invoiceItem.getPreTaxPrice() != null
-                                    // && invoiceItem.getPreTaxPrice() > 0) {
-                                    // preTaxPriceTotal
-                                    // .add(new BigDecimal(invoiceItem.getPreTaxPrice()));
-                                    //
-                                    // }
-                                    //
-                                    // if (invoiceItem.getVatPrice() != null) {
-                                    // // vatTotal.add(new BigDecimal(invoiceItem.get))
-                                    // }
-                                    // }
-                                    return null;
+                                    invoiceItemsToConsider.addAll(provision.getInvoiceItems());
         }
-        return null;
-    }
 
+        BigDecimal totalPrice = new BigDecimal(0);
+        BigDecimal discountTotal = new BigDecimal(0);
+        BigDecimal preTaxPriceTotal = new BigDecimal(0);
+        BigDecimal vatTotal = new BigDecimal(0);
+        if (invoiceItemsToConsider != null)
+            for (InvoiceItem invoiceItem : invoiceItemsToConsider) {
+                if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
+                    preTaxPriceTotal = preTaxPriceTotal
+                            .add(invoiceItem.getPreTaxPriceReinvoiced());
+                } else if (invoiceItem.getPreTaxPrice() != null) {
+                    preTaxPriceTotal = preTaxPriceTotal.add(invoiceItem.getPreTaxPrice());
+                }
+
+                if (invoiceItem.getVatPrice() != null) {
+                    vatTotal = vatTotal.add(invoiceItem.getVatPrice());
+                }
+                if (invoiceItem.getDiscountAmount() != null) {
+                    discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
+                }
+            }
+        totalPrice = discountTotal.add(vatTotal).add(preTaxPriceTotal).subtract(discountTotal);
+
+        invoicingSummary.setDiscountTotal(discountTotal);
+        invoicingSummary.setPreTaxPriceTotal(preTaxPriceTotal);
+        invoicingSummary.setVatTotal(vatTotal);
+        invoicingSummary.setTotalPrice(totalPrice);
+
+        return invoicingSummary;
+    }
 }

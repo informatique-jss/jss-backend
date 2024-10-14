@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -82,7 +83,7 @@ public class Service implements Serializable, IId {
 
 	@Transient
 	@JsonView(JacksonViews.MyJssView.class)
-	private Float servicePrice;
+	private BigDecimal servicePrice;
 
 	public Integer getId() {
 		return id;
@@ -172,11 +173,11 @@ public class Service implements Serializable, IId {
 		this.serviceStatus = serviceStatus;
 	}
 
-	public Float getServicePrice() {
+	public BigDecimal getServicePrice() {
 		return servicePrice;
 	}
 
-	public void setServicePrice(Float servicePrice) {
+	public void setServicePrice(BigDecimal servicePrice) {
 		this.servicePrice = servicePrice;
 	}
 
