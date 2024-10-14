@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.service;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -98,6 +99,9 @@ import jakarta.persistence.PersistenceContext;
 
 @org.springframework.stereotype.Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
+
+    private BigDecimal oneHundredValue = new BigDecimal(100);
+    private BigDecimal zeroValue = new BigDecimal(0);
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
@@ -390,7 +394,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
                 && (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
                         || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))) {
-            Float remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
+            BigDecimal remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
 
             Tiers tiers = customerOrder.getResponsable().getTiers();
             boolean isDepositMandatory = false;
@@ -402,7 +406,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         .equals(constantService.getPaymentTypePrelevement().getId());
 
             if (!isDepositMandatory && !targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)
-                    || remainingToPay <= 0 || isPaymentTypePrelevement) {
+                    || remainingToPay.compareTo(zeroValue) <= 0 || isPaymentTypePrelevement) {
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
                 mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
             } else {
@@ -444,7 +448,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             // Auto billed for JSS Announcement only customer order
             if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     && isOnlyJssAnnouncement(customerOrder)
-                    && getRemainingAmountToPayForCustomerOrder(customerOrder) >= 0) {
+                    && getRemainingAmountToPayForCustomerOrder(customerOrder).compareTo(zeroValue) >= 0) {
                 targetStatusCode = CustomerOrderStatus.BILLED;
             }
         }
@@ -474,11 +478,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         throw new OsirisClientMessageException("Une facture existe déjà pour cette commande !");
             }
 
-            Float remainingToPayForCurrentCustomerOrder = Math
-                    .round(getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
+            BigDecimal remainingToPayForCurrentCustomerOrder = getRemainingAmountToPayForCustomerOrder(customerOrder)
+                    .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
 
-            if (remainingToPayForCurrentCustomerOrder < 0
-                    && Math.abs(remainingToPayForCurrentCustomerOrder) > Float.parseFloat(payementLimitRefundInEuros))
+            if (remainingToPayForCurrentCustomerOrder.compareTo(zeroValue) < 0
+                    && remainingToPayForCurrentCustomerOrder.abs()
+                            .compareTo(BigDecimal.valueOf(Float.parseFloat(payementLimitRefundInEuros))) > 0)
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
 
             Invoice invoice = generateInvoice(customerOrder);
@@ -992,7 +997,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
-        Float remainingToPay = 0f;
+        BigDecimal remainingToPay = new BigDecimal(0);
 
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
             if (customerOrder.getInvoices() != null)
@@ -1006,7 +1011,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
         }
 
-        if (remainingToPay > 0) {
+        if (remainingToPay.compareTo(zeroValue) > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
                     remainingToPay, mail,
                     customerOrder.getId() + "", subject);
@@ -1102,19 +1107,33 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
     }
 
+    public BigDecimal getTotalForCustomerOrder(IQuotation customerOrder) {
+        BigDecimal total = new BigDecimal(0);
+        if (customerOrder != null)
+            if (customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                    for (Service service : assoAffaireOrder.getServices())
+                        for (Provision provision : service.getProvisions())
+                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                                for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                                    total = total.add(invoiceHelper.getTotalForInvoiceItem(invoiceItem));
+        return total;
+    }
+
     @Override
-    public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
+    public BigDecimal getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
         customerOrder = getCustomerOrder(customerOrder.getId());
+
         if (customerOrder != null) {
-            Float total = getTotalForCustomerOrder(customerOrder);
+            BigDecimal total = getTotalForCustomerOrder(customerOrder);
             if (customerOrder.getPayments() != null)
                 for (Payment payment : customerOrder.getPayments())
                     if (!payment.getIsCancelled())
-                        total -= payment.getPaymentAmount();
+                        total = total.subtract(payment.getPaymentAmount());
 
-            return Math.round(total * 100f) / 100f;
+            return total.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
         }
-        return 0f;
+        return zeroValue;
     }
 
     @Override
@@ -1548,29 +1567,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         for (Service service : assoAffaireOrder.getServices())
                             for (Provision provision : service.getProvisions())
                                 if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                                        if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
-                                            preTaxPriceTotal
-                                                    .add(new BigDecimal(invoiceItem.getPreTaxPriceReinvoiced()));
-                                        } else if (invoiceItem.getPreTaxPrice() != null
-                                                && invoiceItem.getPreTaxPrice() > 0) {
-                                            preTaxPriceTotal
-                                                    .add(new BigDecimal(invoiceItem.getPreTaxPrice()));
-
-                                        }
-
-                                        if (invoiceItem.getVatPrice() != null) {
-                                            // vatTotal.add(new BigDecimal(invoiceItem.get))
-                                        }
-                                    }
-            return null;
+                                    // for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                                    // if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
+                                    // preTaxPriceTotal
+                                    // .add(new BigDecimal(invoiceItem.getPreTaxPriceReinvoiced()));
+                                    // } else if (invoiceItem.getPreTaxPrice() != null
+                                    // && invoiceItem.getPreTaxPrice() > 0) {
+                                    // preTaxPriceTotal
+                                    // .add(new BigDecimal(invoiceItem.getPreTaxPrice()));
+                                    //
+                                    // }
+                                    //
+                                    // if (invoiceItem.getVatPrice() != null) {
+                                    // // vatTotal.add(new BigDecimal(invoiceItem.get))
+                                    // }
+                                    // }
+                                    return null;
         }
         return null;
     }
 
-    @Override
-    public Float getTotalForCustomerOrder(IQuotation customerOrder) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTotalForCustomerOrder'");
-    }
 }

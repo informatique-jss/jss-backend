@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -14,7 +15,7 @@ public class PaymentAssociate {
     private Affaire affaireRefund;
     private Tiers tiersRefund;
     private Responsable responsableOrder;
-    private List<Float> byPassAmount;
+    private List<BigDecimal> byPassAmount;
 
     public Payment getPayment() {
         return payment;
@@ -48,11 +49,11 @@ public class PaymentAssociate {
         this.affaireRefund = affaire;
     }
 
-    public List<Float> getByPassAmount() {
+    public List<BigDecimal> getByPassAmount() {
         return byPassAmount;
     }
 
-    public void setByPassAmount(List<Float> byPassAmount) {
+    public void setByPassAmount(List<BigDecimal> byPassAmount) {
         this.byPassAmount = byPassAmount;
     }
 

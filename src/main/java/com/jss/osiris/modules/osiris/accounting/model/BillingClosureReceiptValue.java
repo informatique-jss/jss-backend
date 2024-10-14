@@ -1,15 +1,22 @@
 package com.jss.osiris.modules.osiris.accounting.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 
 public class BillingClosureReceiptValue {
     private LocalDateTime eventDateTime;
     private String eventDateString;
     private String eventDescription;
     private String eventCbLink;
-    private Float creditAmount;
-    private Float debitAmount;
+
+    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+    private BigDecimal creditAmount;
+    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+    private BigDecimal debitAmount;
+
     private boolean displayBottomBorder;
     private LocalDate directDebitTransfertDate;
 
@@ -44,19 +51,19 @@ public class BillingClosureReceiptValue {
         this.eventCbLink = eventCbLink;
     }
 
-    public Float getCreditAmount() {
+    public BigDecimal getCreditAmount() {
         return creditAmount;
     }
 
-    public void setCreditAmount(Float creditAmount) {
+    public void setCreditAmount(BigDecimal creditAmount) {
         this.creditAmount = creditAmount;
     }
 
-    public Float getDebitAmount() {
+    public BigDecimal getDebitAmount() {
         return debitAmount;
     }
 
-    public void setDebitAmount(Float debitAmount) {
+    public void setDebitAmount(BigDecimal debitAmount) {
         this.debitAmount = debitAmount;
     }
 

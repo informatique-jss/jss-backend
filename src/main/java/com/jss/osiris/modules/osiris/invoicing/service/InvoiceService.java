@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -43,7 +44,7 @@ public interface InvoiceService {
         public void sendRemindersForInvoices()
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException;
+        public BigDecimal getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException;
 
         public List<InvoiceSearchResult> getProviderInvoiceForCustomerOrder(Integer customerOrderId)
                         throws OsirisException;

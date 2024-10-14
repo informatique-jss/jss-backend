@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +19,8 @@ public class MontantFormalite {
     @SequenceGenerator(name = "montant_formalite_infogreffe_sequence", sequenceName = "montant_formalite_infogreffe_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "montant_formalite_infogreffe_sequence")
     private Integer id;
-    private Float montantTotal;
+    @Column(precision = 2)
+    private Double montantTotal;
     private String typePaiement;
 
     @OneToMany(mappedBy = "montantInfogreffe", fetch = FetchType.LAZY)
@@ -33,11 +35,11 @@ public class MontantFormalite {
         this.id = id;
     }
 
-    public Float getMontantTotal() {
+    public Double getMontantTotal() {
         return montantTotal;
     }
 
-    public void setMontantTotal(Float montantTotal) {
+    public void setMontantTotal(Double montantTotal) {
         this.montantTotal = montantTotal;
     }
 

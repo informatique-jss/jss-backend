@@ -3,6 +3,8 @@ package com.jss.osiris.modules.osiris.quotation.service.guichetUnique;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -62,6 +64,9 @@ import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referential
 
 @org.springframework.stereotype.Service
 public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUniqueService {
+
+    private BigDecimal zeroValue = new BigDecimal(0);
+    private BigDecimal oneHundredValue = new BigDecimal(100);
 
     @Autowired
     FormaliteGuichetUniqueRepository formaliteGuichetUniqueRepository;
@@ -574,27 +579,27 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                             if (firstItemNonTaxable != null) {
                                                 firstItemNonTaxable.setPreTaxPrice(
                                                         firstItemNonTaxable.getPreTaxPrice()
-                                                                - Math.abs(invoiceItem.getPreTaxPrice()));
+                                                                .subtract(invoiceItem.getPreTaxPrice().abs()));
                                                 firstItemNonTaxable.setPreTaxPriceReinvoiced(
-                                                        -Math.abs(firstItemNonTaxable.getPreTaxPrice()));
+                                                        firstItemNonTaxable.getPreTaxPrice().abs().negate());
                                                 initItem = false;
                                             }
                                         } else {
                                             if (firstItemTaxable != null) {
                                                 firstItemTaxable.setPreTaxPrice(
                                                         firstItemTaxable.getPreTaxPrice()
-                                                                - Math.abs(invoiceItem.getPreTaxPrice()));
+                                                                .subtract(invoiceItem.getPreTaxPrice().abs()));
                                                 firstItemTaxable.setPreTaxPriceReinvoiced(
-                                                        -Math.abs(firstItemTaxable.getPreTaxPrice()));
+                                                        firstItemTaxable.getPreTaxPrice().abs().negate());
                                                 initItem = false;
                                             }
                                         }
                                     }
                                     if (initItem) {
                                         InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                                        invoiceItem.setPreTaxPrice(Math.abs(invoiceItem.getPreTaxPrice()));
-                                        invoiceItem.setPreTaxPriceReinvoiced(
-                                                -Math.abs(invoiceItem.getPreTaxPrice()));
+                                        invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().abs());
+                                        invoiceItem
+                                                .setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice().abs().negate());
                                         invoiceItem.setProvision(null);
                                         invoice.getInvoiceItems().add(invoiceItem);
                                         provision.getInvoiceItems().add(invoiceItem);
@@ -616,13 +621,15 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setIsCreditNote(true);
         invoice.setProvision(provision);
 
-        return invoiceHelper.getPriceTotal(invoice) > 0f ? invoiceService.addOrUpdateInvoiceFromUser(invoice) : null;
+        return invoiceHelper.getPriceTotal(invoice).compareTo(zeroValue) > 0
+                ? invoiceService.addOrUpdateInvoiceFromUser(invoice)
+                : null;
     }
 
     private InvoiceItem getInvoiceItemForCartRate(CartRate cartRate, Cart cart) throws OsirisException {
         InvoiceItem invoiceItem = new InvoiceItem();
         extractVatFromCartRate(invoiceItem, cartRate);
-        invoiceItem.setDiscountAmount(0f);
+        invoiceItem.setDiscountAmount(zeroValue);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
 
@@ -637,19 +644,19 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             competentAuthority = competentAuthorities.get(0);
 
         invoiceItem.setLabel(competentAuthority.getLabel() + " - " + cartRate.getRate().getLabel());
-        float amount = cartRate.getHtAmount();
-        if (amount == 0)
-            amount = cartRate.getAmount() / 1.2f;
+        BigDecimal amount = BigDecimal.valueOf(cartRate.getHtAmount());
+        if (amount.compareTo(zeroValue) == 0)
+            amount = BigDecimal.valueOf(cartRate.getAmount() / 1.2f);
 
-        if (cartRate.getAmount() < 0 && amount > 0)
-            amount = -amount;
-        if (cartRate.getAmount() > 0 && amount < 0)
-            amount = -amount;
+        if (cartRate.getAmount() < 0 && amount.compareTo(zeroValue) > 0)
+            amount = amount.negate();
+        if (cartRate.getAmount() > 0 && amount.compareTo(zeroValue) < 0)
+            amount = amount.negate();
 
         if (cartRate.getQuantity() > 1)
-            amount *= cartRate.getQuantity();
+            amount = amount.multiply(BigDecimal.valueOf(cartRate.getQuantity()));
 
-        invoiceItem.setPreTaxPrice(Float.parseFloat(amount + "") / 100f);
+        invoiceItem.setPreTaxPrice(amount.divide(oneHundredValue));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
 
         return invoiceItem;
@@ -658,12 +665,13 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     private void extractVatFromCartRate(InvoiceItem invoiceItem, CartRate cartRate) throws OsirisException {
         if (Math.abs(cartRate.getAmount()) == Math.abs(cartRate.getHtAmount())) {
             invoiceItem.setVat(constantService.getVatZero());
-            invoiceItem.setVatPrice(0f);
+            invoiceItem.setVatPrice(zeroValue);
             invoiceItem.setBillingItem(
                     pricingHelper.getAppliableBillingItem(constantService.getBillingTypeDeboursNonTaxable(), null));
         } else {
-            Float vatRate = (cartRate.getAmount() - cartRate.getHtAmount()) * 1.0f / cartRate.getHtAmount() * 100f;
-            vatRate = Math.round(vatRate * 10f) / 10f;
+            BigDecimal vatRate = BigDecimal
+                    .valueOf((cartRate.getAmount() - cartRate.getHtAmount()) * 1.0 / cartRate.getHtAmount() * 100.0);
+            vatRate = vatRate.multiply(BigDecimal.TEN).setScale(0, RoundingMode.HALF_UP).divide(BigDecimal.TEN);
             Vat vat = null;
             invoiceItem.setBillingItem(pricingHelper
                     .getAppliableBillingItem(constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));
@@ -691,8 +699,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         }
     }
 
-    private boolean isVatEqual(Float vat1, Float vat2) {
-        return Math.abs(vat1 - vat2) < 1;
+    private boolean isVatEqual(BigDecimal vat1, BigDecimal vat2) {
+        return vat1.subtract(vat2).abs().compareTo(BigDecimal.ONE) < 0;
     }
 
     @Override

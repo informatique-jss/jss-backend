@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -44,9 +45,10 @@ public class Refund implements Serializable, IId {
 	@IndexedField
 	private String label;
 
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
 	@IndexedField
 	@JsonView(JacksonViews.MyJssView.class)
-	private Float refundAmount;
+	private BigDecimal refundAmount;
 
 	@IndexedField
 	@JsonView(JacksonViews.MyJssView.class)
@@ -112,11 +114,11 @@ public class Refund implements Serializable, IId {
 		this.label = label;
 	}
 
-	public Float getRefundAmount() {
+	public BigDecimal getRefundAmount() {
 		return refundAmount;
 	}
 
-	public void setRefundAmount(Float refundAmount) {
+	public void setRefundAmount(BigDecimal refundAmount) {
 		this.refundAmount = refundAmount;
 	}
 

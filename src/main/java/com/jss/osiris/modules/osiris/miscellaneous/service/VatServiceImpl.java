@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.miscellaneous.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,9 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @Service
 public class VatServiceImpl implements VatService {
+
+    private BigDecimal zeroValue = new BigDecimal(0);
+    private BigDecimal oneHundredValue = new BigDecimal(100);
 
     @Autowired
     VatRepository vatRepository;
@@ -93,10 +97,11 @@ public class VatServiceImpl implements VatService {
             vat = constantService.getVatTwenty();
 
         if (vat.getId().equals(constantService.getVatTwenty().getId()))
-            return settings.getIntermediateVat().getRate() >= 0 ? settings.getIntermediateVat() : null;
+            return settings.getIntermediateVat().getRate().compareTo(zeroValue) >= 0 ? settings.getIntermediateVat()
+                    : null;
 
         if (vat.getId().equals(constantService.getVatTwo().getId()))
-            return settings.getReducedVat().getRate() >= 0 ? settings.getReducedVat() : null;
+            return settings.getReducedVat().getRate().compareTo(zeroValue) >= 0 ? settings.getReducedVat() : null;
 
         return vat != null ? vat : constantService.getVatTwenty();
     }
@@ -129,11 +134,14 @@ public class VatServiceImpl implements VatService {
             vat = constantService.getVatDeductible();
 
         if (vat.getId().equals(constantService.getVatDeductible().getId()))
-            return settings.getIntermediateVatForPurshase().getRate() >= 0 ? settings.getIntermediateVatForPurshase()
+            return settings.getIntermediateVatForPurshase().getRate().compareTo(zeroValue) >= 0
+                    ? settings.getIntermediateVatForPurshase()
                     : null;
 
         if (vat.getId().equals(constantService.getVatDeductibleTwo().getId()))
-            return settings.getReducedVatForPurshase().getRate() >= 0 ? settings.getReducedVatForPurshase() : null;
+            return settings.getReducedVatForPurshase().getRate().compareTo(zeroValue) >= 0
+                    ? settings.getReducedVatForPurshase()
+                    : null;
 
         return (vat != null ? vat : constantService.getVatDeductible());
     }
@@ -170,10 +178,11 @@ public class VatServiceImpl implements VatService {
             vat = settings.getIntermediateVat();
 
         if (vat.getId().equals(constantService.getVatTwenty().getId()))
-            return settings.getIntermediateVat().getRate() >= 0 ? settings.getIntermediateVat() : null;
+            return settings.getIntermediateVat().getRate().compareTo(zeroValue) >= 0 ? settings.getIntermediateVat()
+                    : null;
 
         if (vat.getId().equals(constantService.getVatTwo().getId()))
-            return settings.getReducedVat().getRate() >= 0 ? settings.getReducedVat() : null;
+            return settings.getReducedVat().getRate().compareTo(zeroValue) >= 0 ? settings.getReducedVat() : null;
 
         return vat != null ? vat : constantService.getVatTwenty();
     }
@@ -312,7 +321,7 @@ public class VatServiceImpl implements VatService {
                 applicableVat = constantService.getVatZero();
 
             if (invoiceItem.getVat() != null) {
-                if (applicableVat.getRate() < invoiceItem.getVat().getRate())
+                if (applicableVat.getRate().compareTo(invoiceItem.getVat().getRate()) < 0)
                     invoiceItem.setVat(applicableVat);
             } else {
                 invoiceItem.setVat(applicableVat);
@@ -327,7 +336,7 @@ public class VatServiceImpl implements VatService {
                 applicableVat = constantService.getVatZero();
 
             if (invoiceItem.getVat() != null) {
-                if (applicableVat.getRate() < invoiceItem.getVat().getRate())
+                if (applicableVat.getRate().compareTo(invoiceItem.getVat().getRate()) < 0)
                     invoiceItem.setVat(applicableVat);
             } else {
                 invoiceItem.setVat(applicableVat);
@@ -338,11 +347,11 @@ public class VatServiceImpl implements VatService {
         }
 
         if (invoiceItem.getPreTaxPrice() != null)
-            invoiceItem.setVatPrice((invoiceItem.getPreTaxPrice()
-                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f))
-                    * invoiceItem.getVat().getRate() / 100f);
+            invoiceItem.setVatPrice(invoiceItem.getPreTaxPrice()
+                    .subtract(invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : zeroValue)
+                    .multiply(invoiceItem.getVat().getRate()).divide(oneHundredValue));
         else
-            invoiceItem.setVatPrice(0f);
+            invoiceItem.setVatPrice(zeroValue);
     }
 
     @Override
@@ -352,7 +361,7 @@ public class VatServiceImpl implements VatService {
         Vat applicableVat = getGeographicalApplicableVatForSales(customerOrder, invoiceItem.getVat());
 
         if (invoiceItem.getVat() != null) {
-            if (applicableVat.getRate() < invoiceItem.getVat().getRate())
+            if (applicableVat.getRate().compareTo(invoiceItem.getVat().getRate()) < 0)
                 invoiceItem.setVat(applicableVat);
         } else {
             invoiceItem.setVat(applicableVat);
@@ -362,11 +371,11 @@ public class VatServiceImpl implements VatService {
             invoiceItem.setVat(constantService.getVatTwenty());
 
         if (invoiceItem.getPreTaxPrice() != null)
-            invoiceItem.setVatPrice((invoiceItem.getPreTaxPrice()
-                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f))
-                    * invoiceItem.getVat().getRate() / 100f);
+            invoiceItem.setVatPrice(invoiceItem.getPreTaxPrice()
+                    .subtract(invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : zeroValue)
+                    .multiply(invoiceItem.getVat().getRate()).divide(oneHundredValue));
         else
-            invoiceItem.setVatPrice(0f);
+            invoiceItem.setVatPrice(zeroValue);
     }
 
     private void chooseCorrectVatDeductibleCollected(InvoiceItem invoiceItem, boolean isPurschases)

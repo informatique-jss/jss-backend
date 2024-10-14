@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -95,9 +96,9 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public Float getTotalForCustomerOrder(IQuotation customerOrder);
+        public BigDecimal getTotalForCustomerOrder(IQuotation customerOrder);
 
-        public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
+        public BigDecimal getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
 
         public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrders, boolean printLabel,
                         boolean printLetters)

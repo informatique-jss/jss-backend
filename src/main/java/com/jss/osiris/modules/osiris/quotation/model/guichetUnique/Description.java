@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.jss.osiris.libs.search.model.DoNotAudit;
@@ -48,7 +49,8 @@ public class Description implements Serializable, IId {
 
     private Boolean capitalVariable;
 
-    private Float montantCapital;
+    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    private BigDecimal montantCapital;
 
     private Integer capitalMinimum;
 
@@ -204,11 +206,11 @@ public class Description implements Serializable, IId {
         this.capitalVariable = capitalVariable;
     }
 
-    public Float getMontantCapital() {
+    public BigDecimal getMontantCapital() {
         return montantCapital;
     }
 
-    public void setMontantCapital(Float montantCapital) {
+    public void setMontantCapital(BigDecimal montantCapital) {
         this.montantCapital = montantCapital;
     }
 

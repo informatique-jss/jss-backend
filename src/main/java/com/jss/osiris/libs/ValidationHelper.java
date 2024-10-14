@@ -2,6 +2,7 @@ package com.jss.osiris.libs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -276,6 +277,17 @@ public class ValidationHelper {
     }
 
     public void validateFloat(Float value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
+        if ((value == null) && isMandatory)
+            throw new OsirisValidationException(fieldName);
+    }
+
+    public void validateDouble(Double value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
+        if ((value == null) && isMandatory)
+            throw new OsirisValidationException(fieldName);
+    }
+
+    public void validateBigDecimal(BigDecimal value, Boolean isMandatory, String fieldName)
+            throws OsirisValidationException {
         if ((value == null) && isMandatory)
             throw new OsirisValidationException(fieldName);
     }

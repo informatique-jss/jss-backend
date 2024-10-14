@@ -1,7 +1,9 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -35,9 +37,11 @@ public class AssoSpecialOfferBillingType implements Serializable, IId {
 	@JoinColumn(name = "id_billingType")
 	private BillingType billingType;
 
-	private Float discountRate;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal discountRate;
 
-	private Float discountAmount;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal discountAmount;
 
 	public Integer getId() {
 		return id;
@@ -63,19 +67,19 @@ public class AssoSpecialOfferBillingType implements Serializable, IId {
 		this.billingType = billingType;
 	}
 
-	public Float getDiscountRate() {
+	public BigDecimal getDiscountRate() {
 		return discountRate;
 	}
 
-	public void setDiscountRate(Float discountRate) {
+	public void setDiscountRate(BigDecimal discountRate) {
 		this.discountRate = discountRate;
 	}
 
-	public Float getDiscountAmount() {
+	public BigDecimal getDiscountAmount() {
 		return discountAmount;
 	}
 
-	public void setDiscountAmount(Float discountAmount) {
+	public void setDiscountAmount(BigDecimal discountAmount) {
 		this.discountAmount = discountAmount;
 	}
 

@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -137,8 +138,8 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@Column(length = 40)
 	private String commandNumber;
 
-	@Column(name = "total_price")
-	private Float totalPrice;
+	@Column(name = "total_price", precision = 15, scale = 2)
+	private BigDecimal totalPrice;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder", "originPayment",
@@ -343,11 +344,11 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 		this.dueDate = dueDate;
 	}
 
-	public Float getTotalPrice() {
+	public BigDecimal getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(Float totalPrice) {
+	public void setTotalPrice(BigDecimal totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 

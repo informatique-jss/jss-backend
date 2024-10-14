@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.tiers.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public interface IRffCompute {
@@ -9,9 +10,9 @@ public interface IRffCompute {
 
     Integer getRffId();
 
-    Float getRffAl();
+    BigDecimal getRffAl();
 
-    Float getRffFor();
+    BigDecimal getRffFor();
 
     LocalDate getStartDate();
 

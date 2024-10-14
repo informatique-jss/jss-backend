@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 
@@ -30,7 +31,8 @@ public class Gift implements Serializable, IId {
 
 	private Integer stock;
 
-	private Float preTaxPrice;
+	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	private BigDecimal preTaxPrice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account")
@@ -76,11 +78,11 @@ public class Gift implements Serializable, IId {
 		this.code = code;
 	}
 
-	public Float getPreTaxPrice() {
+	public BigDecimal getPreTaxPrice() {
 		return preTaxPrice;
 	}
 
-	public void setPreTaxPrice(Float preTaxPrice) {
+	public void setPreTaxPrice(BigDecimal preTaxPrice) {
 		this.preTaxPrice = preTaxPrice;
 	}
 
