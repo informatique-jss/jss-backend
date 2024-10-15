@@ -184,7 +184,6 @@ public class AttachmentServiceImpl implements AttachmentService {
         if (filename.toLowerCase().endsWith(".pdf")) {
             if (pageSelection != null && !pageSelection.equals("") && !pageSelection.equals("null"))
                 file = pdfTools.keepPages(file, pageSelection);
-            file = pdfTools.optimizePdf(file);
         }
 
         String absoluteFilePath = storageFileService.saveFile(file, filename,
