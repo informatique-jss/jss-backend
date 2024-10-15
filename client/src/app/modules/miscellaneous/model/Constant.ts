@@ -11,6 +11,7 @@ import { DomiciliationContractType } from "../../quotation/model/DomiciliationCo
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
 import { ProvisionType } from '../../quotation/model/ProvisionType';
+import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
 import { ServiceType } from '../../quotation/model/ServiceType';
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
 import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials/TypeFormalite';
@@ -24,6 +25,7 @@ import { RffFrequency } from '../../tiers/model/RffFrequency';
 import { SubscriptionPeriodType } from "../../tiers/model/SubscriptionPeriodType";
 import { TiersCategory } from '../../tiers/model/TiersCategory';
 import { TiersType } from "../../tiers/model/TiersType";
+import { ActiveDirectoryGroup } from './ActiveDirectoryGroup';
 import { AttachmentType } from "./AttachmentType";
 import { BillingType } from "./BillingType";
 import { CompetentAuthority } from './CompetentAuthority';
@@ -38,8 +40,6 @@ import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
-import { ActiveDirectoryGroup } from './ActiveDirectoryGroup';
-import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
 
 export interface Constant {
   id: number;
@@ -236,5 +236,6 @@ export interface Constant {
   dateAccountingClosureForAccountant: Date;
   activeDirectoryGroupFormalites: ActiveDirectoryGroup;
   activeDirectoryGroupFacturation: ActiveDirectoryGroup;
+  activeDirectoryGroupSales: ActiveDirectoryGroup;
   furtherInformationServiceFieldType: ServiceFieldType;
 }

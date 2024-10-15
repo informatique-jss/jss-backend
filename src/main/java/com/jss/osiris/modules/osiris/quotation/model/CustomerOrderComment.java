@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -39,17 +41,21 @@ public class CustomerOrderComment implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "customer_order_comment_sequence", sequenceName = "customer_order_comment_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_order_comment_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssView.class)
 	private String comment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Employee employee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Responsable currentCustomer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -74,9 +80,14 @@ public class CustomerOrderComment implements Serializable, IId {
 	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDateTime createdDateTime;
 
+	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean isRead;
+
+	@JsonView(JacksonViews.MyJssView.class)
+	private Boolean isToDisplayToCustomer;
 
 	public Integer getId() {
 		return id;
@@ -156,5 +167,13 @@ public class CustomerOrderComment implements Serializable, IId {
 
 	public void setCurrentCustomer(Responsable currentCustomer) {
 		this.currentCustomer = currentCustomer;
+	}
+
+	public Boolean getIsToDisplayToCustomer() {
+		return isToDisplayToCustomer;
+	}
+
+	public void setIsToDisplayToCustomer(Boolean isToDisplayToCustomer) {
+		this.isToDisplayToCustomer = isToDisplayToCustomer;
 	}
 }

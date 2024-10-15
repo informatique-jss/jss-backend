@@ -16,6 +16,7 @@ export interface CustomerOrderComment {
   quotation: Quotation;
   activeDirectoryGroups: ActiveDirectoryGroup[];
   isRead: boolean;
+  isToDisplayToCustomer: boolean;
   // Only for frontend
   isCurrentUserInGroup: boolean;
 }

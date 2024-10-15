@@ -122,10 +122,10 @@ export class OrdersComponent implements OnInit {
         this.ordersAssoAffaireOrders[order.id] = response;
         initTooltips();
       })
-      this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order).subscribe(response => {
+      this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id).subscribe(response => {
         this.ordersInvoiceLabelResult[order.id] = response;
       })
-      this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(order).subscribe(response => {
+      this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(order.id).subscribe(response => {
         this.ordersMailComputeResult[order.id] = response;
       })
     }

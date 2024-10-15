@@ -8,6 +8,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -124,4 +125,7 @@ public interface PaymentService {
 
         public Payment cutPayment(Payment payment, BigDecimal amount)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
+
+        public MyJssImage downloadQrCodeForOrderPayment(CustomerOrder customerOrder, String mail)
+                        throws OsirisException;
 }

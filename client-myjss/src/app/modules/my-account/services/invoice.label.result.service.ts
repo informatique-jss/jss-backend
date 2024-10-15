@@ -15,8 +15,8 @@ export class InvoiceLabelResultService extends AppRestService<InvoiceLabelResult
     super(http, "invoicing");
   }
 
-  getInvoiceLabelComputeResultForCustomerOrder(customerOrder: CustomerOrder) {
-    return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "invoice/label/compute/order");
+  getInvoiceLabelComputeResultForCustomerOrder(customerOrderId: number) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrderId), "invoice/label/compute/order");
   }
 
   getInvoiceLabelComputeResultForQuotation(quotation: Quotation) {

@@ -3,6 +3,7 @@ package com.jss.osiris.modules.myjss.quotation.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,10 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
+import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -33,10 +38,12 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
@@ -44,6 +51,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
@@ -92,6 +100,15 @@ public class MyJssQuotationController {
 
 	@Autowired
 	ConstantService constantService;
+
+	@Autowired
+	PaymentService paymentService;
+
+	@Autowired
+	EmployeeService employeeService;
+
+	@Autowired
+	CustomerOrderCommentService customerOrderCommentService;
 
 	@PostMapping(inputEntryPoint + "/order/search/current")
 	@JsonView(JacksonViews.MyJssView.class)
@@ -197,17 +214,25 @@ public class MyJssQuotationController {
 		Attachment tiersAttachment = attachmentService.getAttachment(idAttachment);
 
 		boolean canDownload = true;
-		if (tiersAttachment.getProvision() == null && tiersAttachment.getAssoServiceDocument() == null)
+		if (tiersAttachment.getProvision() == null && tiersAttachment.getAssoServiceDocument() == null
+				&& tiersAttachment.getCustomerOrder() == null)
+			canDownload = false;
+
+		// Can only download invoice
+		if (tiersAttachment.getCustomerOrder() != null && !tiersAttachment.getAttachmentType().getId()
+				.equals(constantService.getAttachmentTypeInvoice().getId()))
 			canDownload = false;
 
 		if (tiersAttachment.getProvision() != null && tiersAttachment.getProvision().getService() != null
 				&& tiersAttachment.getProvision().getService().getAssoAffaireOrder().getQuotation() != null
+				&& tiersAttachment.getAttachmentType().getIsToSentOnUpload()
 				&& !myJssQuotationValidationHelper.canSeeQuotation(
 						tiersAttachment.getProvision().getService().getAssoAffaireOrder().getQuotation()))
 			canDownload = false;
 
 		if (tiersAttachment.getProvision() != null && tiersAttachment.getProvision().getService() != null
 				&& tiersAttachment.getProvision().getService().getAssoAffaireOrder().getCustomerOrder() != null
+				&& tiersAttachment.getAttachmentType().getIsToSentOnUpload()
 				&& !myJssQuotationValidationHelper.canSeeQuotation(
 						tiersAttachment.getProvision().getService().getAssoAffaireOrder().getCustomerOrder()))
 			canDownload = false;
@@ -258,6 +283,42 @@ public class MyJssQuotationController {
 			headers.set("content-type", mimeType);
 		}
 		return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/attachment/invoice/download")
+	@Transactional
+	public ResponseEntity<byte[]> downloadAttachmentInvoice(@RequestParam("customerOrderId") Integer customerOrderId)
+			throws OsirisValidationException, OsirisException {
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
+
+		if (customerOrder.getInvoices() != null)
+			for (Invoice invoice : customerOrder.getInvoices())
+				if ((invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId())
+						|| invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
+						&& invoice.getAttachments().size() > 0)
+					return downloadAttachment(invoice.getAttachments().get(0).getId());
+
+		return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/order/payment/cb/qrcode")
+	@Transactional
+	public ResponseEntity<MyJssImage> downloadQrCodeForOrderPayment(
+			@RequestParam("customerOrderId") Integer customerOrderId,
+			@RequestParam("mail") String mail)
+			throws OsirisValidationException, OsirisException {
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<MyJssImage>(null, new HttpHeaders(), HttpStatus.OK);
+
+		validationHelper.validateMail(mail);
+
+		return new ResponseEntity<MyJssImage>(paymentService.downloadQrCodeForOrderPayment(customerOrder, mail),
+				new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/attachment/disabled")
@@ -447,6 +508,62 @@ public class MyJssQuotationController {
 				documentService.addOrUpdateDocument(currentDocument);
 			}
 		}
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/customer-order-comments/customer")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<CustomerOrderComment>> getCustomerOrderCommentsForCustomer(
+			@RequestParam Integer idCustomerOrder)
+			throws OsirisValidationException {
+		if (idCustomerOrder == null)
+			throw new OsirisValidationException("id");
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<CustomerOrderComment>>(
+				customerOrderService.getCustomerOrderCommentsForCustomer(customerOrder),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/customer-order-comment")
+	public ResponseEntity<Boolean> addOrUpdateCustomerOrderComment(
+			@RequestBody CustomerOrderComment customerOrderComment) throws OsirisValidationException, OsirisException {
+		CustomerOrderComment customerOrderCommentOriginal = null;
+
+		if (customerOrderComment.getCustomerOrder() == null
+				|| !myJssQuotationValidationHelper.canSeeQuotation(customerOrderComment.getCustomerOrder()))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		if (customerOrderComment.getId() != null) {
+			if (customerOrderComment.getCurrentCustomer() == null || !customerOrderComment.getCurrentCustomer().getId()
+					.equals(employeeService.getCurrentMyJssUser().getId()))
+				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+			customerOrderCommentOriginal = (CustomerOrderComment) validationHelper.validateReferential(
+					customerOrderComment,
+					true, "customerOrderComments");
+			customerOrderComment.setProvision(customerOrderCommentOriginal.getProvision());
+			customerOrderComment.setCustomerOrder(customerOrderCommentOriginal.getCustomerOrder());
+			customerOrderComment.setQuotation(customerOrderCommentOriginal.getQuotation());
+		}
+
+		customerOrderComment.setEmployee(null);
+		customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
+		customerOrderComment.setProvision(null);
+		customerOrderComment.setActiveDirectoryGroups(new ArrayList<ActiveDirectoryGroup>());
+		customerOrderComment.getActiveDirectoryGroups().add(constantService.getActiveDirectoryGroupSales());
+		customerOrderComment.setIsToDisplayToCustomer(true);
+
+		if (customerOrderComment.getId() == null)
+			customerOrderComment.setCreatedDateTime(LocalDateTime.now());
+		else if (customerOrderCommentOriginal != null)
+			customerOrderComment.setCreatedDateTime(customerOrderCommentOriginal.getCreatedDateTime());
+
+		customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}

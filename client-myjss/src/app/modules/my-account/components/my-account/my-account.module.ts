@@ -9,6 +9,7 @@ import { EditAffaireComponent } from '../edit-affaire/edit-affaire.component';
 import { OrderDetailsComponent } from '../order-details/order-details.component';
 import { OrdersComponent } from '../orders/orders.component';
 import { OverviewComponent } from '../overview/overview.component';
+import { PayOrderComponent } from '../pay-order/pay-order.component';
 import { QuotationsComponent } from '../quotations/quotations.component';
 import { ScopeComponent } from '../scope/scope.component';
 import { SignInComponent } from '../sign-in/sign-in.component';
@@ -25,7 +26,8 @@ const routes: Routes = [
       { path: 'orders/details/:id', component: OrderDetailsComponent },
       { path: 'quotations', component: QuotationsComponent },
       { path: 'affaire/edit/:id/:idOrder', component: EditAffaireComponent },
-      { path: 'address/edit/:idOrder', component: EditAddressComponent }
+      { path: 'address/edit/:idOrder', component: EditAddressComponent },
+      { path: 'order/pay/:idOrder', component: PayOrderComponent }
     ]
   },
   { path: 'account/signin', component: SignInComponent },
@@ -52,6 +54,7 @@ const routes: Routes = [
     OrderDetailsComponent,
     EditAffaireComponent,
     EditAddressComponent,
+    PayOrderComponent,
   ]
 })
 export class MyAccountModule { }

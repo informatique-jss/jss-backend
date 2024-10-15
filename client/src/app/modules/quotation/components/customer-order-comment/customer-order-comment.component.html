@@ -23,6 +23,12 @@
           (click)="toggleAdGroup(group)"></chips-status>
       </td>
     </tr>
+    <tr *ngIf="isDisplayCommentInput">
+      <td colspan="2" style="display : flex; padding-left: 10px;padding-right: 10px;">
+        <generic-toggle [(model)]="newComment.isToDisplayToCustomer" label="Afficher le commentaire au client"
+          [form]="commentForm" propertyName="isToDisplayToCustomer" [isDisabled]="false"></generic-toggle>
+      </td>
+    </tr>
   </table>
   <div class="div-speech">
     <div class="speech-wrapper">
@@ -45,17 +51,10 @@
               style="color :#b3b3b3; padding-left: 3px;">
               {{getProvisionLabel(comment.provision)}}</span>
           </p>
-          <p> <span *ngIf="comment.employee">{{comment.employee.firstname}} {{comment.employee.lastname}}</span> <span
-              *ngIf="comment.provision" style="color :#b3b3b3; padding-left: 3px;">
-              {{getProvisionLabel(comment.provision)}}</span> <span style=" display : flex"
-              *ngIf="comment.activeDirectoryGroups && comment.activeDirectoryGroups.length>0"><chips-status
-                style="margin-left : 5px;" *ngFor="let group of comment.activeDirectoryGroups"
-                [status]="isEmployeeInGroupList(currentEmployee, [group])?'EMPHASIZED' : ''"
-                [value]="'@'+group.label"></chips-status></span>
-          </p>
           <p class="message" [innerHTML]="comment.comment| trustHtml"> </p>
           <span class="timestamp" [matTooltip]="getTooltipDateText(comment)">{{comment.createdDateTime |
-            date:'dd/MM/yyyy à HH:mm'}}</span><button mat-icon-button matTooltip="Editer le commentaire" color="accent"
+            date:'dd/MM/yyyy à HH:mm'}} <span *ngIf="comment.isToDisplayToCustomer">(visible du
+              client)</span></span><button mat-icon-button matTooltip="Editer le commentaire" color="accent"
             class="edit-icon" *ngIf="canEditComment(comment)" (click)="editComment(comment)"><mat-icon>edit</mat-icon>
           </button>
           <button mat-icon-button matTooltip="Marquer comme non lu"

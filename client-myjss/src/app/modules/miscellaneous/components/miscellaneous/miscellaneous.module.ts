@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { SingleUploadComponent } from '../single-upload/single-upload.component';
@@ -18,11 +19,13 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AvatarComponent,
     GenericInputComponent,
     SingleUploadComponent,
+    TrustHtmlPipe,
   ],
   exports: [
     AvatarComponent,
     GenericInputComponent,
     SingleUploadComponent,
+    TrustHtmlPipe,
   ]
 })
 export class MiscellaneousModule { }

@@ -317,9 +317,12 @@
         <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-wallet text-primary lead pe-1 me-2"></i>
           <h2 class="h4 mb-0">Facturation</h2>
-          <a class="btn btn-sm btn-secondary ms-auto" href="account-settings.html">
+          <a class="btn btn-sm btn-secondary ms-auto" *ngIf="order && invoiceSummary && displayPayButton"
+            (click)="payCustomerOrder($event)">
             <i class="ai-cart ms-n1 me-2"></i>
-            Payer le solde <!-- TODO page de paiement CB + instruction de virement -->
+            <span *ngIf="order.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_BILLED">Payer le solde</span>
+            <span *ngIf="order.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED">Payer un acompte</span>
+            <!-- TODO page de paiement CB + instruction de virement -->
           </a>
         </div>
         <div class="d-flex align-items-center pb-1 mb-2" *ngIf="orderPayments && orderPayments.length>0">
@@ -396,189 +399,70 @@
             </span>
           </div>
         </div>
+        <div class="text-center pt-1 pt-sm-2">
+          <a class="btn btn-sm btn-secondary ms-auto"
+            *ngIf="order && order.customerOrderStatus.code ==CUSTOMER_ORDER_STATUS_BILLED" (click)="downloadInvoice()">
+            <i class="ai-cart ms-n1 me-2"></i>
+            <span>Télécharger la facture</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
 </div>
-<div>
-  <div class="card h-100 border-0">
-
-    <!-- Header -->
-    <div class="navbar card-header w-100 mx-0 px-4">
-      <div class="d-flex align-items-center w-100 px-sm-3">
-        <button class="navbar-toggler d-xl-none me-3 me-sm-4" type="button" data-bs-toggle="offcanvas"
-          data-bs-target="#contactsList" aria-controls="contactsList" aria-label="Toggle contacts list">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="position-relative flex-shrink-0">
-          <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
-          <span class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle me-1"
-            style="width: .625rem; height: .625rem;"></span>
-        </div>
-        <div class="h6 ps-2 ms-1 mb-0">Mark Virgows</div>
-        <div class="dropdown ms-auto">
-          <button class="btn btn-icon btn-sm btn-outline-secondary border-0 rounded-circle me-n2" type="button"
-            data-bs-toggle="dropdown" aria-label="Actions">
-            <i class="ai-dots-vertical fs-4 fw-bold"></i>
-          </button>
-          <div class="dropdown-menu dropdown-menu-end my-1">
-            <a class="dropdown-item" href="#">
-              <i class="ai-user fs-base opacity-80 me-2"></i>
-              View profile
-            </a>
-            <a class="dropdown-item" href="#">
-              <i class="ai-bell-off fs-base opacity-80 me-2"></i>
-              Disable notifications
-            </a>
-            <a class="dropdown-item" href="#">
-              <i class="ai-edit fs-base opacity-80 me-2"></i>
-              Edit contact
-            </a>
-            <a class="dropdown-item" href="#">
-              <i class="ai-trash fs-base opacity-80 me-2"></i>
-              Delete contact
-            </a>
-            <a class="dropdown-item" href="#">
-              <i class="ai-logout fs-base opacity-80 me-2"></i>
-              Leave chat
-            </a>
-            <a class="dropdown-item" href="#">
-              <i class="ai-circle-slash fs-base opacity-80 me-2"></i>
-              Block user
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Body -->
-    <div class="card-body pb-0 pt-4 simplebar-scrollable-y" data-simplebar="init" style="max-height: 580px;">
-      <div class="simplebar-wrapper" style="margin: -24px -38px 0px;">
-        <div class="simplebar-height-auto-observer-wrapper">
-          <div class="simplebar-height-auto-observer"></div>
-        </div>
-        <div class="simplebar-mask">
-          <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-            <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
-              style="height: auto; overflow: hidden scroll;">
-              <div class="simplebar-content" style="padding: 24px 38px 0px;">
-                <div class="text-body-secondary text-center mb-4">May 27, 2023</div>
-
-                <!-- Message -->
-                <div class="mb-3" style="max-width: 392px;">
-                  <div class="d-flex align-items-end mb-2">
-                    <div class="flex-shrink-0 pe-2 me-1">
-                      <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
-                    </div>
-                    <div class="message-box-start text-dark">Thank you for recommending me as a designer. I have an
-                      interview tomorrow!</div>
+<section class="card border-0  " *ngIf="order && selectedAssoAffaireOrder">
+  <div class="card-body">
+    <div class="simplebar-mask">
+      <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+        <div class="simplebar-content-wrapper" tabindex="0" role="region" style="height: auto;  ">
+          <div class="simplebar-content" style="padding: 24px 38px 0px;">
+            <!-- Message -->
+            <ng-container *ngFor="let comment of customerOrderComments">
+              <div class="mb-3" style="max-width: 392px;" *ngIf="comment.currentCustomer">
+                <div class="d-flex align-items-end mb-2">
+                  <div class="flex-shrink-0 pe-2 me-1">
+                    <avatar class="avatar-select" [user]="comment.currentCustomer" [size]="40"></avatar>
                   </div>
-                  <div class="fs-xs text-body-secondary text-end">11:32 am</div>
+                  <div class="message-box-start text-dark"><span class="break-line"
+                      [innerHTML]="comment.comment | trustHtml"></span></div>
                 </div>
-
-                <!-- Message -->
-                <div class="ms-auto mb-3" style="max-width: 392px;">
-                  <div class="d-flex align-items-end mb-2">
-                    <div class="message-box-end bg-primary text-white">Oh no thanks! I just know that you are a great
-                      specialist!</div>
-                    <div class="flex-shrink-0 ps-2 ms-1">
-                      <img class="rounded-circle" src="assets/img/avatar/01.jpg" width="48" alt="Avatar">
-                    </div>
-                  </div>
-                  <div class="fs-xs text-body-secondary">
-                    <i class="ai-checks text-primary fs-xl mt-n1 me-1"></i>
-                    2:18 pm
-                  </div>
-                </div>
-                <div class="text-body-secondary text-center my-4">May 29, 2023</div>
-
-                <!-- Message -->
-                <div class="mb-3" style="max-width: 392px;">
-                  <div class="d-flex align-items-end mb-2">
-                    <div class="flex-shrink-0 pe-2 me-1">
-                      <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
-                    </div>
-                    <div class="w-100">
-                      <div class="message-box-start text-dark mb-2">I have great news, I've been hired! 🚀</div>
-                      <div class="message-box-start text-dark">Thanks again!</div>
-                    </div>
-                  </div>
-                  <div class="fs-xs text-body-secondary text-end">4:04 am</div>
-                </div>
-
-                <!-- Message -->
-                <div class="ms-auto mb-3" style="max-width: 392px;">
-                  <div class="d-flex align-items-end mb-2">
-                    <div class="message-box-end bg-primary text-white">You are welcome!</div>
-                    <div class="flex-shrink-0 ps-2 ms-1">
-                      <img class="rounded-circle" src="assets/img/avatar/01.jpg" width="48" alt="Avatar">
-                    </div>
-                  </div>
-                  <div class="fs-xs text-body-secondary">
-                    <i class="ai-check text-primary fs-xl mt-n1 me-1"></i>
-                    2:18 pm
-                  </div>
-                </div>
-                <div class="text-body-secondary text-center my-4">Today</div>
-
-                <!-- Message -->
-                <div class="mb-3" style="max-width: 392px;">
-                  <div class="d-flex align-items-end mb-2">
-                    <div class="flex-shrink-0 pe-2 me-1">
-                      <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
-                    </div>
-                    <div class="message-box-start text-dark">I'm so happy to be part of the team and work with you on
-                      this new exciting project. Can't thank you enough 😊</div>
-                  </div>
-                  <div class="fs-xs text-body-secondary text-end">10:17 am</div>
+                <div class="fs-xs text-body-secondary text-end"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}} <i
+                    class="ai-edit " style="cursor: pointer;"
+                    *ngIf="comment.currentCustomer && currentUser &&  comment.currentCustomer.id == currentUser.id"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="Modifier le commentaire"
+                    (click)="editCustomerOrderComment(comment)"></i>
                 </div>
               </div>
-            </div>
+
+              <!-- Message -->
+              <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comment.employee">
+                <div class="d-flex align-items-end mb-2">
+                  <div class="message-box-end bg-primary text-white"><span class="break-line"
+                      [innerHTML]="comment.comment | trustHtml"></span></div>
+                  <div class="flex-shrink-0 ps-2 ms-1">
+                    <avatar class="avatar-select" [user]="comment.employee" [size]="40" data-bs-toggle="tooltip"
+                      data-bs-placement="right"
+                      [title]="comment.employee.firstname + ' '+comment.employee.lastname +' - '+comment.employee.title ">
+                    </avatar>
+                  </div>
+                </div>
+                <div class="fs-xs text-body-secondary"> {{comment.createdDateTime|date:'dd/MM/yyyy
+                  HH:mm'}}
+                </div>
+              </div>
+            </ng-container>
           </div>
         </div>
-        <div class="simplebar-placeholder" style="width: 589px; height: 834px;"></div>
-      </div>
-      <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
-        <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
-      </div>
-      <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
-        <div class="simplebar-scrollbar" style="height: 403px; transform: translate3d(0px, 0px, 0px); display: block;">
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer (Textarea) -->
-    <div class="card-footer w-100 border-0 mx-0 px-4">
-      <div class="d-flex align-items-end border rounded-3 pb-3 pe-3 mx-sm-3">
-        <textarea class="form-control border-0" rows="3" placeholder="Type a message" style="resize: none;"></textarea>
-        <div class="nav flex-nowrap align-items-center">
-          <a class="nav-link text-body-secondary p-1 me-1" href="#" aria-label="Attach">
-            <i class="ai-paperclip fs-xl"></i>
-          </a>
-          <a class="nav-link text-body-secondary p-1" href="#" aria-label="Emoji">
-            <i class="ai-emoji-smile fs-xl"></i>
-          </a>
-          <button class="btn btn-sm btn-secondary ms-3" type="button">Send</button>
-        </div>
       </div>
     </div>
   </div>
-</div>
-<!--Disable attachment offcanvas-->
-<div class="offcanvas offcanvas-bottom" id="offcanvasBottom" tabindex="-1">
-  <div class="offcanvas-header border-bottom text-center ">
-    <h5 class="offcanvas-title m-auto">Supprimer le document</h5>
-  </div>
-  <div class="offcanvas-body text-center " *ngIf="currentSelectedAttachmentForDisable">
-    <p>Êtes-vous sûr de supprimer le document {{currentSelectedAttachmentForDisable.description}} ?
-    </p>
-    <div class="text-center pt-1 pt-sm-2">
-      <div class="btn-group   " role="group" aria-label="Outline button group">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="offcanvas"
-          (click)="confirmDisableAttachment()">Supprimer</button>
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas"
-          (click)="dismissDisableAttachment()">Annuler</button>
+  <div class="card-footer w-100 border-0 mx-0 px-4">
+    <div class="d-flex align-items-end border rounded-3 pb-3 pe-3 mx-sm-3">
+      <textarea [(ngModel)]="newCustomerOrderComment.comment" class="form-control border-0" rows="3"
+        placeholder="Ecrivez un message" style="resize: none;"></textarea>
+      <div class="nav flex-nowrap align-items-center">
+        <button class="btn btn-sm btn-secondary ms-3" type="button" (click)="addCustomerOrderComment()">Envoyer</button>
       </div>
     </div>
   </div>
-</div>
+</section>

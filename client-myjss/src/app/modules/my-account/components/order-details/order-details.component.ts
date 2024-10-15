@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
 import { ConstantService } from '../../../../libs/constant.service';
-import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED } from '../../../../libs/Constants';
+import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
+import { Responsable } from '../../../profile/model/Responsable';
+import { LoginService } from '../../../profile/services/login.service';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { Attachment } from '../../model/Attachment';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
@@ -15,6 +18,7 @@ import { Payment } from '../../model/Payment';
 import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AttachmentService } from '../../services/attachment.service';
+import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
@@ -36,6 +40,7 @@ export class OrderDetailsComponent implements OnInit {
   orderInvoiceLabelResult: InvoiceLabelResult | undefined;
   orderMailComputeResult: MailComputeResult | undefined;
   digitalMailComputeResult: MailComputeResult | undefined;
+  customerOrderComments: CustomerOrderComment[] | undefined;
   orderPhysicalMailComputeResult: InvoiceLabelResult | undefined;
   invoiceSummary: InvoicingSummary | undefined;
   orderPayments: Payment[] | undefined;
@@ -43,11 +48,16 @@ export class OrderDetailsComponent implements OnInit {
   paymentTypeCb = this.constantService.getPaymentTypeCB();
   billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
   serviceProvisionAttachments: Attachment[][] = [];
+  currentUser: Responsable | undefined;
 
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
 
   currentSelectedAttachmentForDisable: Attachment | undefined;
+
+  newCustomerOrderComment: CustomerOrderComment = {} as CustomerOrderComment;
+
+  displayPayButton: boolean = false;
 
   constructor(
     private constantService: ConstantService,
@@ -60,7 +70,9 @@ export class OrderDetailsComponent implements OnInit {
     private invoicingSummaryService: InvoicingSummaryService,
     private attachementService: AttachmentService,
     private uploadAttachmentService: UploadAttachmentService,
-    private appService: AppService
+    private appService: AppService,
+    private customerOrderCommentService: CustomerOrderCommentService,
+    private loginService: LoginService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -89,10 +101,10 @@ export class OrderDetailsComponent implements OnInit {
       }
       initTooltips();
     })
-    this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(this.order).subscribe(response => {
+    this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(this.order.id).subscribe(response => {
       this.orderInvoiceLabelResult = response;
     })
-    this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(this.order).subscribe(response => {
+    this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(this.order.id).subscribe(response => {
       this.orderMailComputeResult = response;
     })
     this.mailComputeResultService.getMailComputeResultForDigitalForCustomerOrder(this.order).subscribe(response => {
@@ -105,9 +117,13 @@ export class OrderDetailsComponent implements OnInit {
       this.orderPayments = response;
       initTooltips();
     })
-    this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.order).subscribe(response => {
+    this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.order.id).subscribe(response => {
       this.invoiceSummary = response;
+      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS)
+        this.displayPayButton = true;
     })
+    this.refreshCustomerOrderComments();
+    this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
   }
 
   getCustomerOrderBillingMailList() {
@@ -179,4 +195,36 @@ export class OrderDetailsComponent implements OnInit {
       this.appService.openRoute(event, "account/address/edit/" + this.order.id, undefined);
   }
 
+  payCustomerOrder(event: any) {
+    if (this.order)
+      this.appService.openRoute(event, "account/order/pay/" + this.order.id, undefined);
+  }
+
+  downloadInvoice() {
+    if (this.order)
+      this.customerOrderService.downloadInvoice(this.order);
+  }
+
+  refreshCustomerOrderComments() {
+    if (this.order)
+      this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(this.order.id).subscribe(response => {
+        this.customerOrderComments = response;
+        initTooltips();
+      })
+  }
+
+  addCustomerOrderComment() {
+    if (this.newCustomerOrderComment && this.newCustomerOrderComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0 && this.order) {
+      this.newCustomerOrderComment.customerOrder = this.order;
+    }
+    this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newCustomerOrderComment).subscribe(response => {
+      this.newCustomerOrderComment = {} as CustomerOrderComment;
+      this.refreshCustomerOrderComments();
+    })
+  }
+
+  editCustomerOrderComment(comment: CustomerOrderComment) {
+    this.newCustomerOrderComment = comment;
+    this.newCustomerOrderComment.comment = this.newCustomerOrderComment.comment.replace(/<[^>]+>/g, '');
+  }
 }

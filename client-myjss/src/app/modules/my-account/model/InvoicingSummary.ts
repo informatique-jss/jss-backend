@@ -5,5 +5,6 @@ export interface InvoicingSummary {
   discountTotal: number;
   preTaxPriceTotal: number;
   vatTotal: number;
+  remainingToPay: number;
   billingLabelType: BillingLabelType;
 }

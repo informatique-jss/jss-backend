@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -1577,7 +1578,46 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         invoicingSummary.setPreTaxPriceTotal(preTaxPriceTotal);
         invoicingSummary.setVatTotal(vatTotal);
         invoicingSummary.setTotalPrice(totalPrice);
+        invoicingSummary.setRemainingToPay(totalPrice);
+
+        if (customerOrder instanceof CustomerOrder) {
+            List<Payment> payments = getApplicablePaymentsForCustomerOrder((CustomerOrder) customerOrder);
+            if (payments != null && payments.size() > 0)
+                for (Payment payment : payments)
+                    invoicingSummary
+                            .setRemainingToPay(
+                                    invoicingSummary.getRemainingToPay().subtract(payment.getPaymentAmount()));
+        }
 
         return invoicingSummary;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<CustomerOrderComment> getCustomerOrderCommentsForCustomer(CustomerOrder customerOrder) {
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        List<CustomerOrderComment> customerOrderComments = new ArrayList<CustomerOrderComment>();
+        if (customerOrder.getCustomerOrderComments() != null)
+            for (CustomerOrderComment customerOrderComment : customerOrder.getCustomerOrderComments())
+                if (customerOrderComment.getIsToDisplayToCustomer() != null
+                        && customerOrderComment.getIsToDisplayToCustomer())
+                    customerOrderComments.add(customerOrderComment);
+
+        if (customerOrderComments.size() > 0)
+            customerOrderComments.sort(new Comparator<CustomerOrderComment>() {
+                @Override
+                public int compare(CustomerOrderComment c0, CustomerOrderComment c1) {
+                    if (c0 == null && c1 == null)
+                        return 0;
+                    if (c0 != null && c1 == null)
+                        return 1;
+                    if (c0 == null && c1 != null)
+                        return -1;
+                    if (c1 != null && c0 != null)
+                        return c0.getCreatedDateTime().compareTo(c1.getCreatedDateTime());
+                    return 0;
+                }
+            });
+        return customerOrderComments;
     }
 }

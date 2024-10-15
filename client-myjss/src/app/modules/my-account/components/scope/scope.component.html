@@ -71,7 +71,9 @@
       </ng-container>
     </ng-container>
   </div>
-  <div class="col-12 d-flex justify-content-end pt-3" *ngIf="potentialResponsables && currentUser && currentScope">
-    <button class="btn btn-primary ms-3" type="button" (click)="saveScope()">Enregistrer</button>
+  <div class="text-center pt-1 pt-sm-2" *ngIf="potentialResponsables && currentUser && currentScope">
+    <div class="btn-group   " role="group">
+      <button type="button" class="btn btn-primary" (click)="saveScope()">Enregistrer</button>
+    </div>
   </div>
 </section>

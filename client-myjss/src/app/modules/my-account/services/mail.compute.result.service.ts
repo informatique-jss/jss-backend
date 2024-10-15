@@ -14,8 +14,8 @@ export class MailComputeResultService extends AppRestService<MailComputeResult> 
     super(http, "invoicing");
   }
 
-  getMailComputeResultForBillingForCustomerOrder(order: CustomerOrder) {
-    return this.get(new HttpParams().set("customerOrderId", order.id), "mail/billing/compute/order");
+  getMailComputeResultForBillingForCustomerOrder(orderId: number) {
+    return this.get(new HttpParams().set("customerOrderId", orderId), "mail/billing/compute/order");
   }
 
   getMailComputeResultForBillingForQuotation(quotation: Quotation) {

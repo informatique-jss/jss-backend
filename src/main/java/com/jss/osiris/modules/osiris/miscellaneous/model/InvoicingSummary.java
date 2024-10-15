@@ -20,6 +20,9 @@ public class InvoicingSummary {
     private BigDecimal vatTotal;
 
     @JsonView(JacksonViews.MyJssView.class)
+    private BigDecimal remainingToPay;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private BillingLabelType billingLabelType;
 
     public BigDecimal getTotalPrice() {
@@ -60,6 +63,14 @@ public class InvoicingSummary {
 
     public void setBillingLabelType(BillingLabelType billingLabelType) {
         this.billingLabelType = billingLabelType;
+    }
+
+    public BigDecimal getRemainingToPay() {
+        return remainingToPay;
+    }
+
+    public void setRemainingToPay(BigDecimal remainingToPay) {
+        this.remainingToPay = remainingToPay;
     }
 
 }

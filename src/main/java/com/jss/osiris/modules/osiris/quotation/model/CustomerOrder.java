@@ -206,6 +206,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private Boolean isGifted;
 
 	@JsonView(JacksonViews.MyJssView.class)
+	@Column(name = "is_payed")
 	private Boolean isPayed;
 
 	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "customerOrder", cascade = CascadeType.REMOVE)

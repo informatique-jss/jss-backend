@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { AppRestService } from "../../../libs/appRest.service";
-import { CustomerOrder } from "../model/CustomerOrder";
 import { InvoicingSummary } from "../model/InvoicingSummary";
 
 
@@ -14,7 +13,7 @@ export class InvoicingSummaryService extends AppRestService<InvoicingSummary> {
     super(http, "invoicing");
   }
 
-  getInvoicingSummaryForCustomerOrder(customerOrder: CustomerOrder) {
-    return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "invoice/summary/order");
+  getInvoicingSummaryForCustomerOrder(customerOrderId: number) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrderId), "invoice/summary/order");
   }
 }

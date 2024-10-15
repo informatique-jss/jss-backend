@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Employee } from '../../../profile/model/Employee';
 import { Responsable } from '../../../profile/model/Responsable';
 
 @Component({
@@ -8,7 +9,7 @@ import { Responsable } from '../../../profile/model/Responsable';
 })
 export class AvatarComponent implements OnInit {
 
-  @Input() user: Responsable | undefined;
+  @Input() user: Responsable | Employee | undefined;
   initials: string = "";
   @Input() size: number = 40;
   @Input() centerAvatar: boolean = true;

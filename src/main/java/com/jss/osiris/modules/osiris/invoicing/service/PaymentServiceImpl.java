@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.PictureHelper;
+import com.jss.osiris.libs.QrCodeHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -28,6 +30,7 @@ import com.jss.osiris.libs.ofx.OFXStatement;
 import com.jss.osiris.libs.ofx.StatementTransaction;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordGenerationService;
@@ -154,6 +157,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    QrCodeHelper qrCodeHelper;
+
+    @Value("${payment.cb.entry.point}")
+    private String paymentCbEntryPoint;
+
+    @Autowired
+    PictureHelper pictureHelper;
 
     @Override
     public Payment getPayment(Integer id) {
@@ -536,7 +548,7 @@ public class PaymentServiceImpl implements PaymentService {
             } else if (i == correspondingCustomerOrder.size() - 1) { // if last, put all on last customer order
                 effectivePayment = remainingMoney;
             } else {
-                effectivePayment = remainingToPayForCustomerOrder.min(remainingMoney);
+                effectivePayment = remainingToPayForCustomerOrder.subtract(remainingMoney);
             }
 
             // Generate one deposit per customer order
@@ -593,7 +605,7 @@ public class PaymentServiceImpl implements PaymentService {
                         effectivePayment = byPassAmount.get(amountIndex);
                         amountIndex++;
                     } else {
-                        effectivePayment = remainingToPayForCurrentInvoice.min(remainingMoney);
+                        effectivePayment = remainingToPayForCurrentInvoice.subtract(remainingMoney);
                     }
 
                     // If there is an appoint, use all remaining money, it's handled in
@@ -1492,6 +1504,17 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         return payment;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public MyJssImage downloadQrCodeForOrderPayment(CustomerOrder customerOrder, String mail) throws OsirisException {
+        MyJssImage image = new MyJssImage();
+        image.setAddress(
+                paymentCbEntryPoint + "/order/deposit?customerOrderId=" + customerOrder.getId() + "&mail=" + mail);
+        image.setData(pictureHelper
+                .getPictureAsBase64String(qrCodeHelper.getQrCode(image.getAddress(), 150)));
+        return image;
     }
 
 }

@@ -819,6 +819,10 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_active_directory_group_facturation")
 	private ActiveDirectoryGroup activeDirectoryGroupFacturation;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_active_directory_group_sales")
+	private ActiveDirectoryGroup activeDirectoryGroupSales;
+
 	private LocalDate dateAccountingClosureForAccountant;
 	private LocalDate dateAccountingClosureForAll;
 
@@ -2397,6 +2401,14 @@ public class Constant implements Serializable, IId {
 
 	public void setFurtherInformationServiceFieldType(ServiceFieldType furtherInformationServiceFieldType) {
 		this.furtherInformationServiceFieldType = furtherInformationServiceFieldType;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupSales() {
+		return activeDirectoryGroupSales;
+	}
+
+	public void setActiveDirectoryGroupSales(ActiveDirectoryGroup activeDirectoryGroupSales) {
+		this.activeDirectoryGroupSales = activeDirectoryGroupSales;
 	}
 
 }
