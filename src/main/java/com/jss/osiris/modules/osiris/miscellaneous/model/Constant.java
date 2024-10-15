@@ -59,10 +59,12 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_label_type_other")
+	@JsonView(JacksonViews.MyJssView.class)
 	private BillingLabelType billingLabelTypeOther;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_label_type_customer")
+	@JsonView(JacksonViews.MyJssView.class)
 	private BillingLabelType billingLabelTypeCustomer;
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -103,14 +105,17 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_document_type_digital")
+	@JsonView(JacksonViews.MyJssView.class)
 	private DocumentType documentTypeDigital;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_document_type_paper")
+	@JsonView(JacksonViews.MyJssView.class)
 	private DocumentType documentTypePaper;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_document_type_billing")
+	@JsonView(JacksonViews.MyJssView.class)
 	private DocumentType documentTypeBilling;
 
 	@ManyToOne(fetch = FetchType.EAGER)

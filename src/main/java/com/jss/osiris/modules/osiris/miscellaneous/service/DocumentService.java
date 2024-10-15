@@ -7,6 +7,9 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 
 public interface DocumentService {
+
+    public Document addOrUpdateDocument(Document document);
+
     public List<Document> getDocuments();
 
     public Document getDocument(Integer id);

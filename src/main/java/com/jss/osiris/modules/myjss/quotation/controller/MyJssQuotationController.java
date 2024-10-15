@@ -31,6 +31,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentTypeService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -88,6 +89,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	DocumentService documentService;
+
+	@Autowired
+	ConstantService constantService;
 
 	@PostMapping(inputEntryPoint + "/order/search/current")
 	@JsonView(JacksonViews.MyJssView.class)
@@ -400,28 +404,51 @@ public class MyJssQuotationController {
 		return new ResponseEntity<List<Document>>(customerOrder.getDocuments(), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/order/documents")
+	@PostMapping(inputEntryPoint + "/order/documents")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<List<Document>> addOrUpdateDocumentsForCustomerOrder(@RequestBody List<Document> documents)
-			throws OsirisValidationException {
+	public ResponseEntity<Boolean> addOrUpdateDocumentsForCustomerOrder(@RequestBody List<Document> documents)
+			throws OsirisException {
 		if (documents == null)
 			throw new OsirisValidationException("documents");
 
 		Integer idCustomerOrder = null;
 
 		for (Document document : documents) {
-			Document curentDocument = documentService.getDocument(document.getId());
+			Document currentDocument = documentService.getDocument(document.getId());
 
-			if (curentDocument == null)
-				return new ResponseEntity<List<Document>>(new ArrayList<Document>(), HttpStatus.OK);
+			if (currentDocument == null || currentDocument.getCustomerOrder() == null
+					|| idCustomerOrder != null && !idCustomerOrder.equals(currentDocument.getCustomerOrder().getId()))
+				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
+			idCustomerOrder = currentDocument.getCustomerOrder().getId();
 		}
 
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
 		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
-			return new ResponseEntity<List<Document>>(new ArrayList<Document>(), HttpStatus.OK);
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
-		return new ResponseEntity<List<Document>>(customerOrder.getDocuments(), HttpStatus.OK);
+		for (Document document : documents) {
+			Document currentDocument = documentService.getDocument(document.getId());
+			if (currentDocument.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
+					|| currentDocument.getDocumentType().getId()
+							.equals(constantService.getDocumentTypeDigital().getId())
+					|| currentDocument.getDocumentType().getId()
+							.equals(constantService.getDocumentTypePaper().getId())) {
+				currentDocument.setIsRecipientClient(document.getIsRecipientClient());
+				currentDocument.setIsRecipientAffaire(document.getIsRecipientAffaire());
+				currentDocument.setMailsAffaire(document.getMailsAffaire());
+				currentDocument.setMailsClient(document.getMailsClient());
+				currentDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
+				currentDocument.setAddToClientMailList(document.getAddToClientMailList());
+				currentDocument.setBillingLabelType(document.getBillingLabelType());
+				currentDocument.setIsCommandNumberMandatory(document.getIsCommandNumberMandatory());
+				currentDocument.setCommandNumber(document.getCommandNumber());
+				currentDocument.setExternalReference(document.getExternalReference());
+				documentService.addOrUpdateDocument(currentDocument);
+			}
+		}
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 }

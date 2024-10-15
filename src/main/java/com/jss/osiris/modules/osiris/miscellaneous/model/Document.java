@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
@@ -45,6 +47,7 @@ public class Document implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "document_sequence", sequenceName = "document_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "document_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -85,11 +88,15 @@ public class Document implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_document_type")
+	@JsonView(JacksonViews.MyJssView.class)
 	private DocumentType documentType;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean isRecipientClient;
+
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean isRecipientAffaire;
 	@Column(length = 200)
 	private String affaireAddress;
@@ -104,21 +111,27 @@ public class Document implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_type")
+	@JsonView(JacksonViews.MyJssView.class)
 	private BillingLabelType billingLabelType;
 
 	@ManyToMany
 	@JoinTable(name = "asso_document_mail_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<Mail> mailsClient;
 
 	@ManyToMany
 	@JoinTable(name = "asso_document_mail_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<Mail> mailsAffaire;
 
 	private Boolean isResponsableOnBilling;
+
+	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean isCommandNumberMandatory;
 
 	@Column(length = 40)
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String commandNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -156,6 +169,7 @@ public class Document implements Serializable, IId {
 	private String cedexComplement;
 
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private String externalReference;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -168,7 +182,10 @@ public class Document implements Serializable, IId {
 
 	private Boolean billingLabelIsIndividual;
 
+	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean addToClientMailList;
+
+	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean addToAffaireMailList;
 
 	public Integer getId() {

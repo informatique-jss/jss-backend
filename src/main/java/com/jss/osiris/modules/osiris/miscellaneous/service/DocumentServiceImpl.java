@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -22,6 +23,17 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    MailService mailService;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Document addOrUpdateDocument(Document document) {
+        document.setMailsAffaire(mailService.populateMailIds(document.getMailsAffaire()));
+        document.setMailsClient(mailService.populateMailIds(document.getMailsClient()));
+        return documentRepository.save(document);
+    }
 
     @Override
     public List<Document> getDocuments() {

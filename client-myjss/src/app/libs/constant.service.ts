@@ -54,8 +54,28 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.paymentTypePrelevement;
   }
 
+  getDocumentTypeDigital() {
+    return this.constant.documentTypeDigital;
+  }
+
+  getDocumentTypePaper() {
+    return this.constant.documentTypePaper;
+  }
+
+  getDocumentTypeBilling() {
+    return this.constant.documentTypeBilling;
+  }
+
   getBillingLabelTypeCodeAffaire() {
     return this.constant.billingLabelTypeCodeAffaire;
+  }
+
+  getBillingLabelTypeOther() {
+    return this.constant.billingLabelTypeOther;
+  }
+
+  getBillingLabelTypeCustomer() {
+    return this.constant.billingLabelTypeCustomer;
   }
 
 }

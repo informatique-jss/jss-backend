@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountMenuComponent } from '../account-menu/account-menu.component';
@@ -38,7 +38,8 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
     MiscellaneousModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
   ],
   declarations: [MyAccountComponent,
     AccountMenuComponent,

@@ -1,5 +1,6 @@
 import { Mail } from "../../profile/model/Mail";
 import { BillingLabelType } from "./BillingLabelType";
+import { DocumentType } from "./DocumentType";
 
 
 export interface Document {

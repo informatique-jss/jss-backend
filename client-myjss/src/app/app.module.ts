@@ -32,7 +32,7 @@ const routes: Routes = [
   exports: [],
   bootstrap: [AppComponent],
   imports: [
-    RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
+    RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload', scrollPositionRestoration: 'enabled' }),
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
