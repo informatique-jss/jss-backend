@@ -119,8 +119,6 @@ export class PaperSetComponent implements OnInit {
       let dialogRef = this.selectPaperSetTypeDialogComponent.open(SelectPaperSetTypeDialogComponent, {
         width: '50%',
       });
-      if (this.customerOrder.paperSets)
-        dialogRef.componentInstance.excludedPaperSetTypes = this.customerOrder.paperSets.filter(paperSet => !paperSet.isCancelled).map(paperSet => paperSet.paperSetType);
 
       dialogRef.afterClosed().subscribe(dialogResult => {
         if (dialogResult != null && this.customerOrder) {
