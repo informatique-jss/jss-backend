@@ -19,6 +19,7 @@ import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidatio
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
@@ -180,5 +181,18 @@ public class MyJssInvoicingController {
 		return new ResponseEntity<List<Payment>>(
 				customerOrderService.getApplicablePaymentsForCustomerOrder(customerOrder),
 				HttpStatus.OK);
+	}
+
+	@JsonView(JacksonViews.MyJssView.class)
+	@GetMapping(inputEntryPoint + "/invoice/summary/order")
+	public ResponseEntity<InvoicingSummary> getInvoicingSummaryForCustomerOrder(
+			@RequestParam Integer customerOrderId) throws OsirisException {
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<InvoicingSummary>(new InvoicingSummary(), HttpStatus.OK);
+
+		return new ResponseEntity<InvoicingSummary>(
+				customerOrderService.getInvoicingSummaryForCustomerOrder(customerOrder), HttpStatus.OK);
 	}
 }

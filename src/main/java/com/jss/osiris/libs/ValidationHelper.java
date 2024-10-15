@@ -23,6 +23,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 
 import fr.marcwrobel.jbanking.bic.Bic;
 import fr.marcwrobel.jbanking.iban.Iban;
@@ -346,10 +347,20 @@ public class ValidationHelper {
     }
 
     public boolean validateMailList(List<Mail> mails) {
-        for (Mail mail : mails) {
-            if (!validateMail(mail.getMail()))
-                return false;
-        }
+        if (mails != null)
+            for (Mail mail : mails) {
+                if (!validateMail(mail.getMail()))
+                    return false;
+            }
+        return true;
+    }
+
+    public boolean validatePhoneList(List<Phone> phones) {
+        if (phones != null)
+            for (Phone phone : phones) {
+                if (!validateFrenchPhone(phone.getPhoneNumber()) && !validateInternationalPhone(phone.getPhoneNumber()))
+                    return false;
+            }
         return true;
     }
 

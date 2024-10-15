@@ -132,9 +132,11 @@ public class Affaire implements IId, IAttachment {
 	private BigDecimal shareCapital;
 
 	@Column(length = 40, name = "payment_iban")
+	@JsonView(JacksonViews.MyJssView.class)
 	private String paymentIban;
 
 	@Column(length = 40, name = "payment_bic")
+	@JsonView(JacksonViews.MyJssView.class)
 	private String paymentBic;
 
 	private Boolean isUnregistered;

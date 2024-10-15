@@ -1,0 +1,86 @@
+<div class="d-flex align-items-center mb-4" *ngIf="affaire">
+  <h1 class="h2 mb-0 me-3"> {{capitalizeName(affaire.denomination?affaire.denomination:(affaire.firstname
+    +" "+affaire.lastname))}}</h1>
+</div>
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="affaire">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-briefcase text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">
+        Modifier {{capitalizeName(affaire.denomination?affaire.denomination:(affaire.firstname
+        +" "+affaire.lastname))}} </h2>
+    </div>
+    <div class="d-flex align-items-center pb-1 mb-2">
+      <h3 class="h6 mb-0 me-3" *ngIf="affaire.siret">
+        {{affaire.legalForm?affaire.legalForm.label:""}} -
+        {{affaire.siret }}</h3>
+      <h3 class="h6 mb-0 me-3" *ngIf="!affaire.siret">
+        Société non enregistrée
+      </h3>
+    </div>
+    <p class="mb-0">{{affaire.address}}<br>{{affaire.postalCode}}
+      {{affaire.city?affaire.city.label:""}}<br></p>
+    <p class="mb-0 mt-1" *ngIf="affaire.competentAuthority">
+      RCS : {{capitalizeName(affaire.competentAuthority.label)}}</p>
+    <div class="d-flex align-items-center me-3 mt-2" *ngIf="affaire.mails && affaire.mails.length>0">
+      <i class="ai-mail me-1"></i>
+      {{getListMails(affaire.mails)}}
+    </div>
+    <div class="d-flex align-items-center me-3" *ngIf="affaire.phones && affaire.phones.length>0">
+      <i class="ai-phone me-1"></i>
+      {{getListPhones(affaire.phones)}}
+    </div>
+    <div class="d-flex align-items-center me-3 mt-2" *ngIf="affaire.paymentIban">
+      <i class="ai-wallet me-1"></i>
+      {{affaire.paymentIban}} / {{affaire.paymentBic}}
+    </div>
+  </div>
+</section>
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="affaire">
+  <div class="card-body">
+    <generic-input [(model)]="affaire.paymentIban" label="IBAN" [form]="editAffaireForm" propertyName="IBAN"
+      [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'wallet'"></generic-input>
+    <generic-input [(model)]="affaire.paymentBic" label="BIC" [form]="editAffaireForm" propertyName="BIC"
+      [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'wallet'"></generic-input>
+    <label class="form-label mt-3">Mails</label>
+    <ul class="list-group mt-1 mb-3" *ngIf="affaire.mails && affaire.mails.length>0">
+      <li class="list-group-item" *ngFor="let mail of affaire.mails">
+        <div class="d-flex flex-wrap w-100 justify-content-between">
+          <div class="mt-auto mb-auto">{{mail.mail}}</div>
+          <div>
+            <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
+              data-bs-toggle="tooltip" data-bs-placement="right" title="Supprimer" (click)="deleteMail(mail)">
+              <i class="ai-cross"></i>
+            </button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <generic-input class="mt-4" [(model)]="newMail" label="Nouveau mail (entrer pour valider)" [form]="editAffaireForm"
+      propertyName="newMail" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'"
+      [isDisplayLabel]="false" (onEnter)="addMail()"></generic-input>
+    <label class="form-label mt-3">Téléphones</label>
+    <ul class="list-group mt-1 mb-3" *ngIf="affaire.phones && affaire.phones.length>0">
+      <li class="list-group-item" *ngFor="let phone of affaire.phones">
+        <div class="d-flex flex-wrap w-100 justify-content-between">
+          <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
+          <div>
+            <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
+              data-bs-toggle="tooltip" data-bs-placement="right" title="Supprimer" (click)="deletePhone(phone)">
+              <i class="ai-cross"></i>
+            </button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <generic-input class="mt-4" [(model)]="newPhone" label="Nouveau téléphone (entrer pour valider)"
+      [form]="editAffaireForm" propertyName="newPhone" [isMandatory]="false" [isDisabled]="false"
+      [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addPhone()"></generic-input>
+  </div>
+  <div class="text-center pt-1 pt-sm-2">
+    <div class="btn-group   " role="group" aria-label="Outline button group">
+      <button type="button" class="btn btn-primary" (click)="saveAffaire()">Enregistrer</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="cancelAffaire()">Annuler</button>
+    </div>
+  </div>
+</section>

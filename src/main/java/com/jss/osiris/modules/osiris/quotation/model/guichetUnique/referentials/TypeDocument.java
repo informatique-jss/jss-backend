@@ -44,6 +44,7 @@ public class TypeDocument implements ICode, IAttachment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_attachment_type")
+    @JsonView(JacksonViews.MyJssView.class)
     private AttachmentType attachmentType;
 
     @Column(columnDefinition = "TEXT")

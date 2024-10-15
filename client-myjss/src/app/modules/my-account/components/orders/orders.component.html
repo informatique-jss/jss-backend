@@ -103,6 +103,13 @@
             [attr.aria-controls]="'#order'+order.id">
             <div class="d-flex justify-content-between w-100">
               <div class="me-3 me-sm-4">
+                <div class="fs-sm fw-medium text-dark">
+                  <i class="ai-triangle-alert fs-base text-danger ms-2" data-bs-toggle="tooltip"
+                    data-bs-placement="right" *ngIf="order.hasMissingInformations"
+                    title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                </div>
+              </div>
+              <div class="me-3 me-sm-4">
                 <div class="fs-sm text-body-secondary">n°{{order.id}}</div>
                 <span class="badge bg-opacity-10  fs-xs"
                   [ngClass]="getClassForCustomerOrderStatus(order)">{{getCustomerOrderStatusLabel(order)}}</span>
@@ -119,13 +126,6 @@
               <div class="me-3 me-sm-4">
                 <div class="fs-sm text-body-secondary mb-2">Services</div>
                 <div class="fs-sm fw-medium text-dark">{{order.servicesList}}</div>
-              </div>
-              <div class="me-3 me-sm-4">
-                <div class="fs-sm fw-medium text-dark">
-                  <i class="ai-triangle-alert fs-base text-danger ms-2" data-bs-toggle="tooltip"
-                    data-bs-placement="right" *ngIf="order.hasMissingInformations"
-                    title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
-                </div>
               </div>
             </div>
           </a>

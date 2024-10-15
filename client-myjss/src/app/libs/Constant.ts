@@ -1,3 +1,4 @@
+import { BillingLabelType } from "../modules/my-account/model/BillingLabelType";
 import { PaymentType } from "../modules/my-account/model/PaymentType";
 
 export interface Constant {
@@ -8,4 +9,5 @@ export interface Constant {
   paymentTypeEspeces: PaymentType;
   paymentTypeCheques: PaymentType;
   paymentTypeAccount: PaymentType;
+  billingLabelTypeCodeAffaire: BillingLabelType;
 }

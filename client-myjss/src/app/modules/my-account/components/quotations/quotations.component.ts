@@ -118,7 +118,7 @@ export class QuotationsComponent implements OnInit {
 
   loadQuotationDetails(event: any, quotation: Quotation) {
     if (!this.quotationsAssoAffaireOrders[quotation.id]) {
-      this.assoAffaireOrderService.getAssoAffaireOrderForQuotation(quotation).subscribe(response => {
+      this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(quotation).subscribe(response => {
         this.quotationsAssoAffaireOrders[quotation.id] = response;
         this.initTooltips();
       })

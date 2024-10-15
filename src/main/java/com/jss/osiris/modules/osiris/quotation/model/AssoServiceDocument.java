@@ -47,6 +47,7 @@ public class AssoServiceDocument implements Serializable, IId {
 
 	@OneToMany(mappedBy = "assoServiceDocument", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoServiceDocument" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<Attachment> attachments;
 
 	@JsonView(JacksonViews.MyJssView.class)

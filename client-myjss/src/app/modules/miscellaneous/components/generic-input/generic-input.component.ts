@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { GenericFormComponent } from '../generic-form.components';
 
@@ -34,6 +34,13 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
  */
   @Input() errorMessage: string = "";
 
+  @Input() icon: string = "";
+
+  /**
+* Fired when input blur
+*/
+  @Output() onEnter: EventEmitter<any> = new EventEmitter();
+
   constructor(
     private formBuilder2: UntypedFormBuilder
   ) {
@@ -60,5 +67,9 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
 
   getPreviewActionLinkFunction(entity: any): string[] | undefined {
     return undefined;
+  }
+
+  onEnterTrigger(event: any) {
+    this.onEnter.next(event);
   }
 }

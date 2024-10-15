@@ -54,4 +54,8 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.paymentTypePrelevement;
   }
 
+  getBillingLabelTypeCodeAffaire() {
+    return this.constant.billingLabelTypeCodeAffaire;
+  }
+
 }

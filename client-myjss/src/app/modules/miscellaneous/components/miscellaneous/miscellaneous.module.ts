@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
+import { SingleUploadComponent } from '../single-upload/single-upload.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
 @NgModule({
@@ -16,10 +17,12 @@ import { MiscellaneousComponent } from './miscellaneous.component';
   declarations: [MiscellaneousComponent,
     AvatarComponent,
     GenericInputComponent,
+    SingleUploadComponent,
   ],
   exports: [
     AvatarComponent,
     GenericInputComponent,
+    SingleUploadComponent,
   ]
 })
 export class MiscellaneousModule { }

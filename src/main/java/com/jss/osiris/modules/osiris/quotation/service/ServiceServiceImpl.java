@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.beust.jcommander.Strings;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
@@ -33,6 +35,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    AttachmentService attachmentService;
 
     @Override
     public Service getService(Integer id) {
@@ -298,5 +303,26 @@ public class ServiceServiceImpl implements ServiceService {
             return service.getServiceType().getLabel();
         }
         return "";
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Attachment> getAttachmentsForProvisionOfService(Service service) {
+        service = getService(service.getId());
+        List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        if (service.getProvisions() != null)
+            for (Provision provision : service.getProvisions())
+                if (provision.getAttachments() != null)
+                    for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
+                        if ((attachment.getIsDisabled() == null || attachment.getIsDisabled() == false)
+                                && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
+                                && (attachment.getAttachmentType().getIsToSentOnFinalizationMail() != null
+                                        && attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                                        || attachment.getAttachmentType().getIsToSentOnUpload() != null
+                                                && attachment.getAttachmentType().getIsToSentOnUpload())) {
+                            attachments.add(attachment);
+                        }
+        return attachments;
     }
 }

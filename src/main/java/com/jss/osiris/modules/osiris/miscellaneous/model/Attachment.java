@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureReceipt;
@@ -61,6 +63,7 @@ public class Attachment implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "attachment_sequence", sequenceName = "attachment_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attachment_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -135,10 +138,12 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_attachment_type")
+	@JsonView(JacksonViews.MyJssView.class)
 	private AttachmentType attachmentType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_type_document")
+	@JsonView(JacksonViews.MyJssView.class)
 	private TypeDocument typeDocument;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -154,10 +159,12 @@ public class Attachment implements Serializable, IId {
 	private Boolean isDisabled;
 
 	@Column(length = 2000)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String description;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDateTime creatDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)

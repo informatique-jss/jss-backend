@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountMenuComponent } from '../account-menu/account-menu.component';
+import { EditAddressComponent } from '../edit-address/edit-address.component';
+import { EditAffaireComponent } from '../edit-affaire/edit-affaire.component';
 import { OrderDetailsComponent } from '../order-details/order-details.component';
 import { OrdersComponent } from '../orders/orders.component';
 import { OverviewComponent } from '../overview/overview.component';
@@ -21,7 +23,9 @@ const routes: Routes = [
       { path: 'scope', component: ScopeComponent },
       { path: 'orders', component: OrdersComponent },
       { path: 'orders/details/:id', component: OrderDetailsComponent },
-      { path: 'quotations', component: QuotationsComponent }
+      { path: 'quotations', component: QuotationsComponent },
+      { path: 'affaire/edit/:id/:idOrder', component: EditAffaireComponent },
+      { path: 'address/edit/:idOrder', component: EditAddressComponent }
     ]
   },
   { path: 'account/signin', component: SignInComponent },
@@ -45,6 +49,8 @@ const routes: Routes = [
     OrdersComponent,
     QuotationsComponent,
     OrderDetailsComponent,
+    EditAffaireComponent,
+    EditAddressComponent,
   ]
 })
 export class MyAccountModule { }

@@ -719,11 +719,27 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         service.setServicePrice(getServicePrice(service));
                         if (service.getServicePrice().compareTo(new BigDecimal(0)) <= 0f)
                             service.setServicePrice(null);
-
+                        removeDisabledAttachments(service);
                     }
             }
 
         return assoAffaireOrders;
+    }
+
+    private void removeDisabledAttachments(Service service) {
+        if (service != null && service.getAssoServiceDocuments() != null)
+            for (AssoServiceDocument asso : service.getAssoServiceDocuments()) {
+                List<Attachment> attachmentsToRemove = new ArrayList<Attachment>();
+                if (asso.getAttachments() != null) {
+                    for (Attachment attachment : asso.getAttachments()) {
+                        if (attachment.getIsDisabled() != null && attachment.getIsDisabled())
+                            attachmentsToRemove.add(attachment);
+                    }
+                    if (attachmentsToRemove.size() > 0) {
+                        asso.getAttachments().removeAll(attachmentsToRemove);
+                    }
+                }
+            }
     }
 
     @Override
@@ -781,14 +797,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (provision.getInvoiceItems() != null) {
                     for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
                         if (invoiceItem.getPreTaxPriceReinvoiced() != null)
-                            totalPrice.add(invoiceItem.getPreTaxPriceReinvoiced());
+                            totalPrice = totalPrice.add(invoiceItem.getPreTaxPriceReinvoiced());
                         else if (invoiceItem.getPreTaxPrice() != null)
-                            totalPrice.add(invoiceItem.getPreTaxPrice());
+                            totalPrice = totalPrice.add(invoiceItem.getPreTaxPrice());
 
                         if (invoiceItem.getDiscountAmount() != null)
-                            totalPrice.add(invoiceItem.getDiscountAmount());
+                            totalPrice = totalPrice.add(invoiceItem.getDiscountAmount());
                         if (invoiceItem.getVatPrice() != null)
-                            totalPrice.add(invoiceItem.getVatPrice());
+                            totalPrice = totalPrice.add(invoiceItem.getVatPrice());
                     }
                 }
             }

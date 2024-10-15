@@ -1,0 +1,7 @@
+<input class="form-control" type="file" #fileDropRef id="fileDropRef" (change)="fileBrowseHandler($event.target)">
+<div class="progress mb-3 mt-2" *ngIf="progress/files.length*100">
+  <div class="progress-bar fw-semibold" role="progressbar" style="width: 45%"
+    [attr.aria-valuenow]="progress/files.length*100" aria-valuemin="0" aria-valuemax="100">
+    {{progress/files.length*100}}%
+  </div>
+</div>

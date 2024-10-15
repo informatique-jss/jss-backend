@@ -118,7 +118,7 @@ export class OrdersComponent implements OnInit {
 
   loadOrderDetails(event: any, order: CustomerOrder) {
     if (!this.ordersAssoAffaireOrders[order.id]) {
-      this.assoAffaireOrderService.getAssoAffaireOrderForCustomerOrder(order).subscribe(response => {
+      this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order).subscribe(response => {
         this.ordersAssoAffaireOrders[order.id] = response;
         initTooltips();
       })

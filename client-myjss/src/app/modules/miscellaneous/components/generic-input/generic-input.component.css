@@ -9,3 +9,7 @@
 .icon-with-error {
   padding-bottom: 16px;
 }
+
+.translate-quarter-y {
+  transform: translateY(25%);
+}

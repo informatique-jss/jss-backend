@@ -29,4 +29,6 @@ export interface Affaire {
   acronym: string;
   employeeNumber: number;
   apeCodes: string;
+  paymentIban: string;
+  paymentBic: string;
 }

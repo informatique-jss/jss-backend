@@ -54,6 +54,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_label_type_code_affaire")
+	@JsonView(JacksonViews.MyJssView.class)
 	private BillingLabelType billingLabelTypeCodeAffaire;
 
 	@ManyToOne(fetch = FetchType.EAGER)

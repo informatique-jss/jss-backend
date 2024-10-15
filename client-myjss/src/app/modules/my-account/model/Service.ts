@@ -1,8 +1,9 @@
 import { AssoServiceDocument } from "./AssoServiceDocument";
 import { AssoServiceFieldType } from "./AssoServiceFieldType";
+import { IAttachment } from "./IAttachment";
 import { ServiceType } from "./ServiceType";
 
-export interface Service {
+export interface Service extends IAttachment {
   id: number;
   serviceType: ServiceType;
   assoServiceDocuments: AssoServiceDocument[];

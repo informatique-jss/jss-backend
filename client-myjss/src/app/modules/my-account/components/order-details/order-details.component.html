@@ -2,6 +2,240 @@
   <h1 class="h2 mb-0 me-3">Commande {{order.id}}</h1> <span class="badge bg-opacity-10   "
     [ngClass]="getClassForCustomerOrderStatus(order)">{{getCustomerOrderStatusLabel(order)}}</span>
 </div>
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="order && selectedAssoAffaireOrder">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-briefcase text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">
+        Affaire :
+        {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
+        +" "+selectedAssoAffaireOrder.affaire.lastname))}} </h2>
+      <a class="btn btn-sm  ms-auto btn-danger" role="button"
+        (click)="editAffaireDetails(selectedAssoAffaireOrder.affaire, $event)"
+        *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic || !selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0) && invoiceSummary && invoiceSummary.billingLabelType && invoiceSummary.billingLabelType.id == billingLabelTypeCodeAffaire.id ;else just_edit_affaire">
+        <i class="ai-edit ms-n1 me-2"></i>
+        Indiquer <span
+          *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic)">&nbsp;l'IBAN</span>
+        <span
+          *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic) && (!selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0)">&nbsp;et</span>
+        <span
+          *ngIf="(!selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0)">&nbsp;le
+          mail</span>
+      </a>
+      <ng-template #just_edit_affaire> <a class="btn btn-sm  ms-auto btn-secondary" role="button"
+          (click)="editAffaireDetails(selectedAssoAffaireOrder.affaire, $event)">
+          <i class="ai-edit ms-n1 me-2"></i>
+          Modifier
+        </a></ng-template>
+    </div>
+    <div class="d-flex align-items-center pb-1 mb-2">
+      <h3 class="h6 mb-0 me-3" *ngIf="selectedAssoAffaireOrder.affaire.siret">
+        {{selectedAssoAffaireOrder.affaire.legalForm?selectedAssoAffaireOrder.affaire.legalForm.label:""}} -
+        {{selectedAssoAffaireOrder.affaire.siret }}</h3>
+      <h3 class="h6 mb-0 me-3" *ngIf="!selectedAssoAffaireOrder.affaire.siret">
+        Société non enregistrée
+      </h3>
+    </div>
+    <p class="mb-0">{{selectedAssoAffaireOrder.affaire.address}}<br>{{selectedAssoAffaireOrder.affaire.postalCode}}
+      {{selectedAssoAffaireOrder.affaire.city?selectedAssoAffaireOrder.affaire.city.label:""}}<br></p>
+    <p class="mb-0 mt-1" *ngIf="selectedAssoAffaireOrder.affaire.competentAuthority">
+      RCS : {{capitalizeName(selectedAssoAffaireOrder.affaire.competentAuthority.label)}}</p>
+    <div class="d-flex align-items-center me-3 mt-2"
+      *ngIf="selectedAssoAffaireOrder.affaire.mails && selectedAssoAffaireOrder.affaire.mails.length>0">
+      <i class="ai-mail me-1"></i>
+      {{getListMails(selectedAssoAffaireOrder.affaire.mails)}}
+    </div>
+    <div class="d-flex align-items-center me-3"
+      *ngIf="selectedAssoAffaireOrder.affaire.phones && selectedAssoAffaireOrder.affaire.phones.length>0">
+      <i class="ai-phone me-1"></i>
+      {{getListPhones(selectedAssoAffaireOrder.affaire.phones)}}
+    </div>
+    <div class="d-flex align-items-center me-3 mt-2" *ngIf="selectedAssoAffaireOrder.affaire.paymentIban">
+      <i class="ai-wallet me-1"></i>
+      {{selectedAssoAffaireOrder.affaire.paymentIban}} / {{selectedAssoAffaireOrder.affaire.paymentBic}}
+    </div>
+  </div>
+  <div class="d-flex align-items-center mb-4"
+    *ngIf="order && ordersAssoAffaireOrders && ordersAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
+    <div class="ms-auto">
+      <div class="btn-group dropdown" style="margin-right: 10px;">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false">
+          <i class="ai-briefcase me-2"></i>
+          Affaire :
+          {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
+          +"
+          "+selectedAssoAffaireOrder.affaire.lastname))}}{{selectedAssoAffaireOrder.affaire.city?(" -
+          "+capitalizeName(selectedAssoAffaireOrder.affaire.city.label)):""}}
+        </button>
+        <div class="dropdown-menu my-1">
+          <label class=" dropdown-item" *ngFor="let asso of ordersAssoAffaireOrders">
+            <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire(asso) ">
+              {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
+              +"
+              "+asso.affaire.lastname))}}{{asso.affaire.city?(" -
+              "+capitalizeName(asso.affaire.city.label)):""}}
+            </a>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="order && selectedAssoAffaireOrder">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 mb-0">
+      <i class="ai-layer text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Services</h2>
+    </div>
+  </div>
+  <div class="accordion accordion-alt accordion-orders" id="orders" *ngIf="selectedAssoAffaireOrder.services">
+    <div class="accordion-item border-top mb-0"
+      *ngFor="let service of selectedAssoAffaireOrder.services; let index =index">
+      <div class="accordion-header">
+        <a class="accordion-button d-flex fs-4 fw-normal text-decoration-none py-3 collapsed" href="#"
+          [attr.data-bs-target]="'#order'+service.id" data-bs-toggle="collapse" aria-expanded="false"
+          [attr.aria-controls]="'#order'+service.id">
+          <div class="d-flex justify-content-between w-100">
+            <div class="ps-3 ps-sm-4">
+              <h4 class="h6 mb-2">
+                <a>{{service.customLabel?service.customLabel :
+                  service.serviceType.label}}</a>
+              </h4>
+              <div class="text-body-secondary fs-sm me-3">
+                <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
+              </div>
+            </div>
+            <div class="me-3 me-sm-4">
+              <div class="fs-sm text-body-secondary">3 documents disponibles</div>
+            </div>
+            <div class="me-3 me-sm-4" *ngIf="service.hasMissingInformations">
+              <div class="text-body-secondary fs-sm me-3">
+                4 documents/informations manquants</div>
+            </div>
+            <div class="me-3 me-sm-4">
+              <div class="text-body-secondary fs-sm me-3 ">
+                {{service.servicePrice | currency:'EUR' }}
+              </div>
+            </div>
+            <div class="me-3 me-sm-4">
+              <div class="fs-sm fw-medium text-dark">
+                <i class="ai-triangle-alert fs-base text-danger ms-2" data-bs-toggle="tooltip" data-bs-placement="right"
+                  *ngIf="service.hasMissingInformations"
+                  title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du service"></i>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="accordion-collapse collapse" [id]="'order'+service.id" data-bs-parent="#orders"
+        (show.bs.collapse)="loadServiceDetails(service,false)" [ngClass]="{'show':index==0}">
+        <div class="accordion-body">
+          <div class="accordion-item border-top mb-0" *ngIf="!ordersAssoAffaireOrders[order.id]">
+            <ul class="nav nav-tabs p-3" role="tablist">
+              <li class="nav-item" *ngIf=" service.assoServiceDocuments">
+                <a href="#myDocs" class="nav-link active" data-bs-toggle="tab" role="tab">
+                  <i class="fi-home me-2"></i>
+                  Mes documents
+                </a>
+              </li>
+              <li class="nav-item"
+                *ngIf="this.serviceProvisionAttachments[service.id] && this.serviceProvisionAttachments[service.id].length>0">
+                <a href="#availableDocs" class="nav-link" data-bs-toggle="tab" role="tab">
+                  Documents disponibles <span class="badge bg-success"
+                    style="margin-left: 10px;">{{this.serviceProvisionAttachments[service.id].length}}</span>
+                </a>
+              </li>
+            </ul>
+            <div class="tab-content p-3" *ngIf=" service.assoServiceDocuments">
+              <div class="tab-pane fade show active" id="myDocs" role="tabpanel">
+                <div class="list-group">
+                  <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments">
+                    <div class="list-group-item list-group-item-action flex-column align-items-start py-3"
+                      *ngIf="assoServiceDocument.isMandatory">
+                      <div class="d-flex flex-wrap w-100 justify-content-between">
+                        <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                      </div>
+                      <p class="fs-sm  "
+                        *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
+                        {{assoServiceDocument.formalisteComment}}</p>
+                      <div class="mb-2 mb-md-3 row  ">
+                        <div class="col-md-10">
+                          <single-upload [entity]="assoServiceDocument" (endOfUpload)="refreshCurrentAssoAffaireOrder()"
+                            [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
+                            [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
+                            [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                        </div>
+                      </div>
+                      <div class="table-responsive"
+                        *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
+                        <table class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Nom</th>
+                              <th scope="col">Date de dépot</th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let attachment of assoServiceDocument.attachments; let index = index">
+                              <th scope="row">{{index+1}}</th>
+                              <td>{{attachment.description}}</td>
+                              <td>{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                              <td><button type="button" class="btn btn-danger btn-icon btn-sm me-3"
+                                  aria-label="Supprimer" data-bs-toggle="tooltip" data-bs-placement="right"
+                                  title="Supprimer" (click)="disableAttachment(attachment)"><span
+                                    data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom">
+                                    <i class="ai-cross"></i></span>
+                                </button><button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                  aria-label="Télécharger" data-bs-toggle="tooltip" data-bs-placement="right"
+                                  title="Télécharger" (click)="downloadAttachment(attachment)">
+                                  <i class="ai-download"></i>
+                                </button></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="availableDocs" role="tabpanel">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Date de dépot</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let attachment of serviceProvisionAttachments[service.id]; let index = index">
+                        <th scope="row">{{index+1}}</th>
+                        <td>{{attachment.description}}</td>
+                        <td>{{attachment.attachmentType.label}}</td>
+                        <td>{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                        <td><button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
+                            data-bs-toggle="tooltip" data-bs-placement="right" title="Télécharger"
+                            (click)="downloadAttachment(attachment)">
+                            <i class="ai-download"></i>
+                          </button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
   <!-- Address -->
   <section class="col">
@@ -10,7 +244,7 @@
         <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-map-pin text-primary lead pe-1 me-2"></i>
           <h2 class="h4 mb-0">Adresses</h2>
-          <a class="btn btn-sm btn-secondary ms-auto" href="account-settings.html">
+          <a class="btn btn-sm btn-secondary ms-auto" (click)="editAddress($event)">
             <i class="ai-edit ms-n1 me-2"></i>
             Modifier
           </a>
@@ -18,7 +252,7 @@
         <div class="d-flex align-items-center pb-1 mb-2">
           <h3 class="h6 mb-0 me-3">Adresse de facturation</h3>
         </div>
-        <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-iteems-center my-1"
+        <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-items-center my-1"
           *ngIf="orderMailComputeResult">
           <div class="d-flex align-items-center me-3">
             <i class="ai-mail me-1"></i>
@@ -84,15 +318,15 @@
           <i class="ai-wallet text-primary lead pe-1 me-2"></i>
           <h2 class="h4 mb-0">Facturation</h2>
           <a class="btn btn-sm btn-secondary ms-auto" href="account-settings.html">
-            <i class="ai-edit ms-n1 me-2"></i>
-            Payer le solde <!-- page de paiement CB + instruction de virement -->
+            <i class="ai-cart ms-n1 me-2"></i>
+            Payer le solde <!-- TODO page de paiement CB + instruction de virement -->
           </a>
         </div>
-        <div class="d-flex align-items-center pb-1 mb-2">
+        <div class="d-flex align-items-center pb-1 mb-2" *ngIf="orderPayments && orderPayments.length>0">
           <h3 class="h6 mb-0 me-3">Paiements reçus</h3>
         </div>
-        <ng-container *ngIf="orderPayments">
-          <div class="d-flex align-items-center pb-4 mb-2 mb-sm-3" *ngFor="let payment of orderPayments">
+        <ng-container *ngIf="orderPayments && orderPayments.length>0">
+          <div class="d-flex align-items-center mb-1 mb-sm-3" *ngFor="let payment of orderPayments">
             <svg width="52" height="42" viewBox="0 0 52 42" fill="none" xmlns="http://www.w3.org/2000/svg"
               *ngIf="payment.paymentType.id == paymentTypeCb.id" data-bs-toggle="tooltip" data-bs-placement="right"
               title="Paiement par carte bleue">
@@ -126,161 +360,225 @@
             </ng-container>
           </div>
         </ng-container>
-        <div class="d-flex align-items-center pb-1 mb-2">
-          <h3 class="h6 mb-0 me-3">HT</h3>
+        <div class="d-flex align-items-center pt-2 pb-1 mb-2">
+          <h3 class="h6 mb-0 me-3">Montant <span
+              *ngIf="order && order.customerOrderStatus.code !=CUSTOMER_ORDER_STATUS_BILLED">prévisionnel</span></h3>
         </div>
-        <div class="d-flex align-items-center pb-1 mb-2">
-          <h3 class="h6 mb-0 me-3">TVA</h3>
+        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!invoiceSummary">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+          </p>
         </div>
-        <div class="d-flex align-items-center pb-1 mb-2">
-          <h3 class="h6 mb-0 me-3">TTC</h3>
-        </div>
-        <div class="d-flex align-items-center pb-1 mb-2">
-          <h3 class="h6 mb-0 me-3">Discount</h3>
-        </div>
-        <div class="d-flex align-items-center pb-1 mb-2">
-          <h3 class="h6 mb-0 me-3">TTC</h3>
-        </div>
-        <div class="d-flex align-items-center pb-1 mb-2">
-          <h3 class="h6 mb-0 me-3">Restant dû</h3>
+        <div class="  mt-4" *ngIf="invoiceSummary">
+          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+            <span class="ms-2">Prix HT</span>
+            <span class="ms-auto">{{invoiceSummary.preTaxPriceTotal | currency:'EUR' }}</span>
+          </div>
+          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+            <span class="ms-2">TVA</span>
+            <span class="ms-auto">{{invoiceSummary.vatTotal| currency:'EUR' }}</span>
+          </div>
+          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2"
+            *ngIf="invoiceSummary.discountTotal && invoiceSummary.discountTotal>0">
+            <span class="ms-2">Remise</span>
+            <span class="ms-auto">{{invoiceSummary.discountTotal| currency:'EUR' }}</span>
+          </div>
+          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+            <span class="ms-2">
+              <h6>Total TTC</h6>
+            </span>
+            <span class="ms-auto">
+              <h6>{{invoiceSummary.totalPrice| currency:'EUR' }}</h6>
+            </span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 </div>
+<div>
+  <div class="card h-100 border-0">
 
-<div class="d-flex align-items-center mb-4" *ngIf="order">
-  <div class="ms-auto">
-    <div class="btn-group dropdown ">
-      <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false">
-        <i class="ai-bar-chart-3 me-2"></i>
-        Affaire Toto1
-      </button>
-      <div class="dropdown-menu my-1">
-        <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire();$event.stopPropagation();">
-          Affaire 1
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="order">
-  <div class="card-body">
-    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
-      <i class="ai-user text-primary lead pe-1 me-2"></i>
-      <h2 class="h4 mb-0">Détails de l'affaire</h2>
-      <a class="btn btn-sm btn-secondary ms-auto" href="account-settings.html">
-        <i class="ai-edit ms-n1 me-2"></i>
-        Modifier mes informations
-      </a>
-    </div>
-    <div class="d-flex align-items-center pb-1 mb-2">
-      <h3 class="h6 mb-0 me-3">Toto1</h3>
-      <span class="badge bg-primary bg-opacity-10 text-primary">Primary</span>
-    </div>
-    <p class="mb-0">12 rue de la plaine,<br>Toronto, Ontario, M3J 3H9<br>Canada</p>
-  </div>
-</section>
-<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="order">
-  <div class="card-body">
-    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
-      <i class="ai-user text-primary lead pe-1 me-2"></i>
-      <h2 class="h4 mb-0">Services commandés + détails pièces et info et prix</h2>
-      <a class="btn btn-sm btn-secondary ms-auto" href="account-settings.html">
-        <i class="ai-edit ms-n1 me-2"></i>
-        Modifier mes informations
-      </a>
-    </div>
-  </div>
-  <div class="accordion accordion-alt accordion-orders" id="orders"
-    *ngIf="ordersAssoAffaireOrders && ordersAssoAffaireOrders[0] &&  ordersAssoAffaireOrders[0].services">
-    <div class="accordion-item border-top mb-0" *ngFor="let service of ordersAssoAffaireOrders[0].services">
-      <div class="accordion-header">
-        <a class="accordion-button d-flex fs-4 fw-normal text-decoration-none py-3 collapsed" href="#"
-          [attr.data-bs-target]="'#order'+order.id" data-bs-toggle="collapse" aria-expanded="false"
-          [attr.aria-controls]="'#order'+order.id">
-          <div class="d-flex justify-content-between w-100">
-            <div class="me-3 me-sm-4">
-              <div class="fs-sm text-body-secondary">{{service.customLabel?service.customLabel :
-                service.serviceType.label}}</div>
-            </div>
-            <div class="me-3 me-sm-4">
-              <div class="d-none d-sm-block fs-sm text-body-secondary mb-2">Date de commande</div>
-              <div class="d-sm-none fs-sm text-body-secondary mb-2">Date</div>
-              <div class="fs-sm fw-medium text-dark">{{order.createdDate| date:'dd/MM/yyyy'}}</div>
-            </div>
-            <div class="me-3 me-sm-4">
-              <div class="fs-sm text-body-secondary mb-2">Affaire</div>
-              <div class="fs-sm fw-medium text-dark">{{capitalizeName(order.affairesList)}}</div>
-            </div>
-            <div class="me-3 me-sm-4">
-              <div class="fs-sm text-body-secondary mb-2">Services</div>
-              <div class="fs-sm fw-medium text-dark">{{order.servicesList}}</div>
-            </div>
-            <div class="me-3 me-sm-4">
-              <div class="fs-sm fw-medium text-dark">
-                <i class="ai-triangle-alert fs-base text-danger ms-2" data-bs-toggle="tooltip" data-bs-placement="right"
-                  *ngIf="order.hasMissingInformations"
-                  title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="accordion-collapse collapse" [id]="'order'+order.id" data-bs-parent="#orders"
-        (show.bs.collapse)="loadOrderDetails( )">
-        <div class="accordion-body">
-          <div class="accordion-item border-top mb-0" *ngIf="!ordersAssoAffaireOrders[order.id]">
-            <div class="accordion-header">
-              <p class="card-text placeholder-glow">
-                <span class="placeholder placeholder-sm col-7 me-2"></span>
-                <span class="placeholder placeholder-sm col-4"></span>
-                <span class="placeholder placeholder-sm col-4 me-2"></span>
-                <span class="placeholder placeholder-sm col-6"></span>
-                <span class="placeholder placeholder-sm col-8"></span>
-              </p>
-            </div>
-          </div>
-          <div class="table-responsive pt-1" *ngIf="ordersAssoAffaireOrders ">
-            <table class="table align-middle w-100" style="min-width: 450px;">
-              <tbody>
-                <ng-container *ngFor="let asso of ordersAssoAffaireOrders ">
-                  <tr *ngFor="let service of asso.services">
-                    <td class="border-0 py-1 px-0">
-                      <div class="d-flex align-items-center">
-                        <div class="ps-3 ps-sm-4">
-                          <h4 class="h6 mb-2">
-                            <a>{{service.customLabel?service.customLabel :
-                              service.serviceType.label}}</a>
-                          </h4>
-                          <div class="text-body-secondary fs-sm me-3">
-                            {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
-                            +"
-                            "+asso.affaire.lastname))}}{{asso.affaire.city?(" -
-                            "+capitalizeName(asso.affaire.city.label)):""}}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="border-0 py-1 pe-0 ps-3 ps-sm-4">
-                      <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
-                    </td>
-                    <td class="border-0 py-1 pe-0 ps-3 ps-sm-4">
-                      <i class="ai-triangle-alert fs-base text-danger ms-2" data-bs-toggle="tooltip"
-                        data-bs-placement="right" *ngIf="service.hasMissingInformations"
-                        title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
-                    </td>
-                    <td class="border-0 text-end py-1 pe-0 ps-3 ps-sm-4" *ngIf="service.servicePrice">
-                      <div class="fs-sm text-body-secondary mb-2">Total</div>
-                      <div class="fs-sm fw-medium text-dark">{{service.servicePrice | currency:'EUR' }}</div>
-                    </td>
-                  </tr>
-                </ng-container>
-              </tbody>
-            </table>
+    <!-- Header -->
+    <div class="navbar card-header w-100 mx-0 px-4">
+      <div class="d-flex align-items-center w-100 px-sm-3">
+        <button class="navbar-toggler d-xl-none me-3 me-sm-4" type="button" data-bs-toggle="offcanvas"
+          data-bs-target="#contactsList" aria-controls="contactsList" aria-label="Toggle contacts list">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="position-relative flex-shrink-0">
+          <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
+          <span class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle me-1"
+            style="width: .625rem; height: .625rem;"></span>
+        </div>
+        <div class="h6 ps-2 ms-1 mb-0">Mark Virgows</div>
+        <div class="dropdown ms-auto">
+          <button class="btn btn-icon btn-sm btn-outline-secondary border-0 rounded-circle me-n2" type="button"
+            data-bs-toggle="dropdown" aria-label="Actions">
+            <i class="ai-dots-vertical fs-4 fw-bold"></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end my-1">
+            <a class="dropdown-item" href="#">
+              <i class="ai-user fs-base opacity-80 me-2"></i>
+              View profile
+            </a>
+            <a class="dropdown-item" href="#">
+              <i class="ai-bell-off fs-base opacity-80 me-2"></i>
+              Disable notifications
+            </a>
+            <a class="dropdown-item" href="#">
+              <i class="ai-edit fs-base opacity-80 me-2"></i>
+              Edit contact
+            </a>
+            <a class="dropdown-item" href="#">
+              <i class="ai-trash fs-base opacity-80 me-2"></i>
+              Delete contact
+            </a>
+            <a class="dropdown-item" href="#">
+              <i class="ai-logout fs-base opacity-80 me-2"></i>
+              Leave chat
+            </a>
+            <a class="dropdown-item" href="#">
+              <i class="ai-circle-slash fs-base opacity-80 me-2"></i>
+              Block user
+            </a>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Body -->
+    <div class="card-body pb-0 pt-4 simplebar-scrollable-y" data-simplebar="init" style="max-height: 580px;">
+      <div class="simplebar-wrapper" style="margin: -24px -38px 0px;">
+        <div class="simplebar-height-auto-observer-wrapper">
+          <div class="simplebar-height-auto-observer"></div>
+        </div>
+        <div class="simplebar-mask">
+          <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+            <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
+              style="height: auto; overflow: hidden scroll;">
+              <div class="simplebar-content" style="padding: 24px 38px 0px;">
+                <div class="text-body-secondary text-center mb-4">May 27, 2023</div>
+
+                <!-- Message -->
+                <div class="mb-3" style="max-width: 392px;">
+                  <div class="d-flex align-items-end mb-2">
+                    <div class="flex-shrink-0 pe-2 me-1">
+                      <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
+                    </div>
+                    <div class="message-box-start text-dark">Thank you for recommending me as a designer. I have an
+                      interview tomorrow!</div>
+                  </div>
+                  <div class="fs-xs text-body-secondary text-end">11:32 am</div>
+                </div>
+
+                <!-- Message -->
+                <div class="ms-auto mb-3" style="max-width: 392px;">
+                  <div class="d-flex align-items-end mb-2">
+                    <div class="message-box-end bg-primary text-white">Oh no thanks! I just know that you are a great
+                      specialist!</div>
+                    <div class="flex-shrink-0 ps-2 ms-1">
+                      <img class="rounded-circle" src="assets/img/avatar/01.jpg" width="48" alt="Avatar">
+                    </div>
+                  </div>
+                  <div class="fs-xs text-body-secondary">
+                    <i class="ai-checks text-primary fs-xl mt-n1 me-1"></i>
+                    2:18 pm
+                  </div>
+                </div>
+                <div class="text-body-secondary text-center my-4">May 29, 2023</div>
+
+                <!-- Message -->
+                <div class="mb-3" style="max-width: 392px;">
+                  <div class="d-flex align-items-end mb-2">
+                    <div class="flex-shrink-0 pe-2 me-1">
+                      <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
+                    </div>
+                    <div class="w-100">
+                      <div class="message-box-start text-dark mb-2">I have great news, I've been hired! 🚀</div>
+                      <div class="message-box-start text-dark">Thanks again!</div>
+                    </div>
+                  </div>
+                  <div class="fs-xs text-body-secondary text-end">4:04 am</div>
+                </div>
+
+                <!-- Message -->
+                <div class="ms-auto mb-3" style="max-width: 392px;">
+                  <div class="d-flex align-items-end mb-2">
+                    <div class="message-box-end bg-primary text-white">You are welcome!</div>
+                    <div class="flex-shrink-0 ps-2 ms-1">
+                      <img class="rounded-circle" src="assets/img/avatar/01.jpg" width="48" alt="Avatar">
+                    </div>
+                  </div>
+                  <div class="fs-xs text-body-secondary">
+                    <i class="ai-check text-primary fs-xl mt-n1 me-1"></i>
+                    2:18 pm
+                  </div>
+                </div>
+                <div class="text-body-secondary text-center my-4">Today</div>
+
+                <!-- Message -->
+                <div class="mb-3" style="max-width: 392px;">
+                  <div class="d-flex align-items-end mb-2">
+                    <div class="flex-shrink-0 pe-2 me-1">
+                      <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
+                    </div>
+                    <div class="message-box-start text-dark">I'm so happy to be part of the team and work with you on
+                      this new exciting project. Can't thank you enough 😊</div>
+                  </div>
+                  <div class="fs-xs text-body-secondary text-end">10:17 am</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="simplebar-placeholder" style="width: 589px; height: 834px;"></div>
+      </div>
+      <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+        <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
+      </div>
+      <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
+        <div class="simplebar-scrollbar" style="height: 403px; transform: translate3d(0px, 0px, 0px); display: block;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer (Textarea) -->
+    <div class="card-footer w-100 border-0 mx-0 px-4">
+      <div class="d-flex align-items-end border rounded-3 pb-3 pe-3 mx-sm-3">
+        <textarea class="form-control border-0" rows="3" placeholder="Type a message" style="resize: none;"></textarea>
+        <div class="nav flex-nowrap align-items-center">
+          <a class="nav-link text-body-secondary p-1 me-1" href="#" aria-label="Attach">
+            <i class="ai-paperclip fs-xl"></i>
+          </a>
+          <a class="nav-link text-body-secondary p-1" href="#" aria-label="Emoji">
+            <i class="ai-emoji-smile fs-xl"></i>
+          </a>
+          <button class="btn btn-sm btn-secondary ms-3" type="button">Send</button>
+        </div>
+      </div>
+    </div>
   </div>
-</section>
+</div>
+<!--Disable attachment offcanvas-->
+<div class="offcanvas offcanvas-bottom" id="offcanvasBottom" tabindex="-1">
+  <div class="offcanvas-header border-bottom text-center ">
+    <h5 class="offcanvas-title m-auto">Supprimer le document</h5>
+  </div>
+  <div class="offcanvas-body text-center " *ngIf="currentSelectedAttachmentForDisable">
+    <p>Êtes-vous sûr de supprimer le document {{currentSelectedAttachmentForDisable.description}} ?
+    </p>
+    <div class="text-center pt-1 pt-sm-2">
+      <div class="btn-group   " role="group" aria-label="Outline button group">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="offcanvas"
+          (click)="confirmDisableAttachment()">Supprimer</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas"
+          (click)="dismissDisableAttachment()">Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>

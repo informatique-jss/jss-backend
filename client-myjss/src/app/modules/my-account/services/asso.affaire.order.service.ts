@@ -15,11 +15,11 @@ export class AssoAffaireOrderService extends AppRestService<AssoAffaireOrder> {
     super(http, "quotation");
   }
 
-  getAssoAffaireOrderForCustomerOrder(customerOrder: CustomerOrder) {
+  getAssoAffaireOrdersForCustomerOrder(customerOrder: CustomerOrder) {
     return this.getList(new HttpParams().set('idCustomerOrder', customerOrder.id), "order/asso");
   }
 
-  getAssoAffaireOrderForQuotation(quotation: Quotation) {
+  getAssoAffaireOrdersForQuotation(quotation: Quotation) {
     return this.getList(new HttpParams().set('idQuotation', quotation.id), "quotation/asso");
   }
 

@@ -1535,15 +1535,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 || invoice.getInvoiceStatus().getId()
                                         .equals(constantService.getInvoiceStatusPayed().getId()))) {
                     invoiceItemsToConsider = invoice.getInvoiceItems();
+                    invoicingSummary.setBillingLabelType(invoice.getBillingLabelType());
                 }
         } else {
-            if (customerOrder != null)
+            if (customerOrder != null) {
                 if (customerOrder.getAssoAffaireOrders() != null)
                     for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
                         for (Service service : assoAffaireOrder.getServices())
                             for (Provision provision : service.getProvisions())
                                 if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
                                     invoiceItemsToConsider.addAll(provision.getInvoiceItems());
+                Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+                if (billingDocument != null)
+                    invoicingSummary.setBillingLabelType(billingDocument.getBillingLabelType());
+            }
         }
 
         BigDecimal totalPrice = new BigDecimal(0);

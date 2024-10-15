@@ -1,3 +1,5 @@
+import { EntityType } from "../modules/miscellaneous/model/EntityType";
+
 // Quotation status
 export const QUOTATION_STATUS_OPEN = "OPEN";
 export const QUOTATION_STATUS_ABANDONED = "ABANDONED";
@@ -15,3 +17,6 @@ export const CUSTOMER_ORDER_STATUS_TO_BILLED = "TO_BILLED";
 export const CUSTOMER_ORDER_STATUS_BEING_PROCESSED = "BEING_PROCESSED";
 export const CUSTOMER_ORDER_STATUS_BILLED = "BILLED";
 export const CUSTOMER_ORDER_STATUS_PAYED = "PAYED";
+
+export const MAX_SIZE_UPLOAD_FILES = 10485760;
+export const ASSO_SERVICE_DOCUMENT_ENTITY_TYPE: EntityType = { entityType: 'AssoServiceDocument', tabName: 'Documents du service', entryPoint: 'quotation/service' };

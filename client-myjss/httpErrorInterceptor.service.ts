@@ -49,7 +49,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             // Server unavailable or user not connected to network => ignore error
           } else if (error.status == 400) {
             if (error.headers.get("incorrectField"))
-              errorMessage = 'Erreur de validation sur ' + error.headers.get("incorrectField");
+              errorMessage = 'La valeur du champ ' + error.headers.get("incorrectField") + ' est incorrecte';
             else if (error.headers.get("errorMessageToDisplay"))
               errorMessage = "" + error.headers.get("errorMessageToDisplay");
             else if (error.headers.get("duplicateIds"))
