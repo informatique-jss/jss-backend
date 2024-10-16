@@ -129,6 +129,21 @@ public class MyJssQuotationController {
 				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, page, sortBy), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/order/search/affaire")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUserAndAffaire(@RequestParam Integer idAffaire)
+			throws OsirisClientMessageException {
+		if (idAffaire == null)
+			return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
+
+		Affaire affaire = affaireService.getAffaire(idAffaire);
+		if (affaire == null)
+			return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<CustomerOrder>>(
+				customerOrderService.searchOrdersForCurrentUserAndAffaire(affaire), HttpStatus.OK);
+	}
+
 	@PostMapping(inputEntryPoint + "/quotation/search/current")
 	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<List<Quotation>> searchQuotationsForCurrentUser(
@@ -152,7 +167,7 @@ public class MyJssQuotationController {
 	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForCustomerOrder(
 			@RequestParam Integer idCustomerOrder)
-			throws OsirisClientMessageException {
+			throws OsirisException {
 
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
 		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
@@ -166,7 +181,7 @@ public class MyJssQuotationController {
 	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForQuotation(
 			@RequestParam Integer idQuotation)
-			throws OsirisClientMessageException {
+			throws OsirisException {
 
 		Quotation quotation = quotationService.getQuotation(idQuotation);
 		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
@@ -201,6 +216,22 @@ public class MyJssQuotationController {
 			return new ResponseEntity<List<Attachment>>(new ArrayList<Attachment>(), HttpStatus.OK);
 
 		return new ResponseEntity<List<Attachment>>(serviceService.getAttachmentsForProvisionOfService(service),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/affaire/attachments")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Attachment>> getAttachmentsForAffaire(@RequestParam Integer idAffaire)
+			throws OsirisClientMessageException {
+
+		if (idAffaire == null)
+			return new ResponseEntity<List<Attachment>>(new ArrayList<Attachment>(), HttpStatus.OK);
+
+		Affaire affaire = affaireService.getAffaire(idAffaire);
+		if (affaire == null)
+			return new ResponseEntity<List<Attachment>>(new ArrayList<Attachment>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Attachment>>(affaireService.getAttachmentsForAffaire(affaire),
 				HttpStatus.OK);
 	}
 
@@ -568,4 +599,17 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/affaire/search/current")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Affaire>> getAffairesForCurrentUser(@RequestParam Integer page,
+			@RequestParam String sortBy, @RequestParam String searchText) {
+		if (page == null || page < 0)
+			page = 0;
+
+		if (sortBy == null || !sortBy.equals("nameAsc") && !sortBy.equals("nameDesc"))
+			sortBy = "nameAsc";
+
+		return new ResponseEntity<List<Affaire>>(affaireService.getAffairesForCurrentUser(page, sortBy, searchText),
+				HttpStatus.OK);
+	}
 }

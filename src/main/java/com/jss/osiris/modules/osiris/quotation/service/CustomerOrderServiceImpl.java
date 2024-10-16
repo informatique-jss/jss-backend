@@ -69,6 +69,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -1413,7 +1414,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 }
                 CustomerOrderStatus customerOrderStatusFetched = customerOrderStatusService
                         .getCustomerOrderStatusByCode(customerOrderStatusCode);
-                if (customerOrderStatusFetched != null)
+                if (customerOrderStatusFetched != null
+                        && !customerOrderStatusFetched.getCode().equals(CustomerOrderStatus.ABANDONED))
                     customerOrderStatusToFilter.add(customerOrderStatusFetched);
             }
 
@@ -1440,6 +1442,19 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
+        return null;
+    }
+
+    public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) {
+        List<Responsable> responsablesToFilter = userScopeService.getUserScopeResponsables();
+        CustomerOrderStatus statusAbandonned = customerOrderStatusService
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
+
+        if (responsablesToFilter != null && responsablesToFilter.size() > 0) {
+            return populateTransientField(
+                    customerOrderRepository.searchOrdersForCurrentUserAndAffaire(responsablesToFilter, affaire,
+                            statusAbandonned));
+        }
         return null;
     }
 

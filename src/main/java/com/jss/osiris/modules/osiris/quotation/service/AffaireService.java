@@ -5,6 +5,7 @@ import java.util.List;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 
 public interface AffaireService {
@@ -33,5 +34,9 @@ public interface AffaireService {
 
         public Affaire refreshAffaireFromRne(Affaire affaire)
                         throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;
+
+        public List<Affaire> getAffairesForCurrentUser(Integer page, String sortBy, String searchText);
+
+        public List<Attachment> getAttachmentsForAffaire(Affaire affaire);
 
 }

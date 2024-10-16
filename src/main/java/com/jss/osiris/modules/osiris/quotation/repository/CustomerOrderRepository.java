@@ -12,6 +12,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
@@ -178,5 +179,11 @@ public interface CustomerOrderRepository
                         Pageable pageableRequest,
                         @Param("customerOrderStatusBilled") CustomerOrderStatus customerOrderStatusBilled,
                         @Param("displayPayed") boolean displayPayed);
+
+        @Query("select c from CustomerOrder c where c.customerOrderStatus<>:statusAbandonned and responsable in :responsableToFilter and  exists (select 1 from AssoAffaireOrder aao where aao.affaire = :affaire and aao.customerOrder = c)")
+        List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(
+                        @Param("responsableToFilter") List<Responsable> responsablesToFilter,
+                        @Param("affaire") Affaire affaire,
+                        @Param("statusAbandonned") CustomerOrderStatus statusAbandonned);
 
 }

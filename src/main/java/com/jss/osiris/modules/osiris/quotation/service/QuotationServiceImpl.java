@@ -625,7 +625,8 @@ public class QuotationServiceImpl implements QuotationService {
             for (String customerOrderStatusCode : customerOrderStatus) {
                 QuotationStatus customerOrderStatusFetched = quotationStatusService
                         .getQuotationStatusByCode(customerOrderStatusCode);
-                if (customerOrderStatusFetched != null)
+                if (customerOrderStatusFetched != null
+                        && !customerOrderStatusFetched.getCode().equals(QuotationStatus.ABANDONED))
                     quotationStatusToFilter.add(customerOrderStatusFetched);
             }
 

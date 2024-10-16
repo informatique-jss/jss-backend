@@ -42,3 +42,9 @@ export function instanceOfIAttachmentCode(object: any): object is IAttachmentCod
     return 'code' in object;
   return false;
 }
+
+export function isInt(value: any) {
+  return !isNaN(value) &&
+    parseInt(value) == value &&
+    !isNaN(parseInt(value, 10));
+}

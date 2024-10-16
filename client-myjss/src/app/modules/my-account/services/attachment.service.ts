@@ -17,4 +17,8 @@ export class AttachmentService extends AppRestService<Attachment> {
   getAttachmentsForProvisionOfService(service: Service) {
     return this.getList(new HttpParams().set("serviceId", service.id), "service/provision/attachments");
   }
+
+  getAttachmentsForAffaire(idAffaire: number) {
+    return this.getList(new HttpParams().set("idAffaire", idAffaire), "affaire/attachments");
+  }
 }

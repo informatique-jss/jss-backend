@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +50,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
+import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
@@ -694,19 +696,21 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<AssoAffaireOrder> getAssoAffaireOrderForCustomerOrder(CustomerOrder customerOrder) {
+    public List<AssoAffaireOrder> getAssoAffaireOrderForCustomerOrder(CustomerOrder customerOrder)
+            throws OsirisException {
         customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
         return populateTransientField(assoAffaireOrderRepository.findByCustomerOrderOrderByAffaire(customerOrder));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<AssoAffaireOrder> getAssoAffaireOrderForQuotation(Quotation quotation) {
+    public List<AssoAffaireOrder> getAssoAffaireOrderForQuotation(Quotation quotation) throws OsirisException {
         quotation = quotationService.getQuotation(quotation.getId());
         return populateTransientField(assoAffaireOrderRepository.findByQuotationOrderByAffaire(quotation));
     }
 
-    private List<AssoAffaireOrder> populateTransientField(List<AssoAffaireOrder> assoAffaireOrders) {
+    private List<AssoAffaireOrder> populateTransientField(List<AssoAffaireOrder> assoAffaireOrders)
+            throws OsirisException {
         if (assoAffaireOrders != null && assoAffaireOrders.size() > 0)
             for (AssoAffaireOrder assoAffaireOrder : assoAffaireOrders) {
                 if (assoAffaireOrder.getServices() != null)
@@ -714,12 +718,49 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         service.setHasMissingInformations(false);
                         if (isServiceHasMissingInformations(service)) {
                             service.setHasMissingInformations(true);
+
+                            service.getMissingAttachmentQueries().sort(new Comparator<MissingAttachmentQuery>() {
+
+                                @Override
+                                public int compare(MissingAttachmentQuery o1, MissingAttachmentQuery o2) {
+                                    if (o1 != null && o2 == null)
+                                        return 1;
+                                    if (o1 == null && o2 != null)
+                                        return -1;
+                                    if (o1 == null && o2 == null)
+                                        return 0;
+                                    if (o1 != null && o2 != null)
+                                        return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
+                                    return 0;
+                                }
+                            });
+                            service.setLastMissingAttachmentQueryDateTime(
+                                    service.getMissingAttachmentQueries().get(0).getCreatedDateTime()); // TODO : quand
+                                                                                                        // les alertes
+                                                                                                        // de mails
+                                                                                                        // affaire + rib
+                                                                                                        // affaire
+                                                                                                        // seront
+                                                                                                        // intégrées,
+                                                                                                        // mettre cette
+                                                                                                        // date à la
+                                                                                                        // date de
+                                                                                                        // création de
+                                                                                                        // la commande
                         }
                         service.setServiceStatus(getServiceStatusLabel(service));
                         service.setServicePrice(getServicePrice(service));
                         if (service.getServicePrice().compareTo(new BigDecimal(0)) <= 0f)
                             service.setServicePrice(null);
                         removeDisabledAttachments(service);
+                        removePublicationFlagAssoServiceDocument(service);
+
+                        if (service.getProvisions() != null)
+                            for (Provision provision : service.getProvisions())
+                                if (provision.getAnnouncement() != null
+                                        && provision.getAnnouncement().getConfrere() != null)
+                                    service.setConfrereLabel(
+                                            "publié par " + provision.getAnnouncement().getConfrere().getLabel());
                     }
             }
 
@@ -740,6 +781,34 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     }
                 }
             }
+    }
+
+    private void removePublicationFlagAssoServiceDocument(Service service) throws OsirisException {
+        // When published in the same service, do not ask for publication flag, JSS will
+        // provide it
+        if (service != null && service.getProvisions() != null) {
+            boolean asAnnouncement = false;
+            for (Provision provision : service.getProvisions()) {
+                if (provision.getAnnouncement() != null)
+                    asAnnouncement = true;
+                break;
+            }
+
+            AssoServiceDocument assoServiceDocumentToRemove = null;
+            if (asAnnouncement && service.getAssoServiceDocuments() != null) {
+                for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
+                    if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
+                            && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
+                                    .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
+                        assoServiceDocumentToRemove = assoServiceDocument;
+                        break;
+                    }
+                }
+            }
+
+            if (assoServiceDocumentToRemove != null)
+                service.getAssoServiceDocuments().remove(assoServiceDocumentToRemove);
+        }
     }
 
     @Override

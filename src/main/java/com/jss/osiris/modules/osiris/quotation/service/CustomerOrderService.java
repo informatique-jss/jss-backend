@@ -13,6 +13,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
@@ -122,6 +123,8 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
                         String sortBy);
+
+        public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire);
 
         public List<Payment> getApplicablePaymentsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 

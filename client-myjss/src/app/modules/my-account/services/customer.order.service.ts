@@ -19,6 +19,10 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.get(new HttpParams().set("customerOrderId", idCusomterOrder), 'order');
   }
 
+  getCustomerOrdersForAffaireAndCurrentUser(idAffaire: number) {
+    return this.getList(new HttpParams().set("idAffaire", idAffaire), 'order/search/affaire');
+  }
+
   downloadInvoice(order: CustomerOrder) {
     this.downloadGet(new HttpParams().set("customerOrderId", order.id + ""), "attachment/invoice/download");
   }

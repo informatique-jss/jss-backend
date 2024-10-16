@@ -13,4 +13,6 @@ export interface Service extends IAttachment {
   hasMissingInformations: boolean;
   serviceStatus: string;
   servicePrice: number;
+  confrereLabel: string;
+  lastMissingAttachmentQueryDateTime: Date;
 }

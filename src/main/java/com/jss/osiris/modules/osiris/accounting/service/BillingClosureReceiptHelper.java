@@ -53,7 +53,7 @@ import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 @org.springframework.stereotype.Service
-public class BillingClosureReceiptDelegate {
+public class BillingClosureReceiptHelper {
 
     @Value("${payment.cb.entry.point}")
     private String paymentCbEntryPoint;

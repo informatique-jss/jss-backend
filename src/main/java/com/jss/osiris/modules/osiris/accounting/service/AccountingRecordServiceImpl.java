@@ -62,7 +62,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   ActiveDirectoryHelper activeDirectoryHelper;
 
   @Autowired
-  BillingClosureReceiptDelegate billingClosureReceiptDelegate;
+  BillingClosureReceiptHelper billingClosureReceiptDelegate;
 
   @Autowired
   CustomerMailService customerMailService;

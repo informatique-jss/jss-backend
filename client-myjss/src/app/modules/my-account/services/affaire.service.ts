@@ -19,4 +19,8 @@ export class AffaireService extends AppRestService<Affaire> {
   addOrUpdateAffaire(affaire: Affaire) {
     return this.addOrUpdate(new HttpParams(), "affaire", affaire);
   }
+
+  searchAffairesForCurrentUser(searchText: string, page: number, sorter: string) {
+    return this.getList(new HttpParams().set("page", page).set("sortBy", sorter).set("searchText", searchText), "affaire/search/current");
+  }
 }

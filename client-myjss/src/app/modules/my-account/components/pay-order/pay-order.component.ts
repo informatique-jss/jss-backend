@@ -11,6 +11,7 @@ import { MyJssImage } from '../../model/MyJssImage';
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { MyJssImageService } from '../../services/my.jss.image.service';
+import { initTooltips } from '../orders/orders.component';
 
 @Component({
   selector: 'app-pay-order',
@@ -48,6 +49,7 @@ export class PayOrderComponent implements OnInit {
       })
       this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.idOrder).subscribe(response => {
         this.invoiceSummary = response;
+        initTooltips();
       })
     }
   }
@@ -69,6 +71,10 @@ export class PayOrderComponent implements OnInit {
   payedCb() {
     if (this.qrCodeImage)
       window.open(this.qrCodeImage.address, "_blank");
+  }
+
+  notifyCopied() {
+    this.appService.displayToast("Copié dans le presse papier !", false, "Copié !", 5000);
   }
 
 }

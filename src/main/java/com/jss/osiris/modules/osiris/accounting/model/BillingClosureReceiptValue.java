@@ -4,17 +4,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-
 public class BillingClosureReceiptValue {
     private LocalDateTime eventDateTime;
     private String eventDateString;
     private String eventDescription;
     private String eventCbLink;
 
-    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
     private BigDecimal creditAmount;
-    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+
     private BigDecimal debitAmount;
 
     private boolean displayBottomBorder;

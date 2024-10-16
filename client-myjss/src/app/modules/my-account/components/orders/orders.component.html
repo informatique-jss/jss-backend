@@ -38,11 +38,6 @@
             (change)="changeFilter()">
           Payée
         </label>
-        <label class=" dropdown-item">
-          <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="statusFilterAbandonned"
-            (change)="changeFilter()">
-          Abandonnée
-        </label>
       </div>
     </div>
     <div class="btn-group dropdown ">
@@ -102,28 +97,25 @@
             [attr.data-bs-target]="'#order'+order.id" data-bs-toggle="collapse" aria-expanded="false"
             [attr.aria-controls]="'#order'+order.id">
             <div class="d-flex justify-content-between w-100">
-              <div class="me-3 me-sm-4">
-                <div class="fs-sm fw-medium text-dark">
-                  <i class="ai-triangle-alert fs-base text-danger ms-2" data-bs-toggle="tooltip"
-                    data-bs-placement="right" *ngIf="order.hasMissingInformations"
+              <div class="me-3 me-sm-4" style="width: 28%;">
+                <div class="fs-sm text-body-secondary">n°{{order.id}} <i
+                    class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
+                    data-bs-toggle="tooltip" data-bs-placement="right" *ngIf="order.hasMissingInformations"
                     title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
                 </div>
-              </div>
-              <div class="me-3 me-sm-4">
-                <div class="fs-sm text-body-secondary">n°{{order.id}}</div>
                 <span class="badge bg-opacity-10  fs-xs"
                   [ngClass]="getClassForCustomerOrderStatus(order)">{{getCustomerOrderStatusLabel(order)}}</span>
               </div>
-              <div class="me-3 me-sm-4">
-                <div class="d-none d-sm-block fs-sm text-body-secondary mb-2">Date de commande</div>
+              <div class="me-3 me-sm-4" style="width: 15%;">
+                <div class="d-none d-sm-block fs-sm text-body-secondary mb-2  ">Date de commande</div>
                 <div class="d-sm-none fs-sm text-body-secondary mb-2">Date</div>
                 <div class="fs-sm fw-medium text-dark">{{order.createdDate| date:'dd/MM/yyyy'}}</div>
               </div>
-              <div class="me-3 me-sm-4">
+              <div class="me-3 me-sm-4" style="width: 20%;">
                 <div class="fs-sm text-body-secondary mb-2">Affaire</div>
                 <div class="fs-sm fw-medium text-dark">{{capitalizeName(order.affairesList)}}</div>
               </div>
-              <div class="me-3 me-sm-4">
+              <div class="me-3 me-sm-4" style="width: 37%;">
                 <div class="fs-sm text-body-secondary mb-2">Services</div>
                 <div class="fs-sm fw-medium text-dark">{{order.servicesList}}</div>
               </div>
@@ -160,7 +152,9 @@
                               {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
                               +"
                               "+asso.affaire.lastname))}}{{asso.affaire.city?(" -
-                              "+capitalizeName(asso.affaire.city.label)):""}}</div>
+                              "+capitalizeName(asso.affaire.city.label)):""}}{{(asso.affaire.siret &&
+                              asso.affaire.siret.length>0)?(" -
+                              "+asso.affaire.siret):""}}</div>
                           </div>
                         </div>
                       </td>
@@ -168,9 +162,9 @@
                         <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
                       </td>
                       <td class="border-0 py-1 pe-0 ps-3 ps-sm-4">
-                        <i class="ai-triangle-alert fs-base text-danger ms-2" data-bs-toggle="tooltip"
-                          data-bs-placement="right" *ngIf="service.hasMissingInformations"
-                          title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                        <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
+                          data-bs-toggle="tooltip" data-bs-placement="right" *ngIf="service.hasMissingInformations"
+                          [title]="'Le '+getLastMissingAttachmentQueryDateLabel(service)+' : des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du service'"></i>
                       </td>
                       <td class="border-0 text-end py-1 pe-0 ps-3 ps-sm-4" *ngIf="service.servicePrice">
                         <div class="fs-sm text-body-secondary mb-2">Total</div>

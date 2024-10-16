@@ -2,6 +2,32 @@
   <h1 class="h2 mb-0 me-3">Commande {{order.id}}</h1> <span class="badge bg-opacity-10   "
     [ngClass]="getClassForCustomerOrderStatus(order)">{{getCustomerOrderStatusLabel(order)}}</span>
 </div>
+<div class="d-flex align-items-center mb-4"
+  *ngIf="order && ordersAssoAffaireOrders && ordersAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
+  <div class="ms-auto">
+    <div class="btn-group dropdown" style="margin-right: 10px;">
+      <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false">
+        <i class="ai-briefcase me-2"></i>
+        Affaire :
+        {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
+        +"
+        "+selectedAssoAffaireOrder.affaire.lastname))}}{{selectedAssoAffaireOrder.affaire.city?(" -
+        "+capitalizeName(selectedAssoAffaireOrder.affaire.city.label)):""}}
+      </button>
+      <div class="dropdown-menu my-1">
+        <label class=" dropdown-item" *ngFor="let asso of ordersAssoAffaireOrders">
+          <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire(asso) ">
+            {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
+            +"
+            "+asso.affaire.lastname))}}{{asso.affaire.city?(" -
+            "+capitalizeName(asso.affaire.city.label)):""}}
+          </a>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
 <section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="order && selectedAssoAffaireOrder">
   <div class="card-body">
     <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
@@ -55,38 +81,13 @@
       {{selectedAssoAffaireOrder.affaire.paymentIban}} / {{selectedAssoAffaireOrder.affaire.paymentBic}}
     </div>
   </div>
-  <div class="d-flex align-items-center mb-4"
-    *ngIf="order && ordersAssoAffaireOrders && ordersAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
-    <div class="ms-auto">
-      <div class="btn-group dropdown" style="margin-right: 10px;">
-        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
-          aria-expanded="false">
-          <i class="ai-briefcase me-2"></i>
-          Affaire :
-          {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
-          +"
-          "+selectedAssoAffaireOrder.affaire.lastname))}}{{selectedAssoAffaireOrder.affaire.city?(" -
-          "+capitalizeName(selectedAssoAffaireOrder.affaire.city.label)):""}}
-        </button>
-        <div class="dropdown-menu my-1">
-          <label class=" dropdown-item" *ngFor="let asso of ordersAssoAffaireOrders">
-            <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire(asso) ">
-              {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
-              +"
-              "+asso.affaire.lastname))}}{{asso.affaire.city?(" -
-              "+capitalizeName(asso.affaire.city.label)):""}}
-            </a>
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
+
 </section>
 <section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="order && selectedAssoAffaireOrder">
   <div class="card-body">
     <div class="d-flex align-items-center mt-sm-n1 mb-0">
       <i class="ai-layer text-primary lead pe-1 me-2"></i>
-      <h2 class="h4 mb-0">Services</h2>
+      <h2 class="h4 mb-0">Services commandés</h2>
     </div>
   </div>
   <div class="accordion accordion-alt accordion-orders" id="orders" *ngIf="selectedAssoAffaireOrder.services">
@@ -106,12 +107,15 @@
                 <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
               </div>
             </div>
-            <div class="me-3 me-sm-4">
-              <div class="fs-sm text-body-secondary">3 documents disponibles</div>
+            <div class="me-3 me-sm-4" *ngIf="service.confrereLabel">
+              <div class="fs-sm text-body-secondary">{{service.confrereLabel}}</div>
+              <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
             </div>
-            <div class="me-3 me-sm-4" *ngIf="service.hasMissingInformations">
-              <div class="text-body-secondary fs-sm me-3">
-                4 documents/informations manquants</div>
+            <div class="me-3 me-sm-4"
+              *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
+              <div class="fs-sm text-body-secondary">{{serviceProvisionAttachments[service.id].length}}
+                document{{serviceProvisionAttachments[service.id].length>1?'s':''}}
+                disponible{{serviceProvisionAttachments[service.id].length>1?'s':''}}</div>
             </div>
             <div class="me-3 me-sm-4">
               <div class="text-body-secondary fs-sm me-3 ">
@@ -120,9 +124,9 @@
             </div>
             <div class="me-3 me-sm-4">
               <div class="fs-sm fw-medium text-dark">
-                <i class="ai-triangle-alert fs-base text-danger ms-2" data-bs-toggle="tooltip" data-bs-placement="right"
-                  *ngIf="service.hasMissingInformations"
-                  title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du service"></i>
+                <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
+                  data-bs-toggle="tooltip" data-bs-placement="right" *ngIf="service.hasMissingInformations"
+                  [title]="'Le '+getLastMissingAttachmentQueryDateLabel(service)+' : des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du service'"></i>
               </div>
             </div>
           </div>
@@ -132,26 +136,38 @@
         (show.bs.collapse)="loadServiceDetails(service,false)" [ngClass]="{'show':index==0}">
         <div class="accordion-body">
           <div class="accordion-item border-top mb-0" *ngIf="!ordersAssoAffaireOrders[order.id]">
-            <ul class="nav nav-tabs p-3" role="tablist">
-              <li class="nav-item" *ngIf=" service.assoServiceDocuments">
-                <a href="#myDocs" class="nav-link active" data-bs-toggle="tab" role="tab">
+            <ul class="nav nav-tabs p-3" role="tablist" style="margin-bottom: 0;">
+              <li class="nav-item ">
+                <a [attr.href]="'#myDocs'+service.id" class="nav-link active " data-bs-toggle="tab" role="tab">
                   <i class="fi-home me-2"></i>
                   Mes documents
                 </a>
               </li>
+              <li class="nav-item" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+                <a [attr.href]="'#myFields'+service.id" class="nav-link" data-bs-toggle="tab" role="tab">
+                  <i class="fi-home me-2"></i>
+                  Mes informations complémentaires
+                </a>
+              </li>
               <li class="nav-item"
                 *ngIf="this.serviceProvisionAttachments[service.id] && this.serviceProvisionAttachments[service.id].length>0">
-                <a href="#availableDocs" class="nav-link" data-bs-toggle="tab" role="tab">
+                <a [attr.href]="'#availableDocs'+service.id" class="nav-link" data-bs-toggle="tab" role="tab">
                   Documents disponibles <span class="badge bg-success"
                     style="margin-left: 10px;">{{this.serviceProvisionAttachments[service.id].length}}</span>
                 </a>
               </li>
             </ul>
-            <div class="tab-content p-3" *ngIf=" service.assoServiceDocuments">
-              <div class="tab-pane fade show active" id="myDocs" role="tabpanel">
+            <div class="tab-content ">
+              <div class="tab-pane fade show active" [attr.id]="'myDocs'+service.id" role="tabpanel">
+                <div class="alert alert-info d-flex mb-0 mb-2" role="alert">
+                  <i class="ai-circle-info fs-xl"></i>
+                  <div class="ps-2">Vous pouvez télécharger ci-dessous les documents nécessaires au traitement du
+                    service</div>
+                </div>
                 <div class="list-group">
-                  <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments">
-                    <div class="list-group-item list-group-item-action flex-column align-items-start py-3"
+                  <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
+                    <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
+                      [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
                       *ngIf="assoServiceDocument.isMandatory">
                       <div class="d-flex flex-wrap w-100 justify-content-between">
                         <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
@@ -201,7 +217,10 @@
                   </ng-container>
                 </div>
               </div>
-              <div class="tab-pane fade" id="availableDocs" role="tabpanel">
+            </div>
+            <div class="tab-content "
+              *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
+              <div class="tab-pane fade" [attr.id]="'availableDocs'+service.id" role="tabpanel">
                 <div class="table-responsive">
                   <table class="table table-hover">
                     <thead>
@@ -227,6 +246,55 @@
                       </tr>
                     </tbody>
                   </table>
+                </div>
+              </div>
+            </div>
+            <div class="tab-content p-3"
+              *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+              <div class="tab-pane fade show" [attr.id]="'myFields'+service.id" role="tabpanel">
+                <div class="alert alert-info d-flex mb-2" role="alert">
+                  <i class="ai-circle-info fs-xl"></i>
+                  <div class="ps-2">Vous pouvez renseigner ci-dessous les informations complémentaires nécessaires au
+                    traitement du service</div>
+                </div>
+                <div *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
+                    <label for="text-input" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div> <input class="form-control" id="text-input" [(ngModel)]="assoServiceFieldType.stringValue"
+                        maxLength="255" />
+                    </div>
+                  </div>
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
+                    <label for="text-textarea"
+                      class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div> <textarea class="form-control" id="text-textarea"
+                        [(ngModel)]="assoServiceFieldType.textAreaValue" rows="5"></textarea>
+                    </div>
+                  </div>
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
+                    <label for="text-date" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div> <input class="form-control" id="text-date" type="datetime-local"
+                        [(ngModel)]="assoServiceFieldType.dateValue" />
+                    </div>
+                  </div>
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
+                    <label for="text-integer" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div> <input class="form-control" id="integer" type="number"
+                        [(ngModel)]="assoServiceFieldType.integerValue" />
+                    </div>
+                  </div>
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
+                    <label for="text-select" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div>
+                      <select id="text-select" class="form-select form-select-lg"
+                        [(ngModel)]="assoServiceFieldType.selectValue">
+                        <option
+                          *ngFor="let option of assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues"
+                          [value]="option">
+                          {{option.value}}</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -412,11 +480,30 @@
 </div>
 <section class="card border-0  " *ngIf="order && selectedAssoAffaireOrder">
   <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 mb-0">
+      <i class="ai-message text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Echangez avec notre équipe</h2>
+    </div>
     <div class="simplebar-mask">
       <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
         <div class="simplebar-content-wrapper" tabindex="0" role="region" style="height: auto;  ">
           <div class="simplebar-content" style="padding: 24px 38px 0px;">
             <!-- Message -->
+            <div class="ms-auto mb-3" style="max-width: 392px;"
+              *ngIf="!customerOrderComments || customerOrderComments.length==0">
+              <div class="d-flex align-items-end mb-2">
+                <div class="message-box-end bg-primary text-white"><span class="break-line">Posez votre question
+                    ci-dessous !</span></div>
+                <div class="flex-shrink-0 ps-2 ms-1">
+                  <avatar class="avatar-select" [user]="jssEmployee" [size]="40" data-bs-toggle="tooltip"
+                    data-bs-placement="right" [title]="jssEmployee.firstname + ' '+jssEmployee.lastname  ">
+                  </avatar>
+                </div>
+              </div>
+              <div class="fs-xs text-body-secondary"> {{currentDate|date:'dd/MM/yyyy
+                HH:mm'}}
+              </div>
+            </div>
             <ng-container *ngFor="let comment of customerOrderComments">
               <div class="mb-3" style="max-width: 392px;" *ngIf="comment.currentCustomer">
                 <div class="d-flex align-items-end mb-2">

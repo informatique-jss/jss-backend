@@ -57,7 +57,7 @@ export class AppService {
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Tableau de bord", iconClass: "ai-user-check", route: "/account/overview" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Devis", iconClass: "ai-slider", route: "/account/quotations" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Commandes", iconClass: "ai-cart", route: "/account/orders" } as AccountMenuItem);
-
+    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Affaires", iconClass: "ai-briefcase", route: "/account/affaires" } as AccountMenuItem);
 
     // Display only if I have more than one responsible potential
     this.responsableService.getPotentialUserScope().subscribe(response => {

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
 import { ConstantService } from '../../../../libs/constant.service';
-import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from '../../../../libs/Constants';
+import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
+import { Employee } from '../../../profile/model/Employee';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { Affaire } from '../../model/Affaire';
@@ -25,7 +27,7 @@ import { InvoicingSummaryService } from '../../services/invoicing.summary.servic
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { PaymentService } from '../../services/payment.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
-import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, initTooltips } from '../orders/orders.component';
+import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, getLastMissingAttachmentQueryDateLabel, initTooltips } from '../orders/orders.component';
 
 @Component({
   selector: 'app-order-details',
@@ -58,6 +60,10 @@ export class OrderDetailsComponent implements OnInit {
   newCustomerOrderComment: CustomerOrderComment = {} as CustomerOrderComment;
 
   displayPayButton: boolean = false;
+  orderDetailsForm = this.formBuilder.group({});
+
+  jssEmployee: Employee = { firstname: 'Journal', lastname: 'Spécial des Sociétés', title: '' } as Employee;
+  currentDate = new Date();
 
   constructor(
     private constantService: ConstantService,
@@ -72,7 +78,8 @@ export class OrderDetailsComponent implements OnInit {
     private uploadAttachmentService: UploadAttachmentService,
     private appService: AppService,
     private customerOrderCommentService: CustomerOrderCommentService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private formBuilder: FormBuilder
   ) { }
 
   capitalizeName = capitalizeName;
@@ -80,6 +87,12 @@ export class OrderDetailsComponent implements OnInit {
   getClassForCustomerOrderStatus = getClassForCustomerOrderStatus;
   getListMails = getListMails;
   getListPhones = getListPhones;
+  getLastMissingAttachmentQueryDateLabel = getLastMissingAttachmentQueryDateLabel;
+  SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
+  SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
+  SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
+  SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
+  SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
   ngOnInit() {
     this.customerOrderService.getCustomerOrder(this.activatedRoute.snapshot.params['id']).subscribe(response => {

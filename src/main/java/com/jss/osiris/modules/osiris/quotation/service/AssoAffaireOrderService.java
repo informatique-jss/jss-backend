@@ -40,10 +40,11 @@ public interface AssoAffaireOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public List<AssoAffaireOrder> getAssoAffaireOrderForCustomerOrder(CustomerOrder customerOrder);
+        public List<AssoAffaireOrder> getAssoAffaireOrderForCustomerOrder(CustomerOrder customerOrder)
+                        throws OsirisException;
 
         public boolean isServiceHasMissingInformations(Service service);
 
-        public List<AssoAffaireOrder> getAssoAffaireOrderForQuotation(Quotation quotation);
+        public List<AssoAffaireOrder> getAssoAffaireOrderForQuotation(Quotation quotation) throws OsirisException;
 
 }

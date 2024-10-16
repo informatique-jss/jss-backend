@@ -55,9 +55,16 @@
         <p>Pour payer par virement le montant de <strong>{{invoiceSummary.remainingToPay | currency:'EUR' }}</strong>,
           utilisez les
           informations suivantes :</p>
-        <p>IBAN / BIC : {{JSS_IBAN}} / {{JSS_BIC}}</p>
+        <p class="text-center"> {{JSS_IBAN}} <i style="cursor: pointer;" [copy-clipboard]="JSS_IBAN"
+            (copied)="notifyCopied( )" class="ai-copy" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Copier dans le presse-papier"></i></p>
+        <p class="text-center"> {{JSS_BIC}} <i style="cursor: pointer;" [copy-clipboard]="JSS_BIC"
+            (copied)="notifyCopied( )" class="ai-copy" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Copier dans le presse-papier"></i></p>
         <div class="alert alert-danger" role="alert">
-          Veuillez indiquer absolument la référence "<span class="color-red">{{idOrder}}</span>" de la commande
+          Veuillez indiquer absolument la référence <span class="color-red">{{idOrder}}</span> <i
+            style="cursor: pointer;" [copy-clipboard]="JSS_BIC" (copied)="notifyCopied( )" class="ai-copy"
+            data-bs-toggle="tooltip" data-bs-placement="right" title="Copier dans le presse-papier"></i> de la commande
           dans le libellé de votre
           virement
         </div>

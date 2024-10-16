@@ -27,7 +27,7 @@ const routes: Routes = [
     LoginComponent,
     TopBarComponent,
     FooterComponent,
-    ToastComponent,
+    ToastComponent
   ],
   exports: [],
   bootstrap: [AppComponent],

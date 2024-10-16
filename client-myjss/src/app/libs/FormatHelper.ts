@@ -29,3 +29,17 @@ export function formatBytes(bytes: number, decimals: number) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+export function padTo2Digits(num: number) {
+  return num.toString().padStart(2, '0');
+}
+
+export function formatDateFrance(date: Date) {
+  if (!(date instanceof Date))
+    date = new Date(date);
+  return [
+    padTo2Digits(date.getDate()),
+    padTo2Digits(date.getMonth() + 1),
+    date.getFullYear(),
+  ].join('/');
+}

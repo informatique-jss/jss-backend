@@ -64,8 +64,8 @@
                 <label class="form-check-label" for="billing-isBillingOther">Libeller à un tiers</label>
               </div>
             </div>
-            <generic-input [(model)]="document.externalReference" label="Référence à rappeler" [form]="documentForm"
-              propertyName="externalReference" [isMandatory]="false" [isDisabled]="false"
+            <generic-input [(model)]="document.externalReference" label="Vos références à rappeler"
+              [form]="documentForm" propertyName="externalReference" [isMandatory]="false" [isDisabled]="false"
               [maxLength]="200"></generic-input>
             <div class="form-check form-switch mt-3">
               <input type="checkbox" class="form-check-input" id="billing-isCommandNumberMandatory"

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../../../../libs/app.service';
-import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
-import { capitalizeName } from '../../../../libs/FormatHelper';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../libs/user.preference.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { MailComputeResult } from '../../model/MailComputeResult';
+import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
@@ -27,7 +28,6 @@ export class OrdersComponent implements OnInit {
   statusFilterBilled: boolean = false;
   statusFilterToBilled: boolean = false;
   statusFilterPayed: boolean = false;
-  statusFilterAbandonned: boolean = false;
 
   currentSort: string = "createdDateDesc";
   currentPage: number = 0;
@@ -59,7 +59,7 @@ export class OrdersComponent implements OnInit {
   }
 
   refreshOrders() {
-    if (!this.statusFilterOpen && !this.statusFilterWaitingDeposit && !this.statusFilterBeingProcessed && !this.statusFilterToBilled && !this.statusFilterBilled && !this.statusFilterPayed && !this.statusFilterAbandonned) {
+    if (!this.statusFilterOpen && !this.statusFilterWaitingDeposit && !this.statusFilterBeingProcessed && !this.statusFilterToBilled && !this.statusFilterBilled && !this.statusFilterPayed) {
       this.orders = [];
       return;
     }
@@ -79,8 +79,6 @@ export class OrdersComponent implements OnInit {
       status.push(CUSTOMER_ORDER_STATUS_BILLED);
     if (this.statusFilterPayed)
       status.push(CUSTOMER_ORDER_STATUS_PAYED);
-    if (this.statusFilterAbandonned)
-      status.push(CUSTOMER_ORDER_STATUS_ABANDONED);
 
     if (this.currentPage == 0)
       this.isFirstLoading = true;
@@ -142,7 +140,6 @@ export class OrdersComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterBilled, "order-statusFilterBilled");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterToBilled, "order-statusFilterToBilled");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterPayed, "order-statusFilterPayed");
-    this.userPreferenceService.setUserSearchBookmark(this.statusFilterAbandonned, "order-statusFilterAbandonned");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "order-currentSort");
   }
 
@@ -158,7 +155,6 @@ export class OrdersComponent implements OnInit {
     this.statusFilterBilled = false;
     this.statusFilterToBilled = false;
     this.statusFilterPayed = false;
-    this.statusFilterAbandonned = false;
 
     if (this.userPreferenceService.getUserSearchBookmark("order-statusFilterOpen")) {
       this.statusFilterOpen = true;
@@ -184,10 +180,6 @@ export class OrdersComponent implements OnInit {
       this.statusFilterPayed = true;
       atLeastOne = true;
     }
-    if (this.userPreferenceService.getUserSearchBookmark("order-statusFilterAbandonned")) {
-      this.statusFilterAbandonned = true;
-      atLeastOne = true;
-    }
 
     if (!atLeastOne)
       this.statusFilterBeingProcessed = true;
@@ -195,6 +187,7 @@ export class OrdersComponent implements OnInit {
 
   getCustomerOrderStatusLabel = getCustomerOrderStatusLabel;
   getClassForCustomerOrderStatus = getClassForCustomerOrderStatus;
+  getLastMissingAttachmentQueryDateLabel = getLastMissingAttachmentQueryDateLabel;
   getCustomerOrderBillingMailList(order: CustomerOrder) {
     return getCustomerOrderBillingMailList(order, this.ordersMailComputeResult[order.id]);
   }
@@ -225,8 +218,6 @@ export function getClassForCustomerOrderStatus(order: CustomerOrder) {
     return "bg-success text-success";
   if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)
     return "bg-dark text-dark";
-  if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)
-    return "bg-danger text-danger";
   return "bg-light text-light";
 }
 
@@ -249,4 +240,10 @@ export function getCustomerOrderBillingMailList(order: CustomerOrder, mailComput
       listMail.push(recipient.mail);
   }
   return listMail.join(", ");
+}
+
+export function getLastMissingAttachmentQueryDateLabel(service: Service) {
+  if (service && service.lastMissingAttachmentQueryDateTime)
+    return formatDateFrance(service.lastMissingAttachmentQueryDateTime);
+  return "";
 }

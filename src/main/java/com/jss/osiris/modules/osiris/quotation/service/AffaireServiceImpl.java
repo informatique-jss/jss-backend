@@ -3,13 +3,19 @@ package com.jss.osiris.modules.osiris.quotation.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
@@ -18,6 +24,8 @@ import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
@@ -26,7 +34,10 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Rna;
+import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Activite;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.AdresseDomicile;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.AutresEtablissement;
@@ -37,8 +48,9 @@ import com.jss.osiris.modules.osiris.quotation.repository.AffaireRepository;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormeExerciceActivitePrincipalService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormeJuridiqueService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeVoieService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
-@Service
+@org.springframework.stereotype.Service
 public class AffaireServiceImpl implements AffaireService {
 
     @Autowired
@@ -79,6 +91,15 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    UserScopeService userScopeService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
+
+    @Autowired
+    ServiceService serviceService;
 
     @Override
     public List<Affaire> getAffaires() {
@@ -578,6 +599,61 @@ public class AffaireServiceImpl implements AffaireService {
             affaire.setLastRneUpdate(LocalDate.now());
             addOrUpdateAffaire(affaire);
         }
+    }
+
+    @Override
+    public List<Affaire> getAffairesForCurrentUser(Integer page, String sortBy, String searchText) {
+        List<Responsable> responsables = userScopeService.getUserScopeResponsables();
+        if (responsables == null || responsables.size() == 0)
+            return new ArrayList<Affaire>();
+
+        Order orderDenomination = new Order(Direction.ASC, "denomination");
+        Order orderFirstname = new Order(Direction.ASC, "firstname");
+        Order orderLastname = new Order(Direction.ASC, "lastname");
+
+        if (sortBy.equals("nameDesc")) {
+            orderDenomination = new Order(Direction.DESC, "denomination");
+            orderFirstname = new Order(Direction.DESC, "firstname");
+            orderLastname = new Order(Direction.DESC, "lastname");
+        }
+        Sort sort = Sort.by(Arrays.asList(orderDenomination, orderLastname, orderFirstname));
+        Pageable pageableRequest = PageRequest.of(page, 50, sort);
+        return affaireRepository.getAffairesForResponsables(pageableRequest, responsables, searchText);
+    }
+
+    @Override
+    public List<Attachment> getAttachmentsForAffaire(Affaire affaire) {
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        List<CustomerOrder> customerOrders = customerOrderService.searchOrdersForCurrentUserAndAffaire(affaire);
+
+        if (customerOrders != null)
+            for (CustomerOrder customerOrder : customerOrders)
+                if (customerOrder.getAssoAffaireOrders() != null)
+                    for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                        if (assoAffaireOrder.getServices() != null)
+                            for (Service service : assoAffaireOrder.getServices()) {
+                                List<Attachment> serviceAttachment = serviceService
+                                        .getAttachmentsForProvisionOfService(service);
+                                if (serviceAttachment != null)
+                                    attachments.addAll(serviceAttachment);
+                            }
+
+        if (attachments.size() > 0)
+            attachments.sort(new Comparator<Attachment>() {
+                @Override
+                public int compare(Attachment c0, Attachment c1) {
+                    if (c0 == null && c1 == null)
+                        return 0;
+                    if (c0 != null && c1 == null)
+                        return 1;
+                    if (c0 == null && c1 != null)
+                        return -1;
+                    if (c1 != null && c0 != null)
+                        return c1.getCreatDateTime().compareTo(c0.getCreatDateTime());
+                    return 0;
+                }
+            });
+        return attachments;
     }
 
 }

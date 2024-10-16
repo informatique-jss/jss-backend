@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { CopyClipboardDirective } from '../../../../libs/CopyClipboard.directive';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountMenuComponent } from '../account-menu/account-menu.component';
+import { AffairesComponent } from '../affaires/affaires.component';
 import { EditAddressComponent } from '../edit-address/edit-address.component';
 import { EditAffaireComponent } from '../edit-affaire/edit-affaire.component';
 import { OrderDetailsComponent } from '../order-details/order-details.component';
@@ -27,7 +29,8 @@ const routes: Routes = [
       { path: 'quotations', component: QuotationsComponent },
       { path: 'affaire/edit/:id/:idOrder', component: EditAffaireComponent },
       { path: 'address/edit/:idOrder', component: EditAddressComponent },
-      { path: 'order/pay/:idOrder', component: PayOrderComponent }
+      { path: 'order/pay/:idOrder', component: PayOrderComponent },
+      { path: 'affaires', component: AffairesComponent }
     ]
   },
   { path: 'account/signin', component: SignInComponent },
@@ -55,6 +58,8 @@ const routes: Routes = [
     EditAffaireComponent,
     EditAddressComponent,
     PayOrderComponent,
+    CopyClipboardDirective,
+    AffairesComponent,
   ]
 })
 export class MyAccountModule { }

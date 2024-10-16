@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -84,6 +85,14 @@ public class Service implements Serializable, IId {
 	@Transient
 	@JsonView(JacksonViews.MyJssView.class)
 	private BigDecimal servicePrice;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	private String confrereLabel;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	private LocalDateTime lastMissingAttachmentQueryDateTime;
 
 	public Integer getId() {
 		return id;
@@ -179,6 +188,22 @@ public class Service implements Serializable, IId {
 
 	public void setServicePrice(BigDecimal servicePrice) {
 		this.servicePrice = servicePrice;
+	}
+
+	public String getConfrereLabel() {
+		return confrereLabel;
+	}
+
+	public void setConfrereLabel(String confrereLabel) {
+		this.confrereLabel = confrereLabel;
+	}
+
+	public LocalDateTime getLastMissingAttachmentQueryDateTime() {
+		return lastMissingAttachmentQueryDateTime;
+	}
+
+	public void setLastMissingAttachmentQueryDateTime(LocalDateTime lastMissingAttachmentQueryDateTime) {
+		this.lastMissingAttachmentQueryDateTime = lastMissingAttachmentQueryDateTime;
 	}
 
 }

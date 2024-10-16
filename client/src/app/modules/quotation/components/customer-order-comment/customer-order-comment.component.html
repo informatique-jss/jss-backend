@@ -49,7 +49,11 @@
             <span>{{comment.currentCustomer.firstname}} {{comment.currentCustomer.lastname}} (responsable
               n°{{comment.currentCustomer.id}})</span> <span *ngIf="comment.provision"
               style="color :#b3b3b3; padding-left: 3px;">
-              {{getProvisionLabel(comment.provision)}}</span>
+              {{getProvisionLabel(comment.provision)}}</span><span style=" display : flex"
+              *ngIf="comment.activeDirectoryGroups && comment.activeDirectoryGroups.length>0"><chips-status
+                style="margin-left : 5px;" *ngFor="let group of comment.activeDirectoryGroups"
+                [status]="isEmployeeInGroupList(currentEmployee, [group])?'EMPHASIZED' : ''"
+                [value]="'@'+group.label"></chips-status></span>
           </p>
           <p class="message" [innerHTML]="comment.comment| trustHtml"> </p>
           <span class="timestamp" [matTooltip]="getTooltipDateText(comment)">{{comment.createdDateTime |
