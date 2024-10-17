@@ -7,7 +7,7 @@ import { RefundSearchResult } from '../model/RefundSearchResult';
 @Injectable({
   providedIn: 'root'
 })
-export class RefundSearchResultService extends AppRestService<RefundSearchResult>{
+export class RefundSearchResultService extends AppRestService<RefundSearchResult> {
   constructor(http: HttpClient) {
     super(http, "invoicing");
   }
@@ -17,6 +17,6 @@ export class RefundSearchResultService extends AppRestService<RefundSearchResult
   }
 
   exportRefunds(refundSearch: RefundSearch) {
-    return this.downloadPost("refunds/export", refundSearch as any);
+    return this.downloadPost(new HttpParams(), "refunds/export", refundSearch as any);
   }
 }

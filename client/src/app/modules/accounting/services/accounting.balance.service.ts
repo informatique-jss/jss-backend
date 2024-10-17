@@ -18,7 +18,7 @@ export class AccountingBalanceService extends AppRestService<AccountingBalance> 
   }
 
   exportBalance(accountingBalanceSearch: AccountingBalanceSearch) {
-    this.downloadPost("accounting-balance/export", accountingBalanceSearch as any as AccountingBalance);
+    this.downloadPost(new HttpParams(), "accounting-balance/export", accountingBalanceSearch as any as AccountingBalance);
   }
 
   searchAccountingBalanceGenerale(accountingBalanceSearch: AccountingBalanceSearch) {
@@ -26,7 +26,7 @@ export class AccountingBalanceService extends AppRestService<AccountingBalance> 
   }
 
   exportBalanceGenerale(accountingBalanceSearch: AccountingBalanceSearch) {
-    this.downloadPost("accounting-balance/generale/export", accountingBalanceSearch as any as AccountingBalance);
+    this.downloadPost(new HttpParams(), "accounting-balance/generale/export", accountingBalanceSearch as any as AccountingBalance);
   }
 
 }
