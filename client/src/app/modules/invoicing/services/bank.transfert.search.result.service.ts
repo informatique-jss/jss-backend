@@ -17,6 +17,6 @@ export class BankTransfertSearchResultService extends AppRestService<BankTransfe
   }
 
   exportTransferts(bankTransfertSearch: BankTransfertSearch, isOverrideExecutionDate: boolean) {
-    return this.downloadPost(new HttpParams().set("isOverrideExecutionDate", isOverrideExecutionDate), "transfert/export", bankTransfertSearch as any);
+    return this.downloadPost(new HttpParams().set("isOverrideExecutionDate", isOverrideExecutionDate), "transfert/export", bankTransfertSearch as any, "Export");
   }
 }
