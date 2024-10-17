@@ -116,7 +116,7 @@ export abstract class AppRestService<T> {
     )
   }
 
-  downloadGet(params: HttpParams, api: string, fallbackFilename: string, successfulMessage: string = "", errorMessage: string = "") {
+  downloadGet(params: HttpParams, api: string, fallbackFilename: string = "", successfulMessage: string = "", errorMessage: string = "") {
     let context: HttpContext = new HttpContext();
     context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
     this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
