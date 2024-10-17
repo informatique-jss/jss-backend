@@ -89,8 +89,10 @@ export class AddAccountingRecordComponent implements OnInit {
   addAccountingRecord() {
     if (this.accountingRecordForm.valid) {
       let newRecord = {} as AccountingRecord;
-      if (this.accountingRecords && this.accountingRecords.length > 0)
+      if (this.accountingRecords && this.accountingRecords.length > 0) {
         newRecord.accountingJournal = this.accountingRecords[this.accountingRecords.length - 1].accountingJournal;
+        newRecord.operationDateTime = this.accountingRecords[this.accountingRecords.length - 1].operationDateTime;
+      }
       this.accountingRecords.push(newRecord);
       this.accountingRecord = newRecord;
       this.computeBalanceAndDebitAndCreditAccumulation();
