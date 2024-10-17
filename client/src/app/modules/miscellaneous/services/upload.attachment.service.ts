@@ -1,13 +1,13 @@
 import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { instanceOfIAttachmentCode } from 'src/app/libs/TypeHelper';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { TypeDocument } from '../../quotation/model/guichet-unique/referentials/TypeDocument';
 import { Attachment } from '../model/Attachment';
 import { AttachmentType } from '../model/AttachmentType';
 import { IAttachment } from '../model/IAttachment';
 import { IAttachmentCode } from '../model/IAttachmentCode';
-import { instanceOfIAttachmentCode } from 'src/app/libs/TypeHelper';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +49,6 @@ export class UploadAttachmentService extends AppRestService<IAttachment> {
   }
 
   downloadAttachment(attachment: Attachment) {
-    this.downloadGet(new HttpParams().set("idAttachment", attachment.id + ""), "attachment/download");
+    this.downloadGet(new HttpParams().set("idAttachment", attachment.id + ""), "attachment/download", (attachment && attachment.uploadedFile && attachment.uploadedFile.filename) ? attachment.uploadedFile.filename : attachment.id + "");
   }
 }
