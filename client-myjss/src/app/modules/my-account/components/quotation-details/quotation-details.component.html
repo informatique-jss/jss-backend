@@ -217,7 +217,7 @@
                   <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
                     <label for="text-input" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
                     <div> <input class="form-control" id="text-input" [(ngModel)]="assoServiceFieldType.stringValue"
-                        maxLength="255" />
+                        maxLength="250" />
                     </div>
                   </div>
                   <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
@@ -229,7 +229,7 @@
                   </div>
                   <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
                     <label for="text-date" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                    <div> <input class="form-control" id="text-date" type="datetime-local"
+                    <div> <input class="form-control" id="text-date" type="date"
                         [(ngModel)]="assoServiceFieldType.dateValue" />
                     </div>
                   </div>

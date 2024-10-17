@@ -28,6 +28,7 @@ import { InvoicingSummaryService } from '../../services/invoicing.summary.servic
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { PaymentService } from '../../services/payment.service';
 import { QuotationService } from '../../services/quotation.service';
+import { ServiceService } from '../../services/service.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
 import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, getLastMissingAttachmentQueryDateLabel, initTooltips } from '../orders/orders.component';
 
@@ -83,6 +84,7 @@ export class OrderDetailsComponent implements OnInit {
     private customerOrderCommentService: CustomerOrderCommentService,
     private loginService: LoginService,
     private formBuilder: FormBuilder,
+    private serviceService: ServiceService,
     private quotationService: QuotationService
   ) { }
 
@@ -253,6 +255,9 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   saveFieldsValue(service: Service) {
-
+    this.serviceService.addOrUpdateServiceFields(service).subscribe(response => {
+      this.appService.displayToast("Vos informations complémentaires ont bien été enrengistrées", false, "Succès", 15000);
+      this.refreshCurrentAssoAffaireOrder();
+    })
   }
 }

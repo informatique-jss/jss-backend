@@ -42,12 +42,15 @@ import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeFieldTypePossibleValue;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
@@ -576,12 +579,6 @@ public class MyJssQuotationController {
 		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
 			return new ResponseEntity<List<Document>>(new ArrayList<Document>(), HttpStatus.OK);
 
-		String quotationStatusCode = quotation.getQuotationStatus().getCode();
-		if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
-				|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
-				|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
-			return new ResponseEntity<List<Document>>(new ArrayList<Document>(), HttpStatus.OK);
-
 		return new ResponseEntity<List<Document>>(quotation.getDocuments(), HttpStatus.OK);
 	}
 
@@ -606,6 +603,12 @@ public class MyJssQuotationController {
 
 		Quotation quotation = quotationService.getQuotation(idQuotation);
 		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		String quotationStatusCode = quotation.getQuotationStatus().getCode();
+		if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
+				|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
+				|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
 		for (Document document : documents) {
@@ -730,5 +733,80 @@ public class MyJssQuotationController {
 			return new ResponseEntity<Quotation>(new Quotation(), HttpStatus.OK);
 
 		return new ResponseEntity<Quotation>(customerOrder.getQuotations().get(0), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/service/fields")
+	public ResponseEntity<Boolean> addOrUpdateServiceFields(@RequestBody Service service)
+			throws OsirisValidationException, OsirisException {
+		if (service == null || service.getId() == null || service.getAssoServiceFieldTypes() == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		Service serviceFetched = serviceService.getService(service.getId());
+
+		if (serviceFetched.getAssoAffaireOrder().getCustomerOrder() == null
+				&& serviceFetched.getAssoAffaireOrder().getQuotation() == null
+				|| !myJssQuotationValidationHelper
+						.canSeeQuotation(serviceFetched.getAssoAffaireOrder().getCustomerOrder() != null
+								? serviceFetched.getAssoAffaireOrder().getCustomerOrder()
+								: serviceFetched.getAssoAffaireOrder().getQuotation()))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		if (serviceFetched.getAssoAffaireOrder().getQuotation() != null) {
+			String quotationStatusCode = serviceFetched.getAssoAffaireOrder().getQuotation().getQuotationStatus()
+					.getCode();
+			if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
+					|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
+					|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+		}
+
+		for (AssoServiceFieldType assoServiceFieldTypeOld : serviceFetched.getAssoServiceFieldTypes()) {
+			for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+				if (assoServiceFieldType.getId().equals(assoServiceFieldTypeOld.getId())) {
+					if (assoServiceFieldType.getServiceFieldType().getDataType()
+							.equals(ServiceFieldType.SERVICE_FIELD_TYPE_DATE)) {
+						validationHelper.validateDate(assoServiceFieldType.getDateValue(), false,
+								assoServiceFieldType.getServiceFieldType().getLabel());
+						assoServiceFieldTypeOld.setDateValue(assoServiceFieldType.getDateValue());
+					}
+					if (assoServiceFieldType.getServiceFieldType().getDataType()
+							.equals(ServiceFieldType.SERVICE_FIELD_TYPE_INTEGER)) {
+						validationHelper.validateInteger(assoServiceFieldType.getIntegerValue(), false,
+								assoServiceFieldType.getServiceFieldType().getLabel());
+						assoServiceFieldTypeOld.setIntegerValue(assoServiceFieldType.getIntegerValue());
+					}
+					if (assoServiceFieldType.getServiceFieldType().getDataType()
+							.equals(ServiceFieldType.SERVICE_FIELD_TYPE_TEXT)) {
+						validationHelper.validateString(assoServiceFieldType.getStringValue(), false, 250,
+								assoServiceFieldType.getServiceFieldType().getLabel());
+						assoServiceFieldTypeOld.setStringValue(assoServiceFieldType.getStringValue());
+					}
+					if (assoServiceFieldType.getServiceFieldType().getDataType()
+							.equals(ServiceFieldType.SERVICE_FIELD_TYPE_TEXTAREA)) {
+						assoServiceFieldTypeOld.setTextAreaValue(assoServiceFieldType.getTextAreaValue());
+					}
+					if (assoServiceFieldType.getServiceFieldType().getDataType()
+							.equals(ServiceFieldType.SERVICE_FIELD_TYPE_SELECT)
+							&& assoServiceFieldType.getSelectValue() != null) {
+						boolean found = false;
+						for (ServiceTypeFieldTypePossibleValue serviceTypeFieldTypePossibleValue : assoServiceFieldType
+								.getServiceFieldType().getServiceFieldTypePossibleValues()) {
+							if (serviceTypeFieldTypePossibleValue.getId()
+									.equals(assoServiceFieldType.getSelectValue().getId())) {
+								found = true;
+								break;
+							}
+						}
+						if (!found)
+							throw new OsirisValidationException(assoServiceFieldType.getServiceFieldType().getLabel());
+						assoServiceFieldTypeOld.setSelectValue(assoServiceFieldType.getSelectValue());
+					}
+				}
+			}
+		}
+
+		serviceService.addOrUpdateService(serviceFetched);
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 }

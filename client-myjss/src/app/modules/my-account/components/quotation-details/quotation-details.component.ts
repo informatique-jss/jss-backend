@@ -20,6 +20,7 @@ import { InvoiceLabelResultService } from '../../services/invoice.label.result.s
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { QuotationService } from '../../services/quotation.service';
+import { ServiceService } from '../../services/service.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
 import { getCustomerOrderBillingMailList, initTooltips } from '../orders/orders.component';
 import { getClassForQuotationStatus, getQuotationStatusLabel } from '../quotations/quotations.component';
@@ -63,7 +64,8 @@ export class QuotationDetailsComponent implements OnInit {
     private uploadAttachmentService: UploadAttachmentService,
     private appService: AppService,
     private formBuilder: FormBuilder,
-    private customerOrderService: CustomerOrderService
+    private customerOrderService: CustomerOrderService,
+    private serviceService: ServiceService,
   ) { }
 
   capitalizeName = capitalizeName;
@@ -190,6 +192,9 @@ export class QuotationDetailsComponent implements OnInit {
   }
 
   saveFieldsValue(service: Service) {
-
+    this.serviceService.addOrUpdateServiceFields(service).subscribe(response => {
+      this.appService.displayToast("Vos informations complémentaires ont bien été enrengistrées", false, "Succès", 15000);
+      this.refreshCurrentAssoAffaireOrder();
+    })
   }
 }
