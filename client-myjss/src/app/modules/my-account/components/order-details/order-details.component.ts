@@ -17,6 +17,7 @@ import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { Payment } from '../../model/Payment';
+import { Quotation } from '../../model/Quotation';
 import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AttachmentService } from '../../services/attachment.service';
@@ -26,6 +27,7 @@ import { InvoiceLabelResultService } from '../../services/invoice.label.result.s
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { PaymentService } from '../../services/payment.service';
+import { QuotationService } from '../../services/quotation.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
 import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, getLastMissingAttachmentQueryDateLabel, initTooltips } from '../orders/orders.component';
 
@@ -51,6 +53,7 @@ export class OrderDetailsComponent implements OnInit {
   billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
   serviceProvisionAttachments: Attachment[][] = [];
   currentUser: Responsable | undefined;
+  associatedQuotation: Quotation | undefined;
 
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
@@ -79,7 +82,8 @@ export class OrderDetailsComponent implements OnInit {
     private appService: AppService,
     private customerOrderCommentService: CustomerOrderCommentService,
     private loginService: LoginService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private quotationService: QuotationService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -137,23 +141,26 @@ export class OrderDetailsComponent implements OnInit {
     })
     this.refreshCustomerOrderComments();
     this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
+    this.quotationService.getQuotationForCustomerOrder(this.order.id).subscribe(response => {
+      if (response && response.id)
+        this.associatedQuotation = response;
+    })
   }
 
   getCustomerOrderBillingMailList() {
     if (this.order && this.orderMailComputeResult)
-      return getCustomerOrderBillingMailList(this.order, this.orderMailComputeResult);
+      return getCustomerOrderBillingMailList(this.orderMailComputeResult);
     return null;
   }
 
   getCustomerOrderDigitalMailList() {
     if (this.order && this.digitalMailComputeResult)
-      return getCustomerOrderBillingMailList(this.order, this.digitalMailComputeResult);
+      return getCustomerOrderBillingMailList(this.digitalMailComputeResult);
     return null;
   }
 
   changeAffaire(asso: AssoAffaireOrder) {
     this.selectedAssoAffaireOrder = asso;
-    console.log(this.selectedAssoAffaireOrder);
   }
 
   loadServiceDetails(service: Service, forceLoad: boolean) {
@@ -205,7 +212,7 @@ export class OrderDetailsComponent implements OnInit {
 
   editAddress(event: any) {
     if (this.order)
-      this.appService.openRoute(event, "account/address/edit/" + this.order.id, undefined);
+      this.appService.openRoute(event, "account/order/address/edit/" + this.order.id, undefined);
   }
 
   payCustomerOrder(event: any) {
@@ -239,5 +246,13 @@ export class OrderDetailsComponent implements OnInit {
   editCustomerOrderComment(comment: CustomerOrderComment) {
     this.newCustomerOrderComment = comment;
     this.newCustomerOrderComment.comment = this.newCustomerOrderComment.comment.replace(/<[^>]+>/g, '');
+  }
+
+  openQuotationDetails(event: any, quotation: Quotation) {
+    this.appService.openRoute(event, "account/quotations/details/" + quotation.id, undefined);
+  }
+
+  saveFieldsValue(service: Service) {
+
   }
 }

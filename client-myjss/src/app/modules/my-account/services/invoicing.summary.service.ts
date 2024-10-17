@@ -16,4 +16,8 @@ export class InvoicingSummaryService extends AppRestService<InvoicingSummary> {
   getInvoicingSummaryForCustomerOrder(customerOrderId: number) {
     return this.get(new HttpParams().set("customerOrderId", customerOrderId), "invoice/summary/order");
   }
+
+  getInvoicingSummaryForQuotation(quotationId: number) {
+    return this.get(new HttpParams().set("quotationId", quotationId), "invoice/summary/quotation");
+  }
 }

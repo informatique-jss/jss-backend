@@ -12,6 +12,8 @@ import { OrderDetailsComponent } from '../order-details/order-details.component'
 import { OrdersComponent } from '../orders/orders.component';
 import { OverviewComponent } from '../overview/overview.component';
 import { PayOrderComponent } from '../pay-order/pay-order.component';
+import { PayQuotationComponent } from '../pay-quotation/pay-quotation.component';
+import { QuotationDetailsComponent } from '../quotation-details/quotation-details.component';
 import { QuotationsComponent } from '../quotations/quotations.component';
 import { ScopeComponent } from '../scope/scope.component';
 import { SignInComponent } from '../sign-in/sign-in.component';
@@ -27,9 +29,12 @@ const routes: Routes = [
       { path: 'orders', component: OrdersComponent },
       { path: 'orders/details/:id', component: OrderDetailsComponent },
       { path: 'quotations', component: QuotationsComponent },
+      { path: 'quotations/details/:id', component: QuotationDetailsComponent },
       { path: 'affaire/edit/:id/:idOrder', component: EditAffaireComponent },
-      { path: 'address/edit/:idOrder', component: EditAddressComponent },
+      { path: 'order/address/edit/:idOrder', component: EditAddressComponent },
+      { path: 'quotation/address/edit/:idQuotation', component: EditAddressComponent },
       { path: 'order/pay/:idOrder', component: PayOrderComponent },
+      { path: 'quotation/pay/:idQuotation', component: PayQuotationComponent },
       { path: 'affaires', component: AffairesComponent }
     ]
   },
@@ -60,6 +65,8 @@ const routes: Routes = [
     PayOrderComponent,
     CopyClipboardDirective,
     AffairesComponent,
+    QuotationDetailsComponent,
+    PayQuotationComponent,
   ]
 })
 export class MyAccountModule { }

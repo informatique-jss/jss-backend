@@ -11,6 +11,7 @@ import { AssoAffaireOrderService } from '../../services/asso.affaire.order.servi
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { QuotationService } from '../../services/quotation.service';
+import { getCustomerOrderBillingMailList } from '../orders/orders.component';
 
 declare var bootstrap: any;
 
@@ -54,6 +55,9 @@ export class QuotationsComponent implements OnInit {
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
   ) { }
+
+  getQuotationStatusLabel = getQuotationStatusLabel;
+  getClassForQuotationStatus = getClassForQuotationStatus;
 
   ngOnInit() {
     this.retrieveBookmark();
@@ -122,10 +126,10 @@ export class QuotationsComponent implements OnInit {
         this.quotationsAssoAffaireOrders[quotation.id] = response;
         this.initTooltips();
       })
-      this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(quotation).subscribe(response => {
+      this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(quotation.id).subscribe(response => {
         this.quotationsInvoiceLabelResult[quotation.id] = response;
       })
-      this.mailComputeResultService.getMailComputeResultForBillingForQuotation(quotation).subscribe(response => {
+      this.mailComputeResultService.getMailComputeResultForBillingForQuotation(quotation.id).subscribe(response => {
         this.quotationsMailComputeResult[quotation.id] = response;
       })
     }
@@ -140,47 +144,8 @@ export class QuotationsComponent implements OnInit {
     }, 0);
   }
 
-  getQuotationStatusLabel(quotation: Quotation) {
-    if (quotation.quotationStatus.label) {
-      if (quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER)
-        return "En attente de votre validation";
-      if (quotation.quotationStatus.code == QUOTATION_STATUS_TO_VERIFY)
-        return "En cours de vérification";
-      return quotation.quotationStatus.label;
-    }
-    return "";
-  }
-
-  getClassForQuotationStatus(quotation: Quotation) {
-    if (quotation.quotationStatus.code == QUOTATION_STATUS_OPEN)
-      return "bg-dark text-dark";
-    if (quotation.quotationStatus.code == QUOTATION_STATUS_TO_VERIFY)
-      return "bg-info text-info";
-    if (quotation.quotationStatus.code == QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE)
-      return "bg-info text-info";
-    if (quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER)
-      return "bg-danger text-danger";
-    if (quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER)
-      return "bg-success text-success";
-    if (quotation.quotationStatus.code == QUOTATION_STATUS_REFUSED_BY_CUSTOMER)
-      return "bg-danger text-danger";
-    if (quotation.quotationStatus.code == QUOTATION_STATUS_ABANDONED)
-      return "bg-dark text-dark";
-    if (quotation.quotationStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)
-      return "bg-danger text-danger";
-    return "bg-light text-light";
-  }
-
   getQuotationBillingMailList(quotation: Quotation) {
-    let listMail = [];
-    if (this.quotationsMailComputeResult[quotation.id]) {
-      if (this.quotationsMailComputeResult[quotation.id].recipientsMailCc)
-        for (let recipient of this.quotationsMailComputeResult[quotation.id].recipientsMailTo)
-          listMail.push(recipient.mail);
-      for (let recipient of this.quotationsMailComputeResult[quotation.id].recipientsMailCc)
-        listMail.push(recipient.mail);
-    }
-    return listMail.join(", ");
+    return getCustomerOrderBillingMailList(this.quotationsMailComputeResult[quotation.id]);
   }
 
   openQuotationDetails(event: any, quotation: Quotation) {
@@ -250,3 +215,34 @@ export class QuotationsComponent implements OnInit {
   }
 }
 
+
+export function getQuotationStatusLabel(quotation: Quotation) {
+  if (quotation.quotationStatus.label) {
+    if (quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER)
+      return "En attente de votre validation";
+    if (quotation.quotationStatus.code == QUOTATION_STATUS_TO_VERIFY)
+      return "En cours de vérification";
+    return quotation.quotationStatus.label;
+  }
+  return "";
+}
+
+export function getClassForQuotationStatus(quotation: Quotation) {
+  if (quotation.quotationStatus.code == QUOTATION_STATUS_OPEN)
+    return "bg-dark text-dark";
+  if (quotation.quotationStatus.code == QUOTATION_STATUS_TO_VERIFY)
+    return "bg-info text-info";
+  if (quotation.quotationStatus.code == QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE)
+    return "bg-info text-info";
+  if (quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER)
+    return "bg-danger text-danger";
+  if (quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER)
+    return "bg-success text-success";
+  if (quotation.quotationStatus.code == QUOTATION_STATUS_REFUSED_BY_CUSTOMER)
+    return "bg-danger text-danger";
+  if (quotation.quotationStatus.code == QUOTATION_STATUS_ABANDONED)
+    return "bg-dark text-dark";
+  if (quotation.quotationStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)
+    return "bg-danger text-danger";
+  return "bg-light text-light";
+}

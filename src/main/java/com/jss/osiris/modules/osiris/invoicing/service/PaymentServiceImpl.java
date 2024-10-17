@@ -1386,7 +1386,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
             // If no match by name, attempt by amount
             if (advisedPayments.size() == 0) {
-                BigDecimal totalRound = customerOrderService.getInvoicingSummaryForCustomerOrder(customerOrder)
+                BigDecimal totalRound = customerOrderService.getInvoicingSummaryForIQuotation(customerOrder)
                         .getTotalPrice();
                 for (Payment payment : payments) {
                     BigDecimal paymentRound = payment.getPaymentAmount().multiply(oneHundredValue)

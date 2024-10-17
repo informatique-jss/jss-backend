@@ -1,15 +1,16 @@
-<div class="d-flex align-items-center mb-4" *ngIf="order">
-  <h1 class="h2 mb-0 me-3">Commande {{order.id}}</h1> <span class="badge bg-opacity-10   "
-    [ngClass]="getClassForCustomerOrderStatus(order)">{{getCustomerOrderStatusLabel(order)}}</span>
+<div class="d-flex align-items-center mb-4" *ngIf="quotation">
+  <h1 class="h2 mb-0 me-3">Devis {{quotation.id}}</h1> <span class="badge bg-opacity-10   "
+    [ngClass]="getClassForQuotationStatus(quotation)">{{getQuotationStatusLabel(quotation)}}</span>
 </div>
-<div class="alert alert-info d-flex mb-2" role="alert" *ngIf="associatedQuotation ">
+<div class="alert alert-info d-flex mb-2" role="alert"
+  *ngIf="associatedCustomerOrder && quotation && quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER">
   <i class="ai-circle-info fs-xl"></i>
-  <div class="ps-2">Cette commande est issue du devis validé n°<a style="cursor: pointer; text-decoration: underline;"
-      (click)="openQuotationDetails($event ,associatedQuotation);$event.stopPropagation();">{{associatedQuotation.id}}</a>
+  <div class="ps-2">Ce devis validé a donné lieu à la commande n°<a style="cursor: pointer; text-decoration: underline;"
+      (click)="openOrderDetails($event ,associatedCustomerOrder);$event.stopPropagation();">{{associatedCustomerOrder.id}}</a>
   </div>
 </div>
 <div class="d-flex align-items-center mb-4"
-  *ngIf="order && ordersAssoAffaireOrders && ordersAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
+  *ngIf="quotation && quotationAssoAffaireOrders && quotationAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
   <div class="ms-auto">
     <div class="btn-group dropdown" style="margin-right: 10px;">
       <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
@@ -22,7 +23,7 @@
         "+capitalizeName(selectedAssoAffaireOrder.affaire.city.label)):""}}
       </button>
       <div class="dropdown-menu my-1">
-        <label class=" dropdown-item" *ngFor="let asso of ordersAssoAffaireOrders">
+        <label class=" dropdown-item" *ngFor="let asso of quotationAssoAffaireOrders">
           <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire(asso) ">
             {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
             +"
@@ -34,7 +35,7 @@
     </div>
   </div>
 </div>
-<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="order && selectedAssoAffaireOrder">
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="quotation && selectedAssoAffaireOrder">
   <div class="card-body">
     <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
       <i class="ai-briefcase text-primary lead pe-1 me-2"></i>
@@ -89,7 +90,7 @@
   </div>
 
 </section>
-<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="order && selectedAssoAffaireOrder">
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="quotation && selectedAssoAffaireOrder">
   <div class="card-body">
     <div class="d-flex align-items-center mt-sm-n1 mb-0">
       <i class="ai-layer text-primary lead pe-1 me-2"></i>
@@ -117,31 +118,18 @@
               <div class="fs-sm text-body-secondary">{{service.confrereLabel}}</div>
               <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
             </div>
-            <div class="me-3 me-sm-4"
-              *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
-              <div class="fs-sm text-body-secondary">{{serviceProvisionAttachments[service.id].length}}
-                document{{serviceProvisionAttachments[service.id].length>1?'s':''}}
-                disponible{{serviceProvisionAttachments[service.id].length>1?'s':''}}</div>
-            </div>
             <div class="me-3 me-sm-4">
               <div class="text-body-secondary fs-sm me-3 ">
                 {{service.servicePrice | currency:'EUR' }}
-              </div>
-            </div>
-            <div class="me-3 me-sm-4">
-              <div class="fs-sm fw-medium text-dark">
-                <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
-                  data-bs-toggle="tooltip" data-bs-placement="right" *ngIf="service.hasMissingInformations"
-                  [title]="'Le '+getLastMissingAttachmentQueryDateLabel(service)+' : des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du service'"></i>
               </div>
             </div>
           </div>
         </a>
       </div>
       <div class="accordion-collapse collapse" [id]="'order'+service.id" data-bs-parent="#orders"
-        (show.bs.collapse)="loadServiceDetails(service,false)" [ngClass]="{'show':index==0}">
+        [ngClass]="{'show':index==0}">
         <div class="accordion-body">
-          <div class="accordion-item border-top mb-0" *ngIf="!ordersAssoAffaireOrders[order.id]">
+          <div class="accordion-item border-top mb-0" *ngIf="!quotationAssoAffaireOrders[quotation.id]">
             <ul class="nav nav-tabs p-3" role="tablist" style="margin-bottom: 0;">
               <li class="nav-item ">
                 <a [attr.href]="'#myDocs'+service.id" class="nav-link active " data-bs-toggle="tab" role="tab">
@@ -155,17 +143,10 @@
                   Mes informations complémentaires
                 </a>
               </li>
-              <li class="nav-item"
-                *ngIf="this.serviceProvisionAttachments[service.id] && this.serviceProvisionAttachments[service.id].length>0">
-                <a [attr.href]="'#availableDocs'+service.id" class="nav-link" data-bs-toggle="tab" role="tab">
-                  Documents disponibles <span class="badge bg-success"
-                    style="margin-left: 10px;">{{this.serviceProvisionAttachments[service.id].length}}</span>
-                </a>
-              </li>
             </ul>
             <div class="tab-content ">
               <div class="tab-pane fade show active" [attr.id]="'myDocs'+service.id" role="tabpanel">
-                <div class="alert alert-info d-flex mb-0 mb-2" role="alert">
+                <div class="alert alert-info d-flex mb-0 mb-2" role="alert" *ngIf="canEditQuotation">
                   <i class="ai-circle-info fs-xl"></i>
                   <div class="ps-2">Vous pouvez télécharger ci-dessous les documents nécessaires au traitement du
                     service</div>
@@ -181,7 +162,7 @@
                       <p class="fs-sm  "
                         *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
                         {{assoServiceDocument.formalisteComment}}</p>
-                      <div class="mb-2 mb-md-3 row  ">
+                      <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
                         <div class="col-md-10">
                           <single-upload [entity]="assoServiceDocument" (endOfUpload)="refreshCurrentAssoAffaireOrder()"
                             [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
@@ -221,37 +202,6 @@
                       </div>
                     </div>
                   </ng-container>
-                </div>
-              </div>
-            </div>
-            <div class="tab-content "
-              *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
-              <div class="tab-pane fade" [attr.id]="'availableDocs'+service.id" role="tabpanel">
-                <div class="table-responsive">
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nom</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Date de dépot</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let attachment of serviceProvisionAttachments[service.id]; let index = index">
-                        <th scope="row">{{index+1}}</th>
-                        <td>{{attachment.description}}</td>
-                        <td>{{attachment.attachmentType.label}}</td>
-                        <td>{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                        <td><button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
-                            data-bs-toggle="tooltip" data-bs-placement="right" title="Télécharger"
-                            (click)="downloadAttachment(attachment)">
-                            <i class="ai-download"></i>
-                          </button></td>
-                      </tr>
-                    </tbody>
-                  </table>
                 </div>
               </div>
             </div>
@@ -302,7 +252,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="text-center pt-1 pt-sm-2">
+                <div class="text-center pt-1 pt-sm-2" *ngIf="canEditQuotation">
                   <div class="btn-group   " role="group" aria-label="Outline button group">
                     <button type="button" class="btn btn-primary"
                       (click)="saveFieldsValue(service)">Enregistrer</button>
@@ -324,7 +274,7 @@
         <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-map-pin text-primary lead pe-1 me-2"></i>
           <h2 class="h4 mb-0">Adresses</h2>
-          <a class="btn btn-sm btn-secondary ms-auto" (click)="editAddress($event)">
+          <a class="btn btn-sm btn-secondary ms-auto" (click)="editAddress($event)" *ngIf="canEditQuotation">
             <i class="ai-edit ms-n1 me-2"></i>
             Modifier
           </a>
@@ -333,19 +283,24 @@
           <h3 class="h6 mb-0 me-3">Adresse de facturation</h3>
         </div>
         <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-items-center my-1"
-          *ngIf="orderMailComputeResult">
+          *ngIf="quotationMailComputeResult">
           <div class="d-flex align-items-center me-3">
             <i class="ai-mail me-1"></i>
-            {{getCustomerOrderBillingMailList()}}
+            {{getQuotationBillingMailList()}}
           </div>
         </div>
-        <p class="mb-0" *ngIf="orderInvoiceLabelResult">
-          {{orderInvoiceLabelResult.billingLabel}}<br>{{orderInvoiceLabelResult.billingLabelAddress
-          }}<br>{{orderInvoiceLabelResult.billingLabelPostalCode }}
-          {{orderInvoiceLabelResult.billingLabelCity?orderInvoiceLabelResult.billingLabelCity.label:""}}<span
-            *ngIf="orderInvoiceLabelResult.commandNumber && orderInvoiceLabelResult.commandNumber.length>0"><br>Commande
-            {{orderInvoiceLabelResult.commandNumber }}</span></p>
-        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!orderInvoiceLabelResult">
+        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!quotationMailComputeResult">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+          </p>
+        </div>
+        <p class="mb-0" *ngIf="quotationInvoiceLabelResult">
+          {{quotationInvoiceLabelResult.billingLabel}}<br>{{quotationInvoiceLabelResult.billingLabelAddress
+          }}<br>{{quotationInvoiceLabelResult.billingLabelPostalCode }}
+          {{quotationInvoiceLabelResult.billingLabelCity?quotationInvoiceLabelResult.billingLabelCity.label:""}}<span
+            *ngIf="quotationInvoiceLabelResult.commandNumber && quotationInvoiceLabelResult.commandNumber.length>0"><br>Commande
+            {{quotationInvoiceLabelResult.commandNumber }}</span></p>
+        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!quotationInvoiceLabelResult">
           <p class="card-text placeholder-glow">
             <span class="placeholder placeholder-sm col-7 me-2"></span>
             <span class="placeholder placeholder-sm col-4"></span>
@@ -356,24 +311,19 @@
           <h3 class="h6 mb-0 me-3">Adresse d'envoi des documents</h3>
         </div>
         <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-iteems-center my-1"
-          *ngIf="digitalMailComputeResult">
+          *ngIf="quotationDigitalMailComputeResult">
           <div class="d-flex align-items-center me-3">
             <i class="ai-mail me-1"></i>
-            {{getCustomerOrderDigitalMailList()}}
+            {{getQuotationDigitalMailList()}}
           </div>
         </div>
-        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!orderPhysicalMailComputeResult">
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-          </p>
-        </div>
-        <p class="mb-0" *ngIf="orderPhysicalMailComputeResult">
-          {{orderPhysicalMailComputeResult.billingLabel}}<br>{{orderPhysicalMailComputeResult.billingLabelAddress
-          }}<br>{{orderPhysicalMailComputeResult.billingLabelPostalCode }}
-          {{orderPhysicalMailComputeResult.billingLabelCity?orderPhysicalMailComputeResult.billingLabelCity.label:""}}<span
-            *ngIf="orderPhysicalMailComputeResult.commandNumber && orderPhysicalMailComputeResult.commandNumber.length>0"><br>Commande
-            {{orderPhysicalMailComputeResult.commandNumber }}</span></p>
-        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!orderPhysicalMailComputeResult">
+        <p class="mb-0" *ngIf="quotationPhysicalMailComputeResult">
+          {{quotationPhysicalMailComputeResult.billingLabel}}<br>{{quotationPhysicalMailComputeResult.billingLabelAddress
+          }}<br>{{quotationPhysicalMailComputeResult.billingLabelPostalCode }}
+          {{quotationPhysicalMailComputeResult.billingLabelCity?quotationPhysicalMailComputeResult.billingLabelCity.label:""}}<span
+            *ngIf="quotationPhysicalMailComputeResult.commandNumber && quotationPhysicalMailComputeResult.commandNumber.length>0"><br>Commande
+            {{quotationPhysicalMailComputeResult.commandNumber }}</span></p>
+        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!quotationPhysicalMailComputeResult">
           <p class="card-text placeholder-glow">
             <span class="placeholder placeholder-sm col-7 me-2"></span>
             <span class="placeholder placeholder-sm col-4"></span>
@@ -392,54 +342,13 @@
         <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-wallet text-primary lead pe-1 me-2"></i>
           <h2 class="h4 mb-0">Facturation</h2>
-          <a class="btn btn-sm btn-secondary ms-auto" *ngIf="order && invoiceSummary && displayPayButton"
-            (click)="payCustomerOrder($event)">
-            <i class="ai-cart ms-n1 me-2"></i>
-            <span *ngIf="order.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_BILLED">Payer le solde</span>
-            <span *ngIf="order.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED">Payer un acompte</span>
+          <a class="btn btn-sm btn-secondary ms-auto" *ngIf="quotation && invoiceSummary && displayPayButton"
+            (click)="payQuotation($event)">
+            <i class="ai-cart ms-n1 me-2"></i>Payer un acompte
           </a>
         </div>
-        <div class="d-flex align-items-center pb-1 mb-2" *ngIf="orderPayments && orderPayments.length>0">
-          <h3 class="h6 mb-0 me-3">Paiements reçus</h3>
-        </div>
-        <ng-container *ngIf="orderPayments && orderPayments.length>0">
-          <div class="d-flex align-items-center mb-1 mb-sm-3" *ngFor="let payment of orderPayments">
-            <svg width="52" height="42" viewBox="0 0 52 42" fill="none" xmlns="http://www.w3.org/2000/svg"
-              *ngIf="payment.paymentType.id == paymentTypeCb.id" data-bs-toggle="tooltip" data-bs-placement="right"
-              title="Paiement par carte bleue">
-              <path
-                d="M22.6402 28.2865H18.5199L21.095 12.7244H25.2157L22.6402 28.2865ZM15.0536 12.7244L11.1255 23.4281L10.6607 21.1232L10.6611 21.124L9.27467 14.1256C9.27467 14.1256 9.10703 12.7244 7.32014 12.7244H0.8262L0.75 12.9879C0.75 12.9879 2.73586 13.3942 5.05996 14.7666L8.63967 28.2869H12.9327L19.488 12.7244H15.0536ZM47.4619 28.2865H51.2453L47.9466 12.7239H44.6345C43.105 12.7239 42.7324 13.8837 42.7324 13.8837L36.5873 28.2865H40.8825L41.7414 25.9749H46.9793L47.4619 28.2865ZM42.928 22.7817L45.093 16.9579L46.3109 22.7817H42.928ZM36.9095 16.4667L37.4975 13.1248C37.4975 13.1248 35.6831 12.4463 33.7916 12.4463C31.7469 12.4463 26.8913 13.3251 26.8913 17.5982C26.8913 21.6186 32.5902 21.6685 32.5902 23.7803C32.5902 25.8921 27.4785 25.5137 25.7915 24.182L25.1789 27.6763C25.1789 27.6763 27.0187 28.555 29.8296 28.555C32.6414 28.555 36.8832 27.1234 36.8832 23.2271C36.8832 19.1808 31.1331 18.8041 31.1331 17.0449C31.1335 15.2853 35.1463 15.5113 36.9095 16.4667Z"
-                fill="#2566AF" />
-              <path
-                d="M10.6611 22.1235L9.2747 15.1251C9.2747 15.1251 9.10705 13.7239 7.32016 13.7239H0.8262L0.75 13.9874C0.75 13.9874 3.87125 14.6235 6.86507 17.0066C9.72766 19.2845 10.6611 22.1235 10.6611 22.1235Z"
-                fill="#E6A540" />
-            </svg>
-            <ng-container *ngIf="!payment.refund">
-              <i *ngIf="payment.paymentType.id != paymentTypeCb.id" class="ai-edit ms-n1 me-2" data-bs-toggle="tooltip"
-                data-bs-placement="right" [title]="'Paiement par '+payment.paymentType.label.toLowerCase()"></i>
-              <div class="ps-3 fs-sm">
-                <div class="text-dark">{{payment.paymentAmount | currency:'EUR' }} - <span data-bs-toggle="tooltip"
-                    data-bs-placement="right" [title]="payment.label">{{payment.label.substring(0,25)}}</span>
-                </div>
-                <div class="text-body-secondary">le {{payment.paymentDate| date:'dd/MM/yyyy'}}</div>
-              </div>
-            </ng-container>
-            <ng-container *ngIf="payment.refund">
-              <i *ngIf="payment.paymentType.id != paymentTypeCb.id" class="ai-edit ms-n1 me-2" data-bs-toggle="tooltip"
-                data-bs-placement="right" title="Remboursement par virement bancaire"></i>
-              <div class="ps-3 fs-sm">
-                <div class="text-dark">{{payment.paymentAmount | currency:'EUR' }} - Remboursement <span
-                    data-bs-toggle="tooltip" data-bs-placement="right"
-                    [title]="payment.label">{{payment.label.substring(0,15)}}</span>
-                </div>
-                <div class="text-body-secondary">Effectué le {{payment.paymentDate| date:'dd/MM/yyyy'}}</div>
-              </div>
-            </ng-container>
-          </div>
-        </ng-container>
         <div class="d-flex align-items-center pt-2 pb-1 mb-2">
-          <h3 class="h6 mb-0 me-3">Montant <span
-              *ngIf="order && order.customerOrderStatus.code !=CUSTOMER_ORDER_STATUS_BILLED">prévisionnel</span></h3>
+          <h3 class="h6 mb-0 me-3">Montant prévisionnel</h3>
         </div>
         <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!invoiceSummary">
           <p class="card-text placeholder-glow">
@@ -473,89 +382,7 @@
             </span>
           </div>
         </div>
-        <div class="text-center pt-1 pt-sm-2">
-          <a class="btn btn-sm btn-secondary ms-auto"
-            *ngIf="order && order.customerOrderStatus.code ==CUSTOMER_ORDER_STATUS_BILLED" (click)="downloadInvoice()">
-            <i class="ai-cart ms-n1 me-2"></i>
-            <span>Télécharger la facture</span>
-          </a>
-        </div>
       </div>
     </div>
   </section>
 </div>
-<section class="card border-0  " *ngIf="order">
-  <div class="card-body">
-    <div class="d-flex align-items-center mt-sm-n1 mb-0">
-      <i class="ai-message text-primary lead pe-1 me-2"></i>
-      <h2 class="h4 mb-0">Echangez avec notre équipe</h2>
-    </div>
-    <div class="simplebar-mask">
-      <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-        <div class="simplebar-content-wrapper" tabindex="0" role="region" style="height: auto;  ">
-          <div class="simplebar-content" style="padding: 24px 38px 0px;">
-            <!-- Message -->
-            <div class="ms-auto mb-3" style="max-width: 392px;"
-              *ngIf="!customerOrderComments || customerOrderComments.length==0">
-              <div class="d-flex align-items-end mb-2">
-                <div class="message-box-end bg-primary text-white"><span class="break-line">Posez votre question
-                    ci-dessous !</span></div>
-                <div class="flex-shrink-0 ps-2 ms-1">
-                  <avatar class="avatar-select" [user]="jssEmployee" [size]="40" data-bs-toggle="tooltip"
-                    data-bs-placement="right" [title]="jssEmployee.firstname + ' '+jssEmployee.lastname  ">
-                  </avatar>
-                </div>
-              </div>
-              <div class="fs-xs text-body-secondary"> {{currentDate|date:'dd/MM/yyyy
-                HH:mm'}}
-              </div>
-            </div>
-            <ng-container *ngFor="let comment of customerOrderComments">
-              <div class="mb-3" style="max-width: 392px;" *ngIf="comment.currentCustomer">
-                <div class="d-flex align-items-end mb-2">
-                  <div class="flex-shrink-0 pe-2 me-1">
-                    <avatar class="avatar-select" [user]="comment.currentCustomer" [size]="40"></avatar>
-                  </div>
-                  <div class="message-box-start text-dark"><span class="break-line"
-                      [innerHTML]="comment.comment | trustHtml"></span></div>
-                </div>
-                <div class="fs-xs text-body-secondary text-end"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}} <i
-                    class="ai-edit " style="cursor: pointer;"
-                    *ngIf="comment.currentCustomer && currentUser &&  comment.currentCustomer.id == currentUser.id"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Modifier le commentaire"
-                    (click)="editCustomerOrderComment(comment)"></i>
-                </div>
-              </div>
-
-              <!-- Message -->
-              <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comment.employee">
-                <div class="d-flex align-items-end mb-2">
-                  <div class="message-box-end bg-primary text-white"><span class="break-line"
-                      [innerHTML]="comment.comment | trustHtml"></span></div>
-                  <div class="flex-shrink-0 ps-2 ms-1">
-                    <avatar class="avatar-select" [user]="comment.employee" [size]="40" data-bs-toggle="tooltip"
-                      data-bs-placement="right"
-                      [title]="comment.employee.firstname + ' '+comment.employee.lastname +' - '+comment.employee.title ">
-                    </avatar>
-                  </div>
-                </div>
-                <div class="fs-xs text-body-secondary"> {{comment.createdDateTime|date:'dd/MM/yyyy
-                  HH:mm'}}
-                </div>
-              </div>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="card-footer w-100 border-0 mx-0 px-4">
-    <div class="d-flex align-items-end border rounded-3 pb-3 pe-3 mx-sm-3">
-      <textarea [(ngModel)]="newCustomerOrderComment.comment" class="form-control border-0" rows="3"
-        placeholder="Ecrivez un message" style="resize: none;"></textarea>
-      <div class="nav flex-nowrap align-items-center">
-        <button class="btn btn-sm btn-secondary ms-3" type="button" (click)="addCustomerOrderComment()">Envoyer</button>
-      </div>
-    </div>
-  </div>
-</section>

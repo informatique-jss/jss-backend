@@ -128,7 +128,7 @@ public interface CustomerOrderService {
 
         public List<Payment> getApplicablePaymentsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
-        public InvoicingSummary getInvoicingSummaryForCustomerOrder(IQuotation customerOrder) throws OsirisException;
+        public InvoicingSummary getInvoicingSummaryForIQuotation(IQuotation customerOrder) throws OsirisException;
 
         public List<CustomerOrderComment> getCustomerOrderCommentsForCustomer(CustomerOrder customerOrder);
 

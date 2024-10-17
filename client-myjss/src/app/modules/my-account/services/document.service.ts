@@ -16,7 +16,15 @@ export class DocumentService extends AppRestService<Document> {
     return this.getList(new HttpParams().set("idCustomerOrder", idCustomerOrder), "order/documents");
   }
 
+  getDocumentForQuotation(idQuotation: number) {
+    return this.getList(new HttpParams().set("idQuotation", idQuotation), "quotation/documents");
+  }
+
   addOrUpdateDocumentsForCustomerOrder(documents: Document[]) {
     return this.postItem(new HttpParams(), "order/documents", documents);
+  }
+
+  addOrUpdateDocumentsForQuotation(documents: Document[]) {
+    return this.postItem(new HttpParams(), "quotation/documents", documents);
   }
 }

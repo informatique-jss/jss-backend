@@ -193,6 +193,19 @@ public class MyJssInvoicingController {
 			return new ResponseEntity<InvoicingSummary>(new InvoicingSummary(), HttpStatus.OK);
 
 		return new ResponseEntity<InvoicingSummary>(
-				customerOrderService.getInvoicingSummaryForCustomerOrder(customerOrder), HttpStatus.OK);
+				customerOrderService.getInvoicingSummaryForIQuotation(customerOrder), HttpStatus.OK);
+	}
+
+	@JsonView(JacksonViews.MyJssView.class)
+	@GetMapping(inputEntryPoint + "/invoice/summary/quotation")
+	public ResponseEntity<InvoicingSummary> getInvoicingSummaryForQuotation(
+			@RequestParam Integer quotationId) throws OsirisException {
+		Quotation quotation = quotationService.getQuotation(quotationId);
+
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<InvoicingSummary>(new InvoicingSummary(), HttpStatus.OK);
+
+		return new ResponseEntity<InvoicingSummary>(
+				customerOrderService.getInvoicingSummaryForIQuotation(quotation), HttpStatus.OK);
 	}
 }

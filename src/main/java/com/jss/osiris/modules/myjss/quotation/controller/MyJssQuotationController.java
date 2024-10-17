@@ -46,6 +46,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
@@ -201,6 +202,18 @@ public class MyJssQuotationController {
 			return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
 
 		return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/quotation")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Quotation> getQuotation(@RequestParam Integer quotationId)
+			throws OsirisClientMessageException {
+
+		Quotation quotation = quotationService.getQuotation(quotationId);
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Quotation>(new Quotation(), HttpStatus.OK);
+
+		return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/service/provision/attachments")
@@ -429,6 +442,15 @@ public class MyJssQuotationController {
 							.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()))
 				canUpload = false;
 
+			if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null) {
+				String quotationStatusCode = assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()
+						.getQuotationStatus().getCode();
+				if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
+						|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
+						|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+					canUpload = false;
+			}
+
 			if (assoServiceDocument.getService().getAssoAffaireOrder()
 					.getCustomerOrder() != null
 					&& !myJssQuotationValidationHelper.canSeeQuotation(
@@ -543,6 +565,73 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/quotation/documents")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Document>> getDocumentForQuotation(@RequestParam Integer idQuotation)
+			throws OsirisValidationException {
+		if (idQuotation == null)
+			throw new OsirisValidationException("id");
+
+		Quotation quotation = quotationService.getQuotation(idQuotation);
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<List<Document>>(new ArrayList<Document>(), HttpStatus.OK);
+
+		String quotationStatusCode = quotation.getQuotationStatus().getCode();
+		if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
+				|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
+				|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+			return new ResponseEntity<List<Document>>(new ArrayList<Document>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Document>>(quotation.getDocuments(), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/quotation/documents")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Boolean> addOrUpdateDocumentsForQuotation(@RequestBody List<Document> documents)
+			throws OsirisException {
+		if (documents == null)
+			throw new OsirisValidationException("documents");
+
+		Integer idQuotation = null;
+
+		for (Document document : documents) {
+			Document currentDocument = documentService.getDocument(document.getId());
+
+			if (currentDocument == null || currentDocument.getQuotation() == null
+					|| idQuotation != null && !idQuotation.equals(currentDocument.getQuotation().getId()))
+				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+			idQuotation = currentDocument.getQuotation().getId();
+		}
+
+		Quotation quotation = quotationService.getQuotation(idQuotation);
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		for (Document document : documents) {
+			Document currentDocument = documentService.getDocument(document.getId());
+			if (currentDocument.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
+					|| currentDocument.getDocumentType().getId()
+							.equals(constantService.getDocumentTypeDigital().getId())
+					|| currentDocument.getDocumentType().getId()
+							.equals(constantService.getDocumentTypePaper().getId())) {
+				currentDocument.setIsRecipientClient(document.getIsRecipientClient());
+				currentDocument.setIsRecipientAffaire(document.getIsRecipientAffaire());
+				currentDocument.setMailsAffaire(document.getMailsAffaire());
+				currentDocument.setMailsClient(document.getMailsClient());
+				currentDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
+				currentDocument.setAddToClientMailList(document.getAddToClientMailList());
+				currentDocument.setBillingLabelType(document.getBillingLabelType());
+				currentDocument.setIsCommandNumberMandatory(document.getIsCommandNumberMandatory());
+				currentDocument.setCommandNumber(document.getCommandNumber());
+				currentDocument.setExternalReference(document.getExternalReference());
+				documentService.addOrUpdateDocument(currentDocument);
+			}
+		}
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/customer-order-comments/customer")
 	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<List<CustomerOrderComment>> getCustomerOrderCommentsForCustomer(
@@ -611,5 +700,35 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<List<Affaire>>(affaireService.getAffairesForCurrentUser(page, sortBy, searchText),
 				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/quotation/order")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<CustomerOrder> getCustomerOrderForQuotation(@RequestParam Integer idQuotation)
+			throws OsirisValidationException {
+		if (idQuotation == null)
+			throw new OsirisValidationException("id");
+
+		Quotation quotation = quotationService.getQuotation(idQuotation);
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation)
+				|| quotation.getCustomerOrders() == null || quotation.getCustomerOrders().size() == 0)
+			return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
+
+		return new ResponseEntity<CustomerOrder>(quotation.getCustomerOrders().get(0), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/order/quotation")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Quotation> getQuotationForCustomerOrder(@RequestParam Integer idCustomerOrder)
+			throws OsirisValidationException {
+		if (idCustomerOrder == null)
+			throw new OsirisValidationException("id");
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder)
+				|| customerOrder.getQuotations() == null || customerOrder.getQuotations().size() == 0)
+			return new ResponseEntity<Quotation>(new Quotation(), HttpStatus.OK);
+
+		return new ResponseEntity<Quotation>(customerOrder.getQuotations().get(0), HttpStatus.OK);
 	}
 }

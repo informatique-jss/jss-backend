@@ -1114,7 +1114,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder = getCustomerOrder(customerOrder.getId());
 
         if (customerOrder != null) {
-            BigDecimal total = getInvoicingSummaryForCustomerOrder(customerOrder).getTotalPrice();
+            BigDecimal total = getInvoicingSummaryForIQuotation(customerOrder).getTotalPrice();
             if (customerOrder.getPayments() != null)
                 for (Payment payment : customerOrder.getPayments())
                     if (!payment.getIsCancelled())
@@ -1537,14 +1537,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public InvoicingSummary getInvoicingSummaryForCustomerOrder(IQuotation customerOrder) throws OsirisException {
-        customerOrder = getCustomerOrder(customerOrder.getId());
+    public InvoicingSummary getInvoicingSummaryForIQuotation(IQuotation customerOrder) throws OsirisException {
         InvoicingSummary invoicingSummary = new InvoicingSummary();
         List<InvoiceItem> invoiceItemsToConsider = new ArrayList<InvoiceItem>();
 
         if (customerOrder instanceof CustomerOrder
                 && ((CustomerOrder) customerOrder).getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
                 && ((CustomerOrder) customerOrder).getInvoices() != null) {
+            customerOrder = getCustomerOrder(customerOrder.getId());
             for (Invoice invoice : ((CustomerOrder) customerOrder).getInvoices())
                 if (invoice.getResponsable() != null
                         && (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
@@ -1554,6 +1554,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     invoicingSummary.setBillingLabelType(invoice.getBillingLabelType());
                 }
         } else {
+            customerOrder = quotationService.getQuotation(customerOrder.getId());
             if (customerOrder != null) {
                 if (customerOrder.getAssoAffaireOrders() != null)
                     for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())

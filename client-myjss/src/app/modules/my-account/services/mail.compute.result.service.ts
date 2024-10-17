@@ -18,8 +18,8 @@ export class MailComputeResultService extends AppRestService<MailComputeResult> 
     return this.get(new HttpParams().set("customerOrderId", orderId), "mail/billing/compute/order");
   }
 
-  getMailComputeResultForBillingForQuotation(quotation: Quotation) {
-    return this.get(new HttpParams().set("quotationId", quotation.id), "mail/billing/compute/quotation");
+  getMailComputeResultForBillingForQuotation(quotationId: number) {
+    return this.get(new HttpParams().set("quotationId", quotationId), "mail/billing/compute/quotation");
   }
 
   getMailComputeResultForDigitalForCustomerOrder(order: CustomerOrder) {

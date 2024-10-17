@@ -1,0 +1,10 @@
+.error {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  margin-left: 15px;
+}
+
+.color-red {
+  color: rgb(237, 80, 80);
+}

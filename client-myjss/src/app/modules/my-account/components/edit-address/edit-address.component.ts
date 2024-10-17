@@ -16,6 +16,7 @@ import { DocumentService } from '../../services/document.service';
 export class EditAddressComponent implements OnInit {
 
   idOrder: number | undefined;
+  idQuotation: number | undefined;
   documents: Document[] | undefined;
   documentForm = this.formBuilder.group({});
 
@@ -43,8 +44,26 @@ export class EditAddressComponent implements OnInit {
 
   ngOnInit() {
     this.idOrder = this.activatedRoute.snapshot.params['idOrder'];
+    this.idQuotation = this.activatedRoute.snapshot.params['idQuotation'];
     if (this.idOrder)
       this.documentService.getDocumentForCustomerOrder(this.idOrder).subscribe(response => {
+        this.documents = response.sort((a: Document, b: Document) => b.documentType.code.localeCompare(a.documentType.code));
+
+        if (this.documents)
+          for (let document of this.documents)
+            if (document.documentType.id == this.documentTypeBilling.id && document.billingLabelType) {
+              if (document.billingLabelType.id == this.billingLabelTypeAffaire.id)
+                document.billingLabelType = this.billingLabelTypeAffaire;
+              if (document.billingLabelType.id == this.billingLabelTypeCustomer.id)
+                document.billingLabelType = this.billingLabelTypeCustomer;
+              if (document.billingLabelType.id == this.billingLabelTypeOther.id)
+                document.billingLabelType = this.billingLabelTypeOther;
+
+              this.lockBillingLabel = document.billingLabelType.id == this.billingLabelTypeOther.id;
+            }
+      })
+    if (this.idQuotation)
+      this.documentService.getDocumentForQuotation(this.idQuotation).subscribe(response => {
         this.documents = response.sort((a: Document, b: Document) => b.documentType.code.localeCompare(a.documentType.code));
 
         if (this.documents)
@@ -63,14 +82,24 @@ export class EditAddressComponent implements OnInit {
   }
 
   saveDocuments() {
-    if (this.documents)
-      this.documentService.addOrUpdateDocumentsForCustomerOrder(this.documents).subscribe(response => {
-        this.appService.openRoute(null, "account/orders/details/" + this.activatedRoute.snapshot.params['idOrder'], undefined);
-      })
+    if (this.documents) {
+      if (this.idOrder)
+        this.documentService.addOrUpdateDocumentsForCustomerOrder(this.documents).subscribe(response => {
+          this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
+        })
+
+      if (this.idQuotation)
+        this.documentService.addOrUpdateDocumentsForQuotation(this.documents).subscribe(response => {
+          this.appService.openRoute(null, "account/quotations/details/" + this.idQuotation, undefined);
+        })
+    }
   }
 
   cancelDocuments() {
-    this.appService.openRoute(null, "account/orders/details/" + this.activatedRoute.snapshot.params['idOrder'], undefined);
+    if (this.idOrder)
+      this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
+    if (this.idQuotation)
+      this.appService.openRoute(null, "account/quotations/details/" + this.idQuotation, undefined);
   }
 
   deleteMail(mail: Mail, document: Document, isAffaire: boolean) {

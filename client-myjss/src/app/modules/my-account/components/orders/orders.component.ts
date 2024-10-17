@@ -189,7 +189,7 @@ export class OrdersComponent implements OnInit {
   getClassForCustomerOrderStatus = getClassForCustomerOrderStatus;
   getLastMissingAttachmentQueryDateLabel = getLastMissingAttachmentQueryDateLabel;
   getCustomerOrderBillingMailList(order: CustomerOrder) {
-    return getCustomerOrderBillingMailList(order, this.ordersMailComputeResult[order.id]);
+    return getCustomerOrderBillingMailList(this.ordersMailComputeResult[order.id]);
   }
 }
 
@@ -230,7 +230,7 @@ export function initTooltips() {
   }, 0);
 }
 
-export function getCustomerOrderBillingMailList(order: CustomerOrder, mailComputeResult: MailComputeResult) {
+export function getCustomerOrderBillingMailList(mailComputeResult: MailComputeResult) {
   let listMail = [];
   if (mailComputeResult) {
     if (mailComputeResult.recipientsMailCc)

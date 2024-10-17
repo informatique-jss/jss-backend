@@ -433,7 +433,7 @@ public class MailHelper {
         // Compute deposit amount
         ctx.setVariable("depositAmount",
                 quotation != null
-                        ? customerOrderService.getInvoicingSummaryForCustomerOrder(quotation).getTotalPrice()
+                        ? customerOrderService.getInvoicingSummaryForIQuotation(quotation).getTotalPrice()
                                 .multiply(oneHundredValue)
                                 .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue)
                         : "");

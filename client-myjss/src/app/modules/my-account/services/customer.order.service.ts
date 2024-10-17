@@ -15,8 +15,8 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.postList(new HttpParams().set("page", page).set("sortBy", sorter), "order/search/current", customerOrderStatus);
   }
 
-  getCustomerOrder(idCusomterOrder: number) {
-    return this.get(new HttpParams().set("customerOrderId", idCusomterOrder), 'order');
+  getCustomerOrder(customerOrderId: number) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrderId), 'order');
   }
 
   getCustomerOrdersForAffaireAndCurrentUser(idAffaire: number) {
@@ -25,5 +25,9 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
 
   downloadInvoice(order: CustomerOrder) {
     this.downloadGet(new HttpParams().set("customerOrderId", order.id + ""), "attachment/invoice/download");
+  }
+
+  getCustomerOrderForQuotation(idQuotation: number) {
+    return this.get(new HttpParams().set("idQuotation", idQuotation), 'quotation/order');
   }
 }

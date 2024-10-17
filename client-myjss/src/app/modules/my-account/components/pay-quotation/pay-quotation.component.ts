@@ -14,16 +14,16 @@ import { MyJssImageService } from '../../services/my.jss.image.service';
 import { initTooltips } from '../orders/orders.component';
 
 @Component({
-  selector: 'app-pay-order',
-  templateUrl: './pay-order.component.html',
-  styleUrls: ['./pay-order.component.css']
+  selector: 'app-pay-quotation',
+  templateUrl: './pay-quotation.component.html',
+  styleUrls: ['./pay-quotation.component.css']
 })
-export class PayOrderComponent implements OnInit {
-  idOrder: number | undefined;
+export class PayQuotationComponent implements OnInit {
+  idQuotation: number | undefined;
   invoiceSummary: InvoicingSummary | undefined;
   qrCodeRecourse: SafeResourceUrl | undefined;
   qrCodeImage: MyJssImage | undefined;
-  orderMailComputeResult: MailComputeResult | undefined;
+  quotationMailComputeResult: MailComputeResult | undefined;
   defaultMail: string = "";
   JSS_IBAN = JSS_IBAN;
   JSS_BIC = JSS_BIC;
@@ -39,15 +39,15 @@ export class PayOrderComponent implements OnInit {
   payOrderForm = this.formBuilder.group({});
 
   ngOnInit() {
-    this.idOrder = this.activatedRoute.snapshot.params['idOrder'];
-    if (this.idOrder) {
-      this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(this.idOrder).subscribe(response => {
-        this.orderMailComputeResult = response;
-        if (this.orderMailComputeResult && this.orderMailComputeResult.recipientsMailTo && this.orderMailComputeResult.recipientsMailTo.length > 0)
-          this.defaultMail = this.orderMailComputeResult.recipientsMailTo[0].mail;
+    this.idQuotation = this.activatedRoute.snapshot.params['idQuotation'];
+    if (this.idQuotation) {
+      this.mailComputeResultService.getMailComputeResultForBillingForQuotation(this.idQuotation).subscribe(response => {
+        this.quotationMailComputeResult = response;
+        if (this.quotationMailComputeResult && this.quotationMailComputeResult.recipientsMailTo && this.quotationMailComputeResult.recipientsMailTo.length > 0)
+          this.defaultMail = this.quotationMailComputeResult.recipientsMailTo[0].mail;
         this.refreshQrCode();
       })
-      this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.idOrder).subscribe(response => {
+      this.invoicingSummaryService.getInvoicingSummaryForQuotation(this.idQuotation).subscribe(response => {
         this.invoiceSummary = response;
         initTooltips();
       })
@@ -55,12 +55,12 @@ export class PayOrderComponent implements OnInit {
   }
 
   cancelPay() {
-    this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
+    this.appService.openRoute(null, "account/quotations/details/" + this.idQuotation, undefined);
   }
 
   refreshQrCode() {
-    if (this.defaultMail && this.defaultMail.length > 0 && validateEmail(this.defaultMail) && this.idOrder)
-      this.myJssImageService.downloadQrCode(this.idOrder, this.defaultMail).subscribe(response => {
+    if (this.defaultMail && this.defaultMail.length > 0 && validateEmail(this.defaultMail) && this.idQuotation)
+      this.myJssImageService.downloadQrCode(this.idQuotation, this.defaultMail).subscribe(response => {
         this.qrCodeImage = response;
         this.qrCodeRecourse = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.qrCodeImage.data);
       })
