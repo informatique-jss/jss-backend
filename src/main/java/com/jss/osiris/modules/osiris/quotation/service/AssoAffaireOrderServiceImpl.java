@@ -794,20 +794,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 break;
             }
 
-            AssoServiceDocument assoServiceDocumentToRemove = null;
             if (asAnnouncement && service.getAssoServiceDocuments() != null) {
                 for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
                     if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
                             && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
                                     .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
-                        assoServiceDocumentToRemove = assoServiceDocument;
-                        break;
+                        assoServiceDocument.setIsMandatory(false);
                     }
                 }
             }
-
-            if (assoServiceDocumentToRemove != null)
-                service.getAssoServiceDocuments().remove(assoServiceDocumentToRemove);
         }
     }
 
