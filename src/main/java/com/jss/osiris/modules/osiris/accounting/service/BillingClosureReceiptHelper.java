@@ -28,8 +28,6 @@ import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.osiris.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
-import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearch;
-import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
@@ -41,8 +39,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
-import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
-import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
@@ -123,7 +119,7 @@ public class BillingClosureReceiptHelper {
 
             if (downloadFile) {
                 List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tier, responsable,
-                        isOrderingByEventDate);
+                        isOrderingByEventDate, false, false);
 
                 return generatePdfDelegate.getBillingClosureReceiptFile(tier, responsable, values);
             }
@@ -136,7 +132,7 @@ public class BillingClosureReceiptHelper {
                                     .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
 
                 List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tier, responsable,
-                        isOrderingByEventDate);
+                        isOrderingByEventDate, false, false);
                 if (values.size() > 0) {
                     try {
                         sendBillingClosureReceiptFile(
@@ -158,7 +154,7 @@ public class BillingClosureReceiptHelper {
                     for (Responsable tiersResponsable : tier.getResponsables()) {
 
                         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(null,
-                                tiersResponsable, isOrderingByEventDate);
+                                tiersResponsable, isOrderingByEventDate, false, false);
                         if (values.size() > 0) {
                             try {
                                 sendBillingClosureReceiptFile(
@@ -178,64 +174,38 @@ public class BillingClosureReceiptHelper {
         return null;
     }
 
-    private List<BillingClosureReceiptValue> generateBillingClosureValuesForITiers(Tiers tiers, Responsable responsable,
-            boolean isOrderingByEventDate) throws OsirisException, OsirisClientMessageException {
+    public List<BillingClosureReceiptValue> generateBillingClosureValuesForITiers(Tiers tiers, Responsable responsable,
+            boolean isOrderingByEventDate, boolean hideAffaires, boolean hideServices)
+            throws OsirisException, OsirisClientMessageException {
 
         // Find all elements
         ArrayList<BillingClosureReceiptValue> values = new ArrayList<BillingClosureReceiptValue>();
 
         // Find customer orders
-        OrderingSearch search = new OrderingSearch();
-        ArrayList<Tiers> tiersList = new ArrayList<Tiers>();
+        ArrayList<Responsable> responsableList = new ArrayList<Responsable>();
 
-        tiersList = new ArrayList<Tiers>();
         boolean hadSomeValues = false;
-        if (tiers != null) {
-            tiersList.add(tiers);
+        if (tiers != null && tiers.getResponsables() != null) {
             values.add(new BillingClosureReceiptValue(
                     tiers.getDenomination() != null ? tiers.getDenomination()
                             : (tiers.getFirstname() + " " + tiers.getLastname())));
+            for (Responsable responsableOfTiers : tiers.getResponsables())
+                responsableList.add(responsableOfTiers);
         }
         if (responsable != null) {
-            Tiers fakeTiers = new Tiers();
-            fakeTiers.setId(responsable.getId());
-            tiersList.add(fakeTiers);
+            responsableList.add(responsable);
             values.add(new BillingClosureReceiptValue((responsable.getFirstname() + " " + responsable.getLastname())));
         }
 
-        search.setCustomerOrders(tiersList);
-
-        search.setCustomerOrderStatus(customerOrderStatusService.getCustomerOrderStatus().stream()
-                .filter(status -> !status.getCode().equals(CustomerOrderStatus.BILLED) &&
-                        !status.getCode().equals(CustomerOrderStatus.ABANDONED))
-                .collect(Collectors.toList()));
-
-        List<OrderingSearchResult> customerOrdersList = customerOrderService.searchOrders(search);
-        ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
-
-        if (customerOrdersList != null && customerOrdersList.size() > 0) {
-            for (OrderingSearchResult customerOrder : customerOrdersList) {
-                if (customerOrder.getDepositTotalAmount() != null && customerOrder.getDepositTotalAmount() > 0) {
-                    CustomerOrder completeCustomerOrder = customerOrderService
-                            .getCustomerOrder(customerOrder.getCustomerOrderId());
-                    customerOrders.add(completeCustomerOrder);
-                }
-            }
-        }
+        List<CustomerOrder> customerOrders = customerOrderService
+                .searchOrders(customerOrderStatusService.getCustomerOrderStatus().stream()
+                        .filter(status -> !status.getCode().equals(CustomerOrderStatus.BILLED) &&
+                                !status.getCode().equals(CustomerOrderStatus.ABANDONED))
+                        .collect(Collectors.toList()), null);
 
         // Find invoices
-        InvoiceSearch invoiceSearch = new InvoiceSearch();
-        invoiceSearch.setCustomerOrders(tiersList);
-        invoiceSearch.setInvoiceStatus(Arrays.asList(constantService.getInvoiceStatusSend()));
-
-        List<InvoiceSearchResult> invoiceList = invoiceService.searchInvoices(invoiceSearch);
-        ArrayList<Invoice> invoices = new ArrayList<Invoice>();
-        if (invoiceList != null && invoiceList.size() > 0) {
-            for (InvoiceSearchResult invoice : invoiceList) {
-                Invoice completeInvoice = invoiceService.getInvoice(invoice.getInvoiceId());
-                invoices.add(completeInvoice);
-            }
-        }
+        List<Invoice> invoices = invoiceService.searchInvoices(Arrays.asList(constantService.getInvoiceStatusSend()),
+                responsableList);
 
         if (isOrderingByEventDate) {
             ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
@@ -269,11 +239,9 @@ public class BillingClosureReceiptHelper {
                 });
 
                 for (ICreatedDate input : allInputs) {
-                    // if (input instanceof CustomerOrder)
-                    // values.add(getBillingClosureReceiptValueForCustomerOrder((CustomerOrder)
-                    // input));
                     if (input instanceof Invoice)
-                        values.add(getBillingClosureReceiptValueForInvoice((Invoice) input));
+                        values.add(
+                                getBillingClosureReceiptValueForInvoice((Invoice) input, hideAffaires, hideServices));
                     if (input instanceof Payment) {
                         CustomerOrder customerOrder = null;
                         Payment payment = (Payment) input;
@@ -329,7 +297,8 @@ public class BillingClosureReceiptHelper {
                 }
                 if (input instanceof Invoice) {
                     Invoice invoice = (Invoice) input;
-                    BillingClosureReceiptValue valueInvoice = getBillingClosureReceiptValueForInvoice(invoice);
+                    BillingClosureReceiptValue valueInvoice = getBillingClosureReceiptValueForInvoice(invoice,
+                            hideAffaires, hideServices);
                     values.add(valueInvoice);
                     if (invoice.getPayments() != null && invoice.getPayments().size() > 0) {
                         valueInvoice.setDisplayBottomBorder(false);
@@ -359,42 +328,15 @@ public class BillingClosureReceiptHelper {
         return values;
     }
 
-    private BillingClosureReceiptValue getBillingClosureReceiptValueForCustomerOrder(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
-        BillingClosureReceiptValue value = new BillingClosureReceiptValue();
-        value.setDisplayBottomBorder(true);
-        value.setDebitAmount(null);
-        value.setCreditAmount(null);
-        value.setEventDateTime(customerOrder.getCreatedDate());
-        value.setEventDateString(customerOrder.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        value.setEventDescription(
-                "Commande n°" + customerOrder.getId() + " - " + customerOrder.getCustomerOrderStatus().getLabel()
-                        + "<br/><strong>"
-                        + String.join("<br/>", getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll(
-                                "&",
-                                "<![CDATA[&]]>")
-                        + "</strong><br/>"
-                        + String.join("<br/>", getAllServiceLabelsForCustomerOrder(customerOrder)).replaceAll("&",
-                                "<![CDATA[&]]>"));
-
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
-            MailComputeResult mailComputeResult = mailComputeHelper
-                    .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
-            value.setEventCbLink(paymentCbEntryPoint + "/order/deposit?mail="
-                    + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId="
-                    + customerOrder.getId());
-        }
-
-        return value;
-    }
-
-    private BillingClosureReceiptValue getBillingClosureReceiptValueForInvoice(Invoice invoice)
+    private BillingClosureReceiptValue getBillingClosureReceiptValueForInvoice(Invoice invoice, boolean hideAffaires,
+            boolean hideServices)
             throws OsirisException, OsirisClientMessageException {
         BillingClosureReceiptValue value = new BillingClosureReceiptValue();
         value.setDisplayBottomBorder(true);
         value.setDebitAmount(invoice.getTotalPrice());
         value.setCreditAmount(null);
         value.setEventDateTime(invoice.getCreatedDate());
+        value.setResponsable(invoice.getResponsable());
         value.setEventDateString(invoice.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         value.setEventDescription("Facture n°" + invoice.getId());
         if (invoice.getManualPaymentType() != null
@@ -407,16 +349,28 @@ public class BillingClosureReceiptHelper {
             String customerOrderValue = invoice.getCustomerOrder().getId() != null
                     ? " / Commande n°" + invoice.getCustomerOrder().getId()
                     : "";
-            value.setEventDescription(
-                    "Facture n°" + invoice.getId() + customerOrderValue
-                            + "<br/><strong>"
-                            + String.join("<br/>", getAllAffairesLabelForCustomerOrder(invoice.getCustomerOrder()))
-                                    .replaceAll("&",
-                                            "<![CDATA[&]]>")
-                            + "</strong><br/>"
-                            + String.join("<br/>", getAllServiceLabelsForCustomerOrder(invoice.getCustomerOrder()))
-                                    .replaceAll("&",
-                                            "<![CDATA[&]]>"));
+
+            List<String> eventDescriptions = new ArrayList<String>();
+            eventDescriptions.add("Facture n°" + invoice.getId() + customerOrderValue);
+            if (!hideAffaires)
+                eventDescriptions.add("<br/><strong>"
+                        + String.join("<br/>",
+                                getAllAffairesLabelForCustomerOrder(invoice.getCustomerOrder()))
+                                .replaceAll("&",
+                                        "<![CDATA[&]]>")
+                        + "</strong>");
+            else
+                value.setAffaireLists(
+                        String.join(" / ", getAllAffairesLabelForCustomerOrder(invoice.getCustomerOrder())));
+            if (!hideServices)
+                eventDescriptions.add("<br/>"
+                        + String.join("<br/>", getAllServiceLabelsForCustomerOrder(invoice.getCustomerOrder()))
+                                .replaceAll("&",
+                                        "<![CDATA[&]]>"));
+            else
+                value.setServiceLists(
+                        String.join(" / ", getAllServiceLabelsForCustomerOrder(invoice.getCustomerOrder())));
+            value.setEventDescription(String.join("", eventDescriptions));
 
             MailComputeResult mailComputeResult = mailComputeHelper
                     .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder());
@@ -434,6 +388,7 @@ public class BillingClosureReceiptHelper {
         value.setDisplayBottomBorder(displayBottomBorder);
         value.setDebitAmount(null);
         value.setCreditAmount(payment.getPaymentAmount());
+        value.setResponsable(customerOrder.getResponsable());
         value.setEventDateTime(payment.getPaymentDate());
         value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
@@ -456,6 +411,10 @@ public class BillingClosureReceiptHelper {
         BillingClosureReceiptValue value = new BillingClosureReceiptValue();
         value.setDisplayBottomBorder(displayBottomBorder);
         value.setDebitAmount(null);
+        if (payment.getInvoice() != null)
+            value.setResponsable(payment.getInvoice().getResponsable());
+        else if (payment.getCustomerOrder() != null)
+            value.setResponsable(payment.getCustomerOrder().getResponsable());
         value.setCreditAmount(payment.getPaymentAmount());
         value.setEventDateTime(payment.getPaymentDate());
         value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));

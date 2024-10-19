@@ -10,9 +10,11 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearchResult;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface InvoiceService {
         public List<Invoice> getAllInvoices();
@@ -66,5 +68,7 @@ public interface InvoiceService {
 
         public void remindInvoice(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
+        public List<Invoice> searchInvoices(List<InvoiceStatus> invoiceStatus, List<Responsable> responsables);
 
 }

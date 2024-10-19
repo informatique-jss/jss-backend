@@ -9,6 +9,7 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.myjss.profile.model.UserScope;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class MyJssQuotationValidationHelper {
@@ -31,4 +32,15 @@ public class MyJssQuotationValidationHelper {
                 return false;
         }
 
+        public boolean canSeeResponsable(Responsable responsable) {
+                if (responsable == null || responsable.getId() == null)
+                        return false;
+
+                List<Responsable> userScopes = userScopeService.getUserScopeResponsables();
+                for (Responsable userScope : userScopes) {
+                        if (userScope.getId().equals(responsable.getId()))
+                                return true;
+                }
+                return false;
+        }
 }

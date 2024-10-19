@@ -17,12 +17,14 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
@@ -131,5 +133,8 @@ public interface CustomerOrderService {
         public InvoicingSummary getInvoicingSummaryForIQuotation(IQuotation customerOrder) throws OsirisException;
 
         public List<CustomerOrderComment> getCustomerOrderCommentsForCustomer(CustomerOrder customerOrder);
+
+        public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
+                        List<Responsable> responsables);
 
 }

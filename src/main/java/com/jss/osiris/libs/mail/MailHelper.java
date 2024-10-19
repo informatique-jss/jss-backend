@@ -1256,7 +1256,7 @@ public class MailHelper {
         mail.setExplaination(responsable.getLoginWeb() + " / " + password);
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
-
+        mail.setResponsable(responsable);
         mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
         mail.setMailComputeResult(mailComputeResult);
 

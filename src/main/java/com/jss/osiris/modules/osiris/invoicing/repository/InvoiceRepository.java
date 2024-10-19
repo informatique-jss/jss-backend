@@ -13,6 +13,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.QueryHint;
 
@@ -104,4 +105,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null and billingLabelType=:billingLabelType   ")
         List<Invoice> findInvoiceForCustomReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatusSend,
                         @Param("billingLabelType") BillingLabelType billingLabelType);
+
+        @Query("select i from Invoice i where responsable in :responsables and (invoiceStatus in :invoiceStatus)")
+        List<Invoice> searchInvoices(List<Responsable> responsables, List<InvoiceStatus> invoiceStatus);
 }

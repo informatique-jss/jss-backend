@@ -4,18 +4,43 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+
 public class BillingClosureReceiptValue {
+    @JsonView(JacksonViews.MyJssView.class)
     private LocalDateTime eventDateTime;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private String eventDateString;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private String eventDescription;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private String eventCbLink;
 
+    @JsonView(JacksonViews.MyJssView.class)
     private BigDecimal creditAmount;
 
+    @JsonView(JacksonViews.MyJssView.class)
     private BigDecimal debitAmount;
 
+    @JsonView(JacksonViews.MyJssView.class)
     private boolean displayBottomBorder;
+
+    @JsonView(JacksonViews.MyJssView.class)
     private LocalDate directDebitTransfertDate;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private Responsable responsable;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String affaireLists;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String serviceLists;
 
     public BillingClosureReceiptValue() {
     }
@@ -87,4 +112,33 @@ public class BillingClosureReceiptValue {
     public void setDirectDebitTransfertDateTime(LocalDate transfertDateTime) {
         this.directDebitTransfertDate = transfertDateTime;
     }
+
+    public void setDirectDebitTransfertDate(LocalDate directDebitTransfertDate) {
+        this.directDebitTransfertDate = directDebitTransfertDate;
+    }
+
+    public Responsable getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(Responsable responsable) {
+        this.responsable = responsable;
+    }
+
+    public String getServiceLists() {
+        return serviceLists;
+    }
+
+    public void setServiceLists(String serviceLists) {
+        this.serviceLists = serviceLists;
+    }
+
+    public String getAffaireLists() {
+        return affaireLists;
+    }
+
+    public void setAffaireLists(String affaireLists) {
+        this.affaireLists = affaireLists;
+    }
+
 }

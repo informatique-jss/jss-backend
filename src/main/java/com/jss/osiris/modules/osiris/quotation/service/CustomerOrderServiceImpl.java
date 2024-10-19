@@ -1636,4 +1636,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             });
         return customerOrderComments;
     }
+
+    @Override
+    public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
+            List<Responsable> responsables) {
+        if (customerOrderStatus != null && customerOrderStatus.size() > 0 && customerOrderStatus.size() > 0
+                && responsables != null && responsables.size() > 0) {
+            return customerOrderRepository.searchOrders(responsables, customerOrderStatus);
+        }
+        return null;
+    }
 }

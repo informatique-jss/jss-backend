@@ -749,4 +749,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceRepository.findByProviderAndManualAccountingDocumentNumberContainingIgnoreCase(
                 provider, manualDocumentNumber);
     }
+
+    @Override
+    public List<Invoice> searchInvoices(List<InvoiceStatus> invoiceStatus, List<Responsable> responsables) {
+        if (invoiceStatus != null && invoiceStatus.size() > 0 && invoiceStatus.size() > 0
+                && responsables != null && responsables.size() > 0) {
+            return invoiceRepository.searchInvoices(responsables, invoiceStatus);
+        }
+        return null;
+    }
 }

@@ -6,6 +6,7 @@ import { CopyClipboardDirective } from '../../../../libs/CopyClipboard.directive
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountMenuComponent } from '../account-menu/account-menu.component';
 import { AffairesComponent } from '../affaires/affaires.component';
+import { BillingClosureComponent } from '../billing-closure/billing-closure.component';
 import { EditAddressComponent } from '../edit-address/edit-address.component';
 import { EditAffaireComponent } from '../edit-affaire/edit-affaire.component';
 import { OrderDetailsComponent } from '../order-details/order-details.component';
@@ -27,6 +28,7 @@ const routes: Routes = [
       { path: 'overview', component: OverviewComponent },
       { path: 'scope', component: ScopeComponent },
       { path: 'orders', component: OrdersComponent },
+      { path: 'closure', component: BillingClosureComponent },
       { path: 'orders/details/:id', component: OrderDetailsComponent },
       { path: 'quotations', component: QuotationsComponent },
       { path: 'quotations/details/:id', component: QuotationDetailsComponent },
@@ -67,6 +69,7 @@ const routes: Routes = [
     AffairesComponent,
     QuotationDetailsComponent,
     PayQuotationComponent,
+    BillingClosureComponent,
   ]
 })
 export class MyAccountModule { }

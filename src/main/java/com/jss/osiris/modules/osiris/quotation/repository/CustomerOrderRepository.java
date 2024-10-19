@@ -186,4 +186,8 @@ public interface CustomerOrderRepository
                         @Param("affaire") Affaire affaire,
                         @Param("statusAbandonned") CustomerOrderStatus statusAbandonned);
 
+        @Query("select c from CustomerOrder c where responsable in :responsables and customerOrderStatus in :customerOrderStatusToFilter")
+        List<CustomerOrder> searchOrders(List<Responsable> responsables,
+                        List<CustomerOrderStatus> customerOrderStatusToFilter);
+
 }
