@@ -34,6 +34,11 @@
             label="Masquer les prélèvements exportés" [form]="transfertForm"
             propertyName="isHideExportedBankTransfert"></generic-toggle>
         </td>
+        <td>
+          <generic-toggle [(model)]="transfertSearch.isHideMatchedDirectDebitTransfert"
+            label="Masquer les prélèvements rapprochés" [form]="transfertForm"
+            propertyName="isHideMatchedDirectDebitTransfert"></generic-toggle>
+        </td>
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="transfers" tableName="Virements"

@@ -19,9 +19,11 @@ public interface DirectDebitTransfertRepository extends QueryCacheCrudRepository
                         + " r.label as transfertLabel,"
                         + " r.transfert_iban as transfertIban,"
                         + " r.transfert_bic as transfertBic,"
-                        + " r.is_already_exported  as isAlreadyExported "
+                        + " r.is_already_exported  as isAlreadyExported, "
+                        + " r.is_matched as isMatched "
                         + " from direct_debit_transfert r "
                         + " where is_cancelled=false and (:isHideExportedDirectDebitTransfert=false OR r.is_already_exported=false) and (:idDirectDebitTransfert=0 OR r.id=:idDirectDebitTransfert) "
+                        + " and (:isHideMatchedDirectDebitTransfert=false OR r.is_matched=false) "
                         + " and r.transfert_date_time>=:startDate and r.transfert_date_time<=:endDate "
                         + "  and (:minAmount is null or r.transfert_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or r.transfert_amount<=CAST(CAST(:maxAmount as text) as real) )"
@@ -30,6 +32,7 @@ public interface DirectDebitTransfertRepository extends QueryCacheCrudRepository
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
                         @Param("label") String label,
+                        @Param("isHideMatchedDirectDebitTransfert") boolean isHideMatchedDirectDebitTransfert,
                         @Param("isHideExportedDirectDebitTransfert") boolean isHideExportedDirectDebitTransfert,
                         @Param("idDirectDebitTransfert") Integer idDirectDebitTransfert);
 }

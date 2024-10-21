@@ -23,6 +23,16 @@ public interface AccountingRecordService {
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer id);
 
+        public Number getAccountingRecordBalanceByAccountingAccountId(Integer id);
+
+        public Number getBankTransfertTotal();
+
+        public Number getRefundTotal();
+
+        public Number getCheckTotal();
+
+        public Number getDirectDebitTransfertTotal();
+
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
                         throws OsirisException;
 
