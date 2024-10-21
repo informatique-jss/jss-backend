@@ -34,6 +34,8 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
+import com.jss.osiris.modules.invoicing.model.OutboundCheckSearch;
+import com.jss.osiris.modules.invoicing.model.OutboundCheckSearchResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
@@ -157,6 +159,21 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.isPresent())
             return payment.get();
         return null;
+    }
+
+    @Override
+    public List<OutboundCheckSearchResult> searchOutboundChecks(OutboundCheckSearch outboundCheckSearch) {
+        if (outboundCheckSearch.getStartDate() == null)
+            outboundCheckSearch.setStartDate(LocalDateTime.now().minusYears(100));
+        if (outboundCheckSearch.getEndDate() == null)
+            outboundCheckSearch.setEndDate(LocalDateTime.now().plusYears(100));
+        if (outboundCheckSearch.getIdOutboundCheck() == null)
+            outboundCheckSearch.setIdOutboundCheck(0);
+        return paymentRepository.findOutboundChecks(
+                outboundCheckSearch.getStartDate().withHour(0).withMinute(0),
+                outboundCheckSearch.getEndDate().withHour(23).withMinute(59), outboundCheckSearch.getMinAmount(),
+                outboundCheckSearch.getMaxAmount(),
+                outboundCheckSearch.getLabel(), outboundCheckSearch.isHideMatchedOutboundChecks());
     }
 
     @Override

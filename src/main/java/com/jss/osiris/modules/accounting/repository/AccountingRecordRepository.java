@@ -233,4 +233,21 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "and not exists (select 1 from cart c where c.id_invoice = i.id) and to_char(ar.operation_date_time, 'yyyy')>=:year );")
         void deleteDuplicateAccountingRecord(@Param("year") String year);
 
+        @Query(nativeQuery = true, value = "select sum(accounting_record.debit_amount) - sum(accounting_record.credit_amount) as totalBalance from accounting_record "
+                        + "where id_accounting_account=:accountingAccountId")
+        Number getAccountingRecordBalanceByAccountingAccountId(
+                        @Param("accountingAccountId") Integer accountingAccountId);
+
+        @Query(nativeQuery = true, value = "select sum(transfert_amount) from bank_transfert bt where is_already_exported = true and (is_matched = false or is_matched is null)")
+        Number getBankTransfertTotal();
+
+        @Query(nativeQuery = true, value = "select sum(refund_amount) from refund r where is_already_exported = true and (is_matched = false or is_matched is null)")
+        Number getRefundTotal();
+
+        @Query(nativeQuery = true, value = "select sum(payment_amount) from payment p where bank_id is null and p.check_number is not null ")
+        Number getCheckTotal();
+
+        @Query(nativeQuery = true, value = "select sum(transfert_amount) from direct_debit_transfert ddt where is_already_exported = true and (is_matched = false or is_matched is null)")
+        Number getDirectDebitTransfertTotal();
+
 }

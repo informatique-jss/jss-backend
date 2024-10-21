@@ -25,6 +25,16 @@ public interface AccountingRecordService {
 
         public void deleteDuplicateAccountingRecord();
 
+        public Number getAccountingRecordBalanceByAccountingAccountId(Integer id);
+
+        public Number getBankTransfertTotal();
+
+        public Number getRefundTotal();
+
+        public Number getCheckTotal();
+
+        public Number getDirectDebitTransfertTotal();
+
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
                         throws OsirisException;
 
