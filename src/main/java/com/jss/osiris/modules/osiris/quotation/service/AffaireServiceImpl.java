@@ -603,13 +603,20 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     public List<Affaire> getAffairesForCurrentUser(Integer page, String sortBy, String searchText) {
-        List<Responsable> responsables = userScopeService.getUserScopeResponsables();
+        List<Responsable> responsables = userScopeService.getUserCurrentScopeResponsables();
         if (responsables == null || responsables.size() == 0)
             return new ArrayList<Affaire>();
 
         Order orderDenomination = new Order(Direction.ASC, "denomination");
         Order orderFirstname = new Order(Direction.ASC, "firstname");
         Order orderLastname = new Order(Direction.ASC, "lastname");
+
+        Integer idAffaire = 0;
+        if (searchText != null && searchText.length() > 0)
+            try {
+                idAffaire = Integer.parseInt(searchText);
+            } catch (Exception e) {
+            }
 
         if (sortBy.equals("nameDesc")) {
             orderDenomination = new Order(Direction.DESC, "denomination");
@@ -618,7 +625,7 @@ public class AffaireServiceImpl implements AffaireService {
         }
         Sort sort = Sort.by(Arrays.asList(orderDenomination, orderLastname, orderFirstname));
         Pageable pageableRequest = PageRequest.of(page, 50, sort);
-        return affaireRepository.getAffairesForResponsables(pageableRequest, responsables, searchText);
+        return affaireRepository.getAffairesForResponsables(pageableRequest, responsables, searchText, idAffaire);
     }
 
     @Override

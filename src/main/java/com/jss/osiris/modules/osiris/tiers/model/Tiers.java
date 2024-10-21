@@ -58,7 +58,6 @@ public class Tiers implements IAttachment, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers_type")
-	@IndexedField
 	private TiersType tiersType;
 
 	@Column(length = 80)
@@ -72,7 +71,6 @@ public class Tiers implements IAttachment, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers_category")
-	@IndexedField
 	private TiersCategory tiersCategory;
 
 	@ManyToOne(fetch = FetchType.LAZY)

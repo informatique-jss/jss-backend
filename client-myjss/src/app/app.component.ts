@@ -1,6 +1,8 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConstantService } from './libs/constant.service';
+import { Responsable } from './modules/profile/model/Responsable';
+import { LoginService } from './modules/profile/services/login.service';
 
 @Component({
   selector: 'app-root',
@@ -10,14 +12,28 @@ import { ConstantService } from './libs/constant.service';
 
 export class AppComponent implements AfterViewInit {
   title = 'myjss';
+  currentUser: Responsable | undefined;
 
   constructor(private router: Router,
     private constantService: ConstantService,
+    private loginService: LoginService,
   ) {
   }
 
   ngOnInit() {
     this.constantService.initConstant();
+    this.loginService.currentUserChangeMessage.subscribe(response => {
+      if (!response)
+        this.currentUser = undefined;
+      else
+        this.refreshCurrentUser()
+    });
+  }
+
+  refreshCurrentUser() {
+    this.loginService.getCurrentUser().subscribe(response => {
+      this.currentUser = response;
+    });
   }
 
   ngAfterViewInit() {

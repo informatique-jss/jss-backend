@@ -113,6 +113,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_status")
 	@JsonView(JacksonViews.MyJssView.class)
+	@IndexedField
 	private CustomerOrderStatus customerOrderStatus;
 
 	private LocalDateTime lastStatusUpdate;

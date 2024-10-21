@@ -17,6 +17,13 @@
       </label>
     </div>
 
+    <div class="d-none d-sm-block order-lg-3 me-3 me-lg-4 ms-auto" *ngIf="currentUser">
+      <a class="nav-link fs-4 p-2 mx-sm-1" href="" style="cursor: pointer;" data-bs-toggle="modal" title="Rechercher"
+        data-bs-toggle="tooltip" data-bs-placement="right" data-bs-target="#searchModal" aria-label="Search2">
+        <i class="ai-search"></i>
+      </a>
+    </div>
+
     <!-- User not signed in state.   -->
     <div class="d-none d-sm-block order-lg-3" *ngIf="!currentUser || !currentUser.id">
       <a class="btn btn-primary w-100 mb-1" [routerLink]="['/account/signin']" rel="noopener">
@@ -355,3 +362,5 @@
     </nav>
   </div>
 </header>
+
+<search></search>

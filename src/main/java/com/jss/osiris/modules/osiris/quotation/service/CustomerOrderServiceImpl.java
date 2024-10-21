@@ -1422,7 +1422,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             CustomerOrderStatus customerOrderStatusBilled = customerOrderStatusService
                     .getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED);
 
-            List<Responsable> responsablesToFilter = userScopeService.getUserScopeResponsables();
+            List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
 
             if (customerOrderStatusToFilter.size() > 0 && responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
@@ -1446,7 +1446,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) {
-        List<Responsable> responsablesToFilter = userScopeService.getUserScopeResponsables();
+        List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
         CustomerOrderStatus statusAbandonned = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
 

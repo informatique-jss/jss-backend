@@ -29,6 +29,8 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.profile.model.UserScope;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
@@ -62,6 +64,9 @@ public class MyJssProfileController {
 
 	@Autowired
 	ConstantService constantService;
+
+	@Autowired
+	SearchService searchService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 10;
@@ -193,5 +198,15 @@ public class MyJssProfileController {
 	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<Constant> getConstants() throws OsirisException {
 		return new ResponseEntity<Constant>(constantService.getConstants(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/search/global")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
+			throws OsirisException {
+		if (searchText != null && searchText.length() > 2)
+			return new ResponseEntity<List<IndexEntity>>(searchService.searchEntitiesForCustomer(searchText),
+					HttpStatus.OK);
+		return new ResponseEntity<List<IndexEntity>>(new ArrayList<IndexEntity>(), HttpStatus.OK);
 	}
 }

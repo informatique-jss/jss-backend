@@ -90,7 +90,7 @@ public class UserScopeServiceImpl implements UserScopeService {
     }
 
     @Override
-    public List<Responsable> getUserScopeResponsables() {
+    public List<Responsable> getUserCurrentScopeResponsables() {
         List<UserScope> currentScopes = getUserScope();
         List<Responsable> responsables = new ArrayList<Responsable>();
         for (UserScope userScope : currentScopes)

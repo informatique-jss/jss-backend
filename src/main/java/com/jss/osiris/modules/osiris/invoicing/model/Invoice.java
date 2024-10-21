@@ -80,6 +80,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
+	@IndexedField
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -90,6 +91,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
+	@IndexedField
 	private Responsable responsable;
 
 	// @ManyToOne(fetch = FetchType.LAZY)

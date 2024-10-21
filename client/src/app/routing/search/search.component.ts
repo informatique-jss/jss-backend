@@ -93,6 +93,11 @@ export class SearchComponent implements OnInit {
     search: ['']
   });
 
+  ngOnDestroy() {
+    if (this.searchObservableRef)
+      this.searchObservableRef.unsubscribe();
+  }
+
   debounce: any;
 
   searchEntities() {

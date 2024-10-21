@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../libs/user.preference.service';
@@ -36,6 +37,8 @@ export class AffairesComponent implements OnInit {
   attachmentsAffaire: Attachment[][] = [];
   affaireForm = this.formBuilder.group({});
 
+  inputIdAffaire: number | undefined;
+
   constructor(
     private customerOrderService: CustomerOrderService,
     private affaireService: AffaireService,
@@ -43,10 +46,16 @@ export class AffairesComponent implements OnInit {
     private userPreferenceService: UserPreferenceService,
     private attachmentService: AttachmentService,
     private formBuilder: FormBuilder,
-    private uploadAttachmentService: UploadAttachmentService
+    private uploadAttachmentService: UploadAttachmentService,
+    private activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit() {
+    this.inputIdAffaire = this.activatedRoute.snapshot.params['idAffaire'];
+    if (this.inputIdAffaire) {
+      this.searchText = this.inputIdAffaire + "";
+      return;
+    }
     this.retrieveBookmark();
     this.refreshAffaires();
   }

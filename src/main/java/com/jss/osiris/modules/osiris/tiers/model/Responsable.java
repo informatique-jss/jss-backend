@@ -74,12 +74,10 @@ public class Responsable implements IAttachment, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable_type")
-	@IndexedField
 	private TiersType tiersType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable_category")
-	@IndexedField
 	private TiersCategory tiersCategory;
 
 	@ManyToOne(fetch = FetchType.LAZY)

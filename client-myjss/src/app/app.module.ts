@@ -14,6 +14,7 @@ import { MyAccountModule } from './modules/my-account/components/my-account/my-a
 import { OffersModule } from './modules/offers/components/offers/offers.module';
 import { FooterComponent } from './modules/profile/components/footer/footer.component';
 import { LoginComponent } from './modules/profile/components/login/login.component';
+import { SearchComponent } from './modules/profile/components/search/search.component';
 import { TopBarComponent } from './modules/profile/components/top-bar/top-bar.component';
 registerLocaleData(localeFr, 'fr');
 
@@ -27,7 +28,8 @@ const routes: Routes = [
     LoginComponent,
     TopBarComponent,
     FooterComponent,
-    ToastComponent
+    ToastComponent,
+    SearchComponent,
   ],
   exports: [],
   bootstrap: [AppComponent],

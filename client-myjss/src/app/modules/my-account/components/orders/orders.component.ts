@@ -221,11 +221,11 @@ export function getClassForCustomerOrderStatus(order: CustomerOrder) {
   return "bg-light text-light";
 }
 
-export function initTooltips() {
+export function initTooltips(forcedPlacement: string = 'right') {
   setTimeout(() => {
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl, { placement: "right" })
+      return new bootstrap.Tooltip(tooltipTriggerEl, { placement: forcedPlacement })
     })
   }, 0);
 }

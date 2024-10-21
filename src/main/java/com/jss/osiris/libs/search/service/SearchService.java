@@ -16,4 +16,6 @@ public interface SearchService {
     public List<IndexEntity> getCustomerOrdersByKeyword(String searchedValue);
 
     public List<IndexEntity> getIndividualTiersByKeyword(String searchedValue);
+
+    public List<IndexEntity> searchEntitiesForCustomer(String searchString);
 }

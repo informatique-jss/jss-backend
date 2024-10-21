@@ -83,6 +83,7 @@ public class Quotation implements IQuotation {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation_status")
 	@JsonView(JacksonViews.MyJssView.class)
+	@IndexedField
 	private QuotationStatus quotationStatus;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)

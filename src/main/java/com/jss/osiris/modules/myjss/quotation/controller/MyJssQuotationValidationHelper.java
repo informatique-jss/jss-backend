@@ -36,7 +36,7 @@ public class MyJssQuotationValidationHelper {
                 if (responsable == null || responsable.getId() == null)
                         return false;
 
-                List<Responsable> userScopes = userScopeService.getUserScopeResponsables();
+                List<Responsable> userScopes = userScopeService.getUserCurrentScopeResponsables();
                 for (Responsable userScope : userScopes) {
                         if (userScope.getId().equals(responsable.getId()))
                                 return true;

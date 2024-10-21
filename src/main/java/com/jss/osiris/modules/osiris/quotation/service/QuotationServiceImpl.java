@@ -630,7 +630,7 @@ public class QuotationServiceImpl implements QuotationService {
                     quotationStatusToFilter.add(customerOrderStatusFetched);
             }
 
-            List<Responsable> responsablesToFilter = userScopeService.getUserScopeResponsables();
+            List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
 
             if (quotationStatusToFilter.size() > 0 && responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {

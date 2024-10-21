@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../../../../libs/app.service';
 import { capitalizeName } from '../../../../libs/FormatHelper';
+import { initTooltips } from '../../../my-account/components/orders/orders.component';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
 import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
@@ -32,6 +33,7 @@ export class TopBarComponent implements OnInit {
         this.currentUser = undefined;
       else
         this.refreshCurrentUser()
+      initTooltips('bottom');
     });
   }
 

@@ -19,6 +19,7 @@ import { QuotationsComponent } from '../quotations/quotations.component';
 import { ScopeComponent } from '../scope/scope.component';
 import { SignInComponent } from '../sign-in/sign-in.component';
 import { SignOutComponent } from '../sign-out/sign-out.component';
+import { UserSettingsComponent } from '../user-settings/user-settings.component';
 import { MyAccountComponent } from './my-account.component';
 
 const routes: Routes = [
@@ -27,17 +28,19 @@ const routes: Routes = [
     children: [
       { path: 'overview', component: OverviewComponent },
       { path: 'scope', component: ScopeComponent },
-      { path: 'orders', component: OrdersComponent },
       { path: 'closure', component: BillingClosureComponent },
-      { path: 'orders/details/:id', component: OrderDetailsComponent },
       { path: 'quotations', component: QuotationsComponent },
-      { path: 'quotations/details/:id', component: QuotationDetailsComponent },
-      { path: 'affaire/edit/:id/:idOrder', component: EditAffaireComponent },
+      { path: 'orders', component: OrdersComponent },
+      { path: 'orders/details/:id', component: OrderDetailsComponent },
       { path: 'order/address/edit/:idOrder', component: EditAddressComponent },
-      { path: 'quotation/address/edit/:idQuotation', component: EditAddressComponent },
       { path: 'order/pay/:idOrder', component: PayOrderComponent },
+      { path: 'quotations/details/:id', component: QuotationDetailsComponent },
+      { path: 'quotation/address/edit/:idQuotation', component: EditAddressComponent },
       { path: 'quotation/pay/:idQuotation', component: PayQuotationComponent },
-      { path: 'affaires', component: AffairesComponent }
+      { path: 'affaires', component: AffairesComponent },
+      { path: 'affaires/:idAffaire', component: AffairesComponent },
+      { path: 'affaire/edit/:id/:idOrder', component: EditAffaireComponent },
+      { path: 'settings', component: UserSettingsComponent }
     ]
   },
   { path: 'account/signin', component: SignInComponent },
@@ -70,6 +73,7 @@ const routes: Routes = [
     QuotationDetailsComponent,
     PayQuotationComponent,
     BillingClosureComponent,
+    UserSettingsComponent,
   ]
 })
 export class MyAccountModule { }
