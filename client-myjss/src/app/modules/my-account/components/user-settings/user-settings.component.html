@@ -1,3 +1,286 @@
-<p>
-  user-settings works!
-</p>
+<h1 class="h2 mb-4">Mon compte</h1>
+
+<div class="d-flex align-items-center mb-4" *ngIf="userScope && userScope.length>1 && currentUser">
+  <div class="ms-auto">
+    <div class="btn-group dropdown" style="margin-right: 10px;">
+      <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false">
+        <i class="ai-briefcase me-2"></i>
+        {{capitalizeName(currentUser.firstname+ ' '+currentUser.lastname)}}
+      </button>
+      <div class="dropdown-menu my-1">
+        <label class=" dropdown-item" *ngFor="let scope of userScope">
+          <a class="dropdown-item" style="cursor: pointer;" (click)="changeCurrentUser(scope) ">
+            {{capitalizeName(scope.firstname+ ' '+scope.lastname)}}
+          </a>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Basic info -->
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="!currentUser">
+  <div class="card-body">
+    <p class="card-text placeholder-glow">
+      <span class="placeholder placeholder-sm col-7 me-2"></span>
+      <span class="placeholder placeholder-sm col-4"></span>
+      <span class="placeholder placeholder-sm col-4 me-2"></span>
+      <span class="placeholder placeholder-sm col-6"></span>
+      <span class="placeholder placeholder-sm col-8"></span>
+    </p>
+  </div>
+</section>
+
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="currentUser">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-user text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Mes informations</h2>
+    </div>
+    <div class="d-md-flex align-items-center">
+      <div class="d-sm-flex align-items-center">
+        <avatar class="avatar-select" [user]="currentUser" [size]="70"></avatar>
+        <div class="pt-3 pt-sm-0 ps-sm-3">
+          <h3 class="h5 mb-2">{{capitalizeName(currentUser.firstname + " " +currentUser.lastname)}} </h3>
+          <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-iteems-center">
+            <div class="d-flex align-items-center text-nowrap" *ngIf="currentUser.tiers && currentUser.tiers.country">
+              <i class="ai-map-pin me-1"></i>
+              {{capitalizeName(currentUser.tiers.country.label)}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row py-4 mb-2 mb-sm-3">
+      <div class="col-md-8 mb-4 mb-md-0">
+        <table class="table mb-0">
+          <tbody>
+            <tr>
+              <td class="border-0 text-body-secondary py-1 px-0">Adresse</td>
+              <td class="border-0 text-dark fw-medium py-1 ps-3" *ngIf="currentUser.tiers">
+                {{currentUser.tiers.address+', '+currentUser.tiers.postalCode+
+                ' '+capitalizeName(currentUser.tiers.city?currentUser.tiers.city.label :'')}}</td>
+            </tr>
+            <tr>
+              <td class="border-0 text-body-secondary py-1 px-0">Téléphone</td>
+              <td class="border-0 text-dark fw-medium py-1 ps-3">{{getListPhones(currentUser.phones)}}</td>
+            </tr>
+            <tr>
+              <td class="border-0 text-body-secondary py-1 px-0">Mail</td>
+              <td class="border-0 text-dark fw-medium py-1 ps-3">{{currentUser.mail.mail}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-4 d-md-flex justify-content-end"
+        *ngIf="currentUser.tiers && currentUser.tiers.specialOffers && currentUser.tiers.specialOffers.length>0">
+        <div class="w-100 border rounded-3 p-4" style="max-width: 212px;">
+          <img class="d-block mb-2" src="assets/img/account/gift-icon.svg" width="24" alt="Gift icon">
+          <h4 class="h5 lh-base mb-0">Mon offre</h4>
+          <p class="fs-sm text-body-secondary mb-0">{{currentUser.tiers.specialOffers[0].customLabel}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="currentUser">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-map-pin text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Adresses</h2>
+      <a class="btn btn-sm btn-secondary ms-auto" style="cursor: pointer;" (click)="modifyAddresse()">
+        <i class="ai-edit ms-n1 me-2"></i>
+        Modifier
+      </a>
+    </div>
+    <div class="alert alert-info d-flex mb-4" role="alert">
+      <i class="ai-circle-info fs-xl"></i>
+      <div class="ps-2">Ces paramètres s'appliquent à tous vos futurs devis et commandes </div>
+    </div>
+    <ng-container *ngIf="documents">
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <a href="#billing" class="nav-link rounded-pill active" data-bs-toggle="tab" role="tab">
+            Facture
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#digital" class="nav-link rounded-pill" data-bs-toggle="tab" role="tab">
+            Documents numériques
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#paper" class="nav-link rounded-pill" data-bs-toggle="tab" role="tab">
+            Documents papiers
+          </a>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="billing" role="tabpanel">
+          <ng-container *ngFor="let document of documents ">
+            <ng-container *ngIf="document.documentType.code == documentTypeBilling.code ">
+              <div class="d-flex align-items-center pb-1 mb-2">
+                <h3 class="h6 mb-0 me-3">Libellé de la facture</h3>
+              </div>
+              <div class="form-check mb-3">
+                <div class="form-check" [formGroup]="documentForm">
+                  <input class="form-check-input" type="radio" id="billing-isBillingAffaire"
+                    [(ngModel)]="document.billingLabelType" [value]="billingLabelTypeAffaire" [disabled]="true "
+                    [ngModelOptions]="{standalone: true}">
+                  <label class="form-check-label" for="billing-isRecipientAffaire">Libeller la facture à
+                    l'affaire</label>
+                </div>
+                <div class="form-check" [formGroup]="documentForm">
+                  <input class="form-check-input" type="radio" id="billing-isBillingClient"
+                    [(ngModel)]="document.billingLabelType" [value]="billingLabelTypeCustomer" [disabled]="true "
+                    [ngModelOptions]="{standalone: true}">
+                  <label class="form-check-label" for="billing-isRecipientClient">Libeller la facture à mon
+                    attention</label>
+                </div>
+                <div class="form-check" [formGroup]="documentForm">
+                  <input class="form-check-input" type="radio" id="billing-isBillingOther"
+                    [(ngModel)]="document.billingLabelType" [value]="billingLabelTypeOther" [disabled]="true "
+                    [ngModelOptions]="{standalone: true}">
+                  <label class="form-check-label" for="billing-isBillingOther">Libeller à un tiers</label>
+                </div>
+              </div>
+              <generic-input [(model)]="document.externalReference" label="Vos références à rappeler"
+                *ngIf="document.externalReference" [form]="documentForm" propertyName="externalReference"
+                [isMandatory]="false" [isDisabled]="true" [maxLength]="200"></generic-input>
+              <div class="form-check form-switch mt-3" *ngIf="document.isCommandNumberMandatory">
+                <input type="checkbox" class="form-check-input" id="billing-isCommandNumberMandatory"
+                  [(ngModel)]="document.isCommandNumberMandatory" [checked]="document.isCommandNumberMandatory"
+                  [disabled]="true">
+                <label class="form-check-label" for="billing-isCommandNumberMandatory">Définir un numéro de commande à
+                  rappeler</label>
+              </div>
+              <generic-input [(model)]="document.commandNumber" label="Numéro de commande à rappeler"
+                [form]="documentForm" *ngIf="document.isCommandNumberMandatory" propertyName="commandNumber"
+                [isMandatory]="false" [isDisabled]="true" [maxLength]="200"></generic-input>
+              <div class="d-flex align-items-center pb-1 mb-2">
+                <h3 class="h6 mb-0 me-3 mt-3">Destinataires de la facture</h3>
+              </div>
+              <div class="form-check">
+                <div class="form-check" [formGroup]="documentForm">
+                  <input class="form-check-input" type="checkbox" id="billing-isRecipientAffaire" [disabled]="true"
+                    [(ngModel)]="document.isRecipientAffaire" [ngModelOptions]="{standalone: true}">
+                  <label class="form-check-label" for="billing-isRecipientAffaire">L'envoyer à l'affaire</label>
+                </div>
+                <div class="form-check" [formGroup]="documentForm">
+                  <input class="form-check-input" type="checkbox" id="billing-isRecipientClient" [disabled]="true"
+                    [(ngModel)]="document.isRecipientClient" [ngModelOptions]="{standalone: true}">
+                  <label class="form-check-label" for="billing-isRecipientClient">Me l'envoyer</label>
+                </div>
+              </div>
+              <div class="form-check form-switch mt-3"
+                *ngIf="document.isRecipientAffaire && document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
+                <input type="checkbox" class="form-check-input" id="billing-addCopieAffaire" [disabled]="true"
+                  [(ngModel)]="document.addToAffaireMailList" [checked]="document.addToAffaireMailList">
+                <label class="form-check-label" for="billing-addCopieAffaire">Ajouter des adresses mails en copie de
+                  l'affaire</label>
+              </div>
+              <ul class="list-group mt-1 mb-3"
+                *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
+                <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
+                  <div class="d-flex flex-wrap w-100 justify-content-between">
+                    <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                  </div>
+                </li>
+              </ul>
+              <div class="form-check form-switch mt-3"
+                *ngIf="document.isRecipientClient && document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
+                <input type="checkbox" class="form-check-input" id="billing-addCopieClient" [disabled]="true"
+                  [(ngModel)]="document.addToClientMailList" [checked]="document.addToClientMailList">
+                <label class="form-check-label" for="billing-addCopieAffaire">Ajouter des adresses mails en copie de
+                  moi</label>
+              </div>
+              <ul class="list-group mt-1 mb-3"
+                *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
+                <li class="list-group-item" *ngFor="let mail of document.mailsClient">
+                  <div class="d-flex flex-wrap w-100 justify-content-between">
+                    <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                  </div>
+                </li>
+              </ul>
+            </ng-container>
+          </ng-container>
+        </div>
+        <div class="tab-pane fade show " id="digital" role="tabpanel">
+          <ng-container *ngFor="let document of documents ">
+            <ng-container *ngIf="document.documentType.code == documentTypeDigital.code ">
+              <div class="d-flex align-items-center pb-1 mb-2">
+                <h3 class="h6 mb-0 me-3 mt-3">Destinataires des documents numériques</h3>
+              </div>
+              <div class="form-check">
+                <div class="form-check" [formGroup]="documentForm">
+                  <input class="form-check-input" type="checkbox" id="digital-isRecipientAffaire" [disabled]="true"
+                    [(ngModel)]="document.isRecipientAffaire" [ngModelOptions]="{standalone: true}">
+                  <label class="form-check-label" for="digital-isRecipientAffaire">Les envoyer à l'affaire</label>
+                </div>
+                <div class="form-check" [formGroup]="documentForm">
+                  <input class="form-check-input" type="checkbox" id="digital-isRecipientClient" [disabled]="true"
+                    [(ngModel)]="document.isRecipientClient" [ngModelOptions]="{standalone: true}">
+                  <label class="form-check-label" for="digital-isRecipientClient">Me les envoyer</label>
+                </div>
+              </div>
+              <div class="form-check form-switch mt-3"
+                *ngIf="document.isRecipientAffaire && document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
+                <input type="checkbox" class="form-check-input" id="digital-addCopieAffaire" [disabled]="true"
+                  [(ngModel)]="document.addToAffaireMailList" [checked]="document.addToAffaireMailList">
+                <label class="form-check-label" for="digital-addCopieAffaire">Ajouter des adresses mails en copie de
+                  l'affaire</label>
+              </div>
+              <ul class="list-group mt-1 mb-3"
+                *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
+                <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
+                  <div class="d-flex flex-wrap w-100 justify-content-between">
+                    <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                  </div>
+                </li>
+              </ul>
+              <div class="form-check form-switch mt-3"
+                *ngIf="document.isRecipientClient && document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
+                <input type="checkbox" class="form-check-input" id="billing-addCopieClient" [disabled]="true"
+                  [(ngModel)]="document.addToClientMailList" [checked]="document.addToClientMailList">
+                <label class="form-check-label" for="billing-addCopieAffaire">Ajouter des adresses mails en copie de
+                  moi</label>
+              </div>
+              <ul class="list-group mt-1 mb-3"
+                *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
+                <li class="list-group-item" *ngFor="let mail of document.mailsClient">
+                  <div class="d-flex flex-wrap w-100 justify-content-between">
+                    <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                  </div>
+                </li>
+              </ul>
+            </ng-container>
+          </ng-container>
+        </div>
+        <div class="tab-pane fade show " id="paper" role="tabpanel">
+          <ng-container *ngFor="let document of documents ">
+            <ng-container *ngIf="document.documentType.code == documentTypePaper.code ">
+              <div class="d-flex align-items-center pb-1 mb-2">
+                <h3 class="h6 mb-0 me-3 mt-3">Destinataires des documents papiers</h3>
+              </div>
+              <div class="form-check">
+                <div class="form-check" [formGroup]="documentForm">
+                  <input class="form-check-input" type="checkbox" id="paper-isRecipientAffaire" [disabled]="true"
+                    [(ngModel)]="document.isRecipientAffaire" [ngModelOptions]="{standalone: true}">
+                  <label class="form-check-label" for="paper-isRecipientAffaire">Les envoyer à l'affaire</label>
+                </div>
+                <div class="form-check" [formGroup]="documentForm">
+                  <input class="form-check-input" type="checkbox" id="paper-isRecipientClient" [disabled]="true"
+                    [(ngModel)]="document.isRecipientClient" [ngModelOptions]="{standalone: true}">
+                  <label class="form-check-label" for="paper-isRecipientClient">Me les envoyer</label>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</section>

@@ -1,6 +1,12 @@
 <div class="d-flex align-items-center mb-4" *ngIf="idOrder">
   <h1 class="h2 mb-0 me-3">Commande {{idOrder}} </h1>
 </div>
+<div class="d-flex align-items-center mb-4" *ngIf="idQuotation">
+  <h1 class="h2 mb-0 me-3">Devis {{idQuotation}} </h1>
+</div>
+<div class="d-flex align-items-center mb-4" *ngIf="responsable">
+  <h1 class="h2 mb-0 me-3">{{capitalizeName(responsable.firstname+' ' +responsable.lastname)}} </h1>
+</div>
 <section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4">
   <div class="card-body" *ngIf="!documents">
     <p class="card-text placeholder-glow">

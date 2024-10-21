@@ -17,9 +17,10 @@
       </label>
     </div>
 
-    <div class="d-none d-sm-block order-lg-3 me-3 me-lg-4 ms-auto" *ngIf="currentUser">
-      <a class="nav-link fs-4 p-2 mx-sm-1" href="" style="cursor: pointer;" data-bs-toggle="modal" title="Rechercher"
-        data-bs-toggle="tooltip" data-bs-placement="right" data-bs-target="#searchModal" aria-label="Search2">
+    <div class="d-none d-sm-block order-lg-3 me-3 me-lg-4 ms-auto" *ngIf="currentUser" data-bs-toggle="modal"
+      data-bs-target="#searchModal">
+      <a class="nav-link fs-4 p-2 mx-sm-1" style="cursor: pointer;" title="Rechercher" data-bs-toggle="tooltip"
+        data-bs-placement="right" aria-label="Search2">
         <i class="ai-search"></i>
       </a>
     </div>

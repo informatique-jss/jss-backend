@@ -1,4 +1,6 @@
-import { IReferential } from "../../miscellaneous/model/IReferential";
-
-export interface SpecialOffer extends IReferential {
+export interface SpecialOffer {
+  id: number | undefined;
+  code: string;
+  label: string;
+  customLabel: string;
 }

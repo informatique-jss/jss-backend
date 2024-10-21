@@ -3,6 +3,8 @@ import { AppService } from '../../../../libs/app.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../libs/user.preference.service';
+import { UserScope } from '../../../profile/model/UserScope';
+import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { MailComputeResult } from '../../model/MailComputeResult';
@@ -38,6 +40,8 @@ export class QuotationsComponent implements OnInit {
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
 
+  currentScope: UserScope[] = [];
+
   capitalizeName = capitalizeName;
 
   quotationsAssoAffaireOrders: AssoAffaireOrder[][] = [];
@@ -54,12 +58,16 @@ export class QuotationsComponent implements OnInit {
     private invoiceLabelResultService: InvoiceLabelResultService,
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
+    private userScopeService: UserScopeService,
   ) { }
 
   getQuotationStatusLabel = getQuotationStatusLabel;
   getClassForQuotationStatus = getClassForQuotationStatus;
 
   ngOnInit() {
+    this.userScopeService.getUserScope().subscribe(response => {
+      this.currentScope = response;
+    })
     this.retrieveBookmark();
     this.refreshQuotations();
   }

@@ -40,7 +40,9 @@ const routes: Routes = [
       { path: 'affaires', component: AffairesComponent },
       { path: 'affaires/:idAffaire', component: AffairesComponent },
       { path: 'affaire/edit/:id/:idOrder', component: EditAffaireComponent },
-      { path: 'settings', component: UserSettingsComponent }
+      { path: 'settings', component: UserSettingsComponent },
+      { path: 'settings/:idResponsable', component: UserSettingsComponent },
+      { path: 'settings/address/edit/:idResponsable', component: EditAddressComponent },
     ]
   },
   { path: 'account/signin', component: SignInComponent },

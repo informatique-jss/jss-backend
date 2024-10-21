@@ -650,6 +650,7 @@ public class MiscellaneousController {
             validationHelper.validateReferential(specialOffers, true, "specialOffers");
         validationHelper.validateString(specialOffers.getCode(), true, 20, "code");
         validationHelper.validateString(specialOffers.getLabel(), true, 100, "label");
+        validationHelper.validateString(specialOffers.getCustomLabel(), true, 100, "customLabel");
 
         if (specialOffers.getAssoSpecialOfferBillingTypes() == null
                 || specialOffers.getAssoSpecialOfferBillingTypes().size() == 0)

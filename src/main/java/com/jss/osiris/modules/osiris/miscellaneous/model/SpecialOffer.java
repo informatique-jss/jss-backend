@@ -28,6 +28,10 @@ public class SpecialOffer implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
+	@Column(nullable = false, length = 100)
+	@JsonView(JacksonViews.MyJssView.class)
+	private String customLabel;
+
 	@Column(nullable = false, length = 20)
 	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
@@ -66,6 +70,14 @@ public class SpecialOffer implements Serializable, IId {
 
 	public void setAssoSpecialOfferBillingTypes(List<AssoSpecialOfferBillingType> assoSpecialOfferBillingTypes) {
 		this.assoSpecialOfferBillingTypes = assoSpecialOfferBillingTypes;
+	}
+
+	public String getCustomLabel() {
+		return customLabel;
+	}
+
+	public void setCustomLabel(String customLabel) {
+		this.customLabel = customLabel;
 	}
 
 }

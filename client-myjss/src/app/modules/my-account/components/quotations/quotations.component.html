@@ -101,25 +101,30 @@
             [attr.data-bs-target]="'#order'+quotation.id" data-bs-toggle="collapse" aria-expanded="false"
             [attr.aria-controls]="'#order'+quotation.id">
             <div class="d-flex justify-content-between w-100">
-              <div class="me-3 me-sm-4">
+              <div class="me-3 me-sm-4" style="width: 30%;">
                 <div class="fs-sm text-body-secondary">n°{{quotation.id}}</div>
                 <span class="badge bg-opacity-10  fs-xs"
                   [ngClass]="getClassForQuotationStatus(quotation)">{{getQuotationStatusLabel(quotation)}}</span>
               </div>
-              <div class="me-3 me-sm-4">
+              <div class="me-3 me-sm-4" style="width: 15%;"
+                *ngIf="currentScope && currentScope.length>1 && quotation.responsable">
+                <div class="d-none d-sm-block fs-sm text-body-secondary mb-2  ">Responsable</div>
+                <div class="fs-sm fw-medium text-dark">{{capitalizeName(quotation.responsable.firstname + ' '
+                  +quotation.responsable.lastname)}}</div>
+              </div>
+              <div class="me-3 me-sm-4" style="width: 15%;">
                 <div class="d-none d-sm-block fs-sm text-body-secondary mb-2">Date de devis</div>
-                <div class="d-sm-none fs-sm text-body-secondary mb-2">Date</div>
                 <div class="fs-sm fw-medium text-dark">{{quotation.createdDate| date:'dd/MM/yyyy'}}</div>
               </div>
-              <div class="me-3 me-sm-4">
+              <div class="me-3 me-sm-4" style="width: 15%;">
                 <div class="fs-sm text-body-secondary mb-2">Validité</div>
                 <div class="fs-sm fw-medium text-dark">{{getQuotationValidityDate(quotation)| date:'dd/MM/yyyy'}}</div>
               </div>
-              <div class="me-3 me-sm-4">
+              <div class="me-3 me-sm-4" style="width: 20%;">
                 <div class="fs-sm text-body-secondary mb-2">Affaire</div>
                 <div class="fs-sm fw-medium text-dark">{{capitalizeName(quotation.affairesList)}}</div>
               </div>
-              <div class="me-3 me-sm-4">
+              <div class="me-3 me-sm-4" style="width: 20%;">
                 <div class="fs-sm text-body-secondary mb-2">Services</div>
                 <div class="fs-sm fw-medium text-dark">{{quotation.servicesList}}</div>
               </div>

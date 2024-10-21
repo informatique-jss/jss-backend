@@ -33,6 +33,7 @@ import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.profile.model.UserScope;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
+import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidationHelper;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
@@ -67,6 +68,9 @@ public class MyJssProfileController {
 
 	@Autowired
 	SearchService searchService;
+
+	@Autowired
+	MyJssQuotationValidationHelper myJssQuotationValidationHelper;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 10;
@@ -208,5 +212,17 @@ public class MyJssProfileController {
 			return new ResponseEntity<List<IndexEntity>>(searchService.searchEntitiesForCustomer(searchText),
 					HttpStatus.OK);
 		return new ResponseEntity<List<IndexEntity>>(new ArrayList<IndexEntity>(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/responsable")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Responsable> getResponsable(@RequestParam Integer idResponsable)
+			throws OsirisClientMessageException {
+		Responsable responsable = responsableService.getResponsable(idResponsable);
+
+		if (responsable == null || !myJssQuotationValidationHelper.canSeeResponsable(responsable))
+			return new ResponseEntity<Responsable>(new Responsable(), HttpStatus.OK);
+
+		return new ResponseEntity<Responsable>(responsable, HttpStatus.OK);
 	}
 }

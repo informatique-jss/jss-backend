@@ -6,6 +6,8 @@ import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../.
 import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'top-bar',
   templateUrl: './top-bar.component.html',

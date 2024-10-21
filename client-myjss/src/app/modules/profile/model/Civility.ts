@@ -1,4 +1,6 @@
-import { IReferential } from "../../miscellaneous/model/IReferential";
 
-export interface Civility extends IReferential {
+export interface Civility {
+  id: number | undefined;
+  code: string;
+  label: string;
 }

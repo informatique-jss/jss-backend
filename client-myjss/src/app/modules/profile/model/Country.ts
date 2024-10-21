@@ -1,4 +1,6 @@
-import { IReferential } from "../../miscellaneous/model/IReferential";
 
-export interface Country extends IReferential {
+export interface Country {
+  id: number | undefined;
+  code: string;
+  label: string;
 }

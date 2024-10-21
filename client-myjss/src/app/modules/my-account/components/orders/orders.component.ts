@@ -3,6 +3,8 @@ import { AppService } from '../../../../libs/app.service';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../libs/user.preference.service';
+import { UserScope } from '../../../profile/model/UserScope';
+import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
@@ -37,6 +39,8 @@ export class OrdersComponent implements OnInit {
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
 
+  currentScope: UserScope[] = [];
+
   capitalizeName = capitalizeName;
   CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
 
@@ -51,11 +55,15 @@ export class OrdersComponent implements OnInit {
     private invoiceLabelResultService: InvoiceLabelResultService,
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
+    private userScopeService: UserScopeService,
   ) { }
 
   ngOnInit() {
     this.retrieveBookmark();
     this.refreshOrders();
+    this.userScopeService.getUserScope().subscribe(response => {
+      this.currentScope = response;
+    })
   }
 
   refreshOrders() {
@@ -223,6 +231,12 @@ export function getClassForCustomerOrderStatus(order: CustomerOrder) {
 
 export function initTooltips(forcedPlacement: string = 'right') {
   setTimeout(() => {
+    try {
+      if (bootstrap == undefined)
+        return;
+    } catch {
+      return;
+    }
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl, { placement: forcedPlacement })

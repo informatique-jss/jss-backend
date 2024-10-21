@@ -60,6 +60,8 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 @RestController
 public class MyJssQuotationController {
@@ -113,6 +115,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	CustomerOrderCommentService customerOrderCommentService;
+
+	@Autowired
+	ResponsableService responsableService;
 
 	@PostMapping(inputEntryPoint + "/order/search/current")
 	@JsonView(JacksonViews.MyJssView.class)
@@ -609,6 +614,67 @@ public class MyJssQuotationController {
 		if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
 				|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
 				|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		for (Document document : documents) {
+			Document currentDocument = documentService.getDocument(document.getId());
+			if (currentDocument.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
+					|| currentDocument.getDocumentType().getId()
+							.equals(constantService.getDocumentTypeDigital().getId())
+					|| currentDocument.getDocumentType().getId()
+							.equals(constantService.getDocumentTypePaper().getId())) {
+				currentDocument.setIsRecipientClient(document.getIsRecipientClient());
+				currentDocument.setIsRecipientAffaire(document.getIsRecipientAffaire());
+				currentDocument.setMailsAffaire(document.getMailsAffaire());
+				currentDocument.setMailsClient(document.getMailsClient());
+				currentDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
+				currentDocument.setAddToClientMailList(document.getAddToClientMailList());
+				currentDocument.setBillingLabelType(document.getBillingLabelType());
+				currentDocument.setIsCommandNumberMandatory(document.getIsCommandNumberMandatory());
+				currentDocument.setCommandNumber(document.getCommandNumber());
+				currentDocument.setExternalReference(document.getExternalReference());
+				documentService.addOrUpdateDocument(currentDocument);
+			}
+		}
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/responsable/documents")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Document>> getDocumentForResonsable(@RequestParam Integer idResponsable)
+			throws OsirisValidationException {
+		if (idResponsable == null)
+			throw new OsirisValidationException("id");
+
+		Responsable responsable = responsableService.getResponsable(idResponsable);
+		if (responsable == null || !myJssQuotationValidationHelper.canSeeResponsable(responsable))
+			return new ResponseEntity<List<Document>>(new ArrayList<Document>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Document>>(responsable.getDocuments(), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/responsable/documents")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Boolean> addOrUpdateDocumentsForResponsable(@RequestBody List<Document> documents)
+			throws OsirisException {
+		if (documents == null)
+			throw new OsirisValidationException("documents");
+
+		Integer idResponsable = null;
+
+		for (Document document : documents) {
+			Document currentDocument = documentService.getDocument(document.getId());
+
+			if (currentDocument == null || currentDocument.getResponsable() == null
+					|| idResponsable != null && !idResponsable.equals(currentDocument.getResponsable().getId()))
+				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+			idResponsable = currentDocument.getResponsable().getId();
+		}
+
+		Responsable responsable = responsableService.getResponsable(idResponsable);
+		if (responsable == null || !myJssQuotationValidationHelper.canSeeResponsable(responsable))
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
 		for (Document document : documents) {

@@ -106,9 +106,14 @@
                 <span class="badge bg-opacity-10  fs-xs"
                   [ngClass]="getClassForCustomerOrderStatus(order)">{{getCustomerOrderStatusLabel(order)}}</span>
               </div>
+              <div class="me-3 me-sm-4" style="width: 15%;"
+                *ngIf="currentScope && currentScope.length>1 && order.responsable">
+                <div class="d-none d-sm-block fs-sm text-body-secondary mb-2  ">Responsable</div>
+                <div class="fs-sm fw-medium text-dark">{{capitalizeName(order.responsable.firstname + ' '
+                  +order.responsable.lastname)}}</div>
+              </div>
               <div class="me-3 me-sm-4" style="width: 15%;">
                 <div class="d-none d-sm-block fs-sm text-body-secondary mb-2  ">Date de commande</div>
-                <div class="d-sm-none fs-sm text-body-secondary mb-2">Date</div>
                 <div class="fs-sm fw-medium text-dark">{{order.createdDate| date:'dd/MM/yyyy'}}</div>
               </div>
               <div class="me-3 me-sm-4" style="width: 20%;">

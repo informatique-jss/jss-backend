@@ -15,4 +15,8 @@ export class ResponsableService extends AppRestService<Responsable> {
   getPotentialUserScope() {
     return this.getListCached(new HttpParams(), "user/scope/possible");
   }
+
+  getResponsable(idResponsable: number) {
+    return this.get(new HttpParams().set("idResponsable", idResponsable), "responsable");
+  }
 }
