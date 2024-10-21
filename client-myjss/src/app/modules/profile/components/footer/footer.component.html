@@ -6,115 +6,91 @@
     <!-- Columns with links -->
     <div class="row" id="links">
       <div class="col-md-3 col-xl-2 pb-2 pb-md-0">
-        <h3 class="h6 text-uppercase d-none d-md-block">Useful links</h3>
+        <h3 class="h6 text-uppercase d-none d-md-block">Liens utiles</h3>
         <a class="btn-more h6 mb-1 text-uppercase text-decoration-none d-flex align-items-center collapsed d-md-none"
           href="#useful" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="useful"
-          data-show-label="Useful links" data-hide-label="Useful links" aria-label="Useful links"></a>
+          data-show-label="Liens utiles" data-hide-label="Liens utiles" aria-label="Liens utiles"></a>
         <div class="collapse d-md-block" id="useful" data-bs-parent="#links">
           <ul class="nav flex-column pb-2 pb-md-0">
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Trending</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;"
+                (click)="openPage('access-plan', $event)">Plan d'accès</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Sale</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Mentions légales</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">About us</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Blog</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Contact</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Shipping &amp; Returns</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Delivery info</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Politique de confidentialité</a>
             </li>
           </ul>
         </div>
       </div>
       <div class="col-md-3 col-xl-2 pb-2 pb-md-0">
-        <h3 class="h6 text-uppercase d-none d-md-block">Decors</h3>
+        <h3 class="h6 text-uppercase d-none d-md-block">Nos offres</h3>
         <a class="btn-more h6 mb-1 text-uppercase text-decoration-none d-flex align-items-center collapsed d-md-none"
-          href="#decors" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="decors"
-          data-show-label="Decors" data-hide-label="Decors" aria-label="Decors"></a>
-        <div class="collapse d-md-block" id="decors" data-bs-parent="#links">
+          href="#useful" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="useful"
+          data-show-label="Nos offres" data-hide-label="Nos offres" aria-label="Nos offres"></a>
+        <div class="collapse d-md-block" id="useful" data-bs-parent="#links">
           <ul class="nav flex-column pb-2 pb-md-0">
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Vases</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Toutes nos offres</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Mirrors</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Produit 1</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Paintings</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Figurines</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Textile</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Lighting</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Photo frames</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Produit 2</a>
             </li>
           </ul>
         </div>
       </div>
       <div class="col-md-3 col-xl-2 pb-2 pb-md-0">
-        <h3 class="h6 text-uppercase d-none d-md-block">Categories</h3>
+        <h3 class="h6 text-uppercase d-none d-md-block">Le JSS</h3>
         <a class="btn-more h6 mb-1 text-uppercase text-decoration-none d-flex align-items-center collapsed d-md-none"
-          href="#categories" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="categories"
-          data-show-label="Categories" data-hide-label="Categories" aria-label="Categories"></a>
-        <div class="collapse d-md-block" id="categories" data-bs-parent="#links">
+          href="#useful" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="useful"
+          data-show-label="Le JSS" data-hide-label="Le JSS" aria-label="Le JSS"></a>
+        <div class="collapse d-md-block" id="useful" data-bs-parent="#links">
           <ul class="nav flex-column pb-2 pb-md-0">
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Kitchen</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Notre histoire</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Bathroom</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Nos partenaires</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Living room</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">Bedroom</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Notre équipe</a>
             </li>
           </ul>
         </div>
       </div>
       <div class="col-md-3 pb-2 pb-md-0">
-        <h3 class="h6 text-uppercase d-none d-md-block">Showroom</h3>
+        <h3 class="h6 text-uppercase d-none d-md-block">Contact</h3>
         <a class="btn-more h6 mb-1 text-uppercase text-decoration-none d-flex align-items-center collapsed d-md-none"
           href="#showroom" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="showroom"
-          data-show-label="Showroom" data-hide-label="Showroom" aria-label="Showroom"></a>
+          data-show-label="Contact" data-hide-label="Contact" aria-label="Contact"></a>
         <div class="collapse d-md-block" id="showroom" data-bs-parent="#links">
           <ul class="nav flex-column pb-3">
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="#">1501 Main St, Ste 50<br>Tewksbury MA 01876</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">10 boulevard Haussmann<br>75009 Paris</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="mailto:email@example.com">emailexample.com</a>
+              <a class="nav-link fw-normal px-0 py-1" href="mailto:contact@jss.fr">{{'contact@jss.fr'}}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="+15262200459">+1&nbsp;526&nbsp;220&nbsp;0459</a>
+              <a class="nav-link fw-normal px-0 py-1" href="tel:+33147031010">01&nbsp;47&nbsp;03&nbsp;10&nbsp;10</a>
             </li>
           </ul>
           <ul class="list-unstyled mb-0 pb-3 pb-md-0">
-            <li class="text-light opacity-90 mb-2">Mon-Fri: 8:00 - 21:00</li>
-            <li class="text-light opacity-90 mb-2">Sat: 8:00 - 21:00</li>
-            <li class="text-light opacity-90">Sun: 8:00 - 21:00</li>
+            <li class="text-light opacity-90 mb-2">Lun-Ven : 9:00 - 12:30</li>
+            <li class="text-light opacity-90 mb-2">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14:00
+              -
+              18:00</li>
           </ul>
         </div>
       </div>
       <div class="col-12 col-xl-3 mt-md-2 mt-xl-0 pt-2 pt-md-4 pt-xl-0">
-        <h3 class="h6 text-uppercase mb-1 pb-1">Download our app</h3>
+        <h3 class="h6 text-uppercase mb-1 pb-1">Téléchargez notre application</h3>
         <div class="d-flex d-xl-block d-xxl-flex">
           <a class="btn btn-secondary px-3 py-2 mt-3 me-3" href="#">
             <img class="mx-1" src="assets/img/market/appstore-light.svg" width="120" alt="App Store">
@@ -124,17 +100,6 @@
           </a>
         </div>
       </div>
-    </div>
-
-    <!-- Nav + Switcher -->
-    <div class="d-sm-flex align-items-end justify-content-between border-bottom mt-2 mt-sm-1 pt-4 pt-sm-5">
-
-      <!-- Nav -->
-      <nav class="nav d-flex mb-3 mb-sm-4">
-        <a class="nav-link text-body-secondary fs-sm fw-normal ps-0 pe-2 py-2 me-4" href="#">Support</a>
-        <a class="nav-link text-body-secondary fs-sm fw-normal ps-0 pe-2 py-2 me-4" href="#">Privacy</a>
-        <a class="nav-link text-body-secondary fs-sm fw-normal ps-0 pe-2 py-2 me-sm-4" href="#">Terms of use</a>
-      </nav>
     </div>
 
     <!-- Logo + Socials + Cards -->
@@ -162,7 +127,6 @@
           </a>
         </div>
       </div>
-      <img class="ms-sm-auto" src="assets/img/shop/footer-cards.png" width="187" alt="Accepted cards">
     </div>
   </div>
   <div class="pt-5 pt-lg-0"></div>

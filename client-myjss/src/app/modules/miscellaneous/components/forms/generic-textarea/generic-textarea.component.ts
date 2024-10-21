@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { AppService } from '../../../libs/app.service';
-import { GenericFormComponent } from '../components/generic-form.components';
+import { AppService } from '../../../../../libs/app.service';
+import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
   selector: 'generic-textarea',

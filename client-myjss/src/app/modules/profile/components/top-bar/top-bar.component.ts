@@ -45,4 +45,12 @@ export class TopBarComponent implements OnInit {
     });
   }
 
+  openProduct(event: any) {
+    this.appService.openRoute(event, "product/" + "", undefined);
+  }
+
+  openOffers(event: any) {
+    this.appService.openRoute(event, "offers/" + "", undefined);
+  }
+
 }

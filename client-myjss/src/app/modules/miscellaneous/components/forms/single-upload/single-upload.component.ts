@@ -2,13 +2,13 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { forkJoin, tap } from 'rxjs';
-import { AppService } from '../../../../libs/app.service';
-import { MAX_SIZE_UPLOAD_FILES } from '../../../../libs/Constants';
-import { formatBytes } from '../../../../libs/FormatHelper';
-import { AttachmentType } from '../../../my-account/model/AttachmentType';
-import { IAttachment } from '../../../my-account/model/IAttachment';
-import { TypeDocument } from '../../../my-account/model/TypeDocument';
-import { UploadAttachmentService } from '../../../my-account/services/upload.attachment.service';
+import { AppService } from '../../../../../libs/app.service';
+import { MAX_SIZE_UPLOAD_FILES } from '../../../../../libs/Constants';
+import { formatBytes } from '../../../../../libs/FormatHelper';
+import { AttachmentType } from '../../../../my-account/model/AttachmentType';
+import { IAttachment } from '../../../../my-account/model/IAttachment';
+import { TypeDocument } from '../../../../my-account/model/TypeDocument';
+import { UploadAttachmentService } from '../../../../my-account/services/upload.attachment.service';
 
 @Component({
   selector: 'single-upload',

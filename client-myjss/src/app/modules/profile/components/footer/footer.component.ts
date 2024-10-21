@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppService } from '../../../../libs/app.service';
 
 @Component({
   selector: 'main-footer',
@@ -8,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 export class FooterComponent implements OnInit {
   logoJss: string = '/assets/images/logo.png';
 
-  constructor() { }
+  constructor(
+    private appService: AppService
+  ) { }
 
   ngOnInit() {
   }
 
+  openPage(page: string, event: any) {
+    this.appService.openRoute(event, page + "/", undefined);
+  }
 }

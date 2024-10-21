@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppService } from '../../../../libs/app.service';
 
 @Component({
   selector: 'app-offers',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OffersComponent implements OnInit {
 
-  constructor() { }
+  constructor(private appService: AppService
 
-  ngOnInit() {
+  ) { }
+
+  ngOnInit(
+  ) {
   }
 
+  openProduct(event: any) {
+    this.appService.openRoute(event, "product/" + "", undefined);
+  }
 }
