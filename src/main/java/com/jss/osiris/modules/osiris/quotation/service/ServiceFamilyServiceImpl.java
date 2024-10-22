@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.repository.ServiceFamilyRepository;
 
 @Service
@@ -35,5 +36,10 @@ public class ServiceFamilyServiceImpl implements ServiceFamilyService {
     public ServiceFamily addOrUpdateServiceFamily(
             ServiceFamily serviceFamily) {
         return serviceFamilyRepository.save(serviceFamily);
+    }
+
+    @Override
+    public List<ServiceFamily> getServiceFamiliesForFamilyGroup(ServiceFamilyGroup serviceFamilyGroup) {
+        return serviceFamilyRepository.findByServiceFamilyGroup(serviceFamilyGroup);
     }
 }

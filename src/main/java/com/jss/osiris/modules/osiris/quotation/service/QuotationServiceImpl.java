@@ -462,26 +462,28 @@ public class QuotationServiceImpl implements QuotationService {
         BigDecimal vatTotal = new BigDecimal(0);
         BigDecimal zeroValue = new BigDecimal(0);
 
-        for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
-            for (Service service : asso.getServices())
-                for (Provision provision : service.getProvisions()) {
-                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        preTaxPriceTotal = preTaxPriceTotal
-                                .add(invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : zeroValue);
-                        if (invoiceItem.getDiscountAmount() != null
-                                && invoiceItem.getDiscountAmount().compareTo(zeroValue) > 0) {
-                            if (discountTotal == null)
-                                discountTotal = invoiceItem.getDiscountAmount();
-                            else
-                                discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
-                        }
-                        if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                                && invoiceItem.getVatPrice().compareTo(zeroValue) > 0) {
-                            vatTotal = vatTotal.add(invoiceItem.getVatPrice());
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions()) {
+                        for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                            preTaxPriceTotal = preTaxPriceTotal
+                                    .add(invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
+                                            : zeroValue);
+                            if (invoiceItem.getDiscountAmount() != null
+                                    && invoiceItem.getDiscountAmount().compareTo(zeroValue) > 0) {
+                                if (discountTotal == null)
+                                    discountTotal = invoiceItem.getDiscountAmount();
+                                else
+                                    discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
+                            }
+                            if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
+                                    && invoiceItem.getVatPrice().compareTo(zeroValue) > 0) {
+                                vatTotal = vatTotal.add(invoiceItem.getVatPrice());
+                            }
                         }
                     }
-                }
-        }
+            }
 
         return preTaxPriceTotal.subtract(discountTotal != null ? discountTotal : zeroValue).add(vatTotal);
     }

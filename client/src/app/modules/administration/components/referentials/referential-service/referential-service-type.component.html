@@ -36,6 +36,13 @@
           </tr>
           <tr>
             <td>
+              <generic-textarea [(model)]="selectedEntity.comment" label="Commentaire MyJSS" [form]="entityForm"
+                propertyName="comment" [isMandatory]="false" [isDisabled]="!editMode"
+                [numberOfLines]="5"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-service-family [(model)]="selectedEntity.serviceFamily" label="Famille de service"
                 [form]="entityForm" propertyName="serviceFamily" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-service-family>

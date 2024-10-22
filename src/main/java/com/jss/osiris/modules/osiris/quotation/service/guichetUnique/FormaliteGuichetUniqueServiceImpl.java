@@ -508,22 +508,23 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 LocalDate.parse(cart.getPaymentDate(),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
-        for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
-            for (Service service : asso.getServices())
-                if (asso.getId().equals(service.getAssoAffaireOrder().getId()))
-                    for (Provision inProvision : service.getProvisions()) {
-                        if (inProvision.getInvoiceItems() == null)
-                            inProvision.setInvoiceItems(new ArrayList<InvoiceItem>());
+        if (invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
+                for (Service service : asso.getServices())
+                    if (asso.getId().equals(service.getAssoAffaireOrder().getId()))
+                        for (Provision inProvision : service.getProvisions()) {
+                            if (inProvision.getInvoiceItems() == null)
+                                inProvision.setInvoiceItems(new ArrayList<InvoiceItem>());
 
-                        if (provision.getId().equals(inProvision.getId())) {
-                            for (CartRate cartRate : cart.getCartRates()) {
-                                InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                                invoiceItem.setProvision(null);
-                                invoice.getInvoiceItems().add(invoiceItem);
-                                provision.getInvoiceItems().add(invoiceItem);
+                            if (provision.getId().equals(inProvision.getId())) {
+                                for (CartRate cartRate : cart.getCartRates()) {
+                                    InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
+                                    invoiceItem.setProvision(null);
+                                    invoice.getInvoiceItems().add(invoiceItem);
+                                    provision.getInvoiceItems().add(invoiceItem);
+                                }
                             }
                         }
-                    }
 
         invoice.setProvision(provision);
         return invoiceService.addOrUpdateInvoiceFromUser(invoice);
@@ -557,66 +558,70 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 LocalDate.parse(cart.getPaymentDate() != null ? cart.getPaymentDate() : cart.getUpdated(),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
-        for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
-            if (asso.getId().equals(provision.getService().getAssoAffaireOrder().getId()))
-                for (Service service : asso.getServices())
-                    for (Provision inProvision : service.getProvisions()) {
-                        if (inProvision.getInvoiceItems() == null)
-                            inProvision.setInvoiceItems(new ArrayList<InvoiceItem>());
+        if (invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
+                if (asso.getId().equals(provision.getService().getAssoAffaireOrder().getId()))
+                    for (Service service : asso.getServices())
+                        for (Provision inProvision : service.getProvisions()) {
+                            if (inProvision.getInvoiceItems() == null)
+                                inProvision.setInvoiceItems(new ArrayList<InvoiceItem>());
 
-                        if (provision.getId().equals(inProvision.getId())) {
-                            cart.getCartRates()
-                                    .sort((o1, o2) -> ((Long) o1.getAmount()).compareTo((Long) (o2.getAmount())));
-                            InvoiceItem firstItemTaxable = null;
-                            InvoiceItem firstItemNonTaxable = null;
-                            for (CartRate cartRate : cart.getCartRates()) {
-                                if (cartRate.getRate() != null && cartRate.getAmount() != 0) {
-                                    boolean initItem = true;
-                                    if (cartRate.getAmount() > 0) {
-                                        InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                                        if (invoiceItem.getBillingItem().getBillingType().getId()
-                                                .equals(constantService.getBillingTypeDeboursNonTaxable().getId())) {
-                                            if (firstItemNonTaxable != null) {
-                                                firstItemNonTaxable.setPreTaxPrice(
-                                                        firstItemNonTaxable.getPreTaxPrice()
-                                                                .subtract(invoiceItem.getPreTaxPrice().abs()));
-                                                firstItemNonTaxable.setPreTaxPriceReinvoiced(
-                                                        firstItemNonTaxable.getPreTaxPrice().abs().negate());
-                                                initItem = false;
-                                            }
-                                        } else {
-                                            if (firstItemTaxable != null) {
-                                                firstItemTaxable.setPreTaxPrice(
-                                                        firstItemTaxable.getPreTaxPrice()
-                                                                .subtract(invoiceItem.getPreTaxPrice().abs()));
-                                                firstItemTaxable.setPreTaxPriceReinvoiced(
-                                                        firstItemTaxable.getPreTaxPrice().abs().negate());
-                                                initItem = false;
+                            if (provision.getId().equals(inProvision.getId())) {
+                                cart.getCartRates()
+                                        .sort((o1, o2) -> ((Long) o1.getAmount()).compareTo((Long) (o2.getAmount())));
+                                InvoiceItem firstItemTaxable = null;
+                                InvoiceItem firstItemNonTaxable = null;
+                                for (CartRate cartRate : cart.getCartRates()) {
+                                    if (cartRate.getRate() != null && cartRate.getAmount() != 0) {
+                                        boolean initItem = true;
+                                        if (cartRate.getAmount() > 0) {
+                                            InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
+                                            if (invoiceItem.getBillingItem().getBillingType().getId()
+                                                    .equals(constantService.getBillingTypeDeboursNonTaxable()
+                                                            .getId())) {
+                                                if (firstItemNonTaxable != null) {
+                                                    firstItemNonTaxable.setPreTaxPrice(
+                                                            firstItemNonTaxable.getPreTaxPrice()
+                                                                    .subtract(invoiceItem.getPreTaxPrice().abs()));
+                                                    firstItemNonTaxable.setPreTaxPriceReinvoiced(
+                                                            firstItemNonTaxable.getPreTaxPrice().abs().negate());
+                                                    initItem = false;
+                                                }
+                                            } else {
+                                                if (firstItemTaxable != null) {
+                                                    firstItemTaxable.setPreTaxPrice(
+                                                            firstItemTaxable.getPreTaxPrice()
+                                                                    .subtract(invoiceItem.getPreTaxPrice().abs()));
+                                                    firstItemTaxable.setPreTaxPriceReinvoiced(
+                                                            firstItemTaxable.getPreTaxPrice().abs().negate());
+                                                    initItem = false;
+                                                }
                                             }
                                         }
-                                    }
-                                    if (initItem) {
-                                        InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                                        invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().abs());
-                                        invoiceItem
-                                                .setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice().abs().negate());
-                                        invoiceItem.setProvision(null);
-                                        invoice.getInvoiceItems().add(invoiceItem);
-                                        provision.getInvoiceItems().add(invoiceItem);
+                                        if (initItem) {
+                                            InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
+                                            invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().abs());
+                                            invoiceItem
+                                                    .setPreTaxPriceReinvoiced(
+                                                            invoiceItem.getPreTaxPrice().abs().negate());
+                                            invoiceItem.setProvision(null);
+                                            invoice.getInvoiceItems().add(invoiceItem);
+                                            provision.getInvoiceItems().add(invoiceItem);
 
-                                        if (invoiceItem.getBillingItem().getBillingType().getId()
-                                                .equals(constantService.getBillingTypeDeboursNonTaxable().getId())) {
-                                            if (firstItemNonTaxable == null)
-                                                firstItemNonTaxable = invoiceItem;
-                                        } else {
-                                            if (firstItemTaxable == null)
-                                                firstItemTaxable = invoiceItem;
+                                            if (invoiceItem.getBillingItem().getBillingType().getId()
+                                                    .equals(constantService.getBillingTypeDeboursNonTaxable()
+                                                            .getId())) {
+                                                if (firstItemNonTaxable == null)
+                                                    firstItemNonTaxable = invoiceItem;
+                                            } else {
+                                                if (firstItemTaxable == null)
+                                                    firstItemTaxable = invoiceItem;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
 
         invoice.setIsCreditNote(true);
         invoice.setProvision(provision);

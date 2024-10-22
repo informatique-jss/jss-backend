@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.repository.ServiceTypeRepository;
 
@@ -54,5 +55,10 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
                 asso.setServiceType(serviceType);
 
         return serviceTypeRepository.save(serviceType);
+    }
+
+    @Override
+    public List<ServiceType> getServiceTypesForFamily(ServiceFamily serviceFamily) {
+        return serviceTypeRepository.findByServiceFamily(serviceFamily);
     }
 }

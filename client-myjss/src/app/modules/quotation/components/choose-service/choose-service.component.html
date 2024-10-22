@@ -1,0 +1,95 @@
+<h1 class="h2 mb-4">Choix du service</h1>
+<!-- Vertical steps (default) -->
+<div class="steps    ">
+
+  <div class="step active">
+    <div class="step-number">
+      <div class="step-number-inner">1</div>
+    </div>
+    <div class="step-body">
+      <h5 class="pb-1 mb-2" *ngIf="!serviceFamilyGroupChosen">Choisissez votre package </h5>
+      <h5 class="pb-1 mb-2" *ngIf="serviceFamilyGroupChosen">Package {{serviceFamilyGroupChosen.label}}</h5>
+      <p *ngIf="currentStep==1" class="mb-0">Choisissez si vous souhaitez réaliser une formalité dans son ensemble ou
+        seulement déposer une annonce légale</p>
+    </div>
+  </div>
+
+  <div class="step " *ngIf="currentStep>1">
+    <div class="step-number">
+      <div class="step-number-inner">2</div>
+    </div>
+    <div class="step-body">
+      <h5 class="pb-1 mb-2" *ngIf="!serviceFamilyChosen">Choisissez votre service </h5>
+      <h5 class="pb-1 mb-2" *ngIf="serviceFamilyChosen">Service {{serviceFamilyChosen.label}}</h5>
+      <p *ngIf="currentStep==2" class="mb-0">Choisissez le type de service souhaité</p>
+    </div>
+  </div>
+
+  <div class="step " *ngIf="currentStep>2">
+    <div class="step-number">
+      <div class="step-number-inner">3</div>
+    </div>
+    <div class="step-body">
+      <h5 class="pb-1 mb-2">Détaillez votre demande </h5>
+      <p *ngIf="currentStep==3" class="mb-0">Précisez la forme juridique, ...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Choose group family -->
+<div class="row row-cols-1 row-cols-sm-1 row-cols-lg-3 g-4 pb-sm-3 pb-md-4 pb-xl-5"
+  *ngIf="serviceFamilyGroups && currentStep==1">
+  <div class="col" *ngFor="let familyGroup of serviceFamilyGroups">
+    <a class="card card-hover-primary bg-secondary border-0 h-100 text-decoration-none" style="cursor: pointer;"
+      (click)="choseFamilyGroup(familyGroup)">
+      <div class="card-body pb-0">
+        <h3 class="h4 card-title mt-0">{{familyGroup.label}}</h3>
+        <p class="card-text">{{familyGroup.comment}}</p>
+      </div>
+      <div class="card-footer border-0 py-3 my-3 mb-sm-4">
+        <div class="btn btn-lg btn-icon btn-outline-primary rounded-circle pe-none">
+          <i class="ai-arrow-right"></i>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+<!-- Choose  family -->
+<div class="row row-cols-1 row-cols-sm-1 row-cols-lg-3 g-4 pb-sm-3 pb-md-4 pb-xl-5"
+  *ngIf="serviceFamilies  && currentStep==2">
+  <div class="col" *ngFor="let family of serviceFamilies">
+    <a class="card card-hover-primary bg-secondary border-0 h-100 text-decoration-none" style="cursor: pointer;"
+      (click)="choseFamily(family)">
+      <div class="card-body pb-0">
+        <h3 class="h4 card-title mt-0">{{family.label}}</h3>
+        <p class="card-text">{{family.comment}}</p>
+      </div>
+      <div class="card-footer border-0 py-3 my-3 mb-sm-4">
+        <div class="btn btn-lg btn-icon btn-outline-primary rounded-circle pe-none">
+          <i class="ai-arrow-right"></i>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+<!-- Choose  service type -->
+<div class="row row-cols-1 row-cols-sm-1 row-cols-lg-3 g-4 pb-sm-3 pb-md-4 pb-xl-5"
+  *ngIf="serviceTypes  && currentStep==3">
+  <div class="w-100"> <generic-input [(model)]="searchService" label="Rechercher" [form]="addServiceForm"
+      propertyName="searchService" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+      [icon]="'search'"></generic-input></div>
+  <div class="col" *ngFor="let serviceType of serviceTypes">
+    <a class="card card-hover-primary bg-secondary border-0 h-100 text-decoration-none" style="cursor: pointer;"
+      (click)="choseServiceType(serviceType)">
+      <div class="card-body pb-0">
+        <h3 class="h4 card-title mt-0">{{serviceType.label}}</h3>
+        <p class="card-text">{{serviceType.comment}}</p>
+      </div>
+      <div class="card-footer border-0 py-3 my-3 mb-sm-4">
+        <div class="btn btn-lg btn-icon btn-outline-primary rounded-circle pe-none">
+          <i class="ai-arrow-right"></i>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>

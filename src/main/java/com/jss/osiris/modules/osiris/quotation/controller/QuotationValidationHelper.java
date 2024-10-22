@@ -154,10 +154,10 @@ public class QuotationValidationHelper {
                         for (SpecialOffer specialOffer : quotation.getSpecialOffers())
                                 validationHelper.validateReferential(specialOffer, false, "specialOffer");
 
-                // If new or if from website, grab special offer from tiers / responsable /
+                // If new or if from old website, grab special offer from tiers / responsable /
                 // confrere
                 if (quotation.getCustomerOrderOrigin().getId()
-                                .equals(constantService.getCustomerOrderOriginWebSite().getId())
+                                .equals(constantService.getCustomerOrderOriginOldWebSite().getId())
                                 && (quotation.getSpecialOffers() == null || quotation.getSpecialOffers().size() == 0)
                                 || quotation.getId() == null) {
                         Tiers tiers = quotation.getResponsable().getTiers();
@@ -238,7 +238,7 @@ public class QuotationValidationHelper {
                 // Do not check anything from website with no provision, a human will correct if
                 // after
                 if (isOpen && quotation.getCustomerOrderOrigin().getId()
-                                .equals(constantService.getCustomerOrderOriginWebSite().getId())
+                                .equals(constantService.getCustomerOrderOriginOldWebSite().getId())
                                 && (quotation.getAssoAffaireOrders() == null
                                                 || quotation.getAssoAffaireOrders().size() == 0))
                         return;
@@ -306,42 +306,47 @@ public class QuotationValidationHelper {
                 }
 
                 CustomerOrderFrequency lastProvisionFrequency = null;
-                for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-                        if (assoAffaireOrder.getAffaire() == null)
-                                throw new OsirisValidationException("Affaire");
-                        assoAffaireOrder
-                                        .setAffaire((Affaire) validationHelper.validateReferential(
-                                                        assoAffaireOrder.getAffaire(), true,
-                                                        "Affaire"));
+                if (quotation.getAssoAffaireOrders() != null)
+                        for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+                                if (assoAffaireOrder.getAffaire() == null)
+                                        throw new OsirisValidationException("Affaire");
+                                assoAffaireOrder
+                                                .setAffaire((Affaire) validationHelper.validateReferential(
+                                                                assoAffaireOrder.getAffaire(), true,
+                                                                "Affaire"));
 
-                        if (assoAffaireOrder.getServices() == null || assoAffaireOrder.getServices().size() == 0)
-                                throw new OsirisClientMessageException("Au moins un service est nécessaire");
+                                if (assoAffaireOrder.getServices() == null
+                                                || assoAffaireOrder.getServices().size() == 0)
+                                        throw new OsirisClientMessageException("Au moins un service est nécessaire");
 
-                        for (Service service : assoAffaireOrder.getServices())
-                                if (service.getProvisions() == null
-                                                || service.getProvisions().size() == 0)
-                                        throw new OsirisClientMessageException(
-                                                        "Chaque service doit avoir au moins une prestation");
+                                for (Service service : assoAffaireOrder.getServices())
+                                        if (service.getProvisions() == null
+                                                        || service.getProvisions().size() == 0)
+                                                throw new OsirisClientMessageException(
+                                                                "Chaque service doit avoir au moins une prestation");
 
-                        for (Service service : assoAffaireOrder.getServices())
-                                for (Provision provision : service.getProvisions()) {
-                                        validateProvision(provision, targetStatusCode, isCustomerOrder, quotation);
+                                for (Service service : assoAffaireOrder.getServices())
+                                        for (Provision provision : service.getProvisions()) {
+                                                validateProvision(provision, targetStatusCode, isCustomerOrder,
+                                                                quotation);
 
-                                        // Check unique frequency in all customer order
-                                        if (provision.getProvisionType().getIsRecurring() != null
-                                                        && provision.getProvisionType().getIsRecurring()
-                                                        && provision.getProvisionType()
-                                                                        .getRecurringFrequency() != null) {
-                                                if (lastProvisionFrequency != null && !lastProvisionFrequency.getId()
-                                                                .equals(provision.getProvisionType()
-                                                                                .getRecurringFrequency().getId()))
-                                                        throw new OsirisClientMessageException(
-                                                                        "Une seule fréquence de récurence est possible pour l'ensemble des prestations récurrentes de la commande");
-                                                lastProvisionFrequency = provision.getProvisionType()
-                                                                .getRecurringFrequency();
+                                                // Check unique frequency in all customer order
+                                                if (provision.getProvisionType().getIsRecurring() != null
+                                                                && provision.getProvisionType().getIsRecurring()
+                                                                && provision.getProvisionType()
+                                                                                .getRecurringFrequency() != null) {
+                                                        if (lastProvisionFrequency != null && !lastProvisionFrequency
+                                                                        .getId()
+                                                                        .equals(provision.getProvisionType()
+                                                                                        .getRecurringFrequency()
+                                                                                        .getId()))
+                                                                throw new OsirisClientMessageException(
+                                                                                "Une seule fréquence de récurence est possible pour l'ensemble des prestations récurrentes de la commande");
+                                                        lastProvisionFrequency = provision.getProvisionType()
+                                                                        .getRecurringFrequency();
+                                                }
                                         }
-                                }
-                }
+                        }
 
                 // Check recursivity
                 if (isCustomerOrder && ((CustomerOrder) quotation).getIsRecurring() != null
@@ -476,7 +481,7 @@ public class QuotationValidationHelper {
                         if (announcement.getId() != null) {
                                 currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
                         } else if (!quotation.getCustomerOrderOrigin().getId()
-                                        .equals(constantService.getCustomerOrderOriginWebSite().getId())) {
+                                        .equals(constantService.getCustomerOrderOriginOldWebSite().getId())) {
                                 // By default, if not from webstite, always redacted by JSS if option exists
                                 ProvisionType provisionType = provisionTypeService
                                                 .getProvisionType(provision.getProvisionType().getId());

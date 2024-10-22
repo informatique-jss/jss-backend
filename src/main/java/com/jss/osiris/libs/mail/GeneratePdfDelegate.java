@@ -243,21 +243,22 @@ public class GeneratePdfDelegate {
             ArrayList<String> eventLabels = new ArrayList<String>();
             Employee signatureEmployee = null;
 
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
-                signatureEmployee = asso.getAssignedTo();
-                affaireLabels.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                        : (asso.getAffaire().getCivility().getLabel() + " " + asso.getAffaire().getFirstname() + " "
-                                + asso.getAffaire().getLastname()))
-                        + "<br/>"
-                        + asso.getAffaire().getAddress() + "<br/>"
-                        + asso.getAffaire().getPostalCode() + " "
-                        + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : ""));
-                for (Service service : asso.getServices()) {
-                    for (Provision provision : service.getProvisions()) {
-                        eventLabels.add(provision.getProvisionType().getLabel());
+            if (customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                    signatureEmployee = asso.getAssignedTo();
+                    affaireLabels.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                            : (asso.getAffaire().getCivility().getLabel() + " " + asso.getAffaire().getFirstname() + " "
+                                    + asso.getAffaire().getLastname()))
+                            + "<br/>"
+                            + asso.getAffaire().getAddress() + "<br/>"
+                            + asso.getAffaire().getPostalCode() + " "
+                            + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : ""));
+                    for (Service service : asso.getServices()) {
+                        for (Provision provision : service.getProvisions()) {
+                            eventLabels.add(provision.getProvisionType().getLabel());
+                        }
                     }
                 }
-            }
 
             letterModel.setAffaireLabel(String.join("<br/>", affaireLabels).replaceAll("&", " "));
             letterModel.setEventLabel(String.join(" / ", eventLabels).replaceAll("&", " "));

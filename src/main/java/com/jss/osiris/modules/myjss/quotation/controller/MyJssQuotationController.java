@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -49,7 +51,10 @@ import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeFieldTypePossibleValue;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
@@ -58,10 +63,15 @@ import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentServic
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyGroupService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class MyJssQuotationController {
@@ -118,6 +128,38 @@ public class MyJssQuotationController {
 
 	@Autowired
 	ResponsableService responsableService;
+
+	@Autowired
+	ServiceFamilyGroupService serviceFamilyGroupService;
+
+	@Autowired
+	ServiceFamilyService serviceFamilyService;
+
+	@Autowired
+	ServiceTypeService serviceTypeService;
+
+	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
+	private final long rateLimit = 1000;
+	private LocalDateTime lastFloodFlush = LocalDateTime.now();
+	private int floodFlushDelayMinute = 1;
+
+	private ResponseEntity<String> detectFlood(HttpServletRequest request) {
+		if (lastFloodFlush.isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
+			requestCount.clear();
+		else
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+
+		String ipAddress = request.getRemoteAddr();
+		AtomicLong count = requestCount.computeIfAbsent(ipAddress, k -> new AtomicLong());
+
+		if (count.incrementAndGet() > rateLimit) {
+			return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.TOO_MANY_REQUESTS);
+		}
+		return null;
+	}
 
 	@PostMapping(inputEntryPoint + "/order/search/current")
 	@JsonView(JacksonViews.MyJssView.class)
@@ -874,5 +916,40 @@ public class MyJssQuotationController {
 		serviceService.addOrUpdateService(serviceFetched);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/service-family-groups")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<ServiceFamilyGroup>> getServiceFamilyGroups(HttpServletRequest request) {
+		detectFlood(request);
+		return new ResponseEntity<List<ServiceFamilyGroup>>(serviceFamilyGroupService.getServiceFamilyGroups(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/service-families/service-group")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<ServiceFamily>> getServiceFamiliesForFamilyGroup(Integer idServiceFamilyGroup,
+			HttpServletRequest request) {
+		detectFlood(request);
+
+		ServiceFamilyGroup serviceFamilyGroup = serviceFamilyGroupService.getServiceFamilyGroup(idServiceFamilyGroup);
+		if (serviceFamilyGroup == null)
+			return new ResponseEntity<List<ServiceFamily>>(new ArrayList<ServiceFamily>(), HttpStatus.OK);
+		return new ResponseEntity<List<ServiceFamily>>(
+				serviceFamilyService.getServiceFamiliesForFamilyGroup(serviceFamilyGroup),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/service-type/service-family")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<ServiceType>> getServiceTypesForFamily(Integer idServiceFamily,
+			HttpServletRequest request) {
+		detectFlood(request);
+
+		ServiceFamily serviceFamily = serviceFamilyService.getServiceFamily(idServiceFamily);
+		if (serviceFamily == null)
+			return new ResponseEntity<List<ServiceType>>(new ArrayList<ServiceType>(), HttpStatus.OK);
+		return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypesForFamily(serviceFamily),
+				HttpStatus.OK);
 	}
 }

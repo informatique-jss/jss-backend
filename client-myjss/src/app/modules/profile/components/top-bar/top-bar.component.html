@@ -17,7 +17,7 @@
       </label>
     </div>
 
-    <div class="d-none d-sm-block order-lg-3 me-3 me-lg-4 ms-auto" *ngIf="currentUser" data-bs-toggle="modal"
+    <div class="order-lg-3 me-3 me-lg-4 ms-auto" *ngIf="currentUser" data-bs-toggle="modal"
       data-bs-target="#searchModal">
       <a class="nav-link fs-4 p-2 mx-sm-1" style="cursor: pointer;" title="Rechercher" data-bs-toggle="tooltip"
         data-bs-placement="right" aria-label="Search2">
@@ -170,10 +170,7 @@
           </div>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link " href="#">Nouvelle commande</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link " href="#">Nouveau devis</a>
+          <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Nouvelle demande</a>
         </li>
       </ul>
     </nav>

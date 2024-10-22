@@ -230,7 +230,7 @@ public class NotificationServiceImpl implements NotificationService {
                                 notificationType, customerOrder, customerOrderName, null, false));
         }
 
-        if (notifyAffaireResponsibles)
+        if (notifyAffaireResponsibles && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
                 createdByMe = false;
                 if (asso.getAssignedTo() != null) {

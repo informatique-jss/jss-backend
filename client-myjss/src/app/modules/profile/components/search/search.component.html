@@ -2,7 +2,7 @@
   (hidden.bs.modal)="clearSearch()">
   <div class="modal-dialog modal-dialog-scrollable" role="document">
     <div class="modal-content">
-      <div class="modal-header d-block position-relative border-0 pb-3">
+      <div class="modal-header d-block position-relative border-0">
         <form class="position-relative w-100 mt-2 mb-4">
           <button class="btn-close position-absolute top-50 end-0 translate-middle-y m-0 me-n1" type="reset"
             aria-label="Close" (click)="clearSearch()"></button>
@@ -14,7 +14,14 @@
         <div class="fs-xs fw-medium text-body-secondary text-uppercase" *ngIf="entities && entities.length>0">Résultats
         </div>
       </div>
-      <div class="modal-body pt-3">
+      <div class="modal-body pt-0">
+        <p class="card-text placeholder-glow" *ngIf="searchInProgress">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
         <ng-container *ngFor="let entity of entities">
           <div class="d-flex align-items-center border-bottom pb-4 mb-4"
             (click)="openCustomerOrder($event,entity.entityId)" data-bs-dismiss="modal" style="cursor: pointer;"

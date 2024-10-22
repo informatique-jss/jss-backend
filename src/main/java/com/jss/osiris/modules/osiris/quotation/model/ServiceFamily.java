@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
@@ -21,17 +23,24 @@ public class ServiceFamily implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
+	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family_group")
 	@IndexedField
 	private ServiceFamilyGroup serviceFamilyGroup;
+
+	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssView.class)
+	private String comment;
 
 	public Integer getId() {
 		return id;
@@ -63,6 +72,14 @@ public class ServiceFamily implements Serializable, IId {
 
 	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup) {
 		this.serviceFamilyGroup = serviceFamilyGroup;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

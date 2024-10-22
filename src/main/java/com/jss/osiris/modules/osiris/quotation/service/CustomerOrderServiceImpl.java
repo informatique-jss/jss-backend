@@ -632,15 +632,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
         // Associate invoice to invoice item
-        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-            for (Service service : assoAffaireOrder.getServices())
-                for (Provision provision : service.getProvisions()) {
-                    if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                        for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                            invoice.getInvoiceItems().add(invoiceItem);
-                        }
-                }
-        }
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+                for (Service service : assoAffaireOrder.getServices())
+                    for (Provision provision : service.getProvisions()) {
+                        if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                            for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                                invoice.getInvoiceItems().add(invoiceItem);
+                            }
+                    }
+            }
         invoiceService.addOrUpdateInvoiceFromUser(invoice);
         return invoice;
     }

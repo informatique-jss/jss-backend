@@ -23,6 +23,7 @@ export class SearchComponent implements OnInit {
   searchObservableRef: Subscription | undefined;
 
   debounce: any;
+  searchInProgress: boolean = false;
 
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
@@ -44,6 +45,7 @@ export class SearchComponent implements OnInit {
 
   searchEntities() {
     clearTimeout(this.debounce);
+    this.entities = [];
     this.debounce = setTimeout(() => {
       this.globalSearch();
     }, 500);
@@ -58,6 +60,7 @@ export class SearchComponent implements OnInit {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
 
+    this.searchInProgress = true;
     if (this.searchText && this.searchText.length > 2)
       this.searchObservableRef = this.indexEntityService.globalSearchForEntity(this.searchText).subscribe(response => {
         this.entities = [];
@@ -67,6 +70,7 @@ export class SearchComponent implements OnInit {
             this.entities.push(foundEntity);
           }
         }
+        this.searchInProgress = false;
       })
   }
 

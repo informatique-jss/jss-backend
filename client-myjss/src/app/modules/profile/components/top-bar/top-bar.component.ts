@@ -53,4 +53,8 @@ export class TopBarComponent implements OnInit {
     this.appService.openRoute(event, "offers/" + "", undefined);
   }
 
+  openNewOrder(event: any) {
+    this.appService.openRoute(event, "order/new/" + "", undefined);
+  }
+
 }

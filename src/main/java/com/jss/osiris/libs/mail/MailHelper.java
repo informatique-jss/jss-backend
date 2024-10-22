@@ -412,13 +412,14 @@ public class MailHelper {
 
             AssoAffaireOrder assoAffaireOrderToUse = null;
             if (mail.getProvision() != null)
-                outerloop: for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
-                    for (Service service : assoAffaireOrder.getServices())
-                        for (Provision provision : service.getProvisions())
-                            if (provision.getId().equals(mail.getProvision().getId())) {
-                                assoAffaireOrderToUse = assoAffaireOrder;
-                                break outerloop;
-                            }
+                if (quotation.getAssoAffaireOrders() != null)
+                    outerloop: for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
+                        for (Service service : assoAffaireOrder.getServices())
+                            for (Provision provision : service.getProvisions())
+                                if (provision.getId().equals(mail.getProvision().getId())) {
+                                    assoAffaireOrderToUse = assoAffaireOrder;
+                                    break outerloop;
+                                }
 
             ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("affaireLabelDetails",
@@ -562,8 +563,11 @@ public class MailHelper {
             throws OsirisException {
         ArrayList<String> references = new ArrayList<String>();
         AssoAffaireOrder assoToUse = asso;
-        if (assoToUse == null)
+        if (assoToUse == null && customerOrder.getAssoAffaireOrders() != null)
             assoToUse = customerOrder.getAssoAffaireOrders().get(0);
+
+        if (assoToUse == null)
+            return null;
 
         if (assoToUse.getAffaire().getExternalReference() != null
                 && assoToUse.getAffaire().getExternalReference().length() > 0)
@@ -592,8 +596,11 @@ public class MailHelper {
             throws OsirisException {
         String affaireLabel = "";
         AssoAffaireOrder assoToUse = asso;
-        if (assoToUse == null)
+        if (assoToUse == null && customerOrder.getAssoAffaireOrders() != null)
             assoToUse = customerOrder.getAssoAffaireOrders().get(0);
+
+        if (assoToUse == null)
+            return null;
 
         Affaire affaire = assoToUse.getAffaire();
 
@@ -654,70 +661,71 @@ public class MailHelper {
         // Compute prices
         Double preTaxPriceTotal = 0.0;
         Double discountTotal = null;
-        Double preTaxPriceTotalWithDicount = null;
+        Double preTaxPriceTotalWithDiscount = null;
         ArrayList<VatMail> vats = null;
         Double vatTotal = 0.0;
         Double priceTotal = null;
 
-        for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
-            for (Service service : asso.getServices())
-                for (Provision provision : service.getProvisions()) {
-                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null
-                                ? invoiceItem.getPreTaxPrice().doubleValue()
-                                : 0.0;
-                        if (invoiceItem.getDiscountAmount() != null
-                                && invoiceItem.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
-                            if (discountTotal == null)
-                                discountTotal = invoiceItem.getDiscountAmount().doubleValue();
-                            else
-                                discountTotal += invoiceItem.getDiscountAmount().doubleValue();
-                        }
-                        if (vats == null)
-                            vats = new ArrayList<VatMail>();
-                        if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                                && invoiceItem.getVatPrice().compareTo(BigDecimal.ZERO) > 0) {
-                            vatTotal += invoiceItem.getVatPrice().doubleValue();
-                            boolean vatFound = false;
-                            for (VatMail vatMail : vats) {
-                                if (vatMail.getLabel().equals(invoiceItem.getVat().getLabel())) {
-                                    vatFound = true;
-                                    if (vatMail.getTotal() == null) {
-                                        vatMail.setTotal(invoiceItem.getVatPrice());
-                                        vatMail.setBase(
-                                                invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
-                                                        : BigDecimal.ZERO);
-                                    } else {
-                                        vatMail.setTotal(vatMail.getTotal().add(invoiceItem.getVatPrice()));
-                                        vatMail.setBase(vatMail.getBase()
-                                                .add((invoiceItem.getPreTaxPrice() != null
-                                                        ? invoiceItem.getPreTaxPrice()
-                                                        : BigDecimal.ZERO))
-                                                .subtract(invoiceItem.getDiscountAmount() != null
-                                                        ? invoiceItem.getDiscountAmount()
-                                                        : BigDecimal.ZERO));
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions()) {
+                        for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                            preTaxPriceTotal += invoiceItem.getPreTaxPrice() != null
+                                    ? invoiceItem.getPreTaxPrice().doubleValue()
+                                    : 0.0;
+                            if (invoiceItem.getDiscountAmount() != null
+                                    && invoiceItem.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+                                if (discountTotal == null)
+                                    discountTotal = invoiceItem.getDiscountAmount().doubleValue();
+                                else
+                                    discountTotal += invoiceItem.getDiscountAmount().doubleValue();
+                            }
+                            if (vats == null)
+                                vats = new ArrayList<VatMail>();
+                            if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
+                                    && invoiceItem.getVatPrice().compareTo(BigDecimal.ZERO) > 0) {
+                                vatTotal += invoiceItem.getVatPrice().doubleValue();
+                                boolean vatFound = false;
+                                for (VatMail vatMail : vats) {
+                                    if (vatMail.getLabel().equals(invoiceItem.getVat().getLabel())) {
+                                        vatFound = true;
+                                        if (vatMail.getTotal() == null) {
+                                            vatMail.setTotal(invoiceItem.getVatPrice());
+                                            vatMail.setBase(
+                                                    invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
+                                                            : BigDecimal.ZERO);
+                                        } else {
+                                            vatMail.setTotal(vatMail.getTotal().add(invoiceItem.getVatPrice()));
+                                            vatMail.setBase(vatMail.getBase()
+                                                    .add((invoiceItem.getPreTaxPrice() != null
+                                                            ? invoiceItem.getPreTaxPrice()
+                                                            : BigDecimal.ZERO))
+                                                    .subtract(invoiceItem.getDiscountAmount() != null
+                                                            ? invoiceItem.getDiscountAmount()
+                                                            : BigDecimal.ZERO));
+                                        }
                                     }
                                 }
-                            }
-                            if (!vatFound) {
-                                VatMail vatmail = new VatMail();
-                                vatmail.setTotal(invoiceItem.getVatPrice());
-                                vatmail.setLabel(invoiceItem.getVat().getLabel());
-                                vatmail.setBase(
-                                        (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
-                                                : BigDecimal.ZERO).subtract(invoiceItem.getDiscountAmount() != null
-                                                        ? invoiceItem.getDiscountAmount()
-                                                        : BigDecimal.ZERO));
-                                vats.add(vatmail);
+                                if (!vatFound) {
+                                    VatMail vatmail = new VatMail();
+                                    vatmail.setTotal(invoiceItem.getVatPrice());
+                                    vatmail.setLabel(invoiceItem.getVat().getLabel());
+                                    vatmail.setBase(
+                                            (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
+                                                    : BigDecimal.ZERO).subtract(invoiceItem.getDiscountAmount() != null
+                                                            ? invoiceItem.getDiscountAmount()
+                                                            : BigDecimal.ZERO));
+                                    vats.add(vatmail);
+                                }
                             }
                         }
-                    }
 
-                }
-        }
+                    }
+            }
 
         if (discountTotal != null)
-            preTaxPriceTotalWithDicount = preTaxPriceTotal - discountTotal;
+            preTaxPriceTotalWithDiscount = preTaxPriceTotal - discountTotal;
 
         priceTotal = preTaxPriceTotal - (discountTotal != null ? discountTotal : 0) + (vats != null ? vatTotal : 0);
 
@@ -726,7 +734,7 @@ public class MailHelper {
 
         ctx.setVariable("preTaxPriceTotal", preTaxPriceTotal);
         ctx.setVariable("discountTotal", discountTotal);
-        ctx.setVariable("preTaxPriceTotalWithDicount", preTaxPriceTotalWithDicount);
+        ctx.setVariable("preTaxPriceTotalWithDicount", preTaxPriceTotalWithDiscount);
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(priceTotal * 100f) / 100f);
     }
@@ -1473,26 +1481,27 @@ public class MailHelper {
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                 }
             }
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                for (Service service : asso.getServices())
-                    for (Provision provision : service.getProvisions()) {
-                        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
-                            for (Attachment attachment : attachmentService
-                                    .sortAttachmentByDateDesc(provision.getAttachments()))
-                                if ((sendToMe == true || attachment.getIsAlreadySent() == false)
-                                        && attachment.getAttachmentType().getIsToSentOnFinalizationMail()
-                                        && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
-                                        && !attachment.getAttachmentType().getId()
-                                                .equals(constantService.getAttachmentTypeInvoice().getId())) {
-                                    attachments.add(attachment);
-                                    attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
-                                }
-                        // Send once per provision
-                        attachmentTypeIdsDone = new ArrayList<Integer>();
-                    }
+            if (customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                    for (Service service : asso.getServices())
+                        for (Provision provision : service.getProvisions()) {
+                            if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                                for (Attachment attachment : attachmentService
+                                        .sortAttachmentByDateDesc(provision.getAttachments()))
+                                    if ((sendToMe == true || attachment.getIsAlreadySent() == false)
+                                            && attachment.getAttachmentType().getIsToSentOnFinalizationMail()
+                                            && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
+                                            && !attachment.getAttachmentType().getId()
+                                                    .equals(constantService.getAttachmentTypeInvoice().getId())) {
+                                        attachments.add(attachment);
+                                        attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
+                                    }
+                            // Send once per provision
+                            attachmentTypeIdsDone = new ArrayList<Integer>();
+                        }
         }
 
-        if (attachments.size() > 0)
+        if (attachments.size() > 0 && customerOrder.getAssoAffaireOrders() != null)
             sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), null,
                     sendToMe,
                     attachments);

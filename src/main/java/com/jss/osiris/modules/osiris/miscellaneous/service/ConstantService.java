@@ -412,7 +412,7 @@ public interface ConstantService {
 
     public AccountingAccount getAccountingAccountCaisse() throws OsirisException;
 
-    public CustomerOrderOrigin getCustomerOrderOriginWebSite() throws OsirisException;
+    public CustomerOrderOrigin getCustomerOrderOriginOldWebSite() throws OsirisException;
 
     public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException;
 

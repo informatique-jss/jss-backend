@@ -29,7 +29,7 @@ export class AffairesComponent implements OnInit {
   timeoutFilter: number | undefined;
 
   hideSeeMore: boolean = false;
-  isFirstLoading: boolean = false;
+  isFirstLoading: boolean = true;
 
   capitalizeName = capitalizeName;
 
@@ -52,12 +52,11 @@ export class AffairesComponent implements OnInit {
 
   ngOnInit() {
     this.inputIdAffaire = this.activatedRoute.snapshot.params['idAffaire'];
-    if (this.inputIdAffaire) {
+    if (this.inputIdAffaire && this.inputIdAffaire > 0) {
       this.searchText = this.inputIdAffaire + "";
       return;
     }
     this.retrieveBookmark();
-    this.refreshAffaires();
   }
 
   refreshAffaires() {

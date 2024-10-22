@@ -989,7 +989,7 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public CustomerOrderOrigin getCustomerOrderOriginWebSite() throws OsirisException {
+    public CustomerOrderOrigin getCustomerOrderOriginOldWebSite() throws OsirisException {
         return getConstants().getCustomerOrderOriginWebSite();
     }
 

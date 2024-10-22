@@ -39,6 +39,10 @@ public class ServiceType implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
 
+	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssView.class)
+	private String comment;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family")
 	@IndexedField
@@ -50,10 +54,12 @@ public class ServiceType implements Serializable, IId {
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<AssoServiceTypeDocument> assoServiceTypeDocuments;
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<AssoServiceTypeFieldType> assoServiceTypeFieldTypes;
 
 	public Integer getId() {
