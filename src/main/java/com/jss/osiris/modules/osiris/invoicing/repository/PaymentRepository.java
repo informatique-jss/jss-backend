@@ -52,9 +52,11 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
         Payment findByCheckNumber(String checkNumber);
 
         @Query(nativeQuery = true, value = " select p.check_number as outboundCheckNumber,"
-                        + " p.payment_Date as outboundCheckDate,"
+                        + " p.id as paymentNumber, "
+                        + " p.payment_date as outboundCheckDate,"
                         + " p.payment_amount  as outboundCheckAmount,"
                         + " p.label as outboundCheckLabel,"
+                        + " p.id_invoice as invoiceAssociated, "
                         + " case when p.id_origin_payment is not null and p_origin.bank_id like 'H%' then true else false end as isMatched"
                         + " from payment p left join payment p_origin on p.id_origin_payment = p_origin.id "
                         + " where ( p.bank_id is null and p.check_number is not null ) "

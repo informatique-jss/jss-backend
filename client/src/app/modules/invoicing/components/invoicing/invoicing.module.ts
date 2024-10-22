@@ -36,6 +36,7 @@ import { EditRefundLabelDialogComponent } from "src/app/modules/miscellaneous/co
 import { OutboundCheckListComponent } from "../outbound-check-list/outbound-check-list.component";
 import { BankBalanceComponent } from "../bank-balance/bank-balance.component";
 import { MatTableModule } from '@angular/material/table';
+import { MatTableExporterModule } from "mat-table-exporter";
 
 const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
@@ -72,7 +73,8 @@ const routes: Routes = [
     MiscellaneousModule,
     QuotationModule,
     MatRadioModule,
-    MatTableModule
+    MatTableModule,
+    MatTableExporterModule
   ],
   declarations: [InvoiceComponent,
     InvoiceListComponent,
