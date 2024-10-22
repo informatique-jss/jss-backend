@@ -97,6 +97,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "invoicePayer", fieldName: "billingLabel", label: "Payeur" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "invoiceRecipient", fieldName: "invoiceRecipient", label: "Destinataire" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "invoiceBillingType", fieldName: "invoiceBillingType", label: "Libellé à" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "manualAccountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° pièce" } as SortTableColumn<InvoiceSearchResult>);

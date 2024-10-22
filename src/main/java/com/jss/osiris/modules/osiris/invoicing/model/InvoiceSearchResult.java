@@ -64,4 +64,6 @@ public interface InvoiceSearchResult {
     public Boolean getIsInvoiceFromProvider();
 
     public Boolean getIsProviderCreditNote();
+
+    public String getInvoiceBillingType();
 }

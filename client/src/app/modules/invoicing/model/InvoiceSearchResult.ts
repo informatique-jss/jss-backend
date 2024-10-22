@@ -30,6 +30,7 @@ export interface InvoiceSearchResult {
   invoiceRecipient: string;
   isInvoiceFromProvider: boolean;
   isProviderCreditNote: boolean;
+  invoiceBillingType: string;
 }
 
 

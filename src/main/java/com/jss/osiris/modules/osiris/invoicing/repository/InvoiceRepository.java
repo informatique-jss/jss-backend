@@ -49,6 +49,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + "  max(follow.followup_date) as lastFollowupDate,"
                         + "  COALESCE(i.total_price,0) - sum(COALESCE(case when p.is_appoint then -1 else 1 end * p.payment_amount,0)) as remainingToPay,"
                         + "  case when invoicing_document.is_recipient_affaire then 'Affaire' else 'Donneur d''ordre' end as invoiceRecipient,"
+                        + "  bt.label as invoiceBillingType,"
                         + "  STRING_AGG( cast(p.id as text),', ' order by 1) as paymentId"
                         + " from invoice i"
                         + " join invoice_status ist on ist.id = i.id_invoice_status "
@@ -62,6 +63,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " left join payment p on p.id_invoice = i.id and p.is_cancelled = false"
                         + " left join tiers_followup follow on follow.id_invoice = i.id"
                         + " left join document invoicing_document on invoicing_document.id_customer_order= c.id and invoicing_document.id_document_type = :invoicingDocumentTypeId "
+                        + " left join billing_type bt on bt.id = i.id_billing_type "
                         + " where i.created_date>=:startDate and i.created_date<=:endDate "
                         + " and  ( COALESCE(:invoiceStatus)=0 or ist.id in (:invoiceStatus)) "
                         + " and  ( COALESCE(:customerOrderId)=0 or c.id in (:customerOrderId)) "
@@ -72,7 +74,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " and  ( COALESCE(:salesEmployeeId) =0 or t.id_commercial=:salesEmployeeId or r1.id_commercial=:salesEmployeeId ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
                         + " and (:showToRecover is false or (  i.first_reminder_date_time is not null and  i.second_reminder_date_time  is not null and  i.third_reminder_date_time  is not null and i.id_invoice_status<>:invoicePayedStatusId ) )"
-                        + " group by i.id, ist.label,ist.code,ist.id, pro.label, c.id,  r1.id, r1.firstname,t.id, r1.lastname,"
+                        + " group by i.id, bt.label, ist.label,ist.code,ist.id, pro.label, c.id,  r1.id, r1.firstname,t.id, r1.lastname,"
                         + " t.denomination, t.firstname, t.lastname, r1.firstname, r1.lastname, i.billing_label, i.created_date, i.total_price,"
                         + " i.first_reminder_date_time , i.second_reminder_date_time,i.third_reminder_date_time, invoicing_document.is_recipient_affaire, i.due_date ,c.description")
         List<InvoiceSearchResult> findInvoice(@Param("invoiceStatus") List<Integer> invoiceStatus,
