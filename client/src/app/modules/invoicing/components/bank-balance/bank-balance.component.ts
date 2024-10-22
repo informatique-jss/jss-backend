@@ -3,6 +3,7 @@ import { BankBalanceService } from 'src/app/modules/accounting/services/bank.bal
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatTableExporterModule } from 'mat-table-exporter';
 
 @Component({
   selector: 'bank-balance',
@@ -20,6 +21,7 @@ export class BankBalanceComponent implements OnInit {
   totalJssBankBalance = [] as Array<any>;
   dataSource = new MatTableDataSource<any>;
   displayedColumnsTotal: string[] = ['label', 'amount'];
+  tableName: string = "Solde compte BNP JSS";
 
   constructor(private bankBalanceService: BankBalanceService,
     private constantService: ConstantService

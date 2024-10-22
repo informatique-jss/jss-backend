@@ -9,6 +9,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { OutboundCheckSearchResultService } from '../../services/outbound.check.search.service';
+import { Payment } from '../../model/Payment';
+import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
 
 @Component({
   selector: 'outbound-check-list',
@@ -30,7 +32,8 @@ export class OutboundCheckListComponent implements OnInit, AfterContentChecked {
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
     private userPreferenceService: UserPreferenceService,
-    private outboundCheckSearchResultService: OutboundCheckSearchResultService
+    private outboundCheckSearchResultService: OutboundCheckSearchResultService,
+    private paymentDetailsDialogService: PaymentDetailsDialogService
   ) {
   }
   ngAfterContentChecked(): void {
@@ -40,9 +43,11 @@ export class OutboundCheckListComponent implements OnInit, AfterContentChecked {
   ngOnInit() {
     this.availableColumns = [];
     this.availableColumns.push({ id: "outboundCheckNumber", fieldName: "outboundCheckNumber", label: "N° de chèque" } as SortTableColumn<OutboundCheckSearchResult>);
+    this.availableColumns.push({ id: "paymentNumber", fieldName: "paymentNumber", label: "N° de paiement", actionFunction: (element: OutboundCheckSearchResult) => this.paymentDetailsDialogService.displayPaymentDetailsDialog({ id: element.paymentNumber } as Payment), actionIcon: "visibility", actionTooltip: "Voir le détail du paiement" } as SortTableColumn<OutboundCheckSearchResult>);
     this.availableColumns.push({ id: "outboundCheckDate", fieldName: "outboundCheckDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OutboundCheckSearchResult>);
     this.availableColumns.push({ id: "outboundCheckAmount", fieldName: "outboundCheckAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn<OutboundCheckSearchResult>);
     this.availableColumns.push({ id: "outboundCheckLabel", fieldName: "outboundCheckLabel", label: "Libellé" } as SortTableColumn<OutboundCheckSearchResult>);
+    this.availableColumns.push({ id: "invoiceAssociated", fieldName: "invoiceAssociated", label: "Facture associée" } as SortTableColumn<OutboundCheckSearchResult>);
     this.availableColumns.push({ id: "isMatched", fieldName: "isMatched", label: "Est rapproché", valueFonction: (element: OutboundCheckSearchResult, column: SortTableColumn<OutboundCheckSearchResult>) => { return (element.isMatched) ? "Oui" : "Non" } } as SortTableColumn<OutboundCheckSearchResult>);
 
     this.setColumns();
