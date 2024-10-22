@@ -167,8 +167,6 @@ public class PaymentServiceImpl implements PaymentService {
             outboundCheckSearch.setStartDate(LocalDateTime.now().minusYears(100));
         if (outboundCheckSearch.getEndDate() == null)
             outboundCheckSearch.setEndDate(LocalDateTime.now().plusYears(100));
-        if (outboundCheckSearch.getIdOutboundCheck() == null)
-            outboundCheckSearch.setIdOutboundCheck(0);
         return paymentRepository.findOutboundChecks(
                 outboundCheckSearch.getStartDate().withHour(0).withMinute(0),
                 outboundCheckSearch.getEndDate().withHour(23).withMinute(59), outboundCheckSearch.getMinAmount(),

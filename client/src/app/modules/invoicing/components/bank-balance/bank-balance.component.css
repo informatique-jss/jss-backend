@@ -1,0 +1,9 @@
+.export-icon {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  transform: scale(0.66);
+  z-index: 3;
+}
+
+

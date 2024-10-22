@@ -58,22 +58,14 @@ export class OutboundCheckListComponent implements OnInit, AfterContentChecked {
       this.searchOutboundChecks();
     }
 
-    let idOutboundCheck = this.activatedRoute.snapshot.params.id;
-    if (idOutboundCheck) {
-      this.outboundCheckSearch.idOutboundCheck = idOutboundCheck;
-      this.outboundCheckSearch.isHideMatchedOutboundChecks = false;
-      this.appService.changeHeaderTitle("Chèques sortants");
+    this.bookmark = this.userPreferenceService.getUserSearchBookmark("outboundChecks") as OutboundCheckSearch;
+    if (this.bookmark) {
+      this.outboundCheckSearch = this.bookmark;
+      if (this.outboundCheckSearch.startDate)
+        this.outboundCheckSearch.startDate = new Date(this.outboundCheckSearch.startDate);
+      if (this.outboundCheckSearch.endDate)
+        this.outboundCheckSearch.endDate = new Date(this.outboundCheckSearch.endDate);
       this.searchOutboundChecks();
-    } else {
-      this.bookmark = this.userPreferenceService.getUserSearchBookmark("outboundChecks") as OutboundCheckSearch;
-      if (this.bookmark) {
-        this.outboundCheckSearch = this.bookmark;
-        if (this.outboundCheckSearch.startDate)
-          this.outboundCheckSearch.startDate = new Date(this.outboundCheckSearch.startDate);
-        if (this.outboundCheckSearch.endDate)
-          this.outboundCheckSearch.endDate = new Date(this.outboundCheckSearch.endDate);
-        this.searchOutboundChecks();
-      }
     }
   }
 
@@ -98,8 +90,7 @@ export class OutboundCheckListComponent implements OnInit, AfterContentChecked {
         this.outboundCheckSearch.startDate = new Date(toIsoString(this.outboundCheckSearch.startDate));
       if (this.outboundCheckSearch.endDate)
         this.outboundCheckSearch.endDate = new Date(toIsoString(this.outboundCheckSearch.endDate));
-      if (!this.outboundCheckSearch.idOutboundCheck)
-        this.userPreferenceService.setUserSearchBookmark(this.outboundCheckSearch, "outboundChecks");
+      this.userPreferenceService.setUserSearchBookmark(this.outboundCheckSearch, "outboundChecks");
       this.outboundCheckSearchResultService.getOutboundChecks(this.outboundCheckSearch).subscribe(response => {
         this.outboundChecks = response;
       })
