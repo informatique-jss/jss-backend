@@ -98,10 +98,10 @@ export abstract class AppRestService<T> {
     return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T>;
   }
 
-  downloadPost(api: string, item: T, successfulMessage: string = "", errorMessage: string = "") {
+  downloadPost(params: HttpParams, api: string, item: T, fallbackFilename: string = "", successfulMessage: string = "", errorMessage: string = "") {
     let context: HttpContext = new HttpContext();
     context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
-    this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
+    this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
       (response: any) => {
         let dataType = response.type;
         let binaryData = [];
@@ -110,6 +110,8 @@ export abstract class AppRestService<T> {
         downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }));
         if (response.headers.get("filename"))
           downloadLink.setAttribute('download', response.headers.get("filename"));
+        else if (fallbackFilename)
+          downloadLink.setAttribute('download', fallbackFilename);
         document.body.appendChild(downloadLink);
         downloadLink.click();
       }

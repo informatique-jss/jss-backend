@@ -7,7 +7,7 @@ import { BankTransfertSearchResult } from '../model/BankTransfertSearchResult';
 @Injectable({
   providedIn: 'root'
 })
-export class BankTransfertSearchResultService extends AppRestService<BankTransfertSearchResult>{
+export class BankTransfertSearchResultService extends AppRestService<BankTransfertSearchResult> {
   constructor(http: HttpClient) {
     super(http, "invoicing");
   }
@@ -16,7 +16,7 @@ export class BankTransfertSearchResultService extends AppRestService<BankTransfe
     return this.postList(new HttpParams(), "transfert/search", bankTransfertSearch);
   }
 
-  exportTransferts(bankTransfertSearch: BankTransfertSearch) {
-    return this.downloadPost("transfert/export", bankTransfertSearch as any);
+  exportTransferts(bankTransfertSearch: BankTransfertSearch, isOverrideExecutionDate: boolean) {
+    return this.downloadPost(new HttpParams().set("isOverrideExecutionDate", isOverrideExecutionDate), "transfert/export", bankTransfertSearch as any, "Export");
   }
 }
