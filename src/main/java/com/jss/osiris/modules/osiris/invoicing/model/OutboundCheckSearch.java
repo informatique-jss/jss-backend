@@ -10,7 +10,6 @@ public class OutboundCheckSearch {
     private Float minAmount;
     private Float maxAmount;
     private String label;
-    private Integer idOutboundCheck;
 
     @JsonProperty("isHideMatchedOutboundChecks")
     private boolean isHideMatchedOutboundChecks;
@@ -53,14 +52,6 @@ public class OutboundCheckSearch {
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    public Integer getIdOutboundCheck() {
-        return idOutboundCheck;
-    }
-
-    public void setIdOutboundCheck(Integer idOutboundCheck) {
-        this.idOutboundCheck = idOutboundCheck;
     }
 
     public boolean isHideMatchedOutboundChecks() {
