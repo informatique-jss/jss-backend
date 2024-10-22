@@ -63,7 +63,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " left join payment p on p.id_invoice = i.id and p.is_cancelled = false"
                         + " left join tiers_followup follow on follow.id_invoice = i.id"
                         + " left join document invoicing_document on invoicing_document.id_customer_order= c.id and invoicing_document.id_document_type = :invoicingDocumentTypeId "
-                        + " left join billing_type bt on bt.id = i.id_billing_type "
+                        + " left join billing_label_type bt on bt.id = i.id_billing_label_type "
                         + " where i.created_date>=:startDate and i.created_date<=:endDate "
                         + " and  ( COALESCE(:invoiceStatus)=0 or ist.id in (:invoiceStatus)) "
                         + " and  ( COALESCE(:customerOrderId)=0 or c.id in (:customerOrderId)) "
