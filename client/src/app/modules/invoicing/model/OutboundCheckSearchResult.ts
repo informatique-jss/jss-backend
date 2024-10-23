@@ -1,5 +1,5 @@
 export interface OutboundCheckSearchResult {
-  outboundCheckNumber: number;
+  outboundCheckNumber: string;
   paymentNumber: number;
   outboundCheckDate: Date;
   outboundCheckAmount: number;

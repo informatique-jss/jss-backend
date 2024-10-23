@@ -36,9 +36,9 @@
         </td>
       </tr>
     </table>
-    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="outboundChecks"
-      tableName="Chèques sortants" [isSmallestHeight]="true" *ngIf="displayedColumns && displayedColumns.length>0 "
-      [displayTotalLines]="true">
+    <sort-table class="margin-icon-export" [actions]="tableAction" [columns]="displayedColumns"
+      [values]="outboundChecks" tableName="Chèques sortants" [isSmallestHeight]="true"
+      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
     </sort-table>
   </div>
 </div>

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public interface OutboundCheckSearchResult {
 
-    public Integer getOutboundCheckNumber();
+    public String getOutboundCheckNumber();
 
     public Integer getPaymentNumber();
 
