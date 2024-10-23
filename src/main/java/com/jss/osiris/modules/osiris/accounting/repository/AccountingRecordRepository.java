@@ -232,7 +232,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
         Number getRefundTotal();
 
         @Query(nativeQuery = true, value = "select sum(payment_amount) from payment p "
-                        + "where bank_id is null and p.check_number is not null and (is_cancelled=false or is_cancelled is null) and id_origin_payment is null")
+                        + " where bank_id is null and p.check_number is not null and (is_cancelled=false or is_cancelled is null) and id_origin_payment is null "
+                        + " and p.payment_amount < 0 ")
         Number getCheckTotal();
 
         @Query(nativeQuery = true, value = "select sum(transfert_amount) from direct_debit_transfert ddt "

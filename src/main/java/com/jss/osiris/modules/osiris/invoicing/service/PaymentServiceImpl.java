@@ -178,6 +178,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<OutboundCheckSearchResult> searchOutboundChecks(OutboundCheckSearch outboundCheckSearch) {
         if (outboundCheckSearch.getStartDate() == null)
             outboundCheckSearch.setStartDate(LocalDateTime.now().minusYears(100));

@@ -39,23 +39,23 @@ export class BankBalanceComponent implements OnInit {
         map(([accountingRecordBalance, totalBankTransfert, totalRefund, totalCheck, totalDirectDebitTransfert]) => ({ accountingRecordBalance, totalBankTransfert, totalRefund, totalCheck, totalDirectDebitTransfert })),
       ).subscribe(response => {
         this.accountingRecordBalance.label = "Solde du compte";
-        this.accountingRecordBalance.amount = response.accountingRecordBalance.toFixed(2);
+        this.accountingRecordBalance.amount = response.accountingRecordBalance;
         this.totalJssBankBalance.push(this.accountingRecordBalance);
         this.totalBankTransfert.label = "Virements émis non rapprochés";
-        this.totalBankTransfert.amount = response.totalBankTransfert.toFixed(2);
+        this.totalBankTransfert.amount = response.totalBankTransfert;
         this.totalJssBankBalance.push(this.totalBankTransfert);
         this.totalRefund.label = "Remboursements émis non rapprochés";
-        this.totalRefund.amount = response.totalRefund.toFixed(2);
+        this.totalRefund.amount = response.totalRefund;
         this.totalJssBankBalance.push(this.totalRefund);
         this.totalCheck.label = "Chèques émis non rapprochés";
-        this.totalCheck.amount = response.totalCheck.toFixed(2);
+        this.totalCheck.amount = response.totalCheck;
         this.totalJssBankBalance.push(this.totalCheck);
         this.totalDirectDebitTransfert.label = "Prélèvements émis non rapprochés";
-        this.totalDirectDebitTransfert.amount = response.totalDirectDebitTransfert.toFixed(2);
+        this.totalDirectDebitTransfert.amount = response.totalDirectDebitTransfert;
         this.totalJssBankBalance.push(this.totalDirectDebitTransfert);
         this.finalBankBalance.label = "Solde bancaire";
         this.finalBankBalance.amount = +this.accountingRecordBalance.amount + +this.totalBankTransfert.amount + +this.totalRefund.amount + +this.totalCheck.amount - +this.totalDirectDebitTransfert.amount;
-        this.finalBankBalance.amount = this.finalBankBalance.amount.toFixed(2);
+        this.finalBankBalance.amount = this.finalBankBalance.amount;
         this.totalJssBankBalance.push(this.finalBankBalance);
         this.dataSource.data = this.totalJssBankBalance;
 
