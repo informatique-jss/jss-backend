@@ -1,6 +1,9 @@
 package com.jss.osiris.modules.quotation.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class ActuLegaleAnnouncement {
+    @JsonIgnore
     private Integer id;
     private Integer newspaperId;
     private Integer siren;
