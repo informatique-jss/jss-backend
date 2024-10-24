@@ -30,6 +30,9 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   tableAssoServiceFieldTypes: AssoServiceFieldType[] = [];
   missingAttachmentQuery: MissingAttachmentQuery = {} as MissingAttachmentQuery;
   editMode: boolean = true;
+  searchText: string = "";
+  filteredAssoServiceDocument: AssoServiceDocument[] = [];
+
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
   SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
@@ -37,8 +40,6 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
   constructor(private formBuilder: FormBuilder,
-    private appService: AppService,
-    private dialog: MatDialog,
     public dialogRef: MatDialogRef<SelectAttachmentsDialogComponent>,
     private missingAttachmentQueryService: MissingAttachmentQueryService,
     private serviceService: ServiceService,
@@ -66,6 +67,18 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.service)
       this.setTableValues();
+  }
+
+  applyFilter(filterValue: any) {
+    let filterValueCast = (filterValue as HTMLInputElement);
+    filterValue = filterValueCast.value;
+    this.searchText = filterValue ? filterValue.trim().toLowerCase() : "";
+    this.filteredAssoServiceDocument = [];
+
+    if (this.tableAssoServiceDocuments)
+      for (let document of this.tableAssoServiceDocuments)
+        if (document.typeDocument.label.toLocaleLowerCase().indexOf(this.searchText.normalize("NFD").replace(/[\u0300-\u036f]/g, "")) >= 0)
+          this.filteredAssoServiceDocument.push(document);
   }
 
   setTableValues() {

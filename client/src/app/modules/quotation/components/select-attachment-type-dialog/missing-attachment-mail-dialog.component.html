@@ -1,12 +1,16 @@
 <h1 *ngIf="service" mat-dialog-title>Demande des pièces manquantes - {{getServiceLabel(service)}}</h1>
 <div mat-dialog-content
   *ngIf="service && service.assoServiceDocuments && service.assoServiceDocuments.length>0 || selectedAssoServiceDocument || selectedAssoServiceFieldType">
+  <mat-form-field class="full-width">
+    <generic-input [(model)]="searchText" label="Rechercher" [form]="attachmentTypeForm" propertyName="searchText"
+      [isMandatory]="false" [isDisabled]="false"></generic-input>
+  </mat-form-field>
   <p *ngIf="editMode">Choisissez ci-dessous la liste des pièces jointes à envoyer :</p>
   <table class="full-width" *ngIf="editMode">
     <tr>
       <td>
         <sort-table class="margin-bottom" (onRowClick)="selectAssoServiceDocument($event)" [columns]="displayedColumns"
-          [noPaddingBottom]="true" [noMaxHeight]="true" [values]="tableAssoServiceDocuments"
+          [noPaddingBottom]="true" [noMaxHeight]="true" [values]="tableAssoServiceDocuments" [filterText]="searchText"
           tableName="Documents du service" [refreshTable]="refreshTable.asObservable()">
         </sort-table>
       </td>
