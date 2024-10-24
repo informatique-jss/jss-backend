@@ -87,6 +87,31 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public Number getAccountingRecordBalanceByAccountingAccountId(Integer accountingAccountId) {
+    return accountingRecordRepository.getAccountingRecordBalanceByAccountingAccountId(accountingAccountId);
+  }
+
+  @Override
+  public Number getBankTransfertTotal() {
+    return accountingRecordRepository.getBankTransfertTotal();
+  }
+
+  @Override
+  public Number getRefundTotal() {
+    return accountingRecordRepository.getRefundTotal();
+  }
+
+  @Override
+  public Number getCheckTotal() {
+    return accountingRecordRepository.getCheckTotal();
+  }
+
+  @Override
+  public Number getDirectDebitTransfertTotal() {
+    return accountingRecordRepository.getDirectDebitTransfertTotal();
+  }
+
+  @Override
   public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord,
       boolean byPassOperationDateTimeCheck) throws OsirisException {
     // Do not save null or 0 € records

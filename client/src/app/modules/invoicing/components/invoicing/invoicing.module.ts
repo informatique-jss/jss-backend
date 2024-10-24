@@ -33,6 +33,10 @@ import { ReceiptReconciliationComponent } from "../receipt-reconciliation/receip
 import { RefundListComponent } from '../refund-list/refund-list.component';
 import { InvoiceComponent } from "./invoicing.component";
 import { EditRefundLabelDialogComponent } from "src/app/modules/miscellaneous/components/edit-refund-label-dialog/edit-refund-label-dialog.component";
+import { OutboundCheckListComponent } from "../outbound-check-list/outbound-check-list.component";
+import { BankBalanceComponent } from "../bank-balance/bank-balance.component";
+import { MatTableModule } from '@angular/material/table';
+import { MatTableExporterModule } from "mat-table-exporter";
 
 const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
@@ -69,6 +73,8 @@ const routes: Routes = [
     MiscellaneousModule,
     QuotationModule,
     MatRadioModule,
+    MatTableModule,
+    MatTableExporterModule
   ],
   declarations: [InvoiceComponent,
     InvoiceListComponent,
@@ -83,7 +89,10 @@ const routes: Routes = [
     AddPaymentComponent,
     ReceiptReconciliationComponent,
     ReceiptReconciliationEditDialogComponent,
-    EditRefundLabelDialogComponent
+    EditRefundLabelDialogComponent,
+    OutboundCheckListComponent,
+    BankBalanceComponent,
+
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

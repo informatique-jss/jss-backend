@@ -11,6 +11,8 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.OutboundCheckSearch;
+import com.jss.osiris.modules.osiris.invoicing.model.OutboundCheckSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.PaymentSearchResult;
@@ -28,6 +30,8 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 public interface PaymentService {
         public Payment getPayment(Integer id);
+
+        public List<OutboundCheckSearchResult> searchOutboundChecks(OutboundCheckSearch outboundCheckSearch);
 
         public Payment addOrUpdatePayment(Payment payment) throws OsirisException;
 

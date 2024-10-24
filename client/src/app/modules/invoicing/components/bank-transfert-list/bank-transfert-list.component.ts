@@ -55,8 +55,8 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "isSelectedForExport", fieldName: "isSelectedForExport", label: "Est sélectionné pour l'export", valueFonction: (element: BankTransfertSearchResult, column: SortTableColumn<BankTransfertSearchResult>) => { return (element.isSelectedForExport) ? "Oui" : "Non" } } as SortTableColumn<BankTransfertSearchResult>);
     this.availableColumns.push({ id: "competentAuthorityLabel", fieldName: "competentAuthorityLabel", label: "Autorité compétente" } as SortTableColumn<BankTransfertSearchResult>);
     this.availableColumns.push({ id: "invoiceBillingLabel", fieldName: "invoiceBillingLabel", label: "Libellé de la facture" } as SortTableColumn<BankTransfertSearchResult>);
+    this.availableColumns.push({ id: "isMatched", fieldName: "isMatched", label: "Est rapproché", valueFonction: (element: BankTransfertSearchResult, column: SortTableColumn<BankTransfertSearchResult>) => { return (element.isMatched) ? "Oui" : "Non" } } as SortTableColumn<BankTransfertSearchResult>);
     this.availableColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn<BankTransfertSearchResult>);
-
 
     this.setColumns();
 

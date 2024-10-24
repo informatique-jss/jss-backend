@@ -12,6 +12,8 @@ public class BankTransfertSearch {
     private Float minAmount;
     private Float maxAmount;
     private String label;
+    @JsonProperty("isHideMatchedBankTransfert")
+    private boolean isHideMatchedBankTransfert;
     @JsonProperty("isHideExportedBankTransfert")
     private boolean isHideExportedBankTransfert;
     @JsonProperty("isDisplaySelectedForExportBankTransfert")
@@ -92,4 +94,13 @@ public class BankTransfertSearch {
     public void setProvider(Provider provider) {
         this.provider = provider;
     }
+
+    public boolean isHideMatchedBankTransfert() {
+        return isHideMatchedBankTransfert;
+    }
+
+    public void setHideMatchedBankTransfert(boolean isHideMatchedBankTransfert) {
+        this.isHideMatchedBankTransfert = isHideMatchedBankTransfert;
+    }
+
 }
