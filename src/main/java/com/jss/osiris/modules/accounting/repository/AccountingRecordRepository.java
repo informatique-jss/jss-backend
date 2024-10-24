@@ -245,9 +245,9 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
         @Query(nativeQuery = true, value = "select sum(refund_amount) from refund r where is_already_exported = true and (is_matched = false or is_matched is null)")
         Number getRefundTotal();
 
-        @Query(nativeQuery = true, value = "select sum(payment_amount) from payment p "
-                        + " where bank_id is null and p.check_number is not null and (is_cancelled=false or is_cancelled is null) and id_origin_payment is null "
-                        + " and p.payment_amount < 0 ")
+        @Query(nativeQuery = true, value = "select sum(p.payment_amount) from payment p left join payment p_origin on p.id_origin_payment = p_origin.id "
+                        + " where p.bank_id is null and p.check_number is not null and (p.is_cancelled=false or p.is_cancelled is null) "
+                        + " and (p.id_origin_payment is null or p_origin.bank_id not like 'H%') and p.payment_amount < 0 ")
         Number getCheckTotal();
 
         @Query(nativeQuery = true, value = "select sum(transfert_amount) from direct_debit_transfert ddt "
