@@ -16,6 +16,10 @@ export class AffaireService extends AppRestService<Affaire> {
     return this.getById("affaire", affaireId);
   }
 
+  getAffaireBySiret(siret: string) {
+    return this.getList(new HttpParams().set("siret", siret), "affaire/siret", undefined, "Le service du RNE n'est pas disponible pour le moment. Veuillez réessayer dans quelques instants");
+  }
+
   addOrUpdateAffaire(affaire: Affaire) {
     return this.addOrUpdate(new HttpParams(), "affaire", affaire);
   }

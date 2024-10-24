@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 
@@ -14,5 +15,5 @@ public interface ServiceTypeService {
 
     public ServiceType addOrUpdateServiceType(ServiceType service);
 
-    public List<ServiceType> getServiceTypesForFamily(ServiceFamily serviceFamily);
+    public List<ServiceType> getServiceTypesForFamily(ServiceFamily serviceFamily) throws OsirisException;
 }

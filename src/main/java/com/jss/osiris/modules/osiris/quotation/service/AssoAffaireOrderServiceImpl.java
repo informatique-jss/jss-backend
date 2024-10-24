@@ -749,7 +749,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                                                                                         // la commande
                         }
                         service.setServiceStatus(getServiceStatusLabel(service));
-                        service.setServicePrice(getServicePrice(service));
+                        service.setServicePrice(getServicePrice(service, true, true));
                         if (service.getServicePrice().compareTo(new BigDecimal(0)) <= 0f)
                             service.setServicePrice(null);
                         removeDisabledAttachments(service);
@@ -854,7 +854,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         return currentStatus;
     }
 
-    private BigDecimal getServicePrice(Service service) {
+    @Override
+    public BigDecimal getServicePrice(Service service, boolean withDiscount, boolean withVat) {
         BigDecimal totalPrice = new BigDecimal(0);
         if (service.getProvisions() != null)
             for (Provision provision : service.getProvisions()) {
@@ -865,9 +866,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         else if (invoiceItem.getPreTaxPrice() != null)
                             totalPrice = totalPrice.add(invoiceItem.getPreTaxPrice());
 
-                        if (invoiceItem.getDiscountAmount() != null)
+                        if (withDiscount && invoiceItem.getDiscountAmount() != null)
                             totalPrice = totalPrice.add(invoiceItem.getDiscountAmount());
-                        if (invoiceItem.getVatPrice() != null)
+                        if (withVat && invoiceItem.getVatPrice() != null)
                             totalPrice = totalPrice.add(invoiceItem.getVatPrice());
                     }
                 }

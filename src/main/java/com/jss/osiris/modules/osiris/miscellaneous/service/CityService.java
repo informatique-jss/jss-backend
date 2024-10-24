@@ -16,4 +16,8 @@ public interface CityService {
     public List<City> getCitiesByLabel(String label);
 
     public List<City> getCitiesByCountry(Integer countryId, String city, String postalCode);
+
+    public List<City> getCitiesByCountryAndPostalCode(Integer countryId, String postalCode);
+
+    public List<City> getCitiesByCountry(Integer countryId);
 }

@@ -20,4 +20,8 @@ public interface CityRepository extends QueryCacheCrudRepository<City, Integer> 
     List<City> findCitiesByCountryAndCity(@Param("city") String city, @Param("country") Country country);
 
     List<City> findByLabelContainingIgnoreCase(String label);
+
+    List<City> findByCountryAndPostalCode(Country country, String postalCode);
+
+    List<City> findByCountry(Country country);
 }

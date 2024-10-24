@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.myjss.profile.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,7 @@ public class UserScopeServiceImpl implements UserScopeService {
     @Autowired
     ResponsableService responsableService;
 
-    @Autowired
-    UserScopeServiceProxyImpl userScopeServiceProxyImpl;
-
     @Override
-
     @Caching(evict = {
             @CacheEvict(value = "potential-user-scope", key = "#userScope.responsable.id"),
             @CacheEvict(value = "user-scope", key = "#userScope.responsable.id")
@@ -43,21 +40,80 @@ public class UserScopeServiceImpl implements UserScopeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addResponsableToCurrentUserScope(List<Responsable> responsablesToAdd) {
-        Responsable currentUser = employeeService.getCurrentMyJssUser();
-        userScopeServiceProxyImpl.addResponsableToUserScope(responsablesToAdd, currentUser);
+        Responsable responsable = employeeService.getCurrentMyJssUser();
+        if (responsable != null) {
+            List<UserScope> existingScope = userScopeRepository.findByResponsable(responsable);
+            userScopeRepository.deleteAll(existingScope);
+
+            if (responsablesToAdd != null && responsablesToAdd.size() > 0)
+                for (Responsable responsableToAdd : responsablesToAdd) {
+                    List<Responsable> potentialScope = getPotentialUserScope();
+                    for (Responsable potentialResponsable : potentialScope)
+                        if (potentialResponsable.getId().equals(responsableToAdd.getId())) {
+                            UserScope newScope = new UserScope();
+                            newScope.setResponsable(responsable);
+                            newScope.setResponsableViewed(responsableToAdd);
+                            addOrUpdateUserScope(newScope);
+                        }
+                }
+        }
     }
 
     @Override
     public List<Responsable> getPotentialUserScope() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
-        return userScopeServiceProxyImpl.getPotentialUserScopeForResponsable(responsable);
+        if (responsable != null) {
+            List<Integer> potentialUserScopeIds = userScopeRepository
+                    .getPotentialUserScope(responsable.getMail().getId());
+            if (potentialUserScopeIds != null) {
+                List<Responsable> potentialUserScope = new ArrayList<Responsable>();
+                for (Integer potentialUserScopeId : potentialUserScopeIds)
+                    potentialUserScope.add(responsableService.getResponsable(potentialUserScopeId));
+                return potentialUserScope;
+            }
+            return Arrays.asList(responsable);
+        }
+        return null;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<UserScope> getUserScope() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
-        return userScopeServiceProxyImpl.getUserScopeForResponsable(responsable);
+        if (responsable != null) {
+            checkUserScope(responsable);
+            List<UserScope> userScope = userScopeRepository.findByResponsable(responsable);
+            if (userScope != null && userScope.size() > 0)
+                return userScope;
+
+            UserScope defaultScope = new UserScope();
+            defaultScope.setResponsable(responsable);
+            defaultScope.setResponsableViewed(responsable);
+
+            return Arrays.asList(addOrUpdateUserScope(defaultScope));
+        }
+        return null;
+    }
+
+    private void checkUserScope(Responsable responsable) {
+        List<Responsable> potentialScope = getPotentialUserScope();
+        if (potentialScope == null || potentialScope.size() <= 1)
+            return;
+
+        List<UserScope> currentScope = userScopeRepository.findByResponsable(responsable);
+        if (currentScope != null && currentScope.size() > 0)
+            for (UserScope currentScopeResponsable : currentScope) {
+                boolean found = false;
+                for (Responsable authorizedScopeResponsable : potentialScope) {
+                    if (currentScopeResponsable.getResponsableViewed().getId()
+                            .equals(authorizedScopeResponsable.getId())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    userScopeRepository.delete(currentScopeResponsable);
+            }
     }
 
     @Override

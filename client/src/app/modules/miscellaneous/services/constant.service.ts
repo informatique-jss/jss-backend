@@ -802,4 +802,20 @@ export class ConstantService extends AppRestService<Constant> {
   getFurtherInformationServiceFieldType() {
     return this.constant.furtherInformationServiceFieldType;
   }
+
+  getResponsableDummyCustomerFrance() {
+    return this.constant.responsableDummyCustomerFrance;
+  }
+
+  getResponsableDummyCustomerDom() {
+    return this.constant.responsableDummyCustomerDom;
+  }
+
+  getResponsableDummyCustomerAbroad() {
+    return this.constant.responsableDummyCustomerAbroad;
+  }
+
+  getProvisionScreenTypeAnnouncement() {
+    return this.constant.provisionScreenTypeAnnouncement;
+  }
 }

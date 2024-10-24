@@ -68,4 +68,16 @@ public class CityServiceImpl implements CityService {
         }
         return cityRepository.findByLabelContainingIgnoreCase(city);
     }
+
+    @Override
+    public List<City> getCitiesByCountryAndPostalCode(Integer countryId, String postalCode) {
+        Country country = countryService.getCountry(countryId);
+        return cityRepository.findByCountryAndPostalCode(country, postalCode);
+    }
+
+    @Override
+    public List<City> getCitiesByCountry(Integer countryId) {
+        Country country = countryService.getCountry(countryId);
+        return cityRepository.findByCountry(country);
+    }
 }

@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,5 +47,7 @@ public interface AssoAffaireOrderService {
         public boolean isServiceHasMissingInformations(Service service);
 
         public List<AssoAffaireOrder> getAssoAffaireOrderForQuotation(Quotation quotation) throws OsirisException;
+
+        public BigDecimal getServicePrice(Service service, boolean withDiscount, boolean withVat);
 
 }

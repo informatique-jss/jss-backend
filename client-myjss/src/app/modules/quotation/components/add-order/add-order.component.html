@@ -12,10 +12,10 @@
   </nav>
 
   <choose-type (onChoseType)="chooseType($event)" *ngIf="!typeChosen"></choose-type>
-  <choose-service (onChoseService)="chooseNewService($event)"
+  <choose-service (onChoseService)="chooseNewService($event)" [currentOrderAffaires]="getCurrentAffaires()"
     *ngIf="typeChosen!=undefined && displayAddNewService"></choose-service>
   <checkout [serviceTypesSelected]="servicesChosen" *ngIf="servicesChosen && !displayAddNewService"
-    [typeChosen]="typeChosen">
+    (onRemoveServiceChoosen)="removeService($event)" [typeChosen]="typeChosen">
   </checkout>
 
 </section>

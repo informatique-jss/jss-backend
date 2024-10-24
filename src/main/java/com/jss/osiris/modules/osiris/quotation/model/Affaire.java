@@ -59,6 +59,7 @@ public class Affaire implements IId, IAttachment {
 	private String acronym;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean isIndividual;
 
 	@Column(length = 50)

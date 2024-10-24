@@ -1515,6 +1515,31 @@
                 [isDisabled]="!editMode"></generic-datepicker>
             </td>
           </tr>
+          <tr>
+            <td>
+              <autocomplete-responsable [(model)]="constant.responsableDummyCustomerFrance" [form]="constantForm"
+                propertyName="responsableDummyCustomerFrance" [isMandatory]="true"></autocomplete-responsable>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-responsable [(model)]="constant.responsableDummyCustomerDom" [form]="constantForm"
+                propertyName="responsableDummyCustomerDom" [isMandatory]="true"></autocomplete-responsable>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-responsable [(model)]="constant.responsableDummyCustomerAbroad" [form]="constantForm"
+                propertyName="responsableDummyCustomerAbroad" [isMandatory]="true"></autocomplete-responsable>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-provision-screen-type [(model)]="constant.provisionScreenTypeAnnouncement"
+                label="Type d'écran Annonce légale" [form]="constantForm" propertyName="provisionScreenTypeAnnouncement"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-screen-type>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
@@ -42,6 +44,9 @@ import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
+import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @org.springframework.stereotype.Service
 public class PricingHelper {
@@ -84,6 +89,18 @@ public class PricingHelper {
 
     @Autowired
     CustomerOrderService customerOrderService;
+
+    @Autowired
+    ServiceService serviceService;
+
+    @Autowired
+    ServiceTypeService serviceTypeService;
+
+    @Autowired
+    EmployeeService employeeService;
+
+    @Autowired
+    AssoAffaireOrderService assoAffaireOrderService;
 
     @Transactional
     public IQuotation getAndSetInvoiceItemsForQuotationForFront(IQuotation quotation, boolean persistInvoiceItem)
@@ -287,6 +304,14 @@ public class PricingHelper {
                         (confrere.getShippingCosts() != null ? BigDecimal.valueOf(confrere.getShippingCosts())
                                 : zeroValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
                                 .divide(oneHundredValue));
+        } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()) {
+            if (billingItem.getBillingType().getIsNonTaxable() == false
+                    && provision.getService().getServiceType().getDefaultDeboursPrice() != null) {
+                invoiceItem.setPreTaxPrice(provision.getService().getServiceType().getDefaultDeboursPrice());
+            } else if (billingItem.getBillingType().getIsNonTaxable() == true
+                    && provision.getService().getServiceType().getDefaultDeboursPriceNonTaxable() != null) {
+                invoiceItem.setPreTaxPrice(provision.getService().getServiceType().getDefaultDeboursPriceNonTaxable());
+            }
         } else {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
         }
@@ -347,7 +372,7 @@ public class PricingHelper {
         return nbr;
     }
 
-    private void setInvoiceItemsForProvision(Provision provision, IQuotation quotation, boolean persistInvoiceItem)
+    public void setInvoiceItemsForProvision(Provision provision, IQuotation quotation, boolean persistInvoiceItem)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (provision == null)
@@ -787,5 +812,59 @@ public class PricingHelper {
 
         invoiceItem.setVat(invoiceItem.getBillingItem().getBillingType().getVat());
         vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
+    }
+
+    public UserCustomerOrder completePricingOfUserCustomerOrder(UserCustomerOrder order)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        CustomerOrder customerOrder = new CustomerOrder();
+        Responsable user = employeeService.getCurrentMyJssUser();
+        if (user == null)
+            user = constantService.getResponsableDummyCustomerFrance();
+
+        customerOrder.setResponsable(user);
+        customerOrder.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
+        customerOrder.getAssoAffaireOrders().add(new AssoAffaireOrder());
+        customerOrder.getAssoAffaireOrders().get(0).setAffaire(order.getServiceTypes().get(0).getAffaire());
+
+        List<InvoiceItem> invoiceItemsToConsider = new ArrayList<InvoiceItem>();
+
+        for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
+            serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
+            Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
+                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire());
+            if (service != null && service.getProvisions() != null)
+                for (Provision provision : service.getProvisions()) {
+                    setInvoiceItemsForProvision(provision, customerOrder, false);
+                    invoiceItemsToConsider.addAll(provision.getInvoiceItems());
+                }
+            serviceTypeChosen.setDiscountedAmount(assoAffaireOrderService.getServicePrice(service, true, false));
+            serviceTypeChosen.setPreTaxPrice(assoAffaireOrderService.getServicePrice(service, false, false));
+        }
+
+        BigDecimal discountTotal = new BigDecimal(0);
+        BigDecimal preTaxPriceTotal = new BigDecimal(0);
+        BigDecimal vatTotal = new BigDecimal(0);
+        if (invoiceItemsToConsider != null)
+            for (InvoiceItem invoiceItem : invoiceItemsToConsider) {
+                if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
+                    preTaxPriceTotal = preTaxPriceTotal
+                            .add(invoiceItem.getPreTaxPriceReinvoiced());
+                } else if (invoiceItem.getPreTaxPrice() != null) {
+                    preTaxPriceTotal = preTaxPriceTotal.add(invoiceItem.getPreTaxPrice());
+                }
+
+                if (invoiceItem.getVatPrice() != null) {
+                    vatTotal = vatTotal.add(invoiceItem.getVatPrice());
+                }
+                if (invoiceItem.getDiscountAmount() != null) {
+                    discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
+                }
+            }
+
+        order.setPreTaxPrice(preTaxPriceTotal);
+        order.setTotalPrice(discountTotal.add(vatTotal).add(preTaxPriceTotal).subtract(discountTotal));
+        order.setVatPrice(vatTotal);
+
+        return order;
     }
 }

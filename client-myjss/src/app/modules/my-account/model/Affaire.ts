@@ -31,4 +31,5 @@ export interface Affaire {
   apeCodes: string;
   paymentIban: string;
   paymentBic: string;
+  isIndividual: boolean;
 }

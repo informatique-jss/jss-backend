@@ -16,6 +16,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.JournalType;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
@@ -27,6 +28,7 @@ import com.jss.osiris.modules.osiris.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.osiris.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.osiris.tiers.model.RefundType;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.RffFrequency;
 import com.jss.osiris.modules.osiris.tiers.model.SubscriptionPeriodType;
 import com.jss.osiris.modules.osiris.tiers.model.TiersCategory;
@@ -231,6 +233,7 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeAutreInfogreffe;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JsonView(JacksonViews.MyJssView.class)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -829,6 +832,22 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_further_information_service_field_type")
 	private ServiceFieldType furtherInformationServiceFieldType;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_responsable_dummy_customer_france")
+	private Responsable responsableDummyCustomerFrance;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_responsable_dummy_customer_dom")
+	private Responsable responsableDummyCustomerDom;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_responsable_dummy_customer_abroad")
+	private Responsable responsableDummyCustomerAbroad;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_provision_screen_type_announcement")
+	private ProvisionScreenType provisionScreenTypeAnnouncement;
 
 	public Integer getId() {
 		return id;
@@ -2409,6 +2428,38 @@ public class Constant implements Serializable, IId {
 
 	public void setActiveDirectoryGroupSales(ActiveDirectoryGroup activeDirectoryGroupSales) {
 		this.activeDirectoryGroupSales = activeDirectoryGroupSales;
+	}
+
+	public Responsable getResponsableDummyCustomerFrance() {
+		return responsableDummyCustomerFrance;
+	}
+
+	public void setResponsableDummyCustomerFrance(Responsable responsableDummyCustomerFrance) {
+		this.responsableDummyCustomerFrance = responsableDummyCustomerFrance;
+	}
+
+	public Responsable getResponsableDummyCustomerDom() {
+		return responsableDummyCustomerDom;
+	}
+
+	public void setResponsableDummyCustomerDom(Responsable responsableDummyCustomerDom) {
+		this.responsableDummyCustomerDom = responsableDummyCustomerDom;
+	}
+
+	public Responsable getResponsableDummyCustomerAbroad() {
+		return responsableDummyCustomerAbroad;
+	}
+
+	public void setResponsableDummyCustomerAbroad(Responsable responsableDummyCustomerAbroad) {
+		this.responsableDummyCustomerAbroad = responsableDummyCustomerAbroad;
+	}
+
+	public ProvisionScreenType getProvisionScreenTypeAnnouncement() {
+		return provisionScreenTypeAnnouncement;
+	}
+
+	public void setProvisionScreenTypeAnnouncement(ProvisionScreenType provisionScreenTypeAnnouncement) {
+		this.provisionScreenTypeAnnouncement = provisionScreenTypeAnnouncement;
 	}
 
 }

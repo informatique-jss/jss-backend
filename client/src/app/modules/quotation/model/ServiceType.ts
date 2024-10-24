@@ -8,8 +8,12 @@ export interface ServiceType {
   code: string;
   comment: string;
   label: string;
+  customLabel: string;
   serviceFamily: ServiceFamily;
   assoServiceProvisionTypes: AssoServiceProvisionType[];
   assoServiceTypeDocuments: AssoServiceTypeDocument[];
   assoServiceTypeFieldTypes: AssoServiceTypeFieldType[];
+  isRequiringNewUnregisteredAffaire: boolean;
+  defaultDeboursPrice: number;
+  defaultDeboursPriceNonTaxable: number;
 }

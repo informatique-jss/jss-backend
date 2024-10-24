@@ -35,10 +35,16 @@ import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
+import com.jss.osiris.modules.osiris.miscellaneous.model.City;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentTypeService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.CountryService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -48,6 +54,8 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
+import com.jss.osiris.modules.osiris.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
@@ -55,13 +63,18 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeFieldTypePossibleValue;
+import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.NoticeTypeFamilyService;
+import com.jss.osiris.modules.osiris.quotation.service.NoticeTypeService;
+import com.jss.osiris.modules.osiris.quotation.service.PricingHelper;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyGroupService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyService;
@@ -137,6 +150,24 @@ public class MyJssQuotationController {
 
 	@Autowired
 	ServiceTypeService serviceTypeService;
+
+	@Autowired
+	CountryService countryService;
+
+	@Autowired
+	CityService cityService;
+
+	@Autowired
+	PricingHelper pricingHelper;
+
+	@Autowired
+	DepartmentService departmentService;
+
+	@Autowired
+	NoticeTypeService noticeTypeService;
+
+	@Autowired
+	NoticeTypeFamilyService noticeTypeFamilyService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -527,6 +558,18 @@ public class MyJssQuotationController {
 			throw new OsirisValidationException("id");
 
 		return new ResponseEntity<Affaire>(affaireService.getAffaire(id), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/affaire/siret")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Affaire>> getAffaireBySiret(@RequestParam String siret)
+			throws OsirisClientMessageException, OsirisException {
+		if (siret == null)
+			throw new OsirisValidationException("id");
+		validationHelper.validateSiret(siret);
+
+		return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromSiret(siret.trim().replaceAll(" ", "")),
+				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/affaire")
@@ -943,13 +986,102 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/service-type/service-family")
 	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<List<ServiceType>> getServiceTypesForFamily(Integer idServiceFamily,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
 		ServiceFamily serviceFamily = serviceFamilyService.getServiceFamily(idServiceFamily);
 		if (serviceFamily == null)
 			return new ResponseEntity<List<ServiceType>>(new ArrayList<ServiceType>(), HttpStatus.OK);
 		return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypesForFamily(serviceFamily),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/countries")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Country>> getCountries(HttpServletRequest request) {
+		detectFlood(request);
+		return new ResponseEntity<List<Country>>(countryService.getCountries(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/cities/search/country/postal-code")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<City>> getCitiesByCountryAndPostalCode(@RequestParam Integer countryId,
+			@RequestParam String postalCode, HttpServletRequest request) {
+		detectFlood(request);
+		Country country = countryService.getCountry(countryId);
+		if (country == null)
+			return new ResponseEntity<List<City>>(new ArrayList<City>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<City>>(cityService.getCitiesByCountryAndPostalCode(countryId, postalCode),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/cities/search/country")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<City>> getCitiesByCountry(@RequestParam Integer countryId, HttpServletRequest request) {
+		detectFlood(request);
+		Country country = countryService.getCountry(countryId);
+		if (country == null)
+			return new ResponseEntity<List<City>>(new ArrayList<City>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<City>>(cityService.getCitiesByCountry(countryId),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/departments")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Department>> getDepartments(HttpServletRequest request) {
+		detectFlood(request);
+		return new ResponseEntity<List<Department>>(departmentService.getDepartments(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/notice-types")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<NoticeType>> getNoticeTypes(HttpServletRequest request) {
+		detectFlood(request);
+		return new ResponseEntity<List<NoticeType>>(noticeTypeService.getNoticeTypes(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/notice-type-families")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<NoticeTypeFamily>> getNoticeTypeFamilies(HttpServletRequest request) {
+		detectFlood(request);
+		return new ResponseEntity<List<NoticeTypeFamily>>(noticeTypeFamilyService.getNoticeTypeFamilies(),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/order/user/pricing")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<UserCustomerOrder> completePricingOfUserCustomerOrder(@RequestBody UserCustomerOrder order,
+			HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+		if (order.getBillingDocument() == null || order.getServiceTypes() == null
+				|| order.getServiceTypes().size() == 0)
+			return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+
+		for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
+			if (serviceTypeChosen.getAffaire().getId() == null && (serviceTypeChosen.getAffaire().getCity() == null
+					|| serviceTypeChosen.getAffaire().getCountry() == null)) {
+				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+			}
+
+			if (serviceTypeChosen.getService() == null)
+				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+		}
+
+		if (order.getDummyResponsable() != null) {
+			validationHelper.validateReferential(order.getDummyResponsable(), true, "dummyReponsable");
+
+			if (!order.getDummyResponsable().getId().equals(constantService.getResponsableDummyCustomerAbroad().getId())
+					&& !order.getDummyResponsable().getId()
+							.equals(constantService.getResponsableDummyCustomerDom().getId())
+					&& !order.getDummyResponsable().getId()
+							.equals(constantService.getResponsableDummyCustomerFrance().getId()))
+				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<UserCustomerOrder>(pricingHelper.completePricingOfUserCustomerOrder(order),
 				HttpStatus.OK);
 	}
 }

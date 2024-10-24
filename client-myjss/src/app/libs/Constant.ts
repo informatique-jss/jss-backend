@@ -1,6 +1,8 @@
 import { BillingLabelType } from "../modules/my-account/model/BillingLabelType";
 import { DocumentType } from "../modules/my-account/model/DocumentType";
 import { PaymentType } from "../modules/my-account/model/PaymentType";
+import { Country } from "../modules/profile/model/Country";
+import { Responsable } from "../modules/profile/model/Responsable";
 
 export interface Constant {
   id: number;
@@ -16,4 +18,8 @@ export interface Constant {
   documentTypeDigital: DocumentType;
   documentTypePaper: DocumentType;
   documentTypeBilling: DocumentType;
+  countryFrance: Country;
+  responsableDummyCustomerFrance: Responsable;
+  responsableDummyCustomerDom: Responsable;
+  responsableDummyCustomerAbroad: Responsable;
 }

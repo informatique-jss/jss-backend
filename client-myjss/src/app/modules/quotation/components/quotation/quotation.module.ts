@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddOrderComponent } from '../add-order/add-order.component';
@@ -16,7 +17,9 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
-    MiscellaneousModule
+    MiscellaneousModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   declarations: [QuotationComponent,
     AddOrderComponent,

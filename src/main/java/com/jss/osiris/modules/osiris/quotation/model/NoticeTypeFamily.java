@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -17,12 +19,15 @@ public class NoticeTypeFamily implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "notice_type_family_sequence", sequenceName = "notice_type_family_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notice_type_family_sequence")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
 
 	@Column(nullable = false, length = 20)
+	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
 
 	public Integer getId() {

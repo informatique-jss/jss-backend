@@ -36,6 +36,13 @@
           </tr>
           <tr>
             <td>
+              <generic-input [(model)]="selectedEntity.customLabel" label="Nom fonctionnel MyJSS" [maxLength]="255"
+                [form]="entityForm" propertyName="customLabel" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-textarea [(model)]="selectedEntity.comment" label="Commentaire MyJSS" [form]="entityForm"
                 propertyName="comment" [isMandatory]="false" [isDisabled]="!editMode"
                 [numberOfLines]="5"></generic-textarea>
@@ -43,9 +50,31 @@
           </tr>
           <tr>
             <td>
+              <generic-toggle [(model)]="selectedEntity.isRequiringNewUnregisteredAffaire"
+                label="Nécessite la création d'une affaire non enregistrée" [form]="entityForm"
+                propertyName="isRequiringNewUnregisteredAffaire" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-service-family [(model)]="selectedEntity.serviceFamily" label="Famille de service"
                 [form]="entityForm" propertyName="serviceFamily" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-service-family>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.defaultDeboursPrice" label="Montant par défaut des débours (HT)"
+                [form]="entityForm" propertyName="defaultDeboursPrice" [isMandatory]="false" [isDisabled]="!editMode"
+                type="number" step="0.01"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.defaultDeboursPriceNonTaxable"
+                label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
+                propertyName="defaultDeboursPriceNonTaxable" [isMandatory]="false" [isDisabled]="!editMode"
+                type="number" step="0.01"></generic-input>
             </td>
           </tr>
         </table>

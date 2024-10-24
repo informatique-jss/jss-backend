@@ -641,7 +641,8 @@ public class QuotationController {
     if (serviceFamilyGroups.getId() != null)
       validationHelper.validateReferential(serviceFamilyGroups, true, "serviceFamilyGroups");
     validationHelper.validateString(serviceFamilyGroups.getCode(), true, "code");
-    validationHelper.validateString(serviceFamilyGroups.getLabel(), true, "label");
+    validationHelper.validateString(serviceFamilyGroups.getLabel(), true, 250, "label");
+    validationHelper.validateString(serviceFamilyGroups.getCustomLabel(), false, 250, "customLabel");
 
     return new ResponseEntity<ServiceFamilyGroup>(
         serviceFamilyGroupService.addOrUpdateServiceFamilyGroup(serviceFamilyGroups), HttpStatus.OK);
@@ -659,7 +660,8 @@ public class QuotationController {
     if (serviceFamilies.getId() != null)
       validationHelper.validateReferential(serviceFamilies, true, "serviceFamilies");
     validationHelper.validateString(serviceFamilies.getCode(), true, "code");
-    validationHelper.validateString(serviceFamilies.getLabel(), true, "label");
+    validationHelper.validateString(serviceFamilies.getLabel(), true, 250, "label");
+    validationHelper.validateString(serviceFamilies.getCustomLabel(), false, 250, "customLabel");
     validationHelper.validateReferential(serviceFamilies.getServiceFamilyGroup(), true, "familyGroup");
 
     return new ResponseEntity<ServiceFamily>(serviceFamilyService.addOrUpdateServiceFamily(serviceFamilies),
@@ -678,8 +680,12 @@ public class QuotationController {
     if (serviceType.getId() != null)
       validationHelper.validateReferential(serviceType, true, "services");
     validationHelper.validateString(serviceType.getCode(), true, "code");
-    validationHelper.validateString(serviceType.getLabel(), true, "label");
+    validationHelper.validateString(serviceType.getLabel(), true, 250, "label");
+    validationHelper.validateString(serviceType.getCustomLabel(), false, 250, "customLabel");
     validationHelper.validateReferential(serviceType.getServiceFamily(), true, "serviceFamily");
+    validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPrice(), false, "defaultDeboursPrice");
+    validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPriceNonTaxable(), false,
+        "defaultDeboursPriceNonTaxable");
 
     if (serviceType.getAssoServiceProvisionTypes() != null) {
       for (AssoServiceProvisionType assoServiceProvisionType : serviceType.getAssoServiceProvisionTypes()) {

@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,6 +21,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Transient;
 
 @Entity
 public class ServiceType implements Serializable, IId {
@@ -35,6 +37,10 @@ public class ServiceType implements Serializable, IId {
 	@IndexedField
 	@JsonView(JacksonViews.MyJssView.class)
 	private String label;
+
+	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
+	private String customLabel;
 
 	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
@@ -61,6 +67,19 @@ public class ServiceType implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
 	@JsonView(JacksonViews.MyJssView.class)
 	private List<AssoServiceTypeFieldType> assoServiceTypeFieldTypes;
+
+	@JsonView(JacksonViews.MyJssView.class)
+	private Boolean isRequiringNewUnregisteredAffaire;
+
+	@JsonView(JacksonViews.MyJssView.class)
+	@Transient
+	private Boolean hasAnnouncement;
+
+	@Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+	private BigDecimal defaultDeboursPrice;
+
+	@Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+	private BigDecimal defaultDeboursPriceNonTaxable;
 
 	public Integer getId() {
 		return id;
@@ -116,6 +135,62 @@ public class ServiceType implements Serializable, IId {
 
 	public void setAssoServiceTypeFieldTypes(List<AssoServiceTypeFieldType> assoServiceTypeFieldType) {
 		this.assoServiceTypeFieldTypes = assoServiceTypeFieldType;
+	}
+
+	public static String getSERVICE_TYPE_OTHER() {
+		return SERVICE_TYPE_OTHER;
+	}
+
+	public static void setSERVICE_TYPE_OTHER(String sERVICE_TYPE_OTHER) {
+		SERVICE_TYPE_OTHER = sERVICE_TYPE_OTHER;
+	}
+
+	public String getCustomLabel() {
+		return customLabel;
+	}
+
+	public void setCustomLabel(String customLabel) {
+		this.customLabel = customLabel;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public Boolean getIsRequiringNewUnregisteredAffaire() {
+		return isRequiringNewUnregisteredAffaire;
+	}
+
+	public void setIsRequiringNewUnregisteredAffaire(Boolean isRequiringNewUnregisteredAffaire) {
+		this.isRequiringNewUnregisteredAffaire = isRequiringNewUnregisteredAffaire;
+	}
+
+	public BigDecimal getDefaultDeboursPrice() {
+		return defaultDeboursPrice;
+	}
+
+	public void setDefaultDeboursPrice(BigDecimal defaultDeboursPrice) {
+		this.defaultDeboursPrice = defaultDeboursPrice;
+	}
+
+	public BigDecimal getDefaultDeboursPriceNonTaxable() {
+		return defaultDeboursPriceNonTaxable;
+	}
+
+	public void setDefaultDeboursPriceNonTaxable(BigDecimal defaultDeboursPriceNonTaxable) {
+		this.defaultDeboursPriceNonTaxable = defaultDeboursPriceNonTaxable;
+	}
+
+	public Boolean getHasAnnouncement() {
+		return hasAnnouncement;
+	}
+
+	public void setHasAnnouncement(Boolean hasAnnouncement) {
+		this.hasAnnouncement = hasAnnouncement;
 	}
 
 }

@@ -39,6 +39,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.JournalType;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
@@ -50,6 +51,7 @@ import com.jss.osiris.modules.osiris.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.osiris.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.osiris.tiers.model.RefundType;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.RffFrequency;
 import com.jss.osiris.modules.osiris.tiers.model.SubscriptionPeriodType;
 import com.jss.osiris.modules.osiris.tiers.model.TiersCategory;
@@ -1076,5 +1078,25 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ServiceFieldType getFurtherInformationServiceFieldType() throws OsirisException {
         return this.getConstants().getFurtherInformationServiceFieldType();
+    }
+
+    @Override
+    public Responsable getResponsableDummyCustomerFrance() throws OsirisException {
+        return this.getConstants().getResponsableDummyCustomerFrance();
+    }
+
+    @Override
+    public Responsable getResponsableDummyCustomerDom() throws OsirisException {
+        return this.getConstants().getResponsableDummyCustomerDom();
+    }
+
+    @Override
+    public Responsable getResponsableDummyCustomerAbroad() throws OsirisException {
+        return this.getConstants().getResponsableDummyCustomerAbroad();
+    }
+
+    @Override
+    public ProvisionScreenType getProvisionScreenTypeAnnouncement() throws OsirisException {
+        return this.getConstants().getProvisionScreenTypeAnnouncement();
     }
 }

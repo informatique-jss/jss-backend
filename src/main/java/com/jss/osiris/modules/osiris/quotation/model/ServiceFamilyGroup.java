@@ -27,6 +27,9 @@ public class ServiceFamilyGroup implements Serializable, IId {
 	private String label;
 
 	@JsonView(JacksonViews.MyJssView.class)
+	private String customLabel;
+
+	@JsonView(JacksonViews.MyJssView.class)
 	private String code;
 
 	@Column(columnDefinition = "TEXT")
@@ -63,6 +66,14 @@ public class ServiceFamilyGroup implements Serializable, IId {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public String getCustomLabel() {
+		return customLabel;
+	}
+
+	public void setCustomLabel(String customLabel) {
+		this.customLabel = customLabel;
 	}
 
 }

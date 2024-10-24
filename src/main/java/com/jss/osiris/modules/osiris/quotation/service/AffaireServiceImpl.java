@@ -251,6 +251,9 @@ public class AffaireServiceImpl implements AffaireService {
             if (existingAffaire != null) {
                 affaire = existingAffaire;
                 updateAffaireFromRneCompany(existingAffaire, rneCompany, false);
+            } else {
+                // else persist it
+                affaire = addOrUpdateAffaire(affaire);
             }
         }
 

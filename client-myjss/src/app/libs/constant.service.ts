@@ -78,4 +78,20 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.billingLabelTypeCustomer;
   }
 
+  getCountryFrance() {
+    return this.constant.countryFrance;
+  }
+
+  getResponsableDummyCustomerFrance() {
+    return this.constant.responsableDummyCustomerFrance;
+  }
+
+  getResponsableDummyCustomerDom() {
+    return this.constant.responsableDummyCustomerDom;
+  }
+
+  getResponsableDummyCustomerAbroad() {
+    return this.constant.responsableDummyCustomerAbroad;
+  }
+
 }

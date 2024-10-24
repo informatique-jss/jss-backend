@@ -10,6 +10,7 @@ import { Confrere } from "../../quotation/model/Confrere";
 import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
+import { ProvisionScreenType } from '../../quotation/model/ProvisionScreenType';
 import { ProvisionType } from '../../quotation/model/ProvisionType';
 import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
 import { ServiceType } from '../../quotation/model/ServiceType';
@@ -21,6 +22,7 @@ import { BillingClosureType } from '../../tiers/model/BillingClosureType';
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { PaymentDeadlineType } from '../../tiers/model/PaymentDeadlineType';
 import { RefundType } from "../../tiers/model/RefundType";
+import { Responsable } from '../../tiers/model/Responsable';
 import { RffFrequency } from '../../tiers/model/RffFrequency';
 import { SubscriptionPeriodType } from "../../tiers/model/SubscriptionPeriodType";
 import { TiersCategory } from '../../tiers/model/TiersCategory';
@@ -238,4 +240,8 @@ export interface Constant {
   activeDirectoryGroupFacturation: ActiveDirectoryGroup;
   activeDirectoryGroupSales: ActiveDirectoryGroup;
   furtherInformationServiceFieldType: ServiceFieldType;
+  responsableDummyCustomerFrance: Responsable;
+  responsableDummyCustomerDom: Responsable;
+  responsableDummyCustomerAbroad: Responsable;
+  provisionScreenTypeAnnouncement: ProvisionScreenType;
 }
