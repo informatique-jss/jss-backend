@@ -1,9 +1,9 @@
 package com.jss.osiris.modules.quotation.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ActuLegaleAnnouncement {
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer id;
     private Integer newspaperId;
     private Integer siren;
