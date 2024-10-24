@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.invoicing.model.OutboundCheckSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.PaymentSearchResult;
 
@@ -49,4 +50,26 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
         Payment findByBankId(String id);
 
         Payment findByCheckNumber(String checkNumber);
+
+        @Query(nativeQuery = true, value = " select p.check_number as outboundCheckNumber,"
+                        + " p.id as paymentNumber, "
+                        + " p.payment_date as outboundCheckDate,"
+                        + " p.payment_amount  as outboundCheckAmount,"
+                        + " p.label as outboundCheckLabel,"
+                        + " p.id_invoice as invoiceAssociated, "
+                        + " case when p.id_origin_payment is not null and p_origin.bank_id like 'H%' then true else false end as isMatched"
+                        + " from payment p left join payment p_origin on p.id_origin_payment = p_origin.id "
+                        + " where ( p.bank_id is null and p.check_number is not null ) "
+                        + " and (:isHideMatchedOutboundChecks=false or (p.id_origin_payment is null or p_origin.bank_id not like 'H%')) "
+                        + " and p.payment_date>=:startDate and p.payment_date<=:endDate "
+                        + " and (p.is_cancelled=false or p.is_cancelled is null) "
+                        + " and p.payment_amount < 0 "
+                        + " and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as real) ) "
+                        + " and (:maxAmount is null or p.payment_amount<=CAST(CAST(:maxAmount as text) as real) )"
+                        + " and (:label is null or CAST(p.id as text) = upper(CAST(:label as text)) or  upper(p.label)  like '%' || trim(upper(CAST(:label as text)))  || '%' )")
+        List<OutboundCheckSearchResult> findOutboundChecks(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate,
+                        @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
+                        @Param("label") String label,
+                        @Param("isHideMatchedOutboundChecks") boolean isHideMatchedOutboundChecks);
 }

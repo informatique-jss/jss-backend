@@ -158,7 +158,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 bankTransfertSearch.getStartDate().withHour(0).withMinute(0),
                 bankTransfertSearch.getEndDate().withHour(23).withMinute(59), bankTransfertSearch.getMinAmount(),
                 bankTransfertSearch.getMaxAmount(),
-                bankTransfertSearch.getLabel(), bankTransfertSearch.isHideExportedBankTransfert(),
+                bankTransfertSearch.getLabel(), bankTransfertSearch.isHideMatchedBankTransfert(),
+                bankTransfertSearch.isHideExportedBankTransfert(),
                 bankTransfertSearch.isDisplaySelectedForExportBankTransfert(),
                 bankTransfertSearch.getIdBankTransfert(), bankTransfertSearch.getProvider().getId());
     }

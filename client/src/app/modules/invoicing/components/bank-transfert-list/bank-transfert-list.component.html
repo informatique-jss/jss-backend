@@ -42,6 +42,11 @@
             label="Afficher la sélection" [form]="transfertForm"
             propertyName="isDisplaySelectedForExportBankTransfert"></generic-toggle>
         </td>
+        <td>
+          <generic-toggle [(model)]="transfertSearch.isHideMatchedBankTransfert"
+            label="Masquer les virements rapprochés" [form]="transfertForm"
+            propertyName="isHideMatchedBankTransfert"></generic-toggle>
+        </td>
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="transfers" tableName="Virements"

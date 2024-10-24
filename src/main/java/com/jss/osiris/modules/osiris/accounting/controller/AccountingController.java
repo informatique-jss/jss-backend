@@ -253,6 +253,49 @@ public class AccountingController {
                 HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/accounting-record/accounting-account-id")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Number> getAccountingRecordBalanceByAccountingAccountId(
+            @RequestParam Integer accountingAccountId) throws OsirisValidationException {
+        if (accountingAccountId == null)
+            throw new OsirisValidationException("accountingAccountId");
+        return new ResponseEntity<Number>(
+                accountingRecordService.getAccountingRecordBalanceByAccountingAccountId(accountingAccountId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/bank-transfert-total")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Number> getBankTransfertTotal() {
+        return new ResponseEntity<Number>(
+                accountingRecordService.getBankTransfertTotal(),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/refund-total")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Number> getRefundTotal() {
+        return new ResponseEntity<Number>(
+                accountingRecordService.getRefundTotal(),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/check-total")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Number> getCheckTotal() {
+        return new ResponseEntity<Number>(
+                accountingRecordService.getCheckTotal(),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/direct-debit-transfert-total")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Number> getDirectDebitTransfertTotal() {
+        return new ResponseEntity<Number>(
+                accountingRecordService.getDirectDebitTransfertTotal(),
+                HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/accounting-record/letter")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Boolean> letterRecordsForAs400(

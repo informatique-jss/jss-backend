@@ -23,4 +23,6 @@ public interface DirectDebitTransfertSearchResult {
     public String getInvoiceBillingLabel();
 
     public String getCompetentAuthorityLabel();
+
+    public Boolean getIsMatched();
 }

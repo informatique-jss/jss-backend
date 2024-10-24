@@ -11,6 +11,8 @@ public class DirectDebitTransfertSearch {
     private Float minAmount;
     private Float maxAmount;
     private String label;
+    @JsonProperty("isHideMatchedDirectDebitTransfert")
+    private boolean isHideMatchedDirectDebitTransfert;
     @JsonProperty("isHideExportedDirectDebitTransfert")
     private boolean isHideExportedDirectDebitTransfert;
 
@@ -70,6 +72,14 @@ public class DirectDebitTransfertSearch {
 
     public void setIdDirectDebitTransfert(Integer idDirectDebitTransfert) {
         this.idDirectDebitTransfert = idDirectDebitTransfert;
+    }
+
+    public boolean isHideMatchedDirectDebitTransfert() {
+        return isHideMatchedDirectDebitTransfert;
+    }
+
+    public void setHideMatchedDirectDebitTransfert(boolean isHideMatchedDirectDebitTransfert) {
+        this.isHideMatchedDirectDebitTransfert = isHideMatchedDirectDebitTransfert;
     }
 
 }
