@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.repository.AssoServiceFieldTypeRepository;
 
 @Service
@@ -26,5 +27,14 @@ public class AssoServiceFieldTypeServiceImpl implements AssoServiceFieldTypeServ
     @org.springframework.transaction.annotation.Transactional(rollbackFor = Exception.class)
     public AssoServiceFieldType addOrUpdateServiceFieldType(AssoServiceFieldType assoServiceFieldType) {
         return assoServiceFieldTypeRepository.save(assoServiceFieldType);
+    }
+
+    @Override
+    public AssoServiceFieldType createAssoServiceFieldType(
+            com.jss.osiris.modules.osiris.quotation.model.Service service, ServiceFieldType serviceFieldType) {
+        AssoServiceFieldType assoServiceFieldType = new AssoServiceFieldType();
+        assoServiceFieldType.setService(service);
+        assoServiceFieldType.setServiceFieldType(serviceFieldType);
+        return addOrUpdateServiceFieldType(assoServiceFieldType);
     }
 }

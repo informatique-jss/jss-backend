@@ -11,7 +11,7 @@ export class AssoServiceFieldTypeService extends AppRestService<AssoServiceField
   constructor(http: HttpClient) {
     super(http, "quotation");
   }
-  addAssoServiceFieldType(serviceFieldTypeId: number, serviceId: number) {
-    return this.postItem(new HttpParams().set("serviceFieldTypeId", serviceFieldTypeId).set("serviceId", serviceId), "asso-service-field-type/add", null, "Type de champ ajouté au service", "Erreur lors de l'ajout du type de champ");
+  addAssoServiceFieldType(serviceId: number, serviceFieldTypeId: number) {
+    return this.postItem(new HttpParams().set("serviceId", serviceId).set("serviceFieldTypeId", serviceFieldTypeId), "asso-service-field-type/add", null, "Type de champ ajouté au service", "Erreur lors de l'ajout du type de champ");
   }
 }

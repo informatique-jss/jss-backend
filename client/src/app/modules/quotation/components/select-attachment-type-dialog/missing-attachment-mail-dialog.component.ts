@@ -1,25 +1,23 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Subject } from 'rxjs';
 import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
+import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
 import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
 import { Service } from '../../model/Service';
+import { ServiceFieldType } from '../../model/ServiceFieldType';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { ServiceService } from '../../services/service.service';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
-import { AssoServiceTypeDocumentService } from '../../services/asso.service.type.document.service';
-import { AssoServiceTypeDocument } from '../../model/AssoServiceTypeDocument';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { ServiceFieldType } from '../../model/ServiceFieldType';
+import { AssoServiceDocumentService } from '../../services/asso.service.document.service';
 import { AssoServiceFieldTypeService } from '../../services/asso.service.field.type.service';
 
 @Component({
@@ -53,9 +51,9 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
     private missingAttachmentQueryService: MissingAttachmentQueryService,
     private serviceService: ServiceService,
     private constantService: ConstantService,
-    private userPreferenceService: UserPreferenceService,
-    private assoServiceTypeDocumentService: AssoServiceTypeDocumentService,
+    private assoServiceDocumentService: AssoServiceDocumentService,
     private assoServiceFieldTypeService: AssoServiceFieldTypeService,
+    private userPreferenceService: UserPreferenceService,
     private appService: AppService
   ) { }
 
@@ -197,7 +195,7 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   //Tabs management
   index: number = 0;
   onTabChange(event: MatTabChangeEvent) {
-    this.userPreferenceService.setUserTabsSelectionIndex('simple-provision', event.index);
+    this.userPreferenceService.setUserTabsSelectionIndex('missing-attachment-mail-dialog', event.index);
   }
 
   getFormStatus(): boolean {
@@ -220,21 +218,20 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
 
   addAssoServiceDocumentType(selectedDocumentType: TypeDocument) {
     if (selectedDocumentType.code && this.service) {
-
       let foundDoc: boolean = false;
       for (let asso of this.tableAssoServiceDocuments)
         if (selectedDocumentType.code == asso.typeDocument.code) {
           foundDoc = true;
           break;
         }
-      if (!foundDoc)
-        this.assoServiceTypeDocumentService.addAssoServiceDocument(selectedDocumentType.code, this.service.id).subscribe(response => {
+      if (!foundDoc) {
+        this.assoServiceDocumentService.addAssoServiceDocument(this.service.id, selectedDocumentType.code).subscribe(response => {
           if (response) {
             this.tableAssoServiceDocuments.push(response);
-            selectedDocumentType = {} as TypeDocument;
-            this.refreshTable.next();
+            this.setTableValues();
           }
         });
+      }
       else {
         this.appService.displaySnackBar('Type de document déjà associé à ce service', true, 5);
       }
@@ -242,21 +239,20 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   }
   addAssoServiceFieldType(selectedServiceFieldType: ServiceFieldType) {
     if (selectedServiceFieldType.id && this.service) {
-
       let foundDoc: boolean = false;
       for (let asso of this.tableAssoServiceFieldTypes)
-        if (selectedServiceFieldType.id == asso.serviceFieldType.id) {
+        if (selectedServiceFieldType.code == asso.serviceFieldType.code) {
           foundDoc = true;
           break;
         }
-      if (!foundDoc)
-        this.assoServiceFieldTypeService.addAssoServiceFieldType(selectedServiceFieldType.id, this.service.id).subscribe(response => {
+      if (!foundDoc) {
+        this.assoServiceFieldTypeService.addAssoServiceFieldType(this.service.id, selectedServiceFieldType.id).subscribe(response => {
           if (response) {
             this.tableAssoServiceFieldTypes.push(response);
-            selectedServiceFieldType = {} as ServiceFieldType;
-            this.refreshTable.next();
+            this.setTableValues();
           }
         });
+      }
       else {
         this.appService.displaySnackBar('Type de champ déjà associé à ce service', true, 5);
       }
