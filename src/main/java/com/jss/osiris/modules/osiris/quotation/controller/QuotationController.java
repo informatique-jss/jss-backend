@@ -173,6 +173,7 @@ import com.jss.osiris.modules.osiris.quotation.service.SimpleProvisionStatusServ
 import com.jss.osiris.modules.osiris.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.GuichetUniqueDelegateService;
+import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
@@ -401,6 +402,9 @@ public class QuotationController {
   @Autowired
   FormaliteInfogreffeService formaliteInfogreffeService;
 
+  @Autowired
+  TypeDocumentService typeDocumentService;
+
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
     return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(), HttpStatus.OK);
@@ -433,6 +437,32 @@ public class QuotationController {
     }
 
     return new ResponseEntity<ServiceFieldType>(serviceFieldTypeService.addOrUpdateServiceFieldType(serviceFieldTypes),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/asso-service-document/add")
+  public ResponseEntity<AssoServiceDocument> addAssoServiceDocument(
+      @RequestParam String typeDocumentCode, @RequestParam Integer serviceId) throws OsirisValidationException {
+    if (typeDocumentCode == null || serviceId == null)
+      throw new OsirisValidationException("assoServiceDocument");
+    AssoServiceDocument assoServiceDocument = new AssoServiceDocument();
+    assoServiceDocument.setService(serviceService.getService(serviceId));
+    assoServiceDocument.setTypeDocument(typeDocumentService.getTypeDocumentByCode(typeDocumentCode));
+    return new ResponseEntity<AssoServiceDocument>(
+        assoServiceDocumentService.addOrUpdateAssoServiceDocument(assoServiceDocument),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/asso-service-field-type/add")
+  public ResponseEntity<AssoServiceFieldType> addAssoServiceFieldType(
+      @RequestParam Integer serviceFieldTypeId, @RequestParam Integer serviceId) throws OsirisValidationException {
+    if (serviceFieldTypeId == null || serviceId == null)
+      throw new OsirisValidationException("assoServiceFieldType");
+    AssoServiceFieldType assoServiceFieldType = new AssoServiceFieldType();
+    assoServiceFieldType.setService(serviceService.getService(serviceId));
+    assoServiceFieldType.setServiceFieldType(serviceFieldTypeService.getServiceFieldType(serviceFieldTypeId));
+    return new ResponseEntity<AssoServiceFieldType>(
+        assoServiceFieldTypeService.addOrUpdateServiceFieldType(assoServiceFieldType),
         HttpStatus.OK);
   }
 
