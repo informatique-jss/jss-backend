@@ -7,4 +7,6 @@ import com.jss.osiris.modules.quotation.model.Provision;
 
 public interface DebourDelService {
     public List<DebourDel> getDebourByProvision(Provision provision);
+
+    public void deleteDuplicateDebourDel();
 }

@@ -26,4 +26,9 @@ public class DebourDelServiceImpl implements DebourDelService {
         provision = provisionService.getProvision(provision.getId());
         return debourDelRepository.findByProvision(provision);
     }
+
+    @Override
+    public void deleteDuplicateDebourDel() {
+        debourDelRepository.deleteDuplicateDebourDel("2024");
+    }
 }

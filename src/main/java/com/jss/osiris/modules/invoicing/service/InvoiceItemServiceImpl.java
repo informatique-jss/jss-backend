@@ -41,6 +41,16 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
     }
 
     @Override
+    public void deleteDuplicateInvoiceItem() {
+        invoiceItemRepository.deleteDuplicateInvoiceItem("2024");
+    }
+
+    @Override
+    public void deleteDuplicateInvoiceItemOrigin() {
+        invoiceItemRepository.deleteDuplicateInvoiceItemOrigin("2024");
+    }
+
+    @Override
     public InvoiceItem cloneInvoiceItem(InvoiceItem invoiceItem) {
         InvoiceItem newInvoiceItem = new InvoiceItem();
         newInvoiceItem.setBillingItem(invoiceItem.getBillingItem());

@@ -66,4 +66,6 @@ public interface InvoiceService {
         public void remindInvoice(Invoice invoice)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
+        public void deleteDuplicateInvoices();
+
 }
