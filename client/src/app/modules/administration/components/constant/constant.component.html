@@ -1526,7 +1526,9 @@
           <tr>
             <td>
               <autocomplete-responsable [(model)]="constant.responsableDummyCustomerFrance" [form]="constantForm"
-                propertyName="responsableDummyCustomerFrance" [isMandatory]="true"></autocomplete-responsable>
+                propertyName="responsableDummyCustomerFrance" [isMandatory]="true"
+                label="Responsable - Responsable utilisé pour le pricing non connecté MyJSS"
+                [isDisabled]="!editMode"></autocomplete-responsable>
             </td>
           </tr>
           <tr>
