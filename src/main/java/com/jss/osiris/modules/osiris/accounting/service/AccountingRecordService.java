@@ -33,6 +33,8 @@ public interface AccountingRecordService {
 
         public Number getDirectDebitTransfertTotal();
 
+        public void deleteDuplicateAccountingRecord();
+
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
                         throws OsirisException;
 
