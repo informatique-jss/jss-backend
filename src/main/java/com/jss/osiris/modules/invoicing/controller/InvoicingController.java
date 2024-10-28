@@ -633,7 +633,9 @@ public class InvoicingController {
         // Check same customer order for incoming payment
         Tiers commonCustomerOrder = paymentAssociate.getTiersOrder();
         if (paymentAssociate.getPayment().getPaymentAmount() >= 0
-                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)) {
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP)
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)) {
             if (paymentAssociate.getInvoices() != null) {
                 for (Invoice invoice : paymentAssociate.getInvoices()) {
                     if (invoice.getResponsable() != null
