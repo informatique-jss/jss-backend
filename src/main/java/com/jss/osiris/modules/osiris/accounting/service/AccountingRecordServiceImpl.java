@@ -237,6 +237,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public void deleteDuplicateAccountingRecord() {
+    accountingRecordRepository.deleteDuplicateAccountingRecord("2024");
+
+  }
+
+  @Override
   public List<AccountingRecordSearchResult> searchAccountingRecords(AccountingRecordSearch accountingRecordSearch,
       boolean fetchAll) {
     ArrayList<Integer> accountingAccountId = new ArrayList<Integer>();
