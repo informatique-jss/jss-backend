@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.accounting.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -239,5 +240,17 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
         @Query(nativeQuery = true, value = "select sum(transfert_amount) from direct_debit_transfert ddt "
                         + "where is_already_exported = true and (is_cancelled is null or is_cancelled=false) and (is_matched = false or is_matched is null)")
         Number getDirectDebitTransfertTotal();
+
+        @Modifying
+        @Query(nativeQuery = true, value = "delete from accounting_record where id_invoice in "
+                        + "(select distinct i.id from invoice i "
+                        + "join customer_order co on co.id = i.id_customer_order_for_inbound_invoice "
+                        + "join provision p on p.id = i.id_provision "
+                        + "join formalite_guichet_unique fgu on fgu.id_formalite  = p.id_formalite "
+                        + "join accounting_record ar on i.id = ar.id_invoice "
+                        + "where co.id_customer_order_status not in (13,12) "
+                        + " and i.id_competent_authority=1279 "
+                        + "and not exists (select 1 from cart c where c.id_invoice = i.id) and to_char(ar.operation_date_time, 'yyyy')>=:year );")
+        void deleteDuplicateAccountingRecord(@Param("year") String year);
 
 }

@@ -217,6 +217,12 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteDuplicatePayments() {
+        paymentRepository.deleteDuplicatePayments("2024");
+    }
+
+    @Override
     public List<PaymentSearchResult> searchPayments(PaymentSearch paymentSearch) {
         if (paymentSearch.getStartDate() == null)
             paymentSearch.setStartDate(LocalDateTime.now().minusYears(100));

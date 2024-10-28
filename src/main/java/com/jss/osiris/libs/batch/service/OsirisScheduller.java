@@ -167,6 +167,12 @@ public class OsirisScheduller {
 			batchService.declareNewBatch(Batch.PURGE_BATCH, null);
 	}
 
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.invoices.purge=2000}")
+	private void purgeInvoices() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.PURGE_INVOICE, null);
+	}
+
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.central.pay.payment.request.validation.check}")
 	private void checkAllCentralPayPaymentRequests()
 			throws OsirisException, OsirisClientMessageException,
@@ -387,7 +393,7 @@ public class OsirisScheduller {
 		}
 	}
 
-	@Scheduled(initialDelay = 1000, fixedDelay = 1000 * 60)
+	@Scheduled(initialDelay = 1000, fixedDelay = 100060)
 	private void sendTemporizedMails() {
 		try {
 			if (nodeService.shouldIBatch())
