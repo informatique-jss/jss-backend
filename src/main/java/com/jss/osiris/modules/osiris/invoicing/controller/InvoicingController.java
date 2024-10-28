@@ -675,7 +675,9 @@ public class InvoicingController {
         if (responsableOrder != null) {
             Tiers commonCustomerOrder = responsableOrder.getTiers();
             if (paymentAssociate.getPayment().getPaymentAmount().compareTo(zeroValue) >= 0
-                    && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)) {
+                    && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)
+                    && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP)
+                    && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)) {
                 if (paymentAssociate.getInvoices() != null) {
                     for (Invoice invoice : paymentAssociate.getInvoices()) {
                         if (invoice.getResponsable() != null
