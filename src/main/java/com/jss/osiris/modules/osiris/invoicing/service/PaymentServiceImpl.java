@@ -217,7 +217,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void deleteDuplicatePayments() {
         paymentRepository.deleteDuplicatePayments("2024");
     }
