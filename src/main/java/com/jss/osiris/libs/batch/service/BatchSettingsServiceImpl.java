@@ -185,6 +185,18 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.SYSTEM));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.PURGE_INVOICE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.PURGE_INVOICE);
+            batchSettings.setLabel("Purge des factures INPI");
+            batchSettings.setFixedRate(5 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.SYSTEM));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.CLEAN_AUDIT) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.CLEAN_AUDIT);
