@@ -32,6 +32,8 @@ public interface PaymentService {
 
         public void reindexPayments() throws OsirisException;
 
+        public void deleteDuplicatePayments();
+
         public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
 
         public void paymentGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException,

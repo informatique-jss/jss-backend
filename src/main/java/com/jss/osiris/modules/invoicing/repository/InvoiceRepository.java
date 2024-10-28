@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -123,5 +124,15 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null and billingLabelType=:billingLabelType   ")
         List<Invoice> findInvoiceForCustomReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatusSend,
                         @Param("billingLabelType") BillingLabelType billingLabelType);
+
+        @Modifying
+        @Query(value = " delete from invoice where  id in (select distinct i.id from invoice i "
+                        + " join customer_order co on co.id = i.id_customer_order_for_inbound_invoice "
+                        + " join provision p on p.id = i.id_provision "
+                        + " join formalite_guichet_unique fgu on fgu.id_formalite  = p.id_formalite "
+                        + " join accounting_record ar on i.id = ar.id_invoice "
+                        + " where co.id_customer_order_status not in (13,12) and i.id_competent_authority=1279 "
+                        + " and not exists (select 1 from cart c where c.id_invoice = i.id) and to_char(ar.operation_date_time, 'yyyy')>=:year );", nativeQuery = true)
+        void deleteDuplicateInvoices(@Param("year") String year);
 
 }

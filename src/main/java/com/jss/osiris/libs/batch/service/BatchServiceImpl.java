@@ -28,6 +28,11 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.node.model.Node;
 import com.jss.osiris.libs.node.service.NodeService;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
+import com.jss.osiris.modules.osiris.quotation.service.DebourDelService;
 
 @Service
 public class BatchServiceImpl implements BatchService, ApplicationListener<ContextClosedEvent> {
@@ -46,6 +51,21 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
 
     @Autowired
     GlobalExceptionHandler globalExceptionHandler;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
+
+    @Autowired
+    InvoiceItemService invoiceItemService;
+
+    @Autowired
+    PaymentService paymentService;
+
+    @Autowired
+    InvoiceService invoiceService;
+
+    @Autowired
+    DebourDelService debourDelService;
 
     private HashMap<Integer, LocalDateTime> lastBatchCheck = new HashMap<Integer, LocalDateTime>();
     private HashMap<Integer, ThreadPoolTaskExecutor> queues = new HashMap<Integer, ThreadPoolTaskExecutor>();
@@ -283,5 +303,17 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
     @Override
     public void purgeBatch() {
         batchRepository.deleteAll(batchRepository.findBatchOlderThanMonths(4));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void purgeInvoice() {
+        batchRepository.findDuplicateInvoices("2024");
+        accountingRecordService.deleteDuplicateAccountingRecord();
+        debourDelService.deleteDuplicateDebourDel();
+        invoiceItemService.deleteDuplicateInvoiceItem();
+        invoiceItemService.deleteDuplicateInvoiceItemOrigin();
+        paymentService.deleteDuplicatePayments();
+        invoiceService.deleteDuplicateInvoices();
     }
 }

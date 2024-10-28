@@ -23,6 +23,8 @@ public interface AccountingRecordService {
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer id);
 
+        public void deleteDuplicateAccountingRecord();
+
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
                         throws OsirisException;
 
