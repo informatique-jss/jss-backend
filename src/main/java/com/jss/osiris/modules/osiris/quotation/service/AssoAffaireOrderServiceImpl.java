@@ -411,8 +411,17 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     Announcement announcement = provision.getAnnouncement();
 
                     announcementService.completeAnnouncementWithAffaire(assoAffaireOrder);
+                    if (announcement.getIsHeader() == null)
+                        announcement.setIsHeader(false);
+                    if (announcement.getIsHeaderFree() == null)
+                        announcement.setIsHeaderFree(false);
+                    if (announcement.getIsProofReadingDocument() == null)
+                        announcement.setIsProofReadingDocument(false);
 
                     // If complex, extract string from PDF and put it to notice
+                    if (announcement.getIsComplexAnnouncement() == null)
+                        announcement.setIsComplexAnnouncement(false);
+
                     if (announcement.getIsComplexAnnouncement())
                         announcement = announcementService.updateComplexAnnouncementNotice(announcement,
                                 provision,
@@ -867,7 +876,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             totalPrice = totalPrice.add(invoiceItem.getPreTaxPrice());
 
                         if (withDiscount && invoiceItem.getDiscountAmount() != null)
-                            totalPrice = totalPrice.add(invoiceItem.getDiscountAmount());
+                            totalPrice = totalPrice.subtract(invoiceItem.getDiscountAmount());
                         if (withVat && invoiceItem.getVatPrice() != null)
                             totalPrice = totalPrice.add(invoiceItem.getVatPrice());
                     }

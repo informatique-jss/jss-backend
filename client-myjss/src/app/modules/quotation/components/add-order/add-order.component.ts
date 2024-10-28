@@ -15,6 +15,9 @@ export class AddOrderComponent implements OnInit {
   servicesChosen: ServiceTypeChosen[] = [];
   displayAddNewService: boolean = true;
 
+  temporaryId: number = 1;
+  editedService: ServiceTypeChosen | undefined;
+
   constructor(
     //debug
     private serviceTypeService: ServiceTypeService,
@@ -45,8 +48,17 @@ export class AddOrderComponent implements OnInit {
   }
 
   chooseNewService(service: ServiceTypeChosen) {
+    this.editedService = undefined;
     if (service) {
-      this.servicesChosen.push(service);
+      if (!service.temporaryId) {
+        service.temporaryId = this.temporaryId;
+        this.temporaryId++;
+        this.servicesChosen.push(service);
+      } else if (this.servicesChosen)
+        for (let i = 0; i < this.servicesChosen.length; i++) {
+          if (this.servicesChosen[i].temporaryId == service.temporaryId)
+            this.servicesChosen[i] = service;
+        }
       this.displayAddNewService = false;
     }
   }
@@ -56,6 +68,15 @@ export class AddOrderComponent implements OnInit {
       this.servicesChosen.splice(this.servicesChosen.indexOf(service), 1);
     if (this.servicesChosen.length == 0)
       this.addAService();
+  }
+
+  editService(service: ServiceTypeChosen) {
+    this.editedService = service;
+    this.displayAddNewService = true;
+  }
+
+  addService() {
+    this.displayAddNewService = true;
   }
 
   addAService() {

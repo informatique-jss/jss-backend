@@ -161,17 +161,17 @@ public class InvoiceHelper {
             }
 
             invoiceLabelResult.setBillingLabel(labelResult);
-
-            invoiceLabelResult.setBillingLabelAddress(orderingCustomer.getAddress());
-            invoiceLabelResult.setBillingLabelPostalCode(orderingCustomer.getPostalCode());
-            invoiceLabelResult.setBillingLabelIntercommunityVat(orderingCustomer.getIntercommunityVat());
-            invoiceLabelResult.setBillingLabelCity(orderingCustomer.getCity());
-            invoiceLabelResult.setBillingLabelCountry(orderingCustomer.getCountry());
-            invoiceLabelResult.setCedexComplement(orderingCustomer.getCedexComplement());
             invoiceLabelResult.setBillingLabelType(billingDocument.getBillingLabelType());
             invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
             invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
             invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
+
+            invoiceLabelResult.setBillingLabelAddress(orderingCustomer.getTiers().getAddress());
+            invoiceLabelResult.setBillingLabelPostalCode(orderingCustomer.getTiers().getPostalCode());
+            invoiceLabelResult.setBillingLabelIntercommunityVat(orderingCustomer.getTiers().getIntercommunityVat());
+            invoiceLabelResult.setBillingLabelCity(orderingCustomer.getTiers().getCity());
+            invoiceLabelResult.setBillingLabelCountry(orderingCustomer.getTiers().getCountry());
+            invoiceLabelResult.setCedexComplement(orderingCustomer.getTiers().getCedexComplement());
         }
         return invoiceLabelResult;
     }

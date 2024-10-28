@@ -88,6 +88,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          max(nbr_for.formalityNbr) as formalityNbr, " +
                         "          concat(e2.firstname,' ',e2.lastname) as formalisteLabel, " +
                         "          e2.id as formalisteId, " +
+                        "          t.is_new_tiers as isNewTiers, " +
                         "          blt.label as billingLabelType, " +
                         "          sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
                         +
@@ -129,11 +130,12 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "         nbr_for.id_tiers = t.id " +
                         " where " +
                         "    ( :tiersId =0 or t.id = :tiersId) " +
+                        "   and ( :isNewTiers =false or coalesce(t.is_new_tiers,false) = true) " +
                         " and  ( :salesEmployeeId =0 or e1.id = :salesEmployeeId) " +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(concat(t.firstname, ' ',t.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' ) "
                         +
                         " group by " +
-                        " 	coalesce(t.denomination, " +
+                        " 	 t.is_new_tiers, coalesce(t.denomination, " +
                         " 	concat(t.firstname, " +
                         " 	' ', " +
                         " 	t.lastname)), " +
@@ -152,6 +154,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,
                         @Param("invoiceStatusIds") List<Integer> invoiceStatusIds,
                         @Param("documentTypeBillingId") Integer documentTypeBillingId,
-                        @Param("withNonNullTurnover") Boolean withNonNullTurnover);
+                        @Param("withNonNullTurnover") Boolean withNonNullTurnover,
+                        @Param("isNewTiers") Boolean isNewTiers);
 
 }

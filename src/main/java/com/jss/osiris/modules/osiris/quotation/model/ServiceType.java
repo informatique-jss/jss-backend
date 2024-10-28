@@ -75,6 +75,10 @@ public class ServiceType implements Serializable, IId {
 	@Transient
 	private Boolean hasAnnouncement;
 
+	@JsonView(JacksonViews.MyJssView.class)
+	@Transient
+	private Boolean hasOnlyAnnouncement;
+
 	@Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
 	private BigDecimal defaultDeboursPrice;
 
@@ -191,6 +195,14 @@ public class ServiceType implements Serializable, IId {
 
 	public void setHasAnnouncement(Boolean hasAnnouncement) {
 		this.hasAnnouncement = hasAnnouncement;
+	}
+
+	public Boolean getHasOnlyAnnouncement() {
+		return hasOnlyAnnouncement;
+	}
+
+	public void setHasOnlyAnnouncement(Boolean hasOnlyAnnouncement) {
+		this.hasOnlyAnnouncement = hasOnlyAnnouncement;
 	}
 
 }

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddOrderComponent } from '../add-order/add-order.component';
 import { CheckoutComponent } from '../checkout/checkout.component';
@@ -20,6 +21,7 @@ const routes: Routes = [
     MiscellaneousModule,
     FormsModule,
     ReactiveFormsModule,
+    CKEditorModule
   ],
   declarations: [QuotationComponent,
     AddOrderComponent,

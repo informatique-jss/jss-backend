@@ -9,4 +9,5 @@ export interface TiersSearch {
   startDate: Date;
   endDate: Date;
   label: string;
+  isNewTiers: boolean;
 }

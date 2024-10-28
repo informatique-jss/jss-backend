@@ -20,6 +20,4 @@ export interface Constant {
   documentTypeBilling: DocumentType;
   countryFrance: Country;
   responsableDummyCustomerFrance: Responsable;
-  responsableDummyCustomerDom: Responsable;
-  responsableDummyCustomerAbroad: Responsable;
 }

@@ -101,7 +101,11 @@ public class DocumentServiceImpl implements DocumentService {
         newDocument.setCustomerOrder(document.getCustomerOrder());
         newDocument.setDocumentType(document.getDocumentType());
         newDocument.setIsRecipientClient(document.getIsRecipientClient());
+        if (newDocument.getIsRecipientClient() == null)
+            newDocument.setIsRecipientClient(false);
         newDocument.setIsRecipientAffaire(document.getIsRecipientAffaire());
+        if (newDocument.getIsRecipientAffaire() == null)
+            newDocument.setIsRecipientAffaire(false);
         newDocument.setAffaireAddress(document.getAffaireAddress());
         newDocument.setAffaireRecipient(document.getAffaireRecipient());
         newDocument.setClientAddress(document.getClientAddress());

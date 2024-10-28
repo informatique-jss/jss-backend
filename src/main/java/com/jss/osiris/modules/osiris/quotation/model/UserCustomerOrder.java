@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.osiris.miscellaneous.model.City;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
@@ -38,6 +41,51 @@ public class UserCustomerOrder {
 
     @JsonView(JacksonViews.MyJssView.class)
     private Responsable dummyResponsable;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private Boolean isEmergency;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private Integer orderId;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private Boolean customerIsIndividual;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String customerDenomination;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String customerAddress;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String customerPostalCode;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private City customerCity;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private Country customerCountry;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String customerSiret;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private Civility responsableCivility;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String responsableFirstname;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String responsableLastname;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String responsableMail;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String responsablePhone;
+
+    @JsonView(JacksonViews.MyJssView.class)
+    private String siret;
 
     public Document getBillingDocument() {
         return billingDocument;
@@ -117,6 +165,126 @@ public class UserCustomerOrder {
 
     public void setDummyResponsable(Responsable dummyResponsable) {
         this.dummyResponsable = dummyResponsable;
+    }
+
+    public Boolean getIsEmergency() {
+        return isEmergency;
+    }
+
+    public void setIsEmergency(Boolean isEmergency) {
+        this.isEmergency = isEmergency;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public Boolean getCustomerIsIndividual() {
+        return customerIsIndividual;
+    }
+
+    public void setCustomerIsIndividual(Boolean customerIsIndividual) {
+        this.customerIsIndividual = customerIsIndividual;
+    }
+
+    public String getCustomerDenomination() {
+        return customerDenomination;
+    }
+
+    public void setCustomerDenomination(String customerDenomination) {
+        this.customerDenomination = customerDenomination;
+    }
+
+    public String getCustomerAddress() {
+        return customerAddress;
+    }
+
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
+    }
+
+    public String getCustomerPostalCode() {
+        return customerPostalCode;
+    }
+
+    public void setCustomerPostalCode(String customerPostalCode) {
+        this.customerPostalCode = customerPostalCode;
+    }
+
+    public City getCustomerCity() {
+        return customerCity;
+    }
+
+    public void setCustomerCity(City customerCity) {
+        this.customerCity = customerCity;
+    }
+
+    public Country getCustomerCountry() {
+        return customerCountry;
+    }
+
+    public void setCustomerCountry(Country customerCountry) {
+        this.customerCountry = customerCountry;
+    }
+
+    public String getCustomerSiret() {
+        return customerSiret;
+    }
+
+    public void setCustomerSiret(String customerSiret) {
+        this.customerSiret = customerSiret;
+    }
+
+    public Civility getResponsableCivility() {
+        return responsableCivility;
+    }
+
+    public void setResponsableCivility(Civility responsableCivility) {
+        this.responsableCivility = responsableCivility;
+    }
+
+    public String getResponsableFirstname() {
+        return responsableFirstname;
+    }
+
+    public void setResponsableFirstname(String responsableFirstname) {
+        this.responsableFirstname = responsableFirstname;
+    }
+
+    public String getResponsableLastname() {
+        return responsableLastname;
+    }
+
+    public void setResponsableLastname(String responsableLastname) {
+        this.responsableLastname = responsableLastname;
+    }
+
+    public String getResponsableMail() {
+        return responsableMail;
+    }
+
+    public void setResponsableMail(String responsableMail) {
+        this.responsableMail = responsableMail;
+    }
+
+    public String getResponsablePhone() {
+        return responsablePhone;
+    }
+
+    public void setResponsablePhone(String responsablePhone) {
+        this.responsablePhone = responsablePhone;
+    }
+
+    public String getSiret() {
+        return siret;
+    }
+
+    public void setSiret(String siret) {
+        this.siret = siret;
     }
 
 }

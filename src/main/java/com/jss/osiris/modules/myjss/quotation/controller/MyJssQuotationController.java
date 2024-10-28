@@ -3,6 +3,7 @@ package com.jss.osiris.modules.myjss.quotation.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,12 +37,15 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.CivilityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
@@ -169,6 +173,9 @@ public class MyJssQuotationController {
 	@Autowired
 	NoticeTypeFamilyService noticeTypeFamilyService;
 
+	@Autowired
+	CivilityService civilityService;
+
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
 	private LocalDateTime lastFloodFlush = LocalDateTime.now();
@@ -177,11 +184,6 @@ public class MyJssQuotationController {
 	private ResponseEntity<String> detectFlood(HttpServletRequest request) {
 		if (lastFloodFlush.isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
 			requestCount.clear();
-		else
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-			}
 
 		String ipAddress = request.getRemoteAddr();
 		AtomicLong count = requestCount.computeIfAbsent(ipAddress, k -> new AtomicLong());
@@ -190,6 +192,13 @@ public class MyJssQuotationController {
 			return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.TOO_MANY_REQUESTS);
 		}
 		return null;
+	}
+
+	@GetMapping(inputEntryPoint + "/constants")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Constant> getConstants(HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+		return new ResponseEntity<Constant>(constantService.getConstants(), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/search/current")
@@ -213,8 +222,10 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/order/search/affaire")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUserAndAffaire(@RequestParam Integer idAffaire)
+	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUserAndAffaire(@RequestParam Integer idAffaire,
+			HttpServletRequest request)
 			throws OsirisClientMessageException {
+		detectFlood(request);
 		if (idAffaire == null)
 			return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
 
@@ -553,7 +564,9 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/affaire")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<Affaire> getAffaire(@RequestParam Integer id) throws OsirisValidationException {
+	public ResponseEntity<Affaire> getAffaire(@RequestParam Integer id, HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
 		if (id == null)
 			throw new OsirisValidationException("id");
 
@@ -562,8 +575,9 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/affaire/siret")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<List<Affaire>> getAffaireBySiret(@RequestParam String siret)
+	public ResponseEntity<List<Affaire>> getAffaireBySiret(@RequestParam String siret, HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
+		detectFlood(request);
 		if (siret == null)
 			throw new OsirisValidationException("id");
 		validationHelper.validateSiret(siret);
@@ -1035,6 +1049,13 @@ public class MyJssQuotationController {
 		return new ResponseEntity<List<Department>>(departmentService.getDepartments(), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/civilities")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Civility>> getCivilities(HttpServletRequest request) {
+		detectFlood(request);
+		return new ResponseEntity<List<Civility>>(civilityService.getCivilities(), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/notice-types")
 	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<List<NoticeType>> getNoticeTypes(HttpServletRequest request) {
@@ -1073,15 +1094,104 @@ public class MyJssQuotationController {
 		if (order.getDummyResponsable() != null) {
 			validationHelper.validateReferential(order.getDummyResponsable(), true, "dummyReponsable");
 
-			if (!order.getDummyResponsable().getId().equals(constantService.getResponsableDummyCustomerAbroad().getId())
-					&& !order.getDummyResponsable().getId()
-							.equals(constantService.getResponsableDummyCustomerDom().getId())
-					&& !order.getDummyResponsable().getId()
-							.equals(constantService.getResponsableDummyCustomerFrance().getId()))
+			if (!order.getDummyResponsable().getId()
+					.equals(constantService.getResponsableDummyCustomerFrance().getId()))
 				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
 		}
 
 		return new ResponseEntity<UserCustomerOrder>(pricingHelper.completePricingOfUserCustomerOrder(order),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/order/user/save")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<UserCustomerOrder> saveOrder(@RequestBody UserCustomerOrder order, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+		if (order.getBillingDocument() == null || order.getServiceTypes() == null
+				|| order.getServiceTypes().size() == 0 || order.getPaperDocument() == null
+				|| order.getDigitalDocument() == null)
+			return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+
+		if (order.getIsCustomerOrder() == null || order.getIsDraft() == null)
+			return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+
+		for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
+			if (serviceTypeChosen.getAffaire().getId() == null) {
+				if (serviceTypeChosen.getAffaire().getCity() == null
+						|| serviceTypeChosen.getAffaire().getCountry() == null)
+					return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+
+				Affaire affaire = serviceTypeChosen.getAffaire();
+				validationHelper.validateReferential(affaire.getCountry(), true, "affaireCountry");
+				validationHelper.validateReferential(affaire.getCity(), true, "affaireCity");
+				validationHelper.validateString(affaire.getPostalCode(),
+						affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()),
+						"affairePostalCode");
+				validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
+
+				if (affaire.getIsIndividual()) {
+					validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
+					validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
+					validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
+					affaire.setDenomination(null);
+					if (affaire.getLastname() != null)
+						affaire.setLastname(affaire.getLastname().toUpperCase());
+				} else {
+					validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
+					affaire.setFirstname(null);
+					affaire.setLastname(null);
+				}
+			}
+
+			if (serviceTypeChosen.getAffaire().getId() != null) {
+				validationHelper.validateSiret(serviceTypeChosen.getAffaire().getSiret());
+				validationHelper.validateReferential(serviceTypeChosen.getAffaire(), true, "affaire");
+			}
+
+			if (serviceTypeChosen.getService() == null)
+				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+
+			ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeChosen.getService().getId());
+			if (serviceType == null)
+				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+
+			validationHelper.validateDateMin(serviceTypeChosen.getAnnouncementPublicationDate(), false, LocalDate.now(),
+					"publicationDate");
+			validationHelper.validateReferential(serviceTypeChosen.getAnnouncementNoticeFamily(), false,
+					"noticeFamily");
+			validationHelper.validateReferential(serviceTypeChosen.getAnnouncementNoticeType(), false, "noticeType");
+			validationHelper.validateReferential(serviceTypeChosen.getAnnouncementDepartment(), false, "department");
+		}
+
+		if (order.getDummyResponsable() != null) {
+			validationHelper.validateReferential(order.getDummyResponsable(), true, "dummyReponsable");
+
+			if (!order.getDummyResponsable().getId()
+					.equals(constantService.getResponsableDummyCustomerFrance().getId()))
+				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+		}
+
+		Responsable currentUSer = employeeService.getCurrentMyJssUser();
+		if (currentUSer == null) {
+			if (!validationHelper.validateSiret(order.getCustomerSiret()))
+				order.setCustomerSiret(null);
+
+			validationHelper.validateString(order.getCustomerDenomination(),
+					order.getCustomerIsIndividual() == null || order.getCustomerIsIndividual() == false, 80,
+					"tiersDenomination");
+			validationHelper.validateString(order.getCustomerAddress(), true, 100, "tiersAddress");
+			validationHelper.validateReferential(order.getCustomerCity(), true, "tiersCity");
+			validationHelper.validateReferential(order.getCustomerCountry(), true, "tiersCounty");
+			validationHelper.validateReferential(order.getResponsableCivility(), true, "responsableCivility");
+			validationHelper.validateString(order.getResponsableFirstname(), true, 80, "responsableFirstname");
+			validationHelper.validateString(order.getResponsableLastname(), true, 80, "responsableLastname");
+			validationHelper.validateString(order.getCustomerPostalCode(),
+					order.getCustomerCountry().getId().equals(constantService.getCountryFrance().getId()), 6,
+					"responsableLastname");
+		}
+
+		return new ResponseEntity<UserCustomerOrder>(customerOrderService.saveOrderOfUserCustomerOrder(order, request),
 				HttpStatus.OK);
 	}
 }

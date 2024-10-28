@@ -996,6 +996,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public CustomerOrderOrigin getCustomerOrderOriginMyJss() throws OsirisException {
+        return getConstants().getCustomerOrderOriginMyJss();
+    }
+
+    @Override
     public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException {
         return getConstants().getCustomerOrderOriginOsiris();
     }
@@ -1083,16 +1088,6 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Responsable getResponsableDummyCustomerFrance() throws OsirisException {
         return this.getConstants().getResponsableDummyCustomerFrance();
-    }
-
-    @Override
-    public Responsable getResponsableDummyCustomerDom() throws OsirisException {
-        return this.getConstants().getResponsableDummyCustomerDom();
-    }
-
-    @Override
-    public Responsable getResponsableDummyCustomerAbroad() throws OsirisException {
-        return this.getConstants().getResponsableDummyCustomerAbroad();
     }
 
     @Override

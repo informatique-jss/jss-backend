@@ -3,6 +3,8 @@ import { ServiceType } from "../../my-account/model/ServiceType";
 import { Department } from "../../profile/model/Department";
 import { NoticeType } from "./NoticeType";
 import { NoticeTypeFamily } from "./NoticeTypeFamily";
+import { ServiceFamily } from "./ServiceFamily";
+import { ServiceFamilyGroup } from "./ServiceFamilyGroup";
 
 export interface ServiceTypeChosen {
   service: ServiceType;
@@ -17,4 +19,8 @@ export interface ServiceTypeChosen {
   announcementNoticeType: NoticeType;
   announcementDepartment: Department;
   announcementNotice: string;
+
+  // just for front
+  serviceFamilyGroupChosen: ServiceFamilyGroup;
+  serviceFamilyChosen: ServiceFamily;
 }

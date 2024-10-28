@@ -31,8 +31,15 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       }),
       catchError((error: HttpErrorResponse) => {
         let errorMessage = "";
+        let doNotRedirectOnNonAuthenticated = "";
+        let i = 0;
         for (let k of request.context.keys()) {
-          errorMessage = request.context.get(k) + "";
+          if (i == 1)
+            errorMessage = request.context.get(k) + "";
+          if (i == 2)
+            doNotRedirectOnNonAuthenticated = request.context.get(k) + "";
+
+          i++;
         }
         if (error.error instanceof Error) {
           // A client-side or network error occurred. Handle it accordingly.
@@ -43,7 +50,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
           // If HTTP 403, user not logged in
           if (error.status == 403) {
-            this.appService.openRoute(undefined, "/", undefined);
+            if (doNotRedirectOnNonAuthenticated != "true")
+              this.appService.openRoute(undefined, "/", undefined);
             return EMPTY;
           } else if (error.status == 0) {
             // Server unavailable or user not connected to network => ignore error

@@ -43,3 +43,12 @@ export function formatDateFrance(date: Date) {
     date.getFullYear(),
   ].join('/');
 }
+
+export function formatDate(date: Date) {
+  date = new Date(date);
+  return [
+    padTo2Digits(date.getDate()),
+    padTo2Digits(date.getMonth() + 1),
+    date.getFullYear(),
+  ].join('-');
+}

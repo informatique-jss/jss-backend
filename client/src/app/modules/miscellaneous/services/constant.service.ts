@@ -748,6 +748,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.customerOrderOriginWebSite;
   }
 
+  getCustomerOrderOriginMyJss() {
+    return this.constant.customerOrderOriginMyJss;
+  }
+
   getCustomerOrderOriginOsiris() {
     return this.constant.customerOrderOriginOsiris;
   }
@@ -805,14 +809,6 @@ export class ConstantService extends AppRestService<Constant> {
 
   getResponsableDummyCustomerFrance() {
     return this.constant.responsableDummyCustomerFrance;
-  }
-
-  getResponsableDummyCustomerDom() {
-    return this.constant.responsableDummyCustomerDom;
-  }
-
-  getResponsableDummyCustomerAbroad() {
-    return this.constant.responsableDummyCustomerAbroad;
   }
 
   getProvisionScreenTypeAnnouncement() {

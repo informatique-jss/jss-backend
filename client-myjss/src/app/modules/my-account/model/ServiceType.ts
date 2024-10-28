@@ -11,4 +11,5 @@ export interface ServiceType {
   assoServiceTypeFieldTypes: AssoServiceTypeFieldType[];
   isRequiringNewUnregisteredAffaire: boolean;
   hasAnnouncement: boolean;
+  hasOnlyAnnouncement: boolean;
 }

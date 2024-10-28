@@ -416,6 +416,8 @@ public interface ConstantService {
 
     public CustomerOrderOrigin getCustomerOrderOriginOldWebSite() throws OsirisException;
 
+    public CustomerOrderOrigin getCustomerOrderOriginMyJss() throws OsirisException;
+
     public CustomerOrderOrigin getCustomerOrderOriginOsiris() throws OsirisException;
 
     public PaymentDeadlineType getPaymentDeadLineType30() throws OsirisException;
@@ -447,10 +449,6 @@ public interface ConstantService {
     public ServiceFieldType getFurtherInformationServiceFieldType() throws OsirisException;
 
     public Responsable getResponsableDummyCustomerFrance() throws OsirisException;
-
-    public Responsable getResponsableDummyCustomerDom() throws OsirisException;
-
-    public Responsable getResponsableDummyCustomerAbroad() throws OsirisException;
 
     public ProvisionScreenType getProvisionScreenTypeAnnouncement() throws OsirisException;
 

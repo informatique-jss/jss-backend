@@ -9,7 +9,7 @@ import { Constant } from './Constant';
 export class ConstantService extends AppRestService<Constant> {
 
   constructor(http: HttpClient) {
-    super(http, "profile");
+    super(http, "quotation");
   }
 
   constant: Constant = {} as Constant;
@@ -84,14 +84,6 @@ export class ConstantService extends AppRestService<Constant> {
 
   getResponsableDummyCustomerFrance() {
     return this.constant.responsableDummyCustomerFrance;
-  }
-
-  getResponsableDummyCustomerDom() {
-    return this.constant.responsableDummyCustomerDom;
-  }
-
-  getResponsableDummyCustomerAbroad() {
-    return this.constant.responsableDummyCustomerAbroad;
   }
 
 }

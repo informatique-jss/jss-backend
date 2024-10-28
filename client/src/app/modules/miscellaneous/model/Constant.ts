@@ -224,6 +224,7 @@ export interface Constant {
   accountingAccountBankJss: AccountingAccount;
   accountingAccountCaisse: AccountingAccount;
   customerOrderOriginWebSite: CustomerOrderOrigin;
+  customerOrderOriginMyJss: CustomerOrderOrigin;
   customerOrderOriginOsiris: CustomerOrderOrigin;
   providerCentralPay: Provider;
   tiersFollowupTypeInvoiceReminder: TiersFollowupType;
@@ -241,7 +242,5 @@ export interface Constant {
   activeDirectoryGroupSales: ActiveDirectoryGroup;
   furtherInformationServiceFieldType: ServiceFieldType;
   responsableDummyCustomerFrance: Responsable;
-  responsableDummyCustomerDom: Responsable;
-  responsableDummyCustomerAbroad: Responsable;
   provisionScreenTypeAnnouncement: ProvisionScreenType;
 }

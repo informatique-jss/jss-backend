@@ -13,6 +13,7 @@ public class TiersSearch {
     private LocalDate startDate;
     private LocalDate endDate;
     private String label;
+    private Boolean isNewTiers;
 
     public LocalDate getStartDate() {
         return startDate;
@@ -68,6 +69,14 @@ public class TiersSearch {
 
     public void setWithNonNullTurnover(Boolean withNonNullTurnover) {
         this.withNonNullTurnover = withNonNullTurnover;
+    }
+
+    public Boolean getIsNewTiers() {
+        return isNewTiers;
+    }
+
+    public void setIsNewTiers(Boolean isNewTiers) {
+        this.isNewTiers = isNewTiers;
     }
 
 }

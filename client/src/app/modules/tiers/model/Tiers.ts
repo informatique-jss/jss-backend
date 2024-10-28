@@ -25,6 +25,8 @@ export interface Tiers extends IDocument, IAttachment {
   deliveryService: DeliveryService;
   intercom: string;
   intercommunityVat: string | null;
+  siret: string;
+  isNewTiers: boolean;
   specialOffers: SpecialOffer[];
   instructions: string;
   paymentType: PaymentType;

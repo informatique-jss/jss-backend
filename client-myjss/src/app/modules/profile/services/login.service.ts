@@ -58,13 +58,13 @@ export class LoginService extends AppRestService<Responsable> {
     return this.getList(new HttpParams(), "login/roles");
   }
 
-  getCurrentUser(): Observable<Responsable> {
+  getCurrentUser(forceFetch: boolean = false, getFromCache: boolean = false): Observable<Responsable> {
     return new Observable<Responsable>(observer => {
-      if (this.currentUser) {
+      if (!forceFetch && (getFromCache || this.currentUser)) {
         observer.next(this.currentUser);
         observer.complete();
       } else {
-        this.get(new HttpParams(), "user").subscribe(response => {
+        this.get(new HttpParams(), "user", "", "", true).subscribe(response => {
           this.currentUser = response;
           this.currentUserChange.next(true);
           observer.next(this.currentUser);

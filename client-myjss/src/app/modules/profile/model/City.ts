@@ -1,4 +1,5 @@
 import { Country } from "./Country";
+import { Department } from "./Department";
 
 export interface City {
   id: number | undefined;
@@ -6,5 +7,6 @@ export interface City {
   label: string;
   postalCode: string;
   country: Country;
+  department: Department;
 }
 

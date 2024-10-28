@@ -956,6 +956,14 @@
           </tr>
           <tr>
             <td>
+              <select-customer-order-origin [(model)]="constant.customerOrderOriginMyJss"
+                label="Origine des commandes - site myjss.jss.fr" [form]="constantForm"
+                propertyName="customerOrderOriginMyJss" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-customer-order-origin>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-customer-order-origin [(model)]="constant.customerOrderOriginOsiris"
                 label="Origine des commandes - Osiris" [form]="constantForm" propertyName="customerOrderOriginOsiris"
                 [isMandatory]="true" [isDisabled]="!editMode">
@@ -1519,18 +1527,6 @@
             <td>
               <autocomplete-responsable [(model)]="constant.responsableDummyCustomerFrance" [form]="constantForm"
                 propertyName="responsableDummyCustomerFrance" [isMandatory]="true"></autocomplete-responsable>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <autocomplete-responsable [(model)]="constant.responsableDummyCustomerDom" [form]="constantForm"
-                propertyName="responsableDummyCustomerDom" [isMandatory]="true"></autocomplete-responsable>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <autocomplete-responsable [(model)]="constant.responsableDummyCustomerAbroad" [form]="constantForm"
-                propertyName="responsableDummyCustomerAbroad" [isMandatory]="true"></autocomplete-responsable>
             </td>
           </tr>
           <tr>

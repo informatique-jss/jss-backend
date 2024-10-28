@@ -775,6 +775,10 @@ public class Constant implements Serializable, IId {
 	private CustomerOrderOrigin customerOrderOriginWebSite;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_customer_order_origin_myjss")
+	private CustomerOrderOrigin customerOrderOriginMyJss;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_customer_order_origin_osiris")
 	private CustomerOrderOrigin customerOrderOriginOsiris;
 
@@ -836,14 +840,6 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_responsable_dummy_customer_france")
 	private Responsable responsableDummyCustomerFrance;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_responsable_dummy_customer_dom")
-	private Responsable responsableDummyCustomerDom;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_responsable_dummy_customer_abroad")
-	private Responsable responsableDummyCustomerAbroad;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provision_screen_type_announcement")
@@ -2438,28 +2434,20 @@ public class Constant implements Serializable, IId {
 		this.responsableDummyCustomerFrance = responsableDummyCustomerFrance;
 	}
 
-	public Responsable getResponsableDummyCustomerDom() {
-		return responsableDummyCustomerDom;
-	}
-
-	public void setResponsableDummyCustomerDom(Responsable responsableDummyCustomerDom) {
-		this.responsableDummyCustomerDom = responsableDummyCustomerDom;
-	}
-
-	public Responsable getResponsableDummyCustomerAbroad() {
-		return responsableDummyCustomerAbroad;
-	}
-
-	public void setResponsableDummyCustomerAbroad(Responsable responsableDummyCustomerAbroad) {
-		this.responsableDummyCustomerAbroad = responsableDummyCustomerAbroad;
-	}
-
 	public ProvisionScreenType getProvisionScreenTypeAnnouncement() {
 		return provisionScreenTypeAnnouncement;
 	}
 
 	public void setProvisionScreenTypeAnnouncement(ProvisionScreenType provisionScreenTypeAnnouncement) {
 		this.provisionScreenTypeAnnouncement = provisionScreenTypeAnnouncement;
+	}
+
+	public CustomerOrderOrigin getCustomerOrderOriginMyJss() {
+		return customerOrderOriginMyJss;
+	}
+
+	public void setCustomerOrderOriginMyJss(CustomerOrderOrigin customerOrderOriginMyJss) {
+		this.customerOrderOriginMyJss = customerOrderOriginMyJss;
 	}
 
 }

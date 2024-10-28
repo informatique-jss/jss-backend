@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +49,7 @@ import com.jss.osiris.libs.jackson.JacksonTimestampMillisecondDeserializer;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
@@ -60,6 +62,9 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
@@ -87,17 +92,23 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.PaperSet;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
+import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
+import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 @org.springframework.stereotype.Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -207,6 +218,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     UserScopeService userScopeService;
 
+    @Autowired
+    ServiceTypeService serviceTypeService;
+
+    @Autowired
+    ServiceService serviceService;
+
+    @Autowired
+    AffaireService affaireService;
+
+    @Autowired
+    ResponsableService responsableService;
+
+    @Autowired
+    TiersService tiersService;
+
+    @Autowired
+    MyJssProfileController myJssProfileController;
+
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
@@ -242,8 +271,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
 
-        if (customerOrder.getCustomerOrderOrigin() == null)
-            customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
+        if (isNewCustomerOrder)
+            customerOrder.setCreatedDate(LocalDateTime.now());
+
+        if (customerOrder.getCustomerOrderOrigin() == null) {
+            if (employeeService.getCurrentMyJssUser() != null || employeeService.getCurrentEmployee() == null)
+                customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
+            else
+                customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
+        }
 
         // Set default customer order assignation to sales employee if not set
         if (customerOrder.getAssignedTo() == null)
@@ -1555,7 +1591,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     invoicingSummary.setBillingLabelType(invoice.getBillingLabelType());
                 }
         } else {
-            customerOrder = quotationService.getQuotation(customerOrder.getId());
+            if (customerOrder.getIsQuotation())
+                customerOrder = quotationService.getQuotation(customerOrder.getId());
+            else
+                customerOrder = getCustomerOrder(customerOrder.getId());
             if (customerOrder != null) {
                 if (customerOrder.getAssoAffaireOrders() != null)
                     for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
@@ -1646,5 +1685,193 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             return customerOrderRepository.searchOrders(responsables, customerOrderStatus);
         }
         return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public UserCustomerOrder saveOrderOfUserCustomerOrder(UserCustomerOrder order, HttpServletRequest request)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        CustomerOrder customerOrder = new CustomerOrder();
+        Responsable user = employeeService.getCurrentMyJssUser();
+        ProvisionScreenType provisionScreenTypeAnnouncement = constantService.getProvisionScreenTypeAnnouncement();
+        Boolean shouldAuthenticate = false;
+        if (user == null) {
+            user = generateTiersAndResponsableFromUserCustomerOrder(order);
+            shouldAuthenticate = true;
+        }
+
+        customerOrder.setResponsable(user);
+
+        HashMap<Integer, AssoAffaireOrder> assoAffaireOrders = new HashMap<Integer, AssoAffaireOrder>();
+
+        for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
+            serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
+
+            // Generate affaire
+            if (serviceTypeChosen.getAffaire().getId() == null) {
+                serviceTypeChosen.setAffaire(affaireService.addOrUpdateAffaire(serviceTypeChosen.getAffaire()));
+            }
+
+            Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
+                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire());
+
+            if (assoAffaireOrders.get(serviceTypeChosen.getAffaire().getId()) == null) {
+                AssoAffaireOrder asso = new AssoAffaireOrder();
+                asso.setAffaire(serviceTypeChosen.getAffaire());
+                asso.setServices(new ArrayList<Service>());
+                assoAffaireOrders.put(serviceTypeChosen.getAffaire().getId(), asso);
+            }
+
+            if (order.getIsEmergency() != null && order.getIsEmergency() && service.getProvisions() != null
+                    && service.getProvisions().size() > 0
+                    && order.getServiceTypes().indexOf(serviceTypeChosen) == 0)
+                service.getProvisions().get(0).setIsEmergency(true);
+
+            if (service != null && service.getProvisions() != null)
+                for (Provision provision : service.getProvisions()) {
+                    // map announcement
+                    if (provision.getProvisionType().getProvisionScreenType().getId()
+                            .equals(provisionScreenTypeAnnouncement.getId())) {
+                        provision.setAnnouncement(new Announcement());
+                        if (serviceTypeChosen.getAnnouncementProofReading() != null
+                                && serviceTypeChosen.getAnnouncementProofReading())
+                            provision.getAnnouncement().setIsProofReadingDocument(true);
+
+                        if (serviceTypeChosen.getAnnouncementNoticeType() != null)
+                            provision.getAnnouncement()
+                                    .setNoticeTypes(Arrays.asList(serviceTypeChosen.getAnnouncementNoticeType()));
+
+                        if (serviceTypeChosen.getAnnouncementNoticeFamily() != null)
+                            provision.getAnnouncement()
+                                    .setNoticeTypeFamily(serviceTypeChosen.getAnnouncementNoticeFamily());
+
+                        if (serviceTypeChosen.getAnnouncementNotice() != null
+                                && serviceTypeChosen.getAnnouncementProofReading())
+                            provision.getAnnouncement().setNotice(serviceTypeChosen.getAnnouncementNotice());
+                        ;
+
+                        if (serviceTypeChosen.getAnnouncementPublicationDate() != null)
+                            provision.getAnnouncement()
+                                    .setPublicationDate(serviceTypeChosen.getAnnouncementPublicationDate());
+
+                        if (serviceTypeChosen.getAnnouncementRedactedByJss() != null
+                                && serviceTypeChosen.getAnnouncementRedactedByJss())
+                            provision.setIsRedactedByJss(true);
+                    }
+                }
+            assoAffaireOrders.get(serviceTypeChosen.getAffaire().getId()).getServices().add(service);
+        }
+
+        customerOrder.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
+        for (Integer affaireId : assoAffaireOrders.keySet())
+            customerOrder.getAssoAffaireOrders().add(assoAffaireOrders.get(affaireId));
+
+        if (user.getTiers() != null && user.getTiers().getSpecialOffers() != null) {
+            List<SpecialOffer> specialOffers = null;
+            if (user.getTiers().getSpecialOffers() != null && user.getTiers().getSpecialOffers().size() > 0) {
+                specialOffers = user.getTiers().getSpecialOffers();
+                customerOrder.setSpecialOffers(new ArrayList<SpecialOffer>());
+                for (SpecialOffer specialOffer : specialOffers)
+                    customerOrder.getSpecialOffers().add(specialOffer);
+            }
+        }
+
+        customerOrder.setDocuments(new ArrayList<Document>());
+        customerOrder.getDocuments().add(documentService.cloneDocument(order.getBillingDocument()));
+        customerOrder.getDocuments().add(documentService.cloneDocument(order.getDigitalDocument()));
+        customerOrder.getDocuments().add(documentService.cloneDocument(order.getPaperDocument()));
+
+        customerOrder.setCustomerOrderStatus(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN));
+        addOrUpdateCustomerOrder(customerOrder, true, false);
+        order.setOrderId(customerOrder.getId());
+
+        if (!order.getIsDraft())
+            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, true);
+
+        if (shouldAuthenticate)
+            myJssProfileController.authenticateUser(user, request);
+
+        return order;
+    }
+
+    private Responsable generateTiersAndResponsableFromUserCustomerOrder(UserCustomerOrder userCustomerOrder)
+            throws OsirisException {
+        Responsable responsable = new Responsable();
+        responsable.setIsActive(true);
+        responsable.setIsBouclette(true);
+        responsable.setCivility(userCustomerOrder.getResponsableCivility());
+        responsable.setFirstname(userCustomerOrder.getResponsableFirstname());
+        responsable.setLastname(userCustomerOrder.getResponsableLastname());
+        Mail mail = new Mail();
+        mail.setMail(userCustomerOrder.getResponsableMail());
+        responsable.setMail(mail);
+        responsable.setTiersType(constantService.getTiersTypeClient());
+        responsable.setSalesEmployee(constantService.getEmployeeSalesDirector());
+        if (userCustomerOrder.getResponsablePhone() != null) {
+            Phone phone = new Phone();
+            phone.setPhoneNumber(userCustomerOrder.getResponsablePhone());
+            responsable.setPhones(new ArrayList<Phone>());
+            responsable.getPhones().add(phone);
+        }
+
+        userCustomerOrder.getBillingDocument().setDocumentType(constantService.getDocumentTypeBilling());
+        userCustomerOrder.getDigitalDocument().setDocumentType(constantService.getDocumentTypeDigital());
+        userCustomerOrder.getPaperDocument().setDocumentType(constantService.getDocumentTypePaper());
+
+        responsable.setDocuments(new ArrayList<Document>());
+        responsable.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getBillingDocument()));
+        responsable.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getDigitalDocument()));
+        responsable.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getPaperDocument()));
+
+        Tiers tiers = new Tiers();
+        tiers.setIsNewTiers(true);
+        if (userCustomerOrder.getCustomerIsIndividual() != null && userCustomerOrder.getCustomerIsIndividual()) {
+            tiers.setIsIndividual(true);
+            tiers.setFirstname(responsable.getFirstname());
+            tiers.setLastname(responsable.getLastname());
+        } else {
+            tiers.setIsIndividual(false);
+            tiers.setDenomination(userCustomerOrder.getCustomerDenomination());
+        }
+        tiers.setTiersType(constantService.getTiersTypeClient());
+        tiers.setSalesEmployee(constantService.getEmployeeSalesDirector());
+        tiers.setAddress(userCustomerOrder.getCustomerAddress());
+        tiers.setCity(userCustomerOrder.getCustomerCity());
+        tiers.setCountry(userCustomerOrder.getCustomerCountry());
+        tiers.setSiret(userCustomerOrder.getSiret());
+        tiers.setPostalCode(userCustomerOrder.getCustomerPostalCode());
+        tiers.setIsSepaMandateReceived(false);
+        tiers.setLanguage(constantService.getLanguageFrench());
+
+        tiers.setPaymentType(constantService.getPaymentTypeCB());
+
+        tiers.setDocuments(new ArrayList<Document>());
+        tiers.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getBillingDocument()));
+        tiers.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getDigitalDocument()));
+        tiers.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getPaperDocument()));
+
+        Document documentDunning = new Document();
+        documentDunning.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
+        documentDunning.setIsRecipientAffaire(false);
+        documentDunning.setIsRecipientClient(false);
+        documentDunning.setDocumentType(constantService.getDocumentTypeDunning());
+        tiers.setIsProvisionalPaymentMandatory(true);
+        tiers.getDocuments().add(documentDunning);
+
+        Document receiptDocument = new Document();
+        receiptDocument.setBillingClosureRecipientType(constantService.getBillingClosureRecipientTypeClient());
+        receiptDocument.setIsRecipientAffaire(false);
+        receiptDocument.setIsRecipientClient(false);
+        receiptDocument.setDocumentType(constantService.getDocumentTypeBillingClosure());
+        receiptDocument.setBillingClosureType(constantService.getBillingClosureTypeAffaire());
+        tiers.getDocuments().add(receiptDocument);
+
+        tiers.setResponsables(new ArrayList<Responsable>());
+        responsable.setTiers(tiers);
+        tiers.getResponsables().add(responsable);
+
+        tiersService.addOrUpdateTiers(tiers);
+        return responsableService.getResponsable(responsable.getId());
     }
 }

@@ -15,4 +15,8 @@ export class UserCustomerOrderService extends AppRestService<UserCustomerOrder> 
   completePricingOfUserCustomerOrder(order: UserCustomerOrder) {
     return this.postItem(new HttpParams(), "order/user/pricing", order);
   }
+
+  saveOrder(order: UserCustomerOrder) {
+    return this.postItem(new HttpParams(), "order/user/save", order);
+  }
 }

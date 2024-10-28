@@ -632,6 +632,9 @@ public class TiersController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validationHelper.validateReferential(tiers.getTiersType(), true, "TiersType");
 
+    if (tiers.getIsNewTiers() == null)
+      tiers.setIsNewTiers(false);
+
     if (tiers.getIsIndividual()) {
       validationHelper.validateReferential(tiers.getCivility(), true, "Civility");
       tiers.setDenomination(null);
@@ -642,6 +645,9 @@ public class TiersController {
     } else {
       tiers.setFirstname(null);
       tiers.setLastname(null);
+      if (!validationHelper.validateSiret(tiers.getSiret()))
+        tiers.setSiret(null);
+
       validationHelper.validateString(tiers.getDenomination(), true, 80, "Denomination");
       if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 20)
         throw new OsirisValidationException("IntercommunityVat");

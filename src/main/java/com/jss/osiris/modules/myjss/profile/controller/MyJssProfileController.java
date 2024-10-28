@@ -34,7 +34,6 @@ import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.profile.model.UserScope;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidationHelper;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -119,6 +118,9 @@ public class MyJssProfileController {
 		if (employeeService.getCurrentEmployee() != null)
 			return new ResponseEntity<String>("", HttpStatus.OK);
 
+		if (employeeService.getCurrentMyJssUser() != null)
+			return new ResponseEntity<String>("", HttpStatus.OK);
+
 		Responsable responsable = responsableService.getResponsable(userId);
 		if (responsable == null)
 			throw new OsirisClientMessageException("Identifiant incorrect");
@@ -129,23 +131,27 @@ public class MyJssProfileController {
 
 		String token = responsable.getLoginToken();
 		if (aToken.equals(token)) {
-			Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null,
-					AuthorityUtils.createAuthorityList(ActiveDirectoryHelper.MYJSS_USER_GROUP));
-
-			SecurityContext securityContext = SecurityContextHolder.getContext();
-			securityContext.setAuthentication(authentication);
-
-			HttpSession session = request.getSession(true);
-			session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-
-			responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().minusSeconds(1));
-			responsableService.addOrUpdateResponsable(responsable);
+			authenticateUser(responsable, request);
 
 			return new ResponseEntity<String>("", HttpStatus.OK);
 		}
 		SecurityContextHolder.getContext().setAuthentication(null);
 		throw new OsirisClientMessageException(
 				"Identification expirée, veuillez renouveler votre demande de connexion");
+	}
+
+	public void authenticateUser(Responsable responsable, HttpServletRequest request) {
+		Authentication authentication = new UsernamePasswordAuthenticationToken(responsable.getId(), null,
+				AuthorityUtils.createAuthorityList(ActiveDirectoryHelper.MYJSS_USER_GROUP));
+
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		securityContext.setAuthentication(authentication);
+
+		HttpSession session = request.getSession(true);
+		session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+
+		responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().minusSeconds(1));
+		responsableService.addOrUpdateResponsable(responsable);
 	}
 
 	@GetMapping(inputEntryPoint + "/login/roles")
@@ -196,12 +202,6 @@ public class MyJssProfileController {
 			return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.TOO_MANY_REQUESTS);
 		}
 		return null;
-	}
-
-	@GetMapping(inputEntryPoint + "/constants")
-	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<Constant> getConstants() throws OsirisException {
-		return new ResponseEntity<Constant>(constantService.getConstants(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/search/global")

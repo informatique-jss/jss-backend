@@ -404,12 +404,16 @@ public class TiersServiceImpl implements TiersService {
         if (tiersSearch.getWithNonNullTurnover() == null)
             tiersSearch.setWithNonNullTurnover(false);
 
+        if (tiersSearch.getIsNewTiers() == null)
+            tiersSearch.setIsNewTiers(false);
+
         return tiersRepository.searchTiers(tiersId, salesEmployeeId,
                 tiersSearch.getStartDate(),
                 tiersSearch.getEndDate(), tiersSearch.getLabel(), constantService.getConfrereJssSpel().getId(),
                 Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
                         constantService.getInvoiceStatusSend().getId()),
-                this.constantService.getDocumentTypeBilling().getId(), tiersSearch.getWithNonNullTurnover());
+                this.constantService.getDocumentTypeBilling().getId(), tiersSearch.getWithNonNullTurnover(),
+                tiersSearch.getIsNewTiers());
     }
 
 }

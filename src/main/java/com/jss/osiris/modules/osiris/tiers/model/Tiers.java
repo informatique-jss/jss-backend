@@ -168,6 +168,11 @@ public class Tiers implements IAttachment, IId {
 	@JoinColumn(name = "id_language")
 	private Language language;
 
+	@Column(length = 14)
+	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
+	private String siret;
+
 	@Column(length = 100, nullable = false)
 	@IndexedField
 	@JsonView(JacksonViews.MyJssView.class)
@@ -250,6 +255,8 @@ public class Tiers implements IAttachment, IId {
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
+
+	private Boolean isNewTiers;
 
 	public List<Competitor> getCompetitors() {
 		return competitors;
@@ -663,6 +670,22 @@ public class Tiers implements IAttachment, IId {
 
 	public void setAccountingAccountSuspicious(AccountingAccount accountingAccountSuspicious) {
 		this.accountingAccountSuspicious = accountingAccountSuspicious;
+	}
+
+	public String getSiret() {
+		return siret;
+	}
+
+	public void setSiret(String siret) {
+		this.siret = siret;
+	}
+
+	public Boolean getIsNewTiers() {
+		return isNewTiers;
+	}
+
+	public void setIsNewTiers(Boolean isNewTiers) {
+		this.isNewTiers = isNewTiers;
 	}
 
 }

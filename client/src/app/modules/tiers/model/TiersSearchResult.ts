@@ -19,4 +19,5 @@ export interface TiersSearchResult {
   turnoverAmountWithTax: number;
   turnoverAmountWithoutDebourWithoutTax: number;
   turnoverAmountWithoutDebourWithTax: number;
+  isNewTiers: boolean;
 }

@@ -69,12 +69,18 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
         ProvisionScreenType provisionScreenTypeAnnouncement = constantService.getProvisionScreenTypeAnnouncement();
         if (serviceTypes != null)
             for (ServiceType serviceType : serviceTypes) {
+                boolean findOtherThanAnnouncement = false;
                 serviceType.setHasAnnouncement(false);
+                serviceType.setHasOnlyAnnouncement(false);
                 if (serviceType.getAssoServiceProvisionTypes() != null)
                     for (AssoServiceProvisionType provisionType : serviceType.getAssoServiceProvisionTypes())
                         if (provisionType.getProvisionType().getProvisionScreenType().getId()
                                 .equals(provisionScreenTypeAnnouncement.getId()))
                             serviceType.setHasAnnouncement(true);
+                        else
+                            findOtherThanAnnouncement = true;
+                if (!findOtherThanAnnouncement && serviceType.getHasAnnouncement())
+                    serviceType.setHasOnlyAnnouncement(true);
             }
         return serviceTypes;
     }
