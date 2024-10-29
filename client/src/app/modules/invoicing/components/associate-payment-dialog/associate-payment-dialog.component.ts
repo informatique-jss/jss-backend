@@ -245,7 +245,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           return;
         }
 
-    if (order.responsable && !this.isSameCustomerOrder(order.responsable)) {
+    if (order.responsable && !this.isSameCustomerOrder(order.responsable) && !this.habilitationsService.canByPassMultipleCustomerOrderOnAssociationCheck()) {
       this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
       return;
     }
