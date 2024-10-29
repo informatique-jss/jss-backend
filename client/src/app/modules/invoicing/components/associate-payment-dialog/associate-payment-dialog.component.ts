@@ -248,7 +248,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           return;
         }
 
-    if (!this.isSameCustomerOrder(getCustomerOrderForIQuotation(order))) {
+    if (!this.isSameCustomerOrder(getCustomerOrderForIQuotation(order)) && !this.habilitationsService.canByPassMultipleCustomerOrderOnAssociationCheck()) {
       this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
       return;
     }
