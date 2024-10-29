@@ -184,7 +184,7 @@ export class HabilitationsService {
   }
 
   canByPassMultipleCustomerOrderOnAssociationCheck() {
-    return this.loginService.hasGroup([ADMINISTRATEURS]);
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING_RESPONSIBLE, ACCOUNTING]);
   }
 
   canReinitInvoicing() {
