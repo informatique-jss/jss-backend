@@ -141,7 +141,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public void deleteDuplicateInvoices() {
-        invoiceRepository.deleteDuplicateInvoices();
+        invoiceRepository.deleteDuplicateInvoices("2024");
     }
 
     @Transactional(rollbackFor = Exception.class)

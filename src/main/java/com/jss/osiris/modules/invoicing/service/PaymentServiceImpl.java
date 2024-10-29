@@ -186,7 +186,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void deleteDuplicatePayments() {
-        paymentRepository.deleteDuplicatePayments();
+        paymentRepository.deleteDuplicatePayments("2024");
     }
 
     @Override

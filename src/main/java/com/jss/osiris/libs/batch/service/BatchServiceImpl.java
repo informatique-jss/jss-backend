@@ -308,7 +308,6 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void purgeInvoice() {
-        batchRepository.createTablePurgeInvoice();
         accountingRecordService.deleteDuplicateAccountingRecord();
         debourDelService.deleteDuplicateDebourDel();
         invoiceItemService.deleteDuplicateInvoiceItem();
