@@ -9,7 +9,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 
 public interface InvoiceItemRepository extends QueryCacheCrudRepository<InvoiceItem, Integer> {
         @Modifying
-        @Query(value = "delete from invoice_item where id_invoice in (select id from reprise_inpi_del)  ")
+        @Query(value = "delete from invoice_item where id_invoice in (select id from reprise_inpi_del)  ", nativeQuery = true)
         void deleteDuplicateInvoiceItem();
 
         @Modifying
