@@ -29,6 +29,6 @@ public class DebourDelServiceImpl implements DebourDelService {
 
     @Override
     public void deleteDuplicateDebourDel() {
-        debourDelRepository.deleteDuplicateDebourDel("2024");
+        debourDelRepository.deleteDuplicateDebourDel();
     }
 }

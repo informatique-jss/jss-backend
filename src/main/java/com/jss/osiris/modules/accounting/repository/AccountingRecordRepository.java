@@ -223,14 +223,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         BankTransfert bankTransfert);
 
         @Modifying
-        @Query(nativeQuery = true, value = "delete from accounting_record where id_invoice in "
-                        + "(select distinct i.id from invoice i "
-                        + "join customer_order co on co.id = i.id_customer_order_for_inbound_invoice "
-                        + "join provision p on p.id = i.id_provision "
-                        + "join formalite_guichet_unique fgu on fgu.id_formalite  = p.id_formalite "
-                        + "join accounting_record ar on i.id = ar.id_invoice "
-                        + "where i.id_competent_authority=1279 "
-                        + "and not exists (select 1 from cart c where c.id_invoice = i.id) and to_char(ar.operation_date_time, 'yyyy')>=:year );")
-        void deleteDuplicateAccountingRecord(@Param("year") String year);
+        @Query(nativeQuery = true, value = "delete from accounting_record where id_invoice in (select id from reprise_inpi_del) ")
+        void deleteDuplicateAccountingRecord();
 
 }
