@@ -238,7 +238,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public void deleteDuplicateAccountingRecord() {
-    accountingRecordRepository.deleteDuplicateAccountingRecord("2024");
+    accountingRecordRepository.deleteDuplicateAccountingRecord();
 
   }
 

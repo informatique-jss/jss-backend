@@ -42,12 +42,12 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
 
     @Override
     public void deleteDuplicateInvoiceItem() {
-        invoiceItemRepository.deleteDuplicateInvoiceItem("2024");
+        invoiceItemRepository.deleteDuplicateInvoiceItem();
     }
 
     @Override
     public void deleteDuplicateInvoiceItemOrigin() {
-        invoiceItemRepository.deleteDuplicateInvoiceItemOrigin("2024");
+        invoiceItemRepository.deleteDuplicateInvoiceItemOrigin();
     }
 
     @Override
