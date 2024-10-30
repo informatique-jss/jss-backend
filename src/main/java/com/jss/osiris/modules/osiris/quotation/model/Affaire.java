@@ -129,7 +129,7 @@ public class Affaire implements IId, IAttachment {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal shareCapital;
 
 	@Column(length = 40, name = "payment_iban")

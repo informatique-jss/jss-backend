@@ -32,7 +32,7 @@ public class DirectDebitTransfert implements Serializable, IId {
 	@IndexedField
 	private String label;
 
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	@IndexedField
 	private BigDecimal transfertAmount;
 

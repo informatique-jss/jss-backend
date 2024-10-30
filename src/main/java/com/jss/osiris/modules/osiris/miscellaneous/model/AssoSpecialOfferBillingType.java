@@ -37,10 +37,10 @@ public class AssoSpecialOfferBillingType implements Serializable, IId {
 	@JoinColumn(name = "id_billingType")
 	private BillingType billingType;
 
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal discountRate;
 
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal discountAmount;
 
 	public Integer getId() {

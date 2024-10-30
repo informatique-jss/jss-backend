@@ -34,7 +34,7 @@ public class AzureReceiptInvoice implements IId {
 
     private String invoiceId;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(40,2)", precision = 40, scale = 2)
     private BigDecimal invoiceTotal;
     private Boolean isReconciliated;
 

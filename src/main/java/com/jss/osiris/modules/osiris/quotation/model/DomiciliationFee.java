@@ -42,7 +42,7 @@ public class DomiciliationFee implements Serializable, IId {
     @JoinColumn(name = "id_billing_type")
     private BillingType billingType;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal amount;
 
     private LocalDate feeDate;

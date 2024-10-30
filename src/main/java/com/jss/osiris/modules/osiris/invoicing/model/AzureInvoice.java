@@ -37,7 +37,7 @@ public class AzureInvoice {
     @Column(length = 2500)
     private String modelUsed;
 
-    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
     private BigDecimal globalDocumentConfidence;
 
     @Column(length = 2500)
@@ -51,35 +51,35 @@ public class AzureInvoice {
     @IndexedField
     private String invoiceId;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(30,2)", precision = 15, scale = 2)
     private BigDecimal invoiceTotal;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal invoicePreTaxTotal;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal invoiceTaxTotal;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(20,2)", precision = 20, scale = 2)
     private BigDecimal invoiceNonTaxableTotal;
 
     @Column(length = 2500)
     private String vendorTaxId;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal customerIdConfidence;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal referenceConfidence;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal invoiceDateConfidence;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal invoiceIdConfidence;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal invoiceTotalConfidence;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(30,2)", precision = 30, scale = 2)
     private BigDecimal invoicePreTaxTotalConfidence;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(30,2)", precision = 30, scale = 2)
     private BigDecimal invoiceTaxTotalConfidence;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal invoiceNonTaxableTotalConfidence;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal vendorTaxIdConfidence;
 
     @OneToMany(mappedBy = "azureInvoice")

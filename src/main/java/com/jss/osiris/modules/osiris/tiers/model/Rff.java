@@ -54,11 +54,11 @@ public class Rff implements Serializable, IId {
 	@Transient
 	private Integer responsableId;
 
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal rffInsertion;
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal rffFormalite;
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal rffTotal;
 
 	@Column(length = 100)
