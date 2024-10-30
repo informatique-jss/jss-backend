@@ -2,6 +2,17 @@
   <h1 class="h2 mb-0 me-3">Commande {{order.id}}</h1> <span class="badge bg-opacity-10   "
     [ngClass]="getClassForCustomerOrderStatus(order)">{{getCustomerOrderStatusLabel(order)}}</span>
 </div>
+<div class="d-flex  align-items-center">
+  <div class="alert alert-info d-flex mb-0 mb-2" role="alert"
+    *ngIf="order && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT">
+    <i class="ai-circle-info fs-xl"></i>
+    <div class="ps-2">La commande ne pourra pas être traitée tant que l'acompte est impayé</div>
+  </div>
+  <a class="btn btn-sm btn-secondary ms-auto" *ngIf="order && displayPayButton" (click)="payCustomerOrder($event)">
+    <i class="ai-cart ms-n1 me-2"></i>
+    <span *ngIf="order.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT">Payer l'acompte</span>
+  </a>
+</div>
 <div class="alert alert-info d-flex mb-2" role="alert" *ngIf="associatedQuotation ">
   <i class="ai-circle-info fs-xl"></i>
   <div class="ps-2">Cette commande est issue du devis validé n°<a style="cursor: pointer; text-decoration: underline;"
