@@ -95,7 +95,7 @@ public class Confrere implements IId {
 
 	private Integer numberOfPrint;
 
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal paperPrice;
 
 	private Integer discountRate;

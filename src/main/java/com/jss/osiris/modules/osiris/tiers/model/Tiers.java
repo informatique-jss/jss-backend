@@ -198,9 +198,8 @@ public class Tiers implements IAttachment, IId {
 	@JsonView(JacksonViews.MyJssView.class)
 	private Country country;
 
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal rffFormaliteRate;
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
 	private BigDecimal rffInsertionRate;
 
 	@Column(columnDefinition = "TEXT")

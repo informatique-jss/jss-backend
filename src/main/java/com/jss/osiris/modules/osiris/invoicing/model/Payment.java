@@ -65,7 +65,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDateTime paymentDate;
 
-	@Column(nullable = false, precision = 15, scale = 2)
+	@Column(nullable = false, columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	@IndexedField
 	@JsonView(JacksonViews.MyJssView.class)
 	private BigDecimal paymentAmount;

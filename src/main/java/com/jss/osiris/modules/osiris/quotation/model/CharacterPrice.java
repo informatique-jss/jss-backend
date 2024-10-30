@@ -28,7 +28,7 @@ public class CharacterPrice implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "character_price_sequence")
 	private Integer id;
 
-	@Column(nullable = false, precision = 15, scale = 3)
+	@Column(nullable = false, columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 3)
 	private BigDecimal price;
 
 	@OneToMany(targetEntity = Department.class)

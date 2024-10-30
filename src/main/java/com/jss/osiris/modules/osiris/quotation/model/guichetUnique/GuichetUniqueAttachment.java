@@ -25,7 +25,7 @@ public class GuichetUniqueAttachment {
     @JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
     private FormaliteGuichetUnique formaliteGuichetUnique;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal size;
     private boolean regularisable;
     private String status;
