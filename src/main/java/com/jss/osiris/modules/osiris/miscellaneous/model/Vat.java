@@ -29,7 +29,7 @@ public class Vat implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal rate;
 
 	@ManyToOne(fetch = FetchType.LAZY)

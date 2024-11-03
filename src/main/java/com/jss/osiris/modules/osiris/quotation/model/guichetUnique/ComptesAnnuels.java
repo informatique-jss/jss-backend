@@ -30,9 +30,9 @@ public class ComptesAnnuels {
     private boolean associeUniquePresident;
     private boolean activiteCreditOuAssurance;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal montantCAAnneePrecedente;
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal montantTotalBilanAnneePrecedente;
 
     private boolean activiteProspection;

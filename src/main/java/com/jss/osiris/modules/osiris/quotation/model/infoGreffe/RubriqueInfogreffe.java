@@ -23,15 +23,15 @@ public class RubriqueInfogreffe {
     private Integer id;
     private String code;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     @JsonProperty("montantHT")
     private BigDecimal montantHt;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     @JsonProperty("montantTva")
     private BigDecimal montantTva;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     @JsonProperty("montantTtc")
     private BigDecimal montantTtc;
 

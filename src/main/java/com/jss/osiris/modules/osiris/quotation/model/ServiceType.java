@@ -79,10 +79,10 @@ public class ServiceType implements Serializable, IId {
 	@Transient
 	private Boolean hasOnlyAnnouncement;
 
-	@Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
 	private BigDecimal defaultDeboursPrice;
 
-	@Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
 	private BigDecimal defaultDeboursPriceNonTaxable;
 
 	public Integer getId() {

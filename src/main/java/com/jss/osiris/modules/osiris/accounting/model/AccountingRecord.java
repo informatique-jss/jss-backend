@@ -70,10 +70,10 @@ public class AccountingRecord implements Serializable, IId {
 	@Column(nullable = false, length = 1000)
 	private String label;
 
-	@Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
 	private BigDecimal creditAmount;
 
-	@Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
 	private BigDecimal debitAmount;
 
 	@ManyToOne(fetch = FetchType.LAZY)

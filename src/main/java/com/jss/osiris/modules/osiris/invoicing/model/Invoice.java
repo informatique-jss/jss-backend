@@ -140,7 +140,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@Column(length = 40)
 	private String commandNumber;
 
-	@Column(name = "total_price", precision = 15, scale = 2)
+	@Column(name = "total_price", columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal totalPrice;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)

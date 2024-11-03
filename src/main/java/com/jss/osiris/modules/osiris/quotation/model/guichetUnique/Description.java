@@ -49,7 +49,7 @@ public class Description implements Serializable, IId {
 
     private Boolean capitalVariable;
 
-    @Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal montantCapital;
 
     private Integer capitalMinimum;

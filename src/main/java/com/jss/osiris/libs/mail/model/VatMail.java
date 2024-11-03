@@ -6,9 +6,9 @@ import jakarta.persistence.Column;
 
 public class VatMail {
     String label;
-    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
     BigDecimal total;
-    @Column(columnDefinition = "NUMERIC", precision = 10, scale = 2)
+    @Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
     BigDecimal base;
     CustomerMail customerMail;
 

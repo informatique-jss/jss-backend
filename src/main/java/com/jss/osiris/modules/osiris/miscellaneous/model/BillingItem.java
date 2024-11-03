@@ -29,7 +29,7 @@ public class BillingItem implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type")
 	BillingType billingType;
 
-	@Column(columnDefinition = "NUMERIC", precision = 15, scale = 2)
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	private BigDecimal preTaxPrice;
 
 	@Column(nullable = false)
