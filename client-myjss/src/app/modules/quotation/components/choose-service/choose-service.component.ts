@@ -49,7 +49,8 @@ export class ChooseServiceComponent implements OnInit {
   filteredServiceTypes: ServiceType[] | undefined;
 
   searchService: string = "";
-  siretSearched: string = "48339332800024"; //debug
+  //  siretSearched: string = "48339332800024"; //debug
+  siretSearched: string = ""; //debug
   affaire: Affaire = { isIndividual: false } as Affaire;
   loadingAffaireSearch: boolean = false;
   checkedOnce = false;
@@ -108,7 +109,7 @@ export class ChooseServiceComponent implements OnInit {
     if (!this.serviceFamilyGroups)
       this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => {
         this.serviceFamilyGroups = response;
-        this.choseFamilyGroup(response[2]); //debug
+        //this.choseFamilyGroup(response[2]); //debug
       })
 
     this.countryService.getCountries().subscribe(response => {
@@ -116,8 +117,8 @@ export class ChooseServiceComponent implements OnInit {
       for (let country of this.countries)
         if (country.id == this.countryFrance.id)
           this.affaire.country = country;
-      this.affaireService.getAffaire(4364468).subscribe(affaire => { this.affaire = affaire }); //debug
-      this.validateAffaire(); //debug
+      //this.affaireService.getAffaire(4364468).subscribe(affaire => { this.affaire = affaire }); //debug
+      // this.validateAffaire(); //debug
     })
 
     if (this.editedService) {
@@ -196,7 +197,7 @@ export class ChooseServiceComponent implements OnInit {
         this.serviceFamilies = response;
         if (this.step2)
           setTimeout(this.step2.nativeElement.scrollIntoView({ behavior: 'smooth' }), 0);
-        this.choseFamily(this.serviceFamilies[1]); //debug
+        //  this.choseFamily(this.serviceFamilies[1]); //debug
       })
     }
   }
@@ -213,7 +214,7 @@ export class ChooseServiceComponent implements OnInit {
           setTimeout(this.step3.nativeElement.scrollIntoView({ behavior: 'smooth' }), 200);
         if (this.genericInput)
           setTimeout(this.genericInput.nativeElement.focus(), 200);
-        this.choseServiceType(this.serviceTypes[1]); //debug
+        //this.choseServiceType(this.serviceTypes[1]); //debug
       })
     }
   }

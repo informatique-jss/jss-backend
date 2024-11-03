@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
@@ -37,7 +38,6 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -54,354 +54,354 @@ public class Constant implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_code_affaire")
 	@JsonView(JacksonViews.MyJssView.class)
 	private BillingLabelType billingLabelTypeCodeAffaire;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_other")
 	@JsonView(JacksonViews.MyJssView.class)
 	private BillingLabelType billingLabelTypeOther;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_customer")
 	@JsonView(JacksonViews.MyJssView.class)
 	private BillingLabelType billingLabelTypeCustomer;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_sales")
 	private AccountingJournal accountingJournalSales;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_purchases")
 	private AccountingJournal accountingJournalPurchases;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_anouveau")
 	private AccountingJournal accountingJournalANouveau;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_bank")
 	private AccountingJournal accountingJournalBank;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_cash")
 	private AccountingJournal accountingJournalCash;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_bilan")
 	private AccountingJournal accountingJournalBilan;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_miscellaneous_operations")
 	private AccountingJournal accountingJournalMiscellaneousOperations;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_tiers_type_prospect")
 	private TiersType tiersTypeProspect;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_tiers_type_client")
 	private TiersType tiersTypeClient;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_document_type_digital")
 	@JsonView(JacksonViews.MyJssView.class)
 	private DocumentType documentTypeDigital;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_document_type_paper")
 	@JsonView(JacksonViews.MyJssView.class)
 	private DocumentType documentTypePaper;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_document_type_billing")
 	@JsonView(JacksonViews.MyJssView.class)
 	private DocumentType documentTypeBilling;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_document_type_dunning")
 	private DocumentType documentTypeDunning;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_document_type_refund")
 	private DocumentType documentTypeRefund;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_document_type_billing_closure")
 	private DocumentType documentTypeBillingClosure;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_document_type_provisionnal_receipt")
 	private DocumentType documentTypeProvisionnalReceipt;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_kbis")
 	private AttachmentType attachmentTypeKbis;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_cni")
 	private AttachmentType attachmentTypeCni;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_logo")
 	private AttachmentType attachmentTypeLogo;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_proof_of_address")
 	private AttachmentType attachmentTypeProofOfAddress;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_invoice")
 	private AttachmentType attachmentTypeInvoice;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_provider_invoice")
 	private AttachmentType attachmentTypeProviderInvoice;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_credit_note")
 	private AttachmentType attachmentTypeCreditNote;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_kbis_updated")
 	private AttachmentType attachmentTypeKbisUpdated;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_rbe")
 	private AttachmentType attachmentTypeRbe;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_deposit_receipt")
 	private AttachmentType attachmentTypeDepositReceipt;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_publication_flag")
 	private AttachmentType attachmentTypePublicationFlag;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_publication_receipt")
 	private AttachmentType attachmentTypePublicationReceipt;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_publication_proof")
 	private AttachmentType attachmentTypePublicationProof;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_journal")
 	private AttachmentType attachmentTypeJournal;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_announcement")
 	private AttachmentType attachmentTypeAnnouncement;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_complex_announcement")
 	private AttachmentType attachmentTypeComplexAnnouncement;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_billing_closure")
 	private AttachmentType attachmentTypeBillingClosure;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_proof_reading")
 	private AttachmentType attachmentTypeProofReading;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_automatic_mail")
 	private AttachmentType attachmentTypeAutomaticMail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_contract")
 	private AttachmentType attachmentTypeContract;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_template")
 	private AttachmentType attachmentTypeTemplate;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_quotation")
 	private AttachmentType attachmentTypeQuotation;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_Refus_infogreffe")
 	private AttachmentType attachmentTypeRefusInfogreffe;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_Autre_infogreffe")
 	private AttachmentType attachmentTypeAutreInfogreffe;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JsonView(JacksonViews.MyJssView.class)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_country_monaco")
 	private Country countryMonaco;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_debours_non_taxable")
 	private BillingType billingTypeDeboursNonTaxable;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_central_pay_fees")
 	private BillingType billingTypeCentralPayFees;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_logo")
 	private BillingType billingTypeLogo;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_redacted_by_jss")
 	private BillingType billingTypeRedactedByJss;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_payment_deadline_type")
 	private PaymentDeadlineType paymentDeadLineType30;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_balo_package")
 	private BillingType billingTypeBaloPackage;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_balo_normalization")
 	private BillingType billingTypeBaloNormalization;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_balo_publication_flag")
 	private BillingType billingTypeBaloPublicationFlag;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_publication_paper")
 	private BillingType billingTypePublicationPaper;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_publication_receipt")
 	private BillingType billingTypePublicationReceipt;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_publication_flag")
 	private BillingType billingTypePublicationFlag;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_bodacc_followup")
 	private BillingType billingTypeBodaccFollowup;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_bodacc_followup_redaction")
 	private BillingType billingTypeBodaccFollowupAndRedaction;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_nantissement_deposit")
 	private BillingType billingTypeNantissementDeposit;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_social_share_nantissement_redaction")
 	private BillingType billingTypeSocialShareNantissementRedaction;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_businness_nantissement_redaction")
 	private BillingType billingTypeBusinnessNantissementRedaction;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_seller_privilege_redaction")
 	private BillingType billingTypeSellerPrivilegeRedaction;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_treatment_multiple_modiciation")
 	private BillingType billingTypeTreatmentMultipleModiciation;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_vacation_multiple_modification")
 	private BillingType billingTypeVacationMultipleModification;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_register_purchase")
 	private BillingType billingTypeRegisterPurchase;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_register_initials")
 	private BillingType billingTypeRegisterInitials;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_register_shipping_costs")
 	private BillingType billingTypeRegisterShippingCosts;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_disbursement")
 	private BillingType billingTypeDisbursement;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_feasibility_study")
 	private BillingType billingTypeFeasibilityStudy;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_chronopost_fees")
 	private BillingType billingTypeChronopostFees;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_shipping_costs")
 	private BillingType billingTypeShippingCosts;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_confrere_fees")
 	private BillingType billingTypeConfrereFees;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_application_fees")
 	private BillingType billingTypeApplicationFees;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_bank_cheque")
 	private BillingType billingTypeBankCheque;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_complexe_file")
 	private BillingType billingTypeComplexeFile;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_bilan")
 	private BillingType billingTypeBilan;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_infogreffe_debour")
 	private BillingType billingTypeInfogreffeDebour;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_emoluments_de_greffe_debour")
 	private BillingType billingTypeEmolumentsDeGreffeDebour;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_document_scanning")
 	private BillingType billingTypeDocumentScanning;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_emergency")
 	private BillingType billingTypeEmergency;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_rne_update")
 	private BillingType billingTypeRneUpdate;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_domiciliation_contract_keep_mail")
 	private BillingType billingTypeDomiciliationContractTypeKeepMail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_email")
 	private BillingType billingTypeDomiciliationContractTypeRouteEmail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_mail")
 	private BillingType billingTypeDomiciliationContractTypeRouteMail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_domiciliation_contract_route_mail_email")
 	private BillingType billingTypeDomiciliationContractTypeRouteEmailAndMail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_supply_full_be_copy")
 	private BillingType billingTypeSupplyFullBeCopy;
 
@@ -412,438 +412,454 @@ public class Constant implements Serializable, IId {
 	@Column(length = 1000)
 	private String stringBusinnessNantissementRedactionFormeJuridiqueCode;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_payment_type_prelevement")
 	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypePrelevement;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_payment_type_virement")
 	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeVirement;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_payment_type_cb")
 	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeCB;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_payment_type_especes")
 	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeEspeces;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_payment_type_cheques")
 	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeCheques;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_payment_type_account")
 	@JsonView(JacksonViews.MyJssView.class)
 	private PaymentType paymentTypeAccount;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_refund_type_virement")
 	@JsonView(JacksonViews.MyJssView.class)
 	private RefundType refundTypeVirement;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_subscription_period_type_12m")
 	private SubscriptionPeriodType subscriptionPeriodType12M;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_legal_form_unregistered")
 	private LegalForm legalFormUnregistered;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_journal_type_spel")
 	private JournalType journalTypeSpel;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_journal_type_paper")
 	private JournalType journalTypePaper;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_confrere_jss_spel")
 	private Confrere confrereJssSpel;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_domiciliation_constract_type_keep_mail")
 	private DomiciliationContractType domiciliationContractTypeKeepMail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_domiciliation_constract_type_route_mail")
 	private DomiciliationContractType domiciliationContractTypeRouteMail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_domiciliation_constract_type_route_email_mail")
 	private DomiciliationContractType domiciliationContractTypeRouteEmailAndMail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_domiciliation_constract_type_route_email")
 	private DomiciliationContractType domiciliationContractTypeRouteEmail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_mail_redirection_type_other")
 	private MailRedirectionType mailRedirectionTypeOther;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_mail_redirection_type_legal_guardian")
 	private MailRedirectionType mailRedirectionTypeLegalGuardian;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_mail_redirection_type_activity")
 	private MailRedirectionType mailRedirectionTypeActivity;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_act_type_seing")
 	private ActType actTypeSeing;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_act_type_authentic")
 	private ActType actTypeAuthentic;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_assignation_type_employee")
 	private AssignationType assignationTypeEmployee;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_employee_billing_responsible")
 	private Employee employeeBillingResponsible;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_employee_mail_responsible")
 	private Employee employeeMailResponsible;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_employee_invoice_reminder_responsible")
 	private Employee employeeInvoiceReminderResponsible;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_transfert_funds_type_physique")
 	private TransfertFundsType transfertFundsTypePhysique;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_transfert_funds_type_moral")
 	private TransfertFundsType transfertFundsTypeMoral;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_transfert_funds_type_bail")
 	private TransfertFundsType transfertFundsTypeBail;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_infogreffe")
 	private CompetentAuthority competentAuthorityInfogreffe;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_inpi")
 	private CompetentAuthority competentAuthorityInpi;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_rcs")
 	private CompetentAuthorityType competentAuthorityTypeRcs;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_cfp")
 	private CompetentAuthorityType competentAuthorityTypeCfp;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_cci")
 	private CompetentAuthorityType competentAuthorityTypeCci;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_chambre_metier")
 	private CompetentAuthorityType competentAuthorityTypeChambreMetier;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_chambre_agriculturemetier")
 	private CompetentAuthorityType competentAuthorityTypeChambreAgriculture;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_urssaf")
 	private CompetentAuthorityType competentAuthorityTypeUrssaf;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_direccte")
 	private CompetentAuthorityType competentAuthorityTypeDireccte;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_prefecture")
 	private CompetentAuthorityType competentAuthorityTypePrefecture;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_spfe")
 	private CompetentAuthorityType competentAuthorityTypeSpfe;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_competent_authority_type_insee")
 	private CompetentAuthorityType competentAuthorityTypeInsee;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_invoice_status_send")
 	private InvoiceStatus invoiceStatusSend;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_invoice_status_received")
 	private InvoiceStatus invoiceStatusReceived;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_invoice_status_payed")
 	private InvoiceStatus invoiceStatusPayed;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_invoice_status_cancelled")
 	private InvoiceStatus invoiceStatusCancelled;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_invoice_status_credit_note_emited")
 	private InvoiceStatus invoiceStatusCreditNoteEmited;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_invoice_status_credit_note_received")
 	private InvoiceStatus invoiceStatusCreditNoteReceived;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_vat_twenty")
 	private Vat vatTwenty;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_vat_two")
 	private Vat vatTwo;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_vat_zero")
 	private Vat vatZero;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_vat_deductible")
 	private Vat vatDeductible;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_vat_deductible_two")
 	private Vat vatDeductibleTwo;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_department_martinique")
 	private Department departmentMartinique;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_department_guadeloupe")
 	private Department departmentGuadeloupe;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_department_reunion")
 	private Department departmentReunion;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_type_personne_personne_physique")
 	private TypePersonne typePersonnePersonnePhysique;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_type_personne_personne_exploitation")
 	private TypePersonne typePersonneExploitation;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_type_personne_personne_morale")
 	private TypePersonne typePersonnePersonneMorale;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_type_formalite_cessation")
 	private TypeFormalite typeFormaliteCessation;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_type_formalite_correction")
 	private TypeFormalite typeFormaliteCorrection;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_type_formalite_modification")
 	private TypeFormalite typeFormaliteModification;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_type_formalite_creation")
 	private TypeFormalite typeFormaliteCreation;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_employee_sales_director")
 	private Employee employeeSalesDirector;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_closure_recipient_type_other")
 	private BillingClosureRecipientType billingClosureRecipientTypeOther;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_closure_recipient_type_responsable")
 	private BillingClosureRecipientType billingClosureRecipientTypeResponsable;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_closure_recipient_type_client")
 	private BillingClosureRecipientType billingClosureRecipientTypeClient;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_closure_type_affaire")
 	private BillingClosureType billingClosureTypeAffaire;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_delivery_service_jss")
 	private DeliveryService deliveryServiceJss;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_language_french")
 	private Language languageFrench;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_customer")
 	private PrincipalAccountingAccount principalAccountingAccountCustomer;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_provider")
 	private PrincipalAccountingAccount principalAccountingAccountProvider;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_deposit")
 	private PrincipalAccountingAccount principalAccountingAccountDeposit;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_litigious")
 	private PrincipalAccountingAccount principalAccountingAccountLitigious;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_suspicious")
 	private PrincipalAccountingAccount principalAccountingAccountSuspicious;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_deposit_provider")
 	private PrincipalAccountingAccount principalAccountingAccountDepositProvider;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_product")
 	private PrincipalAccountingAccount principalAccountingAccountProduct;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_charge")
 	private PrincipalAccountingAccount principalAccountingAccountCharge;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_bank")
 	private PrincipalAccountingAccount principalAccountingAccountBank;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_principal_accounting_account_waiting")
 	private PrincipalAccountingAccount principalAccountingAccountWaiting;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_lost")
 	private AccountingAccount accountingAccountLost;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_profit")
 	private AccountingAccount accountingAccountProfit;
 
 	private String salesSharedMailbox;
 	private String accountingSharedMaiblox;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_bank_central_pay")
 	private AccountingAccount accountingAccountBankCentralPay;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_bank_jss")
 	private AccountingAccount accountingAccountBankJss;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_caisse")
 	private AccountingAccount accountingAccountCaisse;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_vacation_update_beneficial_owners")
 	private BillingType billingTypeVacationUpdateBeneficialOwners;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_formality_additional_declaration")
 	private BillingType billingTypeFormalityAdditionalDeclaration;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_correspondence_fees")
 	private BillingType billingTypeCorrespondenceFees;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_rff")
 	private BillingType billingTypeRff;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_customer_order_origin_website")
 	private CustomerOrderOrigin customerOrderOriginWebSite;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_customer_order_origin_myjss")
 	private CustomerOrderOrigin customerOrderOriginMyJss;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_customer_order_origin_osiris")
 	private CustomerOrderOrigin customerOrderOriginOsiris;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_provider_central_pay")
 	private Provider providerCentralPay;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_tiers_followup_type_invoice_reminder")
 	private TiersFollowupType tiersFollowupTypeInvoiceReminder;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_tiers_category_presse")
 	private TiersCategory tiersCategoryPresse;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_rff_frequency_annual")
 	private RffFrequency rffFrequencyAnnual;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_rff_frequency_quarterly")
 	private RffFrequency rffFrequencyQuarterly;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_rff_frequency_monthly")
 	private RffFrequency rffFrequencyMonthly;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_service_type_other")
 	private ServiceType serviceTypeOther;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_provision_type_bilan_publication")
 	private ProvisionType provisionTypeBilanPublication;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_provision_type_registration_act")
 	private ProvisionType provisionTypeRegistrationAct;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_formalites")
 	private ActiveDirectoryGroup activeDirectoryGroupFormalites;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_facturation")
 	private ActiveDirectoryGroup activeDirectoryGroupFacturation;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_sales")
 	private ActiveDirectoryGroup activeDirectoryGroupSales;
 
 	private LocalDate dateAccountingClosureForAccountant;
 	private LocalDate dateAccountingClosureForAll;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_further_information_service_field_type")
 	private ServiceFieldType furtherInformationServiceFieldType;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_responsable_dummy_customer_france")
 	private Responsable responsableDummyCustomerFrance;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "id_provision_screen_type_announcement")
 	private ProvisionScreenType provisionScreenTypeAnnouncement;
+
+	@ManyToOne
+	@JoinColumn(name = "id_category_interview")
+	private Category categoryInterview;
+
+	@ManyToOne
+	@JoinColumn(name = "id_category_podcast")
+	private Category categoryPodcast;
+
+	@ManyToOne
+	@JoinColumn(name = "id_category_article")
+	private Category categoryArticle;
+
+	@ManyToOne
+	@JoinColumn(name = "id_category_serie")
+	private Category categorySerie;
 
 	public Integer getId() {
 		return id;
@@ -2448,6 +2464,38 @@ public class Constant implements Serializable, IId {
 
 	public void setCustomerOrderOriginMyJss(CustomerOrderOrigin customerOrderOriginMyJss) {
 		this.customerOrderOriginMyJss = customerOrderOriginMyJss;
+	}
+
+	public Category getCategoryInterview() {
+		return categoryInterview;
+	}
+
+	public void setCategoryInterview(Category categoryInterview) {
+		this.categoryInterview = categoryInterview;
+	}
+
+	public Category getCategoryPodcast() {
+		return categoryPodcast;
+	}
+
+	public void setCategoryPodcast(Category categoryPodcast) {
+		this.categoryPodcast = categoryPodcast;
+	}
+
+	public Category getCategoryArticle() {
+		return categoryArticle;
+	}
+
+	public void setCategoryArticle(Category categoryArticle) {
+		this.categoryArticle = categoryArticle;
+	}
+
+	public Category getCategorySerie() {
+		return categorySerie;
+	}
+
+	public void setCategorySerie(Category categorySerie) {
+		this.categorySerie = categorySerie;
 	}
 
 }

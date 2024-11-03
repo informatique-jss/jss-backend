@@ -1,0 +1,66 @@
+<section class="pt-0 pt-lg-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10">
+        <!-- Title -->
+        <h2 class="mb-4">Derniers épisodes</h2>
+        <!-- Episodes Item START -->
+        <div class="card border rounded-3 p-3 mb-4" *ngFor="let podcast of podcasts">
+          <div class="row g-4">
+            <!-- Image -->
+            <div class="col-md-5">
+              <div class="position-relative">
+                <img class="rounded-3" [src]="podcast.media.urlMedium" alt="Card image">
+              </div>
+            </div>
+            <div class="col-md-7">
+              <div class="d-flex justify-content-between mb-2">
+                <!-- Episode -->
+                <ng-container *ngIf="podcast.myJssCategories!=null && podcast.myJssCategories.length>0">
+                  <a *ngFor="let category of podcast.myJssCategories" style="cursor: pointer;"
+                    (click)="openCategoryPosts(category, $event)"
+                    class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
+                    [style.background-color]="category.color+' !important'"><i
+                      class="fas fa-circle me-2 small fw-bold"></i>{{category.name}}</a>
+                </ng-container>
+                <span> <i class="bi bi-clock-fill"></i> {{podcast.mediaTimeLength | duration}} </span>
+              </div>
+              <!-- Title -->
+              <h4 class="card-title">
+                <a href="podcast-single.html" class="btn-link text-reset"
+                  [innerHTML]="podcast.titleText| trustHtml"></a>
+              </h4>
+              <!-- Author info -->
+              <div class="d-flex align-items-center position-relative">
+                <div class="avatar avatar-xs me-2">
+                  <img class="avatar-img  rounded-circle" [src]="podcast.fullAuthor.avatar_url_size_24" alt="avatar">
+                </div>
+                <h6 class="mb-0"><a style="cursor: pointer;" (click)="openAuthorPosts(podcast.fullAuthor, $event)"
+                    class="stretched-link text-reset btn-link">{{podcast.fullAuthor.name}}</a></h6>
+              </div>
+              <!-- Play Episode -->
+              <div class="d-xl-flex align-items-center justify-content-between mt-4">
+                <a class="btn btn-sm btn-primary" style="cursor: pointer;" (click)="openPodcast(podcast, $event)">Lire
+                  l'épisode</a>
+                <ul class="list-unstyled d-flex gap-2 align-items-center">
+                  <li class="h6 mb-0">A écouter sur :</li>
+                  <li><a href="#"> <img class="h-20" src="assets/images/icon/apple-podcasts.svg" alt=""> </a></li>
+                  <li><a href="#"> <img class="h-20" src="assets/images/icon/divider-icon.svg" alt=""> </a></li>
+                  <li><a href="#"> <img class="h-20" src="assets/images/icon/spotify.svg" alt=""> </a></li>
+                  <li><a href="#"> <img class="h-20" src="assets/images/icon/pocket.svg" alt=""> </a></li>
+                  <li><a href="#"> <img class="h-20" src="assets/images/icon/sound-cloud.svg" alt=""> </a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Episodes Item END -->
+      </div>
+
+
+      <!-- Sidebar START -->
+      <div class="col-lg-4"></div>
+      <!-- Sidebar END -->
+    </div>
+  </div>
+</section>

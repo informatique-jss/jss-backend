@@ -6,7 +6,7 @@ import { Tag } from '../model/Tag';
 @Injectable({
   providedIn: 'root'
 })
-export class CategoryService extends AppRestService<Tag>{
+export class TagService extends AppRestService<Tag> {
 
   constructor(http: HttpClient) {
     super(http, "wordpress");
@@ -14,6 +14,10 @@ export class CategoryService extends AppRestService<Tag>{
 
   getAvailableTags() {
     return this.getListCached(new HttpParams(), "tags");
+  }
+
+  getTagBySlug(slug: string) {
+    return this.get(new HttpParams().set("slug", slug), "tag/slug");
   }
 
 }

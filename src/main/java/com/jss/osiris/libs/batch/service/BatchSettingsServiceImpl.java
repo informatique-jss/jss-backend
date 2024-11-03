@@ -557,5 +557,17 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.GUICHET_UNIQUE));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.SYNCHRONISE_WORDPRESS) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.SYNCHRONISE_WORDPRESS);
+            batchSettings.setLabel("Synchronisation de WordPress");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
     }
 }

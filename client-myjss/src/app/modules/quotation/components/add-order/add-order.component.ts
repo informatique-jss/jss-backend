@@ -26,7 +26,7 @@ export class AddOrderComponent implements OnInit {
 
   ngOnInit() {
     //debug
-    this.typeChosen = TYPE_CHOSEN_ORDER;
+    // this.typeChosen = TYPE_CHOSEN_ORDER;
     /*this.serviceTypeService.getServiceTypesForFamily(4075334).subscribe(response => {
       this.affaireService.getAffaire(4364468).subscribe(affaire => {
         this.servicesChosen.push({ affaire: affaire, service: response[0], temporaryId: 0, discountedAmount: undefined, preTaxPrice: undefined } as ServiceTypeChosen);

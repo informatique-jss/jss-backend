@@ -8,17 +8,21 @@
             <span class="badge bg-primary p-2 px-3">Tendances</span>
           </div>
           <!-- Slider -->
-          <div class="tiny-slider arrow-end arrow-xs arrow-white arrow-round arrow-md-none">
+          <!--div class="slider tiny-slider arrow-end arrow-xs arrow-white arrow-round arrow-md-none" *ngIf="posts">
             <div class="tiny-slider-inner" data-autoplay="true" data-hoverpause="true" data-gutter="0" data-arrow="true"
               data-dots="false" data-items="1">
-              <!-- Slider items -->
-              <div> <a href="#" class="text-reset btn-link">Un groupe de socialistes tient tête à un moulin</a></div>
-              <div> <a href="#" class="text-reset btn-link">Des martyres bavardes nuisent à trois sélections </a></div>
-              <div> <a href="#" class="text-reset btn-link">Un partisan bavarois résiste à plusieurs combats </a></div>
-              <div> <a href="#" class="text-reset btn-link">Ils se limitent à déroger au poulet sans en avertir Zorro
-                </a></div>
-              <div> <a href="#" class="text-reset btn-link">Les cartomanciennes s'alimentent silencieusement... </a>
-              </div>
+              <div *ngFor="let post of posts"> <a style="cursor: pointer;" (click)="openPost(post, $event)"
+                  class="text-reset btn-link">{{getRawText(post.titleText)}}</a></div>
+            </div>
+          </div-->
+          <div class="tiny-slider arrow-end arrow-xs arrow-white arrow-round arrow-md-none">
+            <div class="slider-trend">
+              <ng-container *ngFor="let post of posts">
+                <div #sliderPage>
+                  <a style="cursor: pointer;" (click)="openPost(post, $event)"
+                    class="text-reset btn-link">{{getRawText(post.titleText)}}</a>
+                </div>
+              </ng-container>
             </div>
           </div>
         </div>

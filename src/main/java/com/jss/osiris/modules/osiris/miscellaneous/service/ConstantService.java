@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.miscellaneous.service;
 import java.time.LocalDate;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
@@ -452,4 +453,11 @@ public interface ConstantService {
 
     public ProvisionScreenType getProvisionScreenTypeAnnouncement() throws OsirisException;
 
+    public Category getCategoryInterview() throws OsirisException;
+
+    public Category getCategoryPodcast() throws OsirisException;
+
+    public Category getCategoryArticle() throws OsirisException;
+
+    public Category getCategorySerie() throws OsirisException;
 }

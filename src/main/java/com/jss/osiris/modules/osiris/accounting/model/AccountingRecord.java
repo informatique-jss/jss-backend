@@ -363,4 +363,5 @@ public class AccountingRecord implements Serializable, IId {
 	public void setIsManual(Boolean isManual) {
 		this.isManual = isManual;
 	}
+
 }

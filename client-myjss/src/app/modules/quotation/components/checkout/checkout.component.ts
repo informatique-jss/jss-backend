@@ -35,7 +35,6 @@ export class CheckoutComponent implements OnInit {
   @Output() onRemoveServiceChoosen = new EventEmitter<ServiceTypeChosen>();
   @Output() onEditServiceChoosen = new EventEmitter<ServiceTypeChosen>();
   @Output() onAddServiceChoosen = new EventEmitter<Boolean>();
-  @ViewChild('topOrder') topOrder: ElementRef | undefined;
   @ViewChild('topAlert') topAlert: ElementRef | undefined;
 
   currentUser: Responsable | undefined;
@@ -104,8 +103,10 @@ export class CheckoutComponent implements OnInit {
         this.defineCustomDocuments = true;
         this.civilityService.getCivilities().subscribe(response => this.civilities = response);
         this.countryService.getCountries().subscribe(response => {
-          if (this.topOrder)
-            setTimeout(this.topOrder.nativeElement.scrollIntoView({ behavior: 'smooth', block: "end" }), 100);
+          setTimeout(() => window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          }), 100);
           this.countries = response;
           if (this.countries)
             for (let country of this.countries)
@@ -156,8 +157,10 @@ export class CheckoutComponent implements OnInit {
     this.currentUser = response;
     this.defineCustomDocuments = false;
     this.documentService.getDocumentForResponsable(this.currentUser.id).subscribe(response => {
-      if (this.topOrder)
-        setTimeout(this.topOrder.nativeElement.scrollIntoView({ behavior: 'smooth', block: "end" }), 100);
+      setTimeout(() => window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      }), 100);
 
       this.userCustomerOrder.billingDocument = this.getDocument(this.documentTypeBilling, response);
 

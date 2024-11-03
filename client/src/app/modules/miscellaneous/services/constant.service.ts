@@ -814,4 +814,20 @@ export class ConstantService extends AppRestService<Constant> {
   getProvisionScreenTypeAnnouncement() {
     return this.constant.provisionScreenTypeAnnouncement;
   }
+
+  getCategoryInterview() {
+    return this.constant.categoryInterview;
+  }
+
+  getCategoryPodcast() {
+    return this.constant.categoryPodcast;
+  }
+
+  getCategoryArticle() {
+    return this.constant.categoryArticle;
+  }
+
+  getCategorySerie() {
+    return this.constant.categorySerie;
+  }
 }

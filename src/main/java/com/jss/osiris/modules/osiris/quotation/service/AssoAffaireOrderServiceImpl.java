@@ -853,6 +853,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         .getServicePriority() > currentPriority) {
                     currentPriority = provision.getFormalite().getFormaliteStatus().getServicePriority();
                     currentStatus = provision.getFormalite().getFormaliteStatus().getLabel();
+                    if (provision.getFormalite().getFormaliteStatus().getCode()
+                            .equals(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED))
+                        currentStatus = formaliteStatusService
+                                .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
+                                .getLabel();
                 } else if (provision.getDomiciliation() != null
                         && provision.getDomiciliation().getDomiciliationStatus()
                                 .getServicePriority() > currentPriority) {

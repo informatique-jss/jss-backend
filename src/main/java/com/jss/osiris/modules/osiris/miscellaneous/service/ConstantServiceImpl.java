@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
@@ -1093,5 +1094,25 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ProvisionScreenType getProvisionScreenTypeAnnouncement() throws OsirisException {
         return this.getConstants().getProvisionScreenTypeAnnouncement();
+    }
+
+    @Override
+    public Category getCategoryInterview() throws OsirisException {
+        return this.getConstants().getCategoryInterview();
+    }
+
+    @Override
+    public Category getCategoryPodcast() throws OsirisException {
+        return this.getConstants().getCategoryPodcast();
+    }
+
+    @Override
+    public Category getCategoryArticle() throws OsirisException {
+        return this.getConstants().getCategoryArticle();
+    }
+
+    @Override
+    public Category getCategorySerie() throws OsirisException {
+        return this.getConstants().getCategorySerie();
     }
 }

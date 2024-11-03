@@ -403,6 +403,16 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.wordpress.synchronise}")
+	private void synchroniseWordpress() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.SYNCHRONISE_WORDPRESS, 1);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(initialDelay = 1000, fixedDelay = Long.MAX_VALUE)
 	private void updateAllStatusEntityReferentials() {
 		try {

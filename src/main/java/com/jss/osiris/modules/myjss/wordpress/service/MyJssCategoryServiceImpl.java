@@ -1,42 +1,46 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.repository.MyJssCategoryRepository;
 
 @Service
 public class MyJssCategoryServiceImpl implements MyJssCategoryService {
 
     @Autowired
-    WordpressDelegate wordpressDelegate;
-
-    @Autowired
     MediaService mediaService;
 
-    @Override
-    @Cacheable(value = "wordpress-myjss-categories")
-    public List<MyJssCategory> getAvailableMyJssCategories() {
-        List<MyJssCategory> categories = wordpressDelegate.getAvailableMyJssCategories();
-        if (categories != null && categories.size() > 0) {
-            for (MyJssCategory category : categories)
-                if (category.getAcf() != null) {
-                    category.setColor(category.getAcf().getColor());
-                    if (category.getAcf().getPicture() != null)
-                        category.setPicture(mediaService.getMedia(category.getAcf().getPicture()));
-                }
+    @Autowired
+    MyJssCategoryRepository myJssCategoryRepository;
 
-            categories.sort(new Comparator<MyJssCategory>() {
-                @Override
-                public int compare(MyJssCategory o1, MyJssCategory o2) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            });
+    @Override
+    public MyJssCategory getMyJssCategory(Integer id) {
+        Optional<MyJssCategory> category = myJssCategoryRepository.findById(id);
+        if (category.isPresent())
+            return category.get();
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public MyJssCategory addOrUpdateMyJssCategory(MyJssCategory category) {
+        if (category.getAcf() != null) {
+            category.setColor(category.getAcf().getColor());
+            if (category.getAcf().getPicture() != null)
+                category.setPicture(mediaService.getMedia(category.getAcf().getPicture()));
+            category.setCategoryOrder(category.getAcf().getOrdre());
         }
-        return categories;
+        return myJssCategoryRepository.save(category);
+    }
+
+    @Override
+    public List<MyJssCategory> getAvailableMyJssCategories() {
+        return myJssCategoryRepository.findAllByOrderByName();
     }
 }

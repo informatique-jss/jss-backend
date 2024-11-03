@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "myjss": {
+    "jss": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/myjss",
+            "outputPath": "dist/jss",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -32,22 +32,22 @@
             "styles": [
               "src/styles.scss",
               {
-                "input": "src/assets/vendor/font-awesome/css/all.min.css",
+                "input": "src/libs/font-awesome/css/all.min.css",
                 "inject": true,
                 "bundleName": "all.min.css"
               },
               {
-                "input": "src/assets/vendor/bootstrap-icons/bootstrap-icons.css",
+                "input": "src/libs/bootstrap-icons/bootstrap-icons.css",
                 "inject": true,
                 "bundleName": "bootstrap-icons.css"
               },
               {
-                "input": "src/assets/vendor/tiny-slider/tiny-slider.css",
+                "input": "src/libs/tiny-slider/tiny-slider.css",
                 "inject": true,
                 "bundleName": "tiny-slider.css"
               },
               {
-                "input": "src/assets/vendor/plyr/plyr.css",
+                "input": "src/libs/plyr/plyr.css",
                 "inject": true,
                 "bundleName": "plyr.css"
               },
@@ -59,22 +59,22 @@
             ],
             "scripts": [
               {
-                "input": "src/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js",
+                "input": "src/libs/bootstrap/dist/js/bootstrap.bundle.min.js",
                 "inject": true,
                 "bundleName": "bootstrap.bundle.min.js"
               },
               {
-                "input": "src/assets/vendor/tiny-slider/tiny-slider.js",
+                "input": "src/libs/tiny-slider/tiny-slider.js",
                 "inject": true,
                 "bundleName": "tiny-slider.js"
               },
               {
-                "input": "src/assets/vendor/sticky-js/sticky.min.js",
+                "input": "src/libs/sticky-js/sticky.min.js",
                 "inject": true,
                 "bundleName": "sticky.min.js"
               },
               {
-                "input": "src/assets/vendor/plyr/plyr.js",
+                "input": "src/libs/plyr/plyr.js",
                 "inject": true,
                 "bundleName": "plyr.js"
               },
@@ -83,27 +83,47 @@
                 "inject": true,
                 "bundleName": "functions.js"
               }
-            ],
-            "server": "src/main.server.ts",
-            "prerender": {
-              "routesFile": "routes.txt"
-            },
-            "ssr": {
-              "entry": "server.ts"
-            }
+            ]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "5000kb",
+                  "maximumError": "10mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "20kb",
+                  "maximumError": "40kb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "recette": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "100mb",
+                  "maximumError": "200mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "10240kb",
+                  "maximumError": "40960kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.rec.ts"
                 }
               ],
               "outputHashing": "all"
@@ -120,10 +140,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "myjss:build:production"
+              "buildTarget": "jss:build:production"
             },
             "development": {
-              "buildTarget": "myjss:build:development"
+              "buildTarget": "jss:build:development"
             }
           },
           "defaultConfiguration": "development",
@@ -134,7 +154,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "myjss:build"
+            "buildTarget": "jss:build"
           }
         },
         "test": {

@@ -1,19 +1,18 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.myjss.wordpress.model.Page;
+import com.jss.osiris.modules.myjss.wordpress.repository.PageRepository;
 
 @Service
 public class PageServiceImpl implements PageService {
-
-    @Autowired
-    WordpressDelegate wordpressDelegate;
 
     @Autowired
     MediaService mediaService;
@@ -21,28 +20,36 @@ public class PageServiceImpl implements PageService {
     @Autowired
     AuthorService authorService;
 
+    @Autowired
+    PageRepository pageRepository;
+
     @Override
-    @Cacheable(value = "wordpress-pages")
+    public Page getPage(Integer id) {
+        Optional<Page> page = pageRepository.findById(id);
+        if (page.isPresent())
+            return page.get();
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Page addOrUpdatePageFromWordpress(Page page) {
+        if (page.getTitle() != null)
+            page.setTitleText(page.getTitle().getRendered());
+        if (page.getContent() != null)
+            page.setContentText(page.getContent().getRendered());
+        if (page.getExcerpt() != null)
+            page.setExcerptText(page.getExcerpt().getRendered());
+
+        if (page.getParent() != null)
+            page.setParentPage(getPage(page.getParent()));
+
+        return pageRepository.save(computePage(page));
+    }
+
+    @Override
     public List<Page> getAllPages() {
-        List<Page> pages = wordpressDelegate.getAllPages();
-        List<Page> finalPages = new ArrayList<Page>();
-
-        for (Page childPage : pages) {
-            computePage(childPage);
-            if (childPage.getParent() > 0)
-                for (Page parentPage : pages)
-                    if (parentPage.getId().equals(childPage.getParent())) {
-                        if (parentPage.getChildrenPages() == null)
-                            parentPage.setChildrenPages(new ArrayList<Page>());
-                        parentPage.getChildrenPages().add(childPage);
-                    }
-        }
-
-        for (Page page : pages) {
-            if (page.getParent() <= 0)
-                finalPages.add(computePage(page));
-        }
-        return finalPages;
+        return IterableUtils.toList(pageRepository.findAll());
     }
 
     private Page computePage(Page page) {

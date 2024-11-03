@@ -3,30 +3,52 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from '../../services/appRest.service';
 import { MyJssCategory } from '../model/MyJssCategory';
 import { Post } from '../model/Post';
+import { PublishingDepartment } from '../model/PublishingDepartment';
+import { Tag } from '../model/Tag';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PostService extends AppRestService<Post>{
+export class PostService extends AppRestService<Post> {
 
   constructor(http: HttpClient) {
     super(http, "wordpress");
   }
 
   getTopPost(page: number) {
-    return this.getListCached(new HttpParams().set("page", page), "posts/top");
+    return this.getList(new HttpParams().set("page", page), "posts/top");
+  }
+
+  getPostsTendency() {
+    return this.getList(new HttpParams(), "posts/tendency");
+  }
+
+  getPostBySlug(slug: string) {
+    return this.get(new HttpParams().set("slug", slug), "posts/slug");
+  }
+
+  getPostSerieBySlug(slug: string) {
+    return this.getList(new HttpParams().set("slug", slug), "posts/serie/slug");
   }
 
   getTopPostByMyJssCategory(page: number, myJssCategory: MyJssCategory) {
-    return this.getListCached(new HttpParams().set("page", page).set("categoryId", myJssCategory.id), "posts/top/myjss-category");
+    return this.getList(new HttpParams().set("page", page).set("categoryId", myJssCategory.id), "posts/top/myjss-category");
+  }
+
+  getTopPostByTag(page: number, tag: Tag) {
+    return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
+  }
+
+  getTopPostByDepartment(page: number, department: PublishingDepartment) {
+    return this.getList(new HttpParams().set("page", page).set("departmentId", department.id), "posts/top/department");
   }
 
   getTopPostInterview(page: number) {
-    return this.getListCached(new HttpParams().set("page", page), "posts/top/interview");
+    return this.getList(new HttpParams().set("page", page), "posts/top/interview");
   }
 
   getTopPostPodcast(page: number) {
-    return this.getListCached(new HttpParams().set("page", page), "posts/top/podcast");
+    return this.getList(new HttpParams().set("page", page), "posts/top/podcast");
   }
 
 }

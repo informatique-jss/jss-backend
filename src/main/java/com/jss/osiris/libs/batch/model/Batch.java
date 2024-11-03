@@ -22,6 +22,7 @@ import jakarta.persistence.Table;
 @Table(indexes = { @Index(name = "idx_batch_settings_id", columnList = "id_batch_settings"),
         @Index(name = "idx_batch_settings_status", columnList = "id_batch_status,id_batch_settings") })
 public class Batch implements IId {
+    public static final String SYNCHRONISE_WORDPRESS = "SYNCHRONISE_WORDPRESS";
     public static String REFRESH_FORMALITE_GUICHET_UNIQUE = "REFRESH_FORMALITE_GUICHET_UNIQUE";
     public static String REFRESH_FORMALITE_INFOGREFFE = "REFRESH_FORMALITE_INFOGREFFE";
     public static String REFRESH_FORMALITE_INFOGREFFE_DETAIL = "REFRESH_FORMALITE_INFOGREFFE_DETAIL";

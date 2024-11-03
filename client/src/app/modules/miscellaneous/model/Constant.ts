@@ -30,6 +30,7 @@ import { TiersType } from "../../tiers/model/TiersType";
 import { ActiveDirectoryGroup } from './ActiveDirectoryGroup';
 import { AttachmentType } from "./AttachmentType";
 import { BillingType } from "./BillingType";
+import { Category } from './Category';
 import { CompetentAuthority } from './CompetentAuthority';
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Country } from "./Country";
@@ -243,4 +244,8 @@ export interface Constant {
   furtherInformationServiceFieldType: ServiceFieldType;
   responsableDummyCustomerFrance: Responsable;
   provisionScreenTypeAnnouncement: ProvisionScreenType;
+  categoryInterview: Category;
+  categoryPodcast: Category;
+  categoryArticle: Category;
+  categorySerie: Category;
 }

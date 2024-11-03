@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { getTimeReading } from '../../../libs/FormatHelper';
+import { AppService } from '../../../services/app.service';
+import { Author } from '../../model/Author';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
 import { MyJssCategoryService } from '../../services/myjss.category.service';
@@ -13,7 +15,7 @@ import { PostService } from '../../services/post.service';
 })
 export class ArticlesCategoryComponent implements OnInit {
 
-  page: number = 1;
+  page: number = 0;
   posts: Post[] = [];
   categories: MyJssCategory[] = [];
   currentCategory: MyJssCategory | null = null;
@@ -25,7 +27,8 @@ export class ArticlesCategoryComponent implements OnInit {
   constructor(
     private postService: PostService,
     private myJssCategoryService: MyJssCategoryService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private appService: AppService
   ) { }
 
   ngOnInit() {
@@ -49,6 +52,18 @@ export class ArticlesCategoryComponent implements OnInit {
   getNextPosts() {
     this.page++;
     this.fetchNextPosts();
+  }
+
+  openCategoryPosts(category: MyJssCategory, event: any) {
+    this.appService.openRoute(event, "category/" + category.slug, undefined);
+  }
+
+  openPost(post: Post, event: any) {
+    this.appService.openRoute(event, "post/" + post.slug, undefined);
+  }
+
+  openAuthorPosts(author: Author, event: any) {
+    this.appService.openRoute(event, "author/" + author.slug, undefined);
   }
 
   fetchNextPosts() {

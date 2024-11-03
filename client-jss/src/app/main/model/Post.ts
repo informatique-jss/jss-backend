@@ -1,5 +1,5 @@
 import { Author } from "./Author";
-import { Content } from "./Content";
+import { Category } from "./Category";
 import { Media } from "./Media";
 import { MyJssCategory } from "./MyJssCategory";
 import { PublishingDepartment } from "./PublishingDepartment";
@@ -7,21 +7,24 @@ import { Tag } from "./Tag";
 
 export interface Post {
   id: number;
-  title: Content;
-  excerpt: Content;
+  titleText: string;
+  excerptText: string;
+  contentText: string;
   date: Date;
   modified: Date;
   slug: string;
+  podcastUrl: string;
+  videoUrl: string;
   sticky: boolean;
-  content: Content;
+  relatedPosts: Post[];
+  mediaTimeLength: number;
 
   // Computed field
   fullAuthor: Author;
-  fullCategories: MyJssCategory[];
-  fullDepartment: PublishingDepartment[];
-  fullTags: Tag[];
+  myJssCategories: MyJssCategory[];
+  postCategories: Category[];
+  departments: PublishingDepartment[];
+  postTags: Tag[];
   media: Media;
   premium: boolean;
 }
-
-

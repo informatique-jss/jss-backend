@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  backendUrl: "http://server.osiris.jss.fr/",
-  frontendUrl: "http://osiris.jss.fr/"
+  backendUrl: "http://server.my.jss.fr/",
+  frontendUrl: "http://my.jss.fr/"
 };

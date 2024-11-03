@@ -3,32 +3,76 @@ package com.jss.osiris.modules.myjss.wordpress.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
+
+@Entity
 public class Page {
     // Common fields
+    @Id
     private Integer id;
+
+    @Transient
     private AcfPage acf;
+
     private Integer author;
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     private LocalDateTime date;
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     private LocalDateTime modified;
     private Integer menu_order;
+
+    @Transient
     private Integer parent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_parent_page")
+    private Page parentPage;
+
+    @Transient
     private Content title;
+    @Column(columnDefinition = "TEXT")
+    private String titleText;
     private String slug;
 
     // Single page request fields
+    @Transient
     private Content content;
+    @Column(columnDefinition = "TEXT")
+    private String contentText;
+
+    @Transient
     private Content excerpt;
+    @Column(columnDefinition = "TEXT")
+    private String excerptText;
+
+    @Transient
     private Integer featured_media;
 
     // Computed fields
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_media")
     private Media media;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_author")
     private Author fullAuthor;
+
+    @OneToMany(mappedBy = "parentPage", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties(value = { "parentPage" }, allowSetters = true)
     private List<Page> childrenPages;
+
     private boolean isPremium;
 
     public Integer getId() {
@@ -157,6 +201,38 @@ public class Page {
 
     public void setFullAuthor(Author fullAuthor) {
         this.fullAuthor = fullAuthor;
+    }
+
+    public String getContentText() {
+        return contentText;
+    }
+
+    public void setContentText(String contentText) {
+        this.contentText = contentText;
+    }
+
+    public String getExcerptText() {
+        return excerptText;
+    }
+
+    public void setExcerptText(String excerptText) {
+        this.excerptText = excerptText;
+    }
+
+    public Page getParentPage() {
+        return parentPage;
+    }
+
+    public void setParentPage(Page parentPage) {
+        this.parentPage = parentPage;
+    }
+
+    public String getTitleText() {
+        return titleText;
+    }
+
+    public void setTitleText(String titleText) {
+        this.titleText = titleText;
     }
 
 }

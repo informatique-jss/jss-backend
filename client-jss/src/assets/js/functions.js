@@ -782,3 +782,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
 document.addEventListener("RefreshThemeFunctions", function (event) {
   e.init();
 });
+document.addEventListener("RefreshTns", function (event) {
+  e.tinySlider();
+});

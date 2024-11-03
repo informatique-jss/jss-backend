@@ -1,0 +1,12 @@
+export const MY_JSS_SUBSCRIBE_ROUTE = "order/new/subscribe";
+export const MY_JSS_NEW_ANNOUNCEMENT_ROUTE = "order/new/announcement";
+export const MY_JSS_NEW_FORMALITY_ROUTE = "order/new/formality";
+export const MY_JSS_PRODUCT_ROUTE = "offers";
+export const MY_JSS_OFFERS_ROUTE = "offers";
+export const MY_JSS_WHO_ARE_WE_ROUTE = "who-are-we";
+export const MY_JSS_JOIN_US_ROUTE = "join-us";
+export const MY_JSS_PARTNERS_ROUTE = "partners";
+export const MY_JSS_LEGAL_MENTIONS_ROUTE = "legal-mentions";
+export const MY_JSS_CGV_ROUTE = "cgv";
+export const MY_JSS_CONFIDENTIALITY_ROUTE = "confidentiality";
+export const MY_JSS_SIGN_IN_ROUTE = "account/signin";

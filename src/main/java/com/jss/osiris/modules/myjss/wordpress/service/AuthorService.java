@@ -4,4 +4,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.Author;
 
 public interface AuthorService {
         public Author getAuthor(Integer id);
+
+        public Author addOrUpdateAuthor(Author author);
 }

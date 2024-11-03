@@ -3,6 +3,7 @@ package com.jss.osiris.modules.myjss.wordpress.model;
 public class AcfCategory {
     private String color;
     private Integer picture;
+    private Integer ordre;
 
     public String getColor() {
         return color;
@@ -18,6 +19,14 @@ public class AcfCategory {
 
     public void setPicture(Integer picture) {
         this.picture = picture;
+    }
+
+    public Integer getOrdre() {
+        return ordre;
+    }
+
+    public void setOrdre(Integer ordre) {
+        this.ordre = ordre;
     }
 
 }

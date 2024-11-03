@@ -1,36 +1,40 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
+import com.jss.osiris.modules.myjss.wordpress.repository.PublishingDepartmentRepository;
 
 @Service
 public class PublishingDepartmentServiceImpl implements PublishingDepartmentService {
 
     @Autowired
-    WordpressDelegate wordpressDelegate;
+    PublishingDepartmentRepository publishingDepartmentRepository;
 
     @Override
-    @Cacheable(value = "wordpress-departments")
-    public List<PublishingDepartment> getAvailableDepartments() {
-        List<PublishingDepartment> departments = wordpressDelegate.getAvailableDepartments();
-        if (departments != null && departments.size() > 0) {
-            for (PublishingDepartment department : departments)
-                if (department.getAcf() != null)
-                    department.setCode(department.getAcf().getCode());
+    public PublishingDepartment getPublishingDepartment(Integer id) {
+        Optional<PublishingDepartment> department = publishingDepartmentRepository.findById(id);
+        if (department.isPresent())
+            return department.get();
+        return null;
+    }
 
-            departments.sort(new Comparator<PublishingDepartment>() {
-                @Override
-                public int compare(PublishingDepartment o1, PublishingDepartment o2) {
-                    return o1.getCode().compareTo(o2.getCode());
-                }
-            });
-        }
-        return departments;
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PublishingDepartment addOrUpdatePublishingDepartmentFromWordpress(
+            PublishingDepartment publishingDepartment) {
+        if (publishingDepartment.getAcf() != null)
+            publishingDepartment.setCode(publishingDepartment.getAcf().getCode());
+        return publishingDepartmentRepository.save(publishingDepartment);
+    }
+
+    @Override
+    public List<PublishingDepartment> getAvailableDepartments() {
+        return publishingDepartmentRepository.findAllByOrderByCode();
     }
 }

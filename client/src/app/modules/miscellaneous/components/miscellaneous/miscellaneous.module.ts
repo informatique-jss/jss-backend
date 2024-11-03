@@ -207,6 +207,7 @@ import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
 import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
+import { SelectCategoryComponent } from '../forms/select-category/select-category.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
 import { SelectCustomerOrderFrequencyComponent } from '../forms/select-customer-order-frequency/select-customer-order-frequency.component';
@@ -548,6 +549,7 @@ const routes: Routes = [
     SelectFormaliteInfogreffeStatusComponent,
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
+    SelectCategoryComponent,
   ],
   exports: [
     HistoryComponent,
@@ -788,7 +790,8 @@ const routes: Routes = [
     AutocompleteInfogreffeFormaliteComponent,
     SelectFormaliteInfogreffeStatusComponent,
     ChipsServiceTypeComponent,
-    SingleChipsMailComponent
+    SingleChipsMailComponent,
+    SelectCategoryComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

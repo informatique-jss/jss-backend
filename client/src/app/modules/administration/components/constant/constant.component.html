@@ -1538,6 +1538,34 @@
                 [isMandatory]="true" [isDisabled]="!editMode"></select-provision-screen-type>
             </td>
           </tr>
+          <tr>
+            <td>
+              <select-category [(model)]="constant.categoryInterview" label="Categorie Wordpress - Interview"
+                [form]="constantForm" propertyName="categoryInterview" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-category [(model)]="constant.categoryPodcast" label="Categorie Wordpress - Podcast"
+                [form]="constantForm" propertyName="categoryPodcast" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-category [(model)]="constant.categoryArticle" label="Categorie Wordpress - Articles"
+                [form]="constantForm" propertyName="categoryArticle" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-category [(model)]="constant.categorySerie" label="Categorie Wordpress - Série"
+                [form]="constantForm" propertyName="categorySerie" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

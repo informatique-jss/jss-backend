@@ -5,12 +5,29 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
+
+@Entity
 public class Media {
+    @Id
     private Integer id;
     private Integer author;
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     private LocalDateTime date;
+
+    @Transient
     private MediaDetails media_details;
+
+    private String file;
+
+    @Transient
+    private String source_url;
+
     private String media_type;
     private String alt_text;
     private String urlFull;
@@ -18,7 +35,10 @@ public class Media {
     private String urlMedium;
     private String urlMediumLarge;
     private String urlThumbnail;
+    private Integer length;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_author")
     private Author fullAuthor;
 
     public Integer getId() {
@@ -115,6 +135,30 @@ public class Media {
 
     public void setUrlThumbnail(String urlThumbnail) {
         this.urlThumbnail = urlThumbnail;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public Integer getLength() {
+        return length;
+    }
+
+    public void setLength(Integer length) {
+        this.length = length;
+    }
+
+    public String getSource_url() {
+        return source_url;
+    }
+
+    public void setSource_url(String source_url) {
+        this.source_url = source_url;
     }
 
 }

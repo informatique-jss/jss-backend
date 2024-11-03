@@ -1,0 +1,30 @@
+<!-- =======================
+Main hero START -->
+<section *ngIf="podcast">
+  <div class="container">
+    <div class="row g-4 align-items-center justify-content-between pb-lg-5">
+      <div class="col-lg-6 mt-0 position-relative">
+        <!-- Hero image -->
+        <img class="rounded" [src]="podcast.media.urlFull" alt="" *ngIf="podcast.media">
+      </div>
+      <div class="col-lg-5">
+        <!-- Hero title -->
+        <h1 class="display-3" [innerHTML]="podcast.titleText| trustHtml"> </h1>
+        <p *ngIf="podcast.excerptText" [innerHTML]="podcast.excerptText| trustHtml"></p>
+        <p class="w-100" [innerHTML]="podcast.contentText| trustHtml"></p>
+        <!-- Listen on -->
+        <ul class="list-unstyled d-flex gap-1 gap-sm-2 align-items-center mt-4">
+          <li class="h5 mb-0">A écouter sur :</li>
+          <li class="ms-2"><a href="#"> <img src="assets/images/icon/apple-podcasts.svg" alt=""> </a></li>
+          <li class="ms-2"><a href="#"> <img src="assets/images/icon/divider-icon.svg" alt=""> </a></li>
+          <li class="ms-2"><a href="#"> <img src="assets/images/icon/spotify.svg" alt=""> </a></li>
+          <li class="ms-2"><a href="#"> <img src="assets/images/icon/google-podcasts.svg" alt=""> </a></li>
+          <li class="ms-2"><a href="#"> <img src="assets/images/icon/pocket.svg" alt=""> </a></li>
+          <li class="ms-2"><a href="#"> <img src="assets/images/icon/sound-cloud.svg" alt=""> </a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- =======================
+Main hero END -->

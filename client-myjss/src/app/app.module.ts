@@ -9,6 +9,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HttpErrorInterceptor } from '../../httpErrorInterceptor.service';
 import { AppComponent } from './app.component';
 import { ToastComponent } from './libs/toast/toast.component';
+import { GeneralModule } from './modules/general/components/general/general.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from './modules/my-account/components/my-account/my-account.module';
 import { OffersModule } from './modules/offers/components/offers/offers.module';
@@ -44,6 +45,7 @@ const routes: Routes = [
     OffersModule,
     MiscellaneousModule,
     QuotationModule,
+    GeneralModule,
   ], providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: HttpErrorInterceptor,

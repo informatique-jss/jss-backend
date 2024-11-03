@@ -1,9 +1,18 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
+
+@Entity
 public class PublishingDepartment {
+
+    @Id
     private Integer id;
     private String name;
     private String code;
+
+    @Transient
     private AcfDepartment acf;
 
     public Integer getId() {

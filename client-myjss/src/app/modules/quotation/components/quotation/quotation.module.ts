@@ -12,6 +12,10 @@ import { QuotationComponent } from './quotation.component';
 
 const routes: Routes = [
   { path: 'order/new', component: AddOrderComponent },
+  { path: 'order/new/subscribe', component: AddOrderComponent },
+  { path: 'order/new/formality', component: AddOrderComponent },
+  { path: 'order/new/announcement', component: AddOrderComponent },
+  { path: 'order/new/subscribe', component: AddOrderComponent },
 ];
 
 @NgModule({

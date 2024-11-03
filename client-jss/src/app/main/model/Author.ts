@@ -1,8 +1,10 @@
-import { Avatar } from "./Avatar";
 
 export interface Author {
   id: number;
   name: string;
-  slung: string;
-  avatar_urls: Avatar;
+  slug: string;
+  description: string;
+  avatar_url_size_24: string;
+  avatar_url_size_48: string;
+  avatar_url_size_96: string;
 }

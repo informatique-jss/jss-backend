@@ -7,4 +7,5 @@ export interface MyJssCategory {
   color: string;
   picture: Media;
   count: number;
+  categoryOrder: number;
 }

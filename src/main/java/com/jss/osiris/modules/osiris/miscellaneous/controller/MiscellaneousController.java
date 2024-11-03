@@ -31,6 +31,8 @@ import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -261,6 +263,14 @@ public class MiscellaneousController {
 
     @Autowired
     PaperSetTypeService paperSetTypeService;
+
+    @Autowired
+    CategoryService categoryService;
+
+    @GetMapping(inputEntryPoint + "/categories")
+    public ResponseEntity<List<Category>> getCategories() {
+        return new ResponseEntity<List<Category>>(categoryService.getAvailableCategories(), HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/paper-set-types")
     public ResponseEntity<List<PaperSetType>> getPaperSetTypes() {
