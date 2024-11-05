@@ -8,6 +8,7 @@ import { Announcement } from '../../model/Announcement';
 import { AnnouncementSearch } from '../../model/AnnouncementSearch';
 import { Confrere } from '../../model/Confrere';
 import { AnnouncementService } from '../../services/announcement.service';
+import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { QuotationService } from '../../services/quotation.service';
 
@@ -31,7 +32,8 @@ export class AnnouncementListComponent implements OnInit, AfterContentChecked {
     private customerOrderService: CustomerOrderService,
     private appService: AppService,
     private formBuilder: FormBuilder,
-    private quotationService: QuotationService
+    private quotationService: QuotationService,
+    private announcementStatusService: AnnouncementStatusService,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -73,10 +75,14 @@ export class AnnouncementListComponent implements OnInit, AfterContentChecked {
   refreshData() {
     if (this.confrere) {
       this.announcementSearch.confrere = this.confrere;
+      this.announcementSearch.announcementStatus = [];
       this.announcementSearch.endDate = new Date();
       this.announcementSearch.startDate = new Date();
       this.announcementSearch.startDate.setDate(this.announcementSearch.startDate.getDate() - 30);
-      this.searchAnnouncements();
+      this.announcementStatusService.getAnnouncementStatus().subscribe(response => {
+        this.announcementSearch.announcementStatus = response;
+        this.searchAnnouncements();
+      })
     }
   }
 

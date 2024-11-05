@@ -18,7 +18,6 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
 import { Provision } from 'src/app/modules/quotation/model/Provision';
-import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
@@ -248,6 +247,11 @@ export class AddInvoiceComponent implements OnInit {
         let nowDate = new Date();
         if (this.invoice.manualAccountingDocumentDate.getTime() < limitDateInvocing.getTime() && limitDateAdding.getTime() < nowDate.getTime()) {
           this.appService.displaySnackBar("Impossible de saisir une facture sur l'exercice précédent", true, 10);
+          return;
+        }
+
+        if (this.invoice.manualAccountingDocumentDate.getTime() < this.minDate.getTime() || this.invoice.manualAccountingDocumentDate.getTime() > this.maxDate.getTime()) {
+          this.appService.displaySnackBar("Date de la pièce comptable invalide", true, 10);
           return;
         }
       }

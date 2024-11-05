@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -10,7 +11,6 @@ import { AppService } from 'src/app/services/app.service';
 import { AccountingJournal } from '../../model/AccountingJournal';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordService } from '../../services/accounting.record.service';
-import { ActivatedRoute, UrlSegment } from '@angular/router';
 @Component({
   selector: 'add-accounting-record',
   templateUrl: './add-accounting-record.component.html',
@@ -162,6 +162,10 @@ export class AddAccountingRecordComponent implements OnInit {
           return;
         }
         journalId = record.accountingJournal.id;
+        if (record.operationDateTime.getTime() > this.maxDate.getTime() || record.operationDateTime.getTime() < this.minDate.getTime()) {
+          this.appService.displaySnackBar("Dates de l'opération invalides", true, 10);
+          return;
+        }
       }
 
       if ((Math.round(this.getTotalBalance() * 100) / 100) == 0) {
