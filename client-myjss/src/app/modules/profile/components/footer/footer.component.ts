@@ -19,4 +19,25 @@ export class FooterComponent implements OnInit {
   openPage(page: string, event: any) {
     this.appService.openRoute(event, page + "/", undefined);
   }
+
+  openContact(event: any) {
+    this.appService.openRoute(event, "contact", undefined);
+  }
+
+  openJoinUs(event: any) {
+    this.appService.openRoute(event, "join-us", undefined);
+  }
+
+
+  openPartners(event: any) {
+    this.appService.openRoute(event, "partners", undefined);
+  }
+
+  openLegalMentions(event: any) {
+    this.appService.openRoute(event, "legal-mentions", undefined);
+  }
+
+  openConfidentialityPolitic(event: any) {
+    this.appService.openRoute(event, "confidentiality", undefined);
+  }
 }

@@ -1,24 +1,9 @@
-<!-- =======================
-Inner intro START -->
-<section class="pt-4">
+<section class="pt-4" *ngIf="currentTag">
   <div class="container">
-    <div class="row">
-      <div class="col-12" *ngIf="currentTag">
-        <div class="bg-primary bg-opacity-10 p-4 p-md-5 rounded-3 text-center"
-          style=" background-position: center left; background-size: cover;">
-          <div class="row justify-content-md-center">
-            <div class="col-lg-5  bg-white bg-opacity-75 rounded-3 text-center">
-              <h1>#{{currentTag.name}}</h1>
-              <nav class="d-flex justify-content-center" aria-label="breadcrumb">
-                <ol class="breadcrumb breadcrumb-dots m-0">
-                  <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house me-1"></i> Accueil</a></li>
-                  <li class="breadcrumb-item "><a style="cursor: pointer;">#{{currentTag.name}}</a></li>
-                  <li class="breadcrumb-item active">Tous les posts</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
+    <div class="row justify-content-center text-center">
+      <div class="col-md-8">
+        <div class="display-1 text-primary">#{{currentTag.name}}</div>
+        <p>{{currentTag.count}} article{{currentTag.count>1?'s':''}} pour ce tag</p>
       </div>
     </div>
   </div>

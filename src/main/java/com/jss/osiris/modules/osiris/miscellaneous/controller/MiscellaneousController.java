@@ -33,6 +33,7 @@ import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
+import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -107,6 +108,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
+import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
@@ -266,6 +268,12 @@ public class MiscellaneousController {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    AnnouncementService announcementService;
+
+    @Autowired
+    PostService postService;
 
     @GetMapping(inputEntryPoint + "/categories")
     public ResponseEntity<List<Category>> getCategories() {
@@ -1189,6 +1197,7 @@ public class MiscellaneousController {
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @GetMapping(inputEntryPoint + "/index/reindex/all")
     public ResponseEntity<Boolean> reindexAll() throws OsirisException {
+        postService.reindexPosts();
         invoiceService.reindexInvoices();
         tiersService.reindexTiers();
         refundService.reindexRefunds();
@@ -1222,6 +1231,13 @@ public class MiscellaneousController {
     @GetMapping(inputEntryPoint + "/index/reindex/affaire")
     public ResponseEntity<Boolean> reindexAffaire() throws OsirisException {
         affaireService.reindexAffaire();
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/post")
+    public ResponseEntity<Boolean> reindexPost() throws OsirisException {
+        postService.reindexPosts();
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 

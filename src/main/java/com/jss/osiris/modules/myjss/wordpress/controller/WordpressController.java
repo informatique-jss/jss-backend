@@ -1,17 +1,26 @@
 package com.jss.osiris.modules.myjss.wordpress.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Page;
@@ -19,6 +28,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
+import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.MyJssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.PageService;
@@ -27,6 +37,8 @@ import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
 import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
+import com.jss.osiris.modules.osiris.quotation.model.Announcement;
+import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -34,6 +46,11 @@ import jakarta.servlet.http.HttpServletRequest;
 public class WordpressController {
 
 	private static final String inputEntryPoint = "/wordpress";
+
+	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
+	private final long rateLimit = 10;
+	private LocalDateTime lastFloodFlush = LocalDateTime.now();
+	private int floodFlushDelayMinute = 1;
 
 	@Autowired
 	PublishingDepartmentService publishingDepartmentService;
@@ -58,6 +75,15 @@ public class WordpressController {
 
 	@Autowired
 	PostViewService postViewService;
+
+	@Autowired
+	AuthorService authorService;
+
+	@Autowired
+	SearchService searchService;
+
+	@Autowired
+	AnnouncementService announcementService;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -92,6 +118,11 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/serie/slug")
 	public ResponseEntity<Serie> getSerieBySlug(@RequestParam String slug) {
 		return new ResponseEntity<Serie>(serieService.getSerieBySlug(slug), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/author/slug")
+	public ResponseEntity<Author> getAuthorBySlug(@RequestParam String slug) {
+		return new ResponseEntity<Author>(authorService.getAuthorBySlug(slug), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/pages")
@@ -145,6 +176,14 @@ public class WordpressController {
 		return new ResponseEntity<List<Post>>(postService.getPostsByTag(page, tag), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/top/author")
+	public ResponseEntity<List<Post>> getTopPostByAuthor(@RequestParam Integer page, @RequestParam Integer authorId) {
+		Author author = authorService.getAuthor(authorId);
+		if (author == null)
+			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(postService.getPostsByAuthor(page, author), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/top/department")
 	public ResponseEntity<List<Post>> getTopPostByDepartment(@RequestParam Integer page,
 			@RequestParam Integer departmentId) throws OsirisException {
@@ -172,6 +211,87 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/tag/slug")
 	public ResponseEntity<Tag> getTagBySlug(@RequestParam String slug) {
 		return new ResponseEntity<Tag>(tagService.getTagBySlug(slug), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/search/post")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
+			throws OsirisException {
+		if (searchText != null && searchText.length() > 2)
+			return new ResponseEntity<List<IndexEntity>>(
+					searchService.searchForEntities(searchText, Post.class.getSimpleName(), false),
+					HttpStatus.OK);
+		return new ResponseEntity<List<IndexEntity>>(new ArrayList<IndexEntity>(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/announcement/top")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Announcement>> getTopAnnouncement(@RequestParam Integer page, HttpServletRequest request)
+			throws OsirisException {
+		detectFlood(request);
+		return new ResponseEntity<List<Announcement>>(announcementService.getTopAnnouncementForWebSite(page),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/announcement/search")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Announcement>> getTopAnnouncementSearch(@RequestParam Integer page,
+			@RequestParam String denomination, @RequestParam String siren, @RequestParam String noticeSearch,
+			HttpServletRequest request)
+			throws OsirisException {
+		detectFlood(request);
+
+		if (denomination == null || denomination.trim().length() == 0)
+			denomination = "";
+		denomination = denomination.trim().toLowerCase();
+
+		if (siren == null || siren.trim().length() == 0)
+			siren = "";
+		siren = siren.trim().toLowerCase();
+
+		if (noticeSearch == null || noticeSearch.trim().length() == 0)
+			noticeSearch = "";
+		noticeSearch = noticeSearch.trim().toLowerCase();
+
+		if (denomination.equals("") && siren.equals("") && noticeSearch.equals(""))
+			return new ResponseEntity<List<Announcement>>(new ArrayList<Announcement>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Announcement>>(
+				announcementService.getAnnouncementForWebSite(page, denomination, siren, noticeSearch), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/announcement/unique")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Announcement> getAnnouncement(@RequestParam Integer announcementId,
+			HttpServletRequest request)
+			throws OsirisException {
+		detectFlood(request);
+
+		Announcement announcement = announcementService.getAnnouncement(announcementId);
+
+		if (announcement == null)
+			return new ResponseEntity<Announcement>(new Announcement(), HttpStatus.OK);
+
+		return new ResponseEntity<Announcement>(announcementService.getAnnouncementForWebSite(announcement),
+				HttpStatus.OK);
+	}
+
+	private ResponseEntity<String> detectFlood(HttpServletRequest request) {
+		if (lastFloodFlush.isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
+			requestCount.clear();
+		else
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+
+		String ipAddress = request.getRemoteAddr();
+		AtomicLong count = requestCount.computeIfAbsent(ipAddress, k -> new AtomicLong());
+
+		if (count.incrementAndGet() > rateLimit) {
+			return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.TOO_MANY_REQUESTS);
+		}
+		return null;
 	}
 
 }

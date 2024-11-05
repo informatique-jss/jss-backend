@@ -1,0 +1,44 @@
+<!-- =======================
+Inner intro START -->
+<section *ngIf="announcement">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-9 mx-auto pt-md-5">
+        <a class="badge text-bg-warning mb-2 margin-category btn-primary-soft" style="margin-right: 8px;"><i
+            class="fas fa-circle me-2 small fw-bold"></i>{{announcement.noticeTypeFamily.label}}</a>
+        <ng-container *ngIf="announcement.noticeTypes!=null">
+          <a *ngFor="let noticeType of announcement.noticeTypes" style="margin-right: 8px;"
+            class="badge text-bg-primary mb-2 margin-category btn-primary-soft"><i
+              class="fas fa-circle me-2 small fw-bold"></i>{{noticeType.label}}</a>
+        </ng-container>
+        <h1 class="display-4 text-center pt-3">{{announcement.affaireLabel}}</h1>
+        <ul class="nav nav-divider align-items-center">
+          <li class="nav-item " *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
+            <span>{{announcement.affaireSiren}}</span>
+          </li>
+          <li class="nav-item">{{announcement.department.label}} ({{announcement.department.code}})</li>
+          <li class="nav-item">le {{announcement.publicationDate | date:'EEEE d MMMM'}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- =======================
+Inner intro END -->
+
+<!-- =======================
+Main START -->
+<section class="pt-0">
+  <div class="container position-relative">
+    <div class="row">
+      <!-- Main Content START -->
+      <div class="col-lg-9 mx-auto">
+        <p *ngIf="announcement && announcement.noticeHeader" [innerHTML]="announcement.noticeHeader| trustHtml"></p>
+        <p *ngIf="announcement && announcement.notice" [innerHTML]="announcement.notice| trustHtml"></p>
+      </div>
+      <!-- Main Content END -->
+    </div>
+  </div>
+</section>
+<!-- =======================
+Main END -->

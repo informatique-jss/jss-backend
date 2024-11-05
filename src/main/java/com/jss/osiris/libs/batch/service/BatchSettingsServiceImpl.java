@@ -545,6 +545,30 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.REINDEX_POST) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_POST);
+            batchSettings.setLabel("Indexation - Articles WordPress");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.REINDEX_POST) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.REINDEX_POST);
+            batchSettings.setLabel("Indexation - Articles WordPress");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(5);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDEXATION));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.SIGN_FORMALITE_GUICHET_UNIQUE) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.SIGN_FORMALITE_GUICHET_UNIQUE);

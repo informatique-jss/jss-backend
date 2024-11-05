@@ -19,9 +19,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
-import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -82,10 +80,11 @@ public class MailComputeHelper {
     public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
         if (quotation.getId() != null) {
-            if (quotation instanceof CustomerOrder)
-                quotation = customerOrderService.getCustomerOrder(quotation.getId());
-            if (quotation instanceof Quotation)
-                quotation = quotationService.getQuotation(quotation.getId());
+            IQuotation fetchedQuotation = quotation = customerOrderService.getCustomerOrder(quotation.getId());
+            if (fetchedQuotation == null)
+                fetchedQuotation = quotationService.getQuotation(quotation.getId());
+            if (fetchedQuotation != null)
+                quotation = fetchedQuotation;
         }
         return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
     }

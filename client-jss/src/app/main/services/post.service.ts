@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../services/appRest.service';
+import { Author } from '../model/Author';
 import { MyJssCategory } from '../model/MyJssCategory';
 import { Post } from '../model/Post';
 import { PublishingDepartment } from '../model/PublishingDepartment';
@@ -41,6 +42,10 @@ export class PostService extends AppRestService<Post> {
 
   getTopPostByDepartment(page: number, department: PublishingDepartment) {
     return this.getList(new HttpParams().set("page", page).set("departmentId", department.id), "posts/top/department");
+  }
+
+  getTopPostByAuthor(page: number, author: Author) {
+    return this.getList(new HttpParams().set("page", page).set("authorId", author.id), "posts/top/author");
   }
 
   getTopPostInterview(page: number) {

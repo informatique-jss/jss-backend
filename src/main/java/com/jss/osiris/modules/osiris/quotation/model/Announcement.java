@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -28,6 +31,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_announcement_status", columnList = "id_announcement_status"),
@@ -39,10 +43,12 @@ public class Announcement implements IId, IDocument {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_department")
+	@JsonView(JacksonViews.MyJssView.class)
 	private Department department;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -54,20 +60,25 @@ public class Announcement implements IId, IDocument {
 	private AnnouncementStatus announcementStatus;
 
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDate publicationDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_notice_type_family")
+	@JsonView(JacksonViews.MyJssView.class)
 	private NoticeTypeFamily noticeTypeFamily;
 
 	@ManyToMany
 	@JoinTable(name = "asso_announcement_notice_type", joinColumns = @JoinColumn(name = "id_announcement"), inverseJoinColumns = @JoinColumn(name = "id_notice_type"))
+	@JsonView(JacksonViews.MyJssView.class)
 	private List<NoticeType> noticeTypes;
 
 	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssView.class)
 	private String notice;
 
 	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssView.class)
 	private String noticeHeader;
 
 	@Column(nullable = false)
@@ -109,6 +120,18 @@ public class Announcement implements IId, IDocument {
 	private Integer characterNumber;
 
 	private Boolean isBilanPublicationReminderIsSent;
+
+	@OneToMany(mappedBy = "announcement")
+	@JsonIgnore
+	private List<Provision> provisions;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	private String affaireLabel;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssView.class)
+	private String affaireSiren;
 
 	public Integer getId() {
 		return id;
@@ -365,6 +388,30 @@ public class Announcement implements IId, IDocument {
 
 	public void setIsBilanPublicationReminderIsSent(Boolean isBilanPublicationReminderIsSent) {
 		this.isBilanPublicationReminderIsSent = isBilanPublicationReminderIsSent;
+	}
+
+	public List<Provision> getProvisions() {
+		return provisions;
+	}
+
+	public void setProvisions(List<Provision> provisions) {
+		this.provisions = provisions;
+	}
+
+	public String getAffaireLabel() {
+		return affaireLabel;
+	}
+
+	public void setAffaireLabel(String affaireLabel) {
+		this.affaireLabel = affaireLabel;
+	}
+
+	public String getAffaireSiren() {
+		return affaireSiren;
+	}
+
+	public void setAffaireSiren(String affaireSiren) {
+		this.affaireSiren = affaireSiren;
 	}
 
 }

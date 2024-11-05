@@ -64,6 +64,7 @@ public class Batch implements IId {
     public static String REINDEX_QUOTATION = "REINDEX_QUOTATION";
     public static String REINDEX_RESPONSABLE = "REINDEX_RESPONSABLE";
     public static String REINDEX_TIERS = "REINDEX_TIERS";
+    public static String REINDEX_POST = "REINDEX_POST";
     public static String PURGE_INVOICE = "PURGE_INVOICE";
 
     @Id

@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { TimeFormatPipe } from '../../../libs/TimeFormatPipe';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
+import { AnnouncementComponent } from '../announcement/announcement.component';
 import { ArticlesCategoryComponent } from '../articles-category/articles-category.component';
 import { AuthorListComponent } from '../author-list/author-list.component';
 import { BodyArticlesComponent } from '../body-articles/body-articles.component';
-import { ContactUsComponent } from '../contact-us/contact-us.component';
 import { DepartmentListComponent } from '../department-list/department-list.component';
 import { HeaderComponent } from '../header/header.component';
 import { InterviewListComponent } from '../interview-list/interview-list.component';
@@ -31,20 +32,20 @@ const routes: Routes = [
   { path: 'interviews', component: InterviewListComponent },
   { path: 'series', component: SerieListComponent },
   { path: 'serie/:slug', component: SerieComponent },
-  { path: 'contact', component: ContactUsComponent },
   { path: 'department/:code', component: DepartmentListComponent },
   { path: 'announcement/search', component: SearchAnnouncementComponent },
+  { path: 'announcement/:id', component: AnnouncementComponent },
 ];
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload', scrollPositionRestoration: 'enabled' }),
   ],
   declarations: [
     MainComponent,
     HeaderComponent,
-    ContactUsComponent,
     TrendComponent,
     NewArticlesComponent,
     TrustHtmlPipe,
@@ -60,7 +61,8 @@ const routes: Routes = [
     SerieComponent,
     SearchAnnouncementComponent,
     TagListComponent,
-    TimeFormatPipe
+    TimeFormatPipe,
+    AnnouncementComponent,
   ],
   exports: [
     HeaderComponent,

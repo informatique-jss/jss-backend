@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { CgvComponent } from '../cgv/cgv.component';
 import { ConfidentialityPoliticComponent } from '../confidentiality-politic/confidentiality-politic.component';
+import { ContactUsComponent } from '../contact-us/contact-us.component';
 import { JoinUsComponent } from '../join-us/join-us.component';
 import { LegalMentionsComponent } from '../legal-mentions/legal-mentions.component';
 import { PartnersComponent } from '../partners/partners.component';
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'legal-mentions', component: LegalMentionsComponent },
   { path: 'cgv', component: CgvComponent },
   { path: 'confidentiality', component: ConfidentialityPoliticComponent },
+  { path: 'contact', component: ContactUsComponent },
 ];
 
 

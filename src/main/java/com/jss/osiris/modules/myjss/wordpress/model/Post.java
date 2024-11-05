@@ -6,6 +6,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +24,7 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true) })
-public class Post {
+public class Post implements IId {
     @Id
     private Integer id;
 
@@ -40,14 +42,17 @@ public class Post {
     @Transient
     private Content title;
     @Column(columnDefinition = "TEXT")
+    @IndexedField
     private String titleText;
 
     @Transient
     private Content excerpt;
     @Column(columnDefinition = "TEXT")
+    @IndexedField
     private String excerptText;
 
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+    @IndexedField
     private LocalDateTime date;
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     private LocalDateTime modified;
@@ -60,6 +65,8 @@ public class Post {
 
     @Transient
     private Integer featured_media;
+
+    @IndexedField
     private String slug;
     private boolean sticky;
 
@@ -69,15 +76,18 @@ public class Post {
     @Transient
     private Content content;
     @Column(columnDefinition = "TEXT")
+    @IndexedField
     private String contentText;
 
     // Computed field
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author")
+    @IndexedField
     private Author fullAuthor;
 
     @ManyToMany
     @JoinTable(name = "asso_post_my_jss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_my_jss_category"))
+    @IndexedField
     private List<MyJssCategory> myJssCategories;
 
     @ManyToMany
@@ -90,6 +100,7 @@ public class Post {
 
     @ManyToMany
     @JoinTable(name = "asso_post_tag", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
+    @IndexedField
     private List<Tag> postTags;
 
     @ManyToMany
@@ -98,6 +109,7 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_media")
+    @IndexedField
     private Media media;
 
     @ManyToMany

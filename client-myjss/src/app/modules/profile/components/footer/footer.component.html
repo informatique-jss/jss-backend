@@ -17,10 +17,12 @@
                 (click)="openPage('access-plan', $event)">Plan d'accès</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Mentions légales</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;"
+                (click)="openLegalMentions( $event)">Mentions légales</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Politique de confidentialité</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;"
+                (click)="openConfidentialityPolitic( $event)">Politique de confidentialité</a>
             </li>
           </ul>
         </div>
@@ -55,16 +57,22 @@
               <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Notre histoire</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Nos partenaires</a>
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;" (click)="openPartners( $event)">Nos
+                partenaires</a>
             </li>
             <li class="nav-item">
               <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">Notre équipe</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;" (click)="openJoinUs($event)">Nous
+                rejoindre</a>
             </li>
           </ul>
         </div>
       </div>
       <div class="col-md-3 pb-2 pb-md-0">
-        <h3 class="h6 text-uppercase d-none d-md-block">Contact</h3>
+        <h3 class="h6 text-uppercase d-none d-md-block" style="cursor: pointer;" (click)="openContact( $event)">Contact
+        </h3>
         <a class="btn-more h6 mb-1 text-uppercase text-decoration-none d-flex align-items-center collapsed d-md-none"
           href="#showroom" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="showroom"
           data-show-label="Contact" data-hide-label="Contact" aria-label="Contact"></a>
@@ -72,9 +80,6 @@
           <ul class="nav flex-column pb-3">
             <li class="nav-item">
               <a class="nav-link fw-normal px-0 py-1" style="cursor: pointer;">10 boulevard Haussmann<br>75009 Paris</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link fw-normal px-0 py-1" href="mailto:contact@jss.fr">{{'contact@jss.fr'}}</a>
             </li>
             <li class="nav-item">
               <a class="nav-link fw-normal px-0 py-1" href="tel:+33147031010">01&nbsp;47&nbsp;03&nbsp;10&nbsp;10</a>

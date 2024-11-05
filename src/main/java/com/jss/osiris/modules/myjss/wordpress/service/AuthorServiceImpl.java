@@ -33,4 +33,9 @@ public class AuthorServiceImpl implements AuthorService {
         }
         return authorRepository.save(author);
     }
+
+    @Override
+    public Author getAuthorBySlug(String slug) {
+        return authorRepository.findBySlug(slug);
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
@@ -40,5 +41,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         List<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b);
 
         List<Post> findByPostTagsAndIsCancelled(Tag tag, boolean b, Pageable pageableRequest);
+
+        List<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, Pageable pageableRequest);
 
 }

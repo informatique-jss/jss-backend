@@ -19,7 +19,10 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.Media;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
@@ -59,6 +62,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    BatchService batchService;
 
     @Value("${apache.media.base.url}")
     private String apacheMediaBaseUrl;
@@ -107,7 +113,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Post addOrUpdatePostFromWordpress(Post post) {
+    public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException {
         post.setIsCancelled(false);
         if (post.getTitle() != null)
             post.setTitleText(post.getTitle().getRendered());
@@ -140,7 +146,9 @@ public class PostServiceImpl implements PostService {
             post.setVideoUrl(url.replace(wordpressMediaBaseUrl, apacheMediaBaseUrl));
         }
 
-        return postRepository.save(computePost(post));
+        postRepository.save(computePost(post));
+        batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
+        return post;
     }
 
     @Override
@@ -162,6 +170,14 @@ public class PostServiceImpl implements PostService {
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
         return postRepository.findByPostTagsAndIsCancelled(tag, false, pageableRequest);
+    }
+
+    @Override
+    public List<Post> getPostsByAuthor(Integer page, Author author) {
+        Order order = new Order(Direction.DESC, "date");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+        return postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
     }
 
     @Override
@@ -293,5 +309,14 @@ public class PostServiceImpl implements PostService {
         post = getPost(post.getId());
         post.setIsCancelled(true);
         postRepository.save(post);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reindexPosts() throws OsirisException {
+        List<Post> posts = IterableUtils.toList(postRepository.findAll());
+        if (posts != null)
+            for (Post post : posts)
+                batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
     }
 }

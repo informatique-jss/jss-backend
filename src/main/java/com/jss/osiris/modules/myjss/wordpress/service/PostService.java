@@ -3,6 +3,7 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
@@ -10,7 +11,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 
 public interface PostService {
-        public Post addOrUpdatePostFromWordpress(Post post);
+        public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException;
 
         public List<Post> getPosts(int page) throws OsirisException;
 
@@ -35,4 +36,8 @@ public interface PostService {
         public List<Post> getPostBySerie(Serie serie);
 
         public List<Post> getPostsByTag(Integer page, Tag tag);
+
+        public List<Post> getPostsByAuthor(Integer page, Author author);
+
+        public void reindexPosts() throws OsirisException;
 }

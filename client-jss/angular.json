@@ -74,9 +74,19 @@
                 "bundleName": "sticky.min.js"
               },
               {
+                "input": "src/libs/sticky-js/sticky.min.js",
+                "inject": true,
+                "bundleName": "sticky.min.js"
+              },
+              {
                 "input": "src/libs/plyr/plyr.js",
                 "inject": true,
                 "bundleName": "plyr.js"
+              },
+              {
+                "input": "src/assets/js/functions.js",
+                "inject": true,
+                "bundleName": "functions.js"
               },
               {
                 "input": "src/assets/js/functions.js",

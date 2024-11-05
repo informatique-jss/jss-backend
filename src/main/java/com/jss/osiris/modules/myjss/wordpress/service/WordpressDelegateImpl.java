@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.Media;
@@ -284,7 +285,7 @@ public class WordpressDelegateImpl implements WordpressDelegate {
 
     @Transactional(rollbackOn = Exception.class)
     @Override
-    public void synchroniseWordpress() {
+    public void synchroniseWordpress() throws OsirisException {
         List<PublishingDepartment> departments = getAvailableDepartments();
         if (departments != null)
             for (PublishingDepartment department : departments)

@@ -5,4 +5,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.Author;
 
 public interface AuthorRepository extends QueryCacheCrudRepository<Author, Integer> {
 
+    Author findBySlug(String slug);
+
 }

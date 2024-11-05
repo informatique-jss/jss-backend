@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,6 +35,8 @@ public class Media {
     private String urlLarge;
     private String urlMedium;
     private String urlMediumLarge;
+
+    @IndexedField
     private String urlThumbnail;
     private Integer length;
 

@@ -13,6 +13,7 @@
         </ul>
         <!-- Top bar right -->
         <div class="d-flex align-items-center">
+
           <!-- Font size accessibility START -->
           <div class="btn-group me-3" role="group" aria-label="font size changer">
             <input type="radio" class="btn-check" name="fntradio" id="font-sm">
@@ -23,6 +24,12 @@
 
             <input type="radio" class="btn-check" name="fntradio" id="font-lg">
             <label class="btn btn-xs btn-outline-primary mb-0" for="font-lg">A+</label>
+          </div>
+
+          <div class="nav-item">
+            <a class="nav-link px-2 fs-5" role="button" data-bs-toggle="modal" data-bs-target="#searchModal">
+              <i class="bi bi-search fs-4"> </i>
+            </a>
           </div>
 
           <!-- Dark mode options START -->
@@ -183,3 +190,56 @@
   </nav>
   <!-- Logo Nav END -->
 </header>
+
+
+<!-- Modal Search START -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <!-- Modal header -->
+      <div class="modal-header border-0 pt-sm-5 pe-sm-5">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row"
+          [ngClass]="{'align-items-center' : !indexedEntities || indexedEntities.length==0,'h-100' : !indexedEntities || indexedEntities.length==0}">
+          <div class="col-lg-5 mx-auto mb-5">
+            <h2 class="mb-4">Rechercher des articles du JSS</h2>
+            <!-- Search form START -->
+            <form class="position-relative w-100">
+              <div class="mb-2 input-group-lg mb-0">
+                <!-- Search input -->
+                <input class="form-control mb-0 pe-6" type="text" name="search" placeholder="Que recherchez-vous ?"
+                  [(ngModel)]="searchText" (keydown)="searchEntities()" [ngModelOptions]="{standalone: true}">
+              </div>
+              <!-- Search button -->
+              <button type="button" class="position-absolute end-0 top-0 btn h-100 border-0">
+                <i class="bi bi-search display-8"></i>
+              </button>
+            </form>
+            <!-- Search form END -->
+            <p class="small mb-0">ex : droit des société, tribunal d'instance, TUP </p>
+          </div>
+        </div>
+        <div class="row">
+          <div *ngIf="indexedEntities" class="col-lg-5 mx-auto">
+            <div class="card mb-3" *ngFor="let post of indexedEntities">
+              <div class="row g-3">
+                <div class="col-4">
+                  <img class="rounded" [src]="post.text.media.urlThumbnail" alt="">
+                </div>
+                <div class="col-8">
+                  <h6><a style="cursor: pointer;" (click)="openPost(post.text.slug, $event)"
+                      class="btn-link stretched-link text-reset fw-bold" [innerHTML]="post.text.titleText| trustHtml">
+                    </a>
+                  </h6>
+                  <p [innerHTML]="post.text.excerptText| trustHtml"></p>
+                  <div class="small mt-1">{{post.text.date | date:'EEEE d MMMM'}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

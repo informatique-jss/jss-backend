@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import com.jss.osiris.libs.search.model.IndexedField;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -9,6 +11,8 @@ public class Tag {
     private Integer id;
     private Integer count;
     private String slug;
+
+    @IndexedField
     private String name;
 
     public Integer getId() {

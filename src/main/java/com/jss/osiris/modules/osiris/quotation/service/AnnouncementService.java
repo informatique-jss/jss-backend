@@ -94,4 +94,11 @@ public interface AnnouncementService {
         public void sendReminderToCustomerForBilanPublication(Announcement announcement)
                         throws OsirisException, OsirisClientMessageException;
 
+        public List<Announcement> getAnnouncementForWebSite(Integer page, String denomination, String siren,
+                        String noticeSearch) throws OsirisException;
+
+        public List<Announcement> getTopAnnouncementForWebSite(Integer page) throws OsirisException;
+
+        public Announcement getAnnouncementForWebSite(Announcement announcement) throws OsirisException;
+
 }

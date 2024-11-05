@@ -8,11 +8,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.itextpdf.text.pdf.PdfReader;
@@ -106,7 +112,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public Announcement addOrUpdateAnnouncement(Announcement announcement) {
+    public Announcement addOrUpdateAnnouncement(Announcement announcement) throws OsirisException {
         return announcementRepository.save(announcement);
     }
 
@@ -880,5 +886,81 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 addOrUpdateAnnouncement(announcement);
             }
         }
+    }
+
+    @Override
+    public List<Announcement> getAnnouncementForWebSite(Integer page, String denomination, String siren,
+            String noticeSearch) throws OsirisException {
+        Order order = new Order(Direction.DESC, "publicationDate");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+
+        List<CustomerOrderStatus> customerOrderStatusExcluded = new ArrayList<CustomerOrderStatus>();
+        customerOrderStatusExcluded
+                .add(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
+
+        List<AnnouncementStatus> announcementStatus = new ArrayList<AnnouncementStatus>();
+        announcementStatus
+                .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+        announcementStatus
+                .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
+
+        return populateAffaireLabel(
+                announcementRepository.searchAnnouncementForWebSite(denomination, siren, noticeSearch,
+                        customerOrderStatusExcluded, announcementStatus, constantService.getConfrereJssSpel(),
+                        pageableRequest));
+    }
+
+    @Override
+    public List<Announcement> getTopAnnouncementForWebSite(Integer page) throws OsirisException {
+        Order order = new Order(Direction.DESC, "publicationDate");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+
+        List<CustomerOrderStatus> customerOrderStatusExcluded = new ArrayList<CustomerOrderStatus>();
+        customerOrderStatusExcluded
+                .add(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
+
+        List<AnnouncementStatus> announcementStatus = new ArrayList<AnnouncementStatus>();
+        announcementStatus
+                .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+        announcementStatus
+                .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
+
+        return populateAffaireLabel(
+                announcementRepository.searchAnnouncementTopForWebSite(customerOrderStatusExcluded, announcementStatus,
+                        constantService.getConfrereJssSpel(), LocalDate.now().minusMonths(3),
+                        pageableRequest));
+    }
+
+    @Override
+    public Announcement getAnnouncementForWebSite(Announcement announcement) throws OsirisException {
+        announcement = getAnnouncement(announcement.getId());
+        return populateAffaireLabel(Arrays.asList(announcement)).get(0);
+    }
+
+    private List<Announcement> populateAffaireLabel(List<Announcement> announcements) {
+        if (announcements != null)
+            for (Announcement announcement : announcements) {
+                if (announcement.getProvisions() != null && announcement.getProvisions().size() > 0)
+                    if (announcement.getProvisions().get(0).getService() != null)
+                        if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder() != null)
+                            if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder()
+                                    .getAffaire() != null) {
+                                announcement.setAffaireLabel(announcement.getProvisions().get(0).getService()
+                                        .getAssoAffaireOrder().getAffaire().getDenomination() != null
+                                                ? announcement.getProvisions().get(0).getService().getAssoAffaireOrder()
+                                                        .getAffaire().getDenomination()
+                                                : (announcement.getProvisions().get(0).getService()
+                                                        .getAssoAffaireOrder().getAffaire().getFirstname() + ' '
+                                                        + announcement.getProvisions().get(0).getService()
+                                                                .getAssoAffaireOrder().getAffaire().getLastname()));
+                                if (announcement.getProvisions().get(0).getService()
+                                        .getAssoAffaireOrder().getAffaire().getSiren() != null)
+                                    announcement.setAffaireSiren(announcement.getProvisions().get(0).getService()
+                                            .getAssoAffaireOrder().getAffaire().getSiren());
+                            }
+            }
+        return announcements;
     }
 }

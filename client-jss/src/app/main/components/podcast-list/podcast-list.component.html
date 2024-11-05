@@ -27,7 +27,7 @@
               </div>
               <!-- Title -->
               <h4 class="card-title">
-                <a href="podcast-single.html" class="btn-link text-reset"
+                <a style="cursor: pointer;" (click)="openPodcast(podcast, $event)" class="btn-link text-reset"
                   [innerHTML]="podcast.titleText| trustHtml"></a>
               </h4>
               <!-- Author info -->
