@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.HtmlTruncateHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -65,6 +66,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    HtmlTruncateHelper htmlTruncateHelper;
 
     @Value("${apache.media.base.url}")
     private String apacheMediaBaseUrl;
@@ -216,12 +220,67 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByPostSerieAndIsCancelled(serie, false);
     }
 
+    @Override
+    public Post getNextPost(Post post) {
+        if (post != null && post.getMyJssCategories() != null && post.getMyJssCategories().size() > 0) {
+            Order order = new Order(Direction.ASC, "date");
+            Sort sort = Sort.by(Arrays.asList(order));
+            Pageable pageableRequest = PageRequest.of(0, 1, sort);
+            List<Post> posts = postRepository.findNextArticle(post.getMyJssCategories().get(0), post.getDate(),
+                    pageableRequest);
+            if (posts != null && posts.size() > 0)
+                return posts.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public Post getPreviousPost(Post post) {
+        if (post != null && post.getMyJssCategories() != null && post.getMyJssCategories().size() > 0) {
+            Order order = new Order(Direction.DESC, "date");
+            Sort sort = Sort.by(Arrays.asList(order));
+            Pageable pageableRequest = PageRequest.of(0, 1, sort);
+            List<Post> posts = postRepository.findPreviousArticle(post.getMyJssCategories().get(0), post.getDate(),
+                    pageableRequest);
+            if (posts != null && posts.size() > 0)
+                return posts.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Post> applyPremium(List<Post> posts) {
+        if (posts != null)
+            for (Post post : posts) {
+                applyPremium(post);
+            }
+        return posts;
+    }
+
+    @Override
+    public Post applyPremium(Post post) {
+        if (post != null)
+            if (post.getIsPremium() != null && post.getIsPremium()) {
+                // TODO : check user connected and have the right
+                boolean haveTheRight = false;
+                if (!haveTheRight) {
+                    Integer percentage = 20;
+                    if (post.getPremiumPercentage() != null && post.getPremiumPercentage() > 0)
+                        percentage = post.getPremiumPercentage();
+
+                    post.setContentText(htmlTruncateHelper.truncateHtml(post.getContentText(), percentage));
+                }
+            }
+        return post;
+    }
+
     private Post computePost(Post post) {
         if (post.getFeatured_media() != null && post.getFeatured_media() > 0) {
             post.setMedia(mediaService.getMedia(post.getFeatured_media()));
         }
         if (post.getAcf() != null) {
-            post.setPremium(post.getAcf().isPremium());
+            post.setIsPremium(post.getAcf().isPremium());
+            post.setPremiumPercentage(post.getAcf().getPremium_percentage());
             if (post.getAcf().getAssociated_post() != null) {
                 List<Post> postList = new ArrayList<Post>();
                 for (Integer postId : post.getAcf().getAssociated_post()) {

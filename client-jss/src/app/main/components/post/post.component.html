@@ -40,7 +40,7 @@ Main START -->
           <hr class="d-none d-lg-block">
           <!-- Card info -->
           <ul class="list-inline list-unstyled">
-            <li class="list-inline-item d-lg-block my-lg-2">{{post.date | date:'EEEE d MMMM'}}</li>
+            <li class="list-inline-item d-lg-block my-lg-2">{{post.date | date:'EEEE d MMMM HH:mm'}}</li>
             <li class="list-inline-item d-lg-block my-lg-2">{{getTimeReading(post.contentText)}}</li>
             <!--li class="list-inline-item d-lg-block my-lg-2"><i class="far fa-eye me-1"></i> 2344 vues</li -- > <!-- to decide when display -->
           </ul>
@@ -56,6 +56,22 @@ Main START -->
       <!-- Main Content START -->
       <div class="col-lg-7 mb-5">
         <span [innerHTML]="post.contentText| trustHtml"></span>
+
+        <!-- Bannière d'abonnement en bas de l'article visible -->
+
+        <div class="subscription-overlay d-flex justify-content-center align-items-center flex-column text-center p-4"
+          style="position: relative; background: rgba(255, 255, 255, 0.85); color: #333; margin-top: -170px; padding-top: 20px;"
+          *ngIf="post.premium">
+          <h2 class="fw-bold">Vous souhaitez lire la suite ?</h2>
+          <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en intégralité et de
+            bien d'autres !</p>
+          <div><a class="btn btn-primary mt-3" style="margin-right: 20px;cursor: pointer;"
+              (click)="openSubscribe($event)">Lire pour 1 €</a>
+            <a href="/abonnement" class="btn btn-primary mt-3" style="cursor: pointer;"
+              (click)="openSubscribe($event)">S'abonner</a>
+          </div>
+        </div>
+
 
         <div class="text-center h5 mb-4" *ngIf="post.relatedPosts && post.relatedPosts.length>0">. . .</div>
 
@@ -117,14 +133,15 @@ Main START -->
 
         <div class="row g-0">
           <div class="col-sm-6 bg-primary bg-opacity-10 p-4 position-relative border-end border-1 rounded-start">
-            <span><i class="bi bi-arrow-left me-3 rtl-flip"></i>Article précédent</span>
-            <h5 class="m-0"><a href="#" class="stretched-link btn-link text-reset">Dirty little secrets about the
-                business industry</a></h5>
+            <span *ngIf="previousPost"><i class="bi bi-arrow-left me-3 rtl-flip"></i>Article précédent</span>
+            <h5 class="m-0" *ngIf="previousPost"><a (click)="openPost(previousPost, $event)" style="cursor: pointer;"
+                class="stretched-link btn-link text-reset" [innerHTML]="previousPost.titleText| trustHtml"></a></h5>
           </div>
           <div class="col-sm-6 bg-primary bg-opacity-10 p-4 position-relative text-sm-end rounded-end">
-            <span>Article suivant<i class="bi bi-arrow-right ms-3 rtl-flip"></i></span>
-            <h5 class="m-0"><a href="#" class="stretched-link btn-link text-reset">Bad habits that people in the
-                industry need to quit</a></h5>
+            <span *ngIf="nextPost">Article suivant<i class="bi bi-arrow-right ms-3 rtl-flip"></i></span>
+            <h5 class="m-0" *ngIf="nextPost"><a class="stretched-link btn-link text-reset"
+                (click)="openPost(nextPost, $event)" style="cursor: pointer;"
+                [innerHTML]="nextPost.titleText| trustHtml"></a></h5>
           </div>
         </div>
 
@@ -137,31 +154,42 @@ Main START -->
           <h4>Partager cet article</h4>
           <ul class="nav text-white-force">
             <li class="nav-item">
-              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-facebook" href="#">
+              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-facebook" style="cursor: pointer;"
+                (click)="shareOnFacebook()">
                 <i class="fab fa-facebook-square align-middle"></i>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-twitter" href="#">
+              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-twitter" style="cursor: pointer;"
+                (click)="shareOnTwitter()">
                 <i class="fab fa-twitter-square align-middle"></i>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-linkedin" href="#">
+              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-linkedin" style="cursor: pointer;"
+                (click)="shareOnLinkedin()">
                 <i class="fab fa-linkedin align-middle"></i>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-pinterest" href="#">
-                <i class="fab fa-pinterest align-middle"></i>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-primary" href="#">
+              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-primary" style="cursor: pointer;"
+                (click)="shareByMail()">
                 <i class="far fa-envelope align-middle"></i>
               </a>
             </li>
           </ul>
+          <!-- Lire l'article avec Play/Pause et contrôler la vitesse -->
+          <!-- Audio player for article text with controls -->
+          <div class="mt-4">
+            <h4 class="m-0" style="cursor: pointer;" (click)="togglePlayPause()"><i class="bi  me-2"
+                [class]="isPlaying ? 'bi-pause' : 'bi-play'"></i>Lire l'article</h4>
+            <div class="mt-3" *ngIf="isPlaying">
+              <label for="speedControl">Vitesse :</label>
+              <input type="range" class="form-range" min="0.5" max="2" step="0.1" id="speedControl"
+                [(ngModel)]="speechRate" (input)="updateSpeed()">
+              <span>{{ speechRate }}x</span>
+            </div>
+          </div>
           <!-- Advertisement -->
           <!--div class="mt-4">
             <a href="#" class="d-block card-img-flash">

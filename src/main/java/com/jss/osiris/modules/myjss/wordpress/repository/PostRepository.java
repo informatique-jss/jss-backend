@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -43,5 +44,13 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         List<Post> findByPostTagsAndIsCancelled(Tag tag, boolean b, Pageable pageableRequest);
 
         List<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, Pageable pageableRequest);
+
+        @Query("select p from Post p where :myJssCategories member of p.myJssCategories and p.date>:date")
+        List<Post> findNextArticle(@Param("myJssCategories") MyJssCategory myJssCategories,
+                        @Param("date") LocalDateTime date, Pageable pageableRequest);
+
+        @Query("select p from Post p where :myJssCategories member of p.myJssCategories and p.date<:date")
+        List<Post> findPreviousArticle(@Param("myJssCategories") MyJssCategory myJssCategories,
+                        @Param("date") LocalDateTime date, Pageable pageableRequest);
 
 }

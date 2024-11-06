@@ -1,15 +1,22 @@
 package com.jss.osiris.modules.myjss.wordpress.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.sound.sampled.AudioInputStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +46,7 @@ import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
+import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -84,6 +92,9 @@ public class WordpressController {
 
 	@Autowired
 	AnnouncementService announcementService;
+
+	@Autowired
+	CharacterPriceService characterPriceService;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -132,12 +143,12 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/top")
 	public ResponseEntity<List<Post>> getTopPosts(@RequestParam Integer page) throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getPosts(page), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPosts(page)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/tendency")
 	public ResponseEntity<List<Post>> getPostsTendency() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getPostTendency(), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostTendency()), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/slug")
@@ -146,7 +157,7 @@ public class WordpressController {
 		Post post = postService.getPostsBySlug(slug);
 		if (post != null && !isCrawler(request))
 			postViewService.incrementView(post);
-		return new ResponseEntity<Post>(post, HttpStatus.OK);
+		return new ResponseEntity<Post>(postService.applyPremium(post), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/serie/slug")
@@ -155,7 +166,8 @@ public class WordpressController {
 		Serie serie = serieService.getSerieBySlug(slug);
 		if (serie == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(postService.getPostBySerie(serie), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostBySerie(serie)),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
@@ -164,7 +176,8 @@ public class WordpressController {
 		MyJssCategory category = myJssCategoryService.getMyJssCategory(categoryId);
 		if (category == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(postService.getPostsByMyJssCategory(page, category), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(
+				postService.applyPremium(postService.getPostsByMyJssCategory(page, category)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/tag")
@@ -173,7 +186,24 @@ public class WordpressController {
 		Tag tag = tagService.getTag(tagId);
 		if (tag == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(postService.getPostsByTag(page, tag), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostsByTag(page, tag)),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/next")
+	public ResponseEntity<Post> getNextPost(@RequestParam Integer idPost) {
+		Post post = postService.getPost(idPost);
+		if (post == null)
+			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
+		return new ResponseEntity<Post>(postService.getNextPost(post), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/previous")
+	public ResponseEntity<Post> getPreviousPost(@RequestParam Integer idPost) {
+		Post post = postService.getPost(idPost);
+		if (post == null)
+			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
+		return new ResponseEntity<Post>(postService.getPreviousPost(post), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/author")
@@ -181,7 +211,8 @@ public class WordpressController {
 		Author author = authorService.getAuthor(authorId);
 		if (author == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(postService.getPostsByAuthor(page, author), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostsByAuthor(page, author)),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department")
@@ -190,17 +221,20 @@ public class WordpressController {
 		PublishingDepartment department = publishingDepartmentService.getPublishingDepartment(departmentId);
 		if (department == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(postService.getTopPostByDepartment(page, department), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(
+				postService.applyPremium(postService.getTopPostByDepartment(page, department)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/interview")
 	public ResponseEntity<List<Post>> getTopPostInterview(@RequestParam Integer page) throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getPostInterview(page), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostInterview(page)),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/podcast")
 	public ResponseEntity<List<Post>> getTopPostPodcast(@RequestParam Integer page) throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getPostPodcast(page), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostPodcast(page)),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/tags")
@@ -217,6 +251,7 @@ public class WordpressController {
 	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
 			throws OsirisException {
+		// TODO : leak premium
 		if (searchText != null && searchText.length() > 2)
 			return new ResponseEntity<List<IndexEntity>>(
 					searchService.searchForEntities(searchText, Post.class.getSimpleName(), false),

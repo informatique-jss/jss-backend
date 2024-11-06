@@ -12,10 +12,10 @@ Inner intro START -->
         <div class="row">
           <div class="col-8 mx-auto">
             <form class="input-group mt-4">
-              <input class="form-control form-control-lg border-success" type="search"
+              <input class="form-control form-control-lg border-primary" type="search"
                 placeholder="Denomination, SIREN ou mot-clé" aria-label="Rechercher" [(ngModel)]="searchText"
                 [ngModelOptions]="{standalone: true}">
-              <button class="btn btn-success btn-lg m-0" type="submit" (click)="searchForAnnouncement()">
+              <button class="btn btn-primary btn-lg m-0" type="submit" (click)="searchForAnnouncement()">
                 <span class="d-none d-md-block"><span class="spinner-border spinner-border-sm me-2" role="status"
                     aria-hidden="true" *ngIf="searchInProgress"></span>Rechercher</span>
                 <i class="d-block d-md-none fas fa-search"></i></button>

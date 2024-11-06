@@ -56,4 +56,12 @@ export class PostService extends AppRestService<Post> {
     return this.getList(new HttpParams().set("page", page), "posts/top/podcast");
   }
 
+  getNextArticle(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/next");
+  }
+
+  getPreviousArticle(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/previous");
+  }
+
 }

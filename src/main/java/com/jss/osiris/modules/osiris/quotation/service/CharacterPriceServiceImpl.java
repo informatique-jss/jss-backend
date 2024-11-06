@@ -88,7 +88,8 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
         return 0;
     }
 
-    private String cleanString(String string) {
+    @Override
+    public String cleanString(String string) {
         if (string != null) {
             // Escape HTML entities
             string = StringEscapeUtils.unescapeHtml4(string);

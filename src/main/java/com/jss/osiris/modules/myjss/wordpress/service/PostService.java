@@ -40,4 +40,12 @@ public interface PostService {
         public List<Post> getPostsByAuthor(Integer page, Author author);
 
         public void reindexPosts() throws OsirisException;
+
+        public List<Post> applyPremium(List<Post> posts);
+
+        public Post applyPremium(Post post);
+
+        public Post getNextPost(Post post);
+
+        public Post getPreviousPost(Post post);
 }

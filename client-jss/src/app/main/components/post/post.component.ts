@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from '../../../../environments/environment';
+import { MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { getTimeReading } from '../../../libs/FormatHelper';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
@@ -19,6 +21,13 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   slug: string | undefined;
   post: Post | undefined;
+  nextPost: Post | undefined;
+  previousPost: Post | undefined;
+
+  speechSynthesisUtterance: SpeechSynthesisUtterance | undefined;
+  speechRate: number = 1;
+  isPlaying: boolean | undefined;
+  audioUrl: string | undefined;
 
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
 
@@ -34,7 +43,16 @@ export class PostComponent implements OnInit, AfterViewInit {
     if (this.slug)
       this.postService.getPostBySlug(this.slug).subscribe(post => {
         this.post = post;
+        if (this.post) {
+          this.postService.getNextArticle(this.post).subscribe(response => this.nextPost = response);
+          this.postService.getPreviousArticle(this.post).subscribe(response => this.previousPost = response);
+        }
       })
+  }
+
+  ngOnDestroy() {
+    window.speechSynthesis.pause();
+    this.isPlaying = undefined;
   }
 
   ngAfterViewInit() {
@@ -81,4 +99,75 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.appService.openRoute(event, "tag/" + tag.slug, undefined);
   }
 
+  shareOnFacebook() {
+    if (this.post) {
+      let url = environment.frontendUrl + "post/" + this.post.slug;
+      window.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank");
+    }
+  }
+
+  shareOnLinkedin() {
+    if (this.post) {
+      let url = environment.frontendUrl + "post/" + this.post.slug;
+      window.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
+    }
+  }
+
+  shareOnTwitter() {
+    if (this.post) {
+      let url = environment.frontendUrl + "post/" + this.post.slug;
+      window.open("https://twitter.com/intent/tweet?text=" + this.extractContent(this.post.titleText) + "&url=" + url, "_blank");
+    }
+  }
+
+  shareByMail() {
+    if (this.post) {
+      let url = environment.frontendUrl + "post/" + this.post.slug;
+      window.open('mailto:?subject=Découvrez cet article intéressant sur JSS.FR&body=Bonjour,%0A%0AJe voulais vous partager cet article :%0A%0A' + this.extractContent(this.post.titleText) + '%0A' + url + '%0A%0ABonne lecture!', "_blank");
+    }
+  }
+
+  extractContent(s: string) {
+    var span = document.createElement('span');
+    span.innerHTML = s;
+    return span.textContent || span.innerText;
+  };
+
+  openSubscribe(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_SUBSCRIBE_ROUTE);
+  }
+
+  readArticle(): void {
+    if (this.post && this.post.contentText) {
+      const articleText = this.extractContent(this.post.contentText);
+
+      this.speechSynthesisUtterance = new SpeechSynthesisUtterance();
+      this.speechSynthesisUtterance.text = articleText;
+      this.speechSynthesisUtterance.lang = 'fr-FR';
+      this.speechSynthesisUtterance.rate = this.speechRate;
+      this.speechSynthesisUtterance.pitch = 1.4;
+
+      window.speechSynthesis.speak(this.speechSynthesisUtterance);
+    }
+  }
+
+  togglePlayPause(): void {
+    if (this.isPlaying === undefined) {
+      this.readArticle();
+      this.isPlaying = true;
+    } else if (this.isPlaying == false) {
+      window.speechSynthesis.resume();
+      this.isPlaying = true;
+    } else {
+      window.speechSynthesis.pause();
+      this.isPlaying = false;
+    }
+  }
+
+  updateSpeed(): void {
+    if (this.speechSynthesisUtterance) {
+      this.speechSynthesisUtterance.rate = this.speechRate;
+      window.speechSynthesis.speak(this.speechSynthesisUtterance);
+    }
+  }
 }

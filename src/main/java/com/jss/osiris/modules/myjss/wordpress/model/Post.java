@@ -116,7 +116,9 @@ public class Post implements IId {
     @JoinTable(name = "asso_post_related", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_post_related"))
     private List<Post> relatedPosts;
 
-    private boolean isPremium;
+    private Boolean isPremium;
+
+    private Integer premiumPercentage;
 
     private String podcastUrl;
 
@@ -258,14 +260,6 @@ public class Post implements IId {
         this.media = media;
     }
 
-    public boolean isPremium() {
-        return isPremium;
-    }
-
-    public void setPremium(boolean isPremium) {
-        this.isPremium = isPremium;
-    }
-
     public String getTitleText() {
         return titleText;
     }
@@ -392,6 +386,22 @@ public class Post implements IId {
 
     public void setMediaTimeLength(Integer mediaTimeLength) {
         this.mediaTimeLength = mediaTimeLength;
+    }
+
+    public Integer getPremiumPercentage() {
+        return premiumPercentage;
+    }
+
+    public void setPremiumPercentage(Integer premiumPercentage) {
+        this.premiumPercentage = premiumPercentage;
+    }
+
+    public Boolean getIsPremium() {
+        return isPremium;
+    }
+
+    public void setIsPremium(Boolean isPremium) {
+        this.isPremium = isPremium;
     }
 
 }

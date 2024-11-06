@@ -80,7 +80,7 @@ public class MailComputeHelper {
     public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
         if (quotation.getId() != null) {
-            IQuotation fetchedQuotation = quotation = customerOrderService.getCustomerOrder(quotation.getId());
+            IQuotation fetchedQuotation = customerOrderService.getCustomerOrder(quotation.getId());
             if (fetchedQuotation == null)
                 fetchedQuotation = quotationService.getQuotation(quotation.getId());
             if (fetchedQuotation != null)
