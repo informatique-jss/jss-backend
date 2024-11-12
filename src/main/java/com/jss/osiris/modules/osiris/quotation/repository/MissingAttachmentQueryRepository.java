@@ -23,7 +23,7 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
                         " 	from " +
                         " 		( " +
                         " 		select " +
-                        " 			s.id, " +
+                        " 			ma.id, " +
                         " 			sum(1) over(partition by s.id " +
                         " 		order by " +
                         " 			ma.created_date_time desc) as n " +
