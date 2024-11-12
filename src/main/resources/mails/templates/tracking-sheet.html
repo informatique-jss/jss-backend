@@ -80,8 +80,10 @@
                 <span style="font-weight: bold;" th:if="${employee!=null}">Prestation suivie par : <span
                         style="font-weight:normal;" th:text="${employee}"></span></span><br />
 
-                <span style="font-weight: bold;" th:if="${provision.id!=null}">Dossier n° : <span
-                        style="font-weight:normal;" th:text="${provision.id}"></span></span> <br />
+                <span style="font-weight: bold;"
+                    th:if="${provision.service.assoAffaireOrder.customerOrder.id!=null}">Dossier n° : <span
+                        style="font-weight:normal;"
+                        th:text="${provision.service.assoAffaireOrder.customerOrder.id}"></span></span> <br />
 
                 <span style="font-weight: bold;" th:if="${affaireDenomination!=null}">Désignation de l'affaire : <span
                         style="font-weight:normal;" th:text="${affaireDenomination}"></span></span><br />
