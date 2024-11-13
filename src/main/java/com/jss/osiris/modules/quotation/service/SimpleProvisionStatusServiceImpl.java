@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.AggregateStatus;
+import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.repository.SimpleProvisonStatusRepository;
 
@@ -55,6 +56,10 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
                 "hourglass_top", false,
                 false,
                 AggregateStatus.AGGREGATE_STATUS_WAITING);
+        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_LINKED_PROVISION, "En attente de prestation liée",
+                "link", false,
+                false,
+                AggregateStatus.AGGREGATE_STATUS_WAITING);
         updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
                 "En attente de l'autorité compétente", "pending",
                 false, false,
@@ -74,12 +79,16 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
                 SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY);
         setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
                 SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
+        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS,
+                SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_LINKED_PROVISION);
 
         setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
         setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
         setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_DONE,
+                SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
+        setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_LINKED_PROVISION,
                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
 
     }
