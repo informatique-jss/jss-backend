@@ -92,8 +92,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED,
                                 FormaliteStatus.FORMALITE_DONE);
 
-                setSuccessor(FormaliteStatus.FORMALITE_WAITING_LINKED_PROVISION, FormaliteStatus.FORMALITE_IN_PROGRESS);
-
+                setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_WAITING_LINKED_PROVISION);
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED,
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED,
