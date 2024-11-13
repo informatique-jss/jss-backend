@@ -55,6 +55,10 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                                 "hourglass_top", false,
                                 false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING, 20);
+                updateStatus(FormaliteStatus.FORMALITE_WAITING_LINKED_PROVISION, "En attente de prestation liée",
+                                "link", false,
+                                false,
+                                AggregateStatus.AGGREGATE_STATUS_WAITING, 6);
                 updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
                                 "En attente de l'autorité compétente", "pending",
                                 false, false,
@@ -88,6 +92,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED,
                                 FormaliteStatus.FORMALITE_DONE);
 
+                setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_WAITING_LINKED_PROVISION);
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED,
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED,
@@ -98,6 +103,9 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                 setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
                 setPredecessor(FormaliteStatus.FORMALITE_DONE,
+                                FormaliteStatus.FORMALITE_IN_PROGRESS);
+
+                setPredecessor(FormaliteStatus.FORMALITE_WAITING_LINKED_PROVISION,
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
 
         }

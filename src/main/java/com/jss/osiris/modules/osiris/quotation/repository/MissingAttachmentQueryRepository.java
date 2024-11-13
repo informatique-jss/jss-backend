@@ -30,7 +30,8 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
                         " 		from " +
                         " 			missing_attachment_query ma " +
                         " 		join service s on " +
-                        " 			s.id = ma.id_service " +
+                        " 			s.id = ma.id_service join asso_affaire_order aao.id = s.id_asso_affaire_order join customer_order co on co.id = aao.id_customer_order "
+                        +
                         " 		join provision p on " +
                         " 			p.id_service = s.id " +
                         " 		left join simple_provision sp on " +
@@ -40,13 +41,15 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
                         " 		where " +
                         " 			(sp.id_simple_provision_status = :simpleProvisionStatusWaitingAttachmentId " +
                         " 				or f.id_formalite_status = :formaliteStatusWaitingAttachmentId ) " +
-                        " 			and ma.third_customer_reminder_date_time is null " +
+                        " 			and ma.third_customer_reminder_date_time is null and co.id_customer_order_status <> :customerOrderStatusIdAbandonned "
+                        +
                         " 				) t " +
                         " 	where " +
                         " 		t.n = 1) ")
         List<MissingAttachmentQuery> getMissingAttachmentQueriesForCustomerReminder(
                         @Param("simpleProvisionStatusWaitingAttachmentId") Integer simpleProvisionStatusWaitingAttachmentId,
-                        @Param("formaliteStatusWaitingAttachmentId") Integer formaliteStatusWaitingAttachmentId);
+                        @Param("formaliteStatusWaitingAttachmentId") Integer formaliteStatusWaitingAttachmentId,
+                        @Param("customerOrderStatusIdAbandonned") Integer customerOrderStatusIdAbandonned);
 
         List<MissingAttachmentQuery> findByService(Service service);
 }
