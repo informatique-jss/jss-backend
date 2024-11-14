@@ -7,7 +7,7 @@ import { Tiers } from '../model/Tiers';
 @Injectable({
   providedIn: 'root'
 })
-export class TiersService extends AppRestService<Tiers>{
+export class TiersService extends AppRestService<Tiers> {
 
   tiers: Tiers | null = null;
   responsable: Responsable | null = null;
@@ -46,5 +46,9 @@ export class TiersService extends AppRestService<Tiers>{
 
   getCurrentViewedResponsable(): Responsable | null {
     return this.responsable;
+  }
+
+  printTiersLabel(tiers: Tiers) {
+    return this.get(new HttpParams().set("idTiers", tiers.id), "label/print", "Etiquette imprimée");
   }
 }

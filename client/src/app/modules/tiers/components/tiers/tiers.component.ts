@@ -245,4 +245,8 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     this.selectedTabIndex = this.userPreferenceService.getUserTabsSelectionIndex('tiers');
   }
 
+  printLabel() {
+    if (this.tiers && this.tiers.id)
+      this.tiersService.printTiersLabel(this.tiers).subscribe();
+  }
 }

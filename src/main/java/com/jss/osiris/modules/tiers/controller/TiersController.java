@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
@@ -173,6 +174,9 @@ public class TiersController {
 
   @Autowired
   SalesComplainService salesComplainService;
+
+  @Autowired
+  PrintDelegate printDelegate;
 
   @GetMapping(inputEntryPoint + "/rff-frequencies")
   public ResponseEntity<List<RffFrequency>> getRffFrequencies() {
@@ -847,6 +851,18 @@ public class TiersController {
     }
 
     return new ResponseEntity<Tiers>(tiersService.addOrUpdateTiers(tiers), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/label/print")
+  public ResponseEntity<Boolean> printMailingLabel(@RequestParam Integer idTiers)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    Tiers tiers = tiersService.getTiers(idTiers);
+    if (tiers == null)
+      throw new OsirisValidationException("tiers");
+
+    printDelegate.printTiersLabel(tiers);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
 }
