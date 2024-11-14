@@ -30,7 +30,9 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.myjss.quotation.controller.model.DashboardUserStatistics;
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
+import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
@@ -176,6 +178,9 @@ public class MyJssQuotationController {
 	@Autowired
 	CivilityService civilityService;
 
+	@Autowired
+	DashboardUserStatisticsService dashboardUserStatisticsService;
+
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
 	private LocalDateTime lastFloodFlush = LocalDateTime.now();
@@ -235,6 +240,14 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<List<CustomerOrder>>(
 				customerOrderService.searchOrdersForCurrentUserAndAffaire(affaire), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/dashboard/user/statistics")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<DashboardUserStatistics> getDashboardUserStatistics()
+			throws OsirisException {
+		return new ResponseEntity<DashboardUserStatistics>(dashboardUserStatisticsService.getDashboardUserStatistics(),
+				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/search/current")

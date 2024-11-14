@@ -655,6 +655,15 @@ public class QuotationServiceImpl implements QuotationService {
         return null;
     }
 
+    @Override
+    public List<Quotation> searchQuotations(List<QuotationStatus> quotationStatus, List<Responsable> responsables) {
+        if (quotationStatus != null && quotationStatus.size() > 0 && quotationStatus.size() > 0
+                && responsables != null && responsables.size() > 0) {
+            return quotationRepository.searchQuotations(responsables, quotationStatus);
+        }
+        return null;
+    }
+
     private List<Quotation> populateTransientField(List<Quotation> quotations) {
         if (quotations != null && quotations.size() > 0)
             for (Quotation quotation : quotations) {

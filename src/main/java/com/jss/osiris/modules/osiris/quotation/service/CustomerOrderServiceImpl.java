@@ -1474,8 +1474,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
                 Sort sort = Sort.by(Arrays.asList(order));
                 Pageable pageableRequest = PageRequest.of(page, 50, sort);
-                return populateTransientField(customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
-                        customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed));
+                return completeAdditionnalInformationForCustomerOrders(
+                        customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
+                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed));
             }
         }
 
@@ -1488,14 +1489,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
 
         if (responsablesToFilter != null && responsablesToFilter.size() > 0) {
-            return populateTransientField(
+            return completeAdditionnalInformationForCustomerOrders(
                     customerOrderRepository.searchOrdersForCurrentUserAndAffaire(responsablesToFilter, affaire,
                             statusAbandonned));
         }
         return null;
     }
 
-    private List<CustomerOrder> populateTransientField(List<CustomerOrder> customerOrders) {
+    @Override
+    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders) {
         if (customerOrders != null && customerOrders.size() > 0)
             for (CustomerOrder customerOrder : customerOrders) {
                 List<String> affaireLabels = new ArrayList<String>();

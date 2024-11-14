@@ -85,6 +85,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                         existingEmployee.setLastname(employee.getLastname());
                         existingEmployee.setTitle(employee.getTitle());
                         existingEmployee.setMail(employee.getMail());
+                        existingEmployee.setPhoneNumber(employee.getPhoneNumber());
                         addOrUpdateEmployee(existingEmployee);
                     } else {
                         addOrUpdateEmployee(employee);

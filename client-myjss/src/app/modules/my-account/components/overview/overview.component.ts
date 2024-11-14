@@ -4,6 +4,8 @@ import { AppService } from '../../../../libs/app.service';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
+import { DashboardUserStatistics } from '../../../quotation/model/DashboardUserStatistics';
+import { DashboardUserStatisticsService } from '../../../quotation/services/dashboard.user.statistics.service';
 
 @Component({
   selector: 'overview',
@@ -13,10 +15,12 @@ import { LoginService } from '../../../profile/services/login.service';
 export class OverviewComponent implements OnInit {
 
   currentUser: Responsable | undefined;
+  statistics: DashboardUserStatistics | undefined;
 
   constructor(private route: ActivatedRoute,
     private appService: AppService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private dashboardUserStatisticsService: DashboardUserStatisticsService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -30,6 +34,10 @@ export class OverviewComponent implements OnInit {
         });
       }
     });
+
+    this.dashboardUserStatisticsService.getDashboardUserStatistics().subscribe(response => {
+      this.statistics = response;
+    })
 
     this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
   }

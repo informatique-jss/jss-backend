@@ -13,6 +13,8 @@ import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearchResult;
+import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface QuotationService {
         public Quotation getQuotation(Integer id);
@@ -74,4 +76,7 @@ public interface QuotationService {
 
         public List<Quotation> searchQuotationsForCurrentUser(List<String> quotationStatus, Integer page,
                         String sortBy);
+
+        public List<Quotation> searchQuotations(List<QuotationStatus> quotationStatus, List<Responsable> responsables);
+
 }

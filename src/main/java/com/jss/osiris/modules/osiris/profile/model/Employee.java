@@ -52,6 +52,9 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	private String mail;
 
 	@JsonView(JacksonViews.MyJssView.class)
+	private String phoneNumber;
+
+	@JsonView(JacksonViews.MyJssView.class)
 	private String title;
 
 	@Column(length = 1000)
@@ -77,6 +80,8 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 		employee.setAdPath((String) attrs.get("distinguishedName").get());
 		if (attrs.get("mail") != null)
 			employee.setMail((String) attrs.get("mail").get());
+		if (attrs.get("telephoneNumber") != null)
+			employee.setPhoneNumber((String) attrs.get("telephoneNumber").get());
 		if (attrs.get("title") != null)
 			employee.setTitle((String) attrs.get("title").get());
 		return employee;
@@ -152,5 +157,13 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	public void setBackups(List<Employee> backups) {
 		this.backups = backups;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 }

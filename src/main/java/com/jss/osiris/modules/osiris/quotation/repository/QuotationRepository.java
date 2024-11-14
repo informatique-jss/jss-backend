@@ -78,4 +78,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         @Param("responsableToFilter") List<Responsable> responsablesToFilter,
                         @Param("quotationStatusToFilter") List<QuotationStatus> quotationStatusToFilter,
                         Pageable pageableRequest);
+
+        @Query("select q from Quotation q where responsable in :responsables and quotationStatus in :quotationStatus")
+        List<Quotation> searchQuotations(List<Responsable> responsables, List<QuotationStatus> quotationStatus);
 }
