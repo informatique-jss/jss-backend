@@ -85,19 +85,9 @@ export class OrderingListTaggedComponent implements OnInit {
           }, display: true,
         } as SortTableAction<OrderingSearchTaggedResult>);
       };
-      if ((this.isForDashboard) && !this.orders && this.orderingSearchTagged) {
-        this.customerOrderStatusService.getCustomerOrderStatus().subscribe(res => {
-          if (!this.orderingSearchTagged.customerOrderStatus) {
-            let status = [] as Array<CustomerOrderStatus>;
-            status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_OPEN)!);
-            status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT)!);
-            status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_TO_BILLED)!);
-            status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!);
-            this.orderingSearchTagged.customerOrderStatus = status;
-          }
-          this.searchOrders();
-        })
-      } else {
+      if (!this.orders && this.orderingSearchTagged)
+        this.searchOrders();
+      else {
         this.bookmark = this.userPreferenceService.getUserSearchBookmark("customerOrders") as OrderingSearchTagged;
 
         if (this.bookmark && !this.isForDashboard) {
