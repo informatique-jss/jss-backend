@@ -12,5 +12,4 @@ export interface BankTransfertSearchResult {
   invoiceBillingLabel: string;
   affaireLabel: string;
   comment: string;
-  isMatched: boolean;
 }

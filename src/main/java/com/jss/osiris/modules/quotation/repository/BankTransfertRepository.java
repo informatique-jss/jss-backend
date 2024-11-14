@@ -30,7 +30,7 @@ public interface BankTransfertRepository extends QueryCacheCrudRepository<BankTr
                         + " left join competent_authority on competent_authority.id = invoice.id_competent_authority "
                         + " left join confrere on confrere.id = invoice.id_confrere "
                         + " left join tiers on tiers.id = invoice.id_tiers "
-                        + " where is_cancelled=false and (:isHideExportedRefunds=false OR r.is_already_exported=false) "
+                        + " where is_cancelled=false and (:isHideExportedBankTransfert=false OR r.is_already_exported=false) "
                         + " and (:isDisplaySelectedForExportBankTransfert=false OR r.is_selected_for_export=true) "
                         + " and (:isHideMatchedBankTransfert=false OR r.is_matched=false) "
                         + " and (:idBankTransfert=0 OR r.id=:idBankTransfert) "
