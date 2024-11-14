@@ -103,3 +103,7 @@
   *ngIf="editMode==false &&  tiers.id" (click)="deleteTiers()">
   <mat-icon>delete</mat-icon>
 </button>
+<button matTooltip="Imprimer une étiquette" mat-fab color="accent" class="fifth-fab-button"
+  *ngIf="editMode==false &&  tiers.id" (click)="printLabel()">
+  <mat-icon>print</mat-icon>
+</button>
