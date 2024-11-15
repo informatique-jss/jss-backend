@@ -226,4 +226,25 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
         @Query(nativeQuery = true, value = "delete from accounting_record where id_invoice in (select id from reprise_inpi_del) ")
         void deleteDuplicateAccountingRecord();
 
+        @Query(nativeQuery = true, value = "select sum(accounting_record.debit_amount) - sum(accounting_record.credit_amount) as totalBalance from accounting_record "
+                        + "where id_accounting_account=:accountingAccountId")
+        Number getAccountingRecordBalanceByAccountingAccountId(
+                        @Param("accountingAccountId") Integer accountingAccountId);
+
+        @Query(nativeQuery = true, value = "select sum(transfert_amount) from bank_transfert bt "
+                        + "where is_already_exported = true and (is_cancelled is null or is_cancelled=false) and (is_matched = false or is_matched is null)")
+        Number getBankTransfertTotal();
+
+        @Query(nativeQuery = true, value = "select sum(refund_amount) from refund r where is_already_exported = true and (is_matched = false or is_matched is null)")
+        Number getRefundTotal();
+
+        @Query(nativeQuery = true, value = "select sum(p.payment_amount) from payment p left join payment p_origin on p.id_origin_payment = p_origin.id "
+                        + " where p.bank_id is null and p.check_number is not null and (p.is_cancelled=false or p.is_cancelled is null) "
+                        + " and (p.id_origin_payment is null or p_origin.bank_id not like 'H%') and p.payment_amount < 0 ")
+        Number getCheckTotal();
+
+        @Query(nativeQuery = true, value = "select sum(transfert_amount) from direct_debit_transfert ddt "
+                        + "where is_already_exported = true and (is_cancelled is null or is_cancelled=false) and (is_matched = false or is_matched is null)")
+        Number getDirectDebitTransfertTotal();
+
 }

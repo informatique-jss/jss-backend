@@ -45,6 +45,8 @@ import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.invoicing.model.OutboundCheckSearch;
+import com.jss.osiris.modules.invoicing.model.OutboundCheckSearchResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
@@ -324,6 +326,18 @@ public class InvoicingController {
 
         payment.setComment(comment);
         return new ResponseEntity<>(paymentService.addOrUpdatePayment(payment), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/outbound-checks/search")
+    public ResponseEntity<List<OutboundCheckSearchResult>> getOutboundChecks(
+            @RequestBody OutboundCheckSearch outboundCheckSearch)
+            throws OsirisValidationException {
+        if (outboundCheckSearch == null)
+            throw new OsirisValidationException("outboundCheckSearch");
+
+        return new ResponseEntity<List<OutboundCheckSearchResult>>(
+                paymentService.searchOutboundChecks(outboundCheckSearch),
+                HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/refunds/search")

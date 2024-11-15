@@ -144,7 +144,8 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 directDebitTransfertSearch.getEndDate().withHour(23).withMinute(59),
                 directDebitTransfertSearch.getMinAmount(),
                 directDebitTransfertSearch.getMaxAmount(),
-                directDebitTransfertSearch.getLabel(), directDebitTransfertSearch.isHideExportedDirectDebitTransfert(),
+                directDebitTransfertSearch.getLabel(), directDebitTransfertSearch.isHideMatchedDirectDebitTransfert(),
+                directDebitTransfertSearch.isHideExportedDirectDebitTransfert(),
                 directDebitTransfertSearch.getIdDirectDebitTransfert());
 
     }

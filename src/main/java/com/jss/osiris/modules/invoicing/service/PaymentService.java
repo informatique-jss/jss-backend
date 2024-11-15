@@ -9,6 +9,8 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.OutboundCheckSearch;
+import com.jss.osiris.modules.invoicing.model.OutboundCheckSearchResult;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
@@ -27,6 +29,8 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface PaymentService {
         public Payment getPayment(Integer id);
+
+        public List<OutboundCheckSearchResult> searchOutboundChecks(OutboundCheckSearch outboundCheckSearch);
 
         public Payment addOrUpdatePayment(Payment payment) throws OsirisException;
 

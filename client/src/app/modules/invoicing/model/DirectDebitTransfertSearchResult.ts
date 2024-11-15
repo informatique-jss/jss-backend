@@ -7,7 +7,7 @@ export interface DirectDebitTransfertSearchResult {
   transfertLabel: string;
   transfertIban: string;
   isAlreadyExported: boolean;
-  isMatched: boolean;
   competentAuthorityLabel: string;
   invoiceBillingLabel: string;
+  isMatched: boolean;
 }

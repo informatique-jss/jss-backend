@@ -1,0 +1,44 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && outboundCheckSearch">
+      <tr>
+        <td>
+          <generic-input [(model)]="outboundCheckSearch.minAmount" label="Montant minimum" [form]="outboundCheckForm"
+            propertyName="minAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+        </td>
+        <td>
+          <generic-input [(model)]="outboundCheckSearch.maxAmount" label="Montant maximum" [form]="outboundCheckForm"
+            propertyName="maxAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+        </td>
+        <td>
+          <generic-input [(model)]="outboundCheckSearch.label" label="Contenu du libellé" [form]="outboundCheckForm"
+            propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="outboundCheckSearch.startDate" label="Date de début" [form]="outboundCheckForm"
+            propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="outboundCheckSearch.endDate" label="Date de fin" [form]="outboundCheckForm"
+            propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchOutboundChecks()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <generic-toggle [(model)]="outboundCheckSearch.isHideMatchedOutboundChecks"
+            label="Masquer les chèques rapprochés" [form]="outboundCheckForm"
+            propertyName="isHideMatchedOutboundCheck"></generic-toggle>
+        </td>
+      </tr>
+    </table>
+    <sort-table class="margin-icon-export" [actions]="tableAction" [columns]="displayedColumns"
+      [values]="outboundChecks" tableName="Chèques sortants" [isSmallestHeight]="true"
+      *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
+    </sort-table>
+  </div>
+</div>

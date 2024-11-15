@@ -6,5 +6,6 @@ export interface DirectDebitTransfertSearch {
   maxAmount: number;
   label: string;
   isHideExportedDirectDebitTransfert: boolean;
+  isHideMatchedDirectDebitTransfert: boolean;
   idDirectDebitTransfert: number;
 }
