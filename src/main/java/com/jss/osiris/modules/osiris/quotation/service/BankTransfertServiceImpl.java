@@ -160,6 +160,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                 bankTransfertSearch.getMaxAmount(),
                 bankTransfertSearch.getLabel(), bankTransfertSearch.isHideMatchedBankTransfert(),
                 bankTransfertSearch.isHideExportedBankTransfert(),
+                bankTransfertSearch.isHideNonExportedBankTransfert(),
                 bankTransfertSearch.isDisplaySelectedForExportBankTransfert(),
                 bankTransfertSearch.getIdBankTransfert(), bankTransfertSearch.getProvider().getId());
     }

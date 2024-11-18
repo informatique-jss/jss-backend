@@ -14,8 +14,13 @@ public class BankTransfertSearch {
     private String label;
     @JsonProperty("isHideMatchedBankTransfert")
     private boolean isHideMatchedBankTransfert;
+
     @JsonProperty("isHideExportedBankTransfert")
     private boolean isHideExportedBankTransfert;
+
+    @JsonProperty("isHideNonExportedBankTransfert")
+    private boolean isHideNonExportedBankTransfert;
+
     @JsonProperty("isDisplaySelectedForExportBankTransfert")
     private boolean isDisplaySelectedForExportBankTransfert;
 
@@ -101,6 +106,14 @@ public class BankTransfertSearch {
 
     public void setHideMatchedBankTransfert(boolean isHideMatchedBankTransfert) {
         this.isHideMatchedBankTransfert = isHideMatchedBankTransfert;
+    }
+
+    public boolean isHideNonExportedBankTransfert() {
+        return isHideNonExportedBankTransfert;
+    }
+
+    public void setHideNonExportedBankTransfert(boolean isHideNonExportedBankTransfert) {
+        this.isHideNonExportedBankTransfert = isHideNonExportedBankTransfert;
     }
 
 }

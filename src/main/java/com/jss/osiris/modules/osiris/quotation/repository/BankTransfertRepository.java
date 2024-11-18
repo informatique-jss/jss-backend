@@ -29,7 +29,7 @@ public interface BankTransfertRepository extends QueryCacheCrudRepository<BankTr
                         + " left join responsable on responsable.id = invoice.id_responsable "
                         + " left join tiers on tiers.id = responsable.id_tiers "
                         + " where is_cancelled=false and (:isHideExportedBankTransfert=false OR r.is_already_exported=false) "
-                        + " and (:isDisplaySelectedForExportBankTransfert=false OR r.is_selected_for_export=true) "
+                        + " and (:isHideNonExportedBankTransfert=false OR r.is_already_exported=true) and (:isDisplaySelectedForExportBankTransfert=false OR r.is_selected_for_export=true) "
                         + " and (:isHideMatchedBankTransfert=false OR r.is_matched=false) "
                         + " and (:idBankTransfert=0 OR r.id=:idBankTransfert) "
                         + " and r.transfert_date_time>=:startDate and r.transfert_date_time<=:endDate "
@@ -43,6 +43,7 @@ public interface BankTransfertRepository extends QueryCacheCrudRepository<BankTr
                         @Param("label") String label,
                         @Param("isHideMatchedBankTransfert") boolean isHideMatchedBankTransfert,
                         @Param("isHideExportedBankTransfert") boolean isHideExportedBankTransfert,
+                        @Param("isHideNonExportedBankTransfert") boolean isHideNonExportedBankTransfert,
                         @Param("isDisplaySelectedForExportBankTransfert") boolean isDisplaySelectedForExportBankTransfert,
                         @Param("idBankTransfert") Integer idBankTransfert, @Param("idProvider") Integer idProvider);
 }
