@@ -34,6 +34,11 @@
             [form]="transfertForm" propertyName="isHideExportedBankTransfert"></generic-toggle>
         </td>
         <td>
+          <generic-toggle [(model)]="transfertSearch.isHideNonExportedBankTransfert"
+            label="Masquer les virements non exportés" [form]="transfertForm"
+            propertyName="isHideNonExportedBankTransfert"></generic-toggle>
+        </td>
+        <td>
           <generic-toggle [(model)]="transfertSearch.isDisplaySelectedForExportBankTransfert"
             label="Afficher la sélection" [form]="transfertForm"
             propertyName="isDisplaySelectedForExportBankTransfert"></generic-toggle>
