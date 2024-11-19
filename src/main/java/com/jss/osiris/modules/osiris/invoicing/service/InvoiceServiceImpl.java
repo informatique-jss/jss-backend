@@ -360,10 +360,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         invoice = getInvoice(invoice.getId());
 
-        if (invoice.getCreatedDate().toLocalDate().isBefore(constantService.getDateAccountingClosureForAll())) {
-            throw new OsirisException(null, "Impossible to cancel invoice, it's before closure all date");
-        }
-
         if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                 || invoice.getResponsable() != null)
             return cancelInvoiceEmitted(invoice, invoice.getCustomerOrder());
