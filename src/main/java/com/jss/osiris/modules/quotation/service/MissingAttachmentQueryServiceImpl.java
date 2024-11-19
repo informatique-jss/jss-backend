@@ -101,6 +101,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
                 assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(assoServiceDocument.getId());
                 assoServiceDocument.setFormalisteComment(newComment);
                 assoServiceDocument.setService(service);
+                assoServiceDocument.setIsMandatory(true);
                 assoServiceDocument = assoServiceDocumentService.addOrUpdateAssoServiceDocument(assoServiceDocument);
             }
         }
@@ -114,6 +115,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
                         .getAssoServiceFieldType(assoServiceFieldType.getId());
                 assoServiceFieldType.setFormalisteComment(newComment);
                 assoServiceFieldType.setService(service);
+                assoServiceFieldType.setIsMandatory(true);
                 assoServiceFieldType = assoServiceFieldTypeService.addOrUpdateServiceFieldType(assoServiceFieldType);
             }
         }
