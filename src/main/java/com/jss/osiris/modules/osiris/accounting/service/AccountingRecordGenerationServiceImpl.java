@@ -103,7 +103,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     private AccountingRecord getCounterPart(AccountingRecord originalAccountingRecord, Integer operationId,
-            AccountingJournal journal, String label) throws OsirisException {
+            AccountingJournal journal, String label, LocalDateTime operationDateTime) throws OsirisException {
         AccountingRecord newAccountingRecord = new AccountingRecord();
         newAccountingRecord.setAccountingAccount(originalAccountingRecord.getAccountingAccount());
         newAccountingRecord.setAccountingJournal(journal);
@@ -123,6 +123,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         newAccountingRecord.setPayment(originalAccountingRecord.getPayment());
         newAccountingRecord.setTemporaryOperationId(operationId);
         newAccountingRecord.setOperationDateTime(originalAccountingRecord.getOperationDateTime());
+        if (operationDateTime != null)
+            newAccountingRecord.setOperationDateTime(operationDateTime);
         newAccountingRecord.setCustomerOrder(originalAccountingRecord.getCustomerOrder());
         newAccountingRecord.setInvoice(originalAccountingRecord.getInvoice());
         newAccountingRecord.setIsCounterPart(true);
@@ -447,9 +449,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 if (accountingRecord.getAccountingJournal().getId()
                         .equals(constantService.getAccountingJournalSales().getId())) {
                     AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, salesJournal,
-                            labelPrefix + " - " + accountingRecord.getLabel());
+                            labelPrefix + " - " + accountingRecord.getLabel(), LocalDateTime.now());
                     accountingRecord.setContrePasse(counterPart);
-                    accountingRecord.setOperationDateTime(getInvoiceOperationDateTime(invoice));
                     accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
                     letterCounterPartRecords(accountingRecord, counterPart);
 
@@ -654,8 +655,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                     balance = balance.add(accountingRecord.getDebitAmount());
 
                 AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, pushasingJournal,
-                        labelPrefix);
-                accountingRecord.setOperationDateTime(LocalDateTime.now());
+                        labelPrefix, getInvoiceOperationDateTime(invoice));
                 accountingRecord.setContrePasse(counterPart);
                 accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
                 letterCounterPartRecords(accountingRecord, counterPart);
@@ -779,7 +779,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 balance = balance.add(accountingRecord.getDebitAmount());
 
             AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
-                    "Annulation du paiement " + payment.getId());
+                    "Annulation du paiement " + payment.getId(), null);
 
             newAccountingRecords.add(counterPart);
             accountingRecord.setContrePasse(counterPart);
