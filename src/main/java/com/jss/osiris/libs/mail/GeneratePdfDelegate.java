@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -524,7 +525,8 @@ public class GeneratePdfDelegate {
 
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal",
-                invoiceHelper.getPriceTotal(invoice).multiply(oneHundredValue).setScale(0).divide(oneHundredValue));
+                invoiceHelper.getPriceTotal(invoice).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
+                        .divide(oneHundredValue).setScale(2, RoundingMode.HALF_UP));
         ctx.setVariable("invoice", invoice);
         ctx.setVariable("isPrelevementType", false);
         if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId()))

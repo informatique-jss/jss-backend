@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,8 @@ public class InvoiceHelper {
     public Invoice setPriceTotal(Invoice invoice) {
         if (invoice != null) {
             invoice.setTotalPrice(
-                    (this.getPriceTotal(invoice).multiply(oneHundredConstant)).setScale(0).divide(oneHundredConstant));
+                    (this.getPriceTotal(invoice).multiply(oneHundredConstant)).divide(oneHundredConstant).setScale(2,
+                            RoundingMode.HALF_UP));
         }
         return invoice;
     }
