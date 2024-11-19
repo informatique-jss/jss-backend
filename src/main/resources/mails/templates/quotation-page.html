@@ -224,14 +224,14 @@
     <p>Pour la réalisation de ce devis, la liste des pièces jointes suivantes est usuellement nécessaire :</p>
     <ul>
         <th:block th:if="${assos!=null}" th:each="asso : ${assos}">
-            <th:block
-                th:if="${asso.services!=null} and ${service.assoServiceDocuments!=null} and ${assoServiceDocument.isMandatory}"
+            <th:block th:if="${asso.services!=null} and ${service.assoServiceDocuments!=null}"
                 th:each="service : ${asso.services}">
                 <li><span th:text="${service.serviceType.label}"></span> : </li>
                 <ul>
-                    <li th:if="${service.assoServiceDocuments!=null} and ${assoServiceDocument.isMandatory}"
+                    <li th:if="${service.assoServiceDocuments!=null}"
                         th:each="assoServiceDocument : ${service.assoServiceDocuments}">
-                        <span th:text="${assoServiceDocument.typeDocument.customLabel}"></span>
+                        <span th:if="${assoServiceDocument.isMandatory}"
+                            th:text="${assoServiceDocument.typeDocument.customLabel}"></span>
                     </li>
                 </ul>
             </th:block>
