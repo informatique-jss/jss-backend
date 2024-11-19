@@ -449,6 +449,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                     AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, salesJournal,
                             labelPrefix + " - " + accountingRecord.getLabel());
                     accountingRecord.setContrePasse(counterPart);
+                    accountingRecord.setOperationDateTime(getInvoiceOperationDateTime(invoice));
                     accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
                     letterCounterPartRecords(accountingRecord, counterPart);
 
@@ -654,6 +655,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
                 AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, pushasingJournal,
                         labelPrefix);
+                accountingRecord.setOperationDateTime(getInvoiceOperationDateTime(invoice));
                 accountingRecord.setContrePasse(counterPart);
                 accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
                 letterCounterPartRecords(accountingRecord, counterPart);
