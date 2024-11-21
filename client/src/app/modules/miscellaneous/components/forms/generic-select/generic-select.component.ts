@@ -1,8 +1,8 @@
 import { Directive, EventEmitter, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { GenericFormComponent } from '../generic-form.components';
 import { AppService } from 'src/app/services/app.service';
+import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
 export abstract class GenericSelectComponent<T> extends GenericFormComponent implements OnInit {
@@ -44,5 +44,15 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
   }
   getPreviewActionLinkFunction(entity: T): string[] | undefined {
     return undefined;
+  }
+
+  displayLabel(object: any): string {
+    if (object && object.label)
+      return object.label;
+    if (object && object.name)
+      return object.name;
+    if (typeof object === "string")
+      return object;
+    return "";
   }
 }
