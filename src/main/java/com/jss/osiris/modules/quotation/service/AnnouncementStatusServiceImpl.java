@@ -64,6 +64,12 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                                 "supervisor_account",
                                 false, false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING);
+
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_LINKED_PROVISION, "En attente de prestation liée",
+                                "link", false,
+                                false,
+                                AggregateStatus.AGGREGATE_STATUS_WAITING);
+
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
                                 "En attente de publication par le confrère", "supervisor_account",
                                 false, false,
@@ -78,6 +84,8 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true,
                                 AggregateStatus.AGGREGATE_STATUS_DONE);
 
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_LINKED_PROVISION);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW,
                                 AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW,
@@ -135,6 +143,9 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
                                 AnnouncementStatus.ANNOUNCEMENT_NEW);
+
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_LINKED_PROVISION);
 
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
                                 AnnouncementStatus.ANNOUNCEMENT_NEW);

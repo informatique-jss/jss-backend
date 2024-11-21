@@ -8,6 +8,7 @@ import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_I
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { ANNOUNCEMENT_STATUS_WAITING_CONFRERE } from '../../../../libs/Constants';
 import { IWorkflowElement } from '../../../miscellaneous/model/IWorkflowElement';
@@ -91,6 +92,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private affaireService: AffaireService,
     private serviceService: ServiceService,
     private domiciliationService: DomiciliationService,
+    private habilitationService: HabilitationsService
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -183,9 +185,10 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   deleteService(asso: AssoAffaireOrder, service: Service) {
-    if (this.asso.customerOrder && this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (this.asso.customerOrder && this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+      }
 
     asso.services.splice(asso.services.indexOf(service), 1);
   }
@@ -223,9 +226,10 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   createService(asso: AssoAffaireOrder) {
-    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+      }
     if (asso && !asso.services)
       asso.services = [] as Array<Service>;
 
@@ -242,10 +246,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   deleteProvision(service: Service, provision: Provision) {
-    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-      return;
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+        return;
+      }
 
     if (provision && provision.payments) {
       for (let payment of provision.payments)
@@ -265,10 +270,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   createProvision(service: Service,): Provision {
-    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-      return {} as Provision;
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+        return {} as Provision;
+      }
     if (service && !service.provisions)
       service.provisions = [] as Array<Provision>;
     let provision = {} as Provision;
@@ -376,10 +382,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   changeStatus(status: IWorkflowElement, provision: Provision) {
-    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-      return;
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+        return;
+      }
 
     let saveAsso = true;
     if (provision.announcement) {

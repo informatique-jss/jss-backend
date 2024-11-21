@@ -190,6 +190,10 @@ export class HabilitationsService {
   canReinitInvoicing() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
+
+  canByPassProvisionLockOnBilledOrder() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
 }
 
 
