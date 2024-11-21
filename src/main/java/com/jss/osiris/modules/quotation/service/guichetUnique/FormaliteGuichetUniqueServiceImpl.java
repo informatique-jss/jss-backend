@@ -607,8 +607,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                     }
                                 }
                             }
-                            firstItemTaxable.setPreTaxPrice(Math.abs(firstItemTaxable.getPreTaxPrice()));
-                            firstItemNonTaxable.setPreTaxPrice(Math.abs(firstItemNonTaxable.getPreTaxPrice()));
+                            if (firstItemTaxable != null)
+                                firstItemTaxable.setPreTaxPrice(Math.abs(firstItemTaxable.getPreTaxPrice()));
+                            if (firstItemNonTaxable != null)
+                                firstItemNonTaxable.setPreTaxPrice(Math.abs(firstItemNonTaxable.getPreTaxPrice()));
                         }
                     }
 
