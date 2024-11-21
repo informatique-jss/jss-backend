@@ -571,27 +571,27 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                             if (firstItemNonTaxable != null) {
                                                 firstItemNonTaxable.setPreTaxPrice(
                                                         firstItemNonTaxable.getPreTaxPrice()
-                                                                - Math.abs(invoiceItem.getPreTaxPrice()));
-                                                firstItemNonTaxable.setPreTaxPriceReinvoiced(
-                                                        -Math.abs(firstItemNonTaxable.getPreTaxPrice()));
+                                                                + invoiceItem.getPreTaxPrice());
+                                                firstItemNonTaxable
+                                                        .setPreTaxPriceReinvoiced(firstItemNonTaxable.getPreTaxPrice());
                                                 initItem = false;
                                             }
                                         } else {
                                             if (firstItemTaxable != null) {
                                                 firstItemTaxable.setPreTaxPrice(
                                                         firstItemTaxable.getPreTaxPrice()
-                                                                - Math.abs(invoiceItem.getPreTaxPrice()));
-                                                firstItemTaxable.setPreTaxPriceReinvoiced(
-                                                        -Math.abs(firstItemTaxable.getPreTaxPrice()));
+                                                                + invoiceItem.getPreTaxPrice());
+                                                firstItemTaxable
+                                                        .setPreTaxPriceReinvoiced(firstItemTaxable.getPreTaxPrice());
                                                 initItem = false;
                                             }
                                         }
                                     }
                                     if (initItem) {
                                         InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                                        invoiceItem.setPreTaxPrice(Math.abs(invoiceItem.getPreTaxPrice()));
+                                        invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice());
                                         invoiceItem.setPreTaxPriceReinvoiced(
-                                                -Math.abs(invoiceItem.getPreTaxPrice()));
+                                                invoiceItem.getPreTaxPrice());
                                         invoiceItem.setProvision(null);
                                         invoice.getInvoiceItems().add(invoiceItem);
                                         provision.getInvoiceItems().add(invoiceItem);
@@ -606,6 +606,16 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                         }
                                     }
                                 }
+                            }
+                            if (firstItemTaxable != null) {
+                                firstItemTaxable.setPreTaxPrice(Math.abs(firstItemTaxable.getPreTaxPrice()));
+                                firstItemTaxable.setPreTaxPriceReinvoiced(
+                                        -Math.abs(firstItemTaxable.getPreTaxPriceReinvoiced()));
+                            }
+                            if (firstItemNonTaxable != null) {
+                                firstItemNonTaxable.setPreTaxPrice(Math.abs(firstItemNonTaxable.getPreTaxPrice()));
+                                firstItemNonTaxable.setPreTaxPriceReinvoiced(
+                                        -Math.abs(firstItemNonTaxable.getPreTaxPriceReinvoiced()));
                             }
                         }
                     }
