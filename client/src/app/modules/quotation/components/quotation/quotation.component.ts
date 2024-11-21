@@ -130,6 +130,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public associatePaymentDialog: MatDialog,
     private userPreferenceService: UserPreferenceService,
     private serviceService: ServiceService,
+    private habilitationService: HabilitationsService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -396,10 +397,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   createProvision(service: Service): Provision {
-    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-      return {} as Provision;
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+        return {} as Provision;
+      }
     if (service && !service.provisions)
       service.provisions = [] as Array<Provision>;
     let provision = {} as Provision;
@@ -409,9 +411,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   createService(asso: AssoAffaireOrder) {
-    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+      }
     if (asso && !asso.services)
       asso.services = [] as Array<Service>;
 
@@ -429,9 +432,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   deleteService(asso: AssoAffaireOrder, service: Service) {
-    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+      }
 
     asso.services.splice(asso.services.indexOf(service), 1);
     this.generateInvoiceItem();
@@ -474,10 +478,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   addAffaire() {
-    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-      return;
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+        return;
+      }
 
     let dialogRef = this.addAffaireDialog.open(AddAffaireDialogComponent, {
       width: '100%',
@@ -573,10 +578,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   deleteProvision(service: Service, provision: Provision) {
-    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-      return;
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+        return;
+      }
 
     if (provision && provision.payments) {
       for (let payment of provision.payments)
@@ -855,10 +861,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   deleteAffaire(affaire: Affaire) {
-    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-      this.displaySnakBarLockProvision();
-      return;
-    }
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+      if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+        return;
+      }
 
     if (this.quotation && this.quotation.assoAffaireOrders)
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
