@@ -23,7 +23,7 @@ export class AutocompleteTypeDocumentComponent extends GenericLocalAutocompleteC
     const filterValue = (value != undefined && value != null && value.toLowerCase != undefined) ? value.toLowerCase() : "";
     return types.filter(item =>
       item && item.label && item.code
-      && (item.label.toLowerCase().includes(filterValue) || item.code.includes(filterValue)));
+      && (item.label.toLowerCase().includes(filterValue) || item.code.includes(filterValue) || item.customLabel && item.customLabel.includes(filterValue)));
   }
 
   initTypes(): void {
