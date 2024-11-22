@@ -92,6 +92,7 @@ export class TiersListComponent implements OnInit {
       this.displayedColumnsTiers.push({ id: "formalisteId", fieldName: "formalisteId", label: "Formaliste", displayAsEmployee: true } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "isNewTiers", fieldName: "isNewTiers", label: "Nouveau tiers ?", valueFonction: (element: TiersSearchResult, column: SortTableColumn<TiersSearchResult>) => { return element.isNewTiers ? "Oui" : "Non" } } as SortTableColumn<TiersSearchResult>);
 
+      this.displayedColumnsTiers.push({ id: "address", fieldName: "address", label: "Adresse" } as SortTableColumn<TiersSearchResult>);
 
       this.displayedColumnsTiers.push({ id: "firstOrderDay", fieldName: "firstOrderDay", label: "1ère commande", valueFonction: formatDateForSortTable } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "lastOrderDay", fieldName: "lastOrderDay", label: "Dernière commande", valueFonction: formatDateForSortTable } as SortTableColumn<TiersSearchResult>);

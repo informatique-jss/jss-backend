@@ -74,6 +74,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          ' ', " +
                         "          t.lastname)) tiersLabel, " +
                         "          tc.label as tiersCategory, " +
+                        "          concat(t.address, ' ', city.label) as address, tc.label as tiersCategory, " +
                         "          t.id as tiersId, " +
                         "          concat(e1.firstname, " +
                         "          ' ', " +
@@ -99,7 +100,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          sum(case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax "
                         +
                         "  from " +
-                        "          tiers t " +
+                        "          tiers t left join city on city.id =  t.id_city " +
                         "  left join tiers_category tc on " +
                         "          tc.id = t.id_tiers_category  left join employee e2 on e2.id = t.id_formaliste   " +
                         "  left join responsable r on " +
@@ -139,7 +140,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         " 	concat(t.firstname, " +
                         " 	' ', " +
                         " 	t.lastname)), " +
-                        " 	tc.label, " +
+                        " 	tc.label,concat(t.address, ' ', city.label) , " +
                         " 	coalesce(concat(e1.firstname, " +
                         " 	' ', " +
                         " 	e1.lastname)), concat(e2.firstname,' ',e2.lastname),e2.id," +

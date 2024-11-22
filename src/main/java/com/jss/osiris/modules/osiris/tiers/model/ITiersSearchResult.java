@@ -43,4 +43,6 @@ public interface ITiersSearchResult {
 
     Boolean getIsNewTiers();
 
+    String getAddress();
+
 }
