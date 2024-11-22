@@ -1394,9 +1394,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
                             provision.getDomiciliation().setId(null);
                         }
-                        if (provision.getInvoiceItems() != null)
-                            for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                                invoiceItem.setId(null);
+
+                        provision.setInvoiceItems(null);
                         provision.setAttachments(null);
 
                         if (provision.getProvisionType().getIsRecurring() == null
