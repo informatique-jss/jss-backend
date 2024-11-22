@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { TypeDocumentService } from 'src/app/modules/miscellaneous/services/guichet-unique/type.document.service';
+import { AppService } from 'src/app/services/app.service';
 import { TypeDocument } from '../../../../../quotation/model/guichet-unique/referentials/TypeDocument';
 import { GenericLocalAutocompleteComponent } from '../../generic-local-autocomplete/generic-local-autocomplete.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-type-document',
@@ -36,5 +36,16 @@ export class AutocompleteTypeDocumentComponent extends GenericLocalAutocompleteC
         this.types = response
     });
   }
+
+  displayLabel(object: any): string {
+    if (object && object.customLabel)
+      return object.customLabel;
+    if (object && object.label)
+      return object.label;
+    if (typeof object === "string")
+      return object;
+    return "";
+  }
+
 
 }
