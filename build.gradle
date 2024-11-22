@@ -20,6 +20,9 @@ repositories {
         } 
 } 
   
+  tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters"
+}
   
 dependencies {
     // Spring

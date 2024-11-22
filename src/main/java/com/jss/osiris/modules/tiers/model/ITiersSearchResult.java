@@ -41,4 +41,6 @@ public interface ITiersSearchResult {
 
     Float getTurnoverAmountWithoutDebourWithTax();
 
+    String getAddress();
+
 }
