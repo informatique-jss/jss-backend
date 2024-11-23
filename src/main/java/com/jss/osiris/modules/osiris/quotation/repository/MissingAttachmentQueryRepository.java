@@ -30,7 +30,7 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
                         " 		from " +
                         " 			missing_attachment_query ma " +
                         " 		join service s on " +
-                        " 			s.id = ma.id_service join asso_affaire_order aao.id = s.id_asso_affaire_order join customer_order co on co.id = aao.id_customer_order "
+                        " 			s.id = ma.id_service join asso_affaire_order aao on aao.id = s.id_asso_affaire_order join customer_order co on co.id = aao.id_customer_order "
                         +
                         " 		join provision p on " +
                         " 			p.id_service = s.id " +
