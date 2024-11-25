@@ -42,7 +42,8 @@ public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<C
                         " select p.id_employee as employeeId,ca.id as competentAuthorityId, p.id as provisionId,STRING_AGG(  distinct cast(coalesce( acamgm.id_mail,acam.id_mail) as text),',' ) as mailId,max(coalesce(a1.datetime, a2.datetime)) as statusDate "
                         +
                         " from provision p " +
-                        " join service s on s.id = p.id_service " +
+                        " join service s on s.id = p.id_service join asso_affaire_order aao on aao.id = s.id_asso_affaire_order join customer_order co on co.id = aao.id_customer_order "
+                        +
                         " join service_type st on st.id  = s.id_service_type  " +
                         " join service_family sf on sf.id = st.id_service_family  " +
                         " left join formalite f on f.id = p.id_formalite  " +
@@ -64,7 +65,8 @@ public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<C
                         " and coalesce(f.id_waited_competent_authority, sp.id_waited_competent_authority) is not null "
                         +
                         " and cat.is_to_reminder = true " +
-                        " and coalesce(ca.is_not_to_reminder, false) = false " +
+                        " and coalesce(ca.is_not_to_reminder, false) = false  and co.id_customer_order_status <>:idCustomerOrderStatusAbandonned "
+                        +
                         " and (p.id_employee % 5 +1) = extract(DOW from now()) " +
                         " group by p.id_employee  ,ca.id  , p.id   " +
                         " having max(coalesce(a1.datetime, a2.datetime))< now() -INTERVAL '10 day' " +
@@ -75,6 +77,7 @@ public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<C
                         @Param("simpleProvisionWaitingAcStatusCode") String simpleProvisionWaitingAcStatusCode,
                         @Param("formaliteWaitingAcStatusCode") String formaliteWaitingAcStatusCode,
                         @Param("simpleProvisionWaitingAcStatusId") Integer simpleProvisionWaitingAcStatusId,
-                        @Param("formaliteWaitingAcStatusId") Integer formaliteWaitingAcStatusId);
+                        @Param("formaliteWaitingAcStatusId") Integer formaliteWaitingAcStatusId,
+                        @Param("idCustomerOrderStatusAbandonned") Integer idCustomerOrderStatusAbandonned);
 
 }

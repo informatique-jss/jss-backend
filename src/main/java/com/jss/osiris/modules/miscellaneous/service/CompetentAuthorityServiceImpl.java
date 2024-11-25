@@ -26,9 +26,11 @@ import com.jss.osiris.modules.miscellaneous.model.ICompetentAuthorityMailReminde
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
+import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
@@ -62,6 +64,9 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    CustomerOrderStatusService customerOrderStatusService;
 
     @Override
     public List<CompetentAuthority> getCompetentAuthorities() {
@@ -205,7 +210,8 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
         List<ICompetentAuthorityMailReminder> competentMailResult = competentAuthorityRepository
                 .findCompetentAuthoritiesMailToSend(simpleProvisionWaitingAcStatus.getCode(),
                         formaliteWaitingAcStatus.getCode(), simpleProvisionWaitingAcStatus.getId(),
-                        formaliteWaitingAcStatus.getId());
+                        formaliteWaitingAcStatus.getId(),
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED).getId());
 
         if (competentMailResult != null && competentMailResult.size() > 0) {
             String currentKey = null;
