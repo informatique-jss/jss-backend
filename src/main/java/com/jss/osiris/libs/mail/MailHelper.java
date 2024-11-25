@@ -173,6 +173,8 @@ public class MailHelper {
 
     @Autowired
     ServiceService serviceService;
+
+    @Autowired
     FormaliteInfogreffeService formaliteInfogreffeService;
 
     @Bean
