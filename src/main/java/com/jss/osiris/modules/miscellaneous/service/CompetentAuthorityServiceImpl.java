@@ -239,7 +239,8 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
                     provisionToSend.add(provisionService.getProvision(reminder.getProvisionId()));
                 }
                 // Send last one
-                if (provisionToSend.size() > 0 && lastReminder != null) {
+                if (provisionToSend.size() > 0 && lastReminder != null
+                        && reminder.equals(competentMailResult.get(competentMailResult.size() - 1))) {
                     // fetch mail
                     List<String> mailsId = Arrays.asList(lastReminder.getMailId().split(";"));
                     List<Mail> mails = new ArrayList<Mail>();
