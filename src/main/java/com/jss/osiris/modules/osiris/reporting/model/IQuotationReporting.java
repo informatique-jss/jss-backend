@@ -27,6 +27,8 @@ public interface IQuotationReporting {
 
     public String getProvisionAssignedToLabel();
 
+    public String getThirdReminderDateTime();
+
     public String getPublicationDateMonth();
 
     public String getSalesEmployeeLabel();

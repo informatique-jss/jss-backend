@@ -37,7 +37,8 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " confrere_a.label as confrereAnnouncementLabel,   " +
                         " ntf.label as noticeTypeFamilyLabel,   " +
                         "  STRING_AGG(DISTINCT nt.label ,', '  ) as noticeTypeLabel,   " +
-                        " origin.label as customerOrderOriginLabel," +
+                        " origin.label as customerOrderOriginLabel,to_char(customer_order.third_reminder_date_time,'DD/MM/YYYY') as thirdReminderDateTime, "
+                        +
                         " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel,   " +
                         " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel,   " +
                         " sum(coalesce(case when billing_type.is_fee=false and billing_type.is_debour = false then invoice_item.pre_tax_price end,0)) as preTaxPriceWithoutDebour, "
@@ -80,8 +81,6 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " left join audit audit_quotation on audit_quotation.entity_id = customer_order.id and audit_quotation.field_name = 'id' and entity = 'Quotation' "
                         +
                         " left join employee quotation_creator on quotation_creator.username = audit_quotation.username "
-                        +
-                        "  where customer_order.created_date BETWEEN  date_trunc('year', now()) AND CURRENT_TIMESTAMP   "
                         +
                         "    group by   " +
                         " affaire.id , origin.label,  " +

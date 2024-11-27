@@ -127,5 +127,6 @@ export const Dictionnary = {
   "SAUVEGARDE": "Sauvegardée",
   "ENVOYE_AU_GRF": "Envoyée au greffe",
   "ENVOI_EN_COURS": "Envoi en cours",
-  "VALIDE": "Validée"
+  "VALIDE": "Validée",
+  "thirdReminderDateTime": "Troisième date de relance"
 };
