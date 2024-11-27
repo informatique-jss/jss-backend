@@ -299,7 +299,7 @@ public class PaymentServiceImpl implements PaymentService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Match inbound payment
         payment = getPayment(payment.getId());
-        if (payment.getPaymentAmount().compareTo(null) >= 0) {
+        if (payment.getPaymentAmount().compareTo(zeroValue) >= 0) {
             // Get corresponding entities
             List<IndexEntity> correspondingEntities = getCorrespondingEntityForInboudPayment(payment);
             ArrayList<Invoice> correspondingInvoices = new ArrayList<Invoice>();
