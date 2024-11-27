@@ -25,4 +25,5 @@ export interface QuotationReporting {
   quotationCreator: string;
   preTaxPriceWithoutDebour: number;
   customerOrderOriginLabel: string;
+  thirdReminderDateTime: string;
 }
