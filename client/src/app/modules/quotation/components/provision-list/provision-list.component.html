@@ -3,6 +3,11 @@
     <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && affaireSearch && !isForTiersIntegration">
       <tr>
         <td>
+          <autocomplete-employee [(model)]="affaireSearch.commercial" label="Commercial" [form]="affaireSearchForm"
+            [isMandatory]="false" propertyName="commercial" [isMandatory]="false">
+          </autocomplete-employee>
+        </td>
+        <td>
           <autocomplete-employee [(model)]="affaireSearch.responsible" label="Responsable" [form]="affaireSearchForm"
             [isMandatory]="false" propertyName="responsible" [isMandatory]="false">
           </autocomplete-employee>
