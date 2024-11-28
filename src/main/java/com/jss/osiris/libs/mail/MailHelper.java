@@ -1433,6 +1433,10 @@ public class MailHelper {
                 label += "  / RCS " + (affaire.getSiret() != null ? affaire.getSiret() : affaire.getSiren());
             }
             label += " / "
+                    + provision.getProvisionFamilyType().getLabel();
+            label += " / "
+                    + provision.getProvisionType().getLabel();
+            label += " / "
                     + provision.getService().getServiceType().getServiceFamily().getServiceFamilyGroup().getLabel();
 
             if (provision.getFormalite() != null && provision.getFormalite().getFormalitesGuichetUnique() != null) {
@@ -1445,20 +1449,9 @@ public class MailHelper {
                 if (liasseList.size() > 0)
                     label += " / liasse(s) GU " + String.join(", ", liasseList);
             }
-            if (provision.getFormalite() != null && provision.getFormalite().getFormalitesInfogreffe() != null) {
-                ArrayList<String> liasseList = new ArrayList<String>();
-                for (FormaliteInfogreffe formaliteInfogreffe : provision.getFormalite()
-                        .getFormalitesInfogreffe()) {
-                    EvenementInfogreffe evenementInfogreffe = formaliteInfogreffeService
-                            .getLastEvenementInfogreffe(formaliteInfogreffe, true);
-                    if (evenementInfogreffe != null && (evenementInfogreffe.getCodeEtat().equals("ENVOYE_AU_GRF")
-                            || evenementInfogreffe.getCodeEtat().equals("RECU_PAR_LE_GRF"))) {
-                        liasseList.add(formaliteInfogreffe.getReferenceTechnique());
-                    }
-                }
-                if (liasseList.size() > 0)
-                    label += " / liasse(s) Infogreffe " + String.join(", ", liasseList);
-            }
+            
+            label += " / "
+                    + provision.getService().getAssoAffaireOrder().getCustomerOrder().getId();
             provisionDetails.add(label);
         }
 
