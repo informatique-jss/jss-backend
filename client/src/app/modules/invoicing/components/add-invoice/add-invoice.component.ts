@@ -109,7 +109,6 @@ export class AddInvoiceComponent implements OnInit {
                         this.invoice.provision = provision;
           }
         })
-
       })
     } else if (url != undefined && url != null && url[2] != undefined && url[1].path == "rff") {
       this.invoiceService.createInvoiceFromRff(idInvoice).subscribe(generatedInvoice => {
@@ -249,13 +248,12 @@ export class AddInvoiceComponent implements OnInit {
           this.appService.displaySnackBar("Impossible de saisir une facture sur l'exercice précédent", true, 10);
           return;
         }
-
-        if (this.invoice.manualAccountingDocumentDate.getTime() < this.minDate.getTime() || this.invoice.manualAccountingDocumentDate.getTime() > this.maxDate.getTime()) {
-          this.appService.displaySnackBar("Date de la pièce comptable invalide", true, 10);
-          return;
-        }
       }
 
+      if (this.invoice.manualAccountingDocumentDate.getTime() < this.minDate.getTime() || this.invoice.manualAccountingDocumentDate.getTime() > this.maxDate.getTime()) {
+        this.appService.displaySnackBar("Date de la pièce comptable invalide", true, 10);
+        return;
+      }
       if (this.invoice.dueDate)
         this.invoice.dueDate = new Date(this.invoice.dueDate.setHours(12));
 
