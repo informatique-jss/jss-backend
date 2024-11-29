@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -132,6 +133,8 @@ public class AccountingController {
             validationHelper.validateString(accountingRecord.getLabel(), true, 100, "Label");
             validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDeadline(), false,
                     "ManualAccountingDocumentDeadline");
+            validationHelper.validateDateMin(accountingRecord.getOperationDateTime().toLocalDate(), false,  LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
+            validationHelper.validateDateMax(accountingRecord.getOperationDateTime().toLocalDate(), false, LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
 
             if (accountingRecord.getAccountingJournal().getId().equals(purchasesJournal.getId())
                     || accountingRecord.getAccountingJournal().getId().equals(salesJournal.getId())
