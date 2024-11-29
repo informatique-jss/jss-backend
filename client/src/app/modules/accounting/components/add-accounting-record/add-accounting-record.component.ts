@@ -162,10 +162,6 @@ export class AddAccountingRecordComponent implements OnInit {
           return;
         }
         journalId = record.accountingJournal.id;
-        if (record.operationDateTime.getTime() > this.maxDate.getTime() || record.operationDateTime.getTime() < this.minDate.getTime()) {
-          this.appService.displaySnackBar("Date de l'opération invalide", true, 10);
-          return;
-        }
       }
 
       if ((Math.round(this.getTotalBalance() * 100) / 100) == 0) {

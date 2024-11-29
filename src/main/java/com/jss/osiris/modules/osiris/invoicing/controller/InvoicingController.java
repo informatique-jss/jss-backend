@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import java.util.Arrays;
 import java.util.List;
 
@@ -974,6 +975,8 @@ public class InvoicingController {
             validationHelper.validateReferential(invoice.getBillingLabelCountry(),
                     invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), "BillingLabelCountry");
             validationHelper.validateString(invoice.getBillingLabelPostalCode(), false, 40, "BillingLabelPostalCode");
+            validationHelper.validateDateMin(invoice.getManualAccountingDocumentDate(), true, LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
+            validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), true, LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
         }
         validationHelper.validateReferential(invoice.getInvoiceStatus(), false, "InvoiceStatus");
         validationHelper.validateDate(invoice.getDueDate(), false, "DueDate");

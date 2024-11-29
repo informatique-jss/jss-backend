@@ -249,11 +249,6 @@ export class AddInvoiceComponent implements OnInit {
           return;
         }
       }
-
-      if (this.invoice.manualAccountingDocumentDate.getTime() < this.minDate.getTime() || this.invoice.manualAccountingDocumentDate.getTime() > this.maxDate.getTime()) {
-        this.appService.displaySnackBar("Date de la pièce comptable invalide", true, 10);
-        return;
-      }
       if (this.invoice.dueDate)
         this.invoice.dueDate = new Date(this.invoice.dueDate.setHours(12));
 

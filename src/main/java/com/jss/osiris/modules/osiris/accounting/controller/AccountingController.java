@@ -132,6 +132,8 @@ public class AccountingController {
             validationHelper.validateString(accountingRecord.getLabel(), true, 100, "Label");
             validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDeadline(), false,
                     "ManualAccountingDocumentDeadline");
+            validationHelper.validateDateMin(accountingRecord.getOperationDateTime().toLocalDate(), true,  LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
+            validationHelper.validateDateMax(accountingRecord.getOperationDateTime().toLocalDate(), true, LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
 
             if (accountingRecord.getAccountingJournal().getId().equals(purchasesJournal.getId())
                     || accountingRecord.getAccountingJournal().getId().equals(salesJournal.getId())
