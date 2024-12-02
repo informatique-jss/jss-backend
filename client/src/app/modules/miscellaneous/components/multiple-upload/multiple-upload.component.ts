@@ -128,7 +128,7 @@ export class MultipleUploadComponent implements OnInit {
           let last = [];
           if (response) {
             for (let res of response)
-              if (res instanceof HttpResponse && res.body.length > last.length)
+              if (res instanceof HttpResponse && res.body && res.body.length > last.length)
                 last = res.body;
           }
           this.endOfUpload.next(last);
