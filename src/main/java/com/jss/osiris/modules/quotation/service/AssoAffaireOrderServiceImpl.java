@@ -355,9 +355,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     if (formaliteInfogreffeOrigin.getEvenements() != null
                                             && formaliteInfogreffeOrigin.getEvenements().size() > 0) {
                                         formaliteInfogreffeOrigin.getEvenements().sort(
-                                                (o1, o2) -> ((LocalDateTime) o1.getCreatedDate())
-                                                        .compareTo((LocalDateTime) (o2.getCreatedDate())));
-                                        if (formaliteInfogreffeOrigin.getEvenements().get(0).getCodeEtat()
+                                                (o1, o2) -> ((LocalDateTime) o2.getCreatedDate())
+                                                        .compareTo((LocalDateTime) (o1.getCreatedDate())));
+                                        if (!formaliteInfogreffeOrigin.getEvenements().get(0).getCodeEtat()
                                                 .equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED))
                                             throw new OsirisClientMessageException(
                                                     "Impossible de terminer la formalité, le dossier Infogreffe n'est pas terminé");
