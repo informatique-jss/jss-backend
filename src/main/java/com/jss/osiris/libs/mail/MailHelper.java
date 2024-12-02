@@ -70,8 +70,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.EvenementInfogreffe;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
@@ -1449,7 +1447,7 @@ public class MailHelper {
                 if (liasseList.size() > 0)
                     label += " / liasse(s) GU " + String.join(", ", liasseList);
             }
-            
+
             label += " / "
                     + provision.getService().getAssoAffaireOrder().getCustomerOrder().getId();
             provisionDetails.add(label);

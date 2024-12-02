@@ -144,8 +144,8 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
                                 AnnouncementStatus.ANNOUNCEMENT_NEW);
 
-                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
-                                AnnouncementStatus.ANNOUNCEMENT_WAITING_LINKED_PROVISION);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_LINKED_PROVISION,
+                                AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
 
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
                                 AnnouncementStatus.ANNOUNCEMENT_NEW);
