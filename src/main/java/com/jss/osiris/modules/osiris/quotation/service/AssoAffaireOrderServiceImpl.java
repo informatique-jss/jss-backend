@@ -365,8 +365,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     if (formaliteInfogreffeOrigin.getEvenements() != null
                                             && formaliteInfogreffeOrigin.getEvenements().size() > 0) {
                                         if (!formaliteInfogreffeService.getLastEvenementInfogreffe(formaliteInfogreffeOrigin, true).getCodeEtat().equals(FormaliteInfogreffe.INFOGREFFE_STATUS_VALIDATED)
-                                        || !formaliteInfogreffeService.getLastEvenementInfogreffe(formaliteInfogreffeOrigin, true).getCodeEtat().equals(FormaliteInfogreffe.INFOGREFFE_STATUS_STRICT_REJECT)){
-                                            throw new OsirisClientMessageException(
+                                        && !formaliteInfogreffeService.getLastEvenementInfogreffe(formaliteInfogreffeOrigin, true).getCodeEtat().equals(FormaliteInfogreffe.INFOGREFFE_STATUS_STRICT_REJECT)){
+                                            throw new OsirisClientMessageException( 
                                                     "Impossible de terminer la formalité, le dossier Infogreffe n'est pas terminé");
                                         }
                                     }
