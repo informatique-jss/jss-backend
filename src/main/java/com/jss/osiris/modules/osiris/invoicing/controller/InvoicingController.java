@@ -975,14 +975,14 @@ public class InvoicingController {
             validationHelper.validateReferential(invoice.getBillingLabelCountry(),
                     invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), "BillingLabelCountry");
             validationHelper.validateString(invoice.getBillingLabelPostalCode(), false, 40, "BillingLabelPostalCode");
-            validationHelper.validateDateMin(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
-            validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
         }
         validationHelper.validateReferential(invoice.getInvoiceStatus(), false, "InvoiceStatus");
         validationHelper.validateDate(invoice.getDueDate(), false, "DueDate");
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "AccountingDocumentDate");
+        validationHelper.validateDateMin(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
+        validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
         validationHelper.validateString(invoice.getManualAccountingDocumentNumber(), false, 150,
-                "ManualAccountingDocumentNumber");
+        "ManualAccountingDocumentNumber");
         validationHelper.validateString(invoice.getBillingLabelIntercommunityVat(), false, 20, "intercommunityVat");
 
         if (invoice.getInvoiceItems() == null) {
