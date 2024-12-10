@@ -383,17 +383,16 @@ public class VatServiceImpl implements VatService {
         if (invoiceItem.getVat() != null)
             if (isPurschases) {
                 // Deductible
-                if (invoiceItem.getVat().getRate().equals(constantService.getVatDeductible().getRate()))
+                if (invoiceItem.getVat().getRate().compareTo(constantService.getVatDeductible().getRate()) == 0)
                     invoiceItem.setVat(constantService.getVatDeductible());
-                if (invoiceItem.getVat().getRate().equals(constantService.getVatDeductibleTwo().getRate()))
+                if (invoiceItem.getVat().getRate().compareTo(constantService.getVatDeductibleTwo().getRate()) == 0)
                     invoiceItem.setVat(constantService.getVatDeductibleTwo());
             } else {
                 // Collected
-                if (invoiceItem.getVat().getRate().equals(constantService.getVatTwenty().getRate()))
+                if (invoiceItem.getVat().getRate().compareTo(constantService.getVatTwenty().getRate()) == 0)
                     invoiceItem.setVat(constantService.getVatTwenty());
-                if (invoiceItem.getVat().getRate().equals(constantService.getVatTwo().getRate()))
+                if (invoiceItem.getVat().getRate().compareTo(constantService.getVatTwo().getRate()) == 0)
                     invoiceItem.setVat(constantService.getVatTwo());
             }
     }
-
 }
