@@ -84,7 +84,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true,
                                 AggregateStatus.AGGREGATE_STATUS_DONE, 2);
 
-                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW,
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
                                 AnnouncementStatus.ANNOUNCEMENT_WAITING_LINKED_PROVISION);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW,
                                 AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
