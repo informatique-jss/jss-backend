@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.profile.model.Employee;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,6 +47,10 @@ public class MissingAttachmentQuery {
     private Boolean sendToMe;
     private Boolean copyToMe;
     private LocalDateTime createdDateTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_employee_sent_by")
+    private Employee employeeSentBy;
 
     private LocalDateTime firstCustomerReminderDateTime;
     private LocalDateTime secondCustomerReminderDateTime;
@@ -137,5 +142,13 @@ public class MissingAttachmentQuery {
 
     public void setAssoServiceFieldType(List<AssoServiceFieldType> assoServiceFieldType) {
         this.assoServiceFieldType = assoServiceFieldType;
+    }
+
+    public Employee getEmployeeSentBy() {
+        return employeeSentBy;
+    }
+
+    public void setEmployeeSentBy(Employee employeeSentBy) {
+        this.employeeSentBy = employeeSentBy;
     }
 }
