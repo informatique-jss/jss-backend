@@ -1317,7 +1317,7 @@ public class MailHelper {
         if (query.getComment() != null)
             mail.setExplaination(query.getComment().replaceAll("\r?\n", "<br/>"));
 
-        Employee sendToEmployee = employeeService.getCurrentEmployee();
+        Employee sendToEmployee = query.getEmployeeSentBy();
         if (sendToEmployee == null)
             sendToEmployee = query.getService().getAssoAffaireOrder().getAssignedTo();
 
@@ -1328,6 +1328,7 @@ public class MailHelper {
 
         if (query.getCopyToMe()) {
             mail.setCopyToMe(true);
+            mail.setSendToMeEmployee(query.getEmployeeSentBy());
         }
 
         List<Attachment> attachments = new ArrayList<Attachment>();

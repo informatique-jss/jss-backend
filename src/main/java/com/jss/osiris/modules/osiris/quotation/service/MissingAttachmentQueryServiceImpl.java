@@ -16,6 +16,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
@@ -66,6 +67,9 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
 
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @Override
     public MissingAttachmentQuery getMissingAttachmentQuery(Integer id) {
@@ -127,6 +131,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
             query.setSecondCustomerReminderDateTime(null);
             query.setThirdCustomerReminderDateTime(null);
             query.setCreatedDateTime(LocalDateTime.now());
+            query.setEmployeeSentBy(employeeService.getCurrentEmployee());
             toSend = true;
         } else {
             if (query.getFirstCustomerReminderDateTime() == null) {
