@@ -107,5 +107,4 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
                         " and i.id_provider=1279 " +
                         " and not exists (select 1 from cart c where c.id_invoice = i.id) ")
         void createTablePurgeInvoice();
-
 }

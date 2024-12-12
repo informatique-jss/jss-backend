@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
