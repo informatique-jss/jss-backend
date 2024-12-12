@@ -564,7 +564,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             for (CartRate cartRate : cart.getCartRates()) {
                                 if (cartRate.getRate() != null && cartRate.getAmount() != 0) {
                                     boolean initItem = true;
-                                    if (cartRate.getAmount() > 0) {
+                                    if (cartRate.getAmount() != 0) {
                                         InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
                                         if (invoiceItem.getBillingItem().getBillingType().getId()
                                                 .equals(constantService.getBillingTypeDeboursNonTaxable().getId())) {
