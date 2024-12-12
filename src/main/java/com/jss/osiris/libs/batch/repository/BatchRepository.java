@@ -108,4 +108,9 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
                         " and not exists (select 1 from cart c where c.id_invoice = i.id) ")
         void createTablePurgeInvoice();
 
+        @Query(nativeQuery = true, value = "select * from batch where id_batch_status in :batchStatusList and id_batch_settings =:batchSettingsId and entity_id =:entityId")
+        List<Batch> findBatchsByEntityIdAndBatchSettingsAndBatchStatus(
+                @Param("batchSettingsId") Integer batchSettingsId,
+                @Param("entityId") Integer entityId, 
+                @Param("batchStatusList") List<Integer> batchStatusList);
 }

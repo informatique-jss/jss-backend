@@ -220,6 +220,12 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
         if (batchStatusWaiting == null)
             batchStatusWaiting = batchStatusService.getBatchStatusByCode(BatchStatus.WAITING);
 
+        List<Batch> existingBatchs = batchRepository.findBatchsByEntityIdAndBatchSettingsAndBatchStatus(batchSettings.get(batchCode).getId(), entityId, Arrays.asList(batchStatusService.getBatchStatusByCode(BatchStatus.NEW).getId(),batchStatusService.getBatchStatusByCode(BatchStatus.NEW).getId(),batchStatusService.getBatchStatusByCode(BatchStatus.NEW).getId()));
+       
+        if(existingBatchs!=null && existingBatchs.size()>0){
+               return null;
+        }
+
         batch.setBatchSettings(batchSettings.get(batchCode));
 
         batch.setBatchStatus(batchStatusNew);
@@ -315,5 +321,9 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
         invoiceItemService.deleteDuplicateInvoiceItemOrigin();
         paymentService.deleteDuplicatePayments();
         invoiceService.deleteDuplicateInvoices();
+    }
+
+    public List<Batch> findBatchsByEntityIdAndBatchSettingsAndBatchStatus(BatchSettings batchSettings, Integer entityId) {
+         return batchRepository.findBatchsByEntityIdAndBatchSettingsAndBatchStatus(batchSettings.getId(), entityId, null);
     }
 }
