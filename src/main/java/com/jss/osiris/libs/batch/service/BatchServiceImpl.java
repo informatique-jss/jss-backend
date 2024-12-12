@@ -220,7 +220,7 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
         if (batchStatusWaiting == null)
             batchStatusWaiting = batchStatusService.getBatchStatusByCode(BatchStatus.WAITING);
 
-        List<Batch> existingBatchs = batchRepository.findBatchsByEntityIdAndBatchSettingsAndBatchStatus(batchSettings.get(batchCode).getId(), entityId, Arrays.asList(batchStatusService.getBatchStatusByCode(BatchStatus.NEW).getId(),batchStatusService.getBatchStatusByCode(BatchStatus.NEW).getId(),batchStatusService.getBatchStatusByCode(BatchStatus.NEW).getId()));
+        List<Batch> existingBatchs = batchRepository.findByBatchSettingsAndEntityIdAndBatchStatusIn(batchSettings.get(batchCode), entityId, Arrays.asList(batchStatusService.getBatchStatusByCode(BatchStatus.NEW),batchStatusService.getBatchStatusByCode(BatchStatus.NEW),batchStatusService.getBatchStatusByCode(BatchStatus.NEW)));
        
         if(existingBatchs!=null && existingBatchs.size()>0){
                return null;
