@@ -87,6 +87,12 @@ export class AccountingBalanceComponent implements OnInit {
   }
 
   exportBalance() {
+    if (this.accountingBalanceSearch.startDate && this.accountingBalanceSearch.endDate)
+      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear()) {
+        this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
+        return;
+      }
+
     this.accountingBalanceService.exportBalance(this.accountingBalanceSearch);
   }
 
@@ -96,6 +102,13 @@ export class AccountingBalanceComponent implements OnInit {
       this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
       return;
     }
+
+    if (this.accountingBalanceSearch.startDate && this.accountingBalanceSearch.endDate)
+      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear()) {
+        this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
+        return;
+      }
+
     this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate.setHours(12));
     this.userPreferenceService.setUserSearchBookmark(this.accountingBalanceSearch, "accounting-balance");
     this.accountingBalanceService.searchAccountingBalance(this.accountingBalanceSearch).subscribe(response => {
@@ -194,7 +207,7 @@ export class AccountingBalanceComponent implements OnInit {
     let d = new Date();
     this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), 0, 1, 12, 0, 0);
     let d2 = new Date();
-    this.accountingBalanceSearch.endDate = new Date(d2.getFullYear() + 1, 0, 1, 12, 0, 0);
+    this.accountingBalanceSearch.endDate = new Date(d2.getFullYear(), 11, 31, 12, 0, 0);
   }
 
 }

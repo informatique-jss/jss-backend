@@ -1,11 +1,12 @@
 package com.jss.osiris.modules.osiris.accounting.controller;
 
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -133,8 +134,10 @@ public class AccountingController {
             validationHelper.validateString(accountingRecord.getLabel(), true, 100, "Label");
             validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDeadline(), false,
                     "ManualAccountingDocumentDeadline");
-            validationHelper.validateDateMin(accountingRecord.getOperationDateTime().toLocalDate(), false,  LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
-            validationHelper.validateDateMax(accountingRecord.getOperationDateTime().toLocalDate(), false, LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
+            validationHelper.validateDateMin(accountingRecord.getOperationDateTime().toLocalDate(), false,
+                    LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
+            validationHelper.validateDateMax(accountingRecord.getOperationDateTime().toLocalDate(), false,
+                    LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
 
             if (accountingRecord.getAccountingJournal().getId().equals(purchasesJournal.getId())
                     || accountingRecord.getAccountingJournal().getId().equals(salesJournal.getId())
@@ -228,7 +231,7 @@ public class AccountingController {
     @PostMapping(inputEntryPoint + "/accounting-record/search")
     public ResponseEntity<List<AccountingRecordSearchResult>> searchAccountingRecords(
             @RequestBody AccountingRecordSearch accountingRecordSearch)
-            throws OsirisValidationException, OsirisClientMessageException {
+            throws OsirisException {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
@@ -240,6 +243,9 @@ public class AccountingController {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
+
+        if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear()))
+            throw new OsirisValidationException("Not in fiscal year");
 
         return new ResponseEntity<List<AccountingRecordSearchResult>>(
                 accountingRecordService.searchAccountingRecords(accountingRecordSearch, false), HttpStatus.OK);
@@ -359,6 +365,9 @@ public class AccountingController {
                 throw new OsirisValidationException("StartDate or EndDate");
         }
 
+        if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear()))
+            throw new OsirisValidationException("Not in fiscal year");
+
         File grandLivre = accountingRecordService.getGrandLivreExport(accountingRecordSearch);
 
         if (grandLivre != null) {
@@ -399,6 +408,9 @@ public class AccountingController {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
+
+        if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear()))
+            throw new OsirisValidationException("Not in fiscal year");
 
         validationHelper.validateReferential(accountingRecordSearch.getAccountingJournal(), true, "accoutingJournal");
 
@@ -441,6 +453,9 @@ public class AccountingController {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
         }
+
+        if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear()))
+            throw new OsirisValidationException("Not in fiscal year");
 
         validationHelper.validateReferential(accountingRecordSearch.getAccountingAccount(), true, "accoutingAccount");
 
@@ -525,6 +540,9 @@ public class AccountingController {
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
+        if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear()))
+            throw new OsirisValidationException("Not in fiscal year");
+
         if (accountingRecordSearch.getPrincipalAccountingAccounts() != null)
             for (PrincipalAccountingAccount principalAccountingAccount : accountingRecordSearch
                     .getPrincipalAccountingAccounts())
@@ -546,6 +564,9 @@ public class AccountingController {
 
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
+
+        if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear()))
+            throw new OsirisValidationException("Not in fiscal year");
 
         File grandLivre = accountingRecordService.getAccountingBalanceExport(accountingRecordSearch);
 
@@ -581,6 +602,9 @@ public class AccountingController {
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
 
+        if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear()))
+            throw new OsirisValidationException("Not in fiscal year");
+
         if (accountingRecordSearch.getPrincipalAccountingAccounts() != null)
             for (PrincipalAccountingAccount principalAccountingAccount : accountingRecordSearch
                     .getPrincipalAccountingAccounts())
@@ -603,6 +627,9 @@ public class AccountingController {
 
         if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
             throw new OsirisValidationException("StartDate or EndDate");
+
+        if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear()))
+            throw new OsirisValidationException("Not in fiscal year");
 
         File grandLivre = accountingRecordService.getAccountingBalanceGeneraleExport(accountingRecordSearch);
 

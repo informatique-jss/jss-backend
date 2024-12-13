@@ -224,6 +224,11 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   exportGrandLivre() {
+    if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear()) {
+        this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
+        return;
+      }
     if (this.accountingRecordSearch.startDate) {
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
       this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch);
@@ -231,6 +236,11 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   exportAllGrandLivre() {
+    if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear()) {
+        this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
+        return;
+      }
     if (this.accountingRecordSearch.startDate) {
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
       this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch);
@@ -238,6 +248,11 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   exportJournal() {
+    if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear()) {
+        this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
+        return;
+      }
     if (this.accountingRecordSearch.startDate) {
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
       this.accountingRecordService.exportJournal(this.accountingRecordSearch);
@@ -245,6 +260,11 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   exportAccountingAccount() {
+    if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear()) {
+        this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
+        return;
+      }
     if (this.accountingRecordSearch.startDate) {
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
       this.accountingRecordService.exportAccountingAccount(this.accountingRecordSearch);
@@ -262,6 +282,15 @@ export class AccountingRecordComponent implements OnInit {
         this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
         return;
       }
+
+      if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
+        if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear()) {
+          this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
+          return;
+        }
+    }
+    if (this.accountingRecordSearch.tiersId || this.accountingRecordSearch.idPayment) {
+      this.setCurentFiscalYear();
     }
     if (this.accountingRecordSearch.startDate)
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
@@ -286,7 +315,7 @@ export class AccountingRecordComponent implements OnInit {
     let d = new Date();
     this.accountingRecordSearch.startDate = new Date(d.getFullYear(), 0, 1, 12, 0, 0);
     let d2 = new Date();
-    this.accountingRecordSearch.endDate = new Date(d2.getFullYear() + 1, 0, 1, 12, 0, 0);
+    this.accountingRecordSearch.endDate = new Date(d2.getFullYear(), 11, 31, 12, 0, 0);
   }
 
   computeBalanceAndDebitAndCreditAccumulation() {

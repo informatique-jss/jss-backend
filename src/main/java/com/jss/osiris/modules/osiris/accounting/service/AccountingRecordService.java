@@ -66,11 +66,13 @@ public interface AccountingRecordService {
 
         // Front search method
         public List<AccountingRecordSearchResult> searchAccountingRecords(
-                        AccountingRecordSearch accountingRecordSearch, boolean fetchAll);
+                        AccountingRecordSearch accountingRecordSearch, boolean fetchAll) throws OsirisException;
 
-        public List<AccountingBalance> searchAccountingBalance(AccountingBalanceSearch accountingBalanceSearch);
+        public List<AccountingBalance> searchAccountingBalance(AccountingBalanceSearch accountingBalanceSearch)
+                        throws OsirisException;
 
-        public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingBalanceSearch);
+        public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingBalanceSearch)
+                        throws OsirisException;
 
         public File getGrandLivreExport(AccountingRecordSearch accountingRecordSearch) throws OsirisException;
 
