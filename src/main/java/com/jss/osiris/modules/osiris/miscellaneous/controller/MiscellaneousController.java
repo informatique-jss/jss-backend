@@ -1325,6 +1325,16 @@ public class MiscellaneousController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/customer-mail/delete")
+    public ResponseEntity<Boolean> deleteCustomerMail(@RequestParam Integer idCustomerMail)
+            throws OsirisValidationException, OsirisException {
+        CustomerMail customerMail = customerMailService.getMail(idCustomerMail);
+        if (customerMail == null)
+            throw new OsirisValidationException("customerMail");
+        customerMailService.deleteCustomerMail(customerMail);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/customer-mail/quotation")
     public ResponseEntity<List<CustomerMail>> getCustomerMailByQuotation(@RequestParam Integer idQuotation)
             throws OsirisValidationException, OsirisException {

@@ -11,7 +11,7 @@ import { CustomerMail } from '../model/CustomerMail';
 @Injectable({
   providedIn: 'root'
 })
-export class CustomerMailService extends AppRestService<CustomerMail>{
+export class CustomerMailService extends AppRestService<CustomerMail> {
 
   constructor(http: HttpClient) {
     super(http, "miscellaneous");
@@ -39,5 +39,9 @@ export class CustomerMailService extends AppRestService<CustomerMail>{
 
   sendCustomerMailImmediatly(customerMail: CustomerMail) {
     return this.get(new HttpParams().set("idCustomerMail", customerMail.id), "customer-mail/send/immediatly");
+  }
+
+  deleteCustomerMail(customerMail: CustomerMail) {
+    return this.get(new HttpParams().set("idCustomerMail", customerMail.id), "customer-mail/delete");
   }
 }
