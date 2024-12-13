@@ -331,7 +331,8 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
                             currentInvoiceId = ((String) fieldMap.get(keyMap).getValue()).toUpperCase().trim()
                                     .replaceAll(" ",
                                             "");
-                            receiptInvoice.setInvoiceId(currentInvoiceId);
+                            if (currentInvoiceId != null)
+                                receiptInvoice.setInvoiceId(currentInvoiceId.trim());
                         }
 
                         if (currentInvoiceId != null && currentInvoiceTotal != null) {
