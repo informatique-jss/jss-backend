@@ -116,10 +116,15 @@ export class AutomaticMailListComponent implements OnInit {
     this.tableActions.push({
       actionIcon: "delete", actionName: "Supprimer le mail", actionClick: (column: SortTableAction<CustomerMail>, element: CustomerMail, event: any): void => {
         let customerMail = element as CustomerMail;
-        if (customerMail && customerMail.isSent == false && customerMail.isCancelled == false && customerMail.toSendAfter != null && customerMail.toSendAfter > new Date()) {
-          this.customerMailService.deleteCustomerMail(element).subscribe(response => {
-            this.appService.displaySnackBar("Le mail a été supprimé", false, 10);
-          })
+        if (customerMail && customerMail.isSent == false && customerMail.isCancelled == false && customerMail.toSendAfter != null) {
+          let toSendDate = new Date(customerMail.toSendAfter);
+          let nowDate = new Date();
+          if (toSendDate.getTime() > nowDate.getTime()) {
+            this.customerMailService.deleteCustomerMail(element).subscribe(response => {
+              this.refreshTable.next();
+              this.appService.displaySnackBar("Le mail a été supprimé", false, 10);
+            });
+          }
         }
       }, display: true
     } as SortTableAction<CustomerMail>);
