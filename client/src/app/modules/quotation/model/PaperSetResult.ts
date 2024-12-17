@@ -14,4 +14,9 @@ export interface PaperSetResult {
   isValidated: boolean;
   isCancelled: boolean;
   creationComment: string;
+  validationComment: string;
+  validatedBy: string;
+  validationDateTime: Date;
+  createdBy: string;
+  createdDateTime: Date;
 }

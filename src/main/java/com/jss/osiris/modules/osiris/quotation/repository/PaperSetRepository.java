@@ -40,7 +40,15 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " 	end, " +
                         " 	', ') as servicesLabel, " +
                         " 	ps.location_number as locationNumber, " +
-                        " 	ps.creation_comment as creationComment " +
+                        " 	ps.creation_comment as creationComment, " +
+                        " 	ps.validation_comment as validationComment, " +
+                        " max(case when a.field_name ='id' then concat(e.firstname, ' ', e.lastname) end) as createdBy, "
+                        +
+                        " max(case when a.field_name ='id' then a.datetime end) as createdDateTime, " +
+                        "              max(case when a.field_name in ('isValidated','isCancelled') then concat(e.firstname, ' ', e.lastname) end) as validatedBy, "
+                        +
+                        " max(case when a.field_name in ('isValidated','isCancelled')  then a.datetime end) as validationDateTime "
+                        +
                         " from " +
                         " 	paper_set ps " +
                         " join paper_set_type pst on " +
@@ -63,6 +71,8 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " 	s.id_asso_affaire_order = aao.id " +
                         " join service_type st on " +
                         " 	st.id = s.id_service_type " +
+                        " left join audit a on a.entity_id = ps.id and a.entity = 'PaperSet' " +
+                        " left join employee e on e.username = a.username " +
                         " 	where (:isDisplayCancelled or ps.is_cancelled=:isDisplayCancelled) " +
                         " and  (:isDisplayValidated or ps.is_validated=:isDisplayValidated) " +
                         " and concat(co.id, '-', ps.location_number, '-', af.id) like '%' || :textSearch || '%' " +

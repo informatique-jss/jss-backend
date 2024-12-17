@@ -569,7 +569,7 @@ public class PaymentServiceImpl implements PaymentService {
             } else if (i == correspondingCustomerOrder.size() - 1) { // if last, put all on last customer order
                 effectivePayment = remainingMoney;
             } else {
-                effectivePayment = remainingToPayForCustomerOrder.subtract(remainingMoney);
+                effectivePayment = remainingToPayForCustomerOrder.min(remainingMoney);
             }
 
             // Generate one deposit per customer order
@@ -626,7 +626,7 @@ public class PaymentServiceImpl implements PaymentService {
                         effectivePayment = byPassAmount.get(amountIndex);
                         amountIndex++;
                     } else {
-                        effectivePayment = remainingToPayForCurrentInvoice.subtract(remainingMoney);
+                        effectivePayment = remainingToPayForCurrentInvoice.min(remainingMoney);
                     }
 
                     // If there is an appoint, use all remaining money, it's handled in

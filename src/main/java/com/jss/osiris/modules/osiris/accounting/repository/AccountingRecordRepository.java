@@ -390,7 +390,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("accountingAccountId") Integer accountingAccountId);
 
         @Query(nativeQuery = true, value = "select sum(transfert_amount) from bank_transfert bt "
-                        + "where is_already_exported = true and (is_cancelled is null or is_cancelled=false) and (is_matched = false or is_matched is null)")
+                        + "where (is_already_exported is not null and is_already_exported = true) and (is_cancelled is null or is_cancelled=false) and (is_matched = false or is_matched is null)")
         Number getBankTransfertTotal();
 
         @Query(nativeQuery = true, value = "select sum(refund_amount) from refund r where is_already_exported = true and (is_matched = false or is_matched is null)")

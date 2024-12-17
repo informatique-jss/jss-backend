@@ -58,6 +58,22 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteService(Service service) {
+        if (service.getProvisions() != null && service.getProvisions().size() > 0) {
+            for (Provision provision : service.getProvisions()) {
+                if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
+                    for (Attachment attachment : provision.getAttachments()) {
+                        attachmentService.cleanAttachmentForDelete(attachment);
+                    }
+                }
+            }
+        }
+        serviceRepository.delete(service);
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire) {
         Service service = new Service();
         if (serviceTypes.size() > 1)

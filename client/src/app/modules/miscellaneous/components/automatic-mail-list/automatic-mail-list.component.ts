@@ -113,6 +113,24 @@ export class AutomaticMailListComponent implements OnInit {
         }
       }, display: true
     } as SortTableAction<CustomerMail>);
+    this.tableActions.push({
+      actionIcon: "delete", actionName: "Annuler le mail", actionClick: (column: SortTableAction<CustomerMail>, element: CustomerMail, event: any): void => {
+        let customerMail = element as CustomerMail;
+        if (customerMail && customerMail.isSent == false && customerMail.isCancelled == false && customerMail.toSendAfter != null) {
+          let toSendDate = new Date(customerMail.toSendAfter);
+          let nowDate = new Date();
+          if (toSendDate.getTime() > nowDate.getTime()) {
+            this.customerMailService.cancelCustomerMail(element).subscribe(response => {
+              if (response) {
+                this.appService.displaySnackBar("Le mail a été annulé", false, 10);
+                if (this.customerOrder)
+                  this.appService.openRoute(null, '/order/' + this.customerOrder.id, null);
+              }
+            });
+          }
+        }
+      }, display: true
+    } as SortTableAction<CustomerMail>);
   }
 
   getSentToLabel(element: CustomerMail, column: SortTableColumn<CustomerMail>): string {

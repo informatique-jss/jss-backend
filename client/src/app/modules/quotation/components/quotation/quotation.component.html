@@ -175,7 +175,7 @@
                                   matTooltip="Modifier le type de service"
                                   (click)="modifyService(service);$event.stopPropagation()" class="pointer">
                                   edit</mat-icon>
-                                <mat-icon color="accent" *ngIf="editMode  " matTooltip="Supprimer le service"
+                                <mat-icon color="accent" *ngIf="!editMode  " matTooltip="Supprimer le service"
                                   (click)="deleteService(asso,service);$event.stopPropagation()" class="pointer">
                                   delete</mat-icon>
                               </mat-panel-description>
@@ -206,8 +206,8 @@
                                   (auxclick)="displayProvision($event, asso,provision);$event.stopPropagation()"
                                   class="pointer">
                                   work</mat-icon>
-                                <mat-icon color="accent" *ngIf="editMode" matTooltip="Supprimer la prestation"
-                                  (click)="deleteProvision(service,provision);$event.stopPropagation()" class="pointer">
+                                <mat-icon color="accent" *ngIf="!editMode" matTooltip="Supprimer la prestation"
+                                  (click)="deleteProvision(provision);$event.stopPropagation()" class="pointer">
                                   delete</mat-icon>
                                 <mat-icon color="accent" *ngIf="editMode" matTooltip="Dupliquer la prestation"
                                   (click)="duplicateProvision(service,provision)" class="pointer">
