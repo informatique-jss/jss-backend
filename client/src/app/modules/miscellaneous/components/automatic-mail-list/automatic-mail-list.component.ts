@@ -114,7 +114,7 @@ export class AutomaticMailListComponent implements OnInit {
       }, display: true
     } as SortTableAction<CustomerMail>);
     this.tableActions.push({
-      actionIcon: "delete", actionName: "Supprimer le mail", actionClick: (column: SortTableAction<CustomerMail>, element: CustomerMail, event: any): void => {
+      actionIcon: "delete", actionName: "Annuler le mail", actionClick: (column: SortTableAction<CustomerMail>, element: CustomerMail, event: any): void => {
         let customerMail = element as CustomerMail;
         if (customerMail && customerMail.isSent == false && customerMail.isCancelled == false && customerMail.toSendAfter != null) {
           let toSendDate = new Date(customerMail.toSendAfter);

@@ -1333,7 +1333,8 @@ public class MiscellaneousController {
         if (customerMail == null)
             throw new OsirisValidationException("customerMail");
 
-        if (customerMail.getIsSent() == false && customerMail.getIsCancelled() == false
+        if (customerMail.getIsSent() != null && customerMail.getIsSent() == false
+                && customerMail.getIsCancelled() != null && customerMail.getIsCancelled() == false
                 && customerMail.getToSendAfter() != null && customerMail.getToSendAfter().isAfter(LocalDateTime.now()))
             customerMailService.cancelCustomerMail(customerMail);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
