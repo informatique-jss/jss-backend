@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDateTime;
+
 public interface IPaperSetResult {
 	Integer getId();
 
@@ -28,4 +30,14 @@ public interface IPaperSetResult {
 	Integer getLocationNumber();
 
 	String getCreationComment();
+
+	String getValidationComment();
+
+	String getValidatedBy();
+
+	LocalDateTime getValidationDateTime();
+
+	String getCreatedBy();
+
+	LocalDateTime getCreatedDateTime();
 }
