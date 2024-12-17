@@ -13,6 +13,8 @@ public interface ServiceService {
 
     public Service addOrUpdateService(Service service);
 
+    public Boolean deleteService(Service service);
+
     public Service modifyServiceType(ServiceType serviceType, Service service);
 
     public String getServiceLabel(Service service) throws OsirisException;

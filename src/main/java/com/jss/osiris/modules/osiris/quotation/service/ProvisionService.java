@@ -13,6 +13,8 @@ public interface ProvisionService {
 
     public void updateAssignedToForProvision(Provision provision, Employee employee);
 
+    public Boolean deleteProvision(Provision provision);
+
     public List<ProvisionBoardResult> getDashboardEmployee(List<Employee> employees);
 
     public Provision addOrUpdateProvision(Provision provision);

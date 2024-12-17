@@ -431,4 +431,15 @@ public class AttachmentServiceImpl implements AttachmentService {
     public List<Attachment> findByDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe) {
         return attachmentRepository.findByDocumentAssocieInfogreffe(documentAssocieInfogreffe.getUrlTelechargement());
     }
+
+    @Override
+    public Attachment cleanAttachmentForDelete(Attachment attachment) {
+        if (attachment.getChildrenAttachments() != null && attachment.getChildrenAttachments().size() > 0) {
+            for (Attachment childAttachmentToclean : attachment.getChildrenAttachments()) {
+                childAttachmentToclean.setParentAttachment(null);
+                addOrUpdateAttachment(childAttachmentToclean);
+            }
+        }
+        return attachment;
+    }
 }

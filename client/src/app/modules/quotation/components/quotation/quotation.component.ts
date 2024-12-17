@@ -436,9 +436,21 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
       }
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      width: '50%',
+      data: {
+        title: "Supprimer le service",
+        content: "Êtes-vous sûr de vouloir continuer ?",
+        closeActionText: "Annuler",
+        validationActionText: "Confirmer"
+      }
+    });
 
-    asso.services.splice(asso.services.indexOf(service), 1);
-    this.generateInvoiceItem();
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.serviceService.deleteService(service).subscribe();
+      }
+    });
   }
 
   modifyService(service: Service) {
@@ -543,8 +555,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     })
   }
 
-
-
   displayQuotationWorkflowDialog() {
     let dialogRef = this.quotationWorkflowDialog.open(WorkflowDialogComponent, {
       width: '100%',
@@ -577,7 +587,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     dialogRef.componentInstance.title = "Workflow des commandes";
   }
 
-  deleteProvision(service: Service, provision: Provision) {
+  deleteProvision(provision: Provision) {
     if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
       if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
@@ -597,7 +607,21 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       return;
     }
 
-    service.provisions.splice(service.provisions.indexOf(provision), 1);
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      width: '50%',
+      data: {
+        title: "Supprimer la prestation",
+        content: "Êtes-vous sûr de vouloir continuer ?",
+        closeActionText: "Annuler",
+        validationActionText: "Confirmer"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.provisionService.deleteProvision(provision).subscribe();
+      }
+    });
   }
 
   duplicateProvision(service: Service, provision: Provision): Provision {

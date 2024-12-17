@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,6 +37,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -183,6 +185,10 @@ public class Attachment implements Serializable, IId {
 	@JsonIgnore
 	@JoinColumn(name = "id_parent_attachment")
 	private Attachment parentAttachment;
+
+	@OneToMany(mappedBy = "parentAttachment")
+	@JsonIgnore
+	private List<Attachment> childrenAttachments;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_piece_jointe")
@@ -340,6 +346,14 @@ public class Attachment implements Serializable, IId {
 
 	public Attachment getParentAttachment() {
 		return parentAttachment;
+	}
+
+	public List<Attachment> getChildrenAttachments() {
+		return childrenAttachments;
+	}
+
+	public void setChildrenAttachments(List<Attachment> childrenAttachments) {
+		this.childrenAttachments = childrenAttachments;
 	}
 
 	public void setParentAttachment(Attachment parentAttachment) {
