@@ -47,7 +47,7 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " max(case when a.field_name ='id' then a.datetime end) as createdDateTime, " +
                         "              max(case when a.field_name in ('isValidated','isCancelled') then concat(e.firstname, ' ', e.lastname) end) as validatedBy, "
                         +
-                        " max(case when a.field_name in ('isValidated','isCancelled')  then a.datetime end) as validateDateTime "
+                        " max(case when a.field_name in ('isValidated','isCancelled')  then a.datetime end) as validationDateTime "
                         +
                         " from " +
                         " 	paper_set ps " +
@@ -71,9 +71,9 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " 	s.id_asso_affaire_order = aao.id " +
                         " join service_type st on " +
                         " 	st.id = s.id_service_type " +
-                        " 	where (:isDisplayCancelled or ps.is_cancelled=:isDisplayCancelled) " +
                         " left join audit a on a.entity_id = ps.id and a.entity = 'PaperSet' " +
                         " left join employee e on e.username = a.username " +
+                        " 	where (:isDisplayCancelled or ps.is_cancelled=:isDisplayCancelled) " +
                         " and  (:isDisplayValidated or ps.is_validated=:isDisplayValidated) " +
                         " and concat(co.id, '-', ps.location_number, '-', af.id) like '%' || :textSearch || '%' " +
                         " group by " +
