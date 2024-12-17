@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.miscellaneous.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -1331,7 +1332,10 @@ public class MiscellaneousController {
         CustomerMail customerMail = customerMailService.getMail(idCustomerMail);
         if (customerMail == null)
             throw new OsirisValidationException("customerMail");
-        customerMailService.cancelCustomerMail(customerMail);
+
+        if (customerMail.getIsSent() == false && customerMail.getIsCancelled() == false
+                && customerMail.getToSendAfter() != null && customerMail.getToSendAfter().isAfter(LocalDateTime.now()))
+            customerMailService.cancelCustomerMail(customerMail);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
