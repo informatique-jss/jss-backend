@@ -18,7 +18,7 @@ export class ProvisionService extends AppRestService<Provision> {
   }
 
   deleteProvision(provision: Provision) {
-    return this.get(new HttpParams().set("provisionId", provision.id), "provision/delete");
+    return this.get(new HttpParams().set("provisionId", provision.id), "provision/delete", "Prestation supprimée", "Erreur lors de la suppression");
   }
 
   getRegistrationActPdf(idProvision: number) {

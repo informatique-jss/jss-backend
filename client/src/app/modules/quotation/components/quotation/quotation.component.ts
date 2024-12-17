@@ -437,7 +437,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         this.displaySnakBarLockProvision();
       }
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-      width: '50%',
+      maxWidth: "400px",
       data: {
         title: "Supprimer le service",
         content: "Êtes-vous sûr de vouloir continuer ?",
@@ -448,7 +448,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        this.serviceService.deleteService(service).subscribe();
+        this.serviceService.deleteService(service).subscribe(response => {
+          if (response)
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+        });
       }
     });
   }
@@ -608,7 +611,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     }
 
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-      width: '50%',
+      maxWidth: "400px",
       data: {
         title: "Supprimer la prestation",
         content: "Êtes-vous sûr de vouloir continuer ?",
@@ -619,7 +622,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        this.provisionService.deleteProvision(provision).subscribe();
+        this.provisionService.deleteProvision(provision).subscribe(response => {
+          if (response)
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+        });
       }
     });
   }
