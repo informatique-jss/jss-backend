@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -47,6 +48,11 @@ export class PaperSetListComponent implements OnInit {
     this.displayedColumns.push({ id: "creationComment", fieldName: "creationComment", label: "Commentaire" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé ?", valueFonction: (element: PaperSetResult | PaperSetResult) => { if (element.isCancelled) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSetResult | PaperSetResult>);
     this.displayedColumns.push({ id: "isValidated", fieldName: "isValidated", label: "Validé ?", valueFonction: (element: PaperSetResult | PaperSetResult) => { if (element.isValidated) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSetResult | PaperSetResult>);
+    this.displayedColumns.push({ id: "createdBy", fieldName: "createdBy", label: "Créé par" } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({ id: "createdDateTime", fieldName: "createdDateTime", label: "Créé le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({ id: "validatedBy", fieldName: "validatedBy", label: "Validé / annulé par" } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({ id: "validationDateTime", fieldName: "validationDateTime", label: "Validé / annulé le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<PaperSetResult>);
+
 
     this.displayedColumns.push({
       id: "isDone", fieldName: "isDone", label: "Statut action", valueFonction: (element: PaperSetResult, column: SortTableColumn<PaperSetResult>) => {
