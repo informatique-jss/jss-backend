@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
@@ -33,6 +35,9 @@ public class ProvisionServiceImpl implements ProvisionService {
     @Autowired
     GeneratePdfDelegate generatePdfDelegate;
 
+    @Autowired
+    AttachmentService attachmentService;
+
     @Override
     public Provision getProvision(Integer id) {
         Optional<Provision> provision = provisionRepository.findById(id);
@@ -51,6 +56,18 @@ public class ProvisionServiceImpl implements ProvisionService {
     public void updateAssignedToForProvision(Provision provision, Employee employee) {
         provision.setAssignedTo(employee);
         provisionRepository.save(provision);
+    }
+
+    @Override
+    @Transactional
+    public Boolean deleteProvision(Provision provision) {
+        if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
+            for (Attachment attachment : provision.getAttachments()) {
+                attachmentService.cleanAttachmentForDelete(attachment);
+            }
+        }
+        provisionRepository.delete(provision);
+        return true;
     }
 
     @Override
@@ -74,5 +91,4 @@ public class ProvisionServiceImpl implements ProvisionService {
     public File getTrackingSheetPdf(Provision provision) throws OsirisException {
         return generatePdfDelegate.generateTrackingSheetPdf(provision);
     }
-
 }

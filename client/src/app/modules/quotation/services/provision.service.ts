@@ -16,6 +16,11 @@ export class ProvisionService extends AppRestService<Provision> {
   updateAssignedToForProvision(provision: Provision, employee: Employee) {
     return this.getList(new HttpParams().set("provisionId", provision.id).set("employeeId", employee.id), "provision/assignedTo");
   }
+
+  deleteProvision(provision: Provision) {
+    return this.get(new HttpParams().set("provisionId", provision.id), "provision/delete", "Prestation supprimée", "Erreur lors de la suppression");
+  }
+
   getRegistrationActPdf(idProvision: number) {
     this.downloadGet(new HttpParams().set("idProvision", idProvision), "provision/generate/registration-act", "Enregistrement d'acte généré", "Erreur lors du téléchargement");
   }

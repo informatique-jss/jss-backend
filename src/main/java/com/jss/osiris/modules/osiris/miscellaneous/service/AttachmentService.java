@@ -45,4 +45,5 @@ public interface AttachmentService {
 
         public List<Attachment> findByDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe);
 
+        public Attachment cleanAttachmentForDelete(Attachment attachment);
 }

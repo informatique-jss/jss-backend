@@ -610,6 +610,17 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/service/delete")
+  public ResponseEntity<Boolean> deleteService(@RequestParam Integer serviceId) throws OsirisValidationException {
+
+    Service service = serviceService.getService(serviceId);
+    if (service == null)
+      throw new OsirisValidationException("service");
+
+    return new ResponseEntity<Boolean>(serviceService.deleteService(service),
+        HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/service-types/provisions")
   public ResponseEntity<Service> getServiceForMultiServiceTypesAndAffaire(@RequestParam Integer idAffaire,
       @RequestBody List<ServiceType> serviceTypes) throws OsirisException {
@@ -1094,6 +1105,14 @@ public class QuotationController {
 
     provisionService.updateAssignedToForProvision(provision, employee);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/provision/delete")
+  public ResponseEntity<Boolean> deleteProvision(@RequestParam Integer provisionId) throws OsirisValidationException {
+    Provision provision = provisionService.getProvision(provisionId);
+    if (provision == null)
+      throw new OsirisValidationException("provision");
+    return new ResponseEntity<Boolean>(provisionService.deleteProvision(provision), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/asso/affaire/order/assignedTo")

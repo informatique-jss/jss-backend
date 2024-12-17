@@ -22,6 +22,10 @@ export class ServiceService extends AppRestService<Service> {
     return this.addOrUpdate(new HttpParams(), "service", service, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
+  deleteService(service: Service) {
+    return this.get(new HttpParams().set("serviceId", service.id), "service/delete", "Service supprimé", "Erreur lors de la suppression");
+  }
+
   getServiceForServiceTypeAndAffaire(serviceType: ServiceType, affaire: Affaire) {
     return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("idAffaire", affaire.id), "service-type/provision");
   }
@@ -31,6 +35,7 @@ export class ServiceService extends AppRestService<Service> {
   }
 
   modifyServiceType(service: Service, serviceType: ServiceType) {
+
     return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("serviceId", service.id), "service/modify");
   }
 
