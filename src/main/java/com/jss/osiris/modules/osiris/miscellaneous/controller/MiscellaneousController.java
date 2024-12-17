@@ -1325,13 +1325,13 @@ public class MiscellaneousController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/customer-mail/delete")
-    public ResponseEntity<Boolean> deleteCustomerMail(@RequestParam Integer idCustomerMail)
+    @GetMapping(inputEntryPoint + "/customer-mail/cancel")
+    public ResponseEntity<Boolean> cancelCustomerMail(@RequestParam Integer idCustomerMail)
             throws OsirisValidationException, OsirisException {
         CustomerMail customerMail = customerMailService.getMail(idCustomerMail);
         if (customerMail == null)
             throw new OsirisValidationException("customerMail");
-        customerMailService.deleteCustomerMail(customerMail);
+        customerMailService.cancelCustomerMail(customerMail);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 

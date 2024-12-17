@@ -106,7 +106,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
     }
 
     @Override
-    public CustomerMail deleteCustomerMail(CustomerMail customerMail) {
+    public CustomerMail cancelCustomerMail(CustomerMail customerMail) {
         customerMail.setIsCancelled(true);
         return addOrUpdateCustomerMail(customerMail);
     }

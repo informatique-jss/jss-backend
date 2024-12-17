@@ -41,7 +41,7 @@ export class CustomerMailService extends AppRestService<CustomerMail> {
     return this.get(new HttpParams().set("idCustomerMail", customerMail.id), "customer-mail/send/immediatly");
   }
 
-  deleteCustomerMail(customerMail: CustomerMail) {
-    return this.get(new HttpParams().set("idCustomerMail", customerMail.id), "customer-mail/delete");
+  cancelCustomerMail(customerMail: CustomerMail) {
+    return this.get(new HttpParams().set("idCustomerMail", customerMail.id), "customer-mail/cancel");
   }
 }

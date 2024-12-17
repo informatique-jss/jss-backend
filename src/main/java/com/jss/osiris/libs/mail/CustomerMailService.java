@@ -34,6 +34,6 @@ public interface CustomerMailService {
 
     public void sendCustomerMailImmediatly(CustomerMail mail) throws OsirisException;
 
-    public CustomerMail deleteCustomerMail(CustomerMail mail) throws OsirisException;
+    public CustomerMail cancelCustomerMail(CustomerMail mail) throws OsirisException;
 
 }

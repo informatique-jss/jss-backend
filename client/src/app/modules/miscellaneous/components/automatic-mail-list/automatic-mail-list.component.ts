@@ -120,9 +120,12 @@ export class AutomaticMailListComponent implements OnInit {
           let toSendDate = new Date(customerMail.toSendAfter);
           let nowDate = new Date();
           if (toSendDate.getTime() > nowDate.getTime()) {
-            this.customerMailService.deleteCustomerMail(element).subscribe(response => {
-              this.refreshTable.next();
-              this.appService.displaySnackBar("Le mail a été supprimé", false, 10);
+            this.customerMailService.cancelCustomerMail(element).subscribe(response => {
+              if (response) {
+                this.appService.displaySnackBar("Le mail a été annulé", false, 10);
+                if (this.customerOrder)
+                  this.appService.openRoute(null, '/order/' + this.customerOrder.id, null);
+              }
             });
           }
         }
