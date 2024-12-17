@@ -98,7 +98,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or coalesce(r.lettering_date_time,:endDate)>=:endDate ) " +
                         " and (:isFromAs400 = false or r.is_from_as400=true ) " +
-                        " and (coalesce(r.manual_accounting_document_date, r.operation_date_time)>= :startDate or coalesce(r.manual_accounting_document_date, r.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and r.lettering_number  is  null) and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
+                        " and (coalesce(r.manual_accounting_document_date, r.operation_date_time)>= :startDate   and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate)  "
                         +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) " +
@@ -183,7 +183,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         " and (:hideLettered = false or coalesce(r.lettering_date_time,:endDate)>=:endDate ) " +
                         " and (:isFromAs400 = false or r.is_from_as400=true ) " +
-                        " and (coalesce(r.manual_accounting_document_date, r.operation_date_time)>= :startDate or coalesce(r.manual_accounting_document_date, r.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and r.lettering_number  is  null) and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate  "
+                        " and (coalesce(r.manual_accounting_document_date, r.operation_date_time)>= :startDate   and coalesce(r.manual_accounting_document_date,r.operation_date_time)<=:endDate)  "
                         +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) " +
@@ -236,7 +236,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "   (:isFromAs400 = false or record.is_from_as400=true ) and " +
                         "(accounting.id_principal_accounting_account in (:principalAccountingAccountIds) or  0 in (:principalAccountingAccountIds) ) and "
                         +
-                        "(  (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate or coalesce(record.manual_accounting_document_date, record.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and record.lettering_number  is not null) and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
+                        "  (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate   and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
@@ -276,7 +276,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "   (:isFromAs400 = false or record.is_from_as400=true ) and " +
                         "(accounting.id_principal_accounting_account in (:principalAccountingAccountIds) or  0 in (:principalAccountingAccountIds) ) and "
                         +
-                        "(  (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate or coalesce(record.manual_accounting_document_date, record.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and record.lettering_number  is not null) and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
+                        " (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate   and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
@@ -315,7 +315,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "  (:isFromAs400 = false or coalesce(record.is_from_as400,false)=true ) and " +
                         "(accounting.id_principal_accounting_account in (:principalAccountingAccountIds) or  0 in (:principalAccountingAccountIds) ) and "
                         +
-                        "(  (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate or coalesce(record.manual_accounting_document_date, record.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and record.lettering_number  is not null) and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
+                        " (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate   and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
@@ -354,7 +354,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "  (:isFromAs400 = false or coalesce(record.is_from_as400,false)=true ) and " +
                         "(accounting.id_principal_accounting_account in (:principalAccountingAccountIds) or  0 in (:principalAccountingAccountIds) ) and "
                         +
-                        "(  (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate or coalesce(record.manual_accounting_document_date, record.operation_date_time)<= date_trunc('year', cast(:startDate as date)) and record.lettering_number  is not null) and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
+                        " (coalesce(record.manual_accounting_document_date, record.operation_date_time)>= :startDate   and coalesce(record.manual_accounting_document_date,record.operation_date_time) <=:endDate ) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
