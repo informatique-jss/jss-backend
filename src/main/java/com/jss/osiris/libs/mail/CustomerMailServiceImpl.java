@@ -106,6 +106,12 @@ public class CustomerMailServiceImpl implements CustomerMailService {
     }
 
     @Override
+    public CustomerMail cancelCustomerMail(CustomerMail customerMail) {
+        customerMail.setIsCancelled(true);
+        return addOrUpdateCustomerMail(customerMail);
+    }
+
+    @Override
     public void addMailToQueue(CustomerMail mail) throws OsirisException {
         mail.setCreatedDateTime(LocalDateTime.now());
         mail.setIsSent(false);
