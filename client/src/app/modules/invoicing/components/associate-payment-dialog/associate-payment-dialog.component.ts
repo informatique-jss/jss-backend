@@ -118,7 +118,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
   }
 
   onConfirm(): void {
-    if (this.payment && this.responsableOrder) {
+    if (this.payment) {
       let paymentAssociate = {} as PaymentAssociate;
 
       if (this.selectedRefundTiers == null && this.selectedRefundAffaire == null && this.selectedRefundConfrere == null && this.getBalance() > INVOICING_PAYMENT_LIMIT_REFUND_EUROS) {
@@ -127,7 +127,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
       }
       paymentAssociate.affaireRefund = this.selectedRefundAffaire;
       paymentAssociate.tiersRefund = this.selectedRefundTiers;
-      paymentAssociate.responsableOrder = this.responsableOrder;
+      if (this.responsableOrder)
+        paymentAssociate.responsableOrder = this.responsableOrder;
       paymentAssociate.payment = this.payment;
 
       if (this.associations) {
@@ -196,7 +197,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusReceived.label, true, 15);
           return;
         }
-        if (this.payment && Math.round(invoice.totalPrice * 100) != Math.abs(Math.round(this.payment.paymentAmount * 100))) {
+        if (this.payment && Math.round(invoice.totalPrice * 100) < Math.abs(Math.round(this.payment.paymentAmount * 100))) {
           this.appService.displaySnackBar("Veuillez choisir une facture avec un total de " + this.payment.paymentAmount + " €", true, 15);
           return;
         }

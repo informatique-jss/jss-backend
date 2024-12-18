@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.controller;
 
+import static java.time.temporal.TemporalAdjusters.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -8,7 +10,6 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import java.util.Arrays;
 import java.util.List;
 
@@ -641,8 +642,9 @@ public class InvoicingController {
                     if (invoice.getInvoiceStatus().getId()
                             .equals(constantService.getInvoiceStatusReceived().getId())) {
                         if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
-                                .negate() != paymentAssociate.getPayment().getPaymentAmount().multiply(oneHundredValue)
-                                        .setScale(0, RoundingMode.HALF_UP))
+                                .negate()
+                                .compareTo(paymentAssociate.getPayment().getPaymentAmount().multiply(oneHundredValue)
+                                        .setScale(0, RoundingMode.HALF_UP)) > 0)
                             throw new OsirisValidationException("Wrong payment amount");
                     }
                 }
@@ -666,8 +668,9 @@ public class InvoicingController {
                                     .compareTo(BigDecimal.valueOf(paymentLimitRefundInEuros)) > 0)
                         if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaireRefund() == null)
                             throw new OsirisValidationException("not all payment used and no refund tiers set");
-                } else if (totalAmount != paymentAssociate.getPayment().getPaymentAmount().multiply(oneHundredValue)
-                        .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue))
+                } else if (totalAmount
+                        .compareTo(paymentAssociate.getPayment().getPaymentAmount().multiply(oneHundredValue)
+                                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue)) != 0)
                     throw new OsirisValidationException("not all payment used");
             }
         }
@@ -979,10 +982,12 @@ public class InvoicingController {
         validationHelper.validateReferential(invoice.getInvoiceStatus(), false, "InvoiceStatus");
         validationHelper.validateDate(invoice.getDueDate(), false, "DueDate");
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "AccountingDocumentDate");
-        validationHelper.validateDateMin(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
-        validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
+        validationHelper.validateDateMin(invoice.getManualAccountingDocumentDate(), false,
+                LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
+        validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(1),
+                "ManualAccountingDocumentDate");
         validationHelper.validateString(invoice.getManualAccountingDocumentNumber(), false, 150,
-        "ManualAccountingDocumentNumber");
+                "ManualAccountingDocumentNumber");
         validationHelper.validateString(invoice.getBillingLabelIntercommunityVat(), false, 20, "intercommunityVat");
 
         if (invoice.getInvoiceItems() == null) {
