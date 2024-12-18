@@ -680,9 +680,8 @@ public class PaymentServiceImpl implements PaymentService {
         BigDecimal invoiceAmount = invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoice).abs()
                 .multiply(oneHundredValue)
                 .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
-        ;
 
-        if (paymentAmount.equals(invoiceAmount)) {
+        if (paymentAmount.compareTo(invoiceAmount) <= 0) {
             cancelPayment(payment);
             Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                     payment.getTargetAccountingAccount());
@@ -718,7 +717,7 @@ public class PaymentServiceImpl implements PaymentService {
         BigDecimal paymentAmount = payment.getPaymentAmount().multiply(oneHundredValue)
                 .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
 
-        if (refundAmount.equals(paymentAmount.negate())) {
+        if (refundAmount.compareTo(paymentAmount.negate()) == 0) {
             refund.setIsMatched(true);
             refundService.addOrUpdateRefund(refund);
             payment.setRefund(refund);
@@ -736,7 +735,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .setScale(0, RoundingMode.HALF_UP)
                 .divide(oneHundredValue);
 
-        if (directDebitAmount.equals(paymentAmount)) {
+        if (directDebitAmount.compareTo(paymentAmount) == 0) {
             payment.setPaymentType(constantService.getPaymentTypePrelevement());
             directDebitTransfert.setIsMatched(true);
             debitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
@@ -756,7 +755,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .setScale(0, RoundingMode.HALF_UP)
                 .divide(oneHundredValue);
 
-        if (bankTransfertAmount.equals(paymentAmount.negate())) {
+        if (bankTransfertAmount.compareTo(paymentAmount.negate()) == 0) {
             bankTransfert.setIsMatched(true);
             bankTransfertService.addOrUpdateBankTransfert(bankTransfert);
             payment.setBankTransfert(bankTransfert);
@@ -773,7 +772,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .setScale(0, RoundingMode.HALF_UP)
                 .divide(oneHundredValue);
 
-        if (inAmount.equals(checkAmount)) {
+        if (inAmount.compareTo(checkAmount) == 0) {
             inPayment.setPaymentType(constantService.getPaymentTypeCheques());
             addOrUpdatePayment(inPayment);
             cancelPayment(inPayment);
@@ -1372,11 +1371,11 @@ public class PaymentServiceImpl implements PaymentService {
                 for (Payment payment : payments) {
                     BigDecimal paymentRound = payment.getPaymentAmount().multiply(oneHundredValue)
                             .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
-                    if (invoice.getProvider() != null && paymentRound.equals(totalRound.negate()))
+                    if (invoice.getProvider() != null && paymentRound.compareTo(totalRound.negate()) == 0)
                         advisedPayments.add(payment);
-                    else if (invoice.getIsCreditNote() && paymentRound.equals(totalRound.negate()))
+                    else if (invoice.getIsCreditNote() && paymentRound.compareTo(totalRound.negate()) == 0)
                         advisedPayments.add(payment);
-                    else if (paymentRound.equals(totalRound.negate()))
+                    else if (paymentRound.compareTo(totalRound.negate()) == 0)
                         advisedPayments.add(payment);
                 }
             }
@@ -1412,7 +1411,7 @@ public class PaymentServiceImpl implements PaymentService {
                 for (Payment payment : payments) {
                     BigDecimal paymentRound = payment.getPaymentAmount().multiply(oneHundredValue)
                             .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
-                    if (paymentRound.equals(totalRound)) {
+                    if (paymentRound.compareTo(totalRound) == 0) {
                         advisedPayments.add(payment);
                     }
                 }
