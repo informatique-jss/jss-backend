@@ -307,40 +307,43 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             savedFormaliteGuichetUnique = addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
 
             // Update provision waiting AC field
-            if (formalityHasNewStatus) {
-                if (savedFormaliteGuichetUnique.getStatus().getCode()
-                        .equals(FormaliteGuichetUniqueStatus.VALIDATION_PENDING)
-                        && savedFormaliteGuichetUnique.getValidationsRequests() != null) {
-                    for (ValidationRequest validationRequest : savedFormaliteGuichetUnique.getValidationsRequests()) {
-                        if (validationRequest.getStatus().getCode()
-                                .equals(ValidationsRequestStatus.MSA_ACCEPTATION_PENDING)
-                                || validationRequest.getStatus().getCode()
-                                        .equals(ValidationsRequestStatus.VALIDATION_PENDING)
-                                || validationRequest.getStatus().getCode()
-                                        .equals(ValidationsRequestStatus.AMENDED)) {
-                            List<CompetentAuthority> competentAuthorities = null;
-                            if (validationRequest.getPartnerCenter() != null)
-                                competentAuthorityService
-                                        .getCompetentAuthorityByInpiReference(
-                                                validationRequest.getPartnerCenter().getCode());
+            if (savedFormaliteGuichetUnique.getStatus().getCode()
+                    .equals(FormaliteGuichetUniqueStatus.VALIDATION_PENDING)
+                    && savedFormaliteGuichetUnique.getValidationsRequests() != null) {
+                for (ValidationRequest validationRequest : savedFormaliteGuichetUnique.getValidationsRequests()) {
+                    if (validationRequest.getStatus().getCode()
+                            .equals(ValidationsRequestStatus.MSA_ACCEPTATION_PENDING)
+                            || validationRequest.getStatus().getCode()
+                                    .equals(ValidationsRequestStatus.VALIDATION_PENDING)
+                            || validationRequest.getStatus().getCode()
+                                    .equals(ValidationsRequestStatus.AMENDED)) {
+                        List<CompetentAuthority> competentAuthorities = null;
+                        if (validationRequest.getPartnerCenter() != null)
+                            competentAuthorityService
+                                    .getCompetentAuthorityByInpiReference(
+                                            validationRequest.getPartnerCenter().getCode());
 
-                            // Try with partner label
-                            if ((competentAuthorities == null || competentAuthorities.size() == 0)
-                                    && validationRequest.getPartner() != null) {
-                                competentAuthorities = competentAuthorityService
-                                        .getCompetentAuthorityByInpiReference(
-                                                validationRequest.getPartner().getLibelleCourt());
-                            }
-                            if (competentAuthorities != null && competentAuthorities.size() == 1) {
+                        // Try with partner label
+                        if ((competentAuthorities == null || competentAuthorities.size() == 0)
+                                && validationRequest.getPartner() != null) {
+                            competentAuthorities = competentAuthorityService
+                                    .getCompetentAuthorityByInpiReference(
+                                            validationRequest.getPartner().getLibelleCourt());
+                        }
+                        if (competentAuthorities != null && competentAuthorities.size() == 1) {
+                            if (savedFormaliteGuichetUnique.getFormalite().getWaitedCompetentAuthority() == null ||
+                                    !savedFormaliteGuichetUnique.getFormalite().getWaitedCompetentAuthority().getId()
+                                            .equals(competentAuthorities.get(0).getId()))
                                 savedFormaliteGuichetUnique.getFormalite()
                                         .setWaitedCompetentAuthority(competentAuthorities.get(0));
-                                formaliteService.addOrUpdateFormalite(savedFormaliteGuichetUnique.getFormalite());
-                                break;
-                            }
+                            formaliteService.addOrUpdateFormalite(savedFormaliteGuichetUnique.getFormalite());
+                            break;
                         }
                     }
                 }
+            }
 
+            if (formalityHasNewStatus) {
                 // Update formalite status based on GU status
                 if (formalite.getFormaliteStatus().getIsCloseState() == null
                         || formalite.getFormaliteStatus().getIsCloseState() == false) {
