@@ -100,6 +100,12 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn<PaymentSearchResult>);
 
     if (this.overrideIconAction == "") {
+      this.tableAction.push({
+        actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
+          this.paymentDetailsDialogService.displayPaymentDetailsDialog(element as any);
+        }, display: true,
+      } as SortTableAction<PaymentSearchResult>);
+
       if (this.habilitationService.canModifyPaymentAssociation()) {
         this.tableAction.push({
           actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
@@ -111,11 +117,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
           actionIcon: "savings", actionName: "Rembourser le paiement", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
             if ((!element.invoiceId && !element.isExternallyAssociated && !element.isCancelled && !element.isAssociated && element.paymentAmount > 0))
               this.openRefundPaymentDialog(element);
-          }, display: true,
-        } as SortTableAction<PaymentSearchResult>);
-        this.tableAction.push({
-          actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
-            this.paymentDetailsDialogService.displayPaymentDetailsDialog(element as any);
           }, display: true,
         } as SortTableAction<PaymentSearchResult>);
 
