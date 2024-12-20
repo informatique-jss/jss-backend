@@ -319,7 +319,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                     .equals(ValidationsRequestStatus.AMENDED)) {
                         List<CompetentAuthority> competentAuthorities = null;
                         if (validationRequest.getPartnerCenter() != null)
-                            competentAuthorityService
+                            competentAuthorities = competentAuthorityService
                                     .getCompetentAuthorityByInpiReference(
                                             validationRequest.getPartnerCenter().getCode());
 
