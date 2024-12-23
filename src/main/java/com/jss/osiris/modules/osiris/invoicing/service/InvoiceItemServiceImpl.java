@@ -1,11 +1,13 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.repository.InvoiceItemRepository;
@@ -67,4 +69,13 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
         return newInvoiceItem;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public InvoiceItem updateAmountInvoiceItem(InvoiceItem invoiceItem, BigDecimal amount) {
+        if (invoiceItem != null && amount != null) {
+            invoiceItem.setPreTaxPriceReinvoiced(amount);
+            addOrUpdateInvoiceItem(invoiceItem);
+        }
+        return invoiceItem;
+    }
 }

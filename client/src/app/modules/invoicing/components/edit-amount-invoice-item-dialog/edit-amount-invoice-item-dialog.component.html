@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <p>{{label}}</p>
+  <generic-input [(model)]="amount" [label]="title" [form]="amountForm" propertyName="amount" [isMandatory]="true"
+    [isDisabled]="false" type="number"></generic-input>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>
