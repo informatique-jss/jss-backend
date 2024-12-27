@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -1767,7 +1768,14 @@ public class QuotationController {
 
     if (quotation.getQuotationStatus() == null)
       quotation.setQuotationStatus(openQuotationStatus);
-    return new ResponseEntity<Quotation>(quotationService.addOrUpdateQuotationFromUser(quotation), HttpStatus.OK);
+
+    Boolean isAlreadyPost = false;
+    if (quotation.getValidationId() != null)
+      isAlreadyPost = checkValidationIdQuotation(quotation.getValidationId());
+    if (isAlreadyPost)
+      throw new OsirisValidationException("Save order already in progress");
+    else
+      return new ResponseEntity<Quotation>(quotationService.addOrUpdateQuotationFromUser(quotation), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/order/search")
@@ -1849,9 +1857,16 @@ public class QuotationController {
     if (customerOrder.getCustomerOrderStatus() == null)
       customerOrder.setCustomerOrderStatus(customerOrderStatus);
 
+    Boolean isAlreadyPost = false;
+    if (customerOrder.getValidationId() != null)
+      isAlreadyPost = checkValidationIdQuotation(customerOrder.getValidationId());
+
+    if (isAlreadyPost)
+      throw new OsirisValidationException("Save order already in progress");
     // assoServiceFieldTypeService.addOrUpdateServiceFieldType(customerOrder) ;
-    return new ResponseEntity<CustomerOrder>(customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder),
-        HttpStatus.OK);
+    else
+      return new ResponseEntity<CustomerOrder>(customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder),
+          HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order/status")
@@ -2415,6 +2430,38 @@ public class QuotationController {
 
     return new ResponseEntity<Quotation>(quotationService.getQuotationForAnnouncement(announcement),
         HttpStatus.OK);
+  }
+
+  private final ConcurrentHashMap<Integer, LocalDateTime> validationIdQuotationMap = new ConcurrentHashMap<>();
+
+  private Integer generateValidationIdForQuotation() {
+
+    Integer maxKey = 0;
+    for (Integer key : validationIdQuotationMap.keySet()) {
+      if (maxKey == null || key > maxKey) {
+        maxKey = key;
+      }
+    }
+    if (maxKey != null)
+      maxKey++;
+    // validationIdQuotationMap.put(maxKey, LocalDateTime.now());
+    return maxKey;
+  }
+
+  private Boolean checkValidationIdQuotation(Integer validationId) {
+    if (validationIdQuotationMap.containsKey(validationId))
+      return true;
+    else {
+      validationIdQuotationMap.put(validationId, LocalDateTime.now());
+      return false;
+    }
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/validation-id")
+  public ResponseEntity<Integer> getValidationIdForQuotation()
+      throws OsirisValidationException {
+    Integer validationId = generateValidationIdForQuotation();
+    return new ResponseEntity<Integer>(validationId, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/announcements/search")

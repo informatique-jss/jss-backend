@@ -49,6 +49,8 @@ public class Quotation implements IQuotation {
 	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
+	private Integer validationId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assigned_to")
 	@IndexedField
@@ -336,6 +338,14 @@ public class Quotation implements IQuotation {
 
 	public void setServicesList(String servicesList) {
 		this.servicesList = servicesList;
+	}
+
+	public Integer getValidationId() {
+		return validationId;
+	}
+
+	public void setValidationId(Integer validationId) {
+		this.validationId = validationId;
 	}
 
 }

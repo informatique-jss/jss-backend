@@ -84,6 +84,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonView(JacksonViews.MyJssView.class)
 	private Integer id;
 
+	private Integer validationId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_assigned_to")
 	@IndexedField
@@ -528,6 +530,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setHasMissingInformations(Boolean hasMissingInformations) {
 		this.hasMissingInformations = hasMissingInformations;
+	}
+
+	public Integer getValidationId() {
+		return validationId;
 	}
 
 }
