@@ -536,4 +536,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		return validationId;
 	}
 
+	public void setValidationId(Integer validationId) {
+		this.validationId = validationId;
+	}
+
 }

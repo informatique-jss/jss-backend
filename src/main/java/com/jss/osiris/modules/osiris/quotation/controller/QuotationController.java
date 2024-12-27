@@ -2434,20 +2434,6 @@ public class QuotationController {
 
   private final ConcurrentHashMap<Integer, LocalDateTime> validationIdQuotationMap = new ConcurrentHashMap<>();
 
-  private Integer generateValidationIdForQuotation() {
-
-    Integer maxKey = 0;
-    for (Integer key : validationIdQuotationMap.keySet()) {
-      if (maxKey == null || key > maxKey) {
-        maxKey = key;
-      }
-    }
-    if (maxKey != null)
-      maxKey++;
-    // validationIdQuotationMap.put(maxKey, LocalDateTime.now());
-    return maxKey;
-  }
-
   private Boolean checkValidationIdQuotation(Integer validationId) {
     if (validationIdQuotationMap.containsKey(validationId))
       return true;
@@ -2460,7 +2446,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/quotation/validation-id")
   public ResponseEntity<Integer> getValidationIdForQuotation()
       throws OsirisValidationException {
-    Integer validationId = generateValidationIdForQuotation();
+    Integer validationId = quotationService.generateValidationIdForQuotation();
     return new ResponseEntity<Integer>(validationId, HttpStatus.OK);
   }
 

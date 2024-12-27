@@ -153,6 +153,11 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
+    public Integer generateValidationIdForQuotation() {
+        return quotationRepository.generateValidationIdForQuotation();
+    }
+
+    @Override
     public Quotation addOrUpdateQuotation(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         quotation.setIsQuotation(true);
