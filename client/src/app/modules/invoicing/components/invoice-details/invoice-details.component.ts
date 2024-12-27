@@ -133,9 +133,9 @@ export class InvoiceDetailsComponent implements OnInit {
       dialogRef.componentInstance.amount = invoiceItem.preTaxPrice;
       dialogRef.afterClosed().subscribe(dialogResult => {
         if (dialogResult) {
-          if (dialogResult <= 0)
+          if (dialogResult < 0)
             this.appService.displaySnackBar("Le montant à refacturer doit être positif", true, 10);
-          this.invoiceItemService.updateAmountInvoiceItem(invoiceItem.id, dialogResult).subscribe();
+          this.invoiceItemService.updateInvoiceItemFromInvoice(invoiceItem.id, dialogResult).subscribe();
           this.refreshData();
         }
       });
@@ -260,6 +260,10 @@ export class InvoiceDetailsComponent implements OnInit {
       return this.habilitationService.canAddNewInvoice();
     }
     return false;
+  }
+
+  canEditAmountInvoice() {
+    return this.habilitationService.canEditPreTaxPriceReinvoiced();
   }
 
   canAddCreditNoteForCustomerOrderInvoice() {

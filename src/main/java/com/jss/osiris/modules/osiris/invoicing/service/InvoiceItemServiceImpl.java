@@ -71,7 +71,7 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public InvoiceItem updateAmountInvoiceItem(InvoiceItem invoiceItem, BigDecimal amount) {
+    public InvoiceItem updateInvoiceItemFromInvoice(InvoiceItem invoiceItem, BigDecimal amount) {
         if (invoiceItem != null && amount != null) {
             invoiceItem.setPreTaxPriceReinvoiced(amount);
             addOrUpdateInvoiceItem(invoiceItem);

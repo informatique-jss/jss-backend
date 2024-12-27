@@ -1084,19 +1084,24 @@ public class InvoicingController {
 
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     @GetMapping(inputEntryPoint + "/invoice-item/edit-amount")
-    public ResponseEntity<InvoiceItem> updateAmountInvoiceItem(@RequestParam Integer idInvoiceItem,
+    public ResponseEntity<InvoiceItem> updateInvoiceItemFromInvoice(@RequestParam Integer idInvoiceItem,
             @RequestParam BigDecimal newPreTaxPrice) throws OsirisException {
         if (idInvoiceItem == null)
             throw new OsirisValidationException("idInvoiceItem");
 
         InvoiceItem invoiceItem = invoiceItemService.getInvoiceItem(idInvoiceItem);
 
-        if (newPreTaxPrice == null || newPreTaxPrice.compareTo(zeroValue) < 0)
-            return new ResponseEntity<InvoiceItem>(invoiceItem, HttpStatus.OK);
+        if (invoiceItem == null)
+            throw new OsirisValidationException("invoiceItem");
+
         if (invoiceItem.getInvoice().getProvider() == null)
             throw new OsirisValidationException("provider");
+
+        if (newPreTaxPrice == null || newPreTaxPrice.compareTo(zeroValue) < 0)
+            return new ResponseEntity<InvoiceItem>(invoiceItem, HttpStatus.OK);
+
         return new ResponseEntity<InvoiceItem>(
-                invoiceItemService.updateAmountInvoiceItem(invoiceItem, newPreTaxPrice),
+                invoiceItemService.updateInvoiceItemFromInvoice(invoiceItem, newPreTaxPrice),
                 HttpStatus.OK);
     }
 }

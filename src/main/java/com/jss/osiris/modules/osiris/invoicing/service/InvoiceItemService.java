@@ -20,5 +20,5 @@ public interface InvoiceItemService {
 
     public InvoiceItem cloneInvoiceItem(InvoiceItem invoiceItem);
 
-    public InvoiceItem updateAmountInvoiceItem(InvoiceItem invoiceItem, BigDecimal amount);
+    public InvoiceItem updateInvoiceItemFromInvoice(InvoiceItem invoiceItem, BigDecimal amount);
 }
