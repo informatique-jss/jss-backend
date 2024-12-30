@@ -81,4 +81,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
 
         @Query("select q from Quotation q where responsable in :responsables and quotationStatus in :quotationStatus")
         List<Quotation> searchQuotations(List<Responsable> responsables, List<QuotationStatus> quotationStatus);
+
+        @Query(value = "SELECT nextval('validation_id_quotation_sequence')", nativeQuery = true)
+        Integer generateValidationIdForQuotation();
 }

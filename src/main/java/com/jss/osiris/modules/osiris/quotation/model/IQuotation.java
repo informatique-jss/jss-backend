@@ -18,6 +18,8 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public void setId(Integer id);
 
+	public Integer getValidationId();
+
 	public Employee getAssignedTo();
 
 	public void setAssignedTo(Employee assignedTo);

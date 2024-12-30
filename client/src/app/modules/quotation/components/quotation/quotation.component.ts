@@ -45,6 +45,7 @@ import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
 import { ServiceService } from '../../services/service.service';
+import { ValidationIdQuotationService } from '../../services/validation-id.quotation.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
@@ -108,6 +109,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private customerOrderService: CustomerOrderService,
     private quotationStatusService: QuotationStatusService,
     private customerOrderStatusService: CustomerOrderStatusService,
+    private validationIdQuotationService: ValidationIdQuotationService,
     private activatedRoute: ActivatedRoute,
     public chooseUserDialog: MatDialog,
     public mailLabelDialog: MatDialog,
@@ -380,8 +382,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.createMode = true;
     this.editMode = true;
     this.quotation = {} as IQuotation;
-    this.setOpenStatus();
-    this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
+    this.validationIdQuotationService.getValidationIdForQuotation().subscribe(response => {
+      if (response) {
+        this.quotation.validationId = response;
+      }
+      this.setOpenStatus();
+      this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
+    });
   }
 
   openSearch() {
