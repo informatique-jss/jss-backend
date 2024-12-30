@@ -1,7 +1,5 @@
 package com.jss.osiris.modules.osiris.invoicing.controller;
 
-import static java.time.temporal.TemporalAdjusters.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -10,6 +8,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import java.util.Arrays;
 import java.util.List;
 
@@ -1083,7 +1082,7 @@ public class InvoicingController {
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    @GetMapping(inputEntryPoint + "/invoice-item/edit-amount")
+    @GetMapping(inputEntryPoint + "/invoice-item/edit-amount-reinvoiced")
     public ResponseEntity<InvoiceItem> updateInvoiceItemFromInvoice(@RequestParam Integer idInvoiceItem,
             @RequestParam BigDecimal newPreTaxPrice) throws OsirisException {
         if (idInvoiceItem == null)
