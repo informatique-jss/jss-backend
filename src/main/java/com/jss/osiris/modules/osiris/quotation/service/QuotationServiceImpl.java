@@ -214,7 +214,6 @@ public class QuotationServiceImpl implements QuotationService {
              * mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
              */
         }
-        updateIsInsertedQuotationBooleanHashmap(quotation.getValidationId());
         return quotation;
     }
 
@@ -698,9 +697,9 @@ public class QuotationServiceImpl implements QuotationService {
         return quotations;
     }
 
-    private final ConcurrentHashMap<Integer, Boolean> validationIdQuotationMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, LocalDateTime> validationIdQuotationMap = new ConcurrentHashMap<>();
     private LocalDateTime lastFloodFlush = LocalDateTime.now();
-    private final int floodFlushDelayMinute = 1;
+    private final int floodFlushDelayMinute = 60;
 
     @Override
     public Integer generateValidationIdForQuotation() {
@@ -714,23 +713,15 @@ public class QuotationServiceImpl implements QuotationService {
         if (validationIdQuotationMap.containsKey(validationId)) {
             return true;
         } else {
-            validationIdQuotationMap.put(validationId, false);
+            validationIdQuotationMap.put(validationId, LocalDateTime.now());
             return false;
         }
     }
 
-    @Override
-    public void updateIsInsertedQuotationBooleanHashmap(Integer validationId) {
-        if (validationId != null)
-            validationIdQuotationMap.replace(validationId, false, true);
-    }
-
     private void cleanValidationIdQuotationMap() {
-        validationIdQuotationMap.entrySet().forEach(k -> {
-            if (k.getValue())
-                validationIdQuotationMap.remove(k.getKey());
-        });
-        // validationIdQuotationMap.clear();
+        for (Integer id : validationIdQuotationMap.keySet())
+            if (validationIdQuotationMap.get(id).isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
+                validationIdQuotationMap.remove(id);
         lastFloodFlush = LocalDateTime.now();
     }
 }

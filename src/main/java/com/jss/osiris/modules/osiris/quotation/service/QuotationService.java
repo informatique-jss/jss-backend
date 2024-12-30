@@ -83,6 +83,4 @@ public interface QuotationService {
 
         public Boolean checkValidationIdQuotation(Integer validationId);
 
-        public void updateIsInsertedQuotationBooleanHashmap(Integer validationId);
-
 }
