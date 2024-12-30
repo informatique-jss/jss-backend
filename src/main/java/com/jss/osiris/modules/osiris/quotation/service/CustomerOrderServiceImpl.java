@@ -359,6 +359,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
+        quotationService.updateIsInsertedQuotationBooleanHashmap(customerOrder.getValidationId());
         return customerOrder;
     }
 

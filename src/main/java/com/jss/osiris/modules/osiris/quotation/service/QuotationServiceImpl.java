@@ -214,6 +214,7 @@ public class QuotationServiceImpl implements QuotationService {
              * mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
              */
         }
+        updateIsInsertedQuotationBooleanHashmap(quotation.getValidationId());
         return quotation;
     }
 
@@ -697,25 +698,39 @@ public class QuotationServiceImpl implements QuotationService {
         return quotations;
     }
 
+    private final ConcurrentHashMap<Integer, Boolean> validationIdQuotationMap = new ConcurrentHashMap<>();
+    private LocalDateTime lastFloodFlush = LocalDateTime.now();
+    private final int floodFlushDelayMinute = 1;
+
     @Override
     public Integer generateValidationIdForQuotation() {
         return quotationRepository.generateValidationIdForQuotation();
     }
 
-    private final ConcurrentHashMap<Integer, LocalDateTime> validationIdQuotationMap = new ConcurrentHashMap<>();
-    private LocalDateTime lastFloodFlush = LocalDateTime.now();
-    private int floodFlushDelayMinute = 60;
-
     @Override
     public Boolean checkValidationIdQuotation(Integer validationId) {
         if (lastFloodFlush.isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
-            validationIdQuotationMap.clear();
-
-        if (validationIdQuotationMap.containsKey(validationId))
+            cleanValidationIdQuotationMap();
+        if (validationIdQuotationMap.containsKey(validationId)) {
             return true;
-        else {
-            validationIdQuotationMap.put(validationId, LocalDateTime.now());
+        } else {
+            validationIdQuotationMap.put(validationId, false);
             return false;
         }
+    }
+
+    @Override
+    public void updateIsInsertedQuotationBooleanHashmap(Integer validationId) {
+        if (validationId != null)
+            validationIdQuotationMap.replace(validationId, false, true);
+    }
+
+    private void cleanValidationIdQuotationMap() {
+        validationIdQuotationMap.entrySet().forEach(k -> {
+            if (k.getValue())
+                validationIdQuotationMap.remove(k.getKey());
+        });
+        // validationIdQuotationMap.clear();
+        lastFloodFlush = LocalDateTime.now();
     }
 }
