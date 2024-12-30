@@ -1,7 +1,5 @@
 package com.jss.osiris.modules.osiris.invoicing.controller;
 
-import static java.time.temporal.TemporalAdjusters.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -10,6 +8,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +33,6 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
-import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureReceipt;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureReceiptInvoice;
@@ -62,6 +60,7 @@ import com.jss.osiris.modules.osiris.invoicing.service.AzureInvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.AzureReceiptInvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.AzureReceiptService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceStatusService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -83,7 +82,6 @@ import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Rff;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
-import com.jss.osiris.modules.osiris.tiers.service.BillingLabelTypeService;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.RffService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
@@ -168,13 +166,10 @@ public class InvoicingController {
     ActiveDirectoryHelper activeDirectoryHelper;
 
     @Autowired
-    BillingLabelTypeService billingLabelTypeService;
-
-    @Autowired
     RffService rffService;
 
     @Autowired
-    AccountingRecordGenerationService accountingRecordGenerationService;
+    InvoiceItemService invoiceItemService;
 
     @GetMapping(inputEntryPoint + "/rff/create")
     public ResponseEntity<Invoice> generateInvoiceForRff(@RequestParam Integer idRff)
@@ -1083,6 +1078,29 @@ public class InvoicingController {
     public ResponseEntity<InvoiceLabelResult> computePaperLabelForCustomerOrder(
             @RequestBody CustomerOrder customerOrder) throws OsirisException, OsirisClientMessageException {
         return new ResponseEntity<InvoiceLabelResult>(mailComputeHelper.computePaperLabelResult(customerOrder),
+                HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @GetMapping(inputEntryPoint + "/invoice-item/edit-amount-reinvoiced")
+    public ResponseEntity<InvoiceItem> updateInvoiceItemFromInvoice(@RequestParam Integer idInvoiceItem,
+            @RequestParam BigDecimal newPreTaxPrice) throws OsirisException {
+        if (idInvoiceItem == null)
+            throw new OsirisValidationException("idInvoiceItem");
+
+        InvoiceItem invoiceItem = invoiceItemService.getInvoiceItem(idInvoiceItem);
+
+        if (invoiceItem == null)
+            throw new OsirisValidationException("invoiceItem");
+
+        if (invoiceItem.getInvoice().getProvider() == null)
+            throw new OsirisValidationException("provider");
+
+        if (newPreTaxPrice == null || newPreTaxPrice.compareTo(zeroValue) < 0)
+            return new ResponseEntity<InvoiceItem>(invoiceItem, HttpStatus.OK);
+
+        return new ResponseEntity<InvoiceItem>(
+                invoiceItemService.updateInvoiceItemFromInvoice(invoiceItem, newPreTaxPrice),
                 HttpStatus.OK);
     }
 }

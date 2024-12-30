@@ -111,7 +111,7 @@
                   class="pointer" (click)="openRoute($event,'/administration/provider/'+invoice.provider.id)"
                   (auxclick)="openRoute($event,'/administration/provider/'+invoice.provider.id)">visibility
                 </mat-icon></p>
-              <p>IBAN : {{invoice.provider.iban}}</p>
+              <p>IBAN : {{invoice.provider.iban}} </p>
               <p>Compte fournisseur :
                 {{invoice.provider.accountingAccountProvider.principalAccountingAccount.code}}{{invoice.provider.accountingAccountProvider.accountingAccountSubNumber}}
               </p>
@@ -150,8 +150,9 @@
                 </tr>
                 <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
                   <tr class="mat-mdc-row mdc-data-table__row ">
-                    <td class="mat-mdc-cell mdc-data-table__cell  ">
+                    <td class="mat-mdc-cell mdc-data-table__cell">
                       <span class="invoice-item">{{invoiceItem.label}}</span>
+
                     </td>
                     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
                       {{invoiceItem.preTaxPrice|number}} €
@@ -189,7 +190,10 @@
           <ng-container *ngFor="let invoiceItem of invoice.invoiceItems;let indexInvoiceItem = index">
             <tr class="mat-mdc-row mdc-data-table__row ">
               <td class="mat-mdc-cell mdc-data-table__cell ">
-                {{invoiceItem.label}}
+                {{invoiceItem.label}} <mat-icon *ngIf="invoiceItem && invoice.provider && canEditAmountInvoice()"
+                  color="accent" matTooltip="Modifier le montant à refacturer" color="accent" class="pointer"
+                  (click)="openEditAmountDialog(invoiceItem)">edit
+                </mat-icon>
               </td>
               <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
                 {{invoiceItem.preTaxPrice|number}} € <span *ngIf="invoice.provider">(refacturé :

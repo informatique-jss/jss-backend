@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -7,6 +8,7 @@ import { QuotationComponent } from 'src/app/modules/quotation/components/quotati
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
+import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
 import { Service } from 'src/app/modules/quotation/model/Service';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
@@ -18,7 +20,9 @@ import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
+import { InvoiceItemService } from '../../services/invoice.item.service';
 import { InvoiceService } from '../../services/invoice.service';
+import { EditAmountInvoiceItemDialogComponent } from '../edit-amount-invoice-item-dialog/edit-amount-invoice-item-dialog.component';
 import { getAffaireList, getAffaireListArray, getCustomerOrderNameForInvoice, getLetteringDate, getRemainingToPay, getResponsableName } from '../invoice-tools';
 
 @Component({
@@ -44,6 +48,8 @@ export class InvoiceDetailsComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private userPreferenceService: UserPreferenceService,
     private serviceService: ServiceService,
+    private invoiceItemService: InvoiceItemService,
+    public editAmountInvoiceItemDialogComponent: MatDialog,
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
@@ -116,6 +122,23 @@ export class InvoiceDetailsComponent implements OnInit {
       }
 
       this.appService.openRoute(event, link.join("/"), null);
+    }
+  }
+
+  openEditAmountDialog(invoiceItem: InvoiceItem) {
+    if (invoiceItem) {
+      const dialogRef = this.editAmountInvoiceItemDialogComponent.open(EditAmountInvoiceItemDialogComponent, {
+        maxWidth: "400px",
+      });
+      dialogRef.componentInstance.amount = invoiceItem.preTaxPrice;
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult) {
+          if (dialogResult < 0)
+            this.appService.displaySnackBar("Le montant à refacturer doit être positif", true, 10);
+          this.invoiceItemService.updateInvoiceItemFromInvoice(invoiceItem.id, dialogResult).subscribe();
+          this.refreshData();
+        }
+      });
     }
   }
 
@@ -237,6 +260,10 @@ export class InvoiceDetailsComponent implements OnInit {
       return this.habilitationService.canAddNewInvoice();
     }
     return false;
+  }
+
+  canEditAmountInvoice() {
+    return this.habilitationService.canEditPreTaxPriceReinvoiced();
   }
 
   canAddCreditNoteForCustomerOrderInvoice() {

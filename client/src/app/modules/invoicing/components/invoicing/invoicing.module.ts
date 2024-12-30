@@ -12,9 +12,12 @@ import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterModule, Routes } from "@angular/router";
+import { MatTableExporterModule } from "mat-table-exporter";
+import { EditRefundLabelDialogComponent } from "src/app/modules/miscellaneous/components/edit-refund-label-dialog/edit-refund-label-dialog.component";
 import { PaymentListComponent } from "src/app/modules/quotation/components/payment-list/payment-list.component";
 import { QuotationModule } from "src/app/modules/quotation/components/quotation/quotation.module";
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
@@ -22,21 +25,19 @@ import { AddInvoiceComponent } from "../add-invoice/add-invoice.component";
 import { AddPaymentComponent } from "../add-payment/add-payment.component";
 import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component";
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
+import { BankBalanceComponent } from "../bank-balance/bank-balance.component";
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
 import { DirectDebitTransfertListComponent } from '../direct-debit-transfert-list/direct-debit-transfert-list.component';
+import { EditAmountInvoiceItemDialogComponent } from "../edit-amount-invoice-item-dialog/edit-amount-invoice-item-dialog.component";
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
+import { OutboundCheckListComponent } from "../outbound-check-list/outbound-check-list.component";
 import { ReceiptReconciliationEditDialogComponent } from "../receipt-reconciliation-edit-dialog/receipt-reconciliation-edit-dialog.component";
 import { ReceiptReconciliationComponent } from "../receipt-reconciliation/receipt-reconciliation.component";
 import { RefundListComponent } from '../refund-list/refund-list.component';
 import { InvoiceComponent } from "./invoicing.component";
-import { EditRefundLabelDialogComponent } from "src/app/modules/miscellaneous/components/edit-refund-label-dialog/edit-refund-label-dialog.component";
-import { OutboundCheckListComponent } from "../outbound-check-list/outbound-check-list.component";
-import { BankBalanceComponent } from "../bank-balance/bank-balance.component";
-import { MatTableModule } from '@angular/material/table';
-import { MatTableExporterModule } from "mat-table-exporter";
 
 const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
@@ -92,7 +93,7 @@ const routes: Routes = [
     EditRefundLabelDialogComponent,
     OutboundCheckListComponent,
     BankBalanceComponent,
-
+    EditAmountInvoiceItemDialogComponent
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,
