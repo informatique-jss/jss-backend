@@ -12,6 +12,6 @@ export class InvoiceItemService extends AppRestService<InvoiceItem> {
     super(http, "invoicing");
   }
   updateInvoiceItemFromInvoice(idInvoiceItem: number, newPreTaxPrice: number) {
-    return this.get(new HttpParams().set("idInvoiceItem", idInvoiceItem).set("newPreTaxPrice", newPreTaxPrice), "invoice-item/edit-amount");
+    return this.get(new HttpParams().set("idInvoiceItem", idInvoiceItem).set("newPreTaxPrice", newPreTaxPrice), "invoice-item/edit-amount-reinvoiced");
   }
 }
