@@ -703,9 +703,14 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     private final ConcurrentHashMap<Integer, LocalDateTime> validationIdQuotationMap = new ConcurrentHashMap<>();
+    private LocalDateTime lastFloodFlush = LocalDateTime.now();
+    private int floodFlushDelayMinute = 60;
 
     @Override
     public Boolean checkValidationIdQuotation(Integer validationId) {
+        if (lastFloodFlush.isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
+            validationIdQuotationMap.clear();
+
         if (validationIdQuotationMap.containsKey(validationId))
             return true;
         else {
