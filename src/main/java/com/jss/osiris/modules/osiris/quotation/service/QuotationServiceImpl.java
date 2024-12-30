@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,11 +151,6 @@ public class QuotationServiceImpl implements QuotationService {
     public Quotation addOrUpdateQuotationFromUser(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         return addOrUpdateQuotation(quotation);
-    }
-
-    @Override
-    public Integer generateValidationIdForQuotation() {
-        return quotationRepository.generateValidationIdForQuotation();
     }
 
     @Override
@@ -701,4 +697,20 @@ public class QuotationServiceImpl implements QuotationService {
         return quotations;
     }
 
+    @Override
+    public Integer generateValidationIdForQuotation() {
+        return quotationRepository.generateValidationIdForQuotation();
+    }
+
+    private final ConcurrentHashMap<Integer, LocalDateTime> validationIdQuotationMap = new ConcurrentHashMap<>();
+
+    @Override
+    public Boolean checkValidationIdQuotation(Integer validationId) {
+        if (validationIdQuotationMap.containsKey(validationId))
+            return true;
+        else {
+            validationIdQuotationMap.put(validationId, LocalDateTime.now());
+            return false;
+        }
+    }
 }

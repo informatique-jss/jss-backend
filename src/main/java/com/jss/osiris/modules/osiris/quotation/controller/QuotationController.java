@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -1769,10 +1768,8 @@ public class QuotationController {
     if (quotation.getQuotationStatus() == null)
       quotation.setQuotationStatus(openQuotationStatus);
 
-    Boolean isAlreadyPost = false;
-    if (quotation.getValidationId() != null)
-      isAlreadyPost = checkValidationIdQuotation(quotation.getValidationId());
-    if (isAlreadyPost)
+    if (quotation.getValidationId() != null
+        && quotationService.checkValidationIdQuotation(quotation.getValidationId()))
       throw new OsirisValidationException("Save order already in progress");
     else
       return new ResponseEntity<Quotation>(quotationService.addOrUpdateQuotationFromUser(quotation), HttpStatus.OK);
@@ -1857,11 +1854,8 @@ public class QuotationController {
     if (customerOrder.getCustomerOrderStatus() == null)
       customerOrder.setCustomerOrderStatus(customerOrderStatus);
 
-    Boolean isAlreadyPost = false;
-    if (customerOrder.getValidationId() != null)
-      isAlreadyPost = checkValidationIdQuotation(customerOrder.getValidationId());
-
-    if (isAlreadyPost)
+    if (customerOrder.getValidationId() != null
+        && quotationService.checkValidationIdQuotation(customerOrder.getValidationId()))
       throw new OsirisValidationException("Save order already in progress");
     // assoServiceFieldTypeService.addOrUpdateServiceFieldType(customerOrder) ;
     else
@@ -2432,21 +2426,12 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  private final ConcurrentHashMap<Integer, LocalDateTime> validationIdQuotationMap = new ConcurrentHashMap<>();
-
-  private Boolean checkValidationIdQuotation(Integer validationId) {
-    if (validationIdQuotationMap.containsKey(validationId))
-      return true;
-    else {
-      validationIdQuotationMap.put(validationId, LocalDateTime.now());
-      return false;
-    }
-  }
-
   @GetMapping(inputEntryPoint + "/quotation/validation-id")
   public ResponseEntity<Integer> getValidationIdForQuotation()
       throws OsirisValidationException {
     Integer validationId = quotationService.generateValidationIdForQuotation();
+    if (validationId == null)
+      throw new OsirisValidationException("validationId");
     return new ResponseEntity<Integer>(validationId, HttpStatus.OK);
   }
 

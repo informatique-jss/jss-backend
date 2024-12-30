@@ -21,8 +21,6 @@ public interface QuotationService {
 
         public Quotation getQuotationForAnnouncement(Announcement announcement);
 
-        public Integer generateValidationIdForQuotation();
-
         public Quotation addOrUpdateQuotation(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
@@ -80,5 +78,9 @@ public interface QuotationService {
                         String sortBy);
 
         public List<Quotation> searchQuotations(List<QuotationStatus> quotationStatus, List<Responsable> responsables);
+
+        public Integer generateValidationIdForQuotation();
+
+        public Boolean checkValidationIdQuotation(Integer validationId);
 
 }
