@@ -225,7 +225,7 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
                         currentKey = newKey;
 
                         // fetch mail
-                        List<String> mailsId = Arrays.asList(lastReminder.getMailId().split(";"));
+                        List<String> mailsId = Arrays.asList(lastReminder.getMailId().split(","));
                         List<Mail> mails = new ArrayList<Mail>();
                         for (String mailId : mailsId) {
                             mails.add(mailService.getMail(Integer.parseInt(mailId)));
@@ -248,7 +248,7 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
                 if (provisionToSend.size() > 0 && lastReminder != null
                         && reminder.equals(competentMailResult.get(competentMailResult.size() - 1))) {
                     // fetch mail
-                    List<String> mailsId = Arrays.asList(lastReminder.getMailId().split(";"));
+                    List<String> mailsId = Arrays.asList(lastReminder.getMailId().split(","));
                     List<Mail> mails = new ArrayList<Mail>();
                     for (String mailId : mailsId) {
                         mails.add(mailService.getMail(Integer.parseInt(mailId)));
