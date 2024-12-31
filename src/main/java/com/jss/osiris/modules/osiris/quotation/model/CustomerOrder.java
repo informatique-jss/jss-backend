@@ -228,6 +228,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonView(JacksonViews.MyJssView.class)
 	public Boolean hasMissingInformations;
 
+	private QuotationStatus quotationStatus;
+
 	public Integer getId() {
 		return id;
 	}
@@ -538,6 +540,15 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setValidationId(Integer validationId) {
 		this.validationId = validationId;
+	}
+
+	public QuotationStatus getQuotationStatus() {
+		return quotationStatus;
+	}
+
+	@Override
+	public void setQuotationStatus(QuotationStatus quotationStatus) {
+		this.quotationStatus = quotationStatus;
 	}
 
 }
