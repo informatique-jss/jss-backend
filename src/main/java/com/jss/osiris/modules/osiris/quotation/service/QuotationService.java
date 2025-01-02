@@ -79,4 +79,8 @@ public interface QuotationService {
 
         public List<Quotation> searchQuotations(List<QuotationStatus> quotationStatus, List<Responsable> responsables);
 
+        public Integer generateValidationIdForQuotation();
+
+        public Boolean checkValidationIdQuotation(Integer validationId);
+
 }

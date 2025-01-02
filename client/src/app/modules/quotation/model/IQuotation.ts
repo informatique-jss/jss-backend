@@ -10,6 +10,7 @@ import { CustomerOrderComment } from "./CustomerOrderComment";
 
 export interface IQuotation extends IAttachment, IDocument {
   id: number;
+  validationId: number;
   assignedTo: Employee;
   // tiers: Tiers | undefined;
   responsable: Responsable | undefined;

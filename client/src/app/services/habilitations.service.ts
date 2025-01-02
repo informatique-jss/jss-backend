@@ -99,6 +99,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
+  canEditPreTaxPriceReinvoiced() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
   canAddNewInvoiceForPreviousExercize() {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }

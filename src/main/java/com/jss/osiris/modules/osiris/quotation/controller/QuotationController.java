@@ -1767,7 +1767,12 @@ public class QuotationController {
 
     if (quotation.getQuotationStatus() == null)
       quotation.setQuotationStatus(openQuotationStatus);
-    return new ResponseEntity<Quotation>(quotationService.addOrUpdateQuotationFromUser(quotation), HttpStatus.OK);
+
+    if (quotation.getValidationId() != null
+        && quotationService.checkValidationIdQuotation(quotation.getValidationId()))
+      throw new OsirisValidationException("Save order already in progress");
+    else
+      return new ResponseEntity<Quotation>(quotationService.addOrUpdateQuotationFromUser(quotation), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/order/search")
@@ -1849,9 +1854,13 @@ public class QuotationController {
     if (customerOrder.getCustomerOrderStatus() == null)
       customerOrder.setCustomerOrderStatus(customerOrderStatus);
 
+    if (customerOrder.getValidationId() != null
+        && quotationService.checkValidationIdQuotation(customerOrder.getValidationId()))
+      throw new OsirisValidationException("Save order already in progress");
     // assoServiceFieldTypeService.addOrUpdateServiceFieldType(customerOrder) ;
-    return new ResponseEntity<CustomerOrder>(customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder),
-        HttpStatus.OK);
+    else
+      return new ResponseEntity<CustomerOrder>(customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder),
+          HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order/status")
@@ -2415,6 +2424,15 @@ public class QuotationController {
 
     return new ResponseEntity<Quotation>(quotationService.getQuotationForAnnouncement(announcement),
         HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/validation-id")
+  public ResponseEntity<Integer> getValidationIdForQuotation()
+      throws OsirisValidationException {
+    Integer validationId = quotationService.generateValidationIdForQuotation();
+    if (validationId == null)
+      throw new OsirisValidationException("validationId");
+    return new ResponseEntity<Integer>(validationId, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/announcements/search")

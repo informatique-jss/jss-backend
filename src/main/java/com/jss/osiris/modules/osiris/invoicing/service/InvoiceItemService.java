@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
@@ -18,4 +19,6 @@ public interface InvoiceItemService {
     public void deleteDuplicateInvoiceItemOrigin();
 
     public InvoiceItem cloneInvoiceItem(InvoiceItem invoiceItem);
+
+    public InvoiceItem updateInvoiceItemFromInvoice(InvoiceItem invoiceItem, BigDecimal amount);
 }

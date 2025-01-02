@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -696,4 +697,31 @@ public class QuotationServiceImpl implements QuotationService {
         return quotations;
     }
 
+    private final ConcurrentHashMap<Integer, LocalDateTime> validationIdQuotationMap = new ConcurrentHashMap<>();
+    private LocalDateTime lastFloodFlush = LocalDateTime.now();
+    private final int floodFlushDelayMinute = 60;
+
+    @Override
+    public Integer generateValidationIdForQuotation() {
+        return quotationRepository.generateValidationIdForQuotation();
+    }
+
+    @Override
+    public Boolean checkValidationIdQuotation(Integer validationId) {
+        if (lastFloodFlush.isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
+            cleanValidationIdQuotationMap();
+        if (validationIdQuotationMap.containsKey(validationId)) {
+            return true;
+        } else {
+            validationIdQuotationMap.put(validationId, LocalDateTime.now());
+            return false;
+        }
+    }
+
+    private void cleanValidationIdQuotationMap() {
+        for (Integer id : validationIdQuotationMap.keySet())
+            if (validationIdQuotationMap.get(id).isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
+                validationIdQuotationMap.remove(id);
+        lastFloodFlush = LocalDateTime.now();
+    }
 }
