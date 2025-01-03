@@ -15,7 +15,7 @@
     <generic-input [(model)]="searchText" label="Rechercher" [form]="serviceForm" propertyName="searchText"
       [isMandatory]="false" [isDisabled]="false"></generic-input>
   </div>
-  <ng-container *ngIf="service.assoServiceDocuments">
+  <ng-container *ngIf="service.assoServiceDocuments ">
     <div class="attachment-cards">
       <ng-container *ngFor="let document of service.assoServiceDocuments;let index= index">
         <mat-card class="document-card" *ngIf="!searchText || searchText.length==0 || documentContainsSearch(document)">
@@ -25,7 +25,7 @@
               matTooltip="Commentaire du formaliste">{{document.formalisteComment?document.formalisteComment :
               "&nbsp;"}}</mat-card-subtitle>
           </mat-card-header>
-          <multiple-upload class="document-upload" [entity]="document"
+          <multiple-upload class="document-upload" [entity]="document" [editMode]="isValidatedStatusForUploadFile()"
             [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType"
             (endOfUpload)="completeDocumentAttachment($event, document)" [isDirectUpload]="true"
             [attachmentType]="document.typeDocument.attachmentType"

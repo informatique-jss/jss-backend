@@ -21,6 +21,7 @@ import { UploadAttachmentService } from '../../services/upload.attachment.servic
 export class MultipleUploadComponent implements OnInit {
 
   @Input() entity: IAttachment | IAttachmentCode = {} as IAttachment;
+  @Input() editMode: boolean = true;
   @Input() entityType: string = "";
   @Output() endOfUpload: EventEmitter<any> = new EventEmitter<any>();
   pageSelection: string | null = null;
@@ -66,13 +67,17 @@ export class MultipleUploadComponent implements OnInit {
   });
 
   fileBrowseHandler(files: any) {
-    this.files = files.files;
-    if (this.files.length == 1)
-      this.filename = this.files[0].name;
-    this.attachmentForm.markAllAsTouched();
-    this.checkFiles();
-    if (this.isDirectUpload)
-      this.uploadFiles();
+    if (this.editMode) {
+      this.files = files.files;
+      if (this.files.length == 1)
+        this.filename = this.files[0].name;
+      this.attachmentForm.markAllAsTouched();
+      this.checkFiles();
+      if (this.isDirectUpload)
+        this.uploadFiles();
+    }
+    else
+      this.appService.displaySnackBar("Veuillez déposer le fichier sur la commande associée au devis.", false, 15);
   }
 
   checkFiles() {
