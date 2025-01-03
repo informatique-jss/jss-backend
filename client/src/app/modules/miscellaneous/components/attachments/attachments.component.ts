@@ -2,7 +2,6 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { formatBytes, formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { CUSTOMER_ORDER_ENTITY_TYPE, PROVISION_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
-import { AppService } from 'src/app/services/app.service';
 import { Attachment } from '../../model/Attachment';
 import { AttachmentType } from '../../model/AttachmentType';
 import { IAttachment } from '../../model/IAttachment';
@@ -20,7 +19,7 @@ import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/u
 export class AttachmentsComponent implements OnInit {
   @Input() entity: IAttachment = {} as IAttachment;
   @Input() entityType: string = "";
-  @Input() editMode: boolean = true;
+  @Input() editMode: boolean = false;
 
   displayedColumns: SortTableColumn<Attachment>[] = [];
   tableActions: SortTableAction<Attachment>[] = [] as Array<SortTableAction<Attachment>>;
@@ -39,7 +38,6 @@ export class AttachmentsComponent implements OnInit {
     public confirmationDialog: MatDialog,
     protected uploadAttachmentService: UploadAttachmentService,
     private constantService: ConstantService,
-    private appService: AppService
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -109,20 +107,16 @@ export class AttachmentsComponent implements OnInit {
   }
 
   uploadFile() {
-    if (!this.editMode)
-      this.appService.displaySnackBar("Veuillez déposer les fichiers sur la commande associée", true, 10);
-    else {
-      this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
-      });
-      this.uploadAttachementDialogRef.componentInstance.entity = this.entity;
-      this.uploadAttachementDialogRef.componentInstance.entityType = this.entityType;
-      this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
-        if (response && response != null) {
-          this.entity.attachments = response;
-          this.setDataTable();
-        }
-      });
-    }
+    this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
+    });
+    this.uploadAttachementDialogRef.componentInstance.entity = this.entity;
+    this.uploadAttachementDialogRef.componentInstance.entityType = this.entityType;
+    this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
+      if (response && response != null) {
+        this.entity.attachments = response;
+        this.setDataTable();
+      }
+    });
   }
 }
 
