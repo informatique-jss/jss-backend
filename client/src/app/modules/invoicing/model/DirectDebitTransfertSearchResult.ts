@@ -10,4 +10,5 @@ export interface DirectDebitTransfertSearchResult {
   competentAuthorityLabel: string;
   invoiceBillingLabel: string;
   isMatched: boolean;
+  invoiceStatus: string;
 }
