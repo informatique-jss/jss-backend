@@ -7,7 +7,6 @@ import { Employee } from '../../profile/model/Employee';
 import { Responsable } from "../../tiers/model/Responsable";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { CustomerOrderComment } from "./CustomerOrderComment";
-import { QuotationStatus } from "./QuotationStatus";
 
 export interface IQuotation extends IAttachment, IDocument {
   id: number;
@@ -27,5 +26,4 @@ export interface IQuotation extends IAttachment, IDocument {
   customerOrderOrigin: CustomerOrderOrigin;
   abandonReason: QuotationAbandonReason;
   customerOrderComments: CustomerOrderComment[];
-  quotationStatus: QuotationStatus;
 }

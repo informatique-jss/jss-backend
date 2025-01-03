@@ -25,8 +25,7 @@
               matTooltip="Commentaire du formaliste">{{document.formalisteComment?document.formalisteComment :
               "&nbsp;"}}</mat-card-subtitle>
           </mat-card-header>
-          <multiple-upload class="document-upload" [entity]="document"
-            *ngIf="quotation && quotation.quotationStatus==QUOTATION_VALIDATED_BY_CUSOMER"
+          <multiple-upload class="document-upload" [entity]="document" [editMode]="isValidatedStatusForUploadFile()"
             [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType"
             (endOfUpload)="completeDocumentAttachment($event, document)" [isDirectUpload]="true"
             [attachmentType]="document.typeDocument.attachmentType"
