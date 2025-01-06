@@ -21,7 +21,7 @@ import { UploadAttachmentService } from '../../services/upload.attachment.servic
 export class MultipleUploadComponent implements OnInit {
 
   @Input() entity: IAttachment | IAttachmentCode = {} as IAttachment;
-  @Input() editMode: boolean = true;
+  @Input() editMode: boolean = false;
   @Input() entityType: string = "";
   @Output() endOfUpload: EventEmitter<any> = new EventEmitter<any>();
   pageSelection: string | null = null;

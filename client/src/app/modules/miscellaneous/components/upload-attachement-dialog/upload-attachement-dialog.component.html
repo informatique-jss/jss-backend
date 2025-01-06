@@ -1,6 +1,6 @@
 <div class="mat-elevation-z2 form-div mat-body" style="padding : 20px"
   *ngIf="entity && (instanceOfIAttachmentCode(entity) && entity.code || (!instanceOfIAttachmentCode(entity) && entity.id))">
-  <multiple-upload [entity]="entity" [entityType]="entityType"
+  <multiple-upload [entity]="entity" [entityType]="entityType" [editMode]="true"
     [replaceExistingAttachementType]="replaceExistingAttachementType" [forcedAttachmentType]="forcedAttachmentType"
     [forcedFileExtension]="forcedFileExtension" (endOfUpload)="endUpload($event)"></multiple-upload>
 </div>
