@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
 import { instanceOfCustomerOrder, instanceOfFormaliteGuichetUnique } from 'src/app/libs/TypeHelper';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -65,6 +66,7 @@ export class FormaliteComponent implements OnInit {
     private formaliteStatusService: FormaliteStatusService,
     private userPreferenceService: UserPreferenceService,
     public associateFormaliteLiasseDialog: MatDialog,
+    private confirmationDialog: MatDialog
   ) { }
 
   formaliteForm = this.formBuilder.group({});
@@ -181,9 +183,30 @@ export class FormaliteComponent implements OnInit {
           this.formalite.formalitesInfogreffe = [] as Array<FormaliteInfogreffe>;
         this.formalite.formalitesInfogreffe.push(result.formaliteInfogreffe);
       }
+
+      if (result) {
+        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+          maxWidth: "400px",
+          data: {
+            title: "Modifier le statut de la prestation",
+            content: "Passer au statut 'En attente de l'autorité compétente' ?",
+            closeActionText: "Non",
+            validationActionText: "Oui"
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult && this.formaliteStatus) {
+            let response = this.formaliteStatusService.getFormaliteStatusByCode(this.formaliteStatus, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY);
+            if (response)
+              this.formalite.formaliteStatus = response;
+          }
+        });
+      }
       this.setFormaliteTableData();
     });
   }
+
 
   ngOnChanges(changes: SimpleChanges) {
 
