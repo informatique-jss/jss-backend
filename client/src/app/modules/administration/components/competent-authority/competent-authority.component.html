@@ -257,7 +257,7 @@
           <receipt-reconciliation [provider]="selectedcompetentAuthority"></receipt-reconciliation>
         </mat-tab>
         <mat-tab label=" Documents" *ngIf="selectedcompetentAuthority.id">
-          <attachments [entity]="selectedcompetentAuthority" [editMode]="editMode"
+          <attachments [entity]="selectedcompetentAuthority" [editMode]="true"
             [entityType]="COMPETENT_AUTHORITY_ENTITY_TYPE.entityType">
           </attachments>
         </mat-tab>
