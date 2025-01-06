@@ -189,7 +189,7 @@
           <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>
         </mat-tab>
         <mat-tab label="Documents" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
-          <attachments [entity]="selectedResponsable!" [editMode]="editMode"
+          <attachments [entity]="selectedResponsable!" [editMode]="true"
             [entityType]="RESPONSABLE_ENTITY_TYPE.entityType">
           </attachments>
         </mat-tab>

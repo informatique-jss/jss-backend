@@ -245,6 +245,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
   }
 
+  isValidatedStatusForUploadFile() {
+    if (this.quotation && instanceOfQuotation(this.quotation) && this.quotation.quotationStatus && this.quotation.quotationStatus.code == VALIDATED_BY_CUSTOMER)
+      return false;
+    else
+      return true;
+  }
+
   updateDocuments() {
     this.updateDocumentsEvent.next(this.quotation);
   }
