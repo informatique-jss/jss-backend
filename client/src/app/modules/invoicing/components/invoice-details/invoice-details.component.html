@@ -151,8 +151,8 @@
                 <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
                   <tr class="mat-mdc-row mdc-data-table__row ">
                     <td class="mat-mdc-cell mdc-data-table__cell">
-                      <span class="invoice-item">{{invoiceItem.label}}</span>
-
+                      <span class="invoice-item">{{invoiceItem.label}} -
+                        {{invoiceItem.billingItem.billingType.label}}</span>
                     </td>
                     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
                       {{invoiceItem.preTaxPrice|number}} €
