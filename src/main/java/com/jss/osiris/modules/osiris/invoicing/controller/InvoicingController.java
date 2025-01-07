@@ -806,7 +806,8 @@ public class InvoicingController {
 
         provisonPayment.setPaymentAmount(provisonPayment.getPaymentAmount().abs().negate());
         validationHelper.validateString(provisonPayment.getLabel(), true, 250, "paymentType");
-        validationHelper.validateDateTimeMax(provisonPayment.getPaymentDate(), true, LocalDateTime.now(),
+        validationHelper.validateDateTimeMax(provisonPayment.getPaymentDate(), true,
+                LocalDateTime.now().withHour(23).withMinute(59),
                 "paymentType");
         provisonPayment.setIsDeposit(false);
         provisonPayment.setIsAppoint(false);
