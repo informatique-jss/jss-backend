@@ -73,6 +73,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Autowired
   ConstantService constantService;
 
+  @Autowired
+  AccountingRecordGenerationService accountingRecordGenerationService;
+
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
     Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
@@ -477,12 +480,22 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       maxLetteringNumber = 0;
     maxLetteringNumber++;
 
+    Invoice invoiceToLetter = new Invoice();
     for (AccountingRecord accountingRecord : fetchRecords) {
+      if (accountingRecord.getInvoice() != null) {
+        invoiceToLetter = accountingRecord.getInvoice();
+        break;
+      }
+    }
+
+    for (AccountingRecord accountingRecord : fetchRecords) {
+      if (accountingRecord.getInvoice() == null)
+        accountingRecord.setInvoice(invoiceToLetter);
       accountingRecord.setLetteringDateTime(LocalDateTime.now());
       accountingRecord.setLetteringNumber(maxLetteringNumber);
       addOrUpdateAccountingRecord(accountingRecord, true);
     }
-
+    accountingRecordGenerationService.checkInvoiceForLettrage(invoiceToLetter);
     return true;
   }
 }
