@@ -449,7 +449,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer lastAccountId = null;
     BigDecimal balance = new BigDecimal(0);
     ArrayList<AccountingRecord> fetchRecords = new ArrayList<AccountingRecord>();
-    Invoice invoiceToLetter = new Invoice();
+    Invoice invoiceToLetter = null;
     Integer countInvoice = 0;
 
     for (AccountingRecord record : accountingRecords) {
@@ -493,7 +493,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       accountingRecord.setLetteringNumber(maxLetteringNumber);
       addOrUpdateAccountingRecord(accountingRecord, true);
     }
-    if (countInvoice == 1 && invoiceToLetter.getId() != null)
+    if (countInvoice == 1 && invoiceToLetter != null)
       accountingRecordGenerationService.checkInvoiceForLettrage(invoiceToLetter);
     return true;
   }
