@@ -73,6 +73,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Autowired
   ConstantService constantService;
 
+  @Autowired
+  AccountingRecordGenerationService accountingRecordGenerationService;
+
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
     Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
@@ -446,6 +449,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer lastAccountId = null;
     BigDecimal balance = new BigDecimal(0);
     ArrayList<AccountingRecord> fetchRecords = new ArrayList<AccountingRecord>();
+    Invoice invoiceToLetter = null;
+    Integer countInvoice = 0;
 
     for (AccountingRecord record : accountingRecords) {
       AccountingRecord fetchRecord = getAccountingRecord(record.getId());
@@ -463,6 +468,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       if (record.getDebitAmount() != null)
         balance = balance.subtract(record.getDebitAmount());
 
+      if (record.getInvoice() != null) {
+        countInvoice++;
+        invoiceToLetter = record.getInvoice();
+      }
     }
     if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).abs().compareTo(new BigDecimal(1)) > 0)
       throw new OsirisValidationException("Balance not null");
@@ -478,11 +487,14 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     maxLetteringNumber++;
 
     for (AccountingRecord accountingRecord : fetchRecords) {
+      if (countInvoice == 1 && accountingRecord.getInvoice() == null)
+        accountingRecord.setInvoice(invoiceToLetter);
       accountingRecord.setLetteringDateTime(LocalDateTime.now());
       accountingRecord.setLetteringNumber(maxLetteringNumber);
       addOrUpdateAccountingRecord(accountingRecord, true);
     }
-
+    if (countInvoice == 1 && invoiceToLetter != null)
+      accountingRecordGenerationService.checkInvoiceForLettrage(invoiceToLetter);
     return true;
   }
 }

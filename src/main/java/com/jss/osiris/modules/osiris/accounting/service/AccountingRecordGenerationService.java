@@ -57,4 +57,6 @@ public interface AccountingRecordGenerationService {
         public void generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(Payment payment)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
+        public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
+
 }
