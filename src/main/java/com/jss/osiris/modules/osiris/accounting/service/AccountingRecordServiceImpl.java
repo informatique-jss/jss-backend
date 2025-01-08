@@ -481,21 +481,23 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     maxLetteringNumber++;
 
     Invoice invoiceToLetter = new Invoice();
+    Integer countInvoice = 0;
     for (AccountingRecord accountingRecord : fetchRecords) {
       if (accountingRecord.getInvoice() != null) {
+        countInvoice++;
         invoiceToLetter = accountingRecord.getInvoice();
-        break;
       }
     }
 
     for (AccountingRecord accountingRecord : fetchRecords) {
-      if (accountingRecord.getInvoice() == null)
+      if (countInvoice == 1 && accountingRecord.getInvoice() == null)
         accountingRecord.setInvoice(invoiceToLetter);
       accountingRecord.setLetteringDateTime(LocalDateTime.now());
       accountingRecord.setLetteringNumber(maxLetteringNumber);
       addOrUpdateAccountingRecord(accountingRecord, true);
     }
-    accountingRecordGenerationService.checkInvoiceForLettrage(invoiceToLetter);
+    if (countInvoice == 1 && invoiceToLetter.getId() != null)
+      accountingRecordGenerationService.checkInvoiceForLettrage(invoiceToLetter);
     return true;
   }
 }

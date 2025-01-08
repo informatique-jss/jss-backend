@@ -69,7 +69,7 @@
       </table>
       <mat-divider class="margin-mat-divider"></mat-divider>
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.isRecurring">
+        <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation)">
           <tr>
             <td><generic-toggle [(model)]="quotation.isRecurring" label="Est récurrente ?" [form]="orderingCustomerForm"
                 propertyName="propeisRecurringrtyName" [isDisabled]="true"></generic-toggle></td>
