@@ -553,7 +553,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (correspondingInvoice != null)
             amountIndex = correspondingInvoice.size() - 1 + 1;
 
-        if (remainingMoney.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).compareTo(zeroValue) == 0)
+        if (remainingMoney.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).compareTo(zeroValue) == 0)
             return zeroValue;
 
         // if no by pass, put all on last customer order even if there is too much
@@ -561,7 +561,8 @@ public class PaymentServiceImpl implements PaymentService {
         for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
             BigDecimal remainingToPayForCustomerOrder = customerOrderService
                     .getRemainingAmountToPayForCustomerOrder(correspondingCustomerOrder.get(i))
-                    .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue).max(zeroValue);
+                    .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue)
+                    .max(zeroValue);
             BigDecimal effectivePayment;
             if (byPassAmount != null) {
                 effectivePayment = byPassAmount.get(amountIndex);
@@ -596,11 +597,11 @@ public class PaymentServiceImpl implements PaymentService {
             // Unlocked customer order if necessary
             customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
-            if (remainingMoney.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue)
+            if (remainingMoney.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue)
                     .compareTo(zeroValue) == 0)
                 return zeroValue;
         }
-        return remainingMoney.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+        return remainingMoney.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
     }
 
     private BigDecimal associateInboundPaymentAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
@@ -652,8 +653,8 @@ public class PaymentServiceImpl implements PaymentService {
                 } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
                         .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
                     if (invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i))
-                            .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP) != payment
-                                    .getPaymentAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP))
+                            .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN) != payment
+                                    .getPaymentAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN))
                         throw new OsirisException(null,
                                 "Wrong amount to pay on invoice " + correspondingInvoices.get(i).getId()
                                         + " and payment bank id " + payment.getBankId() + " " + payment.getId());
@@ -670,16 +671,16 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             }
         }
-        return remainingMoney.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+        return remainingMoney.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
     }
 
     private BigDecimal associateOutboundPaymentAndInvoice(Payment payment, Invoice correspondingInvoice)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         BigDecimal paymentAmount = payment.getPaymentAmount().abs().multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+                .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
         BigDecimal invoiceAmount = invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoice).abs()
                 .multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+                .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
 
         if (paymentAmount.compareTo(invoiceAmount) <= 0) {
             cancelPayment(payment);
@@ -707,15 +708,15 @@ public class PaymentServiceImpl implements PaymentService {
             associatePaymentAndInvoice(newPayment, correspondingInvoice, false, false);
         }
 
-        return paymentAmount.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+        return paymentAmount.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
     }
 
     private void associateOutboundPaymentAndRefund(Payment payment, Refund refund) throws OsirisException {
 
-        BigDecimal refundAmount = refund.getRefundAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
+        BigDecimal refundAmount = refund.getRefundAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                 .divide(oneHundredValue);
         BigDecimal paymentAmount = payment.getPaymentAmount().multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+                .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
 
         if (refundAmount.compareTo(paymentAmount.negate()) == 0) {
             refund.setIsMatched(true);
@@ -729,10 +730,10 @@ public class PaymentServiceImpl implements PaymentService {
             DirectDebitTransfert directDebitTransfert) throws OsirisException, OsirisValidationException {
 
         BigDecimal directDebitAmount = directDebitTransfert.getTransfertAmount().multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP)
+                .setScale(0, RoundingMode.HALF_EVEN)
                 .divide(oneHundredValue);
         BigDecimal paymentAmount = payment.getPaymentAmount().multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP)
+                .setScale(0, RoundingMode.HALF_EVEN)
                 .divide(oneHundredValue);
 
         if (directDebitAmount.compareTo(paymentAmount) == 0) {
@@ -749,10 +750,10 @@ public class PaymentServiceImpl implements PaymentService {
             throws OsirisException, OsirisValidationException {
 
         BigDecimal bankTransfertAmount = bankTransfert.getTransfertAmount().multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP)
+                .setScale(0, RoundingMode.HALF_EVEN)
                 .divide(oneHundredValue);
         BigDecimal paymentAmount = payment.getPaymentAmount().multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP)
+                .setScale(0, RoundingMode.HALF_EVEN)
                 .divide(oneHundredValue);
 
         if (bankTransfertAmount.compareTo(paymentAmount.negate()) == 0) {
@@ -766,10 +767,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void associateOutboundCheckPayment(Payment inPayment, Payment checkPayment)
             throws OsirisException, OsirisValidationException {
-        BigDecimal inAmount = inPayment.getPaymentAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
+        BigDecimal inAmount = inPayment.getPaymentAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                 .divide(oneHundredValue);
         BigDecimal checkAmount = checkPayment.getPaymentAmount().multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP)
+                .setScale(0, RoundingMode.HALF_EVEN)
                 .divide(oneHundredValue);
 
         if (inAmount.compareTo(checkAmount) == 0) {
@@ -1116,7 +1117,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .divide(oneHundredValue);
 
         invoiceItem.setPreTaxPrice(
-                commission.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue));
+                commission.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         invoice.getInvoiceItems().add(invoiceItem);
         vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
@@ -1367,10 +1368,10 @@ public class PaymentServiceImpl implements PaymentService {
             // If no match by name, attempt by amount
             if (advisedPayments.size() == 0) {
                 BigDecimal totalRound = invoice.getTotalPrice().multiply(oneHundredValue)
-                        .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+                        .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
                 for (Payment payment : payments) {
                     BigDecimal paymentRound = payment.getPaymentAmount().multiply(oneHundredValue)
-                            .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+                            .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
                     if (invoice.getProvider() != null && paymentRound.compareTo(totalRound.negate()) == 0)
                         advisedPayments.add(payment);
                     else if (invoice.getIsCreditNote() && paymentRound.compareTo(totalRound.negate()) == 0)
@@ -1410,7 +1411,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .getTotalPrice();
                 for (Payment payment : payments) {
                     BigDecimal paymentRound = payment.getPaymentAmount().multiply(oneHundredValue)
-                            .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+                            .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
                     if (paymentRound.compareTo(totalRound) == 0) {
                         advisedPayments.add(payment);
                     }

@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.controller;
 
+import static java.time.temporal.TemporalAdjusters.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -8,7 +10,6 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import java.util.Arrays;
 import java.util.List;
 
@@ -630,16 +631,16 @@ public class InvoicingController {
                     if (invoice.getInvoiceStatus().getId()
                             .equals(constantService.getInvoiceStatusCreditNoteReceived().getId()))
                         if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0,
-                                RoundingMode.HALF_UP) != paymentAssociate.getPayment().getPaymentAmount()
-                                        .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP))
+                                RoundingMode.HALF_EVEN) != paymentAssociate.getPayment().getPaymentAmount()
+                                        .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN))
                             throw new OsirisValidationException("Wrong payment amount");
 
                     if (invoice.getInvoiceStatus().getId()
                             .equals(constantService.getInvoiceStatusReceived().getId())) {
-                        if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
+                        if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .negate()
                                 .compareTo(paymentAssociate.getPayment().getPaymentAmount().multiply(oneHundredValue)
-                                        .setScale(0, RoundingMode.HALF_UP)) > 0)
+                                        .setScale(0, RoundingMode.HALF_EVEN)) > 0)
                             throw new OsirisValidationException("Wrong payment amount");
                     }
                 }
@@ -652,11 +653,11 @@ public class InvoicingController {
             for (BigDecimal amount : paymentAssociate.getByPassAmount()) {
                 totalAmount = totalAmount.add(amount);
             }
-        totalAmount = totalAmount.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+        totalAmount = totalAmount.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
 
         // If incoming, appoint or refund needed, if outgoing, must match
         if (totalAmount.compareTo(zeroValue) != 0) {
-            if (totalAmount != paymentAssociate.getPayment().getPaymentAmount().setScale(0, RoundingMode.HALF_UP)) {
+            if (totalAmount != paymentAssociate.getPayment().getPaymentAmount().setScale(0, RoundingMode.HALF_EVEN)) {
                 if (paymentAssociate.getPayment().getPaymentAmount().compareTo(zeroValue) >= 0) {
                     if (paymentAssociate.getPayment().getPaymentAmount().compareTo(totalAmount) > 0
                             && totalAmount.abs().subtract(paymentAssociate.getPayment().getPaymentAmount())
@@ -665,7 +666,7 @@ public class InvoicingController {
                             throw new OsirisValidationException("not all payment used and no refund tiers set");
                 } else if (totalAmount
                         .compareTo(paymentAssociate.getPayment().getPaymentAmount().multiply(oneHundredValue)
-                                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue)) != 0)
+                                .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue)) != 0)
                     throw new OsirisValidationException("not all payment used");
             }
         }

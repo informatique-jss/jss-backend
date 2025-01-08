@@ -45,7 +45,7 @@ public class InvoiceHelper {
         if (invoice != null) {
             invoice.setTotalPrice(
                     (this.getPriceTotal(invoice).multiply(oneHundredConstant)).divide(oneHundredConstant).setScale(2,
-                            RoundingMode.HALF_UP));
+                            RoundingMode.HALF_EVEN));
         }
         return invoice;
     }

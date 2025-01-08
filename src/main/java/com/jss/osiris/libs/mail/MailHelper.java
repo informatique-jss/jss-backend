@@ -436,7 +436,7 @@ public class MailHelper {
                 quotation != null
                         ? customerOrderService.getInvoicingSummaryForIQuotation(quotation).getTotalPrice()
                                 .multiply(oneHundredValue)
-                                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue)
+                                .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue)
                         : "");
 
         // Compute remaining to pay on invoice
@@ -454,7 +454,7 @@ public class MailHelper {
             }
             ctx.setVariable("remainingToPay",
                     invoiceService.getRemainingAmountToPayForInvoice(invoice).multiply(oneHundredValue)
-                            .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue));
+                            .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue));
             ctx.setVariable("invoice", invoice);
             ctx.setVariable("creditNote", creditNote);
         }
