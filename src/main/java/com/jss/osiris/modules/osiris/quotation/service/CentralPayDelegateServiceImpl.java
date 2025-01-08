@@ -141,7 +141,7 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         // Convert in cents
-        Integer finalAmount = amount.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).intValue();
+        Integer finalAmount = amount.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_EVEN).intValue();
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
         map.add("paymentMethod[]", "TRANSACTION");

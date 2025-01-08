@@ -152,7 +152,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoiceItem.setLabel(
                 invoiceItem.getBillingItem().getBillingType().getLabel() + (invoice.getProvider().getLabel()));
         invoiceItem.setPreTaxPrice(azureInvoice.getInvoicePreTaxTotal().multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue));
+                .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         if (azureInvoice.getCompetentAuthority() != null)
             vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
@@ -171,7 +171,7 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoiceItem2.setLabel(invoiceItem2.getBillingItem().getBillingType().getLabel()
                 + (invoice.getProvider().getLabel()));
         invoiceItem2.setPreTaxPrice(azureInvoice.getInvoiceNonTaxableTotal().multiply(oneHundredValue)
-                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue));
+                .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue));
         invoiceItem2.setPreTaxPriceReinvoiced(invoiceItem2.getPreTaxPrice());
         if (azureInvoice.getCompetentAuthority() != null)
             vatService.completeVatOnInvoiceItem(invoiceItem2, invoice);

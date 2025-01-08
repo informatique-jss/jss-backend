@@ -681,7 +681,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         } else {
             BigDecimal vatRate = BigDecimal
                     .valueOf((cartRate.getAmount() - cartRate.getHtAmount()) * 1.0 / cartRate.getHtAmount() * 100.0);
-            vatRate = vatRate.multiply(BigDecimal.TEN).setScale(0, RoundingMode.HALF_UP).divide(BigDecimal.TEN);
+            vatRate = vatRate.multiply(BigDecimal.TEN).setScale(0, RoundingMode.HALF_EVEN).divide(BigDecimal.TEN);
             Vat vat = null;
             invoiceItem.setBillingItem(pricingHelper
                     .getAppliableBillingItem(constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));

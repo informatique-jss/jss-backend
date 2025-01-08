@@ -517,7 +517,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
             BigDecimal remainingToPayForCurrentCustomerOrder = getRemainingAmountToPayForCustomerOrder(customerOrder)
-                    .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+                    .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
 
             if (remainingToPayForCurrentCustomerOrder.compareTo(zeroValue) < 0
                     && remainingToPayForCurrentCustomerOrder.abs()
@@ -1157,7 +1157,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     if (!payment.getIsCancelled())
                         total = total.subtract(payment.getPaymentAmount());
 
-            return total.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue);
+            return total.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
         }
         return zeroValue;
     }

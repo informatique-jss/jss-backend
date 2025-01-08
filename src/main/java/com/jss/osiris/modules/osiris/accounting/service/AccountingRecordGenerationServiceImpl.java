@@ -132,7 +132,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     private void checkBalance(BigDecimal balance) throws OsirisValidationException {
-        if (balance.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP).abs().compareTo(new BigDecimal(1)) > 0)
+        if (balance.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).abs()
+                .compareTo(new BigDecimal(1)) > 0)
             throw new OsirisValidationException("Balance not null");
     }
 

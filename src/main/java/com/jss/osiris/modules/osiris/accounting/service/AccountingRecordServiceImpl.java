@@ -432,7 +432,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           balance = balance.subtract(accountingRecord.getDebitAmount());
       }
 
-      if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).abs()
+      if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_EVEN).abs()
           .compareTo(new BigDecimal(1)) > 0)
         throw new OsirisValidationException("Balance not null");
 
@@ -473,7 +473,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         invoiceToLetter = record.getInvoice();
       }
     }
-    if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).abs().compareTo(new BigDecimal(1)) > 0)
+    if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_EVEN).abs()
+        .compareTo(new BigDecimal(1)) > 0)
       throw new OsirisValidationException("Balance not null");
 
     // Lettering
