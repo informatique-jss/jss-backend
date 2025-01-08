@@ -449,6 +449,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer lastAccountId = null;
     BigDecimal balance = new BigDecimal(0);
     ArrayList<AccountingRecord> fetchRecords = new ArrayList<AccountingRecord>();
+    Invoice invoiceToLetter = new Invoice();
+    Integer countInvoice = 0;
 
     for (AccountingRecord record : accountingRecords) {
       AccountingRecord fetchRecord = getAccountingRecord(record.getId());
@@ -466,6 +468,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       if (record.getDebitAmount() != null)
         balance = balance.subtract(record.getDebitAmount());
 
+      if (record.getInvoice() != null) {
+        countInvoice++;
+        invoiceToLetter = record.getInvoice();
+      }
     }
     if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).abs().compareTo(new BigDecimal(1)) > 0)
       throw new OsirisValidationException("Balance not null");
@@ -479,15 +485,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (maxLetteringNumber == null)
       maxLetteringNumber = 0;
     maxLetteringNumber++;
-
-    Invoice invoiceToLetter = new Invoice();
-    Integer countInvoice = 0;
-    for (AccountingRecord accountingRecord : fetchRecords) {
-      if (accountingRecord.getInvoice() != null) {
-        countInvoice++;
-        invoiceToLetter = accountingRecord.getInvoice();
-      }
-    }
 
     for (AccountingRecord accountingRecord : fetchRecords) {
       if (countInvoice == 1 && accountingRecord.getInvoice() == null)
