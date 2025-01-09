@@ -106,6 +106,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
         return;
       }
     this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate.setHours(12));
+    this.accountingBalanceSearch.endDate = new Date(this.accountingBalanceSearch.endDate.setHours(12));
     this.userPreferenceService.setUserSearchBookmark(this.accountingBalanceSearch, "accounting-balance-generale");
     this.accountingBalanceService.searchAccountingBalanceGenerale(this.accountingBalanceSearch).subscribe(response => {
       this.accountingBalances = response;

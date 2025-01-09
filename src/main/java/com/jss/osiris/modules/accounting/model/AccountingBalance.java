@@ -1,10 +1,12 @@
 package com.jss.osiris.modules.accounting.model;
 
+import java.math.BigDecimal;
+
 public interface AccountingBalance {
 
-	public Float getCreditAmount();
+	public BigDecimal getCreditAmount();
 
-	public Float getDebitAmount();
+	public BigDecimal getDebitAmount();
 
 	public String getAccountingAccountLabel();
 
@@ -16,16 +18,16 @@ public interface AccountingBalance {
 
 	public String getAccountingAccountSubNumber();
 
-	public Float getEchoir30();
+	public BigDecimal getEchoir30();
 
-	public Float getEchoir60();
+	public BigDecimal getEchoir60();
 
-	public Float getEchoir90();
+	public BigDecimal getEchoir90();
 
-	public Float getEchu30();
+	public BigDecimal getEchu30();
 
-	public Float getEchu60();
+	public BigDecimal getEchu60();
 
-	public Float getEchu90();
+	public BigDecimal getEchu90();
 
 }

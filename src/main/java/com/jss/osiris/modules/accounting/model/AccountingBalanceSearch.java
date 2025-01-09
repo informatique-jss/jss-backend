@@ -6,6 +6,7 @@ import java.util.List;
 public class AccountingBalanceSearch {
   private AccountingAccountClass accountingClass;
   private AccountingAccount accountingAccount;
+  private AccountingJournal accountingJournal;
   private List<PrincipalAccountingAccount> principalAccountingAccounts;
 
   private LocalDateTime startDate;
@@ -59,6 +60,14 @@ public class AccountingBalanceSearch {
 
   public void setPrincipalAccountingAccounts(List<PrincipalAccountingAccount> principalAccountingAccounts) {
     this.principalAccountingAccounts = principalAccountingAccounts;
+  }
+
+  public AccountingJournal getAccountingJournal() {
+    return accountingJournal;
+  }
+
+  public void setAccountingJournal(AccountingJournal accountingJournal) {
+    this.accountingJournal = accountingJournal;
   }
 
 }

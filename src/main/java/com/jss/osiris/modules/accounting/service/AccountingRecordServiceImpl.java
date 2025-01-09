@@ -32,6 +32,7 @@ import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
@@ -287,9 +288,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     if (accountingRecordSearch.getStartDate() == null)
       accountingRecordSearch.setStartDate(LocalDateTime.now().minusYears(100));
+    else
+      accountingRecordSearch.setStartDate(accountingRecordSearch.getStartDate().withHour(0).withMinute(0));
 
     if (accountingRecordSearch.getEndDate() == null)
       accountingRecordSearch.setEndDate(LocalDateTime.now().plusYears(100));
+    else
+      accountingRecordSearch.setEndDate(accountingRecordSearch.getEndDate().withHour(23).withMinute(59));
 
     if (accountingRecordSearch.getIdPayment() == null)
       accountingRecordSearch.setIdPayment(0);
@@ -340,6 +345,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer accountingClassId = accountingBalanceSearch.getAccountingClass() != null
         ? accountingBalanceSearch.getAccountingClass().getId()
         : 0;
+    Integer accountingJournalId = accountingBalanceSearch.getAccountingJournal() != null
+        ? accountingBalanceSearch.getAccountingJournal().getId()
+        : 0;
     List<Integer> principalAccountingAccountIds = new ArrayList<Integer>();
     if (accountingBalanceSearch.getPrincipalAccountingAccounts() != null)
       for (PrincipalAccountingAccount principalAccountingAccount : accountingBalanceSearch
@@ -354,7 +362,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (getAccountingRecordTableName(accountingBalanceSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME))
       return accountingRecordRepository.searchAccountingBalanceCurrent(
-          accountingClassId,
+          accountingClassId, accountingJournalId,
           accountingAccountId, principalAccountingAccountIds,
           accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
           accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
@@ -362,7 +370,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingBalanceSearch.getIsFromAs400());
 
     return accountingRecordRepository.searchAccountingBalanceClosed(
-        accountingClassId,
+        accountingClassId, accountingJournalId,
         accountingAccountId, principalAccountingAccountIds,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
@@ -379,6 +387,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer accountingClassId = accountingBalanceSearch.getAccountingClass() != null
         ? accountingBalanceSearch.getAccountingClass().getId()
         : 0;
+    Integer accountingJournalId = accountingBalanceSearch.getAccountingJournal() != null
+        ? accountingBalanceSearch.getAccountingJournal().getId()
+        : 0;
     List<Integer> principalAccountingAccountIds = new ArrayList<Integer>();
     if (accountingBalanceSearch.getPrincipalAccountingAccounts() != null)
       for (PrincipalAccountingAccount principalAccountingAccount : accountingBalanceSearch
@@ -393,7 +404,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (getAccountingRecordTableName(accountingBalanceSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME))
       return accountingRecordRepository.searchAccountingBalanceGeneraleCurrent(
-          accountingClassId,
+          accountingClassId, accountingJournalId,
           accountingAccountId, principalAccountingAccountIds,
           accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
           accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
@@ -401,7 +412,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingBalanceSearch.getIsFromAs400());
 
     return accountingRecordRepository.searchAccountingBalanceGeneraleClosed(
-        accountingClassId,
+        accountingClassId, accountingJournalId,
         accountingAccountId, principalAccountingAccountIds,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
@@ -533,5 +544,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     }
 
     return true;
+  }
+
+  @Override
+  public List<AccountingRecord> getClosedAccountingRecordsForPayment(Payment payment) {
+    return accountingRecordRepository.findClosedAccountingRecordsForPayment(payment.getId());
   }
 }

@@ -110,6 +110,8 @@ export class AccountingBalanceComponent implements OnInit {
       }
 
     this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate.setHours(12));
+    if (this.accountingBalanceSearch.endDate)
+      this.accountingBalanceSearch.endDate = new Date(this.accountingBalanceSearch.endDate.setHours(12));
     this.userPreferenceService.setUserSearchBookmark(this.accountingBalanceSearch, "accounting-balance");
     this.accountingBalanceService.searchAccountingBalance(this.accountingBalanceSearch).subscribe(response => {
       this.accountingBalances = response;

@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.accounting.service;
 
+import java.time.LocalDateTime;
+
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -56,5 +58,7 @@ public interface AccountingRecordGenerationService {
 
         public void generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(Payment payment)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
+
+        public LocalDateTime getPaymentDateForAccounting(Payment payment) throws OsirisException;
 
 }

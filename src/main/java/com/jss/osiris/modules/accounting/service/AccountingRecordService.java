@@ -15,6 +15,7 @@ import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 
@@ -91,5 +92,7 @@ public interface AccountingRecordService {
 
         public Boolean letterRecordsForAs400(List<AccountingRecord> accountingRecords)
                         throws OsirisValidationException, OsirisClientMessageException, OsirisException;
+
+        public List<AccountingRecord> getClosedAccountingRecordsForPayment(Payment payment);
 
 }

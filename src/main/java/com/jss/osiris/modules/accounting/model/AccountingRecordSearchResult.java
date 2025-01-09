@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.accounting.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -30,9 +31,9 @@ public interface AccountingRecordSearchResult {
 
   LocalDate getManualAccountingDocumentDate();
 
-  Float getDebitAmount();
+  BigDecimal getDebitAmount();
 
-  Float getCreditAmount();
+  BigDecimal getCreditAmount();
 
   String getLabel();
 
