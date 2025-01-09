@@ -11,7 +11,7 @@
       <responsable-main [tiers]="tiers" [editMode]="editMode"></responsable-main>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <attachments [entity]="tiers" [editMode]="editMode" [entityType]="TIERS_ENTITY_TYPE.entityType">
+      <attachments [entity]="tiers" [editMode]="true" [entityType]="TIERS_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
     <mat-tab label="Mails" *ngIf="tiers.id">

@@ -525,8 +525,8 @@ public class GeneratePdfDelegate {
 
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal",
-                invoiceHelper.getPriceTotal(invoice).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
-                        .divide(oneHundredValue).setScale(2, RoundingMode.HALF_UP));
+                invoiceHelper.getPriceTotal(invoice).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
+                        .divide(oneHundredValue).setScale(2, RoundingMode.HALF_EVEN));
         ctx.setVariable("invoice", invoice);
         ctx.setVariable("isPrelevementType", false);
         if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId()))

@@ -6,7 +6,7 @@ import { FormaliteStatus } from '../../quotation/model/FormaliteStatus';
 @Injectable({
   providedIn: 'root'
 })
-export class FormaliteStatusService extends AppRestService<FormaliteStatus>{
+export class FormaliteStatusService extends AppRestService<FormaliteStatus> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
@@ -15,9 +15,16 @@ export class FormaliteStatusService extends AppRestService<FormaliteStatus>{
   getFormaliteStatus() {
     return this.getList(new HttpParams(), "formalite-status");
   }
-  
-   addOrUpdateFormaliteStatus(formaliteStatus: FormaliteStatus) {
+
+  addOrUpdateFormaliteStatus(formaliteStatus: FormaliteStatus) {
     return this.addOrUpdate(new HttpParams(), "formalite-status", formaliteStatus, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
+  getFormaliteStatusByCode(status: FormaliteStatus[], code: string) {
+    if (status)
+      for (let statu of status)
+        if (statu.code == code)
+          return statu;
+    return null;
+  }
 }

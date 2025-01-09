@@ -20,9 +20,7 @@ public interface DirectDebitTransfertSearchResult {
 
     public Boolean getIsAlreadyExported();
 
-    public String getInvoiceBillingLabel();
-
-    public String getCompetentAuthorityLabel();
-
     public Boolean getIsMatched();
+
+    public String getInvoiceStatus();
 }

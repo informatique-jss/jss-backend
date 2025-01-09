@@ -304,7 +304,7 @@ public class PricingHelper {
             if (nbr > 0)
                 invoiceItem.setPreTaxPrice(
                         (confrere.getShippingCosts() != null ? BigDecimal.valueOf(confrere.getShippingCosts())
-                                : zeroValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
+                                : zeroValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
         } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()) {
             if (billingItem.getBillingType().getIsNonTaxable() == false
@@ -344,7 +344,7 @@ public class PricingHelper {
 
         if (invoiceItem.getPreTaxPrice() != null)
             invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(oneHundredValue)
-                    .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue));
+                    .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue));
 
         if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
             invoiceItem.setPreTaxPrice(zeroValue);
@@ -801,12 +801,12 @@ public class PricingHelper {
                     && assoSpecialOfferBillingType.getDiscountAmount().compareTo(zeroValue) > 0)
                 invoiceItem
                         .setDiscountAmount(assoSpecialOfferBillingType.getDiscountAmount().multiply(oneHundredValue)
-                                .setScale(0, RoundingMode.HALF_UP).divide(oneHundredValue));
+                                .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue));
             if (assoSpecialOfferBillingType.getDiscountRate() != null
                     && assoSpecialOfferBillingType.getDiscountRate().compareTo(zeroValue) > 0)
                 invoiceItem.setDiscountAmount(
                         invoiceItem.getPreTaxPrice().multiply(assoSpecialOfferBillingType.getDiscountRate())
-                                .divide(oneHundredValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)
+                                .divide(oneHundredValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
         } else {
             invoiceItem.setDiscountAmount(zeroValue);

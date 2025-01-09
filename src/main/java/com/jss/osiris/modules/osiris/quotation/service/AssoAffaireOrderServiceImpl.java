@@ -2,7 +2,6 @@ package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -543,8 +542,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     if (invoice.getInvoiceStatus().getId()
                                             .equals(constantService.getInvoiceStatusReceived().getId())) {
                                         if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0,
-                                                RoundingMode.HALF_UP) == payment.getPaymentAmount().negate()
-                                                        .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_UP)) {
+                                                RoundingMode.HALF_EVEN) == payment.getPaymentAmount().negate()
+                                                        .multiply(oneHundredValue)
+                                                        .setScale(0, RoundingMode.HALF_EVEN)) {
                                             if (invoiceFound != null)
                                                 continue outerloop;
                                             invoiceFound = invoice;

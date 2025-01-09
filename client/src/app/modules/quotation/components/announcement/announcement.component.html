@@ -240,7 +240,7 @@
     </mat-tab>
     <mat-tab label="Documents" *ngIf="announcement.id!=null && announcement.id!=undefined && provision">
       <paper-set *ngIf="quotation &&  instanceOfCustomerOrderFn(quotation)" [customerOrder]="quotation"></paper-set>
-      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
+      <attachments [entity]="provision" [editMode]="true" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
     <mat-tab label="Paiements & factures"

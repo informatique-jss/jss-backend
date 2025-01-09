@@ -61,4 +61,6 @@ public interface AccountingRecordGenerationService {
 
         public LocalDateTime getPaymentDateForAccounting(Payment payment) throws OsirisException;
 
+        public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
+
 }

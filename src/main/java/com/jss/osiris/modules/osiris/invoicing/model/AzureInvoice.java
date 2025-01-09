@@ -53,7 +53,7 @@ public class AzureInvoice {
 
     @Column(columnDefinition = "NUMERIC(30,2)", precision = 15, scale = 2)
     private BigDecimal invoiceTotal;
-    @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
+    @Column(columnDefinition = "NUMERIC(30,2)", precision = 30, scale = 2)
     private BigDecimal invoicePreTaxTotal;
     @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal invoiceTaxTotal;

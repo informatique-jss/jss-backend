@@ -1855,7 +1855,8 @@ public class QuotationController {
       customerOrder.setCustomerOrderStatus(customerOrderStatus);
 
     if (customerOrder.getValidationId() != null
-        && quotationService.checkValidationIdQuotation(customerOrder.getValidationId()))
+        && quotationService.checkValidationIdQuotation(customerOrder.getValidationId())
+        && customerOrder.getId() == null)
       throw new OsirisValidationException("Save order already in progress");
     // assoServiceFieldTypeService.addOrUpdateServiceFieldType(customerOrder) ;
     else

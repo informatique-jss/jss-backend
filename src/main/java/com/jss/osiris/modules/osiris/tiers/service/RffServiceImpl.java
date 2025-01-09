@@ -216,7 +216,7 @@ public class RffServiceImpl implements RffService {
                 + StringUtils.leftPad(rff.getStartDate().getMonthValue() + "", 2, "0") + " - " + (tiersLabel);
         invoiceItem.setLabel(invoiceLabel);
 
-        invoiceItem.setPreTaxPrice(rff.getRffTotal().multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP)
+        invoiceItem.setPreTaxPrice(rff.getRffTotal().multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_EVEN)
                 .divide(new BigDecimal(100)));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         invoice.getInvoiceItems().add(invoiceItem);
