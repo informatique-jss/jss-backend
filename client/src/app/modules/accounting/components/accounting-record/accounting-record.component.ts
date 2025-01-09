@@ -294,6 +294,8 @@ export class AccountingRecordComponent implements OnInit {
     }
     if (this.accountingRecordSearch.startDate)
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+    if (this.accountingRecordSearch.endDate)
+      this.accountingRecordSearch.endDate = new Date(this.accountingRecordSearch.endDate.setHours(12));
 
     if (!this.tiersToDisplay && !this.accountingRecordSearch.idPayment && !this.accountingAccountId)
       this.userPreferenceService.setUserSearchBookmark(this.accountingRecordSearch, "accounting-record");

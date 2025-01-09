@@ -773,19 +773,60 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             payment.setAccountingRecords(new ArrayList<AccountingRecord>());
 
         ArrayList<AccountingRecord> newAccountingRecords = new ArrayList<AccountingRecord>();
-        for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
+        if (getPaymentDateForAccounting(payment).getYear() == payment.getPaymentDate().getYear()) {
+            for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
+                if (accountingRecord.getCreditAmount() != null)
+                    balance = balance.subtract(accountingRecord.getCreditAmount());
+                else
+                    balance = balance.add(accountingRecord.getDebitAmount());
+
+                AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
+                        "Annulation du paiement " + payment.getId(), null);
+
+                newAccountingRecords.add(counterPart);
+                accountingRecord.setContrePasse(counterPart);
+                accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
+                letterCounterPartRecords(accountingRecord, counterPart);
+            }
+        } else {
+            // It's a closed payment
+            // Grab former bank accounting record to generate counter part
+
+            // Customer or provider part
+            AccountingRecord accountingRecord = payment.getAccountingRecords().get(0);
             if (accountingRecord.getCreditAmount() != null)
                 balance = balance.subtract(accountingRecord.getCreditAmount());
             else
                 balance = balance.add(accountingRecord.getDebitAmount());
 
             AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
-                    "Annulation du paiement " + payment.getId(), null);
+                    "Annulation du paiement " + payment.getId(), getPaymentDateForAccounting(payment));
 
             newAccountingRecords.add(counterPart);
             accountingRecord.setContrePasse(counterPart);
             accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
             letterCounterPartRecords(accountingRecord, counterPart);
+
+            // Bank part
+            List<AccountingRecord> accountingRecords = accountingRecordService
+                    .getClosedAccountingRecordsForPayment(payment);
+            for (AccountingRecord record : accountingRecords) {
+                if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                        .equals(constantService.getPrincipalAccountingAccountBank().getId())) {
+                    accountingRecord = record;
+                }
+            }
+
+            if (accountingRecord.getCreditAmount() != null)
+                balance = balance.subtract(accountingRecord.getCreditAmount());
+            else
+                balance = balance.add(accountingRecord.getDebitAmount());
+
+            counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
+                    "Annulation du paiement " + payment.getId(), getPaymentDateForAccounting(payment));
+
+            newAccountingRecords.add(counterPart);
+            accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
         }
 
         if (newAccountingRecords.size() > 0)
@@ -1098,7 +1139,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     }
 
-    private LocalDateTime getPaymentDateForAccounting(Payment payment) throws OsirisException {
+    @Override
+    public LocalDateTime getPaymentDateForAccounting(Payment payment) throws OsirisException {
         LocalDateTime closedDate = constantService.getDateAccountingClosureForAccountant().atTime(12, 0);
         if (payment.getPaymentDate().isBefore(closedDate))
             return closedDate;
