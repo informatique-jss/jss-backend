@@ -15,6 +15,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
 
@@ -66,11 +67,13 @@ public interface AccountingRecordService {
 
         // Front search method
         public List<AccountingRecordSearchResult> searchAccountingRecords(
-                        AccountingRecordSearch accountingRecordSearch, boolean fetchAll);
+                        AccountingRecordSearch accountingRecordSearch, boolean fetchAll) throws OsirisException;
 
-        public List<AccountingBalance> searchAccountingBalance(AccountingBalanceSearch accountingBalanceSearch);
+        public List<AccountingBalance> searchAccountingBalance(AccountingBalanceSearch accountingBalanceSearch)
+                        throws OsirisException;
 
-        public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingBalanceSearch);
+        public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingBalanceSearch)
+                        throws OsirisException;
 
         public File getGrandLivreExport(AccountingRecordSearch accountingRecordSearch) throws OsirisException;
 
@@ -89,5 +92,7 @@ public interface AccountingRecordService {
 
         public Boolean letterRecordsForAs400(List<AccountingRecord> accountingRecords)
                         throws OsirisValidationException, OsirisClientMessageException, OsirisException;
+
+        public List<AccountingRecord> getClosedAccountingRecordsForPayment(Payment payment);
 
 }

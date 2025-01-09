@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.accounting.service;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResu
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
@@ -72,6 +74,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   ConstantService constantService;
+
+  private String ACCOUNTING_RECORD_TABLE_NAME = "accounting_record";
+  private String CLOSED_ACCOUNTING_RECORD_TABLE_NAME = "closed_accounting_record";
+
+  private String getAccountingRecordTableName(LocalDate searchedDate) throws OsirisException {
+    if (searchedDate == null
+        || searchedDate.getYear() >= constantService.getDateAccountingClosureForAccountant().getYear())
+      return this.ACCOUNTING_RECORD_TABLE_NAME;
+    return this.CLOSED_ACCOUNTING_RECORD_TABLE_NAME;
+  }
 
   @Autowired
   AccountingRecordGenerationService accountingRecordGenerationService;
@@ -247,7 +259,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public List<AccountingRecordSearchResult> searchAccountingRecords(AccountingRecordSearch accountingRecordSearch,
-      boolean fetchAll) {
+      boolean fetchAll) throws OsirisException {
     ArrayList<Integer> accountingAccountId = new ArrayList<Integer>();
     if (accountingRecordSearch.getAccountingAccount() != null) {
       accountingAccountId.add(accountingRecordSearch.getAccountingAccount().getId());
@@ -277,9 +289,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     if (accountingRecordSearch.getStartDate() == null)
       accountingRecordSearch.setStartDate(LocalDateTime.now().minusYears(100));
+    else
+      accountingRecordSearch.setStartDate(accountingRecordSearch.getStartDate().withHour(0).withMinute(0));
 
     if (accountingRecordSearch.getEndDate() == null)
       accountingRecordSearch.setEndDate(LocalDateTime.now().plusYears(100));
+    else
+      accountingRecordSearch.setEndDate(accountingRecordSearch.getEndDate().withHour(23).withMinute(59));
 
     if (accountingRecordSearch.getIdPayment() == null)
       accountingRecordSearch.setIdPayment(0);
@@ -292,7 +308,21 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getIdRefund() == null)
       accountingRecordSearch.setIdRefund(0);
 
-    return accountingRecordRepository.searchAccountingRecords(accountingAccountId, accountingClass, journalId,
+    if (getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
+        .equals(this.ACCOUNTING_RECORD_TABLE_NAME))
+      return accountingRecordRepository.searchAccountingRecordsCurrent(accountingAccountId, accountingClass, journalId,
+          accountingRecordSearch.getTiersId(),
+          accountingRecordSearch.getHideLettered(),
+          accountingRecordSearch.getIsFromAs400(),
+          accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
+          accountingRecordSearch.getEndDate().withHour(23).withMinute(59),
+          activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+          accountingRecordSearch.getIdPayment(),
+          accountingRecordSearch.getIdCustomerOrder(),
+          accountingRecordSearch.getIdInvoice(),
+          accountingRecordSearch.getIdRefund(),
+          accountingRecordSearch.getIdBankTransfert(), fetchAll ? Integer.MAX_VALUE : 1000);
+    return accountingRecordRepository.searchAccountingRecordsClosed(accountingAccountId, accountingClass, journalId,
         accountingRecordSearch.getTiersId(),
         accountingRecordSearch.getHideLettered(),
         accountingRecordSearch.getIsFromAs400(),
@@ -307,12 +337,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public List<AccountingBalance> searchAccountingBalance(AccountingBalanceSearch accountingBalanceSearch) {
+  public List<AccountingBalance> searchAccountingBalance(AccountingBalanceSearch accountingBalanceSearch)
+      throws OsirisException {
     Integer accountingAccountId = accountingBalanceSearch.getAccountingAccount() != null
         ? accountingBalanceSearch.getAccountingAccount().getId()
         : 0;
     Integer accountingClassId = accountingBalanceSearch.getAccountingClass() != null
         ? accountingBalanceSearch.getAccountingClass().getId()
+        : 0;
+    Integer accountingJournalId = accountingBalanceSearch.getAccountingJournal() != null
+        ? accountingBalanceSearch.getAccountingJournal().getId()
         : 0;
     List<Integer> principalAccountingAccountIds = new ArrayList<Integer>();
     if (accountingBalanceSearch.getPrincipalAccountingAccounts() != null)
@@ -324,24 +358,37 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     if (accountingBalanceSearch.getIsFromAs400() == null)
       accountingBalanceSearch.setIsFromAs400(false);
-    List<AccountingBalance> aa = accountingRecordRepository.searchAccountingBalance(
-        accountingClassId,
+
+    if (getAccountingRecordTableName(accountingBalanceSearch.getStartDate().toLocalDate())
+        .equals(this.ACCOUNTING_RECORD_TABLE_NAME))
+      return accountingRecordRepository.searchAccountingBalanceCurrent(
+          accountingClassId, accountingJournalId,
+          accountingAccountId, principalAccountingAccountIds,
+          accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
+          accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
+          activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+          accountingBalanceSearch.getIsFromAs400());
+
+    return accountingRecordRepository.searchAccountingBalanceClosed(
+        accountingClassId, accountingJournalId,
         accountingAccountId, principalAccountingAccountIds,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
         accountingBalanceSearch.getIsFromAs400());
-
-    return aa;
   }
 
   @Override
-  public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingBalanceSearch) {
+  public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingBalanceSearch)
+      throws OsirisException {
     Integer accountingAccountId = accountingBalanceSearch.getAccountingAccount() != null
         ? accountingBalanceSearch.getAccountingAccount().getId()
         : 0;
     Integer accountingClassId = accountingBalanceSearch.getAccountingClass() != null
         ? accountingBalanceSearch.getAccountingClass().getId()
+        : 0;
+    Integer accountingJournalId = accountingBalanceSearch.getAccountingJournal() != null
+        ? accountingBalanceSearch.getAccountingJournal().getId()
         : 0;
     List<Integer> principalAccountingAccountIds = new ArrayList<Integer>();
     if (accountingBalanceSearch.getPrincipalAccountingAccounts() != null)
@@ -353,8 +400,19 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     if (accountingBalanceSearch.getIsFromAs400() == null)
       accountingBalanceSearch.setIsFromAs400(false);
-    return accountingRecordRepository.searchAccountingBalanceGenerale(
-        accountingClassId,
+
+    if (getAccountingRecordTableName(accountingBalanceSearch.getStartDate().toLocalDate())
+        .equals(this.ACCOUNTING_RECORD_TABLE_NAME))
+      return accountingRecordRepository.searchAccountingBalanceGeneraleCurrent(
+          accountingClassId, accountingJournalId,
+          accountingAccountId, principalAccountingAccountIds,
+          accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
+          accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
+          activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+          accountingBalanceSearch.getIsFromAs400());
+
+    return accountingRecordRepository.searchAccountingBalanceGeneraleClosed(
+        accountingClassId, accountingJournalId,
         accountingAccountId, principalAccountingAccountIds,
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
@@ -497,5 +555,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (countInvoice == 1 && invoiceToLetter != null)
       accountingRecordGenerationService.checkInvoiceForLettrage(invoiceToLetter);
     return true;
+  }
+
+  @Override
+  public List<AccountingRecord> getClosedAccountingRecordsForPayment(Payment payment) {
+    return accountingRecordRepository.findClosedAccountingRecordsForPayment(payment.getId());
   }
 }

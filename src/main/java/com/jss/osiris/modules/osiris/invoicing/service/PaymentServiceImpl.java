@@ -875,7 +875,13 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setIsExternallyAssociated(false);
         newPayment.setOriginPayment(payment);
         newPayment.setPaymentAmount(paymentAmount);
-        newPayment.setPaymentDate(payment.getPaymentDate());
+
+        if (accountingRecordGenerationService.getPaymentDateForAccounting(payment).getYear() == payment.getPaymentDate()
+                .getYear()) {
+            newPayment.setPaymentDate(payment.getPaymentDate());
+        } else {
+            newPayment.setPaymentDate(accountingRecordGenerationService.getPaymentDateForAccounting(payment));
+        }
         newPayment.setPaymentType(payment.getPaymentType());
         newPayment.setLabel(payment.getLabel());
 

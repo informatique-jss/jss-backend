@@ -3,6 +3,8 @@ package com.jss.osiris.modules.osiris.accounting.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -187,8 +189,8 @@ public class AccountingExportHelper {
                         List<AccountingRecordSearchResult> accountingRecordsForAccount = getAccountingRecordForAccountingAccount(
                                         accountingAccount, accountingRecords);
 
-                        Float debit = 0f;
-                        Float credit = 0f;
+                        BigDecimal debit = new BigDecimal(0f);
+                        BigDecimal credit = new BigDecimal(0f);
                         if (accountingRecordsForAccount != null) {
                                 for (AccountingRecordSearchResult accountingRecord : accountingRecordsForAccount) {
                                         currentRow = currentSheet.createRow(currentLine++);
@@ -231,14 +233,16 @@ public class AccountingExportHelper {
                                         currentCell.setCellStyle(recordCellStyle);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         if (accountingRecord.getDebitAmount() != null) {
-                                                currentCell.setCellValue(accountingRecord.getDebitAmount());
-                                                debit += accountingRecord.getDebitAmount();
+                                                currentCell.setCellValue(accountingRecord.getDebitAmount()
+                                                                .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                                                debit = debit.add(accountingRecord.getDebitAmount());
                                         }
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         if (accountingRecord.getCreditAmount() != null) {
-                                                credit += accountingRecord.getCreditAmount();
-                                                currentCell.setCellValue(accountingRecord.getCreditAmount());
+                                                credit = credit.add(accountingRecord.getCreditAmount());
+                                                currentCell.setCellValue(accountingRecord.getCreditAmount()
+                                                                .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                         }
                                         currentCell.setCellStyle(styleCurrency);
                                 }
@@ -251,10 +255,10 @@ public class AccountingExportHelper {
                         currentCell.setCellValue("Total");
                         currentCell.setCellStyle(recordCellStyle);
                         currentCell = currentRow.createCell(currentColumn++);
-                        currentCell.setCellValue(debit);
+                        currentCell.setCellValue(debit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                         currentCell.setCellStyle(styleCurrency);
                         currentCell = currentRow.createCell(currentColumn++);
-                        currentCell.setCellValue(credit);
+                        currentCell.setCellValue(credit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                         currentCell.setCellStyle(styleCurrency);
 
                         // Balance
@@ -264,14 +268,18 @@ public class AccountingExportHelper {
                         currentCell.setCellValue("Solde");
                         currentCell.setCellStyle(recordCellStyle);
                         currentCell = currentRow.createCell(currentColumn++);
-                        if ((credit - debit) < 0)
-                                currentCell.setCellValue(Math.abs(credit - debit));
+                        if ((credit.subtract(debit)).compareTo(new BigDecimal(0)) < 0)
+                                currentCell.setCellValue(
+                                                credit.subtract(debit).setScale(2, RoundingMode.HALF_EVEN).abs()
+                                                                .doubleValue());
                         else
                                 currentCell.setCellValue("");
                         currentCell.setCellStyle(styleCurrency);
                         currentCell = currentRow.createCell(currentColumn++);
-                        if ((credit - debit) > 0)
-                                currentCell.setCellValue(Math.abs(credit - debit));
+                        if ((credit.subtract(debit).compareTo(new BigDecimal(0))) > 0)
+                                currentCell.setCellValue(
+                                                credit.subtract(debit).setScale(2, RoundingMode.HALF_EVEN).abs()
+                                                                .doubleValue());
                         else
                                 currentCell.setCellValue("");
                         currentCell.setCellStyle(styleCurrency);
@@ -439,12 +447,12 @@ public class AccountingExportHelper {
                         currentCell.setCellStyle(headerCellStyle);
                 }
 
-                Float debit = 0f;
-                Float credit = 0f;
+                BigDecimal debit = new BigDecimal(0f);
+                BigDecimal credit = new BigDecimal(0f);
                 if (balanceRecords != null && balanceRecords.size() > 0) {
                         String currentClass = balanceRecords.get(0).getAccountingAccountClassLabel();
-                        Float currentClassDebit = 0f;
-                        Float currentClassCredit = 0f;
+                        BigDecimal currentClassDebit = new BigDecimal(0f);
+                        BigDecimal currentClassCredit = new BigDecimal(0f);
                         for (AccountingBalance balanceRecord : balanceRecords) {
                                 if (!balanceRecord.getAccountingAccountClassLabel().equals(currentClass)
                                                 || (balanceRecords.indexOf(balanceRecord) == balanceRecords.size()
@@ -459,28 +467,32 @@ public class AccountingExportHelper {
                                         currentCell.setCellValue("Total de la classe " + currentClass);
                                         currentCell.setCellStyle(recordCellStyle);
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue(currentClassDebit);
+                                        currentCell.setCellValue(currentClassDebit.setScale(2, RoundingMode.HALF_EVEN)
+                                                        .doubleValue());
 
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue(currentClassCredit);
+                                        currentCell.setCellValue(currentClassCredit.setScale(2, RoundingMode.HALF_EVEN)
+                                                        .doubleValue());
                                         currentCell.setCellStyle(styleCurrency);
 
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        if (currentClassDebit > currentClassCredit) {
-                                                currentCell.setCellValue(currentClassDebit - currentClassCredit);
+                                        if (currentClassDebit.compareTo(currentClassCredit) > 0) {
+                                                currentCell.setCellValue(currentClassDebit.subtract(currentClassCredit)
+                                                                .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                         }
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        if (currentClassDebit <= currentClassCredit) {
-                                                currentCell.setCellValue(currentClassCredit - currentClassDebit);
+                                        if (currentClassDebit.compareTo(currentClassCredit) <= 0) {
+                                                currentCell.setCellValue(currentClassCredit.subtract(currentClassDebit)
+                                                                .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                         }
                                         currentCell.setCellStyle(styleCurrency);
 
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentClass = balanceRecord.getAccountingAccountClassLabel();
-                                        currentClassDebit = 0f;
-                                        currentClassCredit = 0f;
+                                        currentClassDebit = new BigDecimal(0f);
+                                        currentClassCredit = new BigDecimal(0f);
                                 }
 
                                 currentRow = currentSheet.createRow(currentLine++);
@@ -497,33 +509,37 @@ public class AccountingExportHelper {
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (balanceRecord.getDebitAmount() != null) {
-                                        currentCell.setCellValue(balanceRecord.getDebitAmount());
-                                        currentClassDebit += balanceRecord.getDebitAmount();
-                                        debit += balanceRecord.getDebitAmount();
+                                        currentCell.setCellValue(balanceRecord.getDebitAmount()
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                                        currentClassDebit = currentClassDebit.add(balanceRecord.getDebitAmount());
+                                        debit = debit.add(balanceRecord.getDebitAmount());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (balanceRecord.getCreditAmount() != null) {
-                                        credit += balanceRecord.getCreditAmount();
-                                        currentClassCredit += balanceRecord.getCreditAmount();
-                                        currentCell.setCellValue(balanceRecord.getCreditAmount());
+                                        credit = credit.add(balanceRecord.getCreditAmount());
+                                        currentClassCredit = currentClassCredit.add(balanceRecord.getCreditAmount());
+                                        currentCell.setCellValue(balanceRecord.getCreditAmount()
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
 
-                                Float debitAmount = balanceRecord.getDebitAmount() != null
+                                BigDecimal debitAmount = balanceRecord.getDebitAmount() != null
                                                 ? balanceRecord.getDebitAmount()
-                                                : 0f;
-                                Float creditAmount = balanceRecord.getCreditAmount() != null
+                                                : new BigDecimal(0f);
+                                BigDecimal creditAmount = balanceRecord.getCreditAmount() != null
                                                 ? balanceRecord.getCreditAmount()
-                                                : 0f;
+                                                : new BigDecimal(0f);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (debitAmount > creditAmount) {
-                                        currentCell.setCellValue(debitAmount - creditAmount);
+                                if (debitAmount.compareTo(creditAmount) > 0) {
+                                        currentCell.setCellValue(debitAmount.subtract(creditAmount)
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                if (debitAmount <= creditAmount) {
-                                        currentCell.setCellValue(creditAmount - debitAmount);
+                                if (debitAmount.compareTo(creditAmount) <= 0) {
+                                        currentCell.setCellValue(creditAmount.subtract(debitAmount)
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
 
@@ -532,32 +548,44 @@ public class AccountingExportHelper {
                                         currentCell = currentRow.createCell(currentColumn++);
                                         if (balanceRecord.getEchoir30() != null)
                                                 currentCell
-                                                                .setCellValue(balanceRecord.getEchoir30());
+                                                                .setCellValue(balanceRecord.getEchoir30()
+                                                                                .setScale(2, RoundingMode.HALF_EVEN)
+                                                                                .doubleValue());
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         if (balanceRecord.getEchoir60() != null)
                                                 currentCell
-                                                                .setCellValue(balanceRecord.getEchoir60());
+                                                                .setCellValue(balanceRecord.getEchoir60()
+                                                                                .setScale(2, RoundingMode.HALF_EVEN)
+                                                                                .doubleValue());
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         if (balanceRecord.getEchoir90() != null)
                                                 currentCell
-                                                                .setCellValue(balanceRecord.getEchoir90());
+                                                                .setCellValue(balanceRecord.getEchoir90()
+                                                                                .setScale(2, RoundingMode.HALF_EVEN)
+                                                                                .doubleValue());
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         if (balanceRecord.getEchu30() != null)
                                                 currentCell
-                                                                .setCellValue(balanceRecord.getEchu30());
+                                                                .setCellValue(balanceRecord.getEchu30()
+                                                                                .setScale(2, RoundingMode.HALF_EVEN)
+                                                                                .doubleValue());
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         if (balanceRecord.getEchu60() != null)
                                                 currentCell
-                                                                .setCellValue(balanceRecord.getEchu60());
+                                                                .setCellValue(balanceRecord.getEchu60()
+                                                                                .setScale(2, RoundingMode.HALF_EVEN)
+                                                                                .doubleValue());
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         if (balanceRecord.getEchu90() != null)
                                                 currentCell
-                                                                .setCellValue(balanceRecord.getEchu90());
+                                                                .setCellValue(balanceRecord.getEchu90()
+                                                                                .setScale(2, RoundingMode.HALF_EVEN)
+                                                                                .doubleValue());
                                         currentCell.setCellStyle(styleCurrency);
                                 }
                         }
@@ -570,10 +598,10 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Total");
                 currentCell.setCellStyle(recordCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(debit);
+                currentCell.setCellValue(debit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(credit);
+                currentCell.setCellValue(credit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
 
                 // Balance
@@ -583,14 +611,16 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Solde");
                 currentCell.setCellStyle(recordCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                if ((credit - debit) < 0)
-                        currentCell.setCellValue(Math.abs(credit - debit));
+                if (credit.compareTo(debit) < 0)
+                        currentCell.setCellValue(
+                                        credit.subtract(debit).abs().setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 else
                         currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                if ((credit - debit) > 0)
-                        currentCell.setCellValue(Math.abs(credit - debit));
+                if ((credit.compareTo(debit)) > 0)
+                        currentCell.setCellValue(
+                                        credit.subtract(debit).abs().setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 else
                         currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
@@ -750,8 +780,8 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Crédit");
                 currentCell.setCellStyle(headerCellStyle);
 
-                Float debit = 0f;
-                Float credit = 0f;
+                BigDecimal debit = new BigDecimal(0f);
+                BigDecimal credit = new BigDecimal(0f);
                 if (accountingRecords != null) {
                         for (AccountingRecordSearchResult accountingRecord : accountingRecords) {
                                 currentRow = currentSheet.createRow(currentLine++);
@@ -799,14 +829,16 @@ public class AccountingExportHelper {
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getDebitAmount() != null) {
-                                        currentCell.setCellValue(accountingRecord.getDebitAmount());
-                                        debit += accountingRecord.getDebitAmount();
+                                        currentCell.setCellValue(accountingRecord.getDebitAmount()
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                                        debit = debit.add(accountingRecord.getDebitAmount());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getCreditAmount() != null) {
-                                        credit += accountingRecord.getCreditAmount();
-                                        currentCell.setCellValue(accountingRecord.getCreditAmount());
+                                        credit = credit.add(accountingRecord.getCreditAmount());
+                                        currentCell.setCellValue(accountingRecord.getCreditAmount()
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
                         }
@@ -822,10 +854,10 @@ public class AccountingExportHelper {
                 currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue("");
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(debit);
+                currentCell.setCellValue(debit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(credit);
+                currentCell.setCellValue(credit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
 
                 // Balance
@@ -841,7 +873,7 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(credit - debit);
+                currentCell.setCellValue(credit.subtract(debit).setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
 
                 // autosize
@@ -1004,8 +1036,8 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Crédit");
                 currentCell.setCellStyle(headerCellStyle);
 
-                Float debit = 0f;
-                Float credit = 0f;
+                BigDecimal debit = new BigDecimal(0f);
+                BigDecimal credit = new BigDecimal(0f);
                 if (accountingRecords != null) {
                         for (AccountingRecordSearchResult accountingRecord : accountingRecords) {
                                 currentRow = currentSheet.createRow(currentLine++);
@@ -1047,14 +1079,16 @@ public class AccountingExportHelper {
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getDebitAmount() != null) {
-                                        currentCell.setCellValue(accountingRecord.getDebitAmount());
-                                        debit += accountingRecord.getDebitAmount();
+                                        currentCell.setCellValue(accountingRecord.getDebitAmount()
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                                        debit.add(accountingRecord.getDebitAmount());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getCreditAmount() != null) {
-                                        credit += accountingRecord.getCreditAmount();
-                                        currentCell.setCellValue(accountingRecord.getCreditAmount());
+                                        credit.add(accountingRecord.getCreditAmount());
+                                        currentCell.setCellValue(accountingRecord.getCreditAmount()
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
                         }
@@ -1067,10 +1101,10 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Total");
                 currentCell.setCellStyle(recordCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(debit);
+                currentCell.setCellValue(debit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(credit);
+                currentCell.setCellValue(credit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
 
                 // Balance
@@ -1080,14 +1114,16 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Solde");
                 currentCell.setCellStyle(recordCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                if ((credit - debit) < 0)
-                        currentCell.setCellValue(Math.abs(credit - debit));
+                if ((credit.compareTo(debit)) < 0)
+                        currentCell.setCellValue(
+                                        credit.subtract(debit).abs().setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 else
                         currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                if ((credit - debit) > 0)
-                        currentCell.setCellValue(Math.abs(credit - debit));
+                if ((credit.compareTo(debit) > 0))
+                        currentCell.setCellValue(
+                                        credit.subtract(debit).abs().setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 else
                         currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
@@ -1633,8 +1669,8 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Crédit");
                 currentCell.setCellStyle(headerCellStyle);
 
-                Float debit = 0f;
-                Float credit = 0f;
+                BigDecimal debit = new BigDecimal(0f);
+                BigDecimal credit = new BigDecimal(0f);
                 if (accountingRecords != null) {
                         String currentAffaire = "";
                         for (AccountingRecordSearchResult accountingRecord : accountingRecords) {
@@ -1685,14 +1721,16 @@ public class AccountingExportHelper {
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getDebitAmount() != null) {
-                                        currentCell.setCellValue(accountingRecord.getDebitAmount());
-                                        debit += accountingRecord.getDebitAmount();
+                                        currentCell.setCellValue(accountingRecord.getDebitAmount()
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                                        debit = debit.add(accountingRecord.getDebitAmount());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getCreditAmount() != null) {
-                                        credit += accountingRecord.getCreditAmount();
-                                        currentCell.setCellValue(accountingRecord.getCreditAmount());
+                                        credit = credit.add(accountingRecord.getCreditAmount());
+                                        currentCell.setCellValue(accountingRecord.getCreditAmount()
+                                                        .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
                         }
@@ -1705,10 +1743,10 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Total");
                 currentCell.setCellStyle(recordCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(debit);
+                currentCell.setCellValue(debit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(credit);
+                currentCell.setCellValue(credit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
 
                 // Balance
@@ -1721,7 +1759,7 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("");
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
-                currentCell.setCellValue(credit - debit);
+                currentCell.setCellValue(credit.subtract(debit).setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                 currentCell.setCellStyle(styleCurrency);
 
                 // autosize
