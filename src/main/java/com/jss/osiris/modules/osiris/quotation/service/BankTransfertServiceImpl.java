@@ -247,7 +247,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             address.setCtry("FR");
             emiterDetails.setPstlAdrBean(address);
 
-            address.setAdrLine("8 RUE SAINT AUGUSTIN 75002 PARIS");
+            address.setAdrLine("10 BOULEVARD HAUSSMANN 75009 PARIS");
 
             OrgIdBean id = new OrgIdBean();
             emiterDetails.setIdBeanList(id);
