@@ -166,13 +166,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
       throws OsirisException {
     Integer operationId = getNewTemporaryOperationId();
-    Float balance = 0f;
+    BigDecimal balance = new BigDecimal(0f);
     for (AccountingRecord accountingRecord : accountingRecords) {
 
       if (accountingRecord.getCreditAmount() != null)
-        balance = balance - accountingRecord.getCreditAmount();
+        balance = balance.subtract(accountingRecord.getCreditAmount());
       else
-        balance = balance + accountingRecord.getDebitAmount();
+        balance = balance.add(accountingRecord.getDebitAmount());
 
       if (accountingRecord.getOperationDateTime() == null)
         accountingRecord.setOperationDateTime(LocalDateTime.now());
@@ -183,7 +183,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       addOrUpdateAccountingRecord(accountingRecord, false);
     }
 
-    if (Math.abs(Math.round(balance * 100f)) > 1)
+    if (balance.setScale(2, RoundingMode.HALF_EVEN).abs().compareTo(new BigDecimal(1)) >= 1)
       throw new OsirisValidationException("Balance not null");
 
     return accountingRecords;
