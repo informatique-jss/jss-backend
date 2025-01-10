@@ -321,7 +321,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     if (getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME)) {
-      if (accountingRecordSearch.getTiersId() != null) {
+      if (accountingRecordSearch.getTiersId() != 0) {
         // See all if for a Tiers
         accountingRecordSearch.setStartDate(accountingRecordSearch.getStartDate().minusYears(2));
         accountingRecordSearch.setEndDate(accountingRecordSearch.getEndDate().plusYears(2));
