@@ -166,7 +166,14 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
       throws OsirisException {
     Integer operationId = getNewTemporaryOperationId();
+    Float balance = 0f;
     for (AccountingRecord accountingRecord : accountingRecords) {
+
+      if (accountingRecord.getCreditAmount() != null)
+        balance = balance - accountingRecord.getCreditAmount();
+      else
+        balance = balance + accountingRecord.getDebitAmount();
+
       if (accountingRecord.getOperationDateTime() == null)
         accountingRecord.setOperationDateTime(LocalDateTime.now());
       accountingRecord.setTemporaryOperationId(operationId);
@@ -175,6 +182,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       accountingRecord.setIsManual(true);
       addOrUpdateAccountingRecord(accountingRecord, false);
     }
+
+    if (Math.abs(Math.round(balance * 100f)) > 1)
+      throw new OsirisValidationException("Balance not null");
+
     return accountingRecords;
   }
 
