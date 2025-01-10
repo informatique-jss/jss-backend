@@ -319,7 +319,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       accountingRecordSearch.setIdRefund(0);
 
     if (getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
-        .equals(this.ACCOUNTING_RECORD_TABLE_NAME))
+        .equals(this.ACCOUNTING_RECORD_TABLE_NAME)) {
+      if (accountingRecordSearch.getTiersId() != null) {
+        // See all if for a Tiers
+        accountingRecordSearch.setStartDate(accountingRecordSearch.getStartDate().minusYears(2));
+        accountingRecordSearch.setEndDate(accountingRecordSearch.getEndDate().plusYears(2));
+      }
       return accountingRecordRepository.searchAccountingRecordsCurrent(accountingAccountId, accountingClass, journalId,
           accountingRecordSearch.getTiersId(),
           accountingRecordSearch.getConfrereId(),
@@ -333,6 +338,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingRecordSearch.getIdInvoice(),
           accountingRecordSearch.getIdRefund(),
           accountingRecordSearch.getIdBankTransfert(), fetchAll ? Integer.MAX_VALUE : 1000);
+    }
     return accountingRecordRepository.searchAccountingRecordsClosed(accountingAccountId, accountingClass, journalId,
         accountingRecordSearch.getTiersId(),
         accountingRecordSearch.getHideLettered(),
