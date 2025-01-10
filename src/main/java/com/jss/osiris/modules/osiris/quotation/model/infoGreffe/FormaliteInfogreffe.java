@@ -12,12 +12,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_formalite_infogreffe_formalite", columnList = "id_formalite") })
 public class FormaliteInfogreffe {
 
     public static String INFOGREFFE_STATUS_RECEIVED = "RECU_PAR_LE_GRF";

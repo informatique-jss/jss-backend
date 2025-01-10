@@ -38,6 +38,7 @@ import jakarta.persistence.Table;
         @Index(name = "idx_customer_mail_responsable", columnList = "id_responsable"),
         @Index(name = "idx_customer_mail_quotation", columnList = "id_quotation"),
         @Index(name = "idx_customer_mail_customer_order", columnList = "id_customer_order"),
+        @Index(name = "idx_customer_mail_competent_authority", columnList = "id_competent_authority"),
         @Index(name = "idx_customer_mail_confrere", columnList = "id_confrere") })
 public class CustomerMail {
 

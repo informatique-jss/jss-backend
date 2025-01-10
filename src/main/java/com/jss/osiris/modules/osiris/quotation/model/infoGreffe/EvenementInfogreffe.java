@@ -22,7 +22,8 @@ import jakarta.persistence.Transient;
 
 @Entity
 @IdClass(EvenementInfogreffeEntityKey.class)
-@Table(indexes = { @Index(name = "idx_evenement_infogreffe_formalite", columnList = "createdDate, codeEtat") })
+@Table(indexes = { @Index(name = "idx_evenement_infogreffe_formalite", columnList = "createdDate, codeEtat"),
+        @Index(name = "idx_evenement_infogreffe_formalite_infogreffe", columnList = "id_formalite_infogreffe") })
 public class EvenementInfogreffe {
 
     @Transient
