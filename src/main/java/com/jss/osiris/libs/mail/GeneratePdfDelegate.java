@@ -929,7 +929,7 @@ public class GeneratePdfDelegate {
             tableFooter.addCell(pageCell);
 
             final PdfPCell detailsCell2 = new PdfPCell(new Phrase(
-                    "8 rue Saint Augustin - 75002 PARIS - Téléphone : 01 47 03 10 10 - E-mail : annonces@jss.fr",
+                    "10 boulevard Haussmann - 75009 PARIS - Téléphone : 01 47 03 10 10 - E-mail : annonces@jss.fr",
                     footerFont));
             detailsCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
             detailsCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
