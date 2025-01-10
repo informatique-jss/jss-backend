@@ -537,6 +537,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       if (record.getDebitAmount() != null)
         balance = balance.subtract(record.getDebitAmount());
 
+      // check if there's one invoice or more in record lines, we need to set invoice
+      // on record lines if there's only invoice selected before applying
+      // checkInvoiceForLettrage()
       if (record.getInvoice() != null) {
         countInvoice++;
         invoiceToLetter = record.getInvoice();
