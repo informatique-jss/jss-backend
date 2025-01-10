@@ -602,28 +602,32 @@ public class AccountingExportHelper {
                                         currentCell.setCellValue("Total de la classe " + currentClass);
                                         currentCell.setCellStyle(recordCellStyle);
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue(currentClassDebit);
+                                        currentCell.setCellValue(currentClassDebit.setScale(2, RoundingMode.HALF_UP)
+                                                        .doubleValue());
 
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue(currentClassCredit);
+                                        currentCell.setCellValue(currentClassCredit.setScale(2, RoundingMode.HALF_UP)
+                                                        .doubleValue());
                                         currentCell.setCellStyle(styleCurrency);
 
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        if (currentClassDebit > currentClassCredit) {
-                                                currentCell.setCellValue(currentClassDebit - currentClassCredit);
+                                        if (currentClassDebit.compareTo(currentClassCredit) > 0) {
+                                                currentCell.setCellValue(currentClassDebit.subtract(currentClassCredit)
+                                                                .setScale(2, RoundingMode.HALF_UP).doubleValue());
                                         }
                                         currentCell.setCellStyle(styleCurrency);
                                         currentCell = currentRow.createCell(currentColumn++);
-                                        if (currentClassDebit <= currentClassCredit) {
-                                                currentCell.setCellValue(currentClassCredit - currentClassDebit);
+                                        if (currentClassDebit.compareTo(currentClassCredit) <= 0) {
+                                                currentCell.setCellValue(currentClassCredit.subtract(currentClassDebit)
+                                                                .setScale(2, RoundingMode.HALF_UP).doubleValue());
                                         }
                                         currentCell.setCellStyle(styleCurrency);
 
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentClass = balanceRecord.getAccountingAccountClassLabel();
-                                        currentClassDebit = 0f;
-                                        currentClassCredit = 0f;
+                                        currentClassDebit = new BigDecimal(0f);
+                                        currentClassCredit = new BigDecimal(0f);
                                 }
                         }
                 }

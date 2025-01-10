@@ -794,9 +794,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (getPaymentDateForAccounting(payment).getYear() == payment.getPaymentDate().getYear()) {
             for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
                 if (accountingRecord.getCreditAmount() != null)
-                    balance = balance.subtract(accountingRecord.getCreditAmount());
+                    balance = balance - accountingRecord.getCreditAmount();
                 else
-                    balance = balance.add(accountingRecord.getDebitAmount());
+                    balance = balance + accountingRecord.getDebitAmount();
 
                 AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
                         "Annulation du paiement " + payment.getId(), null);
@@ -836,9 +836,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             }
 
             if (accountingRecord.getCreditAmount() != null)
-                balance = balance.subtract(accountingRecord.getCreditAmount());
+                balance = balance - accountingRecord.getCreditAmount();
             else
-                balance = balance.add(accountingRecord.getDebitAmount());
+                balance = balance + accountingRecord.getDebitAmount();
 
             counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
                     "Annulation du paiement " + payment.getId(), getPaymentDateForAccounting(payment));

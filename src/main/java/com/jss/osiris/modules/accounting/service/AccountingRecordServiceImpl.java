@@ -311,6 +311,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME))
       return accountingRecordRepository.searchAccountingRecordsCurrent(accountingAccountId, accountingClass, journalId,
           accountingRecordSearch.getTiersId(),
+          accountingRecordSearch.getConfrereId(),
           accountingRecordSearch.getHideLettered(),
           accountingRecordSearch.getIsFromAs400(),
           accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
@@ -323,7 +324,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingRecordSearch.getIdBankTransfert(), fetchAll ? Integer.MAX_VALUE : 1000);
     return accountingRecordRepository.searchAccountingRecordsClosed(accountingAccountId, accountingClass, journalId,
         accountingRecordSearch.getTiersId(),
-        accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
         accountingRecordSearch.getIsFromAs400(),
         accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
