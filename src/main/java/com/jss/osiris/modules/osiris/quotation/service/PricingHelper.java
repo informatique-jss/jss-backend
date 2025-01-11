@@ -45,6 +45,8 @@ import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
 import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
@@ -167,33 +169,47 @@ public class PricingHelper {
                 }
             });
 
-        LocalDate billingDate = LocalDate.now();
-        // Use first TO_BILLED status to determine billing date
+        LocalDate billingDate = null;
+        // Use quotation date if customerOrder linked to customer validated one
+        // Else use first TO_BILLED status to determine billing date
         if (quotation != null && quotation.getId() != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
             if (customerOrder != null) {
-                List<Audit> audits = auditService.getAuditForEntity(CustomerOrder.class.getSimpleName(),
-                        quotation.getId());
-                if (audits != null && audits.size() > 0) {
-                    List<LocalDateTime> toBilledDate = new ArrayList<LocalDateTime>();
-                    for (Audit audit : audits) {
-                        if (audit.getFieldName().equals("customerOrderStatus")
-                                && audit.getNewValue().equals(CustomerOrderStatus.TO_BILLED)) {
-                            toBilledDate.add(audit.getDatetime());
+                if (customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0) {
+                    for (Quotation orderQuotation : customerOrder.getQuotations())
+                        if (orderQuotation.getQuotationStatus().getCode()
+                                .equals(QuotationStatus.VALIDATED_BY_CUSTOMER)) {
+                            billingDate = orderQuotation.getCreatedDate().toLocalDate();
                         }
-                    }
-                    if (toBilledDate.size() > 0) {
-                        toBilledDate.sort(new Comparator<LocalDateTime>() {
-                            @Override
-                            public int compare(LocalDateTime o1, LocalDateTime o2) {
-                                return o1.compareTo(o2);
+                }
+
+                if (billingDate == null) {
+                    List<Audit> audits = auditService.getAuditForEntity(CustomerOrder.class.getSimpleName(),
+                            quotation.getId());
+                    if (audits != null && audits.size() > 0) {
+                        List<LocalDateTime> toBilledDate = new ArrayList<LocalDateTime>();
+                        for (Audit audit : audits) {
+                            if (audit.getFieldName().equals("customerOrderStatus")
+                                    && audit.getNewValue().equals(CustomerOrderStatus.TO_BILLED)) {
+                                toBilledDate.add(audit.getDatetime());
                             }
-                        });
-                        billingDate = toBilledDate.get(0).toLocalDate();
+                        }
+                        if (toBilledDate.size() > 0) {
+                            toBilledDate.sort(new Comparator<LocalDateTime>() {
+                                @Override
+                                public int compare(LocalDateTime o1, LocalDateTime o2) {
+                                    return o1.compareTo(o2);
+                                }
+                            });
+                            billingDate = toBilledDate.get(0).toLocalDate();
+                        }
                     }
                 }
             }
         }
+
+        if (billingDate == null)
+            billingDate = LocalDate.now();
 
         for (BillingItem billingItem : billingItems) {
             if (billingItem.getStartDate().isBefore(billingDate))
