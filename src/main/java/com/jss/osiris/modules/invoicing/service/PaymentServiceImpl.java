@@ -694,6 +694,11 @@ public class PaymentServiceImpl implements PaymentService {
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
         if (refundAmount.equals(-paymentAmount)) {
+            if (refund.getPayments() != null && refund.getPayments().size() == 1) {
+                Payment paymentChild = refund.getPayments().get(0);
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+            }
             refund.setIsMatched(true);
             refundService.addOrUpdateRefund(refund);
             payment.setRefund(refund);
@@ -708,6 +713,11 @@ public class PaymentServiceImpl implements PaymentService {
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
         if (directDebitAmount.equals(paymentAmount)) {
+            if (directDebitTransfert.getPayments() != null && directDebitTransfert.getPayments().size() == 1) {
+                Payment paymentChild = directDebitTransfert.getPayments().get(0);
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+            }
             payment.setPaymentType(constantService.getPaymentTypePrelevement());
             directDebitTransfert.setIsMatched(true);
             debitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
@@ -724,6 +734,11 @@ public class PaymentServiceImpl implements PaymentService {
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
         if (bankTransfertAmount.equals(-paymentAmount)) {
+            if (bankTransfert.getPayments() != null && bankTransfert.getPayments().size() == 1) {
+                Payment paymentChild = bankTransfert.getPayments().get(0);
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+            }
             bankTransfert.setIsMatched(true);
             bankTransfertService.addOrUpdateBankTransfert(bankTransfert);
             payment.setBankTransfert(bankTransfert);
