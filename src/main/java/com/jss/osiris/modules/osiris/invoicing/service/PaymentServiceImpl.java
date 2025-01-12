@@ -1,8 +1,13 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +19,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -247,6 +253,50 @@ public class PaymentServiceImpl implements PaymentService {
 
         for (Payment payment : payments) {
             batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, payment.getId());
+        }
+    }
+
+    @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
+    public void generateCsvFromDirectory() throws IOException {
+        String directoryPath = "C:\\Users\\gapin\\Desktop\\compta 2024\\ofx\\POINTAGE OFX 2024";
+        Path dir = Paths.get(directoryPath);
+        if (!Files.isDirectory(dir)) {
+            throw new IllegalArgumentException("The provided path is not a directory: " + directoryPath);
+        }
+
+        Path outputCsv = dir.resolve("output.csv");
+        try (BufferedWriter writer = Files.newBufferedWriter(outputCsv)) {
+            writer.write("Bank ID;Label;Amount;Date Posted;Payment Type\n"); // CSV header
+
+            Files.list(dir)
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(".ofx"))
+                    .forEach(path -> {
+                        try (InputStream fileStream = Files.newInputStream(path)) {
+                            OFXStatement operationList = ofxParser.parseOfx(fileStream);
+                            if (operationList != null && operationList.getAccountStatements() != null) {
+                                operationList.getAccountStatements().stream()
+                                        .filter(statement -> statement.getBankTransactionList() != null)
+                                        .flatMap(
+                                                statement -> statement.getBankTransactionList().transactions().stream())
+                                        .forEach(transaction -> {
+                                            try {
+                                                String line = String.format("%s;%s;%s;%s;%s\n",
+                                                        transaction.id(),
+                                                        transaction.name() + " " + transaction.memo(),
+                                                        transaction.amount(),
+                                                        transaction.datePosted().atStartOfDay(),
+                                                        "Virement");
+                                                writer.write(line);
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        });
+                            }
+                        } catch (IOException | OsirisException e) {
+                            e.printStackTrace();
+                        }
+                    });
         }
     }
 
@@ -719,6 +769,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
 
         if (refundAmount.compareTo(paymentAmount.negate()) == 0) {
+            if (refund.getPayments() != null && refund.getPayments().size() == 1) {
+                Payment paymentChild = refund.getPayments().get(0);
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+            }
             refund.setIsMatched(true);
             refundService.addOrUpdateRefund(refund);
             payment.setRefund(refund);
@@ -737,6 +792,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .divide(oneHundredValue);
 
         if (directDebitAmount.compareTo(paymentAmount) == 0) {
+            if (directDebitTransfert.getPayments() != null && directDebitTransfert.getPayments().size() == 1) {
+                Payment paymentChild = directDebitTransfert.getPayments().get(0);
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+            }
             payment.setPaymentType(constantService.getPaymentTypePrelevement());
             directDebitTransfert.setIsMatched(true);
             debitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
@@ -757,6 +817,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .divide(oneHundredValue);
 
         if (bankTransfertAmount.compareTo(paymentAmount.negate()) == 0) {
+            if (bankTransfert.getPayments() != null && bankTransfert.getPayments().size() == 1) {
+                Payment paymentChild = bankTransfert.getPayments().get(0);
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+            }
             bankTransfert.setIsMatched(true);
             bankTransfertService.addOrUpdateBankTransfert(bankTransfert);
             payment.setBankTransfert(bankTransfert);

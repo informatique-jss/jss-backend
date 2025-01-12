@@ -6,13 +6,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,6 +63,10 @@ public class DirectDebitTransfert implements Serializable, IId {
 			"azureInvoice", "azureReceipt", "invoices", "directDebitTransfert",
 			"reverseCreditNote" }, allowSetters = true)
 	List<Invoice> invoices;
+
+	@OneToMany(mappedBy = "directDebitTransfert", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<Payment> payments;
 
 	public Integer getId() {
 		return id;
@@ -163,6 +170,14 @@ public class DirectDebitTransfert implements Serializable, IId {
 
 	public void setIsMatched(Boolean isMatched) {
 		this.isMatched = isMatched;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
 	}
 
 }
