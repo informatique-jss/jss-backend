@@ -677,7 +677,8 @@ public class PaymentServiceImpl implements PaymentService {
                     .equals(constantService.getAccountingAccountBankCentralPay().getId())) {
                 if (newPayment.getPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId()))
                     newPayment.setTargetAccountingAccount(tiers.getAccountingAccountDeposit());
-                else
+                else if (!payment.getTargetAccountingAccount().getId()
+                        .equals(constantService.getAccountingAccountCaisse().getId()))
                     newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
             } else {
                 newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankCentralPay());
