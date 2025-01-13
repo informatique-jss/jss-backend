@@ -97,6 +97,12 @@ export class ConstantService extends AppRestService<Constant> {
   getDocumentTypeDunning() {
     return this.constant.documentTypeDunning;
   }
+  getDocumentTypeSynthesisRbeSigned() {
+    return this.constant.documentTypeSynthesisRbeSigned;
+  }
+  getDocumentTypeSynthesisRbeUnsigned() {
+    return this.constant.documentTypeSynthesisRbeUnsigned;
+  }
 
   getDocumentTypeRefund() {
     return this.constant.documentTypeRefund;
@@ -342,6 +348,13 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.provisionTypeRegistrationAct;
   }
 
+  getProvisionTypeRbe() {
+    return this.constant.provisionTypeRbe;
+  }
+
+  getProvisionFamilyTypeDeposit() {
+    return this.constant.provisionFamilyTypeDeposit;
+  }
   getBillingTypeInfogreffeDebour() {
     return this.constant.billingTypeInfogreffeDebour;
   }

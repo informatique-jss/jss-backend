@@ -55,10 +55,13 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.ValidationsRequestStatus;
 import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
 import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.PartnerCenterRepository;
+import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.FormaliteService;
 import com.jss.osiris.modules.osiris.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.PricingHelper;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
 
@@ -124,6 +127,15 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    ServiceService serviceService;
+
+    @Autowired
+    ProvisionService provisionService;
+
+    @Autowired
+    AssoAffaireOrderService assoAffaireOrderService;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
@@ -290,10 +302,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             typeDocumentsToDownload.add(typeDocument.getCode());
 
                 if (typeDocumentsToDownload.size() > 0) {
-                    for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getContent().getPiecesJointes())
+                    for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getContent().getPiecesJointes()) {
                         if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode())) {
                             downloadPieceJointeOnProvision(formalite.getProvision().get(0), piecesJointe);
                         }
+                        createNewRbeProvisionForRbeAttachmentFromLiasse(piecesJointe, formalite);
+                    }
                 }
             }
 
@@ -718,4 +732,45 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         return formaliteGuichetUniqueRepository.findByLiasseNumber(value);
     }
 
+    private void createNewRbeProvisionForRbeAttachmentFromLiasse(PiecesJointe piecesJointe, Formalite formalite)
+            throws OsirisException {
+        // Check if PJ type is RBE
+        if (piecesJointe.getTypeDocument().getCode()
+                .equals(constantService.getDocumentTypeSynthesisRbeSigned().getCode())
+                || piecesJointe.getTypeDocument().getCode()
+                        .equals(constantService.getDocumentTypeSynthesisRbeUnsigned().getCode())) {
+            Service currentService = serviceService
+                    .getService(formalite.getProvision().get(0).getService().getId());
+            Boolean isProvisionRbe = false;
+            for (Provision provision : currentService.getProvisions()) {
+                if (provision.getProvisionType().getId()
+                        .equals(constantService.getProvisionTypeRbe().getId())) {
+                    isProvisionRbe = true;
+                    break;
+                }
+            }
+            // mettre tout ce bloc dans une methode à part
+            if (!isProvisionRbe) {
+                Formalite newFormalite = new Formalite();
+                Provision newProvision = new Provision();
+                newFormalite.setFormaliteStatus(
+                        formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
+                formaliteService.addOrUpdateFormalite(newFormalite);
+                newProvision.setProvisionFamilyType(constantService.getProvisionFamilyTypeDeposit());
+                newProvision.setProvisionType(constantService.getProvisionTypeRbe());
+                newProvision.setFormalite(newFormalite);
+                provisionService.addOrUpdateProvision(newProvision);
+                currentService.getProvisions().add(newProvision);
+                serviceService.addOrUpdateService(currentService);
+
+                // with current Formalite get current affaire and order to set the new asso
+                currentService.getAssoAffaireOrder().getCustomerOrder();
+                if (currentService.getAssoAffaireOrder() != null
+                        && currentService.getAssoAffaireOrder().getCustomerOrder() != null)
+                    assoAffaireOrderService.completeAssoAffaireOrder(
+                            currentService.getAssoAffaireOrder(),
+                            currentService.getAssoAffaireOrder().getCustomerOrder(), false);
+            }
+        }
+    }
 }
