@@ -65,7 +65,7 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         + " case when p.id_origin_payment is not null and (p_origin.bank_id like 'H%' or p_origin.bank_id like 'manuel%') then true else false end as isMatched"
                         + " from payment p left join payment p_origin on p.id_origin_payment = p_origin.id "
                         + " where ( p.bank_id is null and p.check_number is not null ) "
-                        + " and (:isHideMatchedOutboundChecks=false or (p.id_origin_payment is null or p_origin.bank_id not like 'H%')) "
+                        + " and (:isHideMatchedOutboundChecks=false or (p.id_origin_payment is null or (p_origin.bank_id not like 'H%' and p_origin.bank_id not like 'manuel%'))) "
                         + " and p.payment_date>=:startDate and p.payment_date<=:endDate "
                         + " and (p.is_cancelled=false or p.is_cancelled is null) "
                         + " and p.payment_amount < 0 "
