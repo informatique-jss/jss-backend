@@ -1,7 +1,5 @@
 package com.jss.osiris.modules.osiris.accounting.controller;
 
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -135,7 +133,7 @@ public class AccountingController {
             validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDeadline(), false,
                     "ManualAccountingDocumentDeadline");
             validationHelper.validateDateMin(accountingRecord.getOperationDateTime().toLocalDate(), false,
-                    LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
+                    constantService.getDateAccountingClosureForAll(), "ManualAccountingDocumentDate");
             validationHelper.validateDateMax(accountingRecord.getOperationDateTime().toLocalDate(), false,
                     LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
 
