@@ -14,11 +14,8 @@ import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.model.ExportOsirisMail;
 
 import jakarta.mail.Address;
 import jakarta.mail.Authenticator;
@@ -36,15 +33,15 @@ public class AutoIndexMailOsirisDelegate {
 
     @Value("${mail.imap.host}")
     private String mailImapHost;
-    @Value("mail.imap.port")
+    @Value("${mail.imap.port}")
     private String mailImapPort;
-    @Value("mail.imap.username")
+    @Value("${mail.imap.username}")
     private String mailImapUsername;
-    @Value("mail.imap.password")
+    @Value("${mail.imap.password}")
     private String mailImapPassword;
-    @Value("mail.imap.auth")
-    private String mailIpmapAuth;
-    @Value("mail.imap.ssl.enable")
+    @Value("${mail.imap.auth}")
+    private String mailImapAuth;
+    @Value("${mail.imap.ssl.enable}")
     private String mailImapEnable;
 
     private Session connectionOutlookOsiris() {
@@ -52,7 +49,8 @@ public class AutoIndexMailOsirisDelegate {
         properties.put("mail.imap.host", mailImapHost);
         properties.put("mail.imap.port", mailImapPort);
         properties.put("mail.imap.ssl.enable", mailImapEnable);
-        properties.put("mail.imap.auth", mailIpmapAuth);
+        properties.put("mail.imap.auth", mailImapAuth);
+        properties.put("mail.debug", "true");
 
         return Session.getInstance(properties, new Authenticator() {
             @Override
@@ -62,7 +60,7 @@ public class AutoIndexMailOsirisDelegate {
         });
     }
 
-    private Document exportMailToPdf(Message message) throws OsirisException {
+    private ExportOsirisMail exportMailToFile(Message message) throws OsirisException {
         try {
             String subject = message.getSubject();
             Address[] fromAddresses = message.getFrom();
@@ -79,41 +77,32 @@ public class AutoIndexMailOsirisDelegate {
                     body = (String) message.getContent();
             }
 
-            Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream("Mail_" + subject + ".pdf"));
-            document.open();
-            document.add(new Paragraph("Sujet: " + subject));
-            document.add(new Paragraph("De: " + from));
-            document.add(new Paragraph("A: " + to));
-            document.add(new Paragraph("Date de réception: " + receivedDate));
-            document.add(new Paragraph("Mail:"));
-            document.add(new Paragraph(body));
-            document.close();
-            File file = new File("Mail_" + subject + ".pdf");
-            String fileName = file.getName();
-            return document;
+            ExportOsirisMail exportedMail = new ExportOsirisMail();
+            File tempFile2 = File.createTempFile("Mail_" + subject, "pdf");
+            try (FileOutputStream outputStream = new FileOutputStream(tempFile2)) {
+                byte[] contentBytes = body.getBytes();
+                outputStream.write(contentBytes);
+                exportedMail.setExportedMail(outputStream);
+            }
+            exportedMail.setSubjectMail(subject);
+            exportedMail.setFileName(tempFile2.getName());
+            return exportedMail;
 
         } catch (IOException e) {
             throw new OsirisException(e, "no content in mail");
         } catch (MessagingException e) {
             throw new OsirisException(e, "wrong login or password");
-        } catch (DocumentException e) {
-            throw new OsirisException(e, "impossible to generate pdf document for export");
         }
     }
 
     private Boolean purgeInboxMailOsiris(Message message) throws OsirisException {
         LocalDate purgeDate = LocalDate.now().minus(30, ChronoUnit.DAYS);
-        Date sentDate;
         try {
-            sentDate = message.getReceivedDate();
-            if (sentDate != null) {
-                LocalDate messageDate = convertToLocalDate(sentDate);
-
-                if (messageDate.isBefore(purgeDate)) {
-                    message.setFlag(Flags.Flag.DELETED, true);
-                    return true;
-                }
+            Date receivedDate = message.getReceivedDate();
+            LocalDate messageDate = convertToLocalDate(receivedDate);
+            if (messageDate.isBefore(purgeDate)) {
+                message.setFlag(Flags.Flag.DELETED, true);
+                return true;
             }
         } catch (MessagingException e) {
             throw new OsirisException(e, "no received date in mail");
@@ -126,8 +115,8 @@ public class AutoIndexMailOsirisDelegate {
         return instant.atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
-    public List<Document> getPdfMailsFromJavaMailImap() throws OsirisException {
-        List<Document> mailExports = new ArrayList<>();
+    public List<ExportOsirisMail> getPdfMailsFromJavaMailImap() throws OsirisException {
+        List<ExportOsirisMail> mailExports = new ArrayList<>();
 
         Session session = connectionOutlookOsiris();
         Store store;
@@ -139,17 +128,14 @@ public class AutoIndexMailOsirisDelegate {
         }
         try {
             store.connect(mailImapHost, mailImapUsername, mailImapPassword);
-            // open box mail reception
             folder = store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
 
-            // get all mails
             Message[] messages = folder.getMessages();
             for (Message message : messages) {
                 if (!purgeInboxMailOsiris(message))
-                    mailExports.add(exportMailToPdf(message));
+                    mailExports.add(exportMailToFile(message));
             }
-
             folder.close(false);
             store.close();
         } catch (MessagingException e) {

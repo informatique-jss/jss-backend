@@ -231,6 +231,9 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_Autre_infogreffe")
 	private AttachmentType attachmentTypeAutreInfogreffe;
+	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_client_communication")
+	private AttachmentType attachmentTypeClientCommunication;
 
 	@ManyToOne
 	@JsonView(JacksonViews.MyJssView.class)
@@ -2496,6 +2499,14 @@ public class Constant implements Serializable, IId {
 
 	public void setCategorySerie(Category categorySerie) {
 		this.categorySerie = categorySerie;
+	}
+
+	public AttachmentType getAttachmentTypeClientCommunication() {
+		return attachmentTypeClientCommunication;
+	}
+
+	public void setAttachmentTypeClientCommunication(AttachmentType attachmentTypeClientCommunication) {
+		this.attachmentTypeClientCommunication = attachmentTypeClientCommunication;
 	}
 
 }
