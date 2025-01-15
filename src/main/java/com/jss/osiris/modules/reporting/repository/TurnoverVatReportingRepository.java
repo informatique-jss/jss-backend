@@ -20,13 +20,13 @@ public interface TurnoverVatReportingRepository extends CrudRepository<Quotation
                         " i.created_date),'YYYY-MM - tmw') as invoiceDateWeek, " +
                         " to_char(date_trunc('day', " +
                         " i.created_date),'YYYY-MM-DD') as invoiceDateDay, " +
-                        " sum(case when i.is_credit_note or i.is_provider_credit_note  then -1 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
+                        "  sum( case when i.id_invoice_status =115359  then -1 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
                         +
-                        " sum(case when i.is_credit_note or i.is_provider_credit_note  then -1 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithTax, "
+                        " sum(case when i.id_invoice_status =115359  then -1 else 1 end *( ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0)) ) as turnoverAmountWithTax, "
                         +
-                        " sum(case when bt.id is not null or i.is_provider_credit_note  and bt.is_debour is not null and bt.is_debour then 0 when i.is_credit_note then -1 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithoutTax, "
+                        " sum(case when i.id_invoice_status =115359  then -1 else 1 end * case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithoutTax, "
                         +
-                        " sum(case when bt.id is not null or i.is_provider_credit_note  and bt.is_debour is not null and bt.is_debour then 0 when i.is_credit_note then -1 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax, "
+                        " sum(case when i.id_invoice_status =115359  then -1 else 1 end * case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax, "
                         +
                         " coalesce(case " +
                         " when t1.denomination is not null then t1.denomination " +

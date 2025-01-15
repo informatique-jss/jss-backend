@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.tiers.repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -90,13 +90,13 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          concat(e2.firstname,' ',e2.lastname) as formalisteLabel, " +
                         "          e2.id as formalisteId, " +
                         "          blt.label as billingLabelType, " +
-                        "          sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
+                        "          sum( case when i.id_invoice_status =115359  then -1 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
                         +
-                        "          sum( ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) as turnoverAmountWithTax, "
+                        "          sum(case when i.id_invoice_status =115359  then -1 else 1 end *( ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0)) ) as turnoverAmountWithTax, "
                         +
-                        "          sum(case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithoutTax, "
+                        "          sum(case when i.id_invoice_status =115359  then -1 else 1 end * case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithoutTax, "
                         +
-                        "          sum(case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax "
+                        "          sum(case when i.id_invoice_status =115359  then -1 else 1 end * case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax "
                         +
                         "  from " +
                         "          tiers t left join city on city.id =  t.id_city " +
@@ -109,7 +109,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "  left join customer_order co1 on " +
                         "          co1.id_tiers= t.id " +
                         "  left join customer_order co2 on " +
-                        "          co2.id_responsable = r.id and  co2.created_date>=:startDate and co2.created_date<=:endDate  "
+                        "          co2.id_responsable = r.id   "
                         +
                         "  left join index_entity a1 on " +
                         "            a1.entity_type = 'Tiers' " +
@@ -121,7 +121,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          blt.id = d.id_billing_label_type " +
                         "  left join invoice i on " +
                         "          i.customer_order_id = coalesce(co2.id, co1.id) " +
-                        "          and i.id_invoice_status in (:invoiceStatusIds) " +
+                        "          and i.id_invoice_status in (:invoiceStatusIds) and  i.created_date>=:startDate and i.created_date<=:endDate "
+                        +
                         "  left join invoice_item ii on " +
                         "          ii.id_invoice = i.id " +
                         "  left join billing_item bi on " +
@@ -150,8 +151,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "")
         List<ITiersSearchResult> searchTiers(@Param("tiersId") Integer tiersId,
                         @Param("salesEmployeeId") Integer salesEmployeeId,
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate, @Param("label") String label,
+                        @Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate, @Param("label") String label,
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,
                         @Param("invoiceStatusIds") List<Integer> invoiceStatusIds,
                         @Param("documentTypeBillingId") Integer documentTypeBillingId,
