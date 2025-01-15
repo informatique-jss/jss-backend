@@ -100,28 +100,31 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public Number getAccountingRecordBalanceByAccountingAccountId(Integer accountingAccountId) {
-    return accountingRecordRepository.getAccountingRecordBalanceByAccountingAccountId(accountingAccountId);
+  public Number getAccountingRecordBalanceByAccountingAccountId(Integer accountingAccountId,
+      LocalDateTime accountingDate) {
+    return accountingRecordRepository.getAccountingRecordBalanceByAccountingAccountId(accountingAccountId,
+        accountingDate.withHour(23).withMinute(59).withSecond(59));
   }
 
   @Override
-  public Number getBankTransfertTotal() {
-    return accountingRecordRepository.getBankTransfertTotal();
+  public Number getBankTransfertTotal(LocalDateTime accountingDate) {
+    return accountingRecordRepository.getBankTransfertTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
   }
 
   @Override
-  public Number getRefundTotal() {
-    return accountingRecordRepository.getRefundTotal();
+  public Number getRefundTotal(LocalDateTime accountingDate) {
+    return accountingRecordRepository.getRefundTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
   }
 
   @Override
-  public Number getCheckTotal() {
-    return accountingRecordRepository.getCheckTotal();
+  public Number getCheckTotal(LocalDateTime accountingDate) {
+    return accountingRecordRepository.getCheckTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
   }
 
   @Override
-  public Number getDirectDebitTransfertTotal() {
-    return accountingRecordRepository.getDirectDebitTransfertTotal();
+  public Number getDirectDebitTransfertTotal(LocalDateTime accountingDate) {
+    return accountingRecordRepository
+        .getDirectDebitTransfertTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
   }
 
   @Override

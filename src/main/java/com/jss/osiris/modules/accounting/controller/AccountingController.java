@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -264,43 +266,50 @@ public class AccountingController {
     @GetMapping(inputEntryPoint + "/accounting-record/accounting-account-id")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Number> getAccountingRecordBalanceByAccountingAccountId(
-            @RequestParam Integer accountingAccountId) throws OsirisValidationException {
+            @RequestParam Integer accountingAccountId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate)
+            throws OsirisValidationException {
         if (accountingAccountId == null)
             throw new OsirisValidationException("accountingAccountId");
         return new ResponseEntity<Number>(
-                accountingRecordService.getAccountingRecordBalanceByAccountingAccountId(accountingAccountId),
+                accountingRecordService.getAccountingRecordBalanceByAccountingAccountId(accountingAccountId,
+                        accountingDate),
                 HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/bank-transfert-total")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Number> getBankTransfertTotal() {
+    public ResponseEntity<Number> getBankTransfertTotal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<Number>(
-                accountingRecordService.getBankTransfertTotal(),
+                accountingRecordService.getBankTransfertTotal(accountingDate),
                 HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/refund-total")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Number> getRefundTotal() {
+    public ResponseEntity<Number> getRefundTotal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<Number>(
-                accountingRecordService.getRefundTotal(),
+                accountingRecordService.getRefundTotal(accountingDate),
                 HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/check-total")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Number> getCheckTotal() {
+    public ResponseEntity<Number> getCheckTotal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<Number>(
-                accountingRecordService.getCheckTotal(),
+                accountingRecordService.getCheckTotal(accountingDate),
                 HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/direct-debit-transfert-total")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Number> getDirectDebitTransfertTotal() {
+    public ResponseEntity<Number> getDirectDebitTransfertTotal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<Number>(
-                accountingRecordService.getDirectDebitTransfertTotal(),
+                accountingRecordService.getDirectDebitTransfertTotal(accountingDate),
                 HttpStatus.OK);
     }
 
