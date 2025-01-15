@@ -1,3 +1,16 @@
+<div class=" form-div mat-elevation-z2">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-datepicker [(model)]="accountingDate" label="Date de rapprochement" [form]="bankBalanceForm"
+            (onDateChange)="refresh()" propertyName="accountingDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
 <table mat-table matTableExporter [dataSource]="dataSource" class="mat-elevation-z8" #exporter="matTableExporter">
   <ng-container matColumnDef="label">
     <th mat-header-cell *matHeaderCellDef> Indicateur </th>
