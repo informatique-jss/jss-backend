@@ -56,6 +56,7 @@ export interface Constant {
   accountingJournalCash: AccountingJournal;
   accountingJournalMiscellaneousOperations: AccountingJournal;
   accountingJournalBilan: AccountingJournal;
+  accountingJournalSalary: AccountingJournal;
   tiersTypeProspect: TiersType;
   tiersTypeClient: TiersType;
   documentTypeDigital: DocumentType;

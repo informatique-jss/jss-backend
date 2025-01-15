@@ -43,6 +43,14 @@
           </tr>
           <tr>
             <td>
+              <select-accounting-journal [(model)]="constant.accountingJournalSalary" [form]="constantForm"
+                propertyName="accountingJournalSalary" label="Journal de comptabilité - Salaires" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </select-accounting-journal>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-accounting-journal [(model)]="constant.accountingJournalMiscellaneousOperations"
                 [form]="constantForm" propertyName="accountingJournalMiscellaneousOperations" [isMandatory]="true"
                 label="Journal de comptabilité - Opérations diverses" [isDisabled]="!editMode">

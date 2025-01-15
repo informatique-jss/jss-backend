@@ -41,6 +41,10 @@
           <generic-toggle [(model)]="paymentSearch.isHideAppoint" label="Masquer les appoints" [form]="paymentForm"
             propertyName="isHideAppoint"></generic-toggle>
         </td>
+        <td>
+          <generic-toggle [(model)]="paymentSearch.isHideNoOfx" label="Masquer les paiements hors banque"
+            [form]="paymentForm" propertyName="isHideNoOfx"></generic-toggle>
+        </td>
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="payments" tableName="Paiements"
