@@ -149,6 +149,10 @@ export class TiersListComponent implements OnInit {
 
   searchResponsables() {
     if (this.tiersSearchForm.valid && this.responsableSearch) {
+      if (this.responsableSearch.startDate)
+        this.responsableSearch.startDate = new Date(this.responsableSearch.startDate.setHours(12))
+      if (this.responsableSearch.endDate)
+        this.responsableSearch.endDate = new Date(this.responsableSearch.endDate.setHours(12))
       this.userPreferenceService.setUserSearchBookmark(this.responsableSearch, "responsables");
       this.responsableSearchResultService.getResponsableSearch(this.responsableSearch).subscribe(response => {
         this.responsables = response;
@@ -158,6 +162,10 @@ export class TiersListComponent implements OnInit {
 
   searchTiers() {
     if (this.tiersSearchForm.valid && this.tiersSearch) {
+      if (this.tiersSearch.startDate)
+        this.tiersSearch.startDate = new Date(this.tiersSearch.startDate.setHours(12))
+      if (this.tiersSearch.endDate)
+        this.tiersSearch.endDate = new Date(this.tiersSearch.endDate.setHours(12))
       this.userPreferenceService.setUserSearchBookmark(this.tiersSearch, "tiers");
       this.tiersSearchResultService.getTiersSearch(this.tiersSearch).subscribe(response => {
         this.tiers = response;
