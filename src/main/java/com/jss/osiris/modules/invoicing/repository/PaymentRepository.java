@@ -34,6 +34,7 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         + " where (:isHideAssociatedPayments=false OR ( p.id_invoice is null and p.id_customer_order is null and p.id_refund is null and p.id_bank_transfert is null and p.is_externally_associated=false and p.is_cancelled=false  and id_competent_authority is null and id_provider is null and id_accounting_account is null   )) "
                         + " and (:isHideCancelledPayments=false or p.is_cancelled = false) "
                         + " and (:isHideAppoint=false or p.is_appoint = false) "
+                        + " and (:isHideNoOfx=false or p.bank_id like 'H%') "
                         + " and (:idPayment=0 or p.id = :idPayment) "
                         + " and p.payment_date>=:startDate and p.payment_date<=:endDate "
                         + "  and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as real) ) "
@@ -46,6 +47,7 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         @Param("isHideAssociatedPayments") boolean isHideAssociatedPayments,
                         @Param("isHideCancelledPayments") boolean isHideCancelledPayments,
                         @Param("isHideAppoint") boolean isHideAppoint,
+                        @Param("isHideNoOfx") boolean isHideNoOfx,
                         @Param("idPayment") Integer idPayment);
 
         Payment findByBankId(String id);

@@ -16,6 +16,8 @@ public class PaymentSearch {
     private boolean isHideCancelledPayments;
     @JsonProperty("isHideAppoint")
     private boolean isHideAppoint;
+    @JsonProperty("isHideNoOfx")
+    private boolean isHideNoOfx;
 
     private Integer idPayment;
 
@@ -89,6 +91,14 @@ public class PaymentSearch {
 
     public void setIdPayment(Integer idPayment) {
         this.idPayment = idPayment;
+    }
+
+    public boolean isHideNoOfx() {
+        return isHideNoOfx;
+    }
+
+    public void setHideNoOfx(boolean isHideNoOfx) {
+        this.isHideNoOfx = isHideNoOfx;
     }
 
 }

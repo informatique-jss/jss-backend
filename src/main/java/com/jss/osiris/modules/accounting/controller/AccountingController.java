@@ -342,7 +342,9 @@ public class AccountingController {
             throw new OsirisValidationException("accountingRecord");
 
         if (!accountingRecord.getAccountingJournal().getId()
-                .equals(constantService.getAccountingJournalBilan().getId())) {
+                .equals(constantService.getAccountingJournalBilan().getId())
+                && !accountingRecord.getAccountingJournal().getId()
+                        .equals(constantService.getAccountingJournalSalary().getId())) {
             throw new OsirisValidationException("accountingRecord");
         }
 
