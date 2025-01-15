@@ -300,7 +300,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         if (typeDocument.getIsToDownloadOnProvision() != null
                                 && typeDocument.getIsToDownloadOnProvision())
                             typeDocumentsToDownload.add(typeDocument.getCode());
-
                 if (typeDocumentsToDownload.size() > 0) {
                     for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getContent().getPiecesJointes()) {
                         if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode())) {
@@ -544,7 +543,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 }
                             }
                         }
-
         invoice.setProvision(provision);
         return invoiceService.addOrUpdateInvoiceFromUser(invoice);
     }
@@ -758,13 +756,43 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 formaliteService.addOrUpdateFormalite(newFormalite);
                 newProvision.setProvisionFamilyType(constantService.getProvisionFamilyTypeDeposit());
                 newProvision.setProvisionType(constantService.getProvisionTypeRbe());
+                newProvision.setIsLogo(false);
+                newProvision.setIsRedactedByJss(false);
+                newProvision.setIsBaloPackage(false);
+                newProvision.setIsPublicationPaper(false);
+                newProvision.setIsPublicationReceipt(false);
+                newProvision.setIsPublicationFlag(false);
+                newProvision.setIsBodaccFollowup(false);
+                newProvision.setIsBodaccFollowupAndRedaction(false);
+                newProvision.setIsNantissementDeposit(false);
+                newProvision.setIsSocialShareNantissementRedaction(false);
+                newProvision.setIsBusinnessNantissementRedaction(false);
+                newProvision.setIsSellerPrivilegeRedaction(false);
+                newProvision.setIsTreatmentMultipleModiciation(false);
+                newProvision.setIsVacationMultipleModification(false);
+                newProvision.setIsRegisterPurchase(false);
+                newProvision.setIsRegisterInitials(false);
+                newProvision.setIsRegisterShippingCosts(false);
+                newProvision.setIsDisbursement(false);
+                newProvision.setIsFeasibilityStudy(false);
+                newProvision.setIsChronopostFees(false);
+                newProvision.setIsApplicationFees(false);
+                newProvision.setIsBankCheque(false);
+                newProvision.setIsComplexeFile(false);
+                newProvision.setIsBilan(false);
+                newProvision.setIsDocumentScanning(false);
+                newProvision.setIsEmergency(false);
+                newProvision.setIsRneUpdate(false);
+                newProvision.setIsVacationUpdateBeneficialOwners(false);
+                newProvision.setIsFormalityAdditionalDeclaration(false);
+                newProvision.setIsCorrespondenceFees(false);
+                newProvision.setIsSupplyFullBeCopy(false);
                 newProvision.setFormalite(newFormalite);
                 provisionService.addOrUpdateProvision(newProvision);
                 currentService.getProvisions().add(newProvision);
                 serviceService.addOrUpdateService(currentService);
 
                 // with current Formalite get current affaire and order to set the new asso
-                currentService.getAssoAffaireOrder().getCustomerOrder();
                 if (currentService.getAssoAffaireOrder() != null
                         && currentService.getAssoAffaireOrder().getCustomerOrder() != null)
                     assoAffaireOrderService.completeAssoAffaireOrder(

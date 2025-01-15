@@ -299,8 +299,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                         .addOrUpdateFormaliteGuichetUnique(formaliteGuichetUnique);
                             }
 
-                            batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
-                                    formaliteGuichetUnique.getId());
+                            // batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
+                            // formaliteGuichetUnique.getId());
                         }
                     }
                     if (formalite.getFormalitesInfogreffe() != null) {
