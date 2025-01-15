@@ -301,12 +301,19 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 && typeDocument.getIsToDownloadOnProvision())
                             typeDocumentsToDownload.add(typeDocument.getCode());
                 if (typeDocumentsToDownload.size() > 0) {
+                    Service currentService = null;
                     for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getContent().getPiecesJointes()) {
                         if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode())) {
                             downloadPieceJointeOnProvision(formalite.getProvision().get(0), piecesJointe);
                         }
-                        createNewRbeProvisionForRbeAttachmentFromLiasse(piecesJointe, formalite);
+                        currentService = createNewRbeProvisionForRbeAttachmentFromLiasse(piecesJointe, formalite);
                     }
+                    // with current Formalite get current affaire and order to set the new asso
+                    if (currentService != null && currentService.getAssoAffaireOrder() != null
+                            && currentService.getAssoAffaireOrder().getCustomerOrder() != null)
+                        assoAffaireOrderService.completeAssoAffaireOrder(
+                                currentService.getAssoAffaireOrder(),
+                                currentService.getAssoAffaireOrder().getCustomerOrder(), false);
                 }
             }
 
@@ -730,15 +737,15 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         return formaliteGuichetUniqueRepository.findByLiasseNumber(value);
     }
 
-    private void createNewRbeProvisionForRbeAttachmentFromLiasse(PiecesJointe piecesJointe, Formalite formalite)
+    private Service createNewRbeProvisionForRbeAttachmentFromLiasse(PiecesJointe piecesJointe, Formalite formalite)
             throws OsirisException {
+        Service currentService = serviceService
+                .getService(formalite.getProvision().get(0).getService().getId());
         // Check if PJ type is RBE
         if (piecesJointe.getTypeDocument().getCode()
                 .equals(constantService.getDocumentTypeSynthesisRbeSigned().getCode())
                 || piecesJointe.getTypeDocument().getCode()
                         .equals(constantService.getDocumentTypeSynthesisRbeUnsigned().getCode())) {
-            Service currentService = serviceService
-                    .getService(formalite.getProvision().get(0).getService().getId());
             Boolean isProvisionRbe = false;
             for (Provision provision : currentService.getProvisions()) {
                 if (provision.getProvisionType().getId()
@@ -791,14 +798,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 provisionService.addOrUpdateProvision(newProvision);
                 currentService.getProvisions().add(newProvision);
                 serviceService.addOrUpdateService(currentService);
-
-                // with current Formalite get current affaire and order to set the new asso
-                if (currentService.getAssoAffaireOrder() != null
-                        && currentService.getAssoAffaireOrder().getCustomerOrder() != null)
-                    assoAffaireOrderService.completeAssoAffaireOrder(
-                            currentService.getAssoAffaireOrder(),
-                            currentService.getAssoAffaireOrder().getCustomerOrder(), false);
             }
         }
+        return currentService;
     }
 }
