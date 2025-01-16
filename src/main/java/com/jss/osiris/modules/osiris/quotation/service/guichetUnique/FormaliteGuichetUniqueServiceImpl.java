@@ -301,12 +301,16 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 && typeDocument.getIsToDownloadOnProvision())
                             typeDocumentsToDownload.add(typeDocument.getCode());
                 if (typeDocumentsToDownload.size() > 0) {
-                    Service currentService = null;
+                    Service currentService = serviceService
+                            .getService(formalite.getProvision().get(0).getService().getId());
+                    Boolean isRbeProvisionCreationInProgress = false;
                     for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getContent().getPiecesJointes()) {
                         if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode())) {
                             downloadPieceJointeOnProvision(formalite.getProvision().get(0), piecesJointe);
                         }
-                        currentService = createNewRbeProvisionForRbeAttachmentFromLiasse(piecesJointe, formalite);
+                        if (!isRbeProvisionCreationInProgress && currentService != null)
+                            isRbeProvisionCreationInProgress = createNewRbeProvisionForRbeAttachmentFromLiasse(
+                                    piecesJointe, currentService);
                     }
                     // with current Formalite get current affaire and order to set the new asso
                     if (currentService != null && currentService.getAssoAffaireOrder() != null
@@ -737,10 +741,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         return formaliteGuichetUniqueRepository.findByLiasseNumber(value);
     }
 
-    private Service createNewRbeProvisionForRbeAttachmentFromLiasse(PiecesJointe piecesJointe, Formalite formalite)
+    private Boolean createNewRbeProvisionForRbeAttachmentFromLiasse(PiecesJointe piecesJointe, Service currentService)
             throws OsirisException {
-        Service currentService = serviceService
-                .getService(formalite.getProvision().get(0).getService().getId());
+
         // Check if PJ type is RBE
         if (piecesJointe.getTypeDocument().getCode()
                 .equals(constantService.getDocumentTypeSynthesisRbeSigned().getCode())
@@ -798,8 +801,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 provisionService.addOrUpdateProvision(newProvision);
                 currentService.getProvisions().add(newProvision);
                 serviceService.addOrUpdateService(currentService);
+                return true;
             }
         }
-        return currentService;
+        return false;
     }
 }
