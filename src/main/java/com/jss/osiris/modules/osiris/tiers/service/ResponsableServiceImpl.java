@@ -110,8 +110,9 @@ public class ResponsableServiceImpl implements ResponsableService {
             tiersSearch.setWithNonNullTurnover(false);
 
         return responsableRepository.searchResponsable(tiersId, responsableId, salesEmployeeId, tiersSearch.getMail(),
-                tiersSearch.getStartDate(),
-                tiersSearch.getEndDate(), tiersSearch.getLabel(), constantService.getConfrereJssSpel().getId(),
+                tiersSearch.getStartDate().atTime(0, 0),
+                tiersSearch.getEndDate().atTime(23, 59, 59), tiersSearch.getLabel(),
+                constantService.getConfrereJssSpel().getId(),
                 Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
                         constantService.getInvoiceStatusSend().getId()),
                 this.constantService.getDocumentTypeBilling().getId(), tiersSearch.getWithNonNullTurnover());
