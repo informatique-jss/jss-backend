@@ -26,13 +26,15 @@ public interface AccountingRecordService {
 
         public Number getAccountingRecordBalanceByAccountingAccountId(Integer id);
 
-        public Number getBankTransfertTotal();
+        public Number getAccountingRecordBalanceByAccountingAccountId(Integer id, LocalDateTime accountingDate);
 
-        public Number getRefundTotal();
+        public Number getBankTransfertTotal(LocalDateTime accountingDate);
 
-        public Number getCheckTotal();
+        public Number getRefundTotal(LocalDateTime accountingDate);
 
-        public Number getDirectDebitTransfertTotal();
+        public Number getCheckTotal(LocalDateTime accountingDate);
+
+        public Number getDirectDebitTransfertTotal(LocalDateTime accountingDate);
 
         public void deleteDuplicateAccountingRecord();
 

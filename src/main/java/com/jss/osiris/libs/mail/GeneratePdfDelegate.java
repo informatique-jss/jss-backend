@@ -325,6 +325,8 @@ public class GeneratePdfDelegate {
                     tier.getDenomination() != null
                             ? tier.getDenomination()
                             : (tier.getFirstname() + " " + tier.getLastname()));
+            if (tier.getFirstname() != null && tier.getLastname() != null)
+                ctx.setVariable("tiersName", tier.getFirstname() + " " + tier.getLastname());
             ctx.setVariable("address", tier.getAddress());
             ctx.setVariable("postalCode", tier.getPostalCode());
             ctx.setVariable("city", tier.getCity() != null ? tier.getCity().getLabel() : "");

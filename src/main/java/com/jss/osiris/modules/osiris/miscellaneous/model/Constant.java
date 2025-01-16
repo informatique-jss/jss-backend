@@ -40,6 +40,7 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -95,7 +96,11 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_journal_bilan")
 	private AccountingJournal accountingJournalBilan;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_accounting_journal_salary")
+	private AccountingJournal accountingJournalSalary;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_accounting_journal_miscellaneous_operations")
 	private AccountingJournal accountingJournalMiscellaneousOperations;
 
@@ -2541,5 +2546,13 @@ public class Constant implements Serializable, IId {
 
 	public void setProvisionFamilyTypeDeposit(ProvisionFamilyType provisionFamilyTypeDeposit) {
 		this.provisionFamilyTypeDeposit = provisionFamilyTypeDeposit;
+	}
+  
+	public AccountingJournal getAccountingJournalSalary() {
+		return accountingJournalSalary;
+	}
+
+	public void setAccountingJournalSalary(AccountingJournal accountingJournalSalary) {
+		this.accountingJournalSalary = accountingJournalSalary;
 	}
 }
