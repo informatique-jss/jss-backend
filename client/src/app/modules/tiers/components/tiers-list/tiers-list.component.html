@@ -80,6 +80,10 @@
                     label='Responsable' propertyName="responsable" [isMandatory]="false"></autocomplete-responsable>
                 </td>
                 <td>
+                  <generic-input [(model)]="responsableSearch.mail" label="E-mail" [form]="responsableSearchForm"
+                    propertyName="mail" [isMandatory]="false" [isDisabled]="false"></generic-input>
+                </td>
+                <td>
                   <generic-datepicker [(model)]="responsableSearch.startDate" label="Date de début"
                     [form]="responsableSearchForm" propertyName="startDate" [isMandatory]="false"
                     [isDisabled]="false"></generic-datepicker>
