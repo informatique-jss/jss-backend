@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.osiris.tiers.repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -134,7 +134,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "    ( :tiersId =0 or t.id = :tiersId) " +
                         "   and ( :isNewTiers =false or coalesce(t.is_new_tiers,false) = true) " +
                         " and  ( :salesEmployeeId =0 or e1.id = :salesEmployeeId) " +
-                        " and (:mail='' or exists (select 1 from asso_tiers_mail a join mail m on m.id = a.id_mail where t.id = a.id_tiers and m.mail like '%' || trim(CAST(:mail as text))  || '%')) "
+                        " and (:mail='' or exists (select 1 from asso_tiers_mail a join mail m on m.id = a.id_mail where t.id = a.id_tiers and m.mail like '%' || trim(:mail)  || '%')) "
                         +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(concat(t.firstname, ' ',t.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' ) "
                         +
@@ -154,8 +154,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
         List<ITiersSearchResult> searchTiers(@Param("tiersId") Integer tiersId,
                         @Param("salesEmployeeId") Integer salesEmployeeId,
                         @Param("mail") String mail,
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate, @Param("label") String label,
+                        @Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate, @Param("label") String label,
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,
                         @Param("invoiceStatusIds") List<Integer> invoiceStatusIds,
                         @Param("documentTypeBillingId") Integer documentTypeBillingId,
