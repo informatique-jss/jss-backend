@@ -134,6 +134,22 @@
           </tr>
           <tr>
             <td>
+              <select-type-document [(model)]="constant.documentTypeSynthesisRbeSigned"
+                label="Type de document - Synthèse RBE signé" [form]="constantForm"
+                propertyName="documentTypeSynthesisRbeSigned" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-type-document>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-type-document [(model)]="constant.documentTypeSynthesisRbeUnsigned"
+                label="Type de document - Synthèse RBE non signé" [form]="constantForm"
+                propertyName="documentTypeSynthesisRbeUnsigned" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-type-document>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-document-type [(model)]="constant.documentTypeBillingClosure"
                 label="Type de document - Relevés de compte" [form]="constantForm"
                 propertyName="documentTypeBillingClosure" [isMandatory]="true" [isDisabled]="!editMode">
@@ -1522,6 +1538,22 @@
                 label="Type de prestation - Enregistrement, Acte au TP" [form]="constantForm"
                 propertyName="provisionTypeRegistrationAct" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-provision-type></td>
+          </tr>
+          <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeRbe"
+                label="Type de prestation - Bénéficiaires Effectifs" [form]="constantForm"
+                propertyName="provisionTypeRbe" [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type>
+            </td>
+          </tr>
+
+
+          <tr>
+          <tr>
+            <td>
+              <select-provision-family [(model)]="constant.provisionFamilyTypeDeposit"
+                label="Famille de service - Dépôt" [form]="constantForm" propertyName="provisionFamilyTypeDeposit"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-family>
+            </td>
           </tr>
           <tr>
             <td>

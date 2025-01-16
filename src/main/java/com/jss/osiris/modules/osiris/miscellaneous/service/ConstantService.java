@@ -31,11 +31,13 @@ import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.JournalType;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureRecipientType;
@@ -92,6 +94,10 @@ public interface ConstantService {
     public DocumentType getDocumentTypeDunning() throws OsirisException;
 
     public DocumentType getDocumentTypeRefund() throws OsirisException;
+
+    public TypeDocument getDocumentTypeSynthesisRbeSigned() throws OsirisException;
+
+    public TypeDocument getDocumentTypeSynthesisRbeUnsigned() throws OsirisException;
 
     public DocumentType getDocumentTypeBillingClosure() throws OsirisException;
 
@@ -214,6 +220,10 @@ public interface ConstantService {
     public ProvisionType getProvisionTypeBilanPublication() throws OsirisException;
 
     public ProvisionType getProvisionTypeRegistrationAct() throws OsirisException;
+
+    public ProvisionType getProvisionTypeRbe() throws OsirisException;
+
+    public ProvisionFamilyType getProvisionFamilyTypeDeposit() throws OsirisException;
 
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
 
