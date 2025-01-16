@@ -1543,9 +1543,8 @@
           <tr>
             <td>
               <select-provision-family [(model)]="constant.provisionFamilyTypeDeposit"
-                label="Famille de service - Bénéficiaires Effectifs" [form]="constantForm"
-                propertyName="provisionFamilyTypeDeposit" [isMandatory]="true"
-                [isDisabled]="!editMode"></select-provision-family>
+                label="Famille de service - Dépôt" [form]="constantForm" propertyName="provisionFamilyTypeDeposit"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-family>
             </td>
           </tr>
           <tr>
@@ -1559,7 +1558,7 @@
           <tr>
             <td>
               <autocomplete-responsable [(model)]="constant.responsableDummyCustomerFrance" [form]="constantForm"
-                propertyName="responsableDummyCustomerFrance" [isMandatory]="false"
+                propertyName="responsableDummyCustomerFrance" [isMandatory]="true"
                 label="Responsable - Responsable utilisé pour le pricing non connecté MyJSS"
                 [isDisabled]="!editMode"></autocomplete-responsable>
             </td>
