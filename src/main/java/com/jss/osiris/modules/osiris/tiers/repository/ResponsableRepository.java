@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.osiris.tiers.repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -111,7 +111,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         "  ( :tiersId =0 or t.id = :tiersId) " +
                         " and  ( :salesEmployeeId =0 or e2.id = :salesEmployeeId) " +
                         " and  ( :responsableId =0 or r.id = :responsableId) " +
-                        " and (CAST(:mail as text) ='' or exists (select 1 from asso_tiers_mail a join mail m on m.id = a.id_mail where t.id = a.id_tiers and m.mail like '%' || trim(CAST(:mail as text))  || '%')) "
+                        " and ( :mail='' or exists (select 1 from asso_tiers_mail a join mail m on m.id = a.id_mail where t.id = a.id_tiers and m.mail like '%' || trim(CAST(:mail as text))  || '%')) "
                         +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%'  ) "
                         +
