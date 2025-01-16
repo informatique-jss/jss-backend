@@ -119,7 +119,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "  left join billing_label_type blt on " +
                         "          blt.id = d.id_billing_label_type " +
                         "  left join invoice i on " +
-                        "          i.customer_order_id = coalesce(co2.id, co1.id) " +
+                        "          i.customer_order_id = co2.id " +
                         "          and i.id_invoice_status in (:invoiceStatusIds) and  i.created_date>=:startDate and i.created_date<=:endDate "
                         +
                         "  left join invoice_item ii on " +
@@ -134,6 +134,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "    ( :tiersId =0 or t.id = :tiersId) " +
                         "   and ( :isNewTiers =false or coalesce(t.is_new_tiers,false) = true) " +
                         " and  ( :salesEmployeeId =0 or e1.id = :salesEmployeeId) " +
+                        " and (:mail='' or exists (select 1 from asso_tiers_mail a join mail m on m.id = a.id_mail where t.id = a.id_tiers and m.mail like '%' || trim(:mail)  || '%')) "
+                        +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(concat(t.firstname, ' ',t.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' ) "
                         +
                         " group by " +
@@ -151,6 +153,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "")
         List<ITiersSearchResult> searchTiers(@Param("tiersId") Integer tiersId,
                         @Param("salesEmployeeId") Integer salesEmployeeId,
+                        @Param("mail") String mail,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate, @Param("label") String label,
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,

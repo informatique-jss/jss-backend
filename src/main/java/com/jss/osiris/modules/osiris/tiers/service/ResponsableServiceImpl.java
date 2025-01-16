@@ -94,6 +94,9 @@ public class ResponsableServiceImpl implements ResponsableService {
         if (tiersSearch.getSalesEmployee() != null)
             salesEmployeeId = tiersSearch.getSalesEmployee().getId();
 
+        if (tiersSearch.getMail() == null)
+            tiersSearch.setMail("");
+
         if (tiersSearch.getStartDate() == null)
             tiersSearch.setStartDate(LocalDate.now().minusYears(10));
 
@@ -106,7 +109,7 @@ public class ResponsableServiceImpl implements ResponsableService {
         if (tiersSearch.getWithNonNullTurnover() == null)
             tiersSearch.setWithNonNullTurnover(false);
 
-        return responsableRepository.searchResponsable(tiersId, responsableId, salesEmployeeId,
+        return responsableRepository.searchResponsable(tiersId, responsableId, salesEmployeeId, tiersSearch.getMail(),
                 tiersSearch.getStartDate().atTime(0, 0),
                 tiersSearch.getEndDate().atTime(23, 59, 59), tiersSearch.getLabel(),
                 constantService.getConfrereJssSpel().getId(),

@@ -10,6 +10,7 @@ public class TiersSearch {
     private IndexEntity responsable;
     private Boolean withNonNullTurnover;
     private Employee salesEmployee;
+    private String mail;
     private LocalDate startDate;
     private LocalDate endDate;
     private String label;
@@ -77,6 +78,14 @@ public class TiersSearch {
 
     public void setIsNewTiers(Boolean isNewTiers) {
         this.isNewTiers = isNewTiers;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
 }
