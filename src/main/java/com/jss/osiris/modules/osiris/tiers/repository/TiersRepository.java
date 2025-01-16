@@ -119,7 +119,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "  left join billing_label_type blt on " +
                         "          blt.id = d.id_billing_label_type " +
                         "  left join invoice i on " +
-                        "          i.customer_order_id = coalesce(co2.id, co1.id) " +
+                        "          i.customer_order_id = co2.id " +
                         "          and i.id_invoice_status in (:invoiceStatusIds) and  i.created_date>=:startDate and i.created_date<=:endDate "
                         +
                         "  left join invoice_item ii on " +
