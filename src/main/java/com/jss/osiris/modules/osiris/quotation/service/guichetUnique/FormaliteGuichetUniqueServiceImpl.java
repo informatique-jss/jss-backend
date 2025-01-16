@@ -754,7 +754,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 if (provision.getProvisionType().getId()
                         .equals(constantService.getProvisionTypeRbe().getId())) {
                     isProvisionRbe = true;
-                    break;
+                    return false;
                 }
             }
             // mettre tout ce bloc dans une methode à part
