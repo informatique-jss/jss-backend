@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.tiers.model;
 import java.time.LocalDate;
 
 import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 
 public class TiersSearch {
@@ -10,6 +11,7 @@ public class TiersSearch {
     private IndexEntity responsable;
     private Boolean withNonNullTurnover;
     private Employee salesEmployee;
+    private Mail mail;
     private LocalDate startDate;
     private LocalDate endDate;
     private String label;
@@ -77,6 +79,14 @@ public class TiersSearch {
 
     public void setIsNewTiers(Boolean isNewTiers) {
         this.isNewTiers = isNewTiers;
+    }
+
+    public Mail getMail() {
+        return mail;
+    }
+
+    public void setMail(Mail mail) {
+        this.mail = mail;
     }
 
 }

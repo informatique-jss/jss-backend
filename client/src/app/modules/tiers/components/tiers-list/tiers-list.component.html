@@ -21,6 +21,10 @@
                     [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
                 </td>
                 <td>
+                  <generic-input [(model)]="tiersSearch.mail" label="E-mail" [form]="tiersSearchForm"
+                    propertyName="mail" [isMandatory]="false" [isDisabled]="false"></generic-input>
+                </td>
+                <td>
                   <generic-datepicker [(model)]="tiersSearch.startDate" label="Date de début" [form]="tiersSearchForm"
                     propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
                 </td>
