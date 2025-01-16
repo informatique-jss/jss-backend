@@ -236,7 +236,8 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentSearch.getEndDate().withHour(23).withMinute(59), paymentSearch.getMinAmount(),
                 paymentSearch.getMaxAmount(),
                 paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments(),
-                paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint(), paymentSearch.getIdPayment());
+                paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint(), paymentSearch.isHideNoOfx(),
+                paymentSearch.getIdPayment());
     }
 
     @Override
@@ -700,7 +701,8 @@ public class PaymentServiceImpl implements PaymentService {
                 if (newPayment.getPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId()))
                     newPayment.setTargetAccountingAccount(
                             correspondingInvoice.getProvider().getAccountingAccountDeposit());
-                else
+                else if (!payment.getTargetAccountingAccount().getId()
+                        .equals(constantService.getAccountingAccountCaisse().getId()))
                     newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankJss());
             } else {
                 newPayment.setTargetAccountingAccount(constantService.getAccountingAccountBankCentralPay());
@@ -719,6 +721,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
 
         if (refundAmount.compareTo(paymentAmount.negate()) == 0) {
+            if (refund.getPayments() != null && refund.getPayments().size() == 1) {
+                Payment paymentChild = refund.getPayments().get(0);
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+            }
             refund.setIsMatched(true);
             refundService.addOrUpdateRefund(refund);
             payment.setRefund(refund);
@@ -737,6 +744,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .divide(oneHundredValue);
 
         if (directDebitAmount.compareTo(paymentAmount) == 0) {
+            if (directDebitTransfert.getPayments() != null && directDebitTransfert.getPayments().size() == 1) {
+                Payment paymentChild = directDebitTransfert.getPayments().get(0);
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+            }
             payment.setPaymentType(constantService.getPaymentTypePrelevement());
             directDebitTransfert.setIsMatched(true);
             debitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
@@ -757,6 +769,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .divide(oneHundredValue);
 
         if (bankTransfertAmount.compareTo(paymentAmount.negate()) == 0) {
+            if (bankTransfert.getPayments() != null && bankTransfert.getPayments().size() == 1) {
+                Payment paymentChild = bankTransfert.getPayments().get(0);
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+            }
             bankTransfert.setIsMatched(true);
             bankTransfertService.addOrUpdateBankTransfert(bankTransfert);
             payment.setBankTransfert(bankTransfert);
