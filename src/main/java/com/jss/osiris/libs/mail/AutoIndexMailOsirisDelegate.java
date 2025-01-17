@@ -75,9 +75,17 @@ public class AutoIndexMailOsirisDelegate {
 
     private Session getSessionOutlookOsiris() {
         Properties properties = new Properties();
+        properties.setProperty("mail.imap.ssl.protocols", "TLSv1.2");
         properties.put("mail.imap.ssl.enable", mailImapEnable);
+        properties.put("mail.imap.ssl.trust", "*");
+        properties.put("mail.imap.starttls.enable", "true");
         properties.put("mail.imap.auth", mailImapAuth);
         properties.put("mail.imap.auth.mechanisms", mailImapMechanism);
+        properties.put("mail.imap.sasl.enable", "true");
+        properties.put("mail.imap.sasl.mechanisms", "XOAUTH2");
+        properties.put("mail.imap.auth.login.disable", "true");
+        properties.put("mail.imap.auth.plain.disable", "true");
+        properties.put("mail.debug", "true");
         Session session = Session.getInstance(properties, null);
         return session;
     }
