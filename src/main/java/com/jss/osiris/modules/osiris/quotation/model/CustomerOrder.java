@@ -60,7 +60,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			List<Document> documents,
 			List<AssoAffaireOrder> assoAffaireOrders,
 			List<Quotation> quotations, Boolean isQuotation,
-			List<Invoice> invoices, List<CustomerOrderComment> customerOrderComments) {
+			List<Invoice> invoices, List<CustomerOrderComment> customerOrderComments,
+			CustomerOrderOrigin customerOrderOrigin) {
 		this.assignedTo = assignedTo;
 		this.responsable = responsable;
 		// this.confrere = confrere;
@@ -76,6 +77,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.isQuotation = isQuotation;
 		this.invoices = invoices;
 		this.customerOrderComments = customerOrderComments;
+		this.customerOrderOrigin = customerOrderOrigin;
 	}
 
 	@Id

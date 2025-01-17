@@ -829,7 +829,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 /* quotation.getConfrere(), */ quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getDescription(), null,
                 quotation.getDocuments(), quotation.getAssoAffaireOrders(), null, false,
-                null, quotation.getCustomerOrderComments());
+                null, quotation.getCustomerOrderComments(), quotation.getCustomerOrderOrigin());
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -1341,7 +1341,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 LocalDateTime.now(),
                 statusOpen, customerOrderRecurring.getDescription(), null,
                 customerOrderRecurring.getDocuments(), customerOrderRecurring.getAssoAffaireOrders(), null, false,
-                null, null);
+                null, null, customerOrderRecurring.getCustomerOrderOrigin());
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
