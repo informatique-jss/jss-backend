@@ -14,6 +14,7 @@ import { BillingClosureRecipientType } from '../../model/BillingClosureRecipient
 import { PaymentDeadlineType } from '../../model/PaymentDeadlineType';
 import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
+import { ResponsableService } from '../../services/responsable.service';
 import { TiersService } from '../../services/tiers.service';
 
 @Component({
@@ -56,6 +57,7 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
     protected paymentTypeService: PaymentTypeService,
     protected tiersService: TiersService,
     protected cityService: CityService,
+    private responsableService: ResponsableService,
     private constantService: ConstantService,
     private changeDetectorRef: ChangeDetectorRef,
   ) { }
@@ -155,8 +157,9 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
         this.billingDocument.billingLabelCity = city;
       }
     })
-
   }
-
-
+  applyParametersDocumentToQuotation(document: Document, responsable: Responsable) {
+    if (document && document.documentType && document.documentType.id && !this.editMode && responsable)
+      this.responsableService.applyParametersDocumentToQuotation(document.documentType.id, responsable.id);
+  }
 }

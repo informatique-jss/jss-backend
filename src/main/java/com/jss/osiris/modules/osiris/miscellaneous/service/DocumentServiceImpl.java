@@ -14,6 +14,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.repository.DocumentRepository;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -92,6 +93,11 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    public Document findDocumentByDocumentTypeAndResponsable(DocumentType documentType, Responsable responsable) {
+        return documentRepository.findByDocumentTypeAndResponsable(documentType, responsable);
+    }
+
+    @Override
     public Document cloneDocument(Document document) {
         Document newDocument = new Document();
         newDocument.setTiers(document.getTiers());
@@ -144,4 +150,5 @@ public class DocumentServiceImpl implements DocumentService {
         newDocument.setAddToClientMailList(document.getAddToClientMailList());
         return newDocument;
     }
+
 }

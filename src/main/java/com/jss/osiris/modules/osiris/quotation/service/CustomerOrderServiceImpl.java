@@ -1875,4 +1875,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         tiersService.addOrUpdateTiers(tiers);
         return responsableService.getResponsable(responsable.getId());
     }
+
+    @Override
+    public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable) {
+        return customerOrderRepository.findByResponsable(responsable);
+    }
 }

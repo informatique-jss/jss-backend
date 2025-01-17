@@ -12,6 +12,11 @@
           <addressing [editMode]=" editMode" [document]="paperDocument" [displayOverrideMail]="true"
             [displayNumberMailing]="true" [displayOverrideEMail]="false">
           </addressing>
+          <button *ngIf="instanceOfResponsable(tiers)"
+            matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" mat-icon-button color="accent"
+            (click)="applyParametersDocumentToQuotation(paperDocument, tiers)">
+            <mat-icon>approval</mat-icon>
+          </button>
         </mat-expansion-panel>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
