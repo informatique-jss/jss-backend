@@ -3,11 +3,13 @@ package com.jss.osiris.libs.mail;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -16,15 +18,16 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.model.ExportOsirisMail;
+import com.microsoft.aad.msal4j.ClientCredentialFactory;
+import com.microsoft.aad.msal4j.ClientCredentialParameters;
+import com.microsoft.aad.msal4j.ConfidentialClientApplication;
+import com.microsoft.aad.msal4j.IAuthenticationResult;
 
 import jakarta.mail.Address;
-import jakarta.mail.Authenticator;
 import jakarta.mail.Flags;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import jakarta.mail.NoSuchProviderException;
-import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Store;
 
@@ -39,25 +42,44 @@ public class AutoIndexMailOsirisDelegate {
     private String mailImapUsername;
     @Value("${mail.imap.password}")
     private String mailImapPassword;
+    @Value("${mail.imap.app.id}")
+    private String mailImapAppId;
+    @Value("${mail.imap.tenant.id}")
+    private String mailImapTenantId;
+    @Value("${mail.imap.secret.value}")
+    private String mailImapSecretValue;
+    @Value("${mail.imap.secret.id}")
+    private String mailImapSecretId;
     @Value("${mail.imap.auth}")
     private String mailImapAuth;
     @Value("${mail.imap.ssl.enable}")
     private String mailImapEnable;
+    @Value("${mail.imap.auth.mechanisms}")
+    private String mailImapMechanism;
 
-    private Session connectionOutlookOsiris() {
+    private String getTokenConnectionOutlookOsiris() throws OsirisException {
+        try {
+            ConfidentialClientApplication app = ConfidentialClientApplication
+                    .builder(mailImapAppId, ClientCredentialFactory.createFromSecret(mailImapSecretValue))
+                    .authority("https://login.microsoftonline.com/" + mailImapTenantId).build();
+            ClientCredentialParameters parameters = ClientCredentialParameters
+                    .builder(Collections.singleton("https://outlook.office365.com/.default")).build();
+
+            IAuthenticationResult result = app.acquireToken(parameters).join();
+            return result.accessToken();
+
+        } catch (MalformedURLException ex) {
+            throw new OsirisException(ex, "Wrong client-id or client-secret");
+        }
+    }
+
+    private Session getSessionOutlookOsiris() {
         Properties properties = new Properties();
-        properties.put("mail.imap.host", mailImapHost);
-        properties.put("mail.imap.port", mailImapPort);
         properties.put("mail.imap.ssl.enable", mailImapEnable);
         properties.put("mail.imap.auth", mailImapAuth);
-        properties.put("mail.debug", "true");
-
-        return Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(mailImapUsername, mailImapPassword);
-            }
-        });
+        properties.put("mail.imap.auth.mechanisms", mailImapMechanism);
+        Session session = Session.getInstance(properties, null);
+        return session;
     }
 
     private ExportOsirisMail exportMailToFile(Message message) throws OsirisException {
@@ -118,12 +140,13 @@ public class AutoIndexMailOsirisDelegate {
     public List<ExportOsirisMail> getPdfMailsFromJavaMailImap() throws OsirisException {
         List<ExportOsirisMail> mailExports = new ArrayList<>();
 
-        Session session = connectionOutlookOsiris();
+        String accessToken = getTokenConnectionOutlookOsiris();
         Store store;
         Folder folder;
         try {
-            store = session.getStore("imap");
-        } catch (NoSuchProviderException e) {
+            store = getSessionOutlookOsiris().getStore("imap");
+            store.connect(mailImapHost, Integer.parseInt(mailImapPort), mailImapUsername, accessToken);
+        } catch (NumberFormatException | MessagingException e) {
             throw new OsirisException(e, "no imap store");
         }
         try {
