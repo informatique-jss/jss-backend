@@ -5,6 +5,7 @@ import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { NotificationService } from '../../modules/miscellaneous/services/notification.service';
 import { SearchService } from '../../services/search.service';
+import { LoginService } from '../login-dialog/login.service';
 @Component({
   selector: 'app-sidenav-list',
   templateUrl: './sidenav-list.component.html',
@@ -18,6 +19,7 @@ export class SidenavListComponent implements OnInit {
     protected habilitationService: HabilitationsService,
     private notidicationService: NotificationService,
     private userPreferenceService: UserPreferenceService,
+    private loginService: LoginService,
     protected searchService: SearchService) { }
 
   ngOnInit() {
@@ -132,5 +134,10 @@ export class SidenavListComponent implements OnInit {
         notificationNumber++;
     return notificationNumber;
   }
+
+  signOut() {
+    this.loginService.signOut().subscribe();
+  }
+
 
 }

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { AppService } from '../../services/app.service';
 import { User } from './User';
@@ -12,7 +12,7 @@ export const ACCOUNTING_RESPONSIBLE: string = 'ROLE_OSIRIS_RESPONSABLE_COMPTABIL
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService extends AppRestService<User>{
+export class LoginService extends AppRestService<User> {
 
   constructor(http: HttpClient, private appService: AppService) {
     super(http, "profile");
@@ -34,6 +34,17 @@ export class LoginService extends AppRestService<User>{
 
   getCurrentUserName() {
     return this.currentUsername;
+  }
+
+  signOut() {
+    this.currentUsername = undefined;
+    return new Observable<Boolean>(observer => {
+      this.get(new HttpParams(), 'login/signout', "Vous avez été déconnecté").subscribe(response => {
+        this.loggedState.next(false);
+        observer.next();
+        observer.complete();
+      })
+    })
   }
 
   setUserRoleAndRefresh() {

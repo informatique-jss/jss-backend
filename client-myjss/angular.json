@@ -40,6 +40,11 @@
                 "input": "src/assets/css/theme.min.css",
                 "inject": true,
                 "bundleName": "theme.min.css"
+              },
+              {
+                "input": "src/theme.css",
+                "inject": true,
+                "bundleName": "theme.jss.css"
               }
             ],
             "scripts": [

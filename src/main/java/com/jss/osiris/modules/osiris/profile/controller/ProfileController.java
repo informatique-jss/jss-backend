@@ -174,4 +174,13 @@ public class ProfileController {
 		return new ResponseEntity<Employee>(employeeService.addOrUpdateEmployee(employee), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/login/signout")
+	public ResponseEntity<String> signOut(HttpServletRequest request)
+			throws OsirisException {
+		SecurityContextHolder.getContext().setAuthentication(null);
+		HttpSession session = request.getSession();
+		session.invalidate();
+		return new ResponseEntity<String>("", HttpStatus.OK);
+	}
+
 }
