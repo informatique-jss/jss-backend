@@ -23,6 +23,7 @@ import { EvenementInfogreffe } from '../../model/infogreffe/EvenementInfogreffe'
 import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
+import { FormaliteService } from '../../services/formalite.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 
@@ -66,7 +67,8 @@ export class FormaliteComponent implements OnInit {
     private formaliteStatusService: FormaliteStatusService,
     private userPreferenceService: UserPreferenceService,
     public associateFormaliteLiasseDialog: MatDialog,
-    private confirmationDialog: MatDialog
+    private confirmationDialog: MatDialog,
+    private formaliteService: FormaliteService
   ) { }
 
   formaliteForm = this.formBuilder.group({});
@@ -198,8 +200,12 @@ export class FormaliteComponent implements OnInit {
         dialogRef.afterClosed().subscribe(dialogResult => {
           if (dialogResult && this.formaliteStatus) {
             let response = this.formaliteStatusService.getFormaliteStatusByCode(this.formaliteStatus, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY);
-            if (response)
+            if (response) {
               this.formalite.formaliteStatus = response;
+              this.formaliteService.updateFormaliteStatusToWaitingForAC(this.formalite.id).subscribe(response => {
+                this.formalite = response;
+              });
+            }
           }
         });
       }
