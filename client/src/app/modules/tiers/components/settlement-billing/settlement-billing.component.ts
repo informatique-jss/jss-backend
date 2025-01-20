@@ -167,7 +167,7 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
         maxWidth: "400px",
         data: {
           title: "Confirmation requise",
-          content: "Appliquer les paramètres à toutes les commandes et devis associés ?",
+          content: "Appliquer les paramètres à toutes les commandes et devis en cours de traitement ?",
           closeActionText: "Annuler",
           validationActionText: "Valider"
         }

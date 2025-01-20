@@ -98,8 +98,9 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Document cloneDocument(Document document) {
-        Document newDocument = new Document();
+    public Document cloneDocument(Document document, Document newDocument) {
+        if (newDocument == null)
+            newDocument = new Document();
         newDocument.setTiers(document.getTiers());
         newDocument.setConfrere(document.getConfrere());
         newDocument.setResponsable(document.getResponsable());
@@ -148,7 +149,6 @@ public class DocumentServiceImpl implements DocumentService {
         newDocument.setBillingLabelIsIndividual(document.getBillingLabelIsIndividual());
         newDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
         newDocument.setAddToClientMailList(document.getAddToClientMailList());
-        return newDocument;
+        return addOrUpdateDocument(newDocument);
     }
-
 }
