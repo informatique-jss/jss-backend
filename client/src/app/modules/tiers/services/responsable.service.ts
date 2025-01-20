@@ -17,6 +17,6 @@ export class ResponsableService extends AppRestService<Responsable> {
   }
 
   applyParametersDocumentToQuotation(idDocumentType: number, idResponsable: number) {
-    return this.get(new HttpParams().set("idResponsable", idResponsable).set("idDocumentType", idDocumentType), "quotation/document/apply");
+    return this.get(new HttpParams().set("idResponsable", idResponsable).set("idDocumentType", idDocumentType), "quotation/document/apply", "Les éléments des commandes et devis ont bien été mis à jour", "Erreur lors de l'application des paramètres");
   }
 }

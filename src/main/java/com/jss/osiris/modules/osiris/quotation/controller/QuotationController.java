@@ -37,13 +37,11 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
-import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
@@ -51,8 +49,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.CivilityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
@@ -176,7 +172,6 @@ import com.jss.osiris.modules.osiris.quotation.service.TransfertFundsTypeService
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.FormaliteInfogreffeService;
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -303,9 +298,6 @@ public class QuotationController {
   ProvisionService provisionService;
 
   @Autowired
-  DocumentService documentService;
-
-  @Autowired
   MailHelper mailHelper;
 
   @Autowired
@@ -340,9 +332,6 @@ public class QuotationController {
 
   @Autowired
   BankTransfertService bankTransfertService;
-
-  @Autowired
-  PaymentService paymentService;
 
   @Autowired
   InvoiceService invoiceService;
@@ -403,9 +392,6 @@ public class QuotationController {
 
   @Autowired
   FormaliteInfogreffeService formaliteInfogreffeService;
-
-  @Autowired
-  DocumentTypeService documentTypeService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -1919,20 +1905,6 @@ public class QuotationController {
       throw new OsirisValidationException("Transition forbidden");
 
     return new ResponseEntity<Quotation>(quotationService.addOrUpdateQuotationStatus(quotation, targetStatusCode),
-        HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/quotation/document/apply")
-  public ResponseEntity<Document> applyParametersDocumentToQuotation(@RequestParam Integer idResponsable,
-      @RequestParam Integer idDocumentType) throws OsirisValidationException {
-    if (idResponsable == null)
-      throw new OsirisValidationException("idResponsable");
-    if (idDocumentType == null)
-      throw new OsirisValidationException("idDocumentType");
-    Responsable responsable = responsableService.getResponsable(idResponsable);
-    DocumentType documentType = documentTypeService.getDocumentType(idDocumentType);
-    return new ResponseEntity<Document>(
-        responsableService.applyParametersDocumentToQuotation(documentType, responsable),
         HttpStatus.OK);
   }
 

@@ -1,8 +1,10 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
@@ -59,6 +61,7 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
     protected cityService: CityService,
     private responsableService: ResponsableService,
     private constantService: ConstantService,
+    public confirmationDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef,
   ) { }
 
@@ -159,7 +162,21 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
     })
   }
   applyParametersDocumentToQuotation(document: Document, responsable: Responsable) {
-    if (document && document.documentType && document.documentType.id && !this.editMode && responsable)
-      this.responsableService.applyParametersDocumentToQuotation(document.documentType.id, responsable.id);
+    if (document && document.documentType && document.documentType.id && !this.editMode && responsable) {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Confirmation requise",
+          content: "Appliquer les paramètres à toutes les commandes et devis associés ?",
+          closeActionText: "Annuler",
+          validationActionText: "Valider"
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult && document.documentType.id)
+          this.responsableService.applyParametersDocumentToQuotation(document.documentType.id, responsable.id).subscribe();
+      });
+    }
   }
 }

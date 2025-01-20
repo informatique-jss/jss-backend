@@ -7,22 +7,25 @@
             <mat-panel-title>
               Documents papiers
             </mat-panel-title>
+            <mat-icon *ngIf="instanceOfResponsable(tiers)"
+              matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" color="accent"
+              class="pointer icon-padding" (click)="applyParametersDocumentToQuotation(paperDocument, tiers)">
+              folder_copy</mat-icon>
             <ng-template></ng-template>
           </mat-expansion-panel-header>
           <addressing [editMode]=" editMode" [document]="paperDocument" [displayOverrideMail]="true"
             [displayNumberMailing]="true" [displayOverrideEMail]="false">
           </addressing>
-          <button *ngIf="instanceOfResponsable(tiers)"
-            matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" mat-icon-button color="accent"
-            (click)="applyParametersDocumentToQuotation(paperDocument, tiers)">
-            <mat-icon>approval</mat-icon>
-          </button>
         </mat-expansion-panel>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
               Documents numériques
             </mat-panel-title>
+            <mat-icon *ngIf="instanceOfResponsable(tiers)"
+              matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" color="accent"
+              class="pointer icon-padding" (click)="applyParametersDocumentToQuotation(digitalDocument, tiers)">
+              folder_copy</mat-icon>
             <ng-template></ng-template>
           </mat-expansion-panel-header>
           <addressing [editMode]="editMode" [document]="digitalDocument" [displayOverrideMail]="false"
@@ -34,6 +37,10 @@
             <mat-panel-title>
               Facture
             </mat-panel-title>
+            <mat-icon *ngIf="instanceOfResponsable(tiers)"
+              matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" color="accent"
+              class="pointer icon-padding" (click)="applyParametersDocumentToQuotation(billingDocument, tiers)">
+              folder_copy</mat-icon>
             <ng-template></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">

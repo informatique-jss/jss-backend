@@ -20,7 +20,9 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.IResponsableSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
@@ -49,6 +51,9 @@ public class ResponsableServiceImpl implements ResponsableService {
 
     @Autowired
     DocumentService documentService;
+
+    @Autowired
+    QuotationService quotationService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -94,13 +99,22 @@ public class ResponsableServiceImpl implements ResponsableService {
     @Override
     public Document applyParametersDocumentToQuotation(DocumentType documentType, Responsable responsable) {
         List<CustomerOrder> orders = customerOrderService.findCustomerOrderByResponsable(responsable);
-
+        List<Quotation> quotations = quotationService.findQuotationByResponsable(responsable);
         Document document = documentService.findDocumentByDocumentTypeAndResponsable(documentType, responsable);
 
         if (orders != null) {
             for (CustomerOrder order : orders) {
                 if (!order.getDocuments().isEmpty())
                     for (Document documentToSet : order.getDocuments())
+                        if (documentToSet.getDocumentType().getId().equals(documentType.getId()))
+                            mergeDocument(document, documentToSet);
+            }
+        }
+
+        if (quotations != null) {
+            for (Quotation quotation : quotations) {
+                if (quotation.getDocuments().isEmpty())
+                    for (Document documentToSet : quotation.getDocuments())
                         if (documentToSet.getDocumentType().getId().equals(documentType.getId()))
                             mergeDocument(document, documentToSet);
             }
