@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
 import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -97,6 +97,7 @@ export class OrderingListComponent implements OnInit {
             status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT)!);
             status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_TO_BILLED)!);
             status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!);
+            status.push(this.customerOrderStatusService.getCustomerStatusByCode(res, CUSTOMER_ORDER_STATUS_BILLED)!);
             this.orderingSearch.customerOrderStatus = status;
           }
           this.searchOrders();
