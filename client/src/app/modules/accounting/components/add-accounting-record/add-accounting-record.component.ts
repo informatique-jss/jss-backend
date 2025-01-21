@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -10,7 +11,6 @@ import { AppService } from 'src/app/services/app.service';
 import { AccountingJournal } from '../../model/AccountingJournal';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordService } from '../../services/accounting.record.service';
-import { ActivatedRoute, UrlSegment } from '@angular/router';
 @Component({
   selector: 'add-accounting-record',
   templateUrl: './add-accounting-record.component.html',
@@ -51,7 +51,7 @@ export class AddAccountingRecordComponent implements OnInit {
     // Column init
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "accountingJournal", fieldName: "accountingJournal", label: "Journal", valueFonction: (element: AccountingRecord, column: SortTableColumn<AccountingRecord>) => { if (element && column && element.accountingJournal) return element.accountingJournal.label; return "" } } as SortTableColumn<AccountingRecord>);
-    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: AccountingRecord, column: SortTableColumn<AccountingRecord>) => { if (element && column && element.accountingAccount) return element.accountingAccount.principalAccountingAccount.code + element.accountingAccount.accountingAccountSubNumber; return "" } } as SortTableColumn<AccountingRecord>);
+    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: AccountingRecord, column: SortTableColumn<AccountingRecord>) => { if (element && column && element.accountingAccount) return element.accountingAccount.principalAccountingAccount.code + element.accountingAccount.accountingAccountSubNumber.toString().padStart(8 - element.accountingAccount.principalAccountingAccount.code.length, '0'); return "" } } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte", valueFonction: (element: AccountingRecord, column: SortTableColumn<AccountingRecord>) => { if (element && column && element.accountingAccount) return element.accountingAccount.label; return "" }, isShrinkColumn: true } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "accountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° de pièce justificative" } as SortTableColumn<AccountingRecord>);
     this.displayedColumns.push({ id: "accountingDocumentDate", fieldName: "manualAccountingDocumentDate", label: "Date pièce justificative", valueFonction: formatDateForSortTable } as SortTableColumn<AccountingRecord>);
@@ -92,6 +92,8 @@ export class AddAccountingRecordComponent implements OnInit {
       if (this.accountingRecords && this.accountingRecords.length > 0) {
         newRecord.accountingJournal = this.accountingRecords[this.accountingRecords.length - 1].accountingJournal;
         newRecord.operationDateTime = this.accountingRecords[this.accountingRecords.length - 1].operationDateTime;
+        newRecord.label = this.accountingRecords[this.accountingRecords.length - 1].label;
+        newRecord.manualAccountingDocumentNumber = this.accountingRecords[this.accountingRecords.length - 1].manualAccountingDocumentNumber;
       }
       this.accountingRecords.push(newRecord);
       this.accountingRecord = newRecord;
