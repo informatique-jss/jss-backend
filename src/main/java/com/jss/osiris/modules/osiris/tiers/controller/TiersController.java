@@ -657,7 +657,7 @@ public class TiersController {
         throw new OsirisValidationException("IntercommunityVat");
     }
 
-    validationHelper.validateReferential(tiers.getTiersCategory(), false, "TiersCategory");
+    validationHelper.validateReferential(tiers.getTiersCategory(), true, "TiersCategory");
     validationHelper.validateReferential(tiers.getSalesEmployee(), true, "SalesEmployee");
     validationHelper.validateReferential(tiers.getDefaultCustomerOrderEmployee(), false,
         "DefaultCustomerOrderEmployee");
@@ -785,7 +785,7 @@ public class TiersController {
         if (responsable.getLastname() != null)
           responsable.setLastname(responsable.getLastname().toUpperCase());
         validationHelper.validateReferential(responsable.getTiersType(), true, "TiersType");
-        validationHelper.validateReferential(responsable.getTiersCategory(), false, "TiersCategory");
+        validationHelper.validateReferential(responsable.getTiersCategory(), true, "TiersCategory");
         validationHelper.validateReferential(responsable.getSalesEmployee(), true, "SalesEmployee");
         validationHelper.validateReferential(responsable.getDefaultCustomerOrderEmployee(), false,
             "DefaultCustomerOrderEmployee");
