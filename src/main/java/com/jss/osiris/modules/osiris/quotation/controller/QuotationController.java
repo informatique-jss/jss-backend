@@ -2528,18 +2528,6 @@ public class QuotationController {
       throw new OsirisValidationException("formalite");
   }
 
-  @GetMapping(inputEntryPoint + "/formalite/update-status")
-  public ResponseEntity<Formalite> updateFormaliteStatusToWaitingForAC(
-      @RequestParam Integer idFormalite)
-      throws OsirisValidationException, OsirisException {
-    Formalite formalite = formaliteService.getFormalite(idFormalite);
-    if (formalite == null)
-      throw new OsirisValidationException("idFormalite");
-
-    return new ResponseEntity<Formalite>(formaliteService.updateFormaliteStatusToWaitingForAC(formalite),
-        HttpStatus.OK);
-  }
-
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @GetMapping(inputEntryPoint + "/customer-order/credit-note")
   public ResponseEntity<Boolean> generateCreditNoteForCustomerOrderInvoice(

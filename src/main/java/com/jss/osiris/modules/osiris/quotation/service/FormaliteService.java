@@ -12,5 +12,4 @@ public interface FormaliteService {
 
     public List<Formalite> getFormaliteForGURefresh() throws OsirisException;
 
-    public Formalite updateFormaliteStatusToWaitingForAC(Formalite formalite);
 }

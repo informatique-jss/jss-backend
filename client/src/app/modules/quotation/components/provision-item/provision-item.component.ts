@@ -38,6 +38,7 @@ export class ProvisionItemComponent implements OnInit {
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
+  @Input() isDisabled: boolean = true;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
   @Input() quotation: IQuotation | undefined;

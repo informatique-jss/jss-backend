@@ -11,7 +11,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
-import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.repository.FormaliteRepository;
 
 @Service
@@ -47,15 +46,5 @@ public class FormaliteServiceImpl implements FormaliteService {
     public List<Formalite> getFormaliteForGURefresh() throws OsirisException {
         return formaliteRepository.getFormaliteForGURefresh(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED).getId());
-    }
-
-    @Override
-    public Formalite updateFormaliteStatusToWaitingForAC(Formalite formalite) {
-        if (formalite != null) {
-            FormaliteStatus formaliteStatusWaitingAc = formaliteStatusService
-                    .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY);
-            formalite.setFormaliteStatus(formaliteStatusWaitingAc);
-        }
-        return addOrUpdateFormalite(formalite);
     }
 }

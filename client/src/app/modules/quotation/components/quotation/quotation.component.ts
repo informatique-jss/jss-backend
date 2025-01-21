@@ -71,7 +71,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
   customerOrderStatusList: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   isQuotationUrl = false;
-
+  isDisabled: boolean = true;
   VALIDATED_BY_CUSTOMER = VALIDATED_BY_CUSTOMER;
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
@@ -383,6 +383,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       return;
     }
     this.editMode = true;
+    this.isDisabled = false;
   }
 
   createQuotation() {
