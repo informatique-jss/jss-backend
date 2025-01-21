@@ -73,7 +73,7 @@ public class MailComputeHelper {
 
     public MailComputeResult computeMailForDepositRequest(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
     }
 
     @Transactional(rollbackOn = Exception.class)
