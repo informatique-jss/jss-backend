@@ -62,8 +62,6 @@
               <th class="mat-mdc-header-cell mdc-data-table__header-cell " *ngIf="invoice.responsable">
                 Donneur d'ordre
               </th>
-              <th class="mat-mdc-header-cell mdc-data-table__header-cell " *ngIf="invoice.provider">
-                Fournisseur</th>
             </tr>
           </thead>
           <tr class="mat-mdc-row mdc-data-table__row ">
@@ -190,8 +188,10 @@
           <ng-container *ngFor="let invoiceItem of invoice.invoiceItems;let indexInvoiceItem = index">
             <tr class="mat-mdc-row mdc-data-table__row ">
               <td class="mat-mdc-cell mdc-data-table__cell ">
-                {{invoiceItem.label}} <mat-icon *ngIf="invoiceItem && invoice.provider && canEditAmountInvoice()"
-                  color="accent" matTooltip="Modifier le montant à refacturer" color="accent" class="pointer"
+                <span class="invoice-item">{{invoiceItem.label}} -
+                  {{invoiceItem.billingItem.billingType.label}}</span> <mat-icon
+                  *ngIf="invoiceItem && invoice.provider && canEditAmountInvoice()" color="accent"
+                  matTooltip="Modifier le montant à refacturer" color="accent" class="pointer"
                   (click)="openEditAmountDialog(invoiceItem)">edit
                 </mat-icon>
               </td>
