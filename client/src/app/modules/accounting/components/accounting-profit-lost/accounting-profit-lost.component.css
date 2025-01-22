@@ -1,0 +1,45 @@
+.row-field-container-flex-item {
+  flex: 1;
+}
+
+.add-button {
+  top: -8px;
+}
+
+.table-fixed-layout {
+  table-layout: fixed;
+}
+
+.fab-td-button {
+  width: 35px;
+}
+
+.padding-fab {
+  padding-right: 5px;
+}
+
+.td-label {
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profit-lost-table {
+  margin-bottom: 50px;
+  min-width: 500px;
+}
+
+.total-table {
+  position: fixed;
+  bottom: 10px;
+}
+
+.without-padding-left {
+  padding-left: 0px !important;
+}
+
+.without-padding-left>mat-icon {
+  transform: scale(0.60);
+  margin-left: -210px;
+}
