@@ -32,7 +32,12 @@ export class AccountingRecordService extends AppRestService<AccountingRecord> {
   }
 
   downloadBillingClosureReceipt(tiers: Tiers, responsable: Responsable | undefined) {
-    this.downloadGet(new HttpParams().set("tiersId", tiers.id).set("responsableId", responsable ? responsable.id : 'null'), "billing-closure-receipt/download");
+    let params = new HttpParams()
+    if (tiers)
+      params = params.set("tiersId", tiers.id);
+    if (responsable)
+      params = params.set("responsableId", responsable.id + "");
+    this.downloadGet(params, "billing-closure-receipt/download");
   }
 
   sendBillingClosureReceipt(tiers: Tiers, responsable: Responsable | undefined) {
