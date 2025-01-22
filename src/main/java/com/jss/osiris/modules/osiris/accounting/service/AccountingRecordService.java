@@ -25,8 +25,6 @@ public interface AccountingRecordService {
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer id);
 
-        public Number getAccountingRecordBalanceByAccountingAccountId(Integer id);
-
         public Number getAccountingRecordBalanceByAccountingAccountId(Integer id, LocalDateTime accountingDate);
 
         public Number getBankTransfertTotal(LocalDateTime accountingDate);
