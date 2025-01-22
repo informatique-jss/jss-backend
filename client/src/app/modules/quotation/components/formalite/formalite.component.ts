@@ -66,7 +66,7 @@ export class FormaliteComponent implements OnInit {
     private formaliteStatusService: FormaliteStatusService,
     private userPreferenceService: UserPreferenceService,
     public associateFormaliteLiasseDialog: MatDialog,
-    private confirmationDialog: MatDialog
+    private confirmationDialog: MatDialog,
   ) { }
 
   formaliteForm = this.formBuilder.group({});
