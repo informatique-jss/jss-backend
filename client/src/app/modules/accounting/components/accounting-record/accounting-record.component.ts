@@ -370,8 +370,8 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   downloadBillingClosureReceipt() {
-    if (this.tiersToDisplay)
-      this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay, this.responsableToDisplay);
+    if (this.tiersToDisplay || this.responsableToDisplay)
+      this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay ? this.tiersToDisplay : this.responsableToDisplay!.tiers, this.responsableToDisplay);
   }
 
   sendBillingClosureReceipt() {
