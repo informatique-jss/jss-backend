@@ -1769,7 +1769,8 @@ public class QuotationController {
       quotation.setQuotationStatus(openQuotationStatus);
 
     if (quotation.getValidationId() != null
-        && quotationService.checkValidationIdQuotation(quotation.getValidationId()))
+        && quotationService.checkValidationIdQuotation(quotation.getValidationId())
+        && quotation.getId() == null)
       throw new OsirisValidationException("Save order already in progress");
     else
       return new ResponseEntity<Quotation>(quotationService.addOrUpdateQuotationFromUser(quotation), HttpStatus.OK);
