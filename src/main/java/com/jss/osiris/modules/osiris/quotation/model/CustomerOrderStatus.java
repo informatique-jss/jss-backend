@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +40,7 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 
 	@Column(nullable = false, length = 100)
 	@JsonView(JacksonViews.MyJssView.class)
+	@IndexedField
 	private String label;
 
 	@Column(nullable = false, length = 100)
