@@ -34,9 +34,9 @@
   *ngIf="provision && provision.announcement && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
   [affaire]="affaire">
 </announcement>
-<formalite [formalite]="provision.formalite" [isDisabled]="isDisabled" [editMode]="editMode"
-  [isStatusOpen]="isStatusOpen" [quotation]="quotation" [affaire]="affaire"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision" (provisionChange)="noticeChange()"
+<formalite [formalite]="provision.formalite" [editMode]="editMode" [isStatusOpen]="isStatusOpen" [quotation]="quotation"
+  [affaire]="affaire" [instanceOfCustomerOrder]="instanceOfCustomerOrder" [(provision)]="provision"
+  (provisionChange)="noticeChange()"
   *ngIf="provision && provision.formalite && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
 </formalite>
 <simple-provision [simpleProvision]="provision.simpleProvision" [editMode]="editMode" [isStatusOpen]="isStatusOpen"

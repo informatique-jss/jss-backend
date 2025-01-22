@@ -37,7 +37,6 @@ export class FormaliteComponent implements OnInit {
   @Input() provision: Provision | undefined;
   @Input() affaire: Affaire | undefined;
   @Input() editMode: boolean = false;
-  @Input() isDisabled: boolean = true;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
   @Input() quotation: IQuotation | undefined;

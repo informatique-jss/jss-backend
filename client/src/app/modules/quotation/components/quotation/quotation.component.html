@@ -216,8 +216,8 @@
                               </mat-panel-description>
                             </mat-expansion-panel-header>
                             <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"
-                              [editMode]="isValidatedStatusForUploadFile()" [isDisabled]="isDisabled"
-                              [provision]="provision" [affaire]="asso.affaire"
+                              [editMode]="isValidatedStatusForUploadFile()" [provision]="provision"
+                              [affaire]="asso.affaire"
                               (selectedProvisionTypeChange)="changeSelectedProvisionType($event)"
                               [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen">
                             </provision-item>

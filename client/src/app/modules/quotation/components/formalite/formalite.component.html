@@ -8,7 +8,7 @@
               <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
             </mat-form-field>
             <button (click)="associateLiasseWithFormalite()" mat-mini-fab color="warn" class="mini-fab-add"
-              *ngIf="editMode && formalite && formalite.id && !isDisabled"
+              *ngIf="editMode && formalite && formalite.id"
               matTooltip="Associer une liasse à un fournisseur de service">
               <mat-icon>add</mat-icon>
             </button>
