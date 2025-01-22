@@ -11,6 +11,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingBalanceSearch;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
@@ -94,5 +95,13 @@ public interface AccountingRecordService {
                         throws OsirisValidationException, OsirisClientMessageException, OsirisException;
 
         public List<AccountingRecord> getClosedAccountingRecordsForPayment(Payment payment);
+
+        public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate);
+
+        public List<AccountingBalanceViewTitle> getProfitAndLost(LocalDateTime startDate, LocalDateTime endDate);
+
+        public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
+
+        public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
 
 }
