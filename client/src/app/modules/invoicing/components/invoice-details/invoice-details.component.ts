@@ -137,6 +137,7 @@ export class InvoiceDetailsComponent implements OnInit {
             this.appService.displaySnackBar("Le montant à refacturer doit être positif", true, 10);
           this.invoiceItemService.updateInvoiceItemFromInvoice(invoiceItem.id, dialogResult).subscribe();
           this.refreshData();
+          this.appService.openRoute(null, 'invoicing/view/' + this.invoice!.id, undefined);
         }
       });
     }
