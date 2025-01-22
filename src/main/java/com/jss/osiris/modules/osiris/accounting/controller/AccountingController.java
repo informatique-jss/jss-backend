@@ -496,13 +496,14 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/billing-closure-receipt/download")
-    public ResponseEntity<byte[]> downloadBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId,
-            @RequestParam("responsableId") Integer responsableId)
+    public ResponseEntity<byte[]> downloadBillingClosureReceipt(
+            @RequestParam(value = "tiersId", required = false) Integer tiersId,
+            @RequestParam(value = "responsableId", required = false) Integer responsableId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         byte[] data = null;
         HttpHeaders headers = null;
 
-        if (tiersId == null || responsableId == null)
+        if (tiersId == null && responsableId == null)
             throw new OsirisValidationException("tiersId");
 
         File billingClosureExport = accountingRecordService.getBillingClosureReceiptFile(tiersId, responsableId, true);

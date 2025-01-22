@@ -325,14 +325,16 @@ public class GeneratePdfDelegate {
                     tier.getDenomination() != null
                             ? tier.getDenomination()
                             : (tier.getFirstname() + " " + tier.getLastname()));
-            if (tier.getFirstname() != null && tier.getLastname() != null)
-                ctx.setVariable("tiersName", tier.getFirstname() + " " + tier.getLastname());
             ctx.setVariable("address", tier.getAddress());
             ctx.setVariable("postalCode", tier.getPostalCode());
             ctx.setVariable("city", tier.getCity() != null ? tier.getCity().getLabel() : "");
-        } else if (responsable != null) {
+        }
+        if (responsable != null) {
             ctx.setVariable("denomination",
                     (responsable.getFirstname() + " " + responsable.getLastname()));
+            ctx.setVariable("tiersName",
+                    responsable.getTiers().getDenomination() != null ? responsable.getTiers().getDenomination()
+                            : (responsable.getTiers().getFirstname() + " " + responsable.getTiers().getLastname()));
             ctx.setVariable("address", responsable.getTiers().getAddress());
             ctx.setVariable("postalCode", responsable.getTiers().getPostalCode());
             ctx.setVariable("city",

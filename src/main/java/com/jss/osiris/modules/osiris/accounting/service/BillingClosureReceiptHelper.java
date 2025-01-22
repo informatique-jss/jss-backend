@@ -100,15 +100,18 @@ public class BillingClosureReceiptHelper {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         Tiers tier = null;
         Responsable responsable = null;
-        tier = tiersService.getTiers(tiersId);
+        if (tiersId != null)
+            tier = tiersService.getTiers(tiersId);
 
-        responsable = responsableService.getResponsable(tiersId);
+        if (responsableId != null)
+            responsable = responsableService.getResponsable(responsableId);
 
         Document billingClosureDocument = null;
-        if (responsable != null)
+        if (responsable != null) {
+            tier = responsable.getTiers();
             billingClosureDocument = documentService
                     .getBillingClosureDocument(responsable.getTiers().getDocuments());
-        else
+        } else
             billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
 
         if (billingClosureDocument != null) {
