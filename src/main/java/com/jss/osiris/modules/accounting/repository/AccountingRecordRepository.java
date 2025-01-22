@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.accounting.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
+import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
@@ -406,5 +408,18 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
 
         @Query(nativeQuery = true, value = "select * from closed_accounting_record where id_payment =:idPayment")
         List<AccountingRecord> findClosedAccountingRecordsForPayment(@Param("idPayment") Integer idPayment);
+
+        @Query("select sum(a.creditAmount) as creditAmount, " +
+                        " sum(a.debitAmount) as debitAmount, pa.code as accountingAccountNumber "
+                        +
+                        " from AccountingRecord a  JOIN a.accountingAccount aa  JOIN aa.principalAccountingAccount pa  where "
+                        +
+                        "(a.accountingDateTime is null or (coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) >=:startDate and coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) <=:endDate ))   "
+                        + " and (:canViewRestricted=true or aa.isViewRestricted=false)  " +
+                        " group by pa.code ")
+        List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate,
+                        @Param("canViewRestricted") boolean canViewRestricted);
 
 }

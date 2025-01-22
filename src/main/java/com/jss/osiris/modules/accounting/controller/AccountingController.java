@@ -31,6 +31,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceSearch;
+import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
@@ -662,6 +663,90 @@ public class AccountingController {
 
             grandLivre.delete();
 
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/bilan")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<AccountingBalanceViewTitle>> getBilan(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            throws OsirisValidationException {
+        if (startDate == null || endDate == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+        return new ResponseEntity<List<AccountingBalanceViewTitle>>(
+                accountingRecordService.getBilan(startDate, endDate), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/profit-lost")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<AccountingBalanceViewTitle>> getProfitAndLost(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            throws OsirisValidationException {
+        if (startDate == null || endDate == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+        return new ResponseEntity<List<AccountingBalanceViewTitle>>(
+                accountingRecordService.getProfitAndLost(startDate, endDate), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/profit-lost/export")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<byte[]> downloadProfitLost(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            throws OsirisValidationException, OsirisException {
+        byte[] data = null;
+        HttpHeaders headers = null;
+        if (startDate == null || endDate == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+        File profitAndLost = accountingRecordService.getProfitLostExport(startDate, endDate);
+        if (profitAndLost != null) {
+            try {
+                data = Files.readAllBytes(profitAndLost.toPath());
+            } catch (IOException e) {
+                throw new OsirisException(e, "Unable to read file " + profitAndLost.toPath());
+            }
+            headers = new HttpHeaders();
+            headers.add("filename",
+                    "SPPS - Compte de résultats - "
+                            + startDate.format(dateFormatter) + " - "
+                            + endDate.format(dateFormatter) + ".xlsx");
+            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+            headers.setContentLength(data.length);
+            headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            profitAndLost.delete();
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/bilan/export")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<byte[]> downloadBilan(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            throws OsirisValidationException, OsirisException {
+        byte[] data = null;
+        HttpHeaders headers = null;
+        if (startDate == null || endDate == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+        File bilan = accountingRecordService.getBilanExport(startDate, endDate);
+        if (bilan != null) {
+            try {
+                data = Files.readAllBytes(bilan.toPath());
+            } catch (IOException e) {
+                throw new OsirisException(e, "Unable to read file " + bilan.toPath());
+            }
+            headers = new HttpHeaders();
+            headers.add("filename",
+                    "SPPS - Bilan - "
+                            + startDate.format(dateFormatter) + " - "
+                            + endDate.format(dateFormatter) + ".xlsx");
+            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+            headers.setContentLength(data.length);
+            headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            bilan.delete();
         }
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
