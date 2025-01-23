@@ -1,8 +1,7 @@
 package com.jss.osiris.libs.mail;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -57,7 +56,7 @@ public class AutoIndexMailOsirisDelegate {
     @Value("${mail.imap.auth.mechanisms}")
     private String mailImapMechanism;
 
-    private String getTokenConnectionOutlookOsiris() throws OsirisException {
+    private String getTokenConnectionMail() throws OsirisException {
         try {
             ConfidentialClientApplication app = ConfidentialClientApplication
                     .builder(mailImapAppId, ClientCredentialFactory.createFromSecret(mailImapSecretValue))
@@ -73,7 +72,7 @@ public class AutoIndexMailOsirisDelegate {
         }
     }
 
-    private Session getSessionOutlookOsiris() {
+    private Session getSessionToAccessMail() {
         Properties properties = new Properties();
         properties.setProperty("mail.imap.ssl.protocols", "TLSv1.2");
         properties.put("mail.imap.ssl.enable", mailImapEnable);
@@ -81,11 +80,7 @@ public class AutoIndexMailOsirisDelegate {
         properties.put("mail.imap.starttls.enable", "true");
         properties.put("mail.imap.auth", mailImapAuth);
         properties.put("mail.imap.auth.mechanisms", mailImapMechanism);
-        properties.put("mail.imap.sasl.enable", "true");
-        properties.put("mail.imap.sasl.mechanisms", "XOAUTH2");
-        properties.put("mail.imap.auth.login.disable", "true");
-        properties.put("mail.imap.auth.plain.disable", "true");
-        properties.put("mail.debug", "true");
+
         Session session = Session.getInstance(properties, null);
         return session;
     }
@@ -98,6 +93,7 @@ public class AutoIndexMailOsirisDelegate {
             Date receivedDate = message.getReceivedDate();
             String from = fromAddresses[0].toString();
             String to = toAddresses[0].toString();
+            InputStream file = message.getInputStream();
 
             String body = "";
             if (message.getContent() != null) {
@@ -108,14 +104,11 @@ public class AutoIndexMailOsirisDelegate {
             }
 
             ExportOsirisMail exportedMail = new ExportOsirisMail();
-            File tempFile2 = File.createTempFile("Mail_" + subject, "pdf");
-            try (FileOutputStream outputStream = new FileOutputStream(tempFile2)) {
-                byte[] contentBytes = body.getBytes();
-                outputStream.write(contentBytes);
-                exportedMail.setExportedMail(outputStream);
-            }
+            byte[] contentBytes = body.getBytes();
+            exportedMail.setExportedMail(contentBytes);
             exportedMail.setSubjectMail(subject);
-            exportedMail.setFileName(tempFile2.getName());
+            exportedMail.setFileName("Mail_" + subject + ".pdf");
+            exportedMail.setMailContent(file);
             return exportedMail;
 
         } catch (IOException e) {
@@ -125,7 +118,7 @@ public class AutoIndexMailOsirisDelegate {
         }
     }
 
-    private Boolean purgeInboxMailOsiris(Message message) throws OsirisException {
+    private Boolean purgeInboxMail(Message message) throws OsirisException {
         LocalDate purgeDate = LocalDate.now().minus(30, ChronoUnit.DAYS);
         try {
             Date receivedDate = message.getReceivedDate();
@@ -145,26 +138,25 @@ public class AutoIndexMailOsirisDelegate {
         return instant.atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
-    public List<ExportOsirisMail> getPdfMailsFromJavaMailImap() throws OsirisException {
+    public List<ExportOsirisMail> getPdfMailsFromInbox() throws OsirisException {
         List<ExportOsirisMail> mailExports = new ArrayList<>();
 
-        String accessToken = getTokenConnectionOutlookOsiris();
+        String accessToken = getTokenConnectionMail();
         Store store;
         Folder folder;
         try {
-            store = getSessionOutlookOsiris().getStore("imap");
+            store = getSessionToAccessMail().getStore("imap");
             store.connect(mailImapHost, Integer.parseInt(mailImapPort), mailImapUsername, accessToken);
         } catch (NumberFormatException | MessagingException e) {
             throw new OsirisException(e, "no imap store");
         }
         try {
-            store.connect(mailImapHost, mailImapUsername, mailImapPassword);
             folder = store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
 
             Message[] messages = folder.getMessages();
             for (Message message : messages) {
-                if (!purgeInboxMailOsiris(message))
+                if (!purgeInboxMail(message))
                     mailExports.add(exportMailToFile(message));
             }
             folder.close(false);

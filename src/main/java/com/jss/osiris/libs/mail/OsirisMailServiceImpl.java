@@ -62,7 +62,7 @@ public class OsirisMailServiceImpl implements OsirisMailService {
 
     @Override
     public void getAttachmentFromOsirisMail() throws OsirisException {
-        List<ExportOsirisMail> mailExports = autoIndexMailOsirisDelegate.getPdfMailsFromJavaMailImap();
+        List<ExportOsirisMail> mailExports = autoIndexMailOsirisDelegate.getPdfMailsFromInbox();
         String regex = "\\d+";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = null;
@@ -79,15 +79,11 @@ public class OsirisMailServiceImpl implements OsirisMailService {
                     if (entityFound.get(0).getEntityType().equals(CustomerOrder.class.getSimpleName())) {
                         CustomerOrder customerOrder = customerOrderService
                                 .getCustomerOrder(entityFound.get(0).getEntityId());
-                        try {
-                            attachmentService.addAttachment(new FileInputStream(currentExportedMail.getFileName()),
-                                    customerOrder.getId(), null, CustomerOrder.class.getSimpleName(),
-                                    constantService.getAttachmentTypeClientCommunication(),
-                                    currentExportedMail.getFileName(),
-                                    false, null, null, null, null);
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "file of exported mail not found");
-                        }
+                        attachmentService.addAttachment(currentExportedMail.getMailContent(),
+                                customerOrder.getId(), null, CustomerOrder.class.getSimpleName(),
+                                constantService.getAttachmentTypeClientCommunication(),
+                                currentExportedMail.getFileName(),
+                                false, null, null, null, null);
                     }
                     if (entityFound.get(0).getEntityType().equals(Quotation.class.getSimpleName())) {
                         try {

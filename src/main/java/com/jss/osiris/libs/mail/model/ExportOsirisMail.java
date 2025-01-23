@@ -1,20 +1,22 @@
 package com.jss.osiris.libs.mail.model;
 
-import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class ExportOsirisMail {
 
-    private FileOutputStream exportedMail;
+    private byte[] exportedMail;
+
+    private InputStream mailContent;
 
     private String subjectMail;
 
     private String fileName;
 
-    public FileOutputStream getExportedMail() {
+    public byte[] getExportedMail() {
         return exportedMail;
     }
 
-    public void setExportedMail(FileOutputStream file) {
+    public void setExportedMail(byte[] file) {
         this.exportedMail = file;
     }
 
@@ -32,6 +34,14 @@ public class ExportOsirisMail {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public InputStream getMailContent() {
+        return mailContent;
+    }
+
+    public void setMailContent(InputStream mailContent) {
+        this.mailContent = mailContent;
     }
 
 }
