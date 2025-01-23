@@ -6,7 +6,9 @@ import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { Employee } from 'src/app/modules/profile/model/Employee';
 import { AppService } from 'src/app/services/app.service';
+import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { PaperSetResult } from '../../model/PaperSetResult';
 import { PaperSetResultService } from '../../services/paper.set.result.service';
 import { PaperSetService } from '../../services/paper.set.service';
@@ -25,6 +27,8 @@ export class PaperSetListComponent implements OnInit {
   tableAction: SortTableAction<PaperSetResult>[] = [];
   isDisplayCancelled: boolean = false;
   isDisplayValidated: boolean = false;
+  newComment: CustomerOrderComment = {} as CustomerOrderComment;
+  currentEmployee: Employee | undefined;
 
   constructor(
     private appService: AppService,
@@ -150,7 +154,6 @@ export class PaperSetListComponent implements OnInit {
       }, display: true,
     } as SortTableAction<PaperSetResult>);
 
-
     this.searchPaperSets();
   }
 
@@ -164,3 +167,4 @@ export class PaperSetListComponent implements OnInit {
     );
   }
 }
+

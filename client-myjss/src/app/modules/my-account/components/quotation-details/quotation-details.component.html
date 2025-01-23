@@ -1,0 +1,388 @@
+<div class="d-flex align-items-center mb-4" *ngIf="quotation">
+  <h1 class="h2 mb-0 me-3">Devis {{quotation.id}}</h1> <span class="badge bg-opacity-10   "
+    [ngClass]="getClassForQuotationStatus(quotation)">{{getQuotationStatusLabel(quotation)}}</span>
+</div>
+<div class="alert alert-info d-flex mb-2" role="alert"
+  *ngIf="associatedCustomerOrder && quotation && quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER">
+  <i class="ai-circle-info fs-xl"></i>
+  <div class="ps-2">Ce devis validé a donné lieu à la commande n°<a style="cursor: pointer; text-decoration: underline;"
+      (click)="openOrderDetails($event ,associatedCustomerOrder);$event.stopPropagation();">{{associatedCustomerOrder.id}}</a>
+  </div>
+</div>
+<div class="d-flex align-items-center mb-4"
+  *ngIf="quotation && quotationAssoAffaireOrders && quotationAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
+  <div class="ms-auto">
+    <div class="btn-group dropdown" style="margin-right: 10px;">
+      <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false">
+        <i class="ai-briefcase me-2"></i>
+        Affaire :
+        {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
+        +"
+        "+selectedAssoAffaireOrder.affaire.lastname))}}{{selectedAssoAffaireOrder.affaire.city?(" -
+        "+capitalizeName(selectedAssoAffaireOrder.affaire.city.label)):""}}
+      </button>
+      <div class="dropdown-menu my-1">
+        <label class=" dropdown-item" *ngFor="let asso of quotationAssoAffaireOrders">
+          <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire(asso) ">
+            {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
+            +"
+            "+asso.affaire.lastname))}}{{asso.affaire.city?(" -
+            "+capitalizeName(asso.affaire.city.label)):""}}
+          </a>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="quotation && selectedAssoAffaireOrder">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-briefcase text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">
+        Affaire :
+        {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
+        +" "+selectedAssoAffaireOrder.affaire.lastname))}} </h2>
+      <a class="btn btn-sm  ms-auto btn-danger" role="button"
+        (click)="editAffaireDetails(selectedAssoAffaireOrder.affaire, $event)"
+        *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic || !selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0) && invoiceSummary && invoiceSummary.billingLabelType && invoiceSummary.billingLabelType.id == billingLabelTypeCodeAffaire.id ;else just_edit_affaire">
+        <i class="ai-edit ms-n1 me-2"></i>
+        Indiquer <span
+          *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic)">&nbsp;l'IBAN</span>
+        <span
+          *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic) && (!selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0)">&nbsp;et</span>
+        <span
+          *ngIf="(!selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0)">&nbsp;le
+          mail</span>
+      </a>
+      <ng-template #just_edit_affaire> <a class="btn btn-sm  ms-auto btn-secondary" role="button"
+          (click)="editAffaireDetails(selectedAssoAffaireOrder.affaire, $event)">
+          <i class="ai-edit ms-n1 me-2"></i>
+          Modifier
+        </a></ng-template>
+    </div>
+    <div class="d-flex align-items-center pb-1 mb-2">
+      <h3 class="h6 mb-0 me-3" *ngIf="selectedAssoAffaireOrder.affaire.siret">
+        {{selectedAssoAffaireOrder.affaire.legalForm?selectedAssoAffaireOrder.affaire.legalForm.label:""}} -
+        {{selectedAssoAffaireOrder.affaire.siret }}</h3>
+      <h3 class="h6 mb-0 me-3" *ngIf="!selectedAssoAffaireOrder.affaire.siret">
+        Société non enregistrée
+      </h3>
+    </div>
+    <p class="mb-0">{{selectedAssoAffaireOrder.affaire.address}}<br>{{selectedAssoAffaireOrder.affaire.postalCode}}
+      {{selectedAssoAffaireOrder.affaire.city?selectedAssoAffaireOrder.affaire.city.label:""}}<br></p>
+    <p class="mb-0 mt-1" *ngIf="selectedAssoAffaireOrder.affaire.competentAuthority">
+      RCS : {{capitalizeName(selectedAssoAffaireOrder.affaire.competentAuthority.label)}}</p>
+    <div class="d-flex align-items-center me-3 mt-2"
+      *ngIf="selectedAssoAffaireOrder.affaire.mails && selectedAssoAffaireOrder.affaire.mails.length>0">
+      <i class="ai-mail me-1"></i>
+      {{getListMails(selectedAssoAffaireOrder.affaire.mails)}}
+    </div>
+    <div class="d-flex align-items-center me-3"
+      *ngIf="selectedAssoAffaireOrder.affaire.phones && selectedAssoAffaireOrder.affaire.phones.length>0">
+      <i class="ai-phone me-1"></i>
+      {{getListPhones(selectedAssoAffaireOrder.affaire.phones)}}
+    </div>
+    <div class="d-flex align-items-center me-3 mt-2" *ngIf="selectedAssoAffaireOrder.affaire.paymentIban">
+      <i class="ai-wallet me-1"></i>
+      {{selectedAssoAffaireOrder.affaire.paymentIban}} / {{selectedAssoAffaireOrder.affaire.paymentBic}}
+    </div>
+  </div>
+
+</section>
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="quotation && selectedAssoAffaireOrder">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 mb-0">
+      <i class="ai-layer text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Services commandés</h2>
+    </div>
+  </div>
+  <div class="accordion accordion-alt accordion-orders" id="orders" *ngIf="selectedAssoAffaireOrder.services">
+    <div class="accordion-item border-top mb-0"
+      *ngFor="let service of selectedAssoAffaireOrder.services; let index =index">
+      <div class="accordion-header">
+        <a class="accordion-button d-flex fs-4 fw-normal text-decoration-none py-3 collapsed" href="#"
+          [attr.data-bs-target]="'#order'+service.id" data-bs-toggle="collapse" aria-expanded="false"
+          [attr.aria-controls]="'#order'+service.id">
+          <div class="d-flex justify-content-between w-100">
+            <div class="ps-3 ps-sm-4">
+              <h4 class="h6 mb-2">
+                <a>{{service.customLabel?service.customLabel :
+                  service.serviceType.label}}</a>
+              </h4>
+              <div class="text-body-secondary fs-sm me-3">
+                <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
+              </div>
+            </div>
+            <div class="me-3 me-sm-4" *ngIf="service.confrereLabel">
+              <div class="fs-sm text-body-secondary">{{service.confrereLabel}}</div>
+              <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
+            </div>
+            <div class="me-3 me-sm-4">
+              <div class="text-body-secondary fs-sm me-3 ">
+                {{service.servicePrice | currency:'EUR' }}
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="accordion-collapse collapse" [id]="'order'+service.id" data-bs-parent="#orders"
+        [ngClass]="{'show':index==0}">
+        <div class="accordion-body">
+          <div class="accordion-item border-top mb-0" *ngIf="!quotationAssoAffaireOrders[quotation.id]">
+            <ul class="nav nav-tabs p-3" role="tablist" style="margin-bottom: 0;">
+              <li class="nav-item ">
+                <a [attr.href]="'#myDocs'+service.id" class="nav-link active " data-bs-toggle="tab" role="tab">
+                  <i class="fi-home me-2"></i>
+                  Mes documents
+                </a>
+              </li>
+              <li class="nav-item" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+                <a [attr.href]="'#myFields'+service.id" class="nav-link" data-bs-toggle="tab" role="tab">
+                  <i class="fi-home me-2"></i>
+                  Mes informations complémentaires
+                </a>
+              </li>
+            </ul>
+            <div class="tab-content ">
+              <div class="tab-pane fade show active" [attr.id]="'myDocs'+service.id" role="tabpanel">
+                <div class="alert alert-info d-flex mb-0 mb-2" role="alert" *ngIf="canEditQuotation">
+                  <i class="ai-circle-info fs-xl"></i>
+                  <div class="ps-2">Vous pouvez télécharger ci-dessous les documents nécessaires au traitement du
+                    service</div>
+                </div>
+                <div class="list-group">
+                  <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
+                    <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
+                      [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
+                      *ngIf="assoServiceDocument.isMandatory">
+                      <div class="d-flex flex-wrap w-100 justify-content-between">
+                        <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                      </div>
+                      <p class="fs-sm  "
+                        *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
+                        {{assoServiceDocument.formalisteComment}}</p>
+                      <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
+                        <div class="col-md-10">
+                          <single-upload [entity]="assoServiceDocument" (endOfUpload)="refreshCurrentAssoAffaireOrder()"
+                            [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
+                            [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
+                            [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                        </div>
+                      </div>
+                      <div class="table-responsive"
+                        *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
+                        <table class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Nom</th>
+                              <th scope="col">Date de dépot</th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let attachment of assoServiceDocument.attachments; let index = index">
+                              <th scope="row">{{index+1}}</th>
+                              <td>{{attachment.description}}</td>
+                              <td>{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                              <td><button type="button" class="btn btn-danger btn-icon btn-sm me-3"
+                                  aria-label="Supprimer" data-bs-toggle="tooltip" data-bs-placement="right"
+                                  title="Supprimer" (click)="disableAttachment(attachment)"><span
+                                    data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom">
+                                    <i class="ai-cross"></i></span>
+                                </button><button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                  aria-label="Télécharger" data-bs-toggle="tooltip" data-bs-placement="right"
+                                  title="Télécharger" (click)="downloadAttachment(attachment)">
+                                  <i class="ai-download"></i>
+                                </button></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+            <div class="tab-content p-3"
+              *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+              <div class="tab-pane fade show" [attr.id]="'myFields'+service.id" role="tabpanel">
+                <div class="alert alert-info d-flex mb-2" role="alert">
+                  <i class="ai-circle-info fs-xl"></i>
+                  <div class="ps-2">Vous pouvez renseigner ci-dessous les informations complémentaires nécessaires au
+                    traitement du service</div>
+                </div>
+                <div *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
+                    <label for="text-input" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div> <input class="form-control" id="text-input" [(ngModel)]="assoServiceFieldType.stringValue"
+                        maxLength="250" />
+                    </div>
+                  </div>
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
+                    <label for="text-textarea"
+                      class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div> <textarea class="form-control" id="text-textarea"
+                        [(ngModel)]="assoServiceFieldType.textAreaValue" rows="5"></textarea>
+                    </div>
+                  </div>
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
+                    <label for="text-date" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div> <input class="form-control" id="text-date" type="date"
+                        [(ngModel)]="assoServiceFieldType.dateValue" />
+                    </div>
+                  </div>
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
+                    <label for="text-integer" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div> <input class="form-control" id="integer" type="number"
+                        [(ngModel)]="assoServiceFieldType.integerValue" />
+                    </div>
+                  </div>
+                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
+                    <label for="text-select" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                    <div>
+                      <select id="text-select" class="form-select form-select-lg"
+                        [(ngModel)]="assoServiceFieldType.selectValue">
+                        <option
+                          *ngFor="let option of assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues"
+                          [value]="option">
+                          {{option.value}}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-center pt-1 pt-sm-2" *ngIf="canEditQuotation">
+                  <div class="btn-group   " role="group" aria-label="Outline button group">
+                    <button type="button" class="btn btn-primary"
+                      (click)="saveFieldsValue(service)">Enregistrer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
+  <!-- Address -->
+  <section class="col">
+    <div class="card h-100 border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
+          <i class="ai-map-pin text-primary lead pe-1 me-2"></i>
+          <h2 class="h4 mb-0">Adresses</h2>
+          <a class="btn btn-sm btn-secondary ms-auto" (click)="editAddress($event)" *ngIf="canEditQuotation">
+            <i class="ai-edit ms-n1 me-2"></i>
+            Modifier
+          </a>
+        </div>
+        <div class="d-flex align-items-center pb-1 mb-2">
+          <h3 class="h6 mb-0 me-3">Adresse de facturation</h3>
+        </div>
+        <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-items-center my-1"
+          *ngIf="quotationMailComputeResult">
+          <div class="d-flex align-items-center me-3">
+            <i class="ai-mail me-1"></i>
+            {{getQuotationBillingMailList()}}
+          </div>
+        </div>
+        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!quotationMailComputeResult">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+          </p>
+        </div>
+        <p class="mb-0" *ngIf="quotationInvoiceLabelResult">
+          {{quotationInvoiceLabelResult.billingLabel}}<br>{{quotationInvoiceLabelResult.billingLabelAddress
+          }}<br>{{quotationInvoiceLabelResult.billingLabelPostalCode }}
+          {{quotationInvoiceLabelResult.billingLabelCity?quotationInvoiceLabelResult.billingLabelCity.label:""}}<span
+            *ngIf="quotationInvoiceLabelResult.commandNumber && quotationInvoiceLabelResult.commandNumber.length>0"><br>Commande
+            {{quotationInvoiceLabelResult.commandNumber }}</span></p>
+        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!quotationInvoiceLabelResult">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+          </p>
+        </div>
+        <div class="d-flex align-items-center pt-4 pb-1 my-2">
+          <h3 class="h6 mb-0 me-3">Adresse d'envoi des documents</h3>
+        </div>
+        <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-iteems-center my-1"
+          *ngIf="quotationDigitalMailComputeResult">
+          <div class="d-flex align-items-center me-3">
+            <i class="ai-mail me-1"></i>
+            {{getQuotationDigitalMailList()}}
+          </div>
+        </div>
+        <p class="mb-0" *ngIf="quotationPhysicalMailComputeResult">
+          {{quotationPhysicalMailComputeResult.billingLabel}}<br>{{quotationPhysicalMailComputeResult.billingLabelAddress
+          }}<br>{{quotationPhysicalMailComputeResult.billingLabelPostalCode }}
+          {{quotationPhysicalMailComputeResult.billingLabelCity?quotationPhysicalMailComputeResult.billingLabelCity.label:""}}<span
+            *ngIf="quotationPhysicalMailComputeResult.commandNumber && quotationPhysicalMailComputeResult.commandNumber.length>0"><br>Commande
+            {{quotationPhysicalMailComputeResult.commandNumber }}</span></p>
+        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!quotationPhysicalMailComputeResult">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Billing -->
+  <section class="col">
+    <div class="card h-100 border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
+          <i class="ai-wallet text-primary lead pe-1 me-2"></i>
+          <h2 class="h4 mb-0">Facturation</h2>
+          <a class="btn btn-sm btn-secondary ms-auto" *ngIf="quotation && invoiceSummary && displayPayButton"
+            (click)="payQuotation($event)">
+            <i class="ai-cart ms-n1 me-2"></i>Payer un acompte
+          </a>
+        </div>
+        <div class="d-flex align-items-center pt-2 pb-1 mb-2">
+          <h3 class="h6 mb-0 me-3">Montant prévisionnel</h3>
+        </div>
+        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!invoiceSummary">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+          </p>
+        </div>
+        <div class="  mt-4" *ngIf="invoiceSummary">
+          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+            <span class="ms-2">Prix HT</span>
+            <span class="ms-auto">{{invoiceSummary.preTaxPriceTotal | currency:'EUR' }}</span>
+          </div>
+          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+            <span class="ms-2">TVA</span>
+            <span class="ms-auto">{{invoiceSummary.vatTotal| currency:'EUR' }}</span>
+          </div>
+          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2"
+            *ngIf="invoiceSummary.discountTotal && invoiceSummary.discountTotal>0">
+            <span class="ms-2">Remise</span>
+            <span class="ms-auto">{{invoiceSummary.discountTotal| currency:'EUR' }}</span>
+          </div>
+          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+            <span class="ms-2">
+              <h6>Total TTC</h6>
+            </span>
+            <span class="ms-auto">
+              <h6>{{invoiceSummary.totalPrice| currency:'EUR' }}</h6>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

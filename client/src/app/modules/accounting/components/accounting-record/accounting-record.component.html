@@ -17,12 +17,12 @@
             [form]="accountingRecordForm" propertyName="accountingJournal">
           </select-accounting-journal>
         </td>
-        <td *ngIf="tiersToDisplay==undefined">
+        <td>
           <generic-datepicker [(model)]="accountingRecordSearch.startDate" label="Date de début"
             [form]="accountingRecordForm" propertyName="startDate" [isMandatory]="false"
             [isDisabled]="false"></generic-datepicker>
         </td>
-        <td *ngIf="tiersToDisplay==undefined">
+        <td>
           <generic-datepicker [(model)]="accountingRecordSearch.endDate" label="Date de fin"
             [form]="accountingRecordForm" propertyName="endDate" [isMandatory]="false"
             [isDisabled]="false"></generic-datepicker>
@@ -122,7 +122,7 @@
   <mat-icon>add</mat-icon>
 </button>
 <button matTooltip="Télécharger un relevé de comptes" mat-fab color="accent" class="second-fab-button"
-  *ngIf="tiersToDisplay" (click)="downloadBillingClosureReceipt()">
+  *ngIf="tiersToDisplay || responsableToDisplay" (click)="downloadBillingClosureReceipt()">
   <mat-icon>download</mat-icon>
 </button>
 <button matTooltip="Lettrer les lignes sélectionnées" mat-fab color="accent" class="third-fab-button"

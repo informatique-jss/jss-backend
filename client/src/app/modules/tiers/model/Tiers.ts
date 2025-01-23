@@ -1,19 +1,32 @@
+import { AccountingAccount } from "../../accounting/model/AccountingAccount";
+import { City } from "../../miscellaneous/model/City";
 import { Civility } from "../../miscellaneous/model/Civility";
+import { Country } from "../../miscellaneous/model/Country";
 import { DeliveryService } from "../../miscellaneous/model/DeliveryService";
+import { IAttachment } from "../../miscellaneous/model/IAttachment";
+import { IDocument } from "../../miscellaneous/model/IDocument";
+import { Language } from "../../miscellaneous/model/Language";
+import { Mail } from "../../miscellaneous/model/Mail";
+import { Phone } from "../../miscellaneous/model/Phone";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
+import { TiersFollowup } from "../../miscellaneous/model/TiersFollowup";
+import { Employee } from "../../profile/model/Employee";
 import { PaymentType } from './../../miscellaneous/model/PaymentType';
 import { Competitor } from "./Competitor";
-import { ITiers } from './ITiers';
 import { Responsable } from "./Responsable";
+import { RffFrequency } from "./RffFrequency";
 import { TiersCategory } from "./TiersCategory";
 import { TiersType } from "./TiersType";
 
-export interface Tiers extends ITiers {
+export interface Tiers extends IDocument, IAttachment {
+  id: number;
   denomination: string | null;
   isIndividual: boolean;
   deliveryService: DeliveryService;
   intercom: string;
   intercommunityVat: string | null;
+  siret: string;
+  isNewTiers: boolean;
   specialOffers: SpecialOffer[];
   instructions: string;
   paymentType: PaymentType;
@@ -32,4 +45,27 @@ export interface Tiers extends ITiers {
   rffFormaliteRate: number;
   rffInsertionRate: number;
   idAs400: string;
+  salesEmployee: Employee | undefined;
+  defaultCustomerOrderEmployee: Employee | undefined;
+  formalisteEmployee: Employee | undefined;
+  insertionEmployee: Employee | undefined;
+  mailRecipient: string | null;
+  language: Language;
+  address: string;
+  postalCode: string;
+  cedexComplement: string;
+  city: City;
+  country: Country;
+  mails: Mail[];
+  phones: Phone[];
+  tiersFollowups: TiersFollowup[];
+  observations: string;
+  accountingAccountCustomer: AccountingAccount;
+  accountingAccountDeposit: AccountingAccount;
+  accountingAccountLitigious: AccountingAccount;
+  accountingAccountSuspicious: AccountingAccount;
+  rffFrequency: RffFrequency;
+  rffIban: string;
+  rffBic: string;
+  rffMail: string;
 }

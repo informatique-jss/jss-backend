@@ -257,11 +257,6 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-invoice-status>
-        <referential-regie *ngIf="selectedReferential==BILLING_REGIE"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-regie>
         <referential-principal-accounting-account *ngIf="selectedReferential==PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"

@@ -4,7 +4,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
-import { instanceOfConfrere } from 'src/app/libs/TypeHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -14,7 +13,6 @@ import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { OrderingSearchResult } from 'src/app/modules/quotation/model/OrderingSearchResult';
-import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
 import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
@@ -29,7 +27,7 @@ import { PaymentAssociate } from '../../model/PaymentAssociate';
 import { InvoiceService } from '../../services/invoice.service';
 import { PaymentService } from '../../services/payment.service';
 import { AmountDialogComponent } from '../amount-dialog/amount-dialog.component';
-import { getCustomerOrderForIQuotation, getCustomerOrderForInvoice, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
+import { getCustomerOrderNameForTiers, getRemainingToPay } from '../invoice-tools';
 
 @Component({
   selector: 'associate-payment-dialog',
@@ -47,7 +45,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
   selectedRefundTiers: Tiers | undefined;
   selectedRefundConfrere: Confrere | undefined;
   selectedRefundAffaire: Affaire | undefined;
-  tiersOrder: ITiers | undefined | null;
+  responsableOrder: Responsable | undefined | null;
   isForQuotationBilling: boolean = false;
 
   refreshTable: Subject<void> = new Subject<void>();
@@ -108,7 +106,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     if (this.payment && this.customerOrder && !this.doNotInitializeAsso)
       this.associateOrder(this.customerOrder);
 
-    this.tiersOrder = this.getTiersOrder();
+    this.responsableOrder = this.getResponsableOrder();
 
     if (this.payment) {
       if (this.payment.paymentAmount > 0) {
@@ -120,7 +118,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
   }
 
   onConfirm(): void {
-    if (this.payment && this.tiersOrder) {
+    if (this.payment) {
       let paymentAssociate = {} as PaymentAssociate;
 
       if (this.selectedRefundTiers == null && this.selectedRefundAffaire == null && this.selectedRefundConfrere == null && this.getBalance() > INVOICING_PAYMENT_LIMIT_REFUND_EUROS) {
@@ -129,8 +127,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
       }
       paymentAssociate.affaireRefund = this.selectedRefundAffaire;
       paymentAssociate.tiersRefund = this.selectedRefundTiers;
-      paymentAssociate.confrereRefund = this.selectedRefundConfrere;
-      paymentAssociate.tiersOrder = this.tiersOrder as Tiers;
+      if (this.responsableOrder)
+        paymentAssociate.responsableOrder = this.responsableOrder;
       paymentAssociate.payment = this.payment;
 
       if (this.associations) {
@@ -199,14 +197,14 @@ export class AssociatePaymentDialogComponent implements OnInit {
           this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusReceived.label, true, 15);
           return;
         }
-        if (this.payment && Math.round(invoice.totalPrice * 100) != Math.abs(Math.round(this.payment.paymentAmount * 100))) {
+        if (this.payment && Math.round(invoice.totalPrice * 100) < Math.abs(Math.round(this.payment.paymentAmount * 100))) {
           this.appService.displaySnackBar("Veuillez choisir une facture avec un total de " + this.payment.paymentAmount + " €", true, 15);
           return;
         }
       }
     }
 
-    if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice)) && !this.habilitationsService.canByPassMultipleCustomerOrderOnAssociationCheck()) {
+    if (invoice.responsable && !this.isSameCustomerOrder(invoice.responsable) && !this.habilitationsService.canByPassMultipleCustomerOrderOnAssociationCheck()) {
       this.appService.displaySnackBar("Veuillez choisir une facture du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
       return;
     }
@@ -227,8 +225,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
         let asso = { payment: this.payment, invoice: invoice } as AssociationSummaryTable;
         asso.amountUsed = parseFloat(response);
         this.associations.push(asso);
-        if (!this.tiersOrder || !this.tiersOrder.id)
-          this.tiersOrder = this.getTiersOrder();
+        if (!this.responsableOrder || !this.responsableOrder.id)
+          this.responsableOrder = this.getResponsableOrder();
         this.refreshSummaryTables();
       } else {
         return;
@@ -248,7 +246,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           return;
         }
 
-    if (!this.isSameCustomerOrder(getCustomerOrderForIQuotation(order)) && !this.habilitationsService.canByPassMultipleCustomerOrderOnAssociationCheck()) {
+    if (order.responsable && !this.isSameCustomerOrder(order.responsable) && !this.habilitationsService.canByPassMultipleCustomerOrderOnAssociationCheck()) {
       this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
       return;
     }
@@ -270,8 +268,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
       asso.amountUsed = maxAmount;
       this.associations.push(asso);
       this.refreshSummaryTables();
-      if (!this.tiersOrder || !this.tiersOrder.id)
-        this.tiersOrder = this.getTiersOrder();
+      if (!this.responsableOrder || !this.responsableOrder.id)
+        this.responsableOrder = this.getResponsableOrder();
       this.isForQuotationBilling = false;
     } else {
       let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
@@ -285,8 +283,8 @@ export class AssociatePaymentDialogComponent implements OnInit {
           asso.amountUsed = parseFloat(response);
           this.associations.push(asso);
           this.refreshSummaryTables();
-          if (!this.tiersOrder || !this.tiersOrder.id)
-            this.tiersOrder = this.getTiersOrder();
+          if (!this.responsableOrder || !this.responsableOrder.id)
+            this.responsableOrder = this.getResponsableOrder();
         } else {
           return;
         }
@@ -294,71 +292,57 @@ export class AssociatePaymentDialogComponent implements OnInit {
     }
   }
 
-  isSameCustomerOrder(newCustomerOrder: ITiers): boolean {
-    let currentCustomerOrder: ITiers | undefined = undefined;
-
-    // If responsable, consider tiers
-    if ((newCustomerOrder as Responsable).tiers)
-      newCustomerOrder = (newCustomerOrder as Responsable).tiers;
+  isSameCustomerOrder(newCustomerOrder: Responsable): boolean {
+    let currentCustomerOrder: Tiers | undefined = undefined;
 
     if (this.associations)
       for (let asso of this.associations) {
         let customerOrder;
         if (asso.invoice)
-          customerOrder = getCustomerOrderForInvoice(asso.invoice);
+          customerOrder = asso.invoice.responsable;
         if (asso.customerOrder)
-          customerOrder = getCustomerOrderForIQuotation(asso.customerOrder);
-        if (currentCustomerOrder == undefined)
-          currentCustomerOrder = customerOrder;
+          customerOrder = asso.customerOrder.responsable;
+        if (currentCustomerOrder == undefined && customerOrder)
+          currentCustomerOrder = customerOrder.tiers;
 
-        if ((currentCustomerOrder as Responsable).tiers)
-          currentCustomerOrder = (currentCustomerOrder as Responsable).tiers;
-
-        if (currentCustomerOrder != undefined && newCustomerOrder != undefined && currentCustomerOrder?.id != newCustomerOrder.id)
+        if (currentCustomerOrder && newCustomerOrder && currentCustomerOrder.id != newCustomerOrder.tiers.id)
           return false;
       }
     return true;
   }
 
-  getCustomerOrderNameForITiers = getCustomerOrderNameForITiers;
+  getCustomerOrderNameForITiers = getCustomerOrderNameForTiers;
 
-  getTiersOrder(): ITiers | null {
-    let customerOrder: ITiers | undefined = undefined;
+  getResponsableOrder(): Responsable | undefined {
+    let customerOrder: Responsable | undefined = undefined;
     if (this.associations && this.associations.length > 0) {
       if (this.associations[0].invoice) {
-        customerOrder = getCustomerOrderForInvoice(this.associations[0].invoice);
+        customerOrder = this.associations[0].invoice.responsable;
       } else {
-        customerOrder = getCustomerOrderForIQuotation(this.associations[0].customerOrder);
+        customerOrder = this.associations[0].customerOrder.responsable;
       }
     } else if (this.invoice) {
-      customerOrder = getCustomerOrderForInvoice(this.invoice!);
+      customerOrder = this.invoice!.responsable;
     } else if (this.customerOrder) {
-      customerOrder = getCustomerOrderForIQuotation(this.customerOrder);
+      customerOrder = this.customerOrder.responsable;
     } else {
-      return null;
+      return undefined;
     }
-    // If responsable, return associate Tiers
-    if ((customerOrder as any).tiers)
-      customerOrder = ((customerOrder as any).tiers as Tiers);
 
     return customerOrder;
   }
 
-  getRefundCustomerOrder(): ITiers | null {
-    let customerOrder = this.getTiersOrder();
+  getRefundCustomerOrder(): Tiers | null {
+    let responsable = this.getResponsableOrder();
 
-    if (!customerOrder)
+    if (!responsable)
       return null;
 
-    let refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), customerOrder);
-
-    // If confrere check regie
-    if (refundDocument && refundDocument.regie && refundDocument.regie.iban)
-      return customerOrder;
+    let refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), responsable);
 
     if (!refundDocument || !refundDocument.refundIBAN)
       return null;
-    return customerOrder;
+    return responsable.tiers;
   }
 
   getAllAffaireRefundable(): Affaire[] {
@@ -408,15 +392,9 @@ export class AssociatePaymentDialogComponent implements OnInit {
   selectRefundTiers() {
     let refundTiers = this.getRefundCustomerOrder();
     if (refundTiers) {
-      if (instanceOfConfrere(refundTiers)) {
-        this.selectedRefundConfrere = refundTiers;
-        this.selectedRefundAffaire = undefined;
-        this.selectedRefundTiers = undefined;
-      } else {
-        this.selectedRefundTiers = refundTiers as Tiers;
-        this.selectedRefundAffaire = undefined;
-        this.selectedRefundConfrere = undefined;
-      }
+      this.selectedRefundTiers = refundTiers as Tiers;
+      this.selectedRefundAffaire = undefined;
+      this.selectedRefundConfrere = undefined;
     }
   }
 

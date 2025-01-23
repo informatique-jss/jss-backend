@@ -137,10 +137,10 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     this.provisionSearch.customerOrders = [this.tiers];
 
     if (this.tiers.responsables) {
-      this.orderingSearch.customerOrders.push(...this.tiers.responsables);
-      this.invoiceSearch.customerOrders.push(...this.tiers.responsables);
-      this.quotationSearch.customerOrders.push(...this.tiers.responsables);
-      this.provisionSearch.customerOrders.push(...this.tiers.responsables);
+      this.orderingSearch.customerOrders.push(...this.tiers.responsables as any);
+      this.invoiceSearch.customerOrders.push(...this.tiers.responsables as any);
+      this.quotationSearch.customerOrders.push(...this.tiers.responsables as any);
+      this.provisionSearch.customerOrders.push(...this.tiers.responsables as any);
     }
 
     this.responsableAccountSearch = this.tiers;

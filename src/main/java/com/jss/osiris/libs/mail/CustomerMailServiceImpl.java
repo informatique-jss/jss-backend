@@ -23,17 +23,18 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.repository.CustomerMailRepository;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
-import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.profile.service.EmployeeService;
-import com.jss.osiris.modules.quotation.model.Confrere;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.model.Confrere;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 import jakarta.mail.Address;
 import jakarta.mail.Message;
@@ -105,10 +106,19 @@ public class CustomerMailServiceImpl implements CustomerMailService {
     }
 
     @Override
+    public CustomerMail cancelCustomerMail(CustomerMail customerMail) {
+        customerMail.setIsCancelled(true);
+        return addOrUpdateCustomerMail(customerMail);
+    }
+
+    @Override
     public void addMailToQueue(CustomerMail mail) throws OsirisException {
         mail.setCreatedDateTime(LocalDateTime.now());
         mail.setIsSent(false);
-        mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
+
+        Employee employee = employeeService.getCurrentEmployee();
+        if (employee != null)
+            mail.setSendToMeEmployee((Employee) employee);
         addOrUpdateCustomerMail(mail);
 
         if (mail.getAttachments() != null)

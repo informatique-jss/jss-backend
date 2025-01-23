@@ -1,7 +1,7 @@
 package com.jss.osiris.libs.mail.model;
 
-import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 
 public class LetterModel {
     private String customerReference;

@@ -31,7 +31,6 @@ export interface AccountingRecordSearchResult {
   * only used in fronted
   */
   balance: number;
-  contrePasseOperationId: number;
   affaireLabel: string;
   responsable: string;
   isTemporary: boolean;

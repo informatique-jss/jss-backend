@@ -93,6 +93,11 @@ export class SearchComponent implements OnInit {
     search: ['']
   });
 
+  ngOnDestroy() {
+    if (this.searchObservableRef)
+      this.searchObservableRef.unsubscribe();
+  }
+
   debounce: any;
 
   searchEntities() {
@@ -226,7 +231,7 @@ export class SearchComponent implements OnInit {
             + (provision.formalite && provision.formalite.formaliteStatus ? " - " + provision.formalite.formaliteStatus.label : "")
           );
       }
-      return out.join(" / ") + " / Commande " + entity.text.customerOrder.id;
+      return out.join(" / ") + " / Commande " + entity.text.customerOrder.id + " - " + entity.text.customerOrder.customerOrderStatus.label;
     }
     return "";
   }

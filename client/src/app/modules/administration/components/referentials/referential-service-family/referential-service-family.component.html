@@ -36,6 +36,20 @@
           </tr>
           <tr>
             <td>
+              <generic-input [(model)]="selectedEntity.customLabel" label="Nom fonctionnel MyJSS" [maxLength]="255"
+                [form]="entityForm" propertyName="customLabel" [isMandatory]="false"
+                [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="selectedEntity.comment" label="Commentaire MyJSS" [form]="entityForm"
+                propertyName="comment" [isMandatory]="false" [isDisabled]="!editMode"
+                [numberOfLines]="5"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-service-family-group [(model)]="selectedEntity.serviceFamilyGroup"
                 label="Groupe de familles de service" [form]="entityForm" propertyName="serviceFamilyGroup"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-service-family-group>

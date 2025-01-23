@@ -62,7 +62,6 @@ import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-co
 import { AutocompletePrincipalAccountingAccountComponent } from '../forms/autocomplete-principal-accounting-account/autocomplete-principal-accounting-account.component';
 import { AutocompleteProviderComponent } from '../forms/autocomplete-provider/autocomplete-provider.component';
 import { AutocompleteProvisionTypeComponent } from '../forms/autocomplete-provision-type/autocomplete-provision-type.component';
-import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomplete-regie.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
 import { AutocompleteRnaComponent } from '../forms/autocomplete-rna/autocomplete-rna.component';
@@ -208,6 +207,7 @@ import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
 import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
+import { SelectCategoryComponent } from '../forms/select-category/select-category.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
 import { SelectCustomerOrderFrequencyComponent } from '../forms/select-customer-order-frequency/select-customer-order-frequency.component';
@@ -256,6 +256,7 @@ import { SelectTypeDocumentComponent } from '../forms/select-type-document/selec
 import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component';
 import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
+import { SingleChipsMailComponent } from '../forms/single-chips-mail/single-chips-mail.component';
 import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
 import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
@@ -364,7 +365,6 @@ const routes: Routes = [
     SelectVatComponent,
     SelectRegionsComponent,
     AutocompleteRegionComponent,
-    AutocompleteRegieComponent,
     SelectFundTypeComponent,
     ChipsCityComponent,
     AutocompleteDepartmentComponent,
@@ -547,7 +547,9 @@ const routes: Routes = [
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
     SelectFormaliteInfogreffeStatusComponent,
-    ChipsServiceTypeComponent
+    ChipsServiceTypeComponent,
+    SingleChipsMailComponent,
+    SelectCategoryComponent,
   ],
   exports: [
     HistoryComponent,
@@ -642,7 +644,6 @@ const routes: Routes = [
     SortTableComponent,
     EditCommentDialogComponent,
     SelectInvoiceStatusComponent,
-    AutocompleteRegieComponent,
     SelectAssignationTypeComponent,
     ChipsProvisionFamilyTypeComponent,
     AutocompleteBillingItemComponent,
@@ -788,7 +789,9 @@ const routes: Routes = [
     SelectActiveDirectoryGroupComponent,
     AutocompleteInfogreffeFormaliteComponent,
     SelectFormaliteInfogreffeStatusComponent,
-    ChipsServiceTypeComponent
+    ChipsServiceTypeComponent,
+    SingleChipsMailComponent,
+    SelectCategoryComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

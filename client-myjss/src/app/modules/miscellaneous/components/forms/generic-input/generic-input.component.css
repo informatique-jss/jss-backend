@@ -1,0 +1,15 @@
+.error {
+  color: rgb(237, 80, 80);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  margin-left: 15px;
+}
+
+.icon-with-error {
+  padding-bottom: 16px;
+}
+
+.translate-quarter-y {
+  transform: translateY(25%);
+}

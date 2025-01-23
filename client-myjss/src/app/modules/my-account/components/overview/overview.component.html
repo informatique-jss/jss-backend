@@ -1,0 +1,107 @@
+<h1 class="h2 mb-4">Tableau de bord</h1>
+
+<div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4" *ngIf="statistics">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-chart text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Mes statistiques</h2>
+    </div>
+    <!-- Stats -->
+    <div class="row g-3 g-xl-4">
+      <div class="col-md-4 col-sm-6" *ngIf="statistics.customerOrderInProgress && statistics.customerOrderInProgress>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <h2 class="h6 pb-2 mb-1">Commandes en cours</h2>
+          <div class="h2 text-primary mb-2">{{statistics.customerOrderInProgress}}</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6" *ngIf="statistics.quotationToValidate && statistics.quotationToValidate>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <h2 class="h6 pb-2 mb-1">Devis à valider</h2>
+          <div class="h2 text-primary mb-2">{{statistics.quotationToValidate}}</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6" *ngIf="statistics.invoiceToPay && statistics.invoiceToPay>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <h2 class="h6 pb-2 mb-1">Facture en attente de paiement</h2>
+          <div class="h2 text-primary mb-2">{{statistics.invoiceToPay}}</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6" *ngIf="statistics.invoiceAfterDueDate && statistics.invoiceAfterDueDate>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <h2 class="h6 pb-2 mb-1">Facture en retard de paiement</h2>
+          <div class="h2 text-primary mb-2">{{statistics.invoiceAfterDueDate}}</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6"
+        *ngIf="statistics.customerOrderRequieringAttention && statistics.customerOrderRequieringAttention>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <h2 class="h6 pb-2 mb-1">Commandes qui requièrent votre attention</h2>
+          <div class="h2 text-primary mb-2">{{statistics.customerOrderRequieringAttention}}</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6" *ngIf="statistics.customerOrderDraft && statistics.customerOrderDraft>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <h2 class="h6 pb-2 mb-1">Brouillons de commandes </h2>
+          <div class="h2 text-primary mb-2">{{statistics.customerOrderDraft}}</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6" *ngIf="statistics.quotationDraft && statistics.quotationDraft>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <h2 class="h6 pb-2 mb-1">Brouillons de devis </h2>
+          <div class="h2 text-primary mb-2">{{statistics.quotationDraft}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mt-4" *ngIf="currentUser">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-circle-info text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Mes contacts</h2>
+    </div>
+    <ng-container *ngIf="currentUser.salesEmployee">
+      <div class="d-md-flex align-items-center">
+        <div class="d-sm-flex align-items-center">
+          <avatar class="avatar-select" [user]="currentUser.salesEmployee" [size]="70"></avatar>
+          <div class="pt-3 pt-sm-0 ps-sm-3">
+            <h3 class="h5 mb-2">{{capitalizeName(currentUser.salesEmployee.firstname + " "
+              +currentUser.salesEmployee.lastname)}} </h3>
+            <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-iteems-center">
+              <div class="d-flex align-items-center text-nowrap">
+                <i class="ai-map-pin me-1"></i>
+                {{capitalizeName(currentUser.salesEmployee.title)}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row py-4 mb-2 mb-sm-3">
+        <div class="col-md-8 mb-4 mb-md-0">
+          <table class="table mb-0">
+            <tbody>
+              <tr>
+                <td class="border-0 text-body-secondary py-1 px-0"><i class="ai-phone me-1"></i>Téléphone</td>
+                <td class="border-0 text-dark fw-medium py-1 ps-3">{{currentUser.salesEmployee}}
+                </td>
+              </tr>
+              <tr>
+                <td class="border-0 text-body-secondary py-1 px-0"><i class="ai-mail me-1"></i>Mail</td>
+                <td class="border-0 text-dark fw-medium py-1 ps-3">{{currentUser.salesEmployee.mail}}</td>
+              </tr>
+              <tr>
+                <td class="border-0 text-body-secondary py-1 px-0"><i class="ai-pin me-1"></i>Prenez rendez-vous
+                  ci-dessous : </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="center-block">
+          <iframe class="pt-4" src="https://outlook.office365.com/book/test1@jss138.onmicrosoft.com/" width="100%"
+            height="2300px" frameborder="0">
+          </iframe>
+        </div>
+      </div>
+    </ng-container>
+  </div>

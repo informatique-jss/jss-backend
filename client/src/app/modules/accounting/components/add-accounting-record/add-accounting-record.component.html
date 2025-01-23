@@ -30,7 +30,8 @@
           </td>
           <td>
             <generic-datepicker [(model)]="accountingRecord.operationDateTime" label="Date de l'opération"
-              [form]="accountingRecordForm" propertyName="operationDateTime" [isMandatory]="true">
+              [form]="accountingRecordForm" propertyName="operationDateTime" [isMandatory]="true" [minDate]="minDate"
+              [maxDate]="maxDate">
             </generic-datepicker>
           </td>
         </tr>

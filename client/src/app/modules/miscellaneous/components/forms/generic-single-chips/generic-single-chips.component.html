@@ -1,0 +1,13 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-grid #chipList [formControlName]="propertyName">
+    <mat-chip-row *ngFor="let chip of model" (removed)="removeElement(chip)">
+      {{getValueFromObject(chip)}}
+      <button matChipRemove *ngIf="!isDisabled">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip-row>
+    <input [placeholder]="label" #chipInput [matChipInputFor]="chipList" [disabled]="isDisabled"
+      [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES" (matChipInputTokenEnd)="addElement($event)">
+  </mat-chip-grid>
+</mat-form-field>

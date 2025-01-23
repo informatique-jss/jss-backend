@@ -62,6 +62,7 @@
                     <tr>
                         <td>
                             <span th:text="${denomination}"></span><br />
+                            <span th:if="${tiersName!=null}" th:text="${tiersName}"></span><br />
                             <span th:text="${address}"></span><br />
                             <span th:text="${postalCode}"></span> <span th:text="${city}"></span><br />
                         </td>

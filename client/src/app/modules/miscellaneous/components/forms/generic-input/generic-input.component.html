@@ -1,7 +1,8 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label *ngIf="label && label.length>0">{{label}}</mat-label>
   <input matInput [maxlength]="maxLength+''" [minlength]="minLength+''" [formControlName]="propertyName"
-    [placeholder]="label" (blur)="blurForm()" [type]="type=='number'?'text':type" (change)="parse($event)">
+    [placeholder]="label" (blur)="blurForm()" [type]="type=='number'?'text':type" [step]="step"
+    (change)="parse($event)">
   <mat-hint *ngIf="hint && hint.length>0">
     {{hint}}</mat-hint>
 </mat-form-field>

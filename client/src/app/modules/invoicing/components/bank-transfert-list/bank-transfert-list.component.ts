@@ -28,8 +28,6 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
   tableAction: SortTableAction<BankTransfertSearchResult>[] = [];
   bookmark: BankTransfertSearch | undefined;
 
-
-
   constructor(
     private bankTransfertSearchResultService: BankTransfertSearchResultService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -39,7 +37,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     public editCommentDialog: MatDialog,
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -57,7 +55,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "isSelectedForExport", fieldName: "isSelectedForExport", label: "Est sélectionné pour l'export", valueFonction: (element: BankTransfertSearchResult, column: SortTableColumn<BankTransfertSearchResult>) => { return (element.isSelectedForExport) ? "Oui" : "Non" } } as SortTableColumn<BankTransfertSearchResult>);
     this.availableColumns.push({ id: "competentAuthorityLabel", fieldName: "competentAuthorityLabel", label: "Autorité compétente" } as SortTableColumn<BankTransfertSearchResult>);
     this.availableColumns.push({ id: "invoiceBillingLabel", fieldName: "invoiceBillingLabel", label: "Libellé de la facture" } as SortTableColumn<BankTransfertSearchResult>);
-    this.availableColumns.push({ id: "isMatched", fieldName: "isMatched", label: "A été rapproché", valueFonction: (element: BankTransfertSearchResult, column: SortTableColumn<BankTransfertSearchResult>) => { return (element.isMatched) ? "Oui" : "Non" } } as SortTableColumn<BankTransfertSearchResult>);
+    this.availableColumns.push({ id: "isMatched", fieldName: "isMatched", label: "Est rapproché", valueFonction: (element: BankTransfertSearchResult, column: SortTableColumn<BankTransfertSearchResult>) => { return (element.isMatched) ? "Oui" : "Non" } } as SortTableColumn<BankTransfertSearchResult>);
     this.availableColumns.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn<BankTransfertSearchResult>);
 
     this.setColumns();

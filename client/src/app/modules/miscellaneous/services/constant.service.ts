@@ -342,6 +342,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.provisionTypeBilanPublication;
   }
 
+  getProvisionTypeRegistrationAct() {
+    return this.constant.provisionTypeRegistrationAct;
+  }
+
   getBillingTypeInfogreffeDebour() {
     return this.constant.billingTypeInfogreffeDebour;
   }
@@ -748,6 +752,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.customerOrderOriginWebSite;
   }
 
+  getCustomerOrderOriginMyJss() {
+    return this.constant.customerOrderOriginMyJss;
+  }
+
   getCustomerOrderOriginOsiris() {
     return this.constant.customerOrderOriginOsiris;
   }
@@ -792,10 +800,38 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.activeDirectoryGroupFormalites;
   }
 
+  getActiveDirectoryGroupSales() {
+    return this.constant.activeDirectoryGroupSales;
+  }
+
   getActiveDirectoryGroupFacturation() {
     return this.constant.activeDirectoryGroupFacturation;
   }
   getFurtherInformationServiceFieldType() {
     return this.constant.furtherInformationServiceFieldType;
+  }
+
+  getResponsableDummyCustomerFrance() {
+    return this.constant.responsableDummyCustomerFrance;
+  }
+
+  getProvisionScreenTypeAnnouncement() {
+    return this.constant.provisionScreenTypeAnnouncement;
+  }
+
+  getCategoryInterview() {
+    return this.constant.categoryInterview;
+  }
+
+  getCategoryPodcast() {
+    return this.constant.categoryPodcast;
+  }
+
+  getCategoryArticle() {
+    return this.constant.categoryArticle;
+  }
+
+  getCategorySerie() {
+    return this.constant.categorySerie;
   }
 }

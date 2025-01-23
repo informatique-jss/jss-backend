@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.node.model.Node;
-import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,8 +20,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_batch_settings_id", columnList = "id_batch_settings"),
-        @Index(name = "idx_batch_settings_status", columnList = "id_batch_status,id_batch_settings") })
+        @Index(name = "idx_batch_settings_status", columnList = "id_node,id_batch_settings,id_batch_status"),
+        @Index(name = "idx_batch_status_status", columnList = "id_batch_settings,id_batch_status") })
 public class Batch implements IId {
+    public static final String SYNCHRONISE_WORDPRESS = "SYNCHRONISE_WORDPRESS";
     public static String REFRESH_FORMALITE_GUICHET_UNIQUE = "REFRESH_FORMALITE_GUICHET_UNIQUE";
     public static String REFRESH_FORMALITE_INFOGREFFE = "REFRESH_FORMALITE_INFOGREFFE";
     public static String REFRESH_FORMALITE_INFOGREFFE_DETAIL = "REFRESH_FORMALITE_INFOGREFFE_DETAIL";
@@ -63,6 +65,7 @@ public class Batch implements IId {
     public static String REINDEX_QUOTATION = "REINDEX_QUOTATION";
     public static String REINDEX_RESPONSABLE = "REINDEX_RESPONSABLE";
     public static String REINDEX_TIERS = "REINDEX_TIERS";
+    public static String REINDEX_POST = "REINDEX_POST";
     public static String PURGE_INVOICE = "PURGE_INVOICE";
 
     @Id

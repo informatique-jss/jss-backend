@@ -1,6 +1,7 @@
 package com.jss.osiris.libs;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,17 @@ public class PictureHelper {
             img = ImageIO.read(file);
         } catch (IOException e) {
             throw new OsirisException(e, "Can't read file");
+        }
+        return encodeToString(img, "png");
+    }
+
+    public String getPictureAsBase64String(byte[] byteArray) throws OsirisException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
+        BufferedImage img;
+        try {
+            img = ImageIO.read(bais);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return encodeToString(img, "png");
     }

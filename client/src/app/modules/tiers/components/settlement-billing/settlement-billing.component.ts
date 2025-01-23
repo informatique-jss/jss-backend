@@ -2,7 +2,7 @@ import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, Simpl
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { getDocument } from 'src/app/libs/DocumentHelper';
-import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
+import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
@@ -11,9 +11,9 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { BillingClosureRecipientType } from '../../model/BillingClosureRecipientType';
-import { ITiers } from '../../model/ITiers';
 import { PaymentDeadlineType } from '../../model/PaymentDeadlineType';
 import { Responsable } from '../../model/Responsable';
+import { Tiers } from '../../model/Tiers';
 import { TiersService } from '../../services/tiers.service';
 
 @Component({
@@ -23,7 +23,7 @@ import { TiersService } from '../../services/tiers.service';
 })
 export class SettlementBillingComponent implements OnInit, AfterContentChecked {
 
-  @Input() tiers: ITiers = {} as ITiers;
+  @Input() tiers: Tiers | Responsable = {} as Tiers;
   @Input() editMode: boolean = false;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
   paymentTypes: PaymentType[] = [] as Array<PaymentType>;
@@ -116,7 +116,6 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
 
   instanceOfTiers = instanceOfTiers;
   instanceOfResponsable = instanceOfResponsable;
-  instanceOfConfrere = instanceOfConfrere;
 
   getFormStatus(): boolean {
     this.settlementBillingForm.markAllAsTouched();

@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
-import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.tiers.model.Tiers;
-import com.jss.osiris.modules.tiers.service.TiersService;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 @Service
 public class PrintDelegate {
@@ -84,10 +84,9 @@ public class PrintDelegate {
               .replaceAll("\\p{C}", "").toUpperCase()
           +
           "    "
-          + (customerOrder.getTiers() != null ? StringUtils.stripAccents(
-              (customerOrder.getTiers().getIntercom() != null ? customerOrder.getTiers().getIntercom()
-                  : ""))
-              .replaceAll("\\p{C}", "").toUpperCase() + " " : "")
+          + (StringUtils.stripAccents((customerOrder.getResponsable().getTiers().getIntercom() != null
+              ? customerOrder.getResponsable().getTiers().getIntercom()
+              : "")).replaceAll("\\p{C}", "").toUpperCase() + " ")
           +
           (customerOrder.getResponsable() != null ? (customerOrder.getResponsable().getBuilding() != null
               ? (" | " + customerOrder.getResponsable().getBuilding())

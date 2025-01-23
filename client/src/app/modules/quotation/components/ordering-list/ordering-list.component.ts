@@ -4,7 +4,7 @@ import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUST
 import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { ITiers } from 'src/app/modules/tiers/model/ITiers';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
@@ -140,8 +140,6 @@ export class OrderingListComponent implements OnInit {
         return ['/tiers/responsable', element.responsableId];
       if (element.tiersId)
         return ['/tiers', element.tiersId];
-      if (element.confrereId)
-        return ['/confrere', element.confrereId];
     }
     return ['/tiers'];
   }
@@ -156,7 +154,7 @@ export class OrderingListComponent implements OnInit {
         this.orderingSearch.endDate = new Date(toIsoString(this.orderingSearch.endDate));
       if (this.searchedTiers) {
         this.orderingSearch.customerOrders = [];
-        this.orderingSearch.customerOrders.push({ id: this.searchedTiers.entityId } as ITiers)
+        this.orderingSearch.customerOrders.push({ id: this.searchedTiers.entityId } as Tiers)
       }
       this.orderingSearchResultService.getOrders(this.orderingSearch).subscribe(response => {
         this.orders = response;

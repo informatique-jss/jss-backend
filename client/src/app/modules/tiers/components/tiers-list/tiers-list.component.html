@@ -32,6 +32,10 @@
                   <generic-toggle [(model)]="tiersSearch.withNonNullTurnover" label="Avec un CA>0 ?"
                     [form]="tiersSearchForm" propertyName="withNonNullTurnover"></generic-toggle>
                 </td>
+                <td>
+                  <generic-toggle [(model)]="tiersSearch.isNewTiers" label="Nouveau tiers ?" [form]="tiersSearchForm"
+                    propertyName="isNewTiers"></generic-toggle>
+                </td>
                 <td class="fab-td-button">
                   <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchTiers()" class="add-button">
                     <mat-icon>search</mat-icon>

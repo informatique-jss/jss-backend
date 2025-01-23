@@ -62,6 +62,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
+  registrationAct = this.constantService.getProvisionTypeRegistrationAct();
 
   saveObservableSubscription: Subscription = new Subscription;
 
@@ -126,6 +127,23 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           this.saveAsso()
         else if (this.asso)
           this.editAsso()
+    });
+  }
+
+  generateRegistrationAct() {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Générer l'enregistrement d'acte ?",
+        closeActionText: "Annuler",
+        validationActionText: "Valider"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult == true) {
+        this.provisionService.getRegistrationActPdf(this.inputProvisionId);;
+      }
     });
   }
 
@@ -562,7 +580,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       this.saveAsso();
   }
 
-
   setCurrentProvisionWorkflow(provision: Provision) {
     this.currentProvisionWorkflow = provision;
   }
@@ -686,5 +703,25 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   generateDomiciliationContract(provision: Provision) {
     this.domiciliationService.generateDomiciliationContract(provision).subscribe(response => { this.saveAsso() });
+  }
+
+  downloadTrackingSheet(provision: Provision) {
+    if (!this.asso.affaire.competentAuthority) {
+      const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseCompetentAuthorityDialogComponent, {
+
+      });
+      dialogRef.componentInstance.title = "Autorité compétente manquante";
+      dialogRef.componentInstance.label = "Choisir une autorité compétente pour l'affaire associée à la prestation";
+      dialogRef.afterClosed().subscribe(selectedCompetentAuthority => {
+        if (selectedCompetentAuthority && this.currentProvisionWorkflow) {
+          this.asso.affaire.competentAuthority = selectedCompetentAuthority;
+          this.affaireService.addOrUpdateAffaire(this.asso.affaire).subscribe(response => {
+            this.provisionService.downloadTrackingSheet(provision.id);
+          });
+        }
+      });
+    }
+    else
+      this.provisionService.downloadTrackingSheet(provision.id);
   }
 }

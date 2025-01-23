@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,37 +49,39 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.LetterModel;
 import com.jss.osiris.libs.mail.model.VatMail;
-import com.jss.osiris.modules.accounting.model.BillingClosureReceiptValue;
-import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.invoicing.model.InvoiceItem;
-import com.jss.osiris.modules.invoicing.model.Payment;
-import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
-import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
-import com.jss.osiris.modules.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.invoicing.service.PaymentService;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.miscellaneous.service.DocumentService;
-import com.jss.osiris.modules.miscellaneous.service.VatService;
-import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.quotation.model.Announcement;
-import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
-import com.jss.osiris.modules.quotation.model.Confrere;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Domiciliation;
-import com.jss.osiris.modules.quotation.model.NoticeType;
-import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.Service;
-import com.jss.osiris.modules.quotation.service.ProvisionService;
-import com.jss.osiris.modules.tiers.model.ITiers;
-import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue;
+import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.Announcement;
+import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
+import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class GeneratePdfDelegate {
+
+    private BigDecimal oneHundredValue = new BigDecimal(100);
+    private BigDecimal zeroValue = new BigDecimal(0);
+
     @Autowired
     PictureHelper pictureHelper;
 
@@ -240,21 +244,22 @@ public class GeneratePdfDelegate {
             ArrayList<String> eventLabels = new ArrayList<String>();
             Employee signatureEmployee = null;
 
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
-                signatureEmployee = asso.getAssignedTo();
-                affaireLabels.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                        : (asso.getAffaire().getCivility().getLabel() + " " + asso.getAffaire().getFirstname() + " "
-                                + asso.getAffaire().getLastname()))
-                        + "<br/>"
-                        + asso.getAffaire().getAddress() + "<br/>"
-                        + asso.getAffaire().getPostalCode() + " "
-                        + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : ""));
-                for (Service service : asso.getServices()) {
-                    for (Provision provision : service.getProvisions()) {
-                        eventLabels.add(provision.getProvisionType().getLabel());
+            if (customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                    signatureEmployee = asso.getAssignedTo();
+                    affaireLabels.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                            : (asso.getAffaire().getCivility().getLabel() + " " + asso.getAffaire().getFirstname() + " "
+                                    + asso.getAffaire().getLastname()))
+                            + "<br/>"
+                            + asso.getAffaire().getAddress() + "<br/>"
+                            + asso.getAffaire().getPostalCode() + " "
+                            + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : ""));
+                    for (Service service : asso.getServices()) {
+                        for (Provision provision : service.getProvisions()) {
+                            eventLabels.add(provision.getProvisionType().getLabel());
+                        }
                     }
                 }
-            }
 
             letterModel.setAffaireLabel(String.join("<br/>", affaireLabels).replaceAll("&", " "));
             letterModel.setEventLabel(String.join(" / ", eventLabels).replaceAll("&", " "));
@@ -294,11 +299,17 @@ public class GeneratePdfDelegate {
         return tempFile;
     }
 
-    public File getBillingClosureReceiptFile(ITiers tier, List<BillingClosureReceiptValue> billingClosureValues)
+    public File getBillingClosureReceiptFile(Tiers tier, Responsable responsable,
+            List<BillingClosureReceiptValue> billingClosureValues)
             throws OsirisException, OsirisClientMessageException {
         final Context ctx = new Context();
 
-        Document billingDocument = documentService.getBillingDocument(tier.getDocuments());
+        Document billingDocument = null;
+
+        if (tier != null)
+            billingDocument = documentService.getBillingDocument(tier.getDocuments());
+        else if (responsable != null)
+            billingDocument = documentService.getBillingDocument(responsable.getDocuments());
 
         ctx.setVariable("commandNumber", null);
         if (billingDocument != null && billingDocument.getIsCommandNumberMandatory() != null
@@ -309,28 +320,27 @@ public class GeneratePdfDelegate {
         if (billingDocument != null && billingDocument.getExternalReference() != null)
             ctx.setVariable("clientReference", billingDocument.getExternalReference());
 
-        if (tier instanceof Tiers) {
+        if (tier != null) {
             ctx.setVariable("denomination",
-                    ((Tiers) tier).getDenomination() != null
-                            ? ((Tiers) tier).getDenomination()
-                            : (((Tiers) tier).getFirstname() + " " + ((Tiers) tier).getLastname()));
-            ctx.setVariable("address", ((Tiers) tier).getAddress());
-            ctx.setVariable("postalCode", ((Tiers) tier).getPostalCode());
-            ctx.setVariable("city", ((Tiers) tier).getCity() != null ? ((Tiers) tier).getCity().getLabel() : "");
-        } else if (tier instanceof Responsable) {
+                    tier.getDenomination() != null
+                            ? tier.getDenomination()
+                            : (tier.getFirstname() + " " + tier.getLastname()));
+            ctx.setVariable("address", tier.getAddress());
+            ctx.setVariable("postalCode", tier.getPostalCode());
+            ctx.setVariable("city", tier.getCity() != null ? tier.getCity().getLabel() : "");
+        }
+        if (responsable != null) {
             ctx.setVariable("denomination",
-                    (((Responsable) tier).getFirstname() + " " + ((Responsable) tier).getLastname()));
-            ctx.setVariable("address", ((Responsable) tier).getTiers().getAddress());
-            ctx.setVariable("postalCode", ((Responsable) tier).getTiers().getPostalCode());
+                    (responsable.getFirstname() + " " + responsable.getLastname()));
+            ctx.setVariable("tiersName",
+                    responsable.getTiers().getDenomination() != null ? responsable.getTiers().getDenomination()
+                            : (responsable.getTiers().getFirstname() + " " + responsable.getTiers().getLastname()));
+            ctx.setVariable("address", responsable.getTiers().getAddress());
+            ctx.setVariable("postalCode", responsable.getTiers().getPostalCode());
             ctx.setVariable("city",
-                    ((Responsable) tier).getTiers().getCity() != null
-                            ? ((Responsable) tier).getTiers().getCity().getLabel()
+                    responsable.getTiers().getCity() != null
+                            ? responsable.getTiers().getCity().getLabel()
                             : "");
-        } else if (tier instanceof Confrere) {
-            ctx.setVariable("denomination", (((Confrere) tier).getLabel()));
-            ctx.setVariable("address", ((Confrere) tier).getAddress());
-            ctx.setVariable("postalCode", ((Confrere) tier).getPostalCode());
-            ctx.setVariable("city", ((Confrere) tier).getCity() != null ? ((Confrere) tier).getCity().getLabel() : "");
         }
 
         ctx.setVariable("billingClosureValues", billingClosureValues);
@@ -338,27 +348,33 @@ public class GeneratePdfDelegate {
         ctx.setVariable("bicJss", bicJss);
 
         Tiers billingTiers = null;
-        if (tier instanceof Tiers)
-            billingTiers = (Tiers) tier;
-        if (tier instanceof Responsable)
-            billingTiers = ((Responsable) tier).getTiers();
+        billingTiers = tier;
+        if (responsable != null)
+            billingTiers = responsable.getTiers();
 
         ctx.setVariable("tiersReference", null);
         if (billingTiers != null)
             ctx.setVariable("tiersReference", billingTiers.getId()
                     + (billingTiers.getIdAs400() != null ? ("/" + billingTiers.getIdAs400()) : ""));
 
-        Float balance = 0f;
-        Float creditBalance = 0f;
-        Float debitBalance = 0f;
+        Double balance = 0.0;
+        Double creditBalance = 0.0;
+        Double debitBalance = 0.0;
 
         if (billingClosureValues != null && billingClosureValues.size() > 0)
             for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
-                balance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount() : 0;
-                creditBalance += billingClosureValue.getCreditAmount() != null ? billingClosureValue.getCreditAmount()
+                balance += billingClosureValue.getCreditAmount() != null
+                        ? billingClosureValue.getCreditAmount().doubleValue()
                         : 0;
-                balance -= billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
-                debitBalance += billingClosureValue.getDebitAmount() != null ? billingClosureValue.getDebitAmount() : 0;
+                creditBalance += billingClosureValue.getCreditAmount() != null
+                        ? billingClosureValue.getCreditAmount().doubleValue()
+                        : 0;
+                balance -= billingClosureValue.getDebitAmount() != null
+                        ? billingClosureValue.getDebitAmount().doubleValue()
+                        : 0;
+                debitBalance += billingClosureValue.getDebitAmount() != null
+                        ? billingClosureValue.getDebitAmount().doubleValue()
+                        : 0;
             }
         ctx.setVariable("balance", balance);
         ctx.setVariable("creditBalance", creditBalance);
@@ -384,7 +400,8 @@ public class GeneratePdfDelegate {
             outputStream.close();
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e,
-                    "Unable to create PDF file for biling closure receipt, tiers n°" + tier.getId());
+                    "Unable to create PDF file for biling closure receipt, tiers/responsable n°"
+                            + (tier != null ? tier.getId() : (responsable != null ? responsable.getId() : "")));
         }
         return tempFile;
     }
@@ -392,20 +409,12 @@ public class GeneratePdfDelegate {
     public File generateQuotationPdf(Quotation quotation) throws OsirisException {
         final Context ctx = new Context();
 
-        if (quotation.getResponsable() != null) {
-            ctx.setVariable("tiersReference", quotation.getResponsable().getTiers().getId()
-                    + (quotation.getResponsable().getTiers().getIdAs400() != null
-                            ? ("/" + quotation.getResponsable().getTiers().getIdAs400())
-                            : ""));
-            ctx.setVariable("responsableOnBilling", quotation.getResponsable().getFirstname() + " "
-                    + quotation.getResponsable().getLastname());
-        } else {
-            ctx.setVariable("tiersReference", quotation.getTiers().getId()
-                    + (quotation.getTiers().getIdAs400() != null
-                            ? ("/" + quotation.getTiers().getIdAs400())
-                            : ""));
-        }
-
+        ctx.setVariable("tiersReference", quotation.getResponsable().getTiers().getId()
+                + (quotation.getResponsable().getTiers().getIdAs400() != null
+                        ? ("/" + quotation.getResponsable().getTiers().getIdAs400())
+                        : ""));
+        ctx.setVariable("responsableOnBilling", quotation.getResponsable().getFirstname() + " "
+                + quotation.getResponsable().getLastname());
         ctx.setVariable("assos", quotation.getAssoAffaireOrders());
         ctx.setVariable("quotation", quotation);
         ctx.setVariable("quotationCreatedDate", quotation.getCreatedDate().format(DateTimeFormatter
@@ -445,8 +454,12 @@ public class GeneratePdfDelegate {
         if (originalInvoice != null)
             ctx.setVariable("reverseCreditNote", originalInvoice);
 
+        if (invoice == null)
+            throw new OsirisException("null invoice");
+
         ctx.setVariable("preTaxPriceTotal", invoiceHelper.getPreTaxPriceTotal(invoice));
-        if (Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0)
+        if (invoiceHelper.getDiscountTotal(invoice).multiply(oneHundredValue).setScale(0).divide(oneHundredValue)
+                .compareTo(zeroValue) > 0)
             ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
 
         // Group debouts for asso invoice item debours
@@ -472,16 +485,17 @@ public class GeneratePdfDelegate {
             ctx.setVariable("invoiceItems", invoice.getInvoiceItems());
         }
 
-        ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getPreTaxPriceTotal(invoice)
-                - (invoiceHelper.getDiscountTotal(invoice) != null
-                        && Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0
-                                ? invoiceHelper.getDiscountTotal(invoice)
-                                : 0f));
+        ctx.setVariable("preTaxPriceTotalWithDicount",
+                invoiceHelper.getPreTaxPriceTotal(invoice).subtract(invoiceHelper.getDiscountTotal(invoice)) != null
+                        && invoiceHelper.getDiscountTotal(invoice).multiply(oneHundredValue).setScale(0)
+                                .divide(oneHundredValue).compareTo(zeroValue) > 0
+                                        ? invoiceHelper.getDiscountTotal(invoice)
+                                        : zeroValue);
         ArrayList<VatMail> vats = null;
-        Float vatTotal = 0f;
+        Double vatTotal = 0.0;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
             if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null) {
-                vatTotal += invoiceItem.getVatPrice();
+                vatTotal += invoiceItem.getVatPrice().doubleValue();
                 if (vats == null)
                     vats = new ArrayList<VatMail>();
                 boolean vatFound = false;
@@ -491,11 +505,13 @@ public class GeneratePdfDelegate {
                         if (vatMail.getTotal() == null && invoiceItem.getVatPrice() != null) {
                             vatMail.setTotal(invoiceItem.getVatPrice());
                             vatMail.setBase(invoiceItem.getPreTaxPrice()
-                                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
+                                    .subtract(invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                                            : zeroValue));
                         } else if (invoiceItem.getVatPrice() != null) {
-                            vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
-                            vatMail.setBase(vatMail.getBase() + invoiceItem.getPreTaxPrice()
-                                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
+                            vatMail.setTotal(vatMail.getTotal().add(invoiceItem.getVatPrice()));
+                            vatMail.setBase(vatMail.getBase().add(invoiceItem.getPreTaxPrice())
+                                    .subtract((invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                                            : zeroValue)));
                         }
                     }
                 }
@@ -504,14 +520,17 @@ public class GeneratePdfDelegate {
                     vatmail.setTotal(invoiceItem.getVatPrice());
                     vatmail.setLabel(invoiceItem.getVat().getLabel());
                     vatmail.setBase(invoiceItem.getPreTaxPrice()
-                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
+                            .subtract(invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                                    : zeroValue));
                     vats.add(vatmail);
                 }
             }
         }
 
         ctx.setVariable("vats", vats);
-        ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
+        ctx.setVariable("priceTotal",
+                invoiceHelper.getPriceTotal(invoice).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
+                        .divide(oneHundredValue).setScale(2, RoundingMode.HALF_EVEN));
         ctx.setVariable("invoice", invoice);
         ctx.setVariable("isPrelevementType", false);
         if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId()))
@@ -521,6 +540,12 @@ public class GeneratePdfDelegate {
         if (originalInvoice != null && invoice != null && invoice.getInvoiceItems() != null) {
             ctx.setVariable("reverseInvoiceItems", getGroupedInvoiceItemsForDebours(invoice.getInvoiceItems()));
         }
+
+        ctx.setVariable("tiersReference", null);
+        ctx.setVariable("tiersReference", invoice.getResponsable().getTiers().getId()
+                + (invoice.getResponsable().getTiers().getIdAs400() != null
+                        ? ("/" + invoice.getResponsable().getTiers().getIdAs400())
+                        : ""));
 
         if (customerOrder != null) {
             Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
@@ -539,7 +564,7 @@ public class GeneratePdfDelegate {
 
             ctx.setVariable("customerOrder", customerOrder);
 
-            Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            BigDecimal remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
             ArrayList<Payment> invoicePayment = new ArrayList<Payment>();
             if (invoice.getPayments() != null)
                 for (Payment payment : invoice.getPayments()) {
@@ -551,7 +576,7 @@ public class GeneratePdfDelegate {
                 for (Payment payment : customerOrder.getPayments())
                     if (!payment.getIsCancelled()) {
                         invoicePayment.add(payment);
-                        remainingToPay -= payment.getPaymentAmount();
+                        remainingToPay = remainingToPay.subtract(payment.getPaymentAmount());
                     }
 
             if (invoicePayment.size() > 0)
@@ -560,40 +585,18 @@ public class GeneratePdfDelegate {
             if (invoice.getCustomerOrder() != null && invoice.getCustomerOrder().getRefunds() != null)
                 ctx.setVariable("refunds", invoice.getCustomerOrder().getRefunds());
 
-            if (remainingToPay != null && remainingToPay >= 0
-                    && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))
+            if (remainingToPay != null && remainingToPay.compareTo(zeroValue) >= 0
+                    && remainingToPay.compareTo(BigDecimal.valueOf(Float.parseFloat(payementLimitRefundInEuros))) >= 0)
                 ctx.setVariable("remainingToPay", remainingToPay);
-
-            Tiers invoiceTiers = null;
-            if (customerOrder.getResponsable() != null)
-                invoiceTiers = customerOrder.getResponsable().getTiers();
-            if (customerOrder.getTiers() != null)
-                invoiceTiers = customerOrder.getTiers();
-
-            ctx.setVariable("tiersReference", null);
-            if (invoiceTiers != null)
-                ctx.setVariable("tiersReference", invoiceTiers.getId()
-                        + (invoiceTiers.getIdAs400() != null ? ("/" + invoiceTiers.getIdAs400()) : ""));
 
             ctx.setVariable("quotation",
                     customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0
                             ? customerOrder.getQuotations().get(0)
                             : null);
         } else {
-            Tiers invoiceTiers = null;
-            if (invoice.getResponsable() != null)
-                invoiceTiers = invoice.getResponsable().getTiers();
-            if (invoice.getTiers() != null)
-                invoiceTiers = invoice.getTiers();
-
-            ctx.setVariable("tiersReference", null);
-            if (invoiceTiers != null)
-                ctx.setVariable("tiersReference", invoiceTiers.getId()
-                        + (invoiceTiers.getIdAs400() != null ? ("/" + invoiceTiers.getIdAs400()) : ""));
-
-            Float remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
-            if (remainingToPay != null && remainingToPay >= 0
-                    && remainingToPay > Float.parseFloat(payementLimitRefundInEuros))
+            BigDecimal remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            if (remainingToPay != null && remainingToPay.compareTo(zeroValue) >= 0
+                    && remainingToPay.compareTo(BigDecimal.valueOf(Float.parseFloat(payementLimitRefundInEuros))) > 0)
                 ctx.setVariable("remainingToPay", remainingToPay);
         }
 
@@ -661,26 +664,26 @@ public class GeneratePdfDelegate {
                             if (invoiceItemNonTaxable == null) {
                                 invoiceItemNonTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
                                 if (invoiceItemNonTaxable.getDiscountAmount() == null)
-                                    invoiceItemNonTaxable.setDiscountAmount(0f);
+                                    invoiceItemNonTaxable.setDiscountAmount(zeroValue);
                             } else {
                                 invoiceItemNonTaxable.setPreTaxPrice(
-                                        invoiceItemNonTaxable.getPreTaxPrice() + invoiceItem.getPreTaxPrice());
+                                        invoiceItemNonTaxable.getPreTaxPrice().add(invoiceItem.getPreTaxPrice()));
                                 if (invoiceItem.getDiscountAmount() != null)
                                     invoiceItemNonTaxable.setDiscountAmount(invoiceItemNonTaxable.getDiscountAmount()
-                                            + invoiceItem.getDiscountAmount());
+                                            .add(invoiceItem.getDiscountAmount()));
                             }
                         } else {
                             if (invoiceItemTaxable == null) {
                                 invoiceItemTaxable = invoiceItemService.cloneInvoiceItem(invoiceItem);
                                 ;
                                 if (invoiceItemTaxable.getDiscountAmount() == null)
-                                    invoiceItemTaxable.setDiscountAmount(0f);
+                                    invoiceItemTaxable.setDiscountAmount(zeroValue);
                             } else {
                                 invoiceItemTaxable.setPreTaxPrice(
-                                        invoiceItemTaxable.getPreTaxPrice() + invoiceItem.getPreTaxPrice());
+                                        invoiceItemTaxable.getPreTaxPrice().add(invoiceItem.getPreTaxPrice()));
                                 if (invoiceItem.getDiscountAmount() != null)
                                     invoiceItemTaxable.setDiscountAmount(invoiceItemTaxable.getDiscountAmount()
-                                            + invoiceItem.getDiscountAmount());
+                                            .add(invoiceItem.getDiscountAmount()));
                             }
                         }
                     } else {
@@ -930,7 +933,7 @@ public class GeneratePdfDelegate {
             tableFooter.addCell(pageCell);
 
             final PdfPCell detailsCell2 = new PdfPCell(new Phrase(
-                    "8 rue Saint Augustin - 75002 PARIS - Téléphone : 01 47 03 10 10 - E-mail : annonces@jss.fr",
+                    "10 boulevard Haussmann - 75009 PARIS - Téléphone : 01 47 03 10 10 - E-mail : annonces@jss.fr",
                     footerFont));
             detailsCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
             detailsCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -1373,5 +1376,95 @@ public class GeneratePdfDelegate {
         reader.close();
 
         return tempPdfFile;
+    }
+
+    public File generateRegistrationActPdf(Provision provision) throws OsirisException {
+        final Context ctx = new Context();
+
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        if (provision != null) {
+            ctx.setVariable("provision", provision);
+            if (provision.getService() != null && provision.getService().getAssoAffaireOrder() != null)
+                ctx.setVariable("customerOrder", provision.getService().getAssoAffaireOrder().getCustomerOrder());
+        }
+
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(mailHelper.emailTemplateEngine().process("registration-act", ctx));
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("Enregistrement d'acte", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for registration act");
+        }
+        return tempFile;
+    }
+
+    public File generateTrackingSheetPdf(Provision provision) throws OsirisException {
+        final Context ctx = new Context();
+
+        ctx.setVariable("currentDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        if (provision != null) {
+            ctx.setVariable("provision", provision);
+
+            if (provision.getAssignedTo() != null)
+                ctx.setVariable("employee", provision.getAssignedTo().getFirstname() + ' ' +
+                        provision.getAssignedTo().getLastname() + " / " + provision.getAssignedTo().getMail());
+
+            if (provision.getService() != null && provision.getService().getAssoAffaireOrder() != null
+                    && provision.getService().getAssoAffaireOrder().getAffaire() != null) {
+                if (provision.getService().getAssoAffaireOrder().getAffaire().getDenomination() != null)
+                    ctx.setVariable("affaireDenomination",
+                            provision.getService().getAssoAffaireOrder().getAffaire().getDenomination());
+                else
+                    ctx.setVariable("affaireDenomination",
+                            provision.getService().getAssoAffaireOrder().getAffaire().getFirstname() + ' '
+                                    + provision.getService().getAssoAffaireOrder().getAffaire().getLastname());
+            }
+            if (provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority() != null)
+                ctx.setVariable("affaireCompetentAuthority",
+                        provision.getService().getAssoAffaireOrder().getAffaire().getCompetentAuthority().getLabel());
+        }
+
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(mailHelper.emailTemplateEngine().process("tracking-sheet", ctx));
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("Fiche de suivi", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(
+                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                        .replaceAll("line-height: normal",
+                                "line-height: normal;padding:0;margin:0"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for tracking sheet document");
+        }
+        return tempFile;
     }
 }

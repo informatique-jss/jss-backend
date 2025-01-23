@@ -19,6 +19,14 @@
                 [conditionnalRequired]="!tiers.isIndividual" [maxLength]="80">
               </generic-input>
             </td>
+            <td>
+              <generic-input [(model)]="tiers.siret" label="SIRET" [form]="principalForm" propertyName="siret"
+                [isDisabled]="false"></generic-input>
+            </td>
+            <td>
+              <generic-toggle [(model)]="tiers.isNewTiers" label="Nouveau client ?" [form]="principalForm"
+                propertyName="isNewTiers" [isDisabled]="!editMode"></generic-toggle>
+            </td>
           </tr>
         </table>
         <table class="full-width">
@@ -155,12 +163,6 @@
         </table>
         <table class="full-width">
           <tr>
-            <td *ngIf="tiers.accountingAccountProvider">
-              <autocomplete-accounting-account [(model)]="tiers.accountingAccountProvider" [form]="principalForm"
-                propertyName="accountingAccountProvider" [isMandatory]="false" [isDisabled]="true"
-                label="Compte comptable fournisseur">
-              </autocomplete-accounting-account>
-            </td>
             <td *ngIf="tiers.accountingAccountCustomer">
               <autocomplete-accounting-account [(model)]="tiers.accountingAccountCustomer" [form]="principalForm"
                 propertyName="accountingAccountCustomer" [isMandatory]="false" [isDisabled]="true"

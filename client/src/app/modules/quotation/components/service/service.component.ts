@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
+import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
@@ -11,6 +12,7 @@ import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE } from 'src/app/routing/search/search
 import { AppService } from 'src/app/services/app.service';
 import { formatBytes } from '../../../../libs/FormatHelper';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
+import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
 import { IQuotation } from '../../model/IQuotation';
 import { Service } from '../../model/Service';
 import { ServiceType } from '../../model/ServiceType';
@@ -65,6 +67,13 @@ export class ServiceComponent implements OnInit {
           return aLabel.localeCompare(bLabel)
         });
     }
+  }
+
+  isValidatedStatusForUploadFile() {
+    if (this.quotation && instanceOfQuotation(this.quotation) && this.quotation.quotationStatus && this.quotation.quotationStatus.code == VALIDATED_BY_CUSTOMER)
+      return false;
+    else
+      return true;
   }
 
   commentDocument(document: AssoServiceDocument) {

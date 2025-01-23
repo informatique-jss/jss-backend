@@ -1,6 +1,4 @@
-import { IAttachment } from "../modules/miscellaneous/model/IAttachment";
 import { IAttachmentCode } from "../modules/miscellaneous/model/IAttachmentCode";
-import { Confrere } from "../modules/quotation/model/Confrere";
 import { CustomerOrder } from "../modules/quotation/model/CustomerOrder";
 import { FormaliteGuichetUnique } from "../modules/quotation/model/guichet-unique/FormaliteGuichetUnique";
 import { FormaliteInfogreffe } from "../modules/quotation/model/infogreffe/FormaliteInfogreffe";
@@ -11,12 +9,6 @@ import { Tiers } from "../modules/tiers/model/Tiers";
 
 export function instanceOfTiers(object: any): object is Tiers {
   return !instanceOfResponsable(object);
-}
-
-export function instanceOfConfrere(object: any): object is Confrere {
-  if (object != null)
-    return 'paperGrade' in object;
-  return false;
 }
 
 export function instanceOfResponsable(object: any): object is Responsable {
@@ -49,4 +41,10 @@ export function instanceOfIAttachmentCode(object: any): object is IAttachmentCod
   if (object != null)
     return 'code' in object;
   return false;
+}
+
+export function isInt(value: any) {
+  return !isNaN(value) &&
+    parseInt(value) == value &&
+    !isNaN(parseInt(value, 10));
 }

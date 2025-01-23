@@ -9,11 +9,10 @@ import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
-import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
 import { Document } from '../../../miscellaneous/model/Document';
 import { DocumentType } from '../../../miscellaneous/model/DocumentType';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { IQuotation } from '../../model/IQuotation';
 import { MailComputeResult } from '../../model/MailComputeResult';
@@ -50,7 +49,6 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   paperDocument: Document = {} as Document;
 
   instanceOfResponsable = instanceOfResponsable;
-  getCustomerOrderForIQuotation = getCustomerOrderForIQuotation;
 
   billingMailComputeResult: MailComputeResult | undefined;
   digitalMailComputeResult: MailComputeResult | undefined;
@@ -112,18 +110,12 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   });
 
   setDocument() {
-    let currentOrderingCustomer: ITiers | undefined;
-    if (this.quotation.tiers) {
-      this.tiersService.setCurrentViewedTiers(this.quotation.tiers)
-      currentOrderingCustomer = this.quotation.tiers;
-    }
+    let currentOrderingCustomer: Responsable | undefined;
     if (this.quotation.responsable && this.quotation.responsable.tiers) {
       this.tiersService.setCurrentViewedTiers(this.quotation.responsable.tiers)
       this.tiersService.setCurrentViewedResponsable(this.quotation.responsable);
       currentOrderingCustomer = this.quotation.responsable;
     }
-    if (this.quotation.confrere)
-      currentOrderingCustomer = this.quotation.confrere;
 
     if (!currentOrderingCustomer)
       return;
@@ -212,7 +204,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   isLoadingPaperLabelResult: boolean = false;
 
   updateBillingMailResult() {
-    if (!this.isLoadingMailResult && this.quotation && (this.quotation.tiers || this.quotation.confrere || this.quotation.responsable)) {
+    if (!this.isLoadingMailResult && this.quotation && this.quotation.responsable) {
       this.isLoadingMailResult = true;
       // Can't find a way to make it work correctly ...
       replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.billingDocument);
@@ -232,7 +224,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   }
 
   updateInvoiceLabelResult() {
-    if (!this.isLoadingInvoiceLabelResult && this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation) && (this.quotation.tiers || this.quotation.confrere || this.quotation.responsable)) {
+    if (!this.isLoadingInvoiceLabelResult && this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation) && this.quotation.responsable) {
       this.isLoadingInvoiceLabelResult = true;
       this.invoiceLabelResultService.getInvoiceLabelComputeResult(this.quotation).subscribe(response => {
         this.isLoadingInvoiceLabelResult = false;
@@ -243,7 +235,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   }
 
   updatePaperLabelResult() {
-    if (!this.isLoadingPaperLabelResult && this.quotation && this.quotation.id && (this.quotation.tiers || this.quotation.confrere || this.quotation.responsable)) {
+    if (!this.isLoadingPaperLabelResult && this.quotation && this.quotation.id && this.quotation.responsable) {
       this.isLoadingPaperLabelResult = true;
       this.invoiceLabelResultService.getPaperLabelComputeResult(this.quotation).subscribe(response => {
         this.isLoadingPaperLabelResult = false;

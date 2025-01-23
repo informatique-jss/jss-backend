@@ -1,0 +1,492 @@
+<h1 class="h2 mb-4">Choix du service</h1>
+<!-- Vertical steps (default) -->
+<div class="steps    ">
+
+  <div class="step " [ngClass]="{'active':currentStep==1}" (click)="currentStep=1" style="cursor: pointer;">
+    <div class="step-number">
+      <div class="step-number-inner">1</div>
+    </div>
+    <div class="step-body">
+      <h5 class="pb-1 mb-2" *ngIf="!serviceFamilyGroupChosen">Choisissez votre package </h5>
+      <h5 class="pb-1 mb-2" *ngIf="serviceFamilyGroupChosen">Package {{serviceFamilyGroupChosen.customLabel}}</h5>
+      <p *ngIf="currentStep==1" class="mb-0">Choisissez si vous souhaitez réaliser une formalité dans son ensemble ou
+        seulement déposer une annonce légale</p>
+    </div>
+  </div>
+
+  <div #step2 style="scroll-margin-top:60px; cursor: pointer;">
+    <div class="step " [ngClass]="{'active':currentStep==2}" *ngIf="currentStep>1" (click)="currentStep=2">
+      <div class="step-number">
+        <div class="step-number-inner">2</div>
+      </div>
+      <div class="step-body">
+        <h5 class="pb-1 mb-2" *ngIf="!serviceFamilyChosen">Choisissez votre service </h5>
+        <h5 class="pb-1 mb-2" *ngIf="serviceFamilyChosen">Service {{serviceFamilyChosen.customLabel}}</h5>
+        <p *ngIf="currentStep==2" class="mb-0">Choisissez le type de service souhaité</p>
+      </div>
+    </div>
+  </div>
+
+  <div #step3 style="scroll-margin-top:0px;cursor: pointer;">
+    <div class="step " [ngClass]="{'active':currentStep==3}" *ngIf="currentStep>2" (click)="currentStep=3">
+      <div class="step-number">
+        <div class="step-number-inner">3</div>
+      </div>
+      <div class="step-body">
+        <h5 class="pb-1 mb-2" *ngIf="currentStep==3">Détaillez votre demande </h5>
+        <h5 class="pb-1 mb-2" *ngIf="currentStep>3">{{serviceTypeChosen?.customLabel}} </h5>
+        <p *ngIf="currentStep==3" class="mb-0">Précisez la forme juridique, ...</p>
+      </div>
+    </div>
+  </div>
+
+  <div #step4 style="scroll-margin-top:0px;cursor: pointer;">
+    <div class="step " [ngClass]="{'active':currentStep==4}" *ngIf="currentStep>3" (click)="currentStep=4">
+      <div class="step-number">
+        <div class="step-number-inner">4</div>
+      </div>
+      <div class="step-body">
+        <h5 class="pb-1 mb-2" *ngIf="currentStep==4">Choix de l'affaire</h5>
+        <h5 class="pb-1 mb-2" *ngIf="currentStep>4">Affaire
+          {{capitalizeName(affaire.denomination?affaire.denomination : (affaire.firstname+' '+affaire.lastname))}}</h5>
+        <p *ngIf="currentStep==4 && !service.isRequiringNewUnregisteredAffaire" class="mb-0">Indiquez ci-dessous le
+          SIRET de l'entreprise concernée</p>
+        <p *ngIf="currentStep==4 && service.isRequiringNewUnregisteredAffaire" class="mb-0">Indiquez ci-dessous les
+          informations nécessaires de l'entreprise concernée</p>
+      </div>
+    </div>
+  </div>
+
+  <div #step5 style="scroll-margin-top:0px;cursor: pointer;">
+    <div class="step " [ngClass]="{'active':currentStep==5}"
+      *ngIf="currentStep>4 && serviceTypeChosen?.hasAnnouncement">
+      <div class="step-number">
+        <div class="step-number-inner">5</div>
+      </div>
+      <div class="step-body">
+        <h5 class="pb-1 mb-2">Personnalisation de l'annonce légale</h5>
+        <p class="mb-0">Le service choisi nécessite la publication d'une annonce légale. Vous pouvez la personnaliser
+          ci-dessous</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Choose group family -->
+<div *ngIf="!serviceFamilyGroups && currentStep==1">
+  <p class="card-text placeholder-glow">
+    <span class="placeholder placeholder-sm col-7 me-2"></span>
+    <span class="placeholder placeholder-sm col-4"></span>
+    <span class="placeholder placeholder-sm col-4 me-2"></span>
+    <span class="placeholder placeholder-sm col-6"></span>
+    <span class="placeholder placeholder-sm col-8"></span>
+  </p>
+</div>
+<div class="row row-cols-1 row-cols-sm-1 row-cols-lg-3 g-4 pb-sm-3 pb-md-4 pb-xl-5"
+  *ngIf="serviceFamilyGroups && currentStep==1">
+  <div class="col" *ngFor="let familyGroup of serviceFamilyGroups">
+    <a class="card card-hover-primary bg-secondary border-0 h-100 text-decoration-none" style="cursor: pointer;"
+      (click)="choseFamilyGroup(familyGroup); ">
+      <div class="card-body pb-0">
+        <h3 class="h4 card-title mt-0">{{familyGroup.customLabel}}</h3>
+        <p class="card-text">{{familyGroup.comment}}</p>
+      </div>
+      <div class="card-footer border-0 py-3 my-3 mb-sm-4">
+        <div class="btn btn-lg btn-icon btn-outline-primary rounded-circle pe-none">
+          <i class="ai-arrow-right"></i>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- Choose  family -->
+<div *ngIf="!serviceFamilies && currentStep==2">
+  <p class="card-text placeholder-glow">
+    <span class="placeholder placeholder-sm col-7 me-2"></span>
+    <span class="placeholder placeholder-sm col-4"></span>
+    <span class="placeholder placeholder-sm col-4 me-2"></span>
+    <span class="placeholder placeholder-sm col-6"></span>
+    <span class="placeholder placeholder-sm col-8"></span>
+  </p>
+</div>
+<div class="row row-cols-1 row-cols-sm-1 row-cols-lg-3 g-4 pb-sm-3 pb-md-4 pb-xl-5"
+  *ngIf="serviceFamilies  && currentStep==2">
+  <div class="col" *ngFor="let family of serviceFamilies">
+    <a class="card card-hover-primary bg-secondary border-0 h-100 text-decoration-none" style="cursor: pointer;"
+      (click)="choseFamily(family)">
+      <div class="card-body pb-0">
+        <h3 class="h4 card-title mt-0">{{family.customLabel}}</h3>
+        <p class="card-text">{{family.comment}}</p>
+      </div>
+      <div class="card-footer border-0 py-3 my-3 mb-sm-4">
+        <div class="btn btn-lg btn-icon btn-outline-primary rounded-circle pe-none">
+          <i class="ai-arrow-right"></i>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- Choose  service type -->
+<div *ngIf="!filteredServiceTypes && currentStep==3">
+  <p class="card-text placeholder-glow">
+    <span class="placeholder placeholder-sm col-7 me-2"></span>
+    <span class="placeholder placeholder-sm col-4"></span>
+    <span class="placeholder placeholder-sm col-4 me-2"></span>
+    <span class="placeholder placeholder-sm col-6"></span>
+    <span class="placeholder placeholder-sm col-8"></span>
+  </p>
+</div>
+<div class="row row-cols-1 row-cols-sm-1 row-cols-lg-3 g-4 pb-sm-3 pb-md-4 pb-xl-5"
+  *ngIf="filteredServiceTypes  && currentStep==3">
+  <div class="w-100"> <generic-input [(model)]="searchService" label="Rechercher" [form]="addServiceForm"
+      propertyName="searchService" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+      (modelChange)="searchServices()" [icon]="'search'"></generic-input></div>
+  <div class="col" *ngFor="let serviceType of filteredServiceTypes">
+    <a class="card card-hover-primary bg-secondary border-0 h-100 text-decoration-none" style="cursor: pointer;"
+      (click)="choseServiceType(serviceType)">
+      <div class="card-body pb-0">
+        <h3 class="h4 card-title mt-0">{{serviceType.customLabel}}</h3>
+        <p class="card-text">{{serviceType.comment}}</p>
+      </div>
+      <div class="card-footer border-0 py-3 my-3 mb-sm-4">
+        <div class="btn btn-lg btn-icon btn-outline-primary rounded-circle pe-none">
+          <i class="ai-arrow-right"></i>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- Choose affaire by SIRET -->
+<div class="row row-cols-1 row-cols-sm-1 row-cols-lg-3 g-4 pb-sm-3 pb-md-4 pb-xl-5 "
+  *ngIf=" currentStep==4 && !service.isRequiringNewUnregisteredAffaire ">
+  <div class="w-100">
+    <generic-input [(model)]="siretSearched" label="Rechercher un SIRET" [form]="addServiceForm"
+      propertyName="siretSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+      (onFormChange)="searchSiret()" [icon]="'search'"></generic-input>
+  </div>
+  <div class="w-100" *ngIf="loadingAffaireSearch && (!affaire || !affaire.id)">
+    <p class="card-text placeholder-glow">
+      <span class="placeholder placeholder-sm col-7 me-2"></span>
+      <span class="placeholder placeholder-sm col-4"></span>
+      <span class="placeholder placeholder-sm col-4 me-2"></span>
+      <span class="placeholder placeholder-sm col-6"></span>
+      <span class="placeholder placeholder-sm col-8"></span>
+    </p>
+  </div>
+  <div *ngIf="affaire && affaire.id" class="w-100">
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="!affaire.isIndividual">
+      <label class="col-md-2 col-form-label" for="denomination">Dénomination*</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Dénomination" disabled="true"
+          [(ngModel)]="affaire.denomination" required id="denomination">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="affaire.isIndividual">
+      <label class="col-md-2 col-form-label" for="firstname">Prénom*</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Prénom" disabled="true" [(ngModel)]="affaire.firstname"
+          required id="firstname">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="affaire.isIndividual">
+      <label class="col-md-2 col-form-label" for="lastname">Nom*</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Nom" disabled="true" [(ngModel)]="affaire.lastname"
+          required id="lastname">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="countries  ">
+      <label class="col-md-2 col-form-label" for="country">Pays</label>
+      <div class="col-md-10">
+        <select class="form-control" required id="country" [(ngModel)]="affaire.country" disabled="true"
+          placeholder="Pays">
+          <option [ngValue]="country" *ngFor="let country of countries">{{country.label}} </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center">
+      <label class="col-md-2 col-form-label" for="address">Adresse*</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Adresse" disabled="true" [(ngModel)]="affaire.address"
+          required id="address" maxlength="100">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="affaire.postalCode">
+      <label class="col-md-2 col-form-label" for="postalCode">Code postal*</label>
+      <div class="col-md-10">
+        <input class="form-control " type="text" placeholder="Code postal" disabled="true"
+          [(ngModel)]="affaire.postalCode" required id="postalCode">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="affaire.city">
+      <label class="col-md-2 col-form-label" for="city">Ville*</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Ville" disabled="true" [(ngModel)]="affaire.city.label"
+          required id="city">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Create affaire unregistered -->
+<div class="row row-cols-1 row-cols-sm-1 row-cols-lg-3 g-4 pb-sm-3 pb-md-4 pb-xl-5 "
+  *ngIf=" currentStep==4 && service.isRequiringNewUnregisteredAffaire ">
+  <div class="w-100">
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center form-switch p-0 ">
+      <label class="col-md-2 col-form-label" for="isIndividual">Est une personne physique ?</label>
+      <div class="col-md-10 ">
+        <input type="checkbox" class="form-control form-check-input m-0" id="isIndividual"
+          [(ngModel)]="affaire.isIndividual">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="!affaire.isIndividual">
+      <label class="col-md-2 col-form-label" for="denomination">Dénomination*</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Dénomination" [(ngModel)]="affaire.denomination" required
+          minlength="150" id="denomination">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="affaire.isIndividual">
+      <label class="col-md-2 col-form-label" for="firstname">Prénom*</label>
+      <div class="col-md-10">
+        <select class="form-control" required id="civility" [(ngModel)]="affaire.country" placeholder="Civilité">
+          <option [ngValue]="civility" *ngFor="let civility of civilities">{{civility.label}} </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="affaire.isIndividual">
+      <label class="col-md-2 col-form-label" for="firstname">Prénom*</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Prénom" [(ngModel)]="affaire.firstname" required
+          id="firstname" minlength="40">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="affaire.isIndividual">
+      <label class="col-md-2 col-form-label" for="lastname">Nom*</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Nom" [(ngModel)]="affaire.lastname" required id="lastname"
+          minlength="40">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="countries  ">
+      <label class="col-md-2 col-form-label" for="country">Pays*</label>
+      <div class="col-md-10">
+        <select class="form-control" required id="country" [(ngModel)]="affaire.country" placeholder="Pays"
+          (ngModelChange)="fetchCities()">
+          <option [ngValue]="country" *ngFor="let country of countries">{{country.label}} </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center">
+      <label class="col-md-2 col-form-label" for="address">Adresse*</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Adresse" [(ngModel)]="affaire.address" required
+          id="address" (ngModelChange)="fetchCities()">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="affaire.country">
+      <label class="col-md-2 col-form-label" for="postalCode">Code postal*</label>
+      <div class="col-md-10">
+        <input class="form-control " type="text" placeholder="Code postal" [(ngModel)]="affaire.postalCode" required
+          id="postalCode" (ngModelChange)="fetchCities()">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center"
+      *ngIf="affaire.country && foundCities  && (affaire.country.id!=countryFrance.id || affaire.postalCode && affaire.postalCode.length>3)">
+      <ng-container *ngIf="foundCities.length>0">
+        <label class="col-md-2 col-form-label" for="city">Ville*</label>
+        <div class="col-md-10">
+          <select class="form-control" required id="city" [(ngModel)]="affaire.city" placeholder="Ville">
+            <option [ngValue]="city" *ngFor="let city of foundCities">{{city.label}} </option>
+          </select>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="foundCities.length==0">
+        <div class="alert alert-danger d-flex mb-0 mb-2" role="alert">
+          <i class="ai-octagon-alert fs-xl"></i>
+          <div class="ps-2">Aucune ville trouvée</div>
+        </div>
+      </ng-container>
+    </div>
+
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+    *ngIf="checkedOnce && !affaire.isIndividual && !affaire.denomination">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">La dénomination est obligatoire</div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+    *ngIf="checkedOnce && affaire.isIndividual && !affaire.civility">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">La civilité est obligatoire</div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+    *ngIf="checkedOnce && affaire.isIndividual && !affaire.firstname">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">Le prénom est obligatoire</div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+    *ngIf="checkedOnce && affaire.isIndividual && !affaire.lastname">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">Le nom est obligatoire</div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert" *ngIf="checkedOnce && !affaire.address">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">L'adresse est obligatoire</div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert" *ngIf="checkedOnce && !affaire.country">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">Le pays est obligatoire</div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+    *ngIf="checkedOnce && affaire.country.id == countryFrance.id && (!affaire.postalCode || affaire.postalCode.length<4) ">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">Le code postal est obligatoire</div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert" *ngIf="checkedOnce && !affaire.city">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">La ville est obligatoire</div>
+  </div>
+
+</div>
+
+<!-- announcement form -->
+<div class="row row-cols-1 row-cols-sm-1 row-cols-lg-3 g-4 pb-sm-3 pb-md-4 pb-xl-5 " *ngIf=" currentStep==5">
+  <div class="w-100">
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center form-switch p-0 ">
+      <label class="col-md-2 col-form-label" for="announcementRedactedByJss">Annonce rédigée par le JSS</label>
+      <div class="col-md-10 ">
+        <input type="checkbox" class="form-control form-check-input m-0" id="announcementRedactedByJss"
+          [(ngModel)]="announcementRedactedByJss">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center form-switch p-0 " *ngIf="announcementRedactedByJss">
+      <label class="col-md-2 col-form-label" for="announcementProofReading">Recevoir une épreuve de relecture avant
+        publication</label>
+      <div class="col-md-10 ">
+        <input type="checkbox" class="form-control form-check-input m-0" id="announcementProofReading"
+          [(ngModel)]="announcementProofReading">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center form-switch p-0 ">
+      <label class="col-md-2 col-form-label" for="announcementPublicationDate">Date de publication souhaitée</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" placeholder="Date de publication souhaitée"
+          [ngModel]="announcementPublicationDate | date:'yyyy-MM-dd'"
+          (ngModelChange)="announcementPublicationDate = $event" id="announcementPublicationDate" type="date"
+          [min]="minDatePublication">
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center" *ngIf="!announcementRedactedByJss && departments">
+      <label class="col-md-2 col-form-label" for="announcementDepartment">Département de publication</label>
+      <div class="col-md-10">
+        <select class="form-control" required id="announcementDepartment" [(ngModel)]="announcementDepartment"
+          placeholder="Rubrique de publication">
+          <option [ngValue]="department" *ngFor="let department of departments">
+            {{department.code}} - {{department.label}} </option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center"
+      *ngIf="!announcementRedactedByJss && noticeTypeFamilies">
+      <label class="col-md-2 col-form-label" for="announcementNoticeFamily">Rubrique de publication</label>
+      <div class="col-md-10">
+        <select class="form-control" required id="announcementNoticeFamily" [(ngModel)]="announcementNoticeFamily"
+          placeholder="Rubrique de publication">
+          <option [ngValue]="noticeTypeFamily" *ngFor="let noticeTypeFamily of noticeTypeFamilies">
+            {{noticeTypeFamily.label}} </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center"
+      *ngIf="!announcementRedactedByJss && announcementNoticeFamily && noticeTypes">
+      <label class="col-md-2 col-form-label" for="announcementNoticeType">Sous-rubrique de publication</label>
+      <div class="col-md-10">
+        <select class="form-control" required id="announcementNoticeType" [(ngModel)]="announcementNoticeType"
+          placeholder="Sous-rubrique de publication">
+          <ng-container *ngFor="let noticeType of noticeTypes">
+            <option [ngValue]="noticeType" *ngIf="noticeType.noticeTypeFamily.id == announcementNoticeFamily.id">
+              {{noticeType.label}} </option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-2 mb-md-3 mt-n3 mt-md-0 row align-items-center form-switch p-0 " *ngIf="!announcementRedactedByJss">
+      <label class="col-md-2 col-form-label" for="announcementProofReading">Texte de l'annonce</label>
+      <div class="col-md-10 ">
+        <ckeditor [editor]="ckEditorHeader" [config]="config" [data]="announcementNoticeInit"
+          (change)="onNoticeChange($event)">
+        </ckeditor>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+    *ngIf="checkedOnce && !announcementRedactedByJss && !announcementDepartment">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">Le département est obligatoire</div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+    *ngIf="checkedOnce && !announcementRedactedByJss && !announcementNoticeFamily">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">La rubrique est obligatoire</div>
+  </div>
+
+  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+    *ngIf="checkedOnce && !announcementRedactedByJss && !announcementNoticeType">
+    <i class="ai-octagon-alert fs-xl"></i>
+    <div class="ps-2">La sous-rubrique est obligatoire</div>
+  </div>
+
+</div>
+<!-- validation button -->
+<div class="text-center pt-1 pt-sm-2"
+  *ngIf="service.hasAnnouncement && (service.isRequiringNewUnregisteredAffaire ||  affaire && affaire.id) && currentStep==4 ">
+  <div class="btn-group   " role="group" aria-label="Outline button group">
+    <button type="button" class="btn btn-primary" (click)="validateAffaire()">Valider</button>
+  </div>
+</div>
+<div class="text-center pt-1 pt-sm-2"
+  *ngIf="!service.hasAnnouncement && (service.isRequiringNewUnregisteredAffaire ||  affaire && affaire.id) || currentStep==5 ">
+  <div class="btn-group   " role="group" aria-label="Outline button group">
+    <button type="button" class="btn btn-primary" (click)="validateService()">Valider</button>
+  </div>
+</div>

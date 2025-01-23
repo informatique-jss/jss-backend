@@ -74,7 +74,6 @@ import { ReferentialPrincipalAccountingAccountComponent } from '../referentials/
 import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
 import { ReferentialQuotationAbandonReasonComponent } from '../referentials/referential-quotation-abandon-reason/referential-quotation-abandon-reason';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
-import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
 import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
 import { ReferentialServiceFamilyGroupComponent } from '../referentials/referential-service-family-group/referential-service-family-group.component';
@@ -183,7 +182,6 @@ const routes: Routes = [
     ReferentialDepartmentComponent,
     ConstantComponent,
     ReferentialBillingTypeComponent,
-    ReferentialRegieComponent,
     ReferentialAccountingJournalComponent,
     ReferentialInvoiceStatusComponent,
     ReferentialPrincipalAccountingAccountComponent,

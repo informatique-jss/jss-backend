@@ -9,7 +9,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
+import com.jss.osiris.modules.osiris.quotation.service.MissingAttachmentQueryService;
 
 @Service
 public class SendReminderToCustomerForMissingAttachmentQueriesThread implements IOsirisThread {

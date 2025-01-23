@@ -1,0 +1,204 @@
+<div class="d-flex align-items-center mb-4">
+  <h1 class="h2 mb-0">Relevé de compte</h1>
+  <div class="ms-auto">
+    <div class="btn-group dropdown" style="margin-right: 10px;">
+      <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        <i class="ai-filter me-2"></i>
+        Filtrer
+      </button>
+      <div class="dropdown-menu my-1">
+        <label class=" dropdown-item" *ngFor="let scope of userScope">
+          <input class="form-check-input me-2" type="checkbox"
+            [(ngModel)]="userScopeSelected[scope.responsableViewed.id]" (change)="changeFilter()">
+          {{scope.responsableViewed.firstname+ ' '+scope.responsableViewed.lastname}}
+        </label>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" style="cursor: pointer;" (click)="selectAll(); $event.stopPropagation()">Selectionner
+          tout</a>
+        <a class="dropdown-item" style="cursor: pointer;"
+          (click)="unselectAll(); $event.stopPropagation()">Déselectionner tout</a>
+      </div>
+    </div>
+    <div class="btn-group dropdown " style="margin-right: 10px;">
+      <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        <i class="ai-bar-chart-3 me-2"></i>
+        Trier par
+      </button>
+      <div class="dropdown-menu my-1">
+        <a class="dropdown-item" style="cursor: pointer;"
+          (click)="changeSort('createdDateAsc');$event.stopPropagation();">
+          <i class="ai-time me-2"></i>
+          De la plus ancienne à la plus récente
+          <i class="ai-check me-2" *ngIf="currentSort=='createdDateAsc'"></i>
+        </a>
+        <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('byAffaire');$event.stopPropagation();">
+          <i class="ai-time me-2"></i>
+          Par affaire
+          <i class="ai-check me-2" *ngIf="currentSort=='byAffaire'"></i>
+        </a>
+        <a class="dropdown-item" style="cursor: pointer;"
+          (click)="changeSort('byResponsable');$event.stopPropagation();">
+          <i class="ai-time me-2"></i>
+          Par responsable
+          <i class="ai-check me-2" *ngIf="currentSort=='byResponsable'"></i>
+        </a>
+      </div>
+    </div>
+    <div class="btn-group dropdown" style="margin-right: 10px;">
+      <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        <i class="ai-menu me-2"></i>
+        Actions
+      </button>
+      <div class="dropdown-menu my-1">
+        <a href="#" class="dropdown-item">
+          <i class="ai-download me-2"></i>
+          Exporter en Excel <!-- TODO -->
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
+  <div class="card-body pb-4">
+
+    <div class="alert alert-info d-flex mb-0" role="alert"
+      *ngIf="!isFirstLoading && (!receiptValues || receiptValues.length==0)">
+      <i class="ai-circle-info fs-xl"></i>
+      <div class="ps-2">Aucune valeur n'a été trouvée, essayez de modifier vos filtres ci-dessus</div>
+    </div>
+
+    <!-- Orders accordion -->
+    <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="isFirstLoading">
+      <p class="card-text placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4 me-2"></span>
+        <span class="placeholder placeholder-sm col-6"></span>
+        <span class="placeholder placeholder-sm col-8"></span>
+      </p>
+    </div>
+
+    <div class="table-responsive" *ngIf="!isFirstLoading">
+      <table class="table table-hover" *ngIf="currentSort=='createdDateAsc' && receiptValues && receiptValues.length>0">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Responsable</th>
+            <th scope="col">Affaire</th>
+            <th scope="col">Description</th>
+            <th scope="col">Service</th>
+            <th scope="col" style="width: 20%;">Crédit</th>
+            <th scope="col" style="width: 20%;">Débit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let receiptValue of receiptValues">
+            <tr *ngIf="receiptValue.eventDateTime">
+              <td>{{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</td>
+              <td>{{capitalizeName(getResponsableLabel(receiptValue))}} </td>
+              <td>{{capitalizeName(receiptValue.affaireLists)}} </td>
+              <td><span [innerHTML]="receiptValue.eventDescription | trustHtml" class="announce-container"></span>
+              </td>
+              <td>{{receiptValue.serviceLists}}</td>
+              <td>{{receiptValue.creditAmount | currency:'EUR'}}</td>
+              <td>{{receiptValue.debitAmount | currency:'EUR'}}</td>
+            </tr>
+          </ng-container>
+          <tr>
+            <td colspan="7">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="5">Solde total</td>
+            <td><span *ngIf="getTotalSolde()>0">{{getTotalSolde() | currency:'EUR'}}</span></td>
+            <td><span *ngIf="getTotalSolde()<0">{{getTotalSolde() | currency:'EUR'}}</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-container *ngIf="currentSort=='byAffaire'">
+        <ng-container *ngFor="let affaire of allAffaires ; let index = index">
+          <h4 class="h6 mb-2 mt-6">{{capitalizeName(affaire)}}</h4>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Responsable</th>
+                <th scope="col">Description</th>
+                <th scope="col">Service</th>
+                <th scope="col">Crédit</th>
+                <th scope="col">Débit</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="receiptValues">
+              <ng-container *ngFor="let receiptValue of receiptValues;">
+                <tr *ngIf="receiptValue.eventDateTime && receiptValue.affaireLists == affaire">
+                  <td>{{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</td>
+                  <td>{{capitalizeName(getResponsableLabel(receiptValue))}} </td>
+                  <td><span [innerHTML]="receiptValue.eventDescription | trustHtml" class="announce-container"></span>
+                  </td>
+                  <td>{{receiptValue.serviceLists}}</td>
+                  <td>{{receiptValue.creditAmount | currency:'EUR'}}</td>
+                  <td>{{receiptValue.debitAmount | currency:'EUR'}}</td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="allAffaires&&  index == allAffaires.length-1">
+                <tr>
+                  <td colspan="6">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td colspan="4">Solde total</td>
+                  <td><span *ngIf="getTotalSolde()>0">{{getTotalSolde() | currency:'EUR'}}</span></td>
+                  <td><span *ngIf="getTotalSolde()<0">{{getTotalSolde() | currency:'EUR'}}</span></td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="currentSort=='byResponsable'">
+        <ng-container *ngFor="let responsable of allResponsables ; let index = index">
+          <h4 class="h6 mb-2 mt-6">{{capitalizeName(responsable.firstname+' '+responsable.lastname)}}</h4>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Affaire</th>
+                <th scope="col">Description</th>
+                <th scope="col">Service</th>
+                <th scope="col">Crédit</th>
+                <th scope="col">Débit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let receiptValue of receiptValues">
+                <tr *ngIf="receiptValue.eventDateTime && receiptValue.responsable.id == responsable.id">
+                  <td>{{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</td>
+                  <td>{{capitalizeName(receiptValue.affaireLists)}} </td>
+                  <td><span [innerHTML]="receiptValue.eventDescription | trustHtml" class="announce-container"></span>
+                  </td>
+                  <td>{{receiptValue.serviceLists}}</td>
+                  <td>{{receiptValue.creditAmount | currency:'EUR'}}</td>
+                  <td>{{receiptValue.debitAmount | currency:'EUR'}}</td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="allResponsables &&  index == allResponsables.length-1">
+                <tr>
+                  <td colspan="6">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td colspan="4">Solde total</td>
+                  <td><span *ngIf="getTotalSolde()>0">{{getTotalSolde() | currency:'EUR'}}</span></td>
+                  <td><span *ngIf="getTotalSolde()<0">{{getTotalSolde() | currency:'EUR'}}</span></td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</div>

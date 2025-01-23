@@ -1,11 +1,20 @@
+import { City } from "../../miscellaneous/model/City";
 import { Civility } from "../../miscellaneous/model/Civility";
-import { ITiers } from "./ITiers";
+import { Country } from "../../miscellaneous/model/Country";
+import { IAttachment } from "../../miscellaneous/model/IAttachment";
+import { IDocument } from "../../miscellaneous/model/IDocument";
+import { Language } from "../../miscellaneous/model/Language";
+import { Mail } from "../../miscellaneous/model/Mail";
+import { Phone } from "../../miscellaneous/model/Phone";
+import { TiersFollowup } from "../../miscellaneous/model/TiersFollowup";
+import { Employee } from "../../profile/model/Employee";
 import { SubscriptionPeriodType } from "./SubscriptionPeriodType";
 import { Tiers } from "./Tiers";
 import { TiersCategory } from "./TiersCategory";
 import { TiersType } from "./TiersType";
 
-export interface Responsable extends ITiers {
+export interface Responsable extends IDocument, IAttachment {
+  id: number;
   tiers: Tiers;
   isActive: boolean;
   isBouclette: boolean;
@@ -18,9 +27,25 @@ export interface Responsable extends ITiers {
   civility: Civility;
   firstname: string | null;
   lastname: string | null;
-  rffFormaliteRate: number;
-  rffInsertionRate: number;
   loginWeb: string;
   canViewAllTiersInWeb: boolean;
   idAs400: string;
+  salesEmployee: Employee | undefined;
+  defaultCustomerOrderEmployee: Employee | undefined;
+  formalisteEmployee: Employee | undefined;
+  insertionEmployee: Employee | undefined;
+  mailRecipient: string | null;
+  language: Language;
+  address: string;
+  postalCode: string;
+  cedexComplement: string;
+  city: City;
+  country: Country;
+  mail: Mail;
+  phones: Phone[];
+  tiersFollowups: TiersFollowup[];
+  observations: string;
+  rffIban: string;
+  rffBic: string;
+  rffMail: string;
 }

@@ -1,0 +1,133 @@
+<!-- =======================
+Inner intro START -->
+<section class="pt-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-9 mx-auto text-center py-5">
+        <span>Rechercher des annonces légales</span>
+        <h2 class="display-5">JSS SPEL</h2>
+        <span class="lead" *ngIf="searchResults && searchResults.length>0">{{searchResults.length}}
+          résultat{{searchResults.length>1?'s':''}} trouvé{{searchResults.length>1?'s':''}}</span>
+        <!-- Search -->
+        <div class="row">
+          <div class="col-8 mx-auto">
+            <form class="input-group mt-4">
+              <input class="form-control form-control-lg border-primary" type="search"
+                placeholder="Denomination, SIREN ou mot-clé" aria-label="Rechercher" [(ngModel)]="searchText"
+                [ngModelOptions]="{standalone: true}">
+              <button class="btn btn-primary btn-lg m-0" type="submit" (click)="searchForAnnouncement()">
+                <span class="d-none d-md-block"><span class="spinner-border spinner-border-sm me-2" role="status"
+                    aria-hidden="true" *ngIf="searchInProgress"></span>Rechercher</span>
+                <i class="d-block d-md-none fas fa-search"></i></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- =======================
+Inner intro END -->
+
+<!-- =======================
+Main content START -->
+<section class="position-relative pt-0" *ngIf="searchResults && searchResults.length>0">
+  <div class="container">
+    <div class="row">
+      <!-- Main Post START -->
+      <div class="col-lg-9 mx-auto">
+        <!-- Card item START -->
+        <div class="card border rounded-3 up-hover p-4 mb-4" *ngFor="let announcement of searchResults">
+          <div class="row g-3">
+            <div>
+              <!-- Categories -->
+              <a class="badge text-bg-warning mb-2 margin-category btn-primary-soft" style="margin-right: 8px;"><i
+                  class="fas fa-circle me-2 small fw-bold"></i>{{announcement.noticeTypeFamily.label}}</a>
+              <ng-container *ngIf="announcement.noticeTypes!=null">
+                <a *ngFor="let noticeType of announcement.noticeTypes" style="margin-right: 8px;"
+                  class="badge text-bg-primary mb-2 margin-category btn-primary-soft"><i
+                    class="fas fa-circle me-2 small fw-bold"></i>{{noticeType.label}}</a>
+              </ng-container>
+              <!-- Title -->
+              <h3 class="card-title">
+                <a style="cursor: pointer;" (click)="openAnnouncement(announcement, $event)"
+                  class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
+              </h3>
+              <!-- Card info -->
+              <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
+                <li class="nav-item" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
+                  <div class="nav-link">
+                    <div class="d-flex align-items-center position-relative">
+                      <span>{{announcement.affaireSiren}}</span>
+                    </div>
+                  </div>
+                </li>
+                <li class="nav-item">{{announcement.department.label}} ({{announcement.department.code}})</li>
+                <li class="nav-item">{{announcement.publicationDate | date:'EEEE d MMMM'}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- Card item END -->
+
+        <!-- Load more -->
+        <div class="col-12 text-center mt-5">
+          <button type="button" class="btn btn-primary-soft  " *ngIf="displayLoadMoreButton"
+            (click)="getNextAnnouncements()">Voir
+            + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
+        </div>
+      </div>
+      <!-- Main Post END -->
+    </div> <!-- Row end -->
+  </div>
+</section>
+<section class="position-relative pt-0" *ngIf="!searchResults">
+  <div class="container">
+    <div class="row">
+      <!-- Main Post START -->
+      <div class="col-lg-9 mx-auto">
+        <!-- Card item START -->
+        <div class="card border rounded-3 up-hover p-4 mb-4" *ngFor="let announcement of announcements">
+          <div class="row g-3">
+            <div>
+              <!-- Categories -->
+              <a class="badge text-bg-warning mb-2 margin-category btn-primary-soft" style="margin-right: 8px;"><i
+                  class="fas fa-circle me-2 small fw-bold"></i>{{announcement.noticeTypeFamily.label}}</a>
+              <ng-container *ngIf="announcement.noticeTypes!=null">
+                <a *ngFor="let noticeType of announcement.noticeTypes" style="margin-right: 8px;"
+                  class="badge text-bg-primary mb-2 margin-category btn-primary-soft"><i
+                    class="fas fa-circle me-2 small fw-bold"></i>{{noticeType.label}}</a>
+              </ng-container>
+              <!-- Title -->
+              <h3 class="card-title">
+                <a style="cursor: pointer;" (click)="openAnnouncement(announcement,  $event)"
+                  class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
+              </h3>
+              <!-- Card info -->
+              <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
+                <li class="nav-item" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
+                  <div class="nav-link">
+                    <div class="d-flex align-items-center position-relative">
+                      <span>{{announcement.affaireSiren}}</span>
+                    </div>
+                  </div>
+                </li>
+                <li class="nav-item">{{announcement.department.label}} ({{announcement.department.code}})</li>
+                <li class="nav-item">{{announcement.publicationDate | date:'EEEE d MMMM'}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- Card item END -->
+
+        <!-- Load more -->
+        <div class="col-12 text-center mt-5">
+          <button type="button" class="btn btn-primary-soft  " *ngIf="displayLoadMoreButton"
+            (click)="getNextAnnouncements()">Voir
+            + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
+        </div>
+      </div>
+      <!-- Main Post END -->
+    </div> <!-- Row end -->
+  </div>
+</section>

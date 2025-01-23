@@ -28,11 +28,11 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.node.model.Node;
 import com.jss.osiris.libs.node.service.NodeService;
-import com.jss.osiris.modules.accounting.service.AccountingRecordService;
-import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
-import com.jss.osiris.modules.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.invoicing.service.PaymentService;
-import com.jss.osiris.modules.quotation.service.DebourDelService;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
+import com.jss.osiris.modules.osiris.quotation.service.DebourDelService;
 
 @Service
 public class BatchServiceImpl implements BatchService, ApplicationListener<ContextClosedEvent> {
@@ -221,7 +221,8 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
             batchStatusWaiting = batchStatusService.getBatchStatusByCode(BatchStatus.WAITING);
 
         List<Batch> existingBatchs = batchRepository.findByBatchSettingsAndEntityIdAndBatchStatusIn(
-                batchSettings.get(batchCode), entityId,
+                batchSettings.get(batchCode),
+                entityId,
                 Arrays.asList(batchStatusService.getBatchStatusByCode(BatchStatus.NEW),
                         batchStatusService.getBatchStatusByCode(BatchStatus.WAITING),
                         batchStatusService.getBatchStatusByCode(BatchStatus.RUNNING)));

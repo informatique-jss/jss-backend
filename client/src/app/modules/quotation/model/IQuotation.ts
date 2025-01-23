@@ -5,17 +5,16 @@ import { QuotationAbandonReason } from "../../miscellaneous/model/QuotationAband
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { Employee } from '../../profile/model/Employee';
 import { Responsable } from "../../tiers/model/Responsable";
-import { Tiers } from "../../tiers/model/Tiers";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
-import { Confrere } from "./Confrere";
 import { CustomerOrderComment } from "./CustomerOrderComment";
 
 export interface IQuotation extends IAttachment, IDocument {
   id: number;
+  validationId: number;
   assignedTo: Employee;
-  tiers: Tiers | undefined;
+  // tiers: Tiers | undefined;
   responsable: Responsable | undefined;
-  confrere: Confrere | undefined;
+  // confrere: Confrere | undefined;
   specialOffers: SpecialOffer[] | undefined;
   createdDate: Date;
   description: string;

@@ -11,7 +11,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
-import { ITiers } from 'src/app/modules/tiers/model/ITiers';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { COMPETENT_AUTHORITY_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
@@ -105,7 +105,7 @@ export class CompetentAuthorityComponent implements OnInit {
       this.appService.changeHeaderTitle(element.label);
 
     setTimeout(() => {
-      this.invoiceSearch.customerOrders = [{ id: this.selectedcompetentAuthority!.id } as ITiers];
+      this.invoiceSearch.customerOrders = [{ id: this.selectedcompetentAuthority!.id } as Tiers];
       this.invoiceSearch.invoiceStatus = [this.constantService.getInvoiceStatusReceived()];
     }, 0);
 

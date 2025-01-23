@@ -5,17 +5,17 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
-import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.quotation.model.Confrere;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.MissingAttachmentQuery;
-import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.tiers.model.Responsable;
-import com.jss.osiris.modules.tiers.model.Rff;
-import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.Confrere;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Rff;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -38,6 +38,7 @@ import jakarta.persistence.Table;
         @Index(name = "idx_customer_mail_responsable", columnList = "id_responsable"),
         @Index(name = "idx_customer_mail_quotation", columnList = "id_quotation"),
         @Index(name = "idx_customer_mail_customer_order", columnList = "id_customer_order"),
+        @Index(name = "idx_customer_mail_competent_authority", columnList = "id_competent_authority"),
         @Index(name = "idx_customer_mail_confrere", columnList = "id_confrere") })
 public class CustomerMail {
 
@@ -59,7 +60,8 @@ public class CustomerMail {
     public static String TEMPLATE_BILLING_CLOSURE = "billing-closure";
     public static String TEMPLATE_INVOICE_REMINDER = "invoice-reminder";
     public static String TEMPLATE_MISSING_ATTACHMENT = "missing-attachment";
-    public static String TEMPLATE_RENEW_PASSWORD = "renew-password";
+    public static String TEMPLATE_RENEW_PASSWORD = "renew-password"; // TODO : delete
+    public static String TEMPLATE_SEND_TOKEN = "send-token";
     public static String TEMPLATE_REQUEST_RIB = "request-rib";
     public static String TEMPLATE_SEND_RFF = "send-rff";
     public static String TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = "send-competent-authority-reminder";

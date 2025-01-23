@@ -1,0 +1,206 @@
+<!-- =======================
+Inner intro START -->
+<section class="pb-3 pb-lg-5" *ngIf="post">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <ng-container *ngIf="post.myJssCategories!=null && post.myJssCategories.length>0">
+          <a *ngFor="let category of post.myJssCategories" style="cursor: pointer;"
+            (click)="openCategoryPosts(category, $event)"
+            class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
+            [style.background-color]="category.color+' !important'"><i
+              class="fas fa-circle me-2 small fw-bold"></i>{{category.name}}</a>
+        </ng-container>
+        <h1 [innerHTML]="post.titleText| trustHtml"> </h1>
+      </div>
+      <p class="lead" [innerHTML]="post.excerptText| trustHtml"> </p>
+    </div>
+  </div>
+</section>
+<!-- =======================
+Inner intro END -->
+
+<!-- =======================
+Main START -->
+<section class="pt-0" *ngIf="post">
+  <div class="container position-relative" data-sticky-container>
+    <div class="row">
+      <!-- Left sidebar START -->
+      <div class="col-lg-2">
+        <div class="text-start text-lg-center mb-5" data-sticky data-margin-top="80" data-sticky-for="991">
+          <!-- Author info -->
+          <div class="position-relative">
+            <div class="avatar avatar-xl">
+              <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_96" alt="avatar">
+            </div>
+            <a style="cursor: pointer;" (click)="openAuthorPosts(post.fullAuthor, $event)"
+              class="h5 stretched-link mt-2 mb-0 d-block">{{post.fullAuthor.name}}</a>
+            <p>{{post.fullAuthor.description}}</p>
+          </div>
+          <hr class="d-none d-lg-block">
+          <!-- Card info -->
+          <ul class="list-inline list-unstyled">
+            <li class="list-inline-item d-lg-block my-lg-2">{{post.date | date:'EEEE d MMMM HH:mm'}}</li>
+            <li class="list-inline-item d-lg-block my-lg-2">{{getTimeReading(post.contentText)}}</li>
+            <!--li class="list-inline-item d-lg-block my-lg-2"><i class="far fa-eye me-1"></i> 2344 vues</li -- > <!-- to decide when display -->
+          </ul>
+          <!-- Tags -->
+          <ul class="list-inline text-primary-hover mt-0 mt-lg-3" *ngIf=" post.postTags &&  post.postTags.length>0">
+            <li class="list-inline-item" *ngFor="let tag of post.postTags">
+              <a class="text-body" style="cursor: pointer;" (click)="openTagPosts(tag, $event)">#{{tag.name}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Left sidebar END -->
+      <!-- Main Content START -->
+      <div class="col-lg-7 mb-5">
+        <span [innerHTML]="post.contentText| trustHtml"></span>
+
+        <!-- Bannière d'abonnement en bas de l'article visible -->
+
+        <div class="subscription-overlay d-flex justify-content-center align-items-center flex-column text-center p-4"
+          style="position: relative; background: rgba(255, 255, 255, 0.85); color: #333; margin-top: -170px; padding-top: 20px;"
+          *ngIf="post.premium">
+          <h2 class="fw-bold">Vous souhaitez lire la suite ?</h2>
+          <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en intégralité et de
+            bien d'autres !</p>
+          <div><a class="btn btn-primary mt-3" style="margin-right: 20px;cursor: pointer;"
+              (click)="openSubscribe($event)">Lire pour 1 €</a>
+            <a href="/abonnement" class="btn btn-primary mt-3" style="cursor: pointer;"
+              (click)="openSubscribe($event)">S'abonner</a>
+          </div>
+        </div>
+
+
+        <div class="text-center h5 mb-4" *ngIf="post.relatedPosts && post.relatedPosts.length>0">. . .</div>
+
+        <!-- Related post START -->
+        <div class="mt-5" *ngIf="post.relatedPosts && post.relatedPosts.length>0">
+          <h2 class="my-3"><i class="bi bi-symmetry-vertical me-2"></i>Sur le même sujet</h2>
+          <div class="slider tiny-slider arrow-hover arrow-blur arrow-white arrow-round">
+            <!-- Card item START -->
+            <ng-container *ngFor="let relatedPost of post.relatedPosts">
+              <div class="card" *ngIf="relatedPost.media" #sliderPage>
+                <!-- Card img -->
+                <div class="position-relative">
+                  <img class="card-img" [src]="relatedPost.media.urlMedium" alt="Card image">
+                  <div class="card-img-overlay d-flex align-items-start flex-column p-3">
+                    <!-- Card overlay bottom -->
+                    <div class="w-100 mt-auto">
+                      <ng-container *ngIf="relatedPost.myJssCategories!=null && relatedPost.myJssCategories.length>0">
+                        <a *ngFor="let category of relatedPost.myJssCategories" style="cursor: pointer;"
+                          (click)="openCategoryPosts(category, $event)"
+                          class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
+                          [style.background-color]="category.color+' !important'"><i
+                            class="fas fa-circle me-2 small fw-bold"></i>{{category.name}}</a>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body px-0 pt-3">
+                  <h5 class="card-title"><a (click)="openPost(relatedPost, $event)" style="cursor: pointer;"
+                      class="btn-link text-reset stretched-link fw-bold" [innerHTML]="relatedPost.titleText| trustHtml">
+                    </a></h5>
+                  <!-- Card info -->
+                  <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
+                    <li class="nav-item">
+                      <div class="nav-link">
+                        <div class="d-flex align-items-center position-relative">
+                          <div class="avatar avatar-xs">
+                            <img class="avatar-img rounded-circle" [src]="relatedPost.fullAuthor.avatar_url_size_24"
+                              alt="avatar">
+                          </div>
+                          <span class="ms-3">par <a style="cursor: pointer;"
+                              (click)="openAuthorPosts(relatedPost.fullAuthor, $event)"
+                              class="stretched-link text-reset btn-link">{{relatedPost.fullAuthor.name}}</a></span>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="nav-item">{{relatedPost.date | date:'EEEE d MMMM'}}</li>
+                  </ul>
+                </div>
+              </div>
+            </ng-container>
+            <!-- Card item END -->
+          </div> <!-- Slider END -->
+        </div>
+        <!-- Related post END -->
+
+
+        <!-- Divider -->
+        <div class="text-center h5 mb-4">. . .</div>
+
+        <div class="row g-0">
+          <div class="col-sm-6 bg-primary bg-opacity-10 p-4 position-relative border-end border-1 rounded-start">
+            <span *ngIf="previousPost"><i class="bi bi-arrow-left me-3 rtl-flip"></i>Article précédent</span>
+            <h5 class="m-0" *ngIf="previousPost"><a (click)="openPost(previousPost, $event)" style="cursor: pointer;"
+                class="stretched-link btn-link text-reset" [innerHTML]="previousPost.titleText| trustHtml"></a></h5>
+          </div>
+          <div class="col-sm-6 bg-primary bg-opacity-10 p-4 position-relative text-sm-end rounded-end">
+            <span *ngIf="nextPost">Article suivant<i class="bi bi-arrow-right ms-3 rtl-flip"></i></span>
+            <h5 class="m-0" *ngIf="nextPost"><a class="stretched-link btn-link text-reset"
+                (click)="openPost(nextPost, $event)" style="cursor: pointer;"
+                [innerHTML]="nextPost.titleText| trustHtml"></a></h5>
+          </div>
+        </div>
+
+      </div>
+      <!-- Main Content END -->
+
+      <!-- Right sidebar START -->
+      <div class="col-lg-3">
+        <div data-sticky data-margin-top="80" data-sticky-for="991">
+          <h4>Partager cet article</h4>
+          <ul class="nav text-white-force">
+            <li class="nav-item">
+              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-facebook" style="cursor: pointer;"
+                (click)="shareOnFacebook()">
+                <i class="fab fa-facebook-square align-middle"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-twitter" style="cursor: pointer;"
+                (click)="shareOnTwitter()">
+                <i class="fab fa-twitter-square align-middle"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-linkedin" style="cursor: pointer;"
+                (click)="shareOnLinkedin()">
+                <i class="fab fa-linkedin align-middle"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link icon-md rounded-circle me-2 mb-2 p-0 fs-5 bg-primary" style="cursor: pointer;"
+                (click)="shareByMail()">
+                <i class="far fa-envelope align-middle"></i>
+              </a>
+            </li>
+          </ul>
+          <!-- Lire l'article avec Play/Pause et contrôler la vitesse -->
+          <!-- Audio player for article text with controls -->
+          <div class="mt-4">
+            <h4 class="m-0" style="cursor: pointer;" (click)="togglePlayPause()"><i class="bi  me-2"
+                [class]="isPlaying ? 'bi-pause' : 'bi-play'"></i>Lire l'article</h4>
+            <div class="mt-3" *ngIf="isPlaying">
+              <label for="speedControl">Vitesse :</label>
+              <input type="range" class="form-range" min="0.5" max="2" step="0.1" id="speedControl"
+                [(ngModel)]="speechRate" (input)="updateSpeed()">
+              <span>{{ speechRate }}x</span>
+            </div>
+          </div>
+          <!-- Advertisement -->
+          <!--div class="mt-4">
+            <a href="#" class="d-block card-img-flash">
+              <img src="assets/images/adv.png" alt="">
+            </a>
+          </div--> <!-- not for now -->
+        </div>
+      </div>
+      <!-- Right sidebar END -->
+    </div>
+  </div>
+</section>
+<!-- =======================
+Main END -->

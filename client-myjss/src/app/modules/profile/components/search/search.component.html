@@ -1,0 +1,91 @@
+<div class="modal fade" id="searchModal" tabindex="-1" role="dialog" data-focus-input="#search"
+  (hidden.bs.modal)="clearSearch()">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header d-block position-relative border-0">
+        <form class="position-relative w-100 mt-2 mb-4">
+          <button class="btn-close position-absolute top-50 end-0 translate-middle-y m-0 me-n1" type="reset"
+            aria-label="Close" (click)="clearSearch()"></button>
+          <i class="ai-search fs-xl position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+          <input class="form-control form-control-lg px-5" type="search" [(ngModel)]="searchText"
+            (keydown)="searchEntities()" placeholder="Rechercher une commande, un SIREN, une facture, ..."
+            data-focus-on-open='["modal", "#searchModal"]' [ngModelOptions]="{standalone: true}">
+        </form>
+        <div class="fs-xs fw-medium text-body-secondary text-uppercase" *ngIf="entities && entities.length>0">Résultats
+        </div>
+      </div>
+      <div class="modal-body pt-0">
+        <p class="card-text placeholder-glow" *ngIf="searchInProgress">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
+        <ng-container *ngFor="let entity of entities">
+          <div class="d-flex align-items-center border-bottom pb-4 mb-4"
+            (click)="openCustomerOrder($event,entity.entityId)" data-bs-dismiss="modal" style="cursor: pointer;"
+            *ngIf="entity.entityType==CUSTOMER_ORDER_ENTITY_TYPE.entityType">
+            <button type="button" class="btn btn-secondary btn-icon">
+              <i class="ai-cart"></i>
+            </button>
+            <div class="ps-3">
+              <h4 class="h6 mb-2">
+                Commande
+              </h4>
+              <span class="mb-0 me-2">{{entity.text.id}} - {{entity.text.customerOrderStatus ?
+                entity.text.customerOrderStatus.label:''}} - {{entity.text.responsable.firstname}}
+                {{entity.text.responsable.lastname}}</span>
+            </div>
+          </div>
+          <div class="d-flex align-items-center border-bottom pb-4 mb-4" (click)="openQuotation($event,entity)"
+            data-bs-dismiss="modal" style="cursor: pointer;"
+            *ngIf="entity.entityType==QUOTATION_ENTITY_TYPE.entityType">
+            <button type="button" class="btn btn-secondary btn-icon">
+              <i class="ai-slider"></i>
+            </button>
+            <div class="ps-3">
+              <h4 class="h6 mb-2">
+                Devis
+              </h4>
+              <span class="mb-0 me-2">{{entity.text.id}} - {{entity.text.quotationStatus ?
+                entity.text.quotationStatus.label:''}} - {{entity.text.responsable.firstname}}
+                {{entity.text.responsable.lastname}}</span>
+            </div>
+          </div>
+          <div class="d-flex align-items-center border-bottom pb-4 mb-4"
+            (click)="openCustomerOrder($event,entity.text.customerOrder.id)" data-bs-dismiss="modal"
+            style="cursor: pointer;"
+            *ngIf="entity.text && entity.text.customerOrder && entity.text.customerOrder.id && entity.entityType==CUSTOMER_ORDER_ENTITY_TYPE.entityType">
+            <button type="button" class="btn btn-secondary btn-icon">
+              <i class="ai-cart"></i>
+            </button>
+            <div class="ps-3">
+              <h4 class="h6 mb-2">
+                Facture
+              </h4>
+              <span class="mb-0 me-2">{{entity.text.id}} - Commande {{entity.text.customerOrder.id}} -
+                {{entity.text.responsable.firstname}}
+                {{entity.text.responsable.lastname}}</span>
+            </div>
+          </div>
+          <div class="d-flex align-items-center border-bottom pb-4 mb-4" (click)="openAffaire($event,entity)"
+            data-bs-dismiss="modal" style="cursor: pointer;" *ngIf="entity.entityType==AFFAIRE_ENTITY_TYPE.entityType">
+            <button type="button" class="btn btn-secondary btn-icon">
+              <i class="ai-briefcase"></i>
+            </button>
+            <div class="ps-3">
+              <h4 class="h6 mb-2">
+                Affaire
+              </h4>
+              <span class="mb-0 me-2">{{entity.text.id}} - {{entity.text.denomination ?
+                entity.text.denomination:(entity.text.firstname + ' ' +entity.text.lastname)}} -
+                {{entity.text.city?entity.text.city.label : ''}} - {{entity.text.siret?entity.text.siret : ''}}</span>
+            </div>
+          </div>
+
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

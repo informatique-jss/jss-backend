@@ -16,28 +16,28 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.node.service.NodeService;
-import com.jss.osiris.modules.accounting.service.AccountingRecordService;
-import com.jss.osiris.modules.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.invoicing.service.PaymentService;
-import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
-import com.jss.osiris.modules.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
-import com.jss.osiris.modules.profile.service.EmployeeService;
-import com.jss.osiris.modules.quotation.service.AffaireService;
-import com.jss.osiris.modules.quotation.service.AnnouncementService;
-import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
-import com.jss.osiris.modules.quotation.service.AssignationTypeService;
-import com.jss.osiris.modules.quotation.service.CentralPayPaymentRequestService;
-import com.jss.osiris.modules.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
-import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
-import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
-import com.jss.osiris.modules.quotation.service.MissingAttachmentQueryService;
-import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
-import com.jss.osiris.modules.quotation.service.QuotationService;
-import com.jss.osiris.modules.quotation.service.QuotationStatusService;
-import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
-import com.jss.osiris.modules.quotation.service.guichetUnique.GuichetUniqueDelegateService;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.EtablissementPublicsDelegate;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
+import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
+import com.jss.osiris.modules.osiris.quotation.service.AnnouncementStatusService;
+import com.jss.osiris.modules.osiris.quotation.service.AssignationTypeService;
+import com.jss.osiris.modules.osiris.quotation.service.CentralPayPaymentRequestService;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
+import com.jss.osiris.modules.osiris.quotation.service.DomiciliationStatusService;
+import com.jss.osiris.modules.osiris.quotation.service.FormaliteStatusService;
+import com.jss.osiris.modules.osiris.quotation.service.MissingAttachmentQueryService;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionScreenTypeService;
+import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
+import com.jss.osiris.modules.osiris.quotation.service.SimpleProvisionStatusService;
+import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 
 @Service
 @ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
@@ -398,6 +398,16 @@ public class OsirisScheduller {
 		try {
 			if (nodeService.shouldIBatch())
 				customerMailService.sendTemporizedMails();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.wordpress.synchronise}")
+	private void synchroniseWordpress() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.SYNCHRONISE_WORDPRESS, 1);
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

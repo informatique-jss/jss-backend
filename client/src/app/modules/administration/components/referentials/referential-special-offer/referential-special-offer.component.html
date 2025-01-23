@@ -33,6 +33,13 @@
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.customLabel" label="Nom fonctionnel personnalisé"
+                [maxLength]="100" [form]="entityForm" propertyName="customLabel" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
         </table>
         <div class="mat-accordion-container full-width">
           <table class="full-width" *ngIf="assoSpecialOfferBillingItems">

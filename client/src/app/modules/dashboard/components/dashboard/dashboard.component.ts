@@ -28,6 +28,7 @@ import { SimpleProvisionStatusService } from 'src/app/modules/quotation/services
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { ActiveDirectoryGroupService } from '../../../miscellaneous/services/active.directory.group.service';
 
 @Component({
   selector: 'dashboard',
@@ -140,6 +141,7 @@ export class DashboardComponent implements OnInit {
     private quotationStatusService: QuotationStatusService,
     private constantService: ConstantService,
     private habilitationsService: HabilitationsService,
+    private activeDirectoryGroupService: ActiveDirectoryGroupService,
   ) { }
 
   ngOnInit() {
@@ -211,6 +213,13 @@ export class DashboardComponent implements OnInit {
         this.orderingSearchToBilled.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_BILLED)!];
 
         this.orderingSearchTagged.assignedToEmployee = this.currentEmployee!;
+        this.activeDirectoryGroupService.getActiveDirectoryGroups().subscribe(response => {
+          let activeDirectoryGroups = response;
+          for (let activeDirectoryGroup of activeDirectoryGroups) {
+            if (this.orderingSearchTagged.assignedToEmployee.adPath.includes(activeDirectoryGroup.activeDirectoryPath))
+              this.orderingSearchTagged.activeDirectoryGroup = activeDirectoryGroup;
+          }
+        });
         this.orderingSearchTagged.isOnlyDisplayUnread = true;
 
         this.quotationSearchOpen.assignedToEmployee = this.currentEmployee!;

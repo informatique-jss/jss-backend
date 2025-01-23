@@ -31,7 +31,7 @@
     </ng-template>
   </mat-tab>
   <mat-tab label="Documents" *ngIf="affaire && affaire.id">
-    <attachments [entity]="affaire" [editMode]="editMode" [entityType]="AFFAIRE_ENTITY_TYPE.entityType">
+    <attachments [entity]="affaire" [editMode]="true" [entityType]="AFFAIRE_ENTITY_TYPE.entityType">
     </attachments>
   </mat-tab>
   <mat-tab label="Historique" *ngIf="affaire && affaire.id">

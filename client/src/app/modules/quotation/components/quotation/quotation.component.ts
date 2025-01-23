@@ -13,6 +13,8 @@ import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
+import { Responsable } from 'src/app/modules/tiers/model/Responsable';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
@@ -23,11 +25,9 @@ import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
-import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
-import { ITiers } from '../../../tiers/model/ITiers';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -45,6 +45,7 @@ import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
 import { ServiceService } from '../../services/service.service';
+import { ValidationIdQuotationService } from '../../services/validation-id.quotation.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
@@ -70,7 +71,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
   customerOrderStatusList: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   isQuotationUrl = false;
-
   VALIDATED_BY_CUSTOMER = VALIDATED_BY_CUSTOMER;
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
@@ -108,6 +108,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private customerOrderService: CustomerOrderService,
     private quotationStatusService: QuotationStatusService,
     private customerOrderStatusService: CustomerOrderStatusService,
+    private validationIdQuotationService: ValidationIdQuotationService,
     private activatedRoute: ActivatedRoute,
     public chooseUserDialog: MatDialog,
     public mailLabelDialog: MatDialog,
@@ -243,6 +244,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
   }
 
+  isValidatedStatusForUploadFile() {
+    if (this.quotation && instanceOfQuotation(this.quotation) && this.quotation.quotationStatus && this.quotation.quotationStatus.code == VALIDATED_BY_CUSTOMER)
+      return false;
+    else
+      return this.editMode;
+  }
+
   updateDocuments() {
     this.updateDocumentsEvent.next(this.quotation);
   }
@@ -279,12 +287,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                 userList.push(provision.assignedTo);
             }
           if (userList.length == 0) {
-            let tiers: ITiers | undefined = this.quotation.responsable ?? this.quotation.tiers ?? this.quotation.confrere;
-            if (tiers) {
-              if (tiers.formalisteEmployee)
-                userList.push(tiers.formalisteEmployee);
-              if (tiers.insertionEmployee)
-                userList.push(tiers.insertionEmployee);
+            let responsable: Responsable | undefined = this.quotation.responsable;
+            if (responsable) {
+              if (responsable.formalisteEmployee)
+                userList.push(responsable.formalisteEmployee);
+              else if (responsable.tiers.formalisteEmployee)
+                userList.push(responsable.tiers.formalisteEmployee);
+              if (responsable.insertionEmployee)
+                userList.push(responsable.insertionEmployee);
+              else if (responsable.tiers.insertionEmployee)
+                userList.push(responsable.tiers.insertionEmployee);
             }
           }
           let chooseUserDialogRef = this.chooseUserDialog.open(ChooseAssignedUserDialogComponent, {
@@ -376,8 +388,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.createMode = true;
     this.editMode = true;
     this.quotation = {} as IQuotation;
-    this.setOpenStatus();
-    this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
+    this.validationIdQuotationService.getValidationIdForQuotation().subscribe(response => {
+      if (response) {
+        this.quotation.validationId = response;
+      }
+      this.setOpenStatus();
+      this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
+    });
   }
 
   openSearch() {
@@ -432,9 +449,24 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
       }
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Supprimer le service",
+        content: "Êtes-vous sûr de vouloir continuer ?",
+        closeActionText: "Annuler",
+        validationActionText: "Confirmer"
+      }
+    });
 
-    asso.services.splice(asso.services.indexOf(service), 1);
-    this.generateInvoiceItem();
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.serviceService.deleteService(service).subscribe(response => {
+          if (response)
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+        });
+      }
+    });
   }
 
   modifyService(service: Service) {
@@ -507,7 +539,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
         // Check if another quotation / affaire already exists
         let orderingSearch = {} as OrderingSearch;
-        orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
+        orderingSearch.customerOrders = [this.quotation.responsable as any as Tiers];
         orderingSearch.affaire = asso.affaire;
         orderingSearch.customerOrderStatus = [];
         let d = new Date();
@@ -538,8 +570,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       }
     })
   }
-
-
 
   displayQuotationWorkflowDialog() {
     let dialogRef = this.quotationWorkflowDialog.open(WorkflowDialogComponent, {
@@ -573,7 +603,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     dialogRef.componentInstance.title = "Workflow des commandes";
   }
 
-  deleteProvision(service: Service, provision: Provision) {
+  deleteProvision(provision: Provision) {
     if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
       if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
@@ -593,7 +623,24 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       return;
     }
 
-    service.provisions.splice(service.provisions.indexOf(provision), 1);
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Supprimer la prestation",
+        content: "Êtes-vous sûr de vouloir continuer ?",
+        closeActionText: "Annuler",
+        validationActionText: "Confirmer"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.provisionService.deleteProvision(provision).subscribe(response => {
+          if (response)
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+        });
+      }
+    });
   }
 
   duplicateProvision(service: Service, provision: Provision): Provision {

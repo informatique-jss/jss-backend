@@ -1,0 +1,79 @@
+<h1 class="h2 mb-4">Vue d'ensemble</h1>
+
+
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-grid text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Mon périmètre</h2>
+      <div class="ms-auto" *ngIf="potentialResponsables && currentUser && currentScope">
+        <a class="btn btn-sm btn-secondary ms-auto" style="margin-right: 10px;"
+          (click)="selectAll();$event.stopPropagation()">Sélectionner tout</a>
+        <a class="btn btn-sm btn-secondary ms-auto" (click)="unselectAll();$event.stopPropagation()">Déselectionner
+          tout</a>
+      </div>
+    </div>
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <div class="alert alert-info d-flex mb-0" role="alert">
+        <i class="ai-circle-info fs-xl"></i>
+        <div class="ps-2">Choisissez ici les périmètres des différents responsables que vous souhaitez visualiser dans
+          votre compte</div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3" *ngIf="isLoading">
+      <div class="list-group" style="min-width: 200px;">
+        <label class="list-group-item">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2 "></span>
+          </p>
+        </label>
+        <label class="list-group-item">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2 "></span>
+          </p>
+        </label>
+        <label class="list-group-item">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2 "></span>
+          </p>
+        </label>
+        <label class="list-group-item">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2 "></span>
+          </p>
+        </label>
+        <label class="list-group-item">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2 "></span>
+          </p>
+        </label>
+      </div>
+    </div>
+    <ng-container *ngIf="potentialResponsables && currentUser && currentScope">
+      <ng-container *ngFor="let tiers of allTiers">
+        <div class="d-flex align-items-center pb-1 mb-2">
+          <h3 class="h6 mb-0 me-3">{{capitalizeName(getTiersLabel(tiers))}} {{tiers.city ? (" - "+tiers.city.label) :
+            ""}}
+          </h3>
+        </div>
+        <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+          <div class="list-group">
+            <ng-container *ngFor="let responsable of potentialResponsables">
+              <label class="list-group-item" *ngIf="responsable.tiers.id == tiers.id">
+                <input class="form-check-input me-2" type="checkbox" [checked]="isInScope(responsable)" value=""
+                  [(ngModel)]="responsableStatus[responsable.id]"
+                  (change)="toggleScope(responsable,responsableStatus[responsable.id])">
+                {{capitalizeName(responsable.firstname + " " +responsable.lastname)}}
+              </label>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+  <div class="text-center pt-1 pt-sm-2" *ngIf="potentialResponsables && currentUser && currentScope">
+    <div class="btn-group   " role="group">
+      <button type="button" class="btn btn-primary" (click)="saveScope()">Enregistrer</button>
+    </div>
+  </div>
+</section>

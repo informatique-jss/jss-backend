@@ -6,7 +6,6 @@ import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
 import { AppService } from 'src/app/services/app.service';
 import { Department } from '../../../model/Department';
-import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../../confreres-dialog/confreres-dialog.component';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
@@ -53,30 +52,6 @@ export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<
         this.model! = response;
       super.optionSelected(this.model!);
     });
-  }
-
-  override optionSelected(type: Confrere): void {
-
-    if (type.doNotUse) {
-      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-        maxWidth: "400px",
-        data: {
-          title: "Confrère non autorisé !",
-          content: "Attention, ce confrère n'est pas censé être utilisé ! Rapprochez-vous du service des Annonces Légales avant de l'utiliser !",
-          closeActionText: "Annuler",
-          validationActionText: "Choisir"
-        }
-      });
-
-      dialogRef.afterClosed().subscribe(dialogResult => {
-        if (dialogResult)
-          super.optionSelected(type);
-        else
-          super.clearField();
-      });
-    } else {
-      super.optionSelected(type);
-    }
   }
 
   getPreviewActionLinkFunction(entity: Confrere): string[] | undefined {

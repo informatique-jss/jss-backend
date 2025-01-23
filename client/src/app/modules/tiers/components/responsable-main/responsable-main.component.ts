@@ -19,7 +19,6 @@ import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { EmployeeService } from '../../../profile/services/employee.service';
-import { ITiers } from '../../model/ITiers';
 import { Responsable } from '../../model/Responsable';
 import { RffSearch } from '../../model/RffSearch';
 import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
@@ -61,7 +60,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   rffSearch: RffSearch | undefined;
-  responsableAccountSearch: ITiers | undefined;
 
   displayedColumns: SortTableColumn<Responsable>[] = [];
   tableActions: SortTableAction<Responsable>[] = [] as Array<SortTableAction<Responsable>>;
@@ -97,10 +95,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       }
     }
 
-    if (this.selectedResponsable)
-      if (!this.selectedResponsable.rffFrequency)
-        this.selectedResponsable.rffFrequency = this.constantService.getRffFrequencyAnnual();
-
     if (changes.tiers != undefined && this.tiers.responsables != undefined && this.tiers.responsables != null) {
       this.principalForm.markAllAsTouched();
       this.setDataTable();
@@ -121,7 +115,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     this.displayedColumns.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "function", fieldName: "function", label: "Fonction" } as SortTableColumn<Responsable>);
-    this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.mails) ? element.mails.map((e: { mail: any; }) => e.mail).join(", ") : "") } } as SortTableColumn<Responsable>);
+    this.displayedColumns.push({ id: "mail", fieldName: "mail.mail", label: "Mail" } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return ((element.phones) ? element.phones.map((e: { phoneNumber: any; }) => e.phoneNumber).join(", ") : "") } } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn<Responsable>);
     this.displayedColumns.push({ id: "formalisteEmployee", fieldName: "formalisteEmployee", label: "Formaliste", valueFonction: (element: Responsable, column: SortTableColumn<Responsable>) => { return (element && element.formalisteEmployee) ? element.formalisteEmployee.firstname + " " + element.formalisteEmployee.lastname : "" } } as SortTableColumn<Responsable>);
@@ -167,18 +161,15 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
           this.provisionSearch.customerOrders = [];
           this.invoiceSearch.customerOrders = [];
           this.rffSearch = {} as RffSearch;
-          this.responsableAccountSearch = undefined;
 
           setTimeout(() =>
-            this.orderingSearch.customerOrders = [responsable], 0);
+            this.orderingSearch.customerOrders = [responsable as any as Tiers], 0);
           setTimeout(() =>
-            this.quotationSearch.customerOrders = [responsable], 0);
+            this.quotationSearch.customerOrders = [responsable as any as Tiers], 0);
           setTimeout(() =>
-            this.provisionSearch.customerOrders = [responsable], 0);
+            this.provisionSearch.customerOrders = [responsable as any as Tiers], 0);
           setTimeout(() =>
-            this.invoiceSearch.customerOrders = [responsable], 0);
-          setTimeout(() =>
-            this.responsableAccountSearch = responsable, 0);
+            this.invoiceSearch.customerOrders = [responsable as any as Tiers], 0);
           setTimeout(() => {
             this.rffSearch = {} as RffSearch;
             this.rffSearch.responsable = { entityId: responsable.id } as IndexEntity;
@@ -301,15 +292,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       status = status && this.principalForm.valid && (documentSettlementBillingFormStatus! || this.isResponsableTypeProspect());
     }
     return status;
-  }
-
-  renewPassword() {
-    if (!this.selectedResponsable || !this.selectedResponsable.mails || this.selectedResponsable.mails.length == 0) {
-      this.appService.displaySnackBar("Aucune adresse mail disponible pour ce responsable !", true, 20);
-      return;
-    }
-
-    this.employeeService.renewResponsablePassword(this.selectedResponsable!).subscribe(response => { });
   }
 
   //Tabs management

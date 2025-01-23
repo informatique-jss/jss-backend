@@ -879,6 +879,14 @@
           </tr>
           <tr>
             <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupSales"
+                label="Groupe Active Directory - Commerciaux" [form]="constantForm"
+                propertyName="activeDirectoryGroupSales" [isMandatory]=" true"
+                [isDisabled]="!editMode"></select-active-directory-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-contract-type [(model)]="constant.domiciliationContractTypeRouteEmail"
                 label="Contrat de domiciliation - redirection par mail" [form]="constantForm"
                 propertyName="domiciliationContractTypeRouteEmail" [isMandatory]="true" [isDisabled]="!editMode">
@@ -951,6 +959,14 @@
               <select-customer-order-origin [(model)]="constant.customerOrderOriginWebSite"
                 label="Origine des commandes - site www.jss.fr" [form]="constantForm"
                 propertyName="customerOrderOriginWebSite" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-customer-order-origin>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-customer-order-origin [(model)]="constant.customerOrderOriginMyJss"
+                label="Origine des commandes - site myjss.jss.fr" [form]="constantForm"
+                propertyName="customerOrderOriginMyJss" [isMandatory]="true" [isDisabled]="!editMode">
               </select-customer-order-origin>
             </td>
           </tr>
@@ -1502,11 +1518,60 @@
                 [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type></td>
           </tr>
           <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeRegistrationAct"
+                label="Type de prestation - Enregistrement, Acte au TP" [form]="constantForm"
+                propertyName="provisionTypeRegistrationAct" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-provision-type></td>
+          </tr>
+          <tr>
             <td>
               <generic-datepicker [(model)]="constant.dateAccountingClosureForAccountant"
                 label="Date - cloture comptable pour les comptables" [form]="constantForm"
                 propertyName="dateAccountingClosureForAccountant" [isMandatory]="true"
                 [isDisabled]="!editMode"></generic-datepicker>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-responsable [(model)]="constant.responsableDummyCustomerFrance" [form]="constantForm"
+                propertyName="responsableDummyCustomerFrance" [isMandatory]="true"
+                label="Responsable - Responsable utilisé pour le pricing non connecté MyJSS"
+                [isDisabled]="!editMode"></autocomplete-responsable>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-provision-screen-type [(model)]="constant.provisionScreenTypeAnnouncement"
+                label="Type d'écran Annonce légale" [form]="constantForm" propertyName="provisionScreenTypeAnnouncement"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-screen-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-category [(model)]="constant.categoryInterview" label="Categorie Wordpress - Interview"
+                [form]="constantForm" propertyName="categoryInterview" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-category [(model)]="constant.categoryPodcast" label="Categorie Wordpress - Podcast"
+                [form]="constantForm" propertyName="categoryPodcast" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-category [(model)]="constant.categoryArticle" label="Categorie Wordpress - Articles"
+                [form]="constantForm" propertyName="categoryArticle" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-category [(model)]="constant.categorySerie" label="Categorie Wordpress - Série"
+                [form]="constantForm" propertyName="categorySerie" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
             </td>
           </tr>
         </table>

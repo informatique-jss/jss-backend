@@ -3,6 +3,10 @@ package com.jss.osiris.libs.search.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,18 +17,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import com.jss.osiris.modules.profile.model.Employee;
-
 @Entity
 @IdClass(CompositeIndexEntityKey.class)
 @Table(indexes = { @Index(name = "pk_index", columnList = "entityType,entityId", unique = true) })
 public class IndexEntity implements Serializable {
 	@Id
+	@JsonView(JacksonViews.MyJssView.class)
 	private String entityType;
 	@Id
+	@JsonView(JacksonViews.MyJssView.class)
 	private Integer entityId;
 
 	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssView.class)
 	private String text;
 
 	private LocalDateTime createdDate;

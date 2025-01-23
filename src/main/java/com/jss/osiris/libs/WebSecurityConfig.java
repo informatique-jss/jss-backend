@@ -49,23 +49,37 @@ public class WebSecurityConfig {
 
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-		if (devMode == null || devMode == false) {
-			http.authorizeHttpRequests((auth) -> auth.requestMatchers(HttpMethod.OPTIONS).permitAll()
-					.requestMatchers("/profile/login").permitAll()
-					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
-					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
-					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()
-					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/quotation/deposit/validate").permitAll()
-					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/invoice").permitAll()
-					.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/invoice/validate").permitAll()
-					.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/validate").permitAll()
-					.anyRequest().authenticated()).cors((cors) -> cors
-							.configurationSource(customConfigurationSource()))
-					.csrf((csrf -> csrf.disable()));
-		} else {
-			http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll()).cors((cors) -> cors
-					.configurationSource(customConfigurationSource())).csrf((csrf -> csrf.disable()));
-		}
+		http.authorizeHttpRequests((auth) -> auth.requestMatchers(HttpMethod.OPTIONS).permitAll()
+				.requestMatchers("/wordpress/**").permitAll()
+				.requestMatchers("/profile/login").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/profile/login").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/constants").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/profile/login/token/send").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/countries").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/departments").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/civilities").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/notice-types").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/notice-type-families").permitAll()
+				.requestMatchers(HttpMethod.POST, "/myjss/quotation/order/user/pricing").permitAll()
+				.requestMatchers(HttpMethod.POST, "/myjss/quotation/order/user/save").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/affaire/siret").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/service-family-groups").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/service-families/service-group").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/service-type/service-family").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/cities/search/country/postal-code").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/cities/search/country").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/order/search/affaire").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/affaire").permitAll()
+				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
+				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
+				.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()
+				.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/quotation/deposit/validate").permitAll()
+				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/invoice").permitAll()
+				.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/invoice/validate").permitAll()
+				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/validate").permitAll()
+				.anyRequest().authenticated()).cors((cors) -> cors
+						.configurationSource(customConfigurationSource()))
+				.csrf((csrf -> csrf.disable()));
 		return http.build();
 	}
 

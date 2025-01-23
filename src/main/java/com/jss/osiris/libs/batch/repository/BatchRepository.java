@@ -104,8 +104,7 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
                         " join provision p on p.id = i.id_provision  " +
                         " join formalite_guichet_unique fgu on fgu.id_formalite  = p.id_formalite  " +
                         " where co.id_customer_order_status not in (13,12) " +
-                        " and i.id_competent_authority=1279 " +
+                        " and i.id_provider=1279 " +
                         " and not exists (select 1 from cart c where c.id_invoice = i.id) ")
         void createTablePurgeInvoice();
-
 }

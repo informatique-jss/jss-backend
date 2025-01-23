@@ -2,6 +2,7 @@ package com.jss.osiris.libs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,9 +20,10 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.miscellaneous.model.ICode;
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 
 import fr.marcwrobel.jbanking.bic.Bic;
 import fr.marcwrobel.jbanking.iban.Iban;
@@ -280,6 +282,17 @@ public class ValidationHelper {
             throw new OsirisValidationException(fieldName);
     }
 
+    public void validateDouble(Double value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
+        if ((value == null) && isMandatory)
+            throw new OsirisValidationException(fieldName);
+    }
+
+    public void validateBigDecimal(BigDecimal value, Boolean isMandatory, String fieldName)
+            throws OsirisValidationException {
+        if ((value == null) && isMandatory)
+            throw new OsirisValidationException(fieldName);
+    }
+
     public void validateString(String value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
         validateString(value, isMandatory, null, fieldName);
     }
@@ -334,10 +347,26 @@ public class ValidationHelper {
     }
 
     public boolean validateMailList(List<Mail> mails) {
-        for (Mail mail : mails) {
-            if (!validateMail(mail.getMail()))
-                return false;
-        }
+        if (mails != null)
+            for (Mail mail : mails) {
+                if (!validateMail(mail.getMail()))
+                    return false;
+            }
+        return true;
+    }
+
+    public boolean validatePhoneList(List<Phone> phones) {
+        if (phones != null)
+            for (Phone phone : phones) {
+                if (!validateFrenchPhone(phone.getPhoneNumber()) && !validateInternationalPhone(phone.getPhoneNumber()))
+                    return false;
+            }
+        return true;
+    }
+
+    public boolean validateMail(Mail mail) {
+        if (!validateMail(mail.getMail()))
+            return false;
         return true;
     }
 

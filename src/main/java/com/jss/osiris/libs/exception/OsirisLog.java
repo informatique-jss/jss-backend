@@ -3,6 +3,10 @@ package com.jss.osiris.libs.exception;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,9 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_osiris_log_read", columnList = "is_read") })
@@ -48,6 +49,10 @@ public class OsirisLog implements Serializable, IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_employee")
     private Employee currentUser;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_responsable")
+    private Responsable currentCustomer;
 
     private LocalDateTime createdDateTime;
 
@@ -150,6 +155,14 @@ public class OsirisLog implements Serializable, IId {
 
     public void setCauseStackTrace(String causeStackTrace) {
         this.causeStackTrace = causeStackTrace;
+    }
+
+    public Responsable getCurrentCustomer() {
+        return currentCustomer;
+    }
+
+    public void setCurrentCustomer(Responsable currentCustomer) {
+        this.currentCustomer = currentCustomer;
     }
 
 }
