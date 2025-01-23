@@ -18,6 +18,8 @@ import { Service } from '../../model/Service';
 import { ServiceType } from '../../model/ServiceType';
 import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
 import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
+import { ServiceFieldType } from '../../model/ServiceFieldType';
 
 @Component({
   selector: 'service',

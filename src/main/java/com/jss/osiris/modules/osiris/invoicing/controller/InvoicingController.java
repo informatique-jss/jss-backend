@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.controller;
 
-import static java.time.temporal.TemporalAdjusters.*;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 
 import java.io.File;
 import java.io.IOException;

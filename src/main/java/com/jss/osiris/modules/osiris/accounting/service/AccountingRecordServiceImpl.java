@@ -80,6 +80,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Autowired
   AccountingBalanceHelper accountingBalanceHelper;
 
+  @Autowired
+  AccountingRecordGenerationService accountingRecordGenerationService;
+
   private String ACCOUNTING_RECORD_TABLE_NAME = "accounting_record";
   private String CLOSED_ACCOUNTING_RECORD_TABLE_NAME = "closed_accounting_record";
 
@@ -89,9 +92,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       return this.ACCOUNTING_RECORD_TABLE_NAME;
     return this.CLOSED_ACCOUNTING_RECORD_TABLE_NAME;
   }
-
-  @Autowired
-  AccountingRecordGenerationService accountingRecordGenerationService;
 
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {

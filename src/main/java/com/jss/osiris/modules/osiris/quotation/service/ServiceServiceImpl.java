@@ -101,7 +101,6 @@ public class ServiceServiceImpl implements ServiceService {
                         assoServiceDocuments.add(newAssoServiceDocument);
                     }
                 }
-
             // Provision
             if (service.getProvisions() != null && service.getProvisions().size() > 0)
                 service.getProvisions().addAll(getProvisionsFromServiceType(serviceType,

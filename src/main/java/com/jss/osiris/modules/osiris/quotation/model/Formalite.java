@@ -10,7 +10,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.FormaliteInfogreffe;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -57,10 +56,6 @@ public class Formalite implements IId {
     @OneToMany(mappedBy = "formalite")
     @JsonIgnore
     private List<Provision> provision;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_acte_deposit")
-    private ActeDeposit acteDeposit;
 
     public Integer getId() {
         return id;

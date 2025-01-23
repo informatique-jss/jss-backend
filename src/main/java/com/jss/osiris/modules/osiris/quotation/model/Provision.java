@@ -102,6 +102,7 @@ public class Provision implements IId, IAttachment {
 	private Boolean isBaloPackage;
 
 	private Boolean isBaloPublicationFlag;
+
 	private Boolean isBaloNormalization;
 
 	@Column(nullable = false)

@@ -62,6 +62,7 @@ public class PaperSetServiceImpl implements PaperSetService {
             if (paperSet.getIsValidated() == null)
                 paperSet.setIsValidated(false);
         }
+
         return paperSetRepository.save(paperSet);
     }
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -36,6 +37,7 @@ public class FormaliteStatus implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@IndexedField
 	private String label;
 
 	@Column(nullable = false, length = 100)
