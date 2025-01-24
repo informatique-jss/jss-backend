@@ -154,6 +154,10 @@ public class QuotationValidationHelper {
                         for (SpecialOffer specialOffer : quotation.getSpecialOffers())
                                 validationHelper.validateReferential(specialOffer, false, "specialOffer");
 
+                quotation.setResponsable(
+                                (Responsable) validationHelper.validateReferential(quotation.getResponsable(), false,
+                                                "Responsable"));
+
                 // If new or if from old website, grab special offer from tiers / responsable /
                 // confrere
                 if (quotation.getCustomerOrderOrigin().getId()
@@ -170,10 +174,6 @@ public class QuotationValidationHelper {
                                         quotation.getSpecialOffers().add(specialOffer);
                         }
                 }
-
-                quotation.setResponsable(
-                                (Responsable) validationHelper.validateReferential(quotation.getResponsable(), false,
-                                                "Responsable"));
 
                 if (quotation.getResponsable() == null)
                         throw new OsirisValidationException("No customer order");

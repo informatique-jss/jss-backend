@@ -160,7 +160,7 @@ public class FormRecognizerServiceImpl implements FormRecognizerService {
             } else if (key.equals("InvoiceTotal")) {
                 BigDecimal invoiceTotal = BigDecimal.ZERO;
                 if (documentField.getValue() != null) {
-                    invoiceTotal = ((BigDecimal) documentField.getValue());
+                    invoiceTotal = (BigDecimal.valueOf((Double) documentField.getValue()));
                 }
                 azureInvoice.setInvoiceTotal(invoiceTotal);
                 azureInvoice.setInvoiceTotalConfidence(
