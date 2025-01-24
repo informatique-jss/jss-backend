@@ -404,8 +404,8 @@ public class PaymentServiceImpl implements PaymentService {
                     totalItemsAmount = totalItemsAmount.add(invoiceService.getRemainingAmountToPayForInvoice(invoice));
 
             if (correspondingInvoices.size() > 0
-                    && totalItemsAmount.multiply(oneHundredValue).setScale(0) != remainingMoney
-                            .multiply(oneHundredValue).setScale(0))
+                    && !totalItemsAmount.multiply(oneHundredValue).setScale(0).equals(remainingMoney
+                            .multiply(oneHundredValue).setScale(0)))
                 if (correspondingCustomerOrder.size() == 0 && correspondingQuotation.size() == 0)
                     return;
 
