@@ -1,7 +1,5 @@
 package com.jss.osiris.libs.mail;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,50 +7,27 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.libs.mail.model.ExportOsirisMail;
+import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.model.IndexationMail;
 import com.jss.osiris.libs.search.model.IndexEntity;
-import com.jss.osiris.libs.search.repository.IndexEntityRepository;
+import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
-import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
-import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
-import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
-import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 @Service
 public class OsirisMailServiceImpl implements OsirisMailService {
-    @Autowired
-    AutoIndexMailOsirisDelegate autoIndexMailOsirisDelegate;
 
     @Autowired
-    IndexEntityRepository indexEntityRepository;
-
-    @Autowired
-    CustomerOrderService customerOrderService;
-
-    @Autowired
-    QuotationService quotationService;
-
-    @Autowired
-    TiersService tiersService;
-
-    @Autowired
-    ResponsableService responsableService;
-
-    @Autowired
-    AffaireService affaireService;
-
-    @Autowired
-    CompetentAuthorityService competentAuthorityService;
+    SearchService searchService;
 
     @Autowired
     AttachmentService attachmentService;
@@ -61,97 +36,37 @@ public class OsirisMailServiceImpl implements OsirisMailService {
     ConstantService constantService;
 
     @Override
-    public void getAttachmentFromOsirisMail() throws OsirisException {
-        List<ExportOsirisMail> mailExports = autoIndexMailOsirisDelegate.getPdfMailsFromInbox();
-        String regex = "\\d+";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = null;
+    public boolean attachIndexationMailToEntity(IndexationMail currentExportedMail) throws OsirisException {
+        Pattern p = Pattern.compile("\\d+");
 
-        for (ExportOsirisMail currentExportedMail : mailExports) {
-            String foundId = null;
-            if (currentExportedMail.getSubjectMail() != null)
-                matcher = pattern.matcher(currentExportedMail.getSubjectMail());
-            if (matcher != null && matcher.find())
-                foundId = matcher.group();
-            if (foundId != null) {
-                List<IndexEntity> entityFound = indexEntityRepository.searchForEntities(foundId, 1);
-                if (entityFound != null && !entityFound.isEmpty()) {
-                    if (entityFound.get(0).getEntityType().equals(CustomerOrder.class.getSimpleName())) {
-                        CustomerOrder customerOrder = customerOrderService
-                                .getCustomerOrder(entityFound.get(0).getEntityId());
-                        attachmentService.addAttachment(currentExportedMail.getMailContent(),
-                                customerOrder.getId(), null, CustomerOrder.class.getSimpleName(),
-                                constantService.getAttachmentTypeClientCommunication(),
-                                currentExportedMail.getFileName(),
-                                false, null, null, null, null);
-                    }
-                    if (entityFound.get(0).getEntityType().equals(Quotation.class.getSimpleName())) {
-                        try {
-                            Quotation quotation = quotationService.getQuotation(entityFound.get(0).getEntityId());
-                            attachmentService.addAttachment(new FileInputStream(currentExportedMail.getFileName()),
-                                    quotation.getId(), null, CustomerOrder.class.getSimpleName(),
-                                    constantService.getAttachmentTypeClientCommunication(),
-                                    currentExportedMail.getFileName(),
-                                    false, null, null, null, null);
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "file of exported mail not found");
-                        }
-                    }
-                    if (entityFound.get(0).getEntityType().equals(Tiers.class.getSimpleName())) {
-                        try {
-                            Tiers tiers = tiersService.getTiers(entityFound.get(0).getEntityId());
-                            attachmentService.addAttachment(new FileInputStream(currentExportedMail.getFileName()),
-                                    tiers.getId(), null, Tiers.class.getSimpleName(),
-                                    constantService.getAttachmentTypeClientCommunication(),
-                                    currentExportedMail.getFileName(),
-                                    false, null, null, null, null);
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "file of exported mail not found");
-                        }
-                    }
-                    if (entityFound.get(0).getEntityType().equals(Responsable.class.getSimpleName())) {
-                        try {
-                            Responsable responsable = responsableService
-                                    .getResponsable(entityFound.get(0).getEntityId());
-                            attachmentService.addAttachment(new FileInputStream(currentExportedMail.getFileName()),
-                                    responsable.getId(), null, Responsable.class.getSimpleName(),
-                                    constantService.getAttachmentTypeClientCommunication(),
-                                    currentExportedMail.getFileName(),
-                                    false, null, null, null, null);
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "file of exported mail not found");
-                        }
-                    }
-                    if (entityFound.get(0).getEntityType().equals(Affaire.class.getSimpleName())) {
-                        try {
-                            Affaire affaire = affaireService.getAffaire(entityFound.get(0).getEntityId());
-                            attachmentService.addAttachment(new FileInputStream(currentExportedMail.getFileName()),
-                                    affaire.getId(), null, Affaire.class.getSimpleName(),
-                                    constantService.getAttachmentTypeClientCommunication(),
-                                    currentExportedMail.getFileName(),
-                                    false, null, null, null, null);
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "file of exported mail not found");
-                        }
-                    }
-                    if (entityFound.get(0).getEntityType().equals(CompetentAuthority.class.getSimpleName())) {
-                        try {
-                            CompetentAuthority competentAuthority = competentAuthorityService
-                                    .getCompetentAuthority(entityFound.get(0).getEntityId());
-                            attachmentService.addAttachment(new FileInputStream(currentExportedMail.getFileName()),
-                                    competentAuthority.getId(), null, CompetentAuthority.class.getSimpleName(),
-                                    constantService.getAttachmentTypeClientCommunication(),
-                                    currentExportedMail.getFileName(),
-                                    false, null, null, null, null);
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "file of exported mail not found");
-                        }
-                    }
-                }
+        Matcher m = p.matcher(currentExportedMail.getSubject());
+        while (m.find()) {
+            try {
+                indexMailOnEntity(Integer.parseInt(m.group()), CustomerOrder.class.getSimpleName(),
+                        currentExportedMail);
+                indexMailOnEntity(Integer.parseInt(m.group()), Quotation.class.getSimpleName(), currentExportedMail);
+                indexMailOnEntity(Integer.parseInt(m.group()), Affaire.class.getSimpleName(), currentExportedMail);
+                indexMailOnEntity(Integer.parseInt(m.group()), Responsable.class.getSimpleName(), currentExportedMail);
+                indexMailOnEntity(Integer.parseInt(m.group()), Tiers.class.getSimpleName(), currentExportedMail);
+                indexMailOnEntity(Integer.parseInt(m.group()), CompetentAuthority.class.getSimpleName(),
+                        currentExportedMail);
+            } catch (NumberFormatException e) {
             }
-            autoIndexMailOsirisDelegate.closeConnection();
         }
+        return true;
+    }
 
+    private void indexMailOnEntity(Integer idToFind, String entityType, IndexationMail currentExportedMail)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        List<IndexEntity> entitiesFound = searchService.searchForEntities(idToFind + "", entityType, true);
+        if (entitiesFound != null && entitiesFound.size() == 1) {
+            attachmentService.addAttachment(null, entitiesFound.get(0).getEntityId(), null,
+                    CustomerOrder.class.getSimpleName(),
+                    constantService.getAttachmentTypeClientCommunication(),
+                    ("Mail client n°" + (currentExportedMail.getId() + "") + " - " + currentExportedMail.getSubject())
+                            .substring(0, 1999),
+                    false, null, null, null, null);
+        }
     }
 
 }
