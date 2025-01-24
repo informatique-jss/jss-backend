@@ -37,8 +37,8 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         + " and (:isHideNoOfx=false or p.bank_id like 'H%') "
                         + " and (:idPayment=0 or p.id = :idPayment) "
                         + " and p.payment_date>=:startDate and p.payment_date<=:endDate "
-                        + "  and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as real) ) "
-                        + "  and (:maxAmount is null or p.payment_amount<=CAST(CAST(:maxAmount as text) as real) )"
+                        + "  and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as numeric(15, 2)) ) "
+                        + "  and (:maxAmount is null or p.payment_amount<=CAST(CAST(:maxAmount as text) as numeric(15, 2)) )"
                         + " and (:label is null or CAST(p.id as text) = upper(CAST(:label as text)) or  upper(p.label)  like '%' || trim(upper(CAST(:label as text)))  || '%' )")
         List<PaymentSearchResult> findPayments(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
@@ -67,8 +67,8 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         + " and p.payment_date>=:startDate and p.payment_date<=:endDate "
                         + " and (p.is_cancelled=false or p.is_cancelled is null) "
                         + " and p.payment_amount < 0 "
-                        + " and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as real) ) "
-                        + " and (:maxAmount is null or p.payment_amount<=CAST(CAST(:maxAmount as text) as real) )"
+                        + " and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as numeric(15, 2)) ) "
+                        + " and (:maxAmount is null or p.payment_amount<=CAST(CAST(:maxAmount as text) as numeric(15, 2)) )"
                         + " and (:label is null or CAST(p.id as text) = upper(CAST(:label as text)) or  upper(p.label)  like '%' || trim(upper(CAST(:label as text)))  || '%' )")
         List<OutboundCheckSearchResult> findOutboundChecks(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,

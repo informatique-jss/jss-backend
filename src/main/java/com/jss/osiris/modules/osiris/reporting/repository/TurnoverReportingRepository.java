@@ -49,7 +49,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " concat (e2.firstname, " +
                         " ' ', " +
                         " e2.lastname)) as salesEmployeeLabel, " +
-                        " c1.label as confrereLabel, " +
+                        " null as confrereLabel, " +
                         " ist.label as invoiceStatusLabel, " +
                         " case " +
                         " when i.first_reminder_date_time is null then 'Non relancé' " +
@@ -76,8 +76,6 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " bt.id = bi.id_billing_type " +
                         " left join responsable r on " +
                         " r.id = i.id_responsable " +
-                        " left join confrere c1 on " +
-                        " c1.id = i.id_confrere " +
                         " left join tiers t2 on " +
                         " t2.id = r.id_tiers " +
                         " left join tiers_category tt2 on " +
@@ -90,7 +88,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " e1.username = a1.username " +
                         " left join customer_order co on co.id = i.customer_order_id " +
                         " left join employee e2 on " +
-                        " e2.id = coalesce(r.id_commercial,  t2.id_commercial, c1.id_commercial) " +
+                        " e2.id = coalesce(r.id_commercial,  t2.id_commercial) " +
                         " where " +
                         " i.id_invoice_status in :invoiceStatusId " +
                         " and i.id_provider is null " +
@@ -103,7 +101,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " date_trunc('week', " +
                         " i.created_date) , " +
                         " date_trunc('day', " +
-                        " i.created_date) ,c1.label, " +
+                        " i.created_date) , " +
                         " case " +
                         " when t2.denomination is not null then t2.denomination " +
                         " else concat(t2.firstname, " +

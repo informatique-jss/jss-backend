@@ -28,8 +28,8 @@ public interface DirectDebitTransfertRepository extends QueryCacheCrudRepository
                         + " where r.is_cancelled=false and (:isHideExportedDirectDebitTransfert=false OR r.is_already_exported=false) and (:idDirectDebitTransfert=0 OR r.id=:idDirectDebitTransfert) "
                         + " and (:isHideMatchedDirectDebitTransfert=false OR r.is_matched=false) "
                         + " and r.transfert_date_time>=:startDate and r.transfert_date_time<=:endDate "
-                        + "  and (:minAmount is null or r.transfert_amount>=CAST(CAST(:minAmount as text) as real) ) "
-                        + "  and (:maxAmount is null or r.transfert_amount<=CAST(CAST(:maxAmount as text) as real) )"
+                        + "  and (:minAmount is null or r.transfert_amount>=CAST(CAST(:minAmount as text) as numeric(15, 2)) ) "
+                        + "  and (:maxAmount is null or r.transfert_amount<=CAST(CAST(:maxAmount as text) as numeric(15, 2)) )"
                         + " and (:label is null or   CAST(r.id as text) = upper(CAST(:label as text)) or upper(r.label)  like '%' || upper(CAST(:label as text))  || '%' )")
         List<DirectDebitTransfertSearchResult> findTransferts(
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,

@@ -485,12 +485,10 @@ public class GeneratePdfDelegate {
             ctx.setVariable("invoiceItems", invoice.getInvoiceItems());
         }
 
-        ctx.setVariable("preTaxPriceTotalWithDicount",
-                invoiceHelper.getPreTaxPriceTotal(invoice).subtract(invoiceHelper.getDiscountTotal(invoice)) != null
-                        && invoiceHelper.getDiscountTotal(invoice).multiply(oneHundredValue).setScale(0)
-                                .divide(oneHundredValue).compareTo(zeroValue) > 0
-                                        ? invoiceHelper.getDiscountTotal(invoice)
-                                        : zeroValue);
+        if (invoiceHelper.getDiscountTotal(invoice) != null)
+            ctx.setVariable("preTaxPriceTotalWithDicount",
+                    invoiceHelper.getPreTaxPriceTotal(invoice).subtract(invoiceHelper.getDiscountTotal(invoice)));
+
         ArrayList<VatMail> vats = null;
         Double vatTotal = 0.0;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {

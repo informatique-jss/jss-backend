@@ -115,7 +115,7 @@
         <tr>
           <td>
             <select-payment-types [(model)]="invoice.manualPaymentType" label="Type de paiement" [form]="invoiceForm"
-              *ngIf="!invoice.isCreditNote && !invoice.provider" propertyName="manualPaymentType" [isMandatory]="true"
+              *ngIf="!invoice.isCreditNote" propertyName="manualPaymentType" [isMandatory]="true"
               [isDisabled]="!editMode || invoice.id!=undefined"></select-payment-types>
           </td>
           <td>
