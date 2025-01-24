@@ -397,11 +397,11 @@ public class OsirisScheduller {
 		}
 	}
 
-	@Scheduled(initialDelay = 500)
-	private void generateMailAttachmentsFromOsirisOutlook() {
+	@Scheduled(initialDelay = 500, fixedDelay = 1000 * 60 * 60)
+	private void generateAttachmentsFromMailOsiris() {
 		try {
-			// if (nodeService.shouldIBatch())
-			// osirisMailService.getAttachmentFromOsirisMail();
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.CHECK_MAIL_TO_INDEX, 1);
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

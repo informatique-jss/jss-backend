@@ -13,9 +13,10 @@ import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.model.IndexationMail;
 import com.microsoft.aad.msal4j.ClientCredentialFactory;
@@ -66,6 +67,9 @@ public class MailIndexationDelegate {
     OsirisMailService osirisMailService;
 
     @Autowired
+    BatchService batchService;
+
+    @Autowired
     GeneratePdfDelegate generatePdfDelegate;
 
     private String getAccessToken() throws OsirisException {
@@ -97,7 +101,6 @@ public class MailIndexationDelegate {
         return session;
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
     public void getPdfMailsFromInbox() throws OsirisException {
         Store store = null;
         Folder folder = null;
@@ -137,7 +140,8 @@ public class MailIndexationDelegate {
         for (Message message : messages) {
             // TODO : declare batch
             try {
-                exportMailToFile(message.getReceivedDate().toInstant().toEpochMilli());
+                batchService.declareNewBatch(Batch.INDEX_MAIL_TO_ENTITY,
+                        (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "")));
             } catch (MessagingException e) {
                 throw new OsirisException(e, "Impossible to process message received");
             }
@@ -157,7 +161,7 @@ public class MailIndexationDelegate {
         }
     }
 
-    public void exportMailToFile(Long id) throws OsirisException {
+    public void exportMailToFile(Integer id) throws OsirisException {
         IndexationMail mail = new IndexationMail();
 
         Store store = null;
@@ -209,7 +213,7 @@ public class MailIndexationDelegate {
 
         for (Message message : messages) {
             try {
-                if (message.getReceivedDate().toInstant().toEpochMilli() == id) {
+                if (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "") == id) {
                     // Generate PDF
                     try {
                         Address[] fromAddresses = message.getFrom();

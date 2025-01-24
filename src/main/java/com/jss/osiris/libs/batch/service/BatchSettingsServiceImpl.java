@@ -593,5 +593,29 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.CHECK_MAIL_TO_INDEX) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.CHECK_MAIL_TO_INDEX);
+            batchSettings.setLabel("Parcourir la liste des mails reçus à indexer");
+            batchSettings.setFixedRate(10000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.INDEX_MAIL_TO_ENTITY) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.INDEX_MAIL_TO_ENTITY);
+            batchSettings.setLabel("Indexation des mails reçus sur l'entité correspondante");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(10);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
     }
 }

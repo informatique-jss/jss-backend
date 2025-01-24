@@ -1464,7 +1464,7 @@ public class GeneratePdfDelegate {
         return tempFile;
     }
 
-    public File generateGenericFromHtml(String htmlContent, Long mailId)
+    public File generateGenericFromHtml(String htmlContent, Integer mailId)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         File tempFile;
         OutputStream outputStream;

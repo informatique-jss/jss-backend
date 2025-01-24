@@ -359,7 +359,7 @@ public class MailHelper {
         } catch (Exception e) {
             throw new OsirisException(e, "Unable to parse HTML for mail " + mail.getId());
         }
-        return generatePdfDelegate.generateGenericFromHtml(htmlContent, Long.valueOf(mail.getId()));
+        return generatePdfDelegate.generateGenericFromHtml(htmlContent, mail.getId());
     }
 
     private void setContextVariable(Context ctx, CustomerMail mail, boolean setPlainPictures)
