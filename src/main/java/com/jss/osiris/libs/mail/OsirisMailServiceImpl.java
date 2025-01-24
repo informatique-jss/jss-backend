@@ -149,6 +149,7 @@ public class OsirisMailServiceImpl implements OsirisMailService {
                     }
                 }
             }
+            autoIndexMailOsirisDelegate.closeConnection();
         }
 
     }

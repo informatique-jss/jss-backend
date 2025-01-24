@@ -1,5 +1,7 @@
 package com.jss.osiris.libs.mail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -56,6 +58,9 @@ public class AutoIndexMailOsirisDelegate {
     @Value("${mail.imap.auth.mechanisms}")
     private String mailImapMechanism;
 
+    private Store store;
+    private Folder folder;
+
     private String getTokenConnectionMail() throws OsirisException {
         try {
             ConfidentialClientApplication app = ConfidentialClientApplication
@@ -94,7 +99,6 @@ public class AutoIndexMailOsirisDelegate {
             String from = fromAddresses[0].toString();
             String to = toAddresses[0].toString();
             InputStream file = message.getInputStream();
-
             String body = "";
             if (message.getContent() != null) {
                 if (message.isMimeType("text/plain"))
@@ -104,11 +108,15 @@ public class AutoIndexMailOsirisDelegate {
             }
 
             ExportOsirisMail exportedMail = new ExportOsirisMail();
-            byte[] contentBytes = body.getBytes();
+            byte[] contentBytes = message.getInputStream().readAllBytes();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            out.write(contentBytes);
+            out.close();
+            InputStream in = new ByteArrayInputStream(out.toByteArray());
             exportedMail.setExportedMail(contentBytes);
             exportedMail.setSubjectMail(subject);
             exportedMail.setFileName("Mail_" + subject + ".pdf");
-            exportedMail.setMailContent(file);
+            exportedMail.setMailContent(in);
             return exportedMail;
 
         } catch (IOException e) {
@@ -140,11 +148,9 @@ public class AutoIndexMailOsirisDelegate {
 
     public List<ExportOsirisMail> getPdfMailsFromInbox() throws OsirisException {
         List<ExportOsirisMail> mailExports = new ArrayList<>();
-
-        String accessToken = getTokenConnectionMail();
-        Store store;
-        Folder folder;
         try {
+
+            String accessToken = getTokenConnectionMail();
             store = getSessionToAccessMail().getStore("imap");
             store.connect(mailImapHost, Integer.parseInt(mailImapPort), mailImapUsername, accessToken);
         } catch (NumberFormatException | MessagingException e) {
@@ -152,18 +158,28 @@ public class AutoIndexMailOsirisDelegate {
         }
         try {
             folder = store.getFolder("INBOX");
-            folder.open(Folder.READ_ONLY);
+            folder.open(Folder.READ_WRITE);
 
             Message[] messages = folder.getMessages();
             for (Message message : messages) {
-                if (!purgeInboxMail(message))
+                if (!purgeInboxMail(message) && !message.getFlags().contains(Flags.Flag.SEEN)) {
+                    message.setFlags(new Flags(Flags.Flag.SEEN), true);
                     mailExports.add(exportMailToFile(message));
+                }
             }
-            folder.close(false);
-            store.close();
+
         } catch (MessagingException e) {
             throw new OsirisException(e, "wrong login or password");
         }
         return mailExports;
+    }
+
+    public void closeConnection() throws OsirisException {
+        try {
+            folder.close(false);
+            store.close();
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "error closing connection folder/store");
+        }
     }
 }

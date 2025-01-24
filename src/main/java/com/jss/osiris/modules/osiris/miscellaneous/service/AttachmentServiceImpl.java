@@ -46,11 +46,8 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
-import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.osiris.quotation.service.DomiciliationService;
-import com.jss.osiris.modules.osiris.quotation.service.FormaliteService;
 import com.jss.osiris.modules.osiris.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
@@ -80,15 +77,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     QuotationService quotationService;
-
-    @Autowired
-    DomiciliationService domiciliationService;
-
-    @Autowired
-    AnnouncementService announcementService;
-
-    @Autowired
-    FormaliteService formaliteService;
 
     @Autowired
     ProvisionService provisionService;
