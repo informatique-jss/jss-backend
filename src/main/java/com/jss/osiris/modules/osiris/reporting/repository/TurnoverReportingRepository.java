@@ -33,20 +33,13 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         +
                         " count(distinct case when i.is_credit_note = false then i.id end) as nbrInvoices, " +
                         " count(distinct case when i.is_credit_note = true then i.id end) as nbrCreditNote, " +
-                        " coalesce(case " +
-                        " when t1.denomination is not null then t1.denomination " +
-                        " when t1.id is not null then concat(t1.firstname, " +
-                        " ' ', " +
-                        " t1.lastname) " +
-                        " end , " +
                         " case " +
                         " when t2.denomination is not null then t2.denomination " +
                         " else concat(t2.firstname, " +
                         " ' ', " +
                         " t2.lastname) " +
-                        " end ) as tiersLabel, " +
-                        " coalesce(tt1.label, " +
-                        " tt2.label) as tiersCategory, " +
+                        " end as tiersLabel, " +
+                        " tt2.label as tiersCategory, " +
                         " concat (e1.firstname, " +
                         " ' ', " +
                         " e1.lastname) as invoiceCreator, " +
@@ -83,14 +76,10 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " bt.id = bi.id_billing_type " +
                         " left join responsable r on " +
                         " r.id = i.id_responsable " +
-                        " left join tiers t1 on " +
-                        " t1.id = i.id_tiers " +
                         " left join confrere c1 on " +
                         " c1.id = i.id_confrere " +
                         " left join tiers t2 on " +
                         " t2.id = r.id_tiers " +
-                        " left join tiers_category tt1 on " +
-                        " tt1.id = t1.id_tiers_category " +
                         " left join tiers_category tt2 on " +
                         " tt2.id = t2.id_tiers_category " +
                         " left join audit a1 on " +
@@ -101,7 +90,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " e1.username = a1.username " +
                         " left join customer_order co on co.id = i.customer_order_id " +
                         " left join employee e2 on " +
-                        " e2.id = coalesce(r.id_commercial, t1.id_commercial, t2.id_commercial, c1.id_commercial) " +
+                        " e2.id = coalesce(r.id_commercial,  t2.id_commercial, c1.id_commercial) " +
                         " where " +
                         " i.id_invoice_status in :invoiceStatusId " +
                         " and i.id_provider is null " +
@@ -115,20 +104,13 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " i.created_date) , " +
                         " date_trunc('day', " +
                         " i.created_date) ,c1.label, " +
-                        " coalesce(case " +
-                        " when t1.denomination is not null then t1.denomination " +
-                        " when t1.id is not null then concat(t1.firstname, " +
-                        " ' ', " +
-                        " t1.lastname) " +
-                        " end , " +
                         " case " +
                         " when t2.denomination is not null then t2.denomination " +
                         " else concat(t2.firstname, " +
                         " ' ', " +
                         " t2.lastname) " +
-                        " end ) , " +
-                        " coalesce(tt1.label, " +
-                        " tt2.label) , " +
+                        " end  , " +
+                        " tt2.label , " +
                         " concat (e1.firstname, " +
                         " ' ', " +
                         " e1.lastname) , " +
