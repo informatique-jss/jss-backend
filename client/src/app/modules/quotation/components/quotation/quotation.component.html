@@ -200,6 +200,13 @@
                               </avatar-chip>
                               <ng-template></ng-template>
                               <mat-panel-description>
+                                <mat-icon color="accent" *ngIf="!editMode" matTooltip="Supprimer la prestation"
+                                  style="padding-right: 20px;"
+                                  (click)="deleteProvision(provision);$event.stopPropagation()" class="pointer">
+                                  delete</mat-icon>
+                                <mat-icon color="accent" *ngIf="editMode" matTooltip="Dupliquer la prestation"
+                                  (click)="duplicateProvision(service,provision)" class="pointer">
+                                  content_copy</mat-icon>
                                 <mat-icon color="accent"
                                   *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.id && !editMode"
                                   matTooltip="Voir/éditer la prestation"
@@ -207,12 +214,6 @@
                                   (auxclick)="displayProvision($event, asso,provision);$event.stopPropagation()"
                                   class="pointer">
                                   work</mat-icon>
-                                <mat-icon color="accent" *ngIf="!editMode" matTooltip="Supprimer la prestation"
-                                  (click)="deleteProvision(provision);$event.stopPropagation()" class="pointer">
-                                  delete</mat-icon>
-                                <mat-icon color="accent" *ngIf="editMode" matTooltip="Dupliquer la prestation"
-                                  (click)="duplicateProvision(service,provision)" class="pointer">
-                                  content_copy</mat-icon>
                               </mat-panel-description>
                             </mat-expansion-panel-header>
                             <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"

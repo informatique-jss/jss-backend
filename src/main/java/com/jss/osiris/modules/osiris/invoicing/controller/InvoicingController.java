@@ -1,7 +1,5 @@
 package com.jss.osiris.modules.osiris.invoicing.controller;
 
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -944,7 +942,7 @@ public class InvoicingController {
 
         if (invoice.getManualAccountingDocumentDate() != null
                 && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP)) {
-            LocalDate limitDate = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+            LocalDate limitDate = constantService.getDateAccountingClosureForAll();
             LocalDate limitDateAdding = LocalDate.of(LocalDate.now().getYear(), 1, 31);
             if (invoice.getManualAccountingDocumentDate().isBefore(limitDate)
                     && LocalDate.now().isAfter(limitDateAdding)) {
@@ -980,7 +978,7 @@ public class InvoicingController {
         validationHelper.validateDate(invoice.getDueDate(), false, "DueDate");
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "AccountingDocumentDate");
         validationHelper.validateDateMin(invoice.getManualAccountingDocumentDate(), false,
-                LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
+                constantService.getDateAccountingClosureForAll(), "ManualAccountingDocumentDate");
         validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(1),
                 "ManualAccountingDocumentDate");
         validationHelper.validateString(invoice.getManualAccountingDocumentNumber(), false, 150,

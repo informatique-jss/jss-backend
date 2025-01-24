@@ -91,6 +91,7 @@ export class FormaliteComponent implements OnInit {
             for (let formalite of this.formalite.formalitesGuichetUnique)
               if (formalite.id == element.id) {
                 formalite.isAuthorizedToSign = true;
+                this.switchToWaitingAc();
                 break;
               }
         this.refreshFormalityTable;
@@ -185,23 +186,7 @@ export class FormaliteComponent implements OnInit {
       }
 
       if (result) {
-        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-          maxWidth: "400px",
-          data: {
-            title: "Modifier le statut de la prestation",
-            content: "Passer au statut 'En attente de l'autorité compétente' ?",
-            closeActionText: "Non",
-            validationActionText: "Oui"
-          }
-        });
-
-        dialogRef.afterClosed().subscribe(dialogResult => {
-          if (dialogResult && this.formaliteStatus) {
-            let response = this.formaliteStatusService.getFormaliteStatusByCode(this.formaliteStatus, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY);
-            if (response)
-              this.formalite.formaliteStatus = response;
-          }
-        });
+        this.switchToWaitingAc();
       }
       this.setFormaliteTableData();
     });
@@ -231,5 +216,25 @@ export class FormaliteComponent implements OnInit {
 
   restoreTab() {
     this.index = this.userPreferenceService.getUserTabsSelectionIndex('formalite');
+  }
+
+  switchToWaitingAc() {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Modifier le statut de la prestation",
+        content: "Passer au statut 'En attente de l'autorité compétente' ?",
+        closeActionText: "Non",
+        validationActionText: "Oui"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult && this.formaliteStatus) {
+        let response = this.formaliteStatusService.getFormaliteStatusByCode(this.formaliteStatus, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY);
+        if (response)
+          this.formalite.formaliteStatus = response;
+      }
+    });
   }
 }

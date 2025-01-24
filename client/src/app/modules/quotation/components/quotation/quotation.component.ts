@@ -462,8 +462,19 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
         this.serviceService.deleteService(service).subscribe(response => {
-          if (response)
-            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+          if (!this.instanceOfCustomerOrder) {
+            this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
+              this.editMode = false;
+              this.quotation = response;
+              this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+            })
+          } else {
+            this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+              this.editMode = false;
+              this.quotation = response;
+              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+            })
+          }
         });
       }
     });
@@ -636,8 +647,19 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
         this.provisionService.deleteProvision(provision).subscribe(response => {
-          if (response)
-            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+          if (!this.instanceOfCustomerOrder) {
+            this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
+              this.editMode = false;
+              this.quotation = response;
+              this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+            })
+          } else {
+            this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+              this.editMode = false;
+              this.quotation = response;
+              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+            })
+          }
         });
       }
     });
