@@ -60,11 +60,12 @@ public class OsirisMailServiceImpl implements OsirisMailService {
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
         List<IndexEntity> entitiesFound = searchService.searchForEntities(idToFind + "", entityType, true);
         if (entitiesFound != null && entitiesFound.size() == 1) {
-            attachmentService.addAttachment(null, entitiesFound.get(0).getEntityId(), null,
+            attachmentService.addAttachment(currentExportedMail.getMailPdf(), entitiesFound.get(0).getEntityId(), null,
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeClientCommunication(),
-                    ("Mail client n°" + (currentExportedMail.getId() + "") + " - " + currentExportedMail.getSubject())
-                            .substring(0, 1999),
+                    ("Mail client n°" + (currentExportedMail.getId() + "") + " - "
+                            + currentExportedMail.getSubject().replace(":", " ")
+                            + ".html"),
                     false, null, null, null, null);
         }
     }

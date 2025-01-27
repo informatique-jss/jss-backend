@@ -126,6 +126,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("mail.imap.secret.value");
         isOk = isOk && checkProperty("mail.imap.secret.id");
         isOk = isOk && checkProperty("mail.imap.tls.version");
+        isOk = isOk && checkProperty("schedulling.mail.purge.indexation");
 
         if (!isOk)
             System.exit(-1);

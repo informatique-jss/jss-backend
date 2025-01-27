@@ -617,5 +617,17 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.PURGE_MAIL_TO_INDEX) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.PURGE_MAIL_TO_INDEX);
+            batchSettings.setLabel("Purge des mails reçus déjà indexés");
+            batchSettings.setFixedRate(10000);
+            batchSettings.setQueueSize(10);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
     }
 }

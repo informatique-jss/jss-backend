@@ -407,6 +407,16 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(cron = "${schedulling.mail.purge.indexation}")
+	private void purgeMailDeletedOsiris() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.PURGE_MAIL_TO_INDEX, 1);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(initialDelay = 1000, fixedDelay = 1000 * 60)
 	private void sendTemporizedMails() {
 		try {

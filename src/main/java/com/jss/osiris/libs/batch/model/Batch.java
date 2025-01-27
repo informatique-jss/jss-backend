@@ -69,6 +69,7 @@ public class Batch implements IId {
     public static String PURGE_INVOICE = "PURGE_INVOICE";
     public static String CHECK_MAIL_TO_INDEX = "CHECK_MAIL_TO_INDEX";
     public static String INDEX_MAIL_TO_ENTITY = "INDEX_MAIL_TO_ENTITY";
+    public static String PURGE_MAIL_TO_INDEX = "PURGE_MAIL_TO_INDEX";
 
     @Id
     @SequenceGenerator(name = "batch_sequence", sequenceName = "batch_sequence", allocationSize = 1)

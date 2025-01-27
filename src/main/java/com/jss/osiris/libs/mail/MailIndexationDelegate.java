@@ -1,15 +1,17 @@
 package com.jss.osiris.libs.mail;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,10 +32,10 @@ import jakarta.mail.Flags;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
 import jakarta.mail.NoSuchProviderException;
 import jakarta.mail.Session;
 import jakarta.mail.Store;
-import jakarta.mail.internet.MimeMultipart;
 
 @Service
 public class MailIndexationDelegate {
@@ -44,16 +46,12 @@ public class MailIndexationDelegate {
     private String mailImapPort;
     @Value("${mail.imap.username}")
     private String mailImapUsername;
-    @Value("${mail.imap.password}")
-    private String mailImapPassword;
     @Value("${mail.imap.app.id}")
     private String mailImapAppId;
     @Value("${mail.imap.tenant.id}")
     private String mailImapTenantId;
     @Value("${mail.imap.secret.value}")
     private String mailImapSecretValue;
-    @Value("${mail.imap.secret.id}")
-    private String mailImapSecretId;
     @Value("${mail.imap.auth}")
     private String mailImapAuth;
     @Value("${mail.imap.ssl.enable}")
@@ -68,9 +66,6 @@ public class MailIndexationDelegate {
 
     @Autowired
     BatchService batchService;
-
-    @Autowired
-    GeneratePdfDelegate generatePdfDelegate;
 
     private String getAccessToken() throws OsirisException {
         try {
@@ -161,7 +156,7 @@ public class MailIndexationDelegate {
         }
     }
 
-    public void exportMailToFile(Integer id) throws OsirisException {
+    public void exportMailToFile(Integer id) throws OsirisException, IOException {
         IndexationMail mail = new IndexationMail();
 
         Store store = null;
@@ -215,30 +210,22 @@ public class MailIndexationDelegate {
             try {
                 if (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "") == id) {
                     // Generate PDF
-                    try {
-                        Address[] fromAddresses = message.getFrom();
-                        Address[] toAddresses = message.getAllRecipients();
-                        String from = String.join(" / ",
-                                Arrays.asList(fromAddresses).stream().map(Address::toString).toList());
-                        String to = String.join(" / ",
-                                Arrays.asList(toAddresses).stream().map(Address::toString).toList());
-
-                        mail.setMailPdf(new FileInputStream(
-                                generatePdfDelegate.generateGenericFromHtml(
-                                        getHtmlContent(message).replace("</head>",
-                                                "</head><div><p>De : " + from.replaceAll("<", "").replaceAll(">", "")
-                                                        + "</p><p>A :"
-                                                        + to.replaceAll("<", "").replaceAll(">", "")
-                                                        + "</p></div>"),
-                                        id)));
-                    } catch (FileNotFoundException e) {
-                        throw new OsirisException(e, "Temp file not found");
-                    } catch (IOException e) {
-                        throw new OsirisException(e, "Impossible to read temp file");
-                    }
+                    Address[] fromAddresses = message.getFrom();
+                    Address[] toAddresses = message.getAllRecipients();
+                    String from = String.join(" / ",
+                            Arrays.asList(fromAddresses).stream().map(Address::toString).toList());
+                    String to = String.join(" / ",
+                            Arrays.asList(toAddresses).stream().map(Address::toString).toList());
+                    String mailHtml = autoCloseTags(getHtmlContent(message)).replace("</head>",
+                            "</head><div><p>De : " + from.replaceAll("<", "").replaceAll(">", "")
+                                    + "</p><p>A :"
+                                    + to.replaceAll("<", "").replaceAll(">", "")
+                                    + "</p></div>")
+                            .replaceAll("(?m)^(\\s*)<(\\w+)>([^<]+)$", "$1<$2>$3</$2>");
 
                     mail.setSubject(message.getSubject());
                     mail.setId(id);
+                    mail.setMailPdf(new ByteArrayInputStream(mailHtml.getBytes()));
 
                     if (osirisMailService.attachIndexationMailToEntity(mail)) {
                         // Move to trash
@@ -247,7 +234,7 @@ public class MailIndexationDelegate {
                         return;
                     }
                 }
-            } catch (MessagingException e) {
+            } catch (Exception e) {
                 throw new OsirisException(e, "Impossible to process message received");
             }
         }
@@ -255,47 +242,104 @@ public class MailIndexationDelegate {
         closeConnection(store, folderInbox, folderTrash);
     }
 
-    // TODO : batch quotidient la nuit à faire que sur la corbeille
-    private Boolean purgeDeletedElements(Message message) throws OsirisException {
-        LocalDate purgeDate = LocalDate.now().minus(30, ChronoUnit.DAYS);
+    public void purgeDeletedElements() throws OsirisException {
+        // LocalDate purgeDate = LocalDate.now().minus(30, ChronoUnit.DAYS);
+
+        Store store = null;
+        Folder folderTrash = null;
+        String accessToken = getAccessToken();
         try {
-            Date receivedDate = message.getReceivedDate();
-            // LocalDate messageDate = convertToLocalDate(receivedDate);
-            LocalDate messageDate = LocalDate.now();
-            if (messageDate.isBefore(purgeDate)) {
-                message.setFlag(Flags.Flag.DELETED, true);
-                return true;
-            }
+            store = getSessionToAccessMail().getStore("imap");
+        } catch (NoSuchProviderException e) {
+            throw new OsirisException(e, "IMAP store not found");
+        }
+        try {
+            store.connect(mailImapHost, Integer.parseInt(mailImapPort), mailImapUsername, accessToken);
+        } catch (NumberFormatException e) {
+            throw new OsirisException(e, "Malformated connection to IMAP");
         } catch (MessagingException e) {
-            throw new OsirisException(e, "no received date in mail");
+            throw new OsirisException(e, "Impossible to connect to IMAP");
         }
-        return false;
+        try {
+            folderTrash = store.getFolder("Éléments supprimés");
+            folderTrash.open(Folder.READ_WRITE);
+            folderTrash.expunge();
+            folderTrash.close();
+            store.close();
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to write into Trash folder");
+        }
     }
 
-    public String getHtmlContent(Message message) throws MessagingException, IOException {
-        Object content = message.getContent();
-
-        if (content instanceof String) {
-            // If text/plain ou text/html
-            return (String) content;
-        } else if (content instanceof MimeMultipart) {
-            // If multipart
-            MimeMultipart multipart = (MimeMultipart) content;
-            return getHtmlFromMultipart(multipart);
+    private String autoCloseTags(String html) {
+        html = html.replace("text/html", "texthtml");
+        html = html.replace("span.", "").replace("div.", "").replace(":&quot;", ":").replace("&quot;,", ",")
+                .replace("mso-ignore:vglayout", "").replace("mso-ignore:vglayout;", "");
+        String selfClosingTags = "img|br|hr|input|meta|link|area|base|col|command|embed|keygen|param|source|track|wbr";
+        Pattern tagPattern = Pattern
+                .compile("<(" + selfClosingTags + ")([^>/]*?)>");
+        Matcher matcher = tagPattern.matcher(html);
+        StringBuffer correctedHtml = new StringBuffer();
+        while (matcher.find()) {
+            String tagName = matcher.group(1);
+            String attributes = matcher.group(2);
+            matcher.appendReplacement(correctedHtml, "<" + tagName + attributes + " />");
         }
-        return null;
+
+        matcher.appendTail(correctedHtml);
+
+        return correctedHtml.toString();
     }
 
-    private String getHtmlFromMultipart(MimeMultipart multipart) throws MessagingException, IOException {
+    private String getHtmlContent(Message message) throws Exception, MessagingException,
+            IOException {
+        String htmlContent = "";
+        if (message.isMimeType("multipart/*")) {
+            Multipart multipart = (Multipart) message.getContent();
+            htmlContent = processMultipart(multipart);
+        }
+        return htmlContent;
+    }
+
+    private static String processMultipart(Multipart multipart) throws Exception {
+        StringBuilder htmlBuilder = new StringBuilder();
+        Map<String, String> base64Images = new HashMap<>();
+
         for (int i = 0; i < multipart.getCount(); i++) {
-            BodyPart bodyPart = multipart.getBodyPart(i);
-            if (bodyPart.isMimeType("text/html")) {
-                // get HTML
-                return (String) bodyPart.getContent();
-            } else if (bodyPart.isMimeType("multipart/*")) {
-                return getHtmlFromMultipart((MimeMultipart) bodyPart.getContent());
+            BodyPart part = multipart.getBodyPart(i);
+
+            if ("inline".equalsIgnoreCase(part.getDisposition()) && part.getContentType().contains("image")) {
+                String cid = extractCid(part);
+                String base64 = convertToBase64(part.getInputStream());
+                base64Images.put(cid, base64);
+            }
+
+            if (part.isMimeType("text/html")) {
+                String content = (String) part.getContent();
+                htmlBuilder.append(content);
             }
         }
+
+        String htmlContent = htmlBuilder.toString();
+        for (Map.Entry<String, String> entry : base64Images.entrySet()) {
+            String cid = entry.getKey();
+            String base64 = entry.getValue();
+            htmlContent = htmlContent.replace("cid:" + cid, "data:image/png;base64," + base64);
+        }
+        return htmlContent;
+    }
+
+    private static String extractCid(BodyPart part) throws MessagingException {
+        String[] disposition = part.getHeader("Content-ID");
+        if (disposition != null && disposition.length > 0) {
+            String cid = disposition[0];
+            return cid.substring(1, cid.length() - 1);
+        }
         return null;
+    }
+
+    private static String convertToBase64(InputStream is) throws IOException {
+        byte[] bytes = is.readAllBytes();
+        return Base64.getEncoder().encodeToString(bytes);
     }
 }
