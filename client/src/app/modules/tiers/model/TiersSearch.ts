@@ -6,6 +6,7 @@ export interface TiersSearch {
   withNonNullTurnover: boolean;
   responsable: IndexEntity;
   salesEmployee: Employee;
+  mail: string;
   startDate: Date;
   endDate: Date;
   label: string;

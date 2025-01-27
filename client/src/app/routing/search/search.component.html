@@ -104,7 +104,7 @@
                     *ngFor="let entity of getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE)"
                     (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-header>
-                      <mat-card-title>{{entity.text.id}}</mat-card-title>
+                      <mat-card-title>{{entity.text.id}} - {{entity.text.customerOrderStatus.label}}</mat-card-title>
                       <mat-card-subtitle><span *ngIf="entity.text.tiers!=null">Pour {{entity.text.tiers.firstname}}
                           {{entity.text.tiers.lastname}}</span><span
                           *ngIf="entity.text.responsable!=null">{{entity.text.responsable.firstname}}

@@ -11,4 +11,5 @@ public interface FormaliteService {
     public Formalite addOrUpdateFormalite(Formalite formalite);
 
     public List<Formalite> getFormaliteForGURefresh() throws OsirisException;
+
 }

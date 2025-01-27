@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -106,8 +107,10 @@ public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceServic
             for (AzureInvoice invoice : azureInvoices)
                 if (invoice.getIsDisabled() == false
                         && (((invoice.getInvoiceTotal().multiply(oneHundredConstant)).divide(oneHundredConstant))
-                                .setScale(0) == ((azureReceiptInvoice.getInvoiceTotal().multiply(oneHundredConstant))
-                                        .setScale(0)).divide(oneHundredConstant)))
+                                .setScale(0,
+                                        RoundingMode.HALF_EVEN) == ((azureReceiptInvoice.getInvoiceTotal()
+                                                .multiply(oneHundredConstant))
+                                                .setScale(0, RoundingMode.HALF_EVEN)).divide(oneHundredConstant)))
                     finalAzureInvoices.add(invoice);
 
         status.setAzureInvoices(finalAzureInvoices);

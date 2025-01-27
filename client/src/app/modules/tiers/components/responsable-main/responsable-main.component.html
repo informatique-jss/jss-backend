@@ -62,7 +62,7 @@
                   </td>
                   <td>
                     <select-tiers-category [(model)]="selectedResponsable.tiersCategory" label="Catégorie"
-                      [form]="principalForm" propertyName="tiersCategory" [isDisabled]="!editMode">
+                      [form]="principalForm" propertyName="tiersCategory" [isDisabled]="!editMode" [isMandatory]="true">
                     </select-tiers-category>
                   </td>
                   <td>
@@ -184,6 +184,12 @@
               </table>
             </fieldset>
           </div>
+          <button
+            [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
+            mat-fab color="accent" class="second-fab-button" *ngIf="!editMode && selectedResponsable"
+            (click)="renewPassword()">
+            <mat-icon>password</mat-icon>
+          </button>
         </mat-tab>
         <mat-tab label="Pièces et facturation" *ngIf="isResponsableTypeProspect()==false">
           <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>

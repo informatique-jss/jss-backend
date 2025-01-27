@@ -1,17 +1,17 @@
 package com.jss.osiris.modules.osiris.accounting.controller;
 
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +31,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingBalanceSearch;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
@@ -135,7 +136,7 @@ public class AccountingController {
             validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDeadline(), false,
                     "ManualAccountingDocumentDeadline");
             validationHelper.validateDateMin(accountingRecord.getOperationDateTime().toLocalDate(), false,
-                    LocalDate.now().with(firstDayOfYear()), "ManualAccountingDocumentDate");
+                    constantService.getDateAccountingClosureForAll(), "ManualAccountingDocumentDate");
             validationHelper.validateDateMax(accountingRecord.getOperationDateTime().toLocalDate(), false,
                     LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
 
@@ -265,43 +266,50 @@ public class AccountingController {
     @GetMapping(inputEntryPoint + "/accounting-record/accounting-account-id")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Number> getAccountingRecordBalanceByAccountingAccountId(
-            @RequestParam Integer accountingAccountId) throws OsirisValidationException {
+            @RequestParam Integer accountingAccountId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate)
+            throws OsirisValidationException {
         if (accountingAccountId == null)
             throw new OsirisValidationException("accountingAccountId");
         return new ResponseEntity<Number>(
-                accountingRecordService.getAccountingRecordBalanceByAccountingAccountId(accountingAccountId),
+                accountingRecordService.getAccountingRecordBalanceByAccountingAccountId(accountingAccountId,
+                        accountingDate),
                 HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/bank-transfert-total")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Number> getBankTransfertTotal() {
+    public ResponseEntity<Number> getBankTransfertTotal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<Number>(
-                accountingRecordService.getBankTransfertTotal(),
+                accountingRecordService.getBankTransfertTotal(accountingDate),
                 HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/refund-total")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Number> getRefundTotal() {
+    public ResponseEntity<Number> getRefundTotal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<Number>(
-                accountingRecordService.getRefundTotal(),
+                accountingRecordService.getRefundTotal(accountingDate),
                 HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/check-total")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Number> getCheckTotal() {
+    public ResponseEntity<Number> getCheckTotal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<Number>(
-                accountingRecordService.getCheckTotal(),
+                accountingRecordService.getCheckTotal(accountingDate),
                 HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-record/direct-debit-transfert-total")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
-    public ResponseEntity<Number> getDirectDebitTransfertTotal() {
+    public ResponseEntity<Number> getDirectDebitTransfertTotal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<Number>(
-                accountingRecordService.getDirectDebitTransfertTotal(),
+                accountingRecordService.getDirectDebitTransfertTotal(accountingDate),
                 HttpStatus.OK);
     }
 
@@ -343,7 +351,9 @@ public class AccountingController {
             throw new OsirisValidationException("accountingRecord");
 
         if (!accountingRecord.getAccountingJournal().getId()
-                .equals(constantService.getAccountingJournalBilan().getId())) {
+                .equals(constantService.getAccountingJournalBilan().getId())
+                && !accountingRecord.getAccountingJournal().getId()
+                        .equals(constantService.getAccountingJournalSalary().getId())) {
             throw new OsirisValidationException("accountingRecord");
         }
 
@@ -486,13 +496,14 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/billing-closure-receipt/download")
-    public ResponseEntity<byte[]> downloadBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId,
-            @RequestParam("responsableId") Integer responsableId)
+    public ResponseEntity<byte[]> downloadBillingClosureReceipt(
+            @RequestParam(value = "tiersId", required = false) Integer tiersId,
+            @RequestParam(value = "responsableId", required = false) Integer responsableId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         byte[] data = null;
         HttpHeaders headers = null;
 
-        if (tiersId == null || responsableId == null)
+        if (tiersId == null && responsableId == null)
             throw new OsirisValidationException("tiersId");
 
         File billingClosureExport = accountingRecordService.getBillingClosureReceiptFile(tiersId, responsableId, true);
@@ -651,6 +662,90 @@ public class AccountingController {
 
             grandLivre.delete();
 
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/bilan")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<AccountingBalanceViewTitle>> getBilan(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            throws OsirisValidationException {
+        if (startDate == null || endDate == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+        return new ResponseEntity<List<AccountingBalanceViewTitle>>(
+                accountingRecordService.getBilan(startDate, endDate), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/profit-lost")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<AccountingBalanceViewTitle>> getProfitAndLost(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            throws OsirisValidationException {
+        if (startDate == null || endDate == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+        return new ResponseEntity<List<AccountingBalanceViewTitle>>(
+                accountingRecordService.getProfitAndLost(startDate, endDate), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/profit-lost/export")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<byte[]> downloadProfitLost(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            throws OsirisValidationException, OsirisException {
+        byte[] data = null;
+        HttpHeaders headers = null;
+        if (startDate == null || endDate == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+        File profitAndLost = accountingRecordService.getProfitLostExport(startDate, endDate);
+        if (profitAndLost != null) {
+            try {
+                data = Files.readAllBytes(profitAndLost.toPath());
+            } catch (IOException e) {
+                throw new OsirisException(e, "Unable to read file " + profitAndLost.toPath());
+            }
+            headers = new HttpHeaders();
+            headers.add("filename",
+                    "SPPS - Compte de résultats - "
+                            + startDate.format(dateFormatter) + " - "
+                            + endDate.format(dateFormatter) + ".xlsx");
+            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+            headers.setContentLength(data.length);
+            headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            profitAndLost.delete();
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/bilan/export")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<byte[]> downloadBilan(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            throws OsirisValidationException, OsirisException {
+        byte[] data = null;
+        HttpHeaders headers = null;
+        if (startDate == null || endDate == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+        File bilan = accountingRecordService.getBilanExport(startDate, endDate);
+        if (bilan != null) {
+            try {
+                data = Files.readAllBytes(bilan.toPath());
+            } catch (IOException e) {
+                throw new OsirisException(e, "Unable to read file " + bilan.toPath());
+            }
+            headers = new HttpHeaders();
+            headers.add("filename",
+                    "SPPS - Bilan - "
+                            + startDate.format(dateFormatter) + " - "
+                            + endDate.format(dateFormatter) + ".xlsx");
+            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+            headers.setContentLength(data.length);
+            headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            bilan.delete();
         }
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
