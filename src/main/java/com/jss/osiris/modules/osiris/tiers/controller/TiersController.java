@@ -27,6 +27,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PhoneSearch;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SalesComplain;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SalesComplainCause;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SalesComplainOrigin;
@@ -37,6 +38,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ProviderService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SalesComplainCauseService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SalesComplainOriginService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SalesComplainProblemService;
@@ -177,6 +179,9 @@ public class TiersController {
 
   @Autowired
   PrintDelegate printDelegate;
+
+  @Autowired
+  ProviderService providerService;
 
   @GetMapping(inputEntryPoint + "/rff-frequencies")
   public ResponseEntity<List<RffFrequency>> getRffFrequencies() {
@@ -322,6 +327,18 @@ public class TiersController {
       throw new OsirisValidationException("Tiers");
 
     tiersFollowup.setTiers(tiers);
+    return saveTiersFollomUp(tiersFollowup);
+  }
+
+  @PostMapping(inputEntryPoint + "/tiers-followup/provider")
+  public ResponseEntity<List<TiersFollowup>> addTiersFollowupForProvider(@RequestBody TiersFollowup tiersFollowup,
+      @RequestParam Integer idProvider)
+      throws OsirisValidationException, OsirisException {
+    Provider provider = providerService.getProvider(idProvider);
+    if (provider == null)
+      throw new OsirisValidationException("Provider");
+
+    tiersFollowup.setProvider(provider);
     return saveTiersFollomUp(tiersFollowup);
   }
 

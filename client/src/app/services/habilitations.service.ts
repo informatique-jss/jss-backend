@@ -43,8 +43,12 @@ export class HabilitationsService {
     return true;
   }
 
-  canViewProviderModule() {
+  canEditProviderModule() {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
+  canViewProviderModule() {
+    return true;
   }
 
   canViewQuotationModule() {
