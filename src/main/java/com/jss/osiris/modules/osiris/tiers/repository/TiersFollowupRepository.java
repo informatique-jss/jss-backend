@@ -31,4 +31,8 @@ public interface TiersFollowupRepository extends QueryCacheCrudRepository<TiersF
     @Query(value = "select a.* from tiers_followup a where id_affaire =:idAffaire", nativeQuery = true)
     @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<TiersFollowup> findByAffaireId(@Param("idAffaire") Integer idAffaire);
+
+    @Query(value = "select a.* from tiers_followup a where id_provider =:idProvider", nativeQuery = true)
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+    List<TiersFollowup> findByProviderId(@Param("idProvider") Integer idProvider);
 }

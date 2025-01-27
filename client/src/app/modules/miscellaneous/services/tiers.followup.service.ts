@@ -5,6 +5,7 @@ import { Affaire } from '../../quotation/model/Affaire';
 import { Invoice } from '../../quotation/model/Invoice';
 import { Responsable } from '../../tiers/model/Responsable';
 import { Tiers } from '../../tiers/model/Tiers';
+import { Provider } from '../model/Provider';
 import { TiersFollowup } from '../model/TiersFollowup';
 
 @Injectable({
@@ -18,6 +19,10 @@ export class TiersFollowupService extends AppRestService<TiersFollowup> {
 
   addFollowupForTiers(tiersFollowup: TiersFollowup, tiers: Tiers) {
     return this.postList(new HttpParams().set("idTiers", tiers.id), "tiers-followup/tiers", tiersFollowup);
+  }
+
+  addFollowupForProvider(tiersFollowup: TiersFollowup, provider: Provider) {
+    return this.postList(new HttpParams().set("idProvider", provider.id), "tiers-followup/provider", tiersFollowup);
   }
 
   addFollowupForResponsable(tiersFollowup: TiersFollowup, responsable: Responsable) {

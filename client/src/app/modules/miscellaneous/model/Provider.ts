@@ -7,6 +7,7 @@ import { IAttachment } from './IAttachment';
 import { Mail } from "./Mail";
 import { PaymentType } from "./PaymentType";
 import { Phone } from "./Phone";
+import { TiersFollowup } from "./TiersFollowup";
 import { VatCollectionType } from "./VatCollectionType";
 
 export interface Provider extends IReferential, IAttachment {
@@ -32,4 +33,5 @@ export interface Provider extends IReferential, IAttachment {
   city: City;
   idAs400: number;
   isRemindProviderInvoice: boolean;
+  tiersFollowups: TiersFollowup[];
 }

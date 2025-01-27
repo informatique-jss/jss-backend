@@ -303,4 +303,13 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   restoreTab() {
     this.index = this.userPreferenceService.getUserTabsSelectionIndex('responsable');
   }
+
+  renewPassword() {
+    if (!this.selectedResponsable || !this.selectedResponsable.mail) {
+      this.appService.displaySnackBar("Aucune adresse mail disponible pour ce responsable !", true, 20);
+      return;
+    }
+
+    this.employeeService.renewResponsablePassword(this.selectedResponsable!).subscribe(response => { });
+  }
 }
