@@ -354,7 +354,8 @@ public class PricingHelper {
                     invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(
                             BigDecimal.valueOf(masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber())));
 
-            if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring())
+            if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring()
+                    && invoiceItem.getPreTaxPrice() != null)
                 invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(new BigDecimal(2)));
         }
 
