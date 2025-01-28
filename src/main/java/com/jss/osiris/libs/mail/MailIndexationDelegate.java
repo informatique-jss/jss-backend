@@ -217,7 +217,8 @@ public class MailIndexationDelegate {
                     String to = String.join(" / ",
                             Arrays.asList(toAddresses).stream().map(Address::toString).toList());
                     String mailHtml = autoCloseTags(getHtmlContent(message)).replace("</head>",
-                            "</head><div><p>De : " + from.replaceAll("<", "").replaceAll(">", "")
+                            "</head><div><p>Objet : " + message.getSubject() + "</p><br><p>De : "
+                                    + from.replaceAll("<", "").replaceAll(">", "")
                                     + "</p><p>A :"
                                     + to.replaceAll("<", "").replaceAll(">", "")
                                     + "</p></div>")
