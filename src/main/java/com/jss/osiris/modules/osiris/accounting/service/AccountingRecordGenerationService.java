@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
@@ -63,4 +64,5 @@ public interface AccountingRecordGenerationService {
 
         public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
 
+        public void generateAccountingRecordForSageRecord(SageRecord sageRecord) throws OsirisException;
 }

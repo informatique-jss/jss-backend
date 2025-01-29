@@ -1,6 +1,10 @@
 package com.jss.osiris.modules.osiris.accounting.service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -23,7 +27,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingBalanceBilan;
@@ -34,13 +37,13 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
+import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
 import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
-import com.jss.osiris.modules.osiris.quotation.service.ConfrereService;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -60,16 +63,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   TiersService tiersService;
 
   @Autowired
-  ConfrereService confrereService;
-
-  @Autowired
   ActiveDirectoryHelper activeDirectoryHelper;
 
   @Autowired
   BillingClosureReceiptHelper billingClosureReceiptDelegate;
-
-  @Autowired
-  CustomerMailService customerMailService;
 
   @Autowired
   BatchService batchService;
@@ -79,6 +76,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   AccountingBalanceHelper accountingBalanceHelper;
+
+  @Autowired
+  SageRecordService sageRecordService;
 
   private String ACCOUNTING_RECORD_TABLE_NAME = "accounting_record";
   private String CLOSED_ACCOUNTING_RECORD_TABLE_NAME = "closed_accounting_record";
@@ -326,6 +326,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       accountingRecordSearch.setIdInvoice(0);
     if (accountingRecordSearch.getIdRefund() == null)
       accountingRecordSearch.setIdRefund(0);
+
+    if (accountingRecordSearch.getIsFromSage() == true)
+      return accountingRecordRepository.searchAccountingPayJournalRecords(accountingAccountId,
+          accountingRecordSearch.getHideLettered(), accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
+          accountingRecordSearch.getEndDate().withHour(23).withMinute(59));
 
     if (getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME)) {
@@ -636,5 +641,50 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     ArrayList<AccountingBalanceViewTitle> outBilanPassif = new ArrayList<AccountingBalanceViewTitle>();
     outBilanPassif.add(accountingBalanceHelper.getBilanPassif(accountingRecords, accountingRecordsN1));
     return accountingExportHelper.getBilan(outBilanActif, outBilanPassif);
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void uploadSageFile(InputStream file) throws OsirisException {
+    List<SageRecord> sageRecords = parsePnmFile(file);
+
+    if (sageRecords != null && !sageRecords.isEmpty()) {
+      sageRecordService.deleteExistingSageRecords(sageRecords);
+      for (SageRecord currentRecord : sageRecords) {
+        sageRecordService.addOrUpdateSageRecord(currentRecord);
+        accountingRecordGenerationService.generateAccountingRecordForSageRecord(currentRecord);
+      }
+    }
+  }
+
+  private List<SageRecord> parsePnmFile(InputStream file) throws OsirisException {
+    List<SageRecord> records = new ArrayList<>();
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(file))) {
+      String line;
+      if (reader.readLine().contains("SPPS - Sté"))
+        reader.skip(reader.readLine().length() + 1);
+      while ((line = reader.readLine()) != null) {
+        SageRecord record = new SageRecord();
+        record.setOperationDate(parseDateFromString(line.substring(3, 9)));
+        record.setTargetAccountingAccount(Integer.valueOf(line.substring(11, 17).trim()));
+        record.setLabel(line.substring(51, 76).trim());
+        record.setCreditOrDebit(line.substring(83, 84).trim());
+        record.setAmount(BigDecimal.valueOf(Double.parseDouble(line.substring(93, 104).replace(",", ".").trim())));
+        record.setCreatedDate(LocalDateTime.now());
+        records.add(record);
+      }
+    } catch (IOException ex) {
+    }
+    return records;
+  }
+
+  private LocalDate parseDateFromString(String date) {
+    int day = Integer.parseInt(date.substring(0, 2));
+    int month = Integer.parseInt(date.substring(2, 4));
+    int year = Integer.parseInt(date.substring(4, 6));
+
+    year += 2000;
+
+    return LocalDate.of(year, month, day);
   }
 }

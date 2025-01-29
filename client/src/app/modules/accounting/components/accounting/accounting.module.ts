@@ -17,6 +17,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterModule, Routes } from "@angular/router";
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
 import { AccountingBilanComponent } from "../accounting-bilan/accounting-bilan.component";
+import { AccountingPayJournalComponent } from "../accounting-pay-journal/accounting-pay-journal.component";
 import { AccountingProfitLostComponent } from "../accounting-profit-lost/accounting-profit-lost.component";
 import { AddAccountingRecordComponent } from "../add-accounting-record/add-accounting-record.component";
 import { AccountingBalanceGeneraleComponent } from "./../accounting-balance-generale/accounting-balance-generale.component";
@@ -57,7 +58,8 @@ const routes: Routes = [
     AccountingBalanceGeneraleComponent,
     AddAccountingRecordComponent,
     AccountingBilanComponent,
-    AccountingProfitLostComponent
+    AccountingProfitLostComponent,
+    AccountingPayJournalComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

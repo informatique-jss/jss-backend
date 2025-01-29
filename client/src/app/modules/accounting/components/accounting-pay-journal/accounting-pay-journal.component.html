@@ -1,0 +1,54 @@
+<div class="mat-elevation-z2 form-div  ">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout" *ngIf="!accountingRecordSearch.idPayment">
+      <tr>
+        <td>
+          <autocomplete-accounting-account [(model)]="accountingRecordSearch.accountingAccount"
+            [form]="accountingRecordForm" propertyName="accountingAccounts" label="Compte comptable">
+          </autocomplete-accounting-account>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="accountingRecordSearch.startDate" label="Date de début"
+            [form]="accountingRecordForm" propertyName="startDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="accountingRecordSearch.endDate" label="Date de fin"
+            [form]="accountingRecordForm" propertyName="endDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td class="fab-td-button padding-fab">
+          <button mat-mini-fab matTooltip="Mois en cours" (click)="setCurentMonth()" class="add-button">
+            <mat-icon>calendar_view_month</mat-icon>
+          </button>
+        </td>
+        <td class="fab-td-button padding-fab">
+          <button mat-mini-fab matTooltip="Exercice en cours" (click)="setCurentFiscalYear()" class="add-button">
+            <mat-icon>date_range</mat-icon>
+          </button>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRecords()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <table class="full-width table-fixed-layout" *ngIf="!accountingRecordSearch.idPayment">
+      <tr>
+        <td class="toggle-td">
+          <generic-toggle [(model)]="accountingRecordSearch.hideLettered" label="Cacher lettrées ?"
+            [form]="accountingRecordForm" propertyName="hideLettered"></generic-toggle>
+        </td>
+      </tr>
+    </table>
+    <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures"
+      [isSmallerHeight]="true">
+    </sort-table>
+  </div>
+</div>
+
+<button *ngIf="canImportPnmFile()" matTooltip="Importer un fichier PNM" mat-fab color="accent" class="fab-button"
+  (click)="importPnmFile()">
+  <mat-icon>upload</mat-icon>
+</button>
