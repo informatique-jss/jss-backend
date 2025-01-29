@@ -156,7 +156,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         // check if AccountingDocumentNumber already exists for a provider, only for new
         // invoice
         if (invoice.getId() == null && invoice.getManualAccountingDocumentNumber() != null
-                && invoice.getProvider() != null) {
+                && invoice.getProvider() != null && !invoice.getProvider().getId()
+                        .equals(constantService.getCompetentAuthorityInpi().getProvider().getId())) {
             List<Invoice> duplicateInvoices = invoiceRepository
                     .findByProviderAndManualAccountingDocumentNumberIgnoreCase(invoice.getProvider(),
                             invoice.getManualAccountingDocumentNumber());

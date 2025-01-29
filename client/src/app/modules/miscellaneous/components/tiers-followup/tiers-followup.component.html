@@ -56,6 +56,8 @@
   </div>
   <sort-table *ngIf='tiers!=undefined' [columns]="displayedColumns" [values]="tiers.tiersFollowups"
     tableName="Suivi factures" [filterText]="searchText" [noPaddingBottom]="true" [noMaxHeight]="true"></sort-table>
+  <sort-table *ngIf='provider!=undefined' [columns]="displayedColumns" [values]="provider.tiersFollowups"
+    tableName="Suivi fournisseur" [filterText]="searchText" [noPaddingBottom]="true" [noMaxHeight]="true"></sort-table>
   <sort-table *ngIf='invoice!=undefined' [columns]="displayedColumns" [values]="invoice.tiersFollowups"
     tableName="Suivi factures" [filterText]="searchText" [noPaddingBottom]="true" [noMaxHeight]="true"></sort-table>
   <sort-table *ngIf='affaire!=undefined' [columns]="displayedColumns" [values]="affaire.tiersFollowups"

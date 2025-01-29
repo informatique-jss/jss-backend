@@ -17,11 +17,13 @@ import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.JournalType;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureRecipientType;
@@ -38,6 +40,7 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -93,7 +96,11 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_journal_bilan")
 	private AccountingJournal accountingJournalBilan;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_accounting_journal_salary")
+	private AccountingJournal accountingJournalSalary;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_accounting_journal_miscellaneous_operations")
 	private AccountingJournal accountingJournalMiscellaneousOperations;
 
@@ -131,6 +138,13 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_billing_closure")
 	private DocumentType documentTypeBillingClosure;
+
+	@ManyToOne
+	@JoinColumn(name = "id_document_type_synthesis_rbe_signed")
+	private TypeDocument documentTypeSynthesisRbeSigned;
+	@ManyToOne
+	@JoinColumn(name = "id_document_type_synthesis_rbe_unsigned")
+	private TypeDocument documentTypeSynthesisRbeUnsigned;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_provisionnal_receipt")
@@ -820,6 +834,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_provision_type_registration_act")
 	private ProvisionType provisionTypeRegistrationAct;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_type_rbe")
+	private ProvisionType provisionTypeRbe;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type_deposit")
+	private ProvisionFamilyType provisionFamilyTypeDeposit;
 
 	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_formalites")
@@ -2509,4 +2531,39 @@ public class Constant implements Serializable, IId {
 		this.attachmentTypeClientCommunication = attachmentTypeClientCommunication;
 	}
 
+	public TypeDocument getDocumentTypeSynthesisRbeSigned() {
+		return documentTypeSynthesisRbeSigned;
+	}
+
+	public void setDocumentTypeSynthesisRbeSigned(TypeDocument documentTypeSynthesisRbeSigned) {
+		this.documentTypeSynthesisRbeSigned = documentTypeSynthesisRbeSigned;
+	}
+
+	public TypeDocument getDocumentTypeSynthesisRbeUnsigned() {
+		return documentTypeSynthesisRbeUnsigned;
+	}
+
+	public void setDocumentTypeSynthesisRbeUnsigned(TypeDocument documentTypeSynthesisRbeUnsigned) {
+		this.documentTypeSynthesisRbeUnsigned = documentTypeSynthesisRbeUnsigned;
+	}
+
+	public ProvisionType getProvisionTypeRbe() {
+		return provisionTypeRbe;
+	}
+
+	public ProvisionFamilyType getProvisionFamilyTypeDeposit() {
+		return provisionFamilyTypeDeposit;
+	}
+
+	public void setProvisionFamilyTypeDeposit(ProvisionFamilyType provisionFamilyTypeDeposit) {
+		this.provisionFamilyTypeDeposit = provisionFamilyTypeDeposit;
+	}
+  
+	public AccountingJournal getAccountingJournalSalary() {
+		return accountingJournalSalary;
+	}
+
+	public void setAccountingJournalSalary(AccountingJournal accountingJournalSalary) {
+		this.accountingJournalSalary = accountingJournalSalary;
+	}
 }

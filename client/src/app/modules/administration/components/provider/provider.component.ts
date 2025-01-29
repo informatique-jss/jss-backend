@@ -13,6 +13,7 @@ import { ProviderService } from 'src/app/modules/miscellaneous/services/provider
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { PROVIDER_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { CityService } from '../../../miscellaneous/services/city.service';
 
@@ -29,7 +30,8 @@ export class ProviderComponent implements OnInit {
     protected paymentTypeService: PaymentTypeService,
     protected activatedRoute: ActivatedRoute,
     private userPreferenceService: UserPreferenceService,
-    private cityService: CityService
+    private cityService: CityService,
+    private habilitationsService: HabilitationsService,
   ) {
   }
 
@@ -179,5 +181,9 @@ export class ProviderComponent implements OnInit {
         }
       })
     }
+  }
+
+  canEditProvider() {
+    return this.habilitationsService.canEditProviderModule();
   }
 }

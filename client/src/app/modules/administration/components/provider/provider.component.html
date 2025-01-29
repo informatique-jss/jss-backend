@@ -166,18 +166,23 @@
       <attachments [entity]="selectedProvider" [editMode]="true" [entityType]="PROVIDER_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
+    <mat-tab label="Suivi" *ngIf="selectedProvider.id">
+      <ng-template matTabContent>
+        <tiers-followup [provider]="selectedProvider" [editMode]="true"></tiers-followup>
+      </ng-template>
+    </mat-tab>
   </mat-tab-group>
 </div>
 
-<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
+<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true && canEditProvider()"
   (click)="saveProvider()">
   <mat-icon>save</mat-icon>
 </button>
-<button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
-  *ngIf="editMode==false && selectedProvider &&  selectedProvider.id" (click)="editProvider()">
+<button matTooltip="Modifier le fournisseur" mat-fab color="accent" class="second-fab-button"
+  *ngIf="editMode==false && selectedProvider &&  selectedProvider.id && canEditProvider()" (click)="editProvider()">
   <mat-icon>edit</mat-icon>
 </button>
-<button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
-  (click)="addProvider()">
+<button matTooltip="Ajouter un fournisseur" mat-fab color="accent" class="fab-button"
+  *ngIf="editMode==false && canEditProvider()" (click)="addProvider()">
   <mat-icon>add</mat-icon>
 </button>

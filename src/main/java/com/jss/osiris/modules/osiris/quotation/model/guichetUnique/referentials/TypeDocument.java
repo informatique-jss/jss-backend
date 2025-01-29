@@ -33,9 +33,6 @@ public class TypeDocument implements ICode, IAttachment {
     public static String UNSIGNED_SYNTHESES_DOCUMENT_CODE = "PJ_99";
     public static String SIGNED_SYNTHESES_DOCUMENT_CODE = "PJ_115";
 
-    public static String UNSIGNED_BE_DOCUMENT_CODE = "PJ_119";
-    public static String SIGNED_BE_DOCUMENT_CODE = "PJ_120";
-
     @Id
     @JsonView(JacksonViews.MyJssView.class)
     private String code;
@@ -113,22 +110,6 @@ public class TypeDocument implements ICode, IAttachment {
 
     public static void setSIGNED_SYNTHESES_DOCUMENT_CODE(String sIGNED_SYNTHESES_DOCUMENT_CODE) {
         SIGNED_SYNTHESES_DOCUMENT_CODE = sIGNED_SYNTHESES_DOCUMENT_CODE;
-    }
-
-    public static String getUNSIGNED_BE_DOCUMENT_CODE() {
-        return UNSIGNED_BE_DOCUMENT_CODE;
-    }
-
-    public static void setUNSIGNED_BE_DOCUMENT_CODE(String uNSIGNED_BE_DOCUMENT_CODE) {
-        UNSIGNED_BE_DOCUMENT_CODE = uNSIGNED_BE_DOCUMENT_CODE;
-    }
-
-    public static String getSIGNED_BE_DOCUMENT_CODE() {
-        return SIGNED_BE_DOCUMENT_CODE;
-    }
-
-    public static void setSIGNED_BE_DOCUMENT_CODE(String sIGNED_BE_DOCUMENT_CODE) {
-        SIGNED_BE_DOCUMENT_CODE = sIGNED_BE_DOCUMENT_CODE;
     }
 
     public String getCustomLabel() {

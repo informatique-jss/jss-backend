@@ -10,6 +10,7 @@ import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Gift;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 
@@ -42,6 +43,12 @@ public class TiersFollowup implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
 	@JsonIgnore
 	private Tiers tiers;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_provider")
+	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
+	@JsonIgnore
+	private Provider provider;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
@@ -168,6 +175,14 @@ public class TiersFollowup implements Serializable, IId {
 
 	public void setAffaire(Affaire affaire) {
 		this.affaire = affaire;
+	}
+
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
 	}
 
 }

@@ -2,8 +2,10 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.osiris.tiers.model.TiersFollowup;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -104,6 +106,10 @@ public class Provider implements IAttachment, IId {
 	private String siret;
 
 	private Boolean isRemindProviderInvoice;
+
+	@OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "provider" }, allowSetters = true)
+	private List<TiersFollowup> tiersFollowups;
 
 	public Integer getId() {
 		return id;
@@ -287,6 +293,14 @@ public class Provider implements IAttachment, IId {
 
 	public void setIsRemindProviderInvoice(Boolean isRemindProviderInvoice) {
 		this.isRemindProviderInvoice = isRemindProviderInvoice;
+	}
+
+	public List<TiersFollowup> getTiersFollowups() {
+		return tiersFollowups;
+	}
+
+	public void setTiersFollowups(List<TiersFollowup> tiersFollowups) {
+		this.tiersFollowups = tiersFollowups;
 	}
 
 }

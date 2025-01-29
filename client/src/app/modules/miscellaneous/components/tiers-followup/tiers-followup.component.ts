@@ -7,6 +7,7 @@ import { ICSEvent } from 'src/app/libs/ICSEvent';
 import { createEvent } from 'src/app/libs/ICSHelper';
 import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { Gift } from 'src/app/modules/miscellaneous/model/Gift';
+import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
@@ -28,6 +29,7 @@ import { TiersFollowupService } from '../../services/tiers.followup.service';
 export class TiersFollowupComponent implements OnInit {
 
   @Input() tiers: Tiers | Responsable | undefined;
+  @Input() provider: Provider | undefined;
   @Input() invoice: Invoice | undefined;
   @Input() affaire: Affaire | undefined;
   @Input() editMode: boolean = false;
@@ -71,7 +73,7 @@ export class TiersFollowupComponent implements OnInit {
   formatDateForSortTable = formatDateForSortTable;
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.tiers != undefined || changes.invoice != undefined || changes.affaire != undefined) {
+    if (changes.tiers != undefined || changes.invoice != undefined || changes.affaire != undefined || changes.provider != undefined) {
       this.followupForm.markAllAsTouched();
       this.setData();
 
@@ -86,6 +88,10 @@ export class TiersFollowupComponent implements OnInit {
       // By default, select Salesman of Tiers
       if (this.newFollowup && !this.newFollowup.salesEmployee)
         this.newFollowup.salesEmployee = this.tiers.salesEmployee;
+    } else if (this.provider && this.provider.tiersFollowups != null) {
+      this.provider.tiersFollowups.sort(function (a: TiersFollowup, b: TiersFollowup) {
+        return new Date(b.followupDate).getTime() - new Date(a.followupDate).getTime();
+      });
     } else if (this.invoice && this.invoice.tiersFollowups != null) {
       this.invoice.tiersFollowups.sort(function (a: TiersFollowup, b: TiersFollowup) {
         return new Date(b.followupDate).getTime() - new Date(a.followupDate).getTime();
@@ -119,7 +125,10 @@ export class TiersFollowupComponent implements OnInit {
     if (this.getFormStatus() == false)
       return;
 
-    if (this.tiers) {
+    if (this.provider) {
+      if (this.provider.tiersFollowups == null || this.provider.tiersFollowups == undefined)
+        this.provider.tiersFollowups = [] as Array<TiersFollowup>;
+    } else if (this.tiers) {
       if (this.tiers.tiersFollowups == null || this.tiers.tiersFollowups == undefined)
         this.tiers.tiersFollowups = [] as Array<TiersFollowup>;
     } else if (this.invoice) {
@@ -135,6 +144,8 @@ export class TiersFollowupComponent implements OnInit {
     let promise;
     if (this.invoice)
       promise = this.tiersFollowupService.addFollowupForInvoice(this.newFollowup, this.invoice);
+    else if (this.provider)
+      promise = this.tiersFollowupService.addFollowupForProvider(this.newFollowup, this.provider);
     else if (this.affaire)
       promise = this.tiersFollowupService.addFollowupForAffaire(this.newFollowup, this.affaire);
     else if (instanceOfTiers(this.tiers))
@@ -150,6 +161,8 @@ export class TiersFollowupComponent implements OnInit {
           this.invoice.tiersFollowups = response;
         else if (this.affaire)
           this.affaire.tiersFollowups = response;
+        else if (this.provider)
+          this.provider.tiersFollowups = response;
         this.setData();
       });
     this.newFollowup = {} as TiersFollowup;
@@ -224,6 +237,19 @@ export class TiersFollowupComponent implements OnInit {
       event.end = d;
 
       createEvent([event], 'Rappel affaire n°' + this.affaire.id + '.ics');
+    } else if (this.provider) {
+      event.description = "Bonjour, \n\nMerci de rappeler le fournisseur " + this.provider.label + ".";
+      event.htmlDescription = "<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 3.2//EN><html><body><p>Bonjour,</p><p>Merci de rappeler le tiers <a href=\"" + environment.frontendUrl + "provider/" + this.provider.id + "\">" + this.provider.label + "</a></p></html></body>";
+
+      event.summary = "[Relance Fournisseur] : " + this.provider.label;
+      event.location = "";
+      event.url = "";
+      event.start = new Date(this.reminderDatetime);
+      let d = new Date(event.start.getTime());
+      d.setMinutes(d.getMinutes() + 60);
+      event.end = d;
+
+      createEvent([event], 'Rappel ' + this.provider.label + '.ics');
     }
   }
 }

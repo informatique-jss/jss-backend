@@ -50,6 +50,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.accountingJournalSales;
   }
 
+  getAccountingJournalSalary() {
+    return this.constant.accountingJournalSalary;
+  }
+
   getAccountingJournalPurchases() {
     return this.constant.accountingJournalPurchases;
   }
@@ -96,6 +100,12 @@ export class ConstantService extends AppRestService<Constant> {
 
   getDocumentTypeDunning() {
     return this.constant.documentTypeDunning;
+  }
+  getDocumentTypeSynthesisRbeSigned() {
+    return this.constant.documentTypeSynthesisRbeSigned;
+  }
+  getDocumentTypeSynthesisRbeUnsigned() {
+    return this.constant.documentTypeSynthesisRbeUnsigned;
   }
 
   getDocumentTypeRefund() {
@@ -346,6 +356,13 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.provisionTypeRegistrationAct;
   }
 
+  getProvisionTypeRbe() {
+    return this.constant.provisionTypeRbe;
+  }
+
+  getProvisionFamilyTypeDeposit() {
+    return this.constant.provisionFamilyTypeDeposit;
+  }
   getBillingTypeInfogreffeDebour() {
     return this.constant.billingTypeInfogreffeDebour;
   }

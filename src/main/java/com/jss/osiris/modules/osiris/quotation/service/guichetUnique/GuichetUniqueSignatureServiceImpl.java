@@ -25,6 +25,7 @@ import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
@@ -52,6 +53,9 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
 
     @Autowired
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
+
+    @Autowired
+    ConstantService constantService;
 
     @Value("${guichet.unique.signature.path.input}")
     private String inSignatureFolder;
@@ -108,7 +112,7 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
                 for (PiecesJointe piecesJointe : formaliteGuichetUnique.getContent().getPiecesJointes()) {
 
                     if (piecesJointe.getTypeDocument().getCode()
-                            .equals(TypeDocument.UNSIGNED_SYNTHESES_DOCUMENT_CODE)) {
+                            .equals(constantService.getDocumentTypeSynthesisRbeUnsigned().getCode())) {
                         if (lastSynthesis == null || LocalDateTime.parse(lastSynthesis.getCreated().substring(0, 19),
                                 JacksonLocalDateTimeDeserializer.formatter)
                                 .isBefore(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
@@ -116,7 +120,7 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
                             lastSynthesis = piecesJointe;
                     }
                     if (piecesJointe.getTypeDocument().getCode()
-                            .equals(TypeDocument.UNSIGNED_BE_DOCUMENT_CODE)) {
+                            .equals(constantService.getDocumentTypeSynthesisRbeSigned().getCode())) {
                         if (lastBe == null || LocalDateTime.parse(lastBe.getCreated().substring(0, 19),
                                 JacksonLocalDateTimeDeserializer.formatter)
                                 .isBefore(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
@@ -199,7 +203,8 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
                     if (signedBe != null)
                         signedSynthesisBePieceJointe = guichetUniqueDelegateService.uploadAttachment(formalite,
                                 signedBe,
-                                typeDocumentService.getTypeDocumentByCode(TypeDocument.SIGNED_BE_DOCUMENT_CODE),
+                                typeDocumentService.getTypeDocumentByCode(
+                                        constantService.getDocumentTypeSynthesisRbeSigned().getCode()),
                                 "Signed_be_" + formalite.getId() + "_"
                                         + LocalDateTime.now()
                                                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))

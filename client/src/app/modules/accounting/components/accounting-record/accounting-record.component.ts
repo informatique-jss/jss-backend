@@ -137,7 +137,7 @@ export class AccountingRecordComponent implements OnInit {
     if (this.habilitationService.canDeleteAccountingRecordsOnBilanJournal())
       this.tableAction.push({
         actionIcon: 'delete', actionName: "Supprimer l'écriture", actionClick: (column: SortTableAction<AccountingRecordSearchResult>, element: AccountingRecordSearchResult, event: any) => {
-          if (element && element.accountingJournalCode == this.constantService.getAccountingJournalBilan().code) {
+          if (element && (element.accountingJournalCode == this.constantService.getAccountingJournalBilan().code || element.accountingJournalCode == this.constantService.getAccountingJournalSalary().code)) {
             const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
               maxWidth: "400px",
               data: {
@@ -153,7 +153,7 @@ export class AccountingRecordComponent implements OnInit {
                 this.accountingRecordService.deleteRecords(element).subscribe(res => { this.searchRecords() });
             });
           } else {
-            this.appService.displaySnackBar("La suppression n'est possible que sur des lignes du journal Bilan", true, 10);
+            this.appService.displaySnackBar("La suppression n'est possible que sur des lignes du journal Bilan et Salaire", true, 10);
           }
         }, display: true,
       } as SortTableAction<AccountingRecordSearchResult>);
@@ -370,8 +370,8 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   downloadBillingClosureReceipt() {
-    if (this.tiersToDisplay)
-      this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay, this.responsableToDisplay);
+    if (this.tiersToDisplay || this.responsableToDisplay)
+      this.accountingRecordService.downloadBillingClosureReceipt(this.tiersToDisplay ? this.tiersToDisplay : this.responsableToDisplay!.tiers, this.responsableToDisplay);
   }
 
   sendBillingClosureReceipt() {

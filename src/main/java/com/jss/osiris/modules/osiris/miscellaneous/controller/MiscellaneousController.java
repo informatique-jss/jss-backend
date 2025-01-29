@@ -419,7 +419,7 @@ public class MiscellaneousController {
 
         List<Employee> backupEmployee = null;
         if (employee != null) {
-            employeeService.getMyHolidaymaker((Employee) employee);
+            backupEmployee = employeeService.getMyHolidaymaker((Employee) employee);
 
             if (notification.getNotificationType().equals(Notification.PERSONNAL)) {
                 backupEmployee = new ArrayList<Employee>();
