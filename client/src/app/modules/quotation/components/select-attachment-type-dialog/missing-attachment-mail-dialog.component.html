@@ -88,7 +88,29 @@
   *ngIf="(!service || !service.assoServiceDocuments || service.assoServiceDocuments.length==0) && !selectedAssoServiceDocument">
   <p>Aucun type de document attendu sur ce service</p>
 </div>
-
+<div>
+  <multiple-upload class="document-upload" [entity]="entity"
+    [entityType]="MISSING_ATTACHMENT_QUERY_ENTITY_TYPE.entityType" [editMode]="true"
+    [forcedAttachmentType]="constantService.getAttachmentTypeAutomaticMail()"
+    (endOfUpload)="completeDocumentAttachment($event, missingAttachmentQuery)"
+    [isDirectUpload]="true"></multiple-upload>
+  <mat-card-content>
+    <div *ngIf="missingAttachmentQuery.attachments && missingAttachmentQuery.attachments.length>0">
+      <div *ngFor="let attachment of missingAttachmentQuery.attachments">
+        <ng-container *ngIf="!attachment.isDisabled">
+          <mat-icon color="accent" mat-list-icon (click)="deleteAttachment(attachment)" class="pointer"
+            matTooltip="Supprimer le fichier">delete_forever</mat-icon>
+          <mat-icon color="accent" mat-list-icon (click)="previewAttachment(attachment)"
+            matTooltip="Prévisualiser le fichier" class="pointer">visibility</mat-icon>
+          <mat-icon color="accent" mat-list-icon matTooltip="Télécharger le fichier"
+            (click)="downloadAttachment(attachment)" class="pointer">download</mat-icon> {{
+          attachment.uploadedFile.filename }}
+          {{attachment.uploadedFile.size ? ("("+formatBytes(attachment.uploadedFile.size,2)+")"):"" }}
+        </ng-container>
+      </div>
+    </div>
+  </mat-card-content>
+</div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="closeDialog()" *ngIf="editMode">Annuler</button>
   <button mat-raised-button color="accent" (click)="closeDialog()" *ngIf="!editMode">Fermer</button>
