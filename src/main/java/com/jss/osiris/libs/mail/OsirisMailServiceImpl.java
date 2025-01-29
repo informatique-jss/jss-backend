@@ -38,7 +38,8 @@ public class OsirisMailServiceImpl implements OsirisMailService {
     @Override
     public boolean attachIndexationMailToEntity(IndexationMail currentExportedMail) throws OsirisException {
         Pattern p = Pattern.compile("\\d+");
-
+        // match any number id with order or quotation etc and get corresponding entity
+        // to add attachment from email
         Matcher m = p.matcher(currentExportedMail.getSubject());
         while (m.find()) {
             try {

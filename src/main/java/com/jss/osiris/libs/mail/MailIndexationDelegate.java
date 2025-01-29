@@ -131,9 +131,9 @@ public class MailIndexationDelegate {
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to get messages from INBOX folder");
         }
-
+        // for all messages received in inbox folder, launch a batch calling method
+        // exportMailToFile()
         for (Message message : messages) {
-            // TODO : declare batch
             try {
                 batchService.declareNewBatch(Batch.INDEX_MAIL_TO_ENTITY,
                         (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "")));
@@ -205,11 +205,11 @@ public class MailIndexationDelegate {
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to get messages from INBOX folder");
         }
-
+        // matching mail and getting all content, adresses and subject into an
+        // InputStream to call method addAttachment
         for (Message message : messages) {
             try {
                 if (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "") == id) {
-                    // Generate PDF
                     Address[] fromAddresses = message.getFrom();
                     Address[] toAddresses = message.getAllRecipients();
                     String from = String.join(" / ",
@@ -217,11 +217,12 @@ public class MailIndexationDelegate {
                     String to = String.join(" / ",
                             Arrays.asList(toAddresses).stream().map(Address::toString).toList());
                     String mailHtml = autoCloseTags(getHtmlContent(message)).replace("</head>",
-                            "</head><div><p>Objet : " + message.getSubject() + "</p><br><p>De : "
+                            "</head><div><p class=\"MsoNormal\">Objet : " + message.getSubject()
+                                    + "</p><br><p class=\"MsoNormal\">De : "
                                     + from.replaceAll("<", "").replaceAll(">", "")
-                                    + "</p><p>A :"
+                                    + "</p><p class=\"MsoNormal\">A :"
                                     + to.replaceAll("<", "").replaceAll(">", "")
-                                    + "</p></div>")
+                                    + "</p></div><hr/>")
                             .replaceAll("(?m)^(\\s*)<(\\w+)>([^<]+)$", "$1<$2>$3</$2>");
 
                     mail.setSubject(message.getSubject());
@@ -244,8 +245,6 @@ public class MailIndexationDelegate {
     }
 
     public void purgeDeletedElements() throws OsirisException {
-        // LocalDate purgeDate = LocalDate.now().minus(30, ChronoUnit.DAYS);
-
         Store store = null;
         Folder folderTrash = null;
         String accessToken = getAccessToken();
@@ -272,6 +271,7 @@ public class MailIndexationDelegate {
         }
     }
 
+    // Outlook html is not clean, corrections on tags needed
     private String autoCloseTags(String html) {
         html = html.replace("text/html", "texthtml");
         html = html.replace("span.", "").replace("div.", "").replace(":&quot;", ":").replace("&quot;,", ",")
@@ -286,7 +286,6 @@ public class MailIndexationDelegate {
             String attributes = matcher.group(2);
             matcher.appendReplacement(correctedHtml, "<" + tagName + attributes + " />");
         }
-
         matcher.appendTail(correctedHtml);
 
         return correctedHtml.toString();
@@ -302,6 +301,7 @@ public class MailIndexationDelegate {
         return htmlContent;
     }
 
+    // method to get images from html and display it into attachment
     private static String processMultipart(Multipart multipart) throws Exception {
         StringBuilder htmlBuilder = new StringBuilder();
         Map<String, String> base64Images = new HashMap<>();
