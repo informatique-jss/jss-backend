@@ -7,6 +7,6 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
 
 public interface SageRecordRepository extends QueryCacheCrudRepository<SageRecord, Integer> {
-    List<SageRecord> findByTargetAccountingAccountAndOperationDate(Integer targetAccountingAccount,
+    List<SageRecord> findByTargetAccountingAccountCodeAndOperationDate(String targetAccountingAccountCode,
             LocalDate operationDate);
 }

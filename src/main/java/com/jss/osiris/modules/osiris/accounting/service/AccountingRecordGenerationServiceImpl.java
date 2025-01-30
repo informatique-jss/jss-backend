@@ -1150,30 +1150,40 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     @Override
-    public void generateAccountingRecordForSageRecord(SageRecord sageRecord) throws OsirisException {
+    public void generateAccountingRecordForSageRecord(List<SageRecord> sageRecords) throws OsirisException {
         Integer operationId = getNewTemporaryOperationId();
         AccountingJournal salaryJournal = constantService.getAccountingJournalSalary();
-        AccountingAccount targetAccountingAccount = accountingAccountService
-                .getAccountingAccount(sageRecord.getTargetAccountingAccount());
+        List<AccountingAccount> targetAccountingAccount = new ArrayList<AccountingAccount>();
+        BigDecimal balance = new BigDecimal(0);
 
-        if (sageRecord.getTargetAccountingAccount() == null)
-            throw new OsirisException(null, "No target accounting account for sage record n°" + sageRecord.getId());
+        if (sageRecords != null && !sageRecords.isEmpty()) {
+            for (SageRecord sageRecord : sageRecords) {
+                targetAccountingAccount = accountingAccountService
+                        .getAccountingAccountByLabelOrCode(sageRecord.getTargetAccountingAccountCode());
+                if (targetAccountingAccount.isEmpty())
+                    throw new OsirisException(null,
+                            "Invalid target accounting account provided for sage record n°" + sageRecord.getId());
 
-        if (targetAccountingAccount == null)
-            throw new OsirisException(null,
-                    "Invalid target accounting account provided for sage record n°" + sageRecord.getId());
+                if (sageRecord.getCreditOrDebit() != null
+                        && sageRecord.getCreditOrDebit().equals(SageRecord.DEBIT_SAGE))
+                    generateNewAccountingRecord(sageRecord.getCreatedDate(), operationId, null, null,
+                            "Ecriture SAGE pour le compte cible n°" + targetAccountingAccount.get(0).getId()
+                                    + " - "
+                                    + sageRecord.getLabel(),
+                            null, sageRecord.getAmount().abs(), targetAccountingAccount.get(0), null, null, null,
+                            salaryJournal, null, null, null, sageRecord);
 
-        if (sageRecord.getCreditOrDebit().equals(SageRecord.DEBIT_SAGE))
-            generateNewAccountingRecord(sageRecord.getCreatedDate(), operationId, null, null,
-                    "Ecriture SAGE pour le compte cible n°" + sageRecord.getTargetAccountingAccount() + " - "
-                            + sageRecord.getLabel(),
-                    null, sageRecord.getAmount().abs(), targetAccountingAccount, null, null, null,
-                    salaryJournal, null, null, null, sageRecord);
-        if (sageRecord.getCreditOrDebit().equals(SageRecord.CREDIT_SAGE))
-            generateNewAccountingRecord(sageRecord.getCreatedDate(), operationId, null, null,
-                    "Ecriture SAGE pour le compte cible n°" + sageRecord.getTargetAccountingAccount() + " - "
-                            + sageRecord.getLabel(),
-                    sageRecord.getAmount().abs(), null, targetAccountingAccount, null, null, null,
-                    salaryJournal, null, null, null, sageRecord);
+                if (sageRecord.getCreditOrDebit() != null
+                        && sageRecord.getCreditOrDebit().equals(SageRecord.CREDIT_SAGE))
+                    generateNewAccountingRecord(sageRecord.getCreatedDate(), operationId, null, null,
+                            "Ecriture SAGE pour le compte cible n°" + targetAccountingAccount.get(0).getId()
+                                    + " - "
+                                    + sageRecord.getLabel(),
+                            sageRecord.getAmount().abs(), null, targetAccountingAccount.get(0), null, null, null,
+                            salaryJournal, null, null, null, sageRecord);
+                balance.add(sageRecord.getAmount());
+            }
+            checkBalance(balance);
+        }
     }
 }

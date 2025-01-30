@@ -327,10 +327,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getIdRefund() == null)
       accountingRecordSearch.setIdRefund(0);
 
-    if (accountingRecordSearch.getIsFromSage() == true)
-      return accountingRecordRepository.searchAccountingPayJournalRecords(accountingAccountId,
-          accountingRecordSearch.getHideLettered(), accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
-          accountingRecordSearch.getEndDate().withHour(23).withMinute(59));
+    // if (accountingRecordSearch.getIsFromSage() == true)
+    // return
+    // accountingRecordRepository.searchAccountingPayJournalRecords(accountingAccountId,
+    // accountingRecordSearch.getHideLettered(),
+    // accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
+    // accountingRecordSearch.getEndDate().withHour(23).withMinute(59));
 
     if (getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME)) {
@@ -652,8 +654,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       sageRecordService.deleteExistingSageRecords(sageRecords);
       for (SageRecord currentRecord : sageRecords) {
         sageRecordService.addOrUpdateSageRecord(currentRecord);
-        accountingRecordGenerationService.generateAccountingRecordForSageRecord(currentRecord);
       }
+      accountingRecordGenerationService.generateAccountingRecordForSageRecord(sageRecords);
     }
   }
 
@@ -666,7 +668,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       while ((line = reader.readLine()) != null) {
         SageRecord record = new SageRecord();
         record.setOperationDate(parseDateFromString(line.substring(3, 9)));
-        record.setTargetAccountingAccount(Integer.valueOf(line.substring(11, 17).trim()));
+        record.setTargetAccountingAccountCode(line.substring(11, 17).trim());
         record.setLabel(line.substring(51, 76).trim());
         record.setCreditOrDebit(line.substring(83, 84).trim());
         record.setAmount(BigDecimal.valueOf(Double.parseDouble(line.substring(93, 104).replace(",", ".").trim())));

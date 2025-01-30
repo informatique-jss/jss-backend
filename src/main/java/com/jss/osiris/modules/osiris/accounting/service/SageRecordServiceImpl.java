@@ -23,7 +23,7 @@ public class SageRecordServiceImpl implements SageRecordService {
         if (sageRecords != null && !sageRecords.isEmpty()) {
             for (SageRecord sageRecord : sageRecords) {
                 List<SageRecord> foundRecords = sageRecordRepository
-                        .findByTargetAccountingAccountAndOperationDate(sageRecord.getTargetAccountingAccount(),
+                        .findByTargetAccountingAccountCodeAndOperationDate(sageRecord.getTargetAccountingAccountCode(),
                                 sageRecord.getOperationDate());
                 if (foundRecords != null && !foundRecords.isEmpty()) {
                     sageRecordRepository.deleteAll(foundRecords);

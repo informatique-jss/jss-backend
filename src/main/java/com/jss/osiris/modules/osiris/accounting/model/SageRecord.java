@@ -27,7 +27,7 @@ public class SageRecord {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sage_record_sequence")
     private Integer id;
 
-    private Integer targetAccountingAccount;
+    private String targetAccountingAccountCode;
 
     private LocalDate operationDate;
 
@@ -52,12 +52,12 @@ public class SageRecord {
         this.id = id;
     }
 
-    public Integer getTargetAccountingAccount() {
-        return targetAccountingAccount;
+    public String getTargetAccountingAccountCode() {
+        return targetAccountingAccountCode;
     }
 
-    public void setTargetAccountingAccount(Integer sageAccount) {
-        this.targetAccountingAccount = sageAccount;
+    public void setTargetAccountingAccountCode(String sageAccount) {
+        this.targetAccountingAccountCode = sageAccount;
     }
 
     public String getLabel() {

@@ -1,7 +1,7 @@
 import { CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -9,11 +9,14 @@ import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortT
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { UploadAttachementDialogComponent } from 'src/app/modules/miscellaneous/components/upload-attachement-dialog/upload-attachement-dialog.component';
+import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
+import { SAGE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
@@ -48,7 +51,8 @@ export class AccountingRecordComponent implements OnInit {
     public confirmationDialog: MatDialog,
     private constantService: ConstantService,
     private activatedRoute: ActivatedRoute,
-    private accountingAccountService: AccountingAccountService
+    private accountingAccountService: AccountingAccountService,
+    public uploadAttachementDialog: MatDialog,
   ) { }
 
   accountingRecords: AccountingRecordSearchResult[] | undefined;
@@ -62,7 +66,7 @@ export class AccountingRecordComponent implements OnInit {
   bookmark: AccountingRecordSearch | undefined;
   refreshLetteringTable: Subject<void> = new Subject<void>();
   accountingAccountId: string | undefined;
-
+  uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
 
   canAddNewAccountingRecord() {
     return this.habilitationService.canAddNewAccountingRecord();
@@ -405,4 +409,16 @@ export class AccountingRecordComponent implements OnInit {
     return balance;
   }
 
+  canImportPnmFile() {
+    return this.habilitationService.canImportPnmFile();
+  }
+
+  importPnmFile() {
+    this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
+    });
+    this.uploadAttachementDialogRef.componentInstance.entity = { id: 1 } as IAttachment;
+    this.uploadAttachementDialogRef.componentInstance.entityType = SAGE_ENTITY_TYPE.entityType;
+    this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeBillingClosure();
+    this.uploadAttachementDialogRef.afterClosed().subscribe(response => { });
+  }
 }

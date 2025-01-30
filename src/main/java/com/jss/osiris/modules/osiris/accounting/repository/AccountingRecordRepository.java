@@ -420,64 +420,75 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("endDate") LocalDate endDate,
                         @Param("canViewRestricted") boolean canViewRestricted);
 
-        @Query(nativeQuery = true, value = "" +
-                        " with invoice_label as (select i.id, string_agg(ii.label, ', ' order by ii.id) as label " +
-                        " from invoice i  " +
-                        " join invoice_item ii on ii.id_invoice = i.id " +
-                        " where i.id_provider is not null and i.created_date between :startDate and :endDate " +
-                        " group by i.id) " +
-                        " select  " +
-                        " r.id as recordId, " +
-                        " r.operation_id as operationId, " +
-                        " r.accounting_id  as id, " +
-                        " r.temporary_operation_id as temporaryOperationId, " +
-                        " r.accounting_date_time as accountingDateTime, " +
-                        " r.operation_date_time as operationDateTime, " +
-                        " j.label as accountingJournalLabel, " +
-                        " j.code as accountingJournalCode, " +
-                        " pa.code as principalAccountingAccountCode, " +
-                        " lpad(concat(a.accounting_account_sub_number,''),8-length(pa.code),'0') as accountingAccountSubNumber, "
-                        +
-                        " a.label as accountingAccountLabel, " +
-                        " coalesce(r.manual_accounting_document_number,r.id_invoice||'') as manualAccountingDocumentNumber, "
-                        +
-                        " coalesce(r.manual_accounting_document_date, i.created_date) as manualAccountingDocumentDate, "
-                        +
-                        " round(cast(r.debit_amount as numeric), 2) as debitAmount, " +
-                        " round(cast(r.credit_amount as numeric), 2) as creditAmount, " +
-                        " concat(r.label,' ',il.label) as label, " +
-                        " r.lettering_number as letteringNumber, " +
-                        " r.lettering_date_time as letteringDate, " +
-                        " r.id_invoice as invoiceId, " +
-                        " r.id_customer_order	 as customerId, " +
-                        " r.id_payment as paymentId, " +
-                        " r.is_temporary as isTemporary, " +
-                        " r.is_from_as400 as isFromAs400, " +
-                        " r.is_manual as isManual, " +
-                        " (select STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')',', ' order by 1) as affaireLabel from asso_affaire_order asso join affaire af on af.id = asso.id_affaire left join city on city.id = af.id_city where  asso.id_customer_order = i.customer_order_id or asso.id_customer_order = r.id_customer_order)  as affaireLabel,"
-                        +
-                        " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable "
-                        +
-                        " from accounting_record r " +
-                        " left join accounting_journal j on j.id = r.id_accounting_journal " +
-                        " join accounting_account a on a.id = r.id_accounting_account " +
-                        " join principal_accounting_account pa on pa.id = a.id_principal_accounting_account " +
-                        " left join invoice i on i.id = r.id_invoice left join invoice_label il on il.id = i.id " +
-                        " left join customer_order co on co.id = r.id_customer_order " +
-                        " left join responsable re1 on re1.id = i.id_responsable " +
-                        " left join responsable re2 on re2.id = co.id_responsable "
-                        +
-                        " where ( COALESCE(:accountingAccountIds) =0 or r.id_accounting_account in (:accountingAccountIds)) "
-                        +
-                        " and (:hideLettered = false or coalesce(r.lettering_date_time,:endDate)>=:endDate ) " +
-                        " and (greatest(r.operation_date_time,'2023-01-01') between :startDate and :endDate)  "
-                        +
-                        " and r.id_sage_record is not null" +
-                        " order by  r.operation_date_time  " +
-                        " ")
-        List<AccountingRecordSearchResult> searchAccountingPayJournalRecords(
-                        @Param("accountingAccountIds") List<Integer> accountingAccountIds,
-                        @Param("hideLettered") Boolean hideLettered,
-                        @Param("startDate") LocalDateTime startDate,
-                        @Param("endDate") LocalDateTime endDate);
+        /*
+         * @Query(nativeQuery = true, value = "" +
+         * " with invoice_label as (select i.id, string_agg(ii.label, ', ' order by ii.id) as label "
+         * +
+         * " from invoice i  " +
+         * " join invoice_item ii on ii.id_invoice = i.id " +
+         * " where i.id_provider is not null and i.created_date between :startDate and :endDate "
+         * +
+         * " group by i.id) " +
+         * " select  " +
+         * " r.id as recordId, " +
+         * " r.operation_id as operationId, " +
+         * " r.accounting_id  as id, " +
+         * " r.temporary_operation_id as temporaryOperationId, " +
+         * " r.accounting_date_time as accountingDateTime, " +
+         * " r.operation_date_time as operationDateTime, " +
+         * " j.label as accountingJournalLabel, " +
+         * " j.code as accountingJournalCode, " +
+         * " pa.code as principalAccountingAccountCode, " +
+         * " lpad(concat(a.accounting_account_sub_number,''),8-length(pa.code),'0') as accountingAccountSubNumber, "
+         * +
+         * " a.label as accountingAccountLabel, " +
+         * " coalesce(r.manual_accounting_document_number,r.id_invoice||'') as manualAccountingDocumentNumber, "
+         * +
+         * " coalesce(r.manual_accounting_document_date, i.created_date) as manualAccountingDocumentDate, "
+         * +
+         * " round(cast(r.debit_amount as numeric), 2) as debitAmount, " +
+         * " round(cast(r.credit_amount as numeric), 2) as creditAmount, " +
+         * " concat(r.label,' ',il.label) as label, " +
+         * " r.lettering_number as letteringNumber, " +
+         * " r.lettering_date_time as letteringDate, " +
+         * " r.id_invoice as invoiceId, " +
+         * " r.id_customer_order	 as customerId, " +
+         * " r.id_payment as paymentId, " +
+         * " r.is_temporary as isTemporary, " +
+         * " r.is_from_as400 as isFromAs400, " +
+         * " r.is_manual as isManual, " +
+         * " (select STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')',', ' order by 1) as affaireLabel from asso_affaire_order asso join affaire af on af.id = asso.id_affaire left join city on city.id = af.id_city where  asso.id_customer_order = i.customer_order_id or asso.id_customer_order = r.id_customer_order)  as affaireLabel,"
+         * +
+         * " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable "
+         * +
+         * " from accounting_record r " +
+         * " left join accounting_journal j on j.id = r.id_accounting_journal " +
+         * " join accounting_account a on a.id = r.id_accounting_account " +
+         * " join principal_accounting_account pa on pa.id = a.id_principal_accounting_account "
+         * +
+         * " left join invoice i on i.id = r.id_invoice left join invoice_label il on il.id = i.id "
+         * +
+         * " left join customer_order co on co.id = r.id_customer_order " +
+         * " left join responsable re1 on re1.id = i.id_responsable " +
+         * " left join responsable re2 on re2.id = co.id_responsable "
+         * +
+         * " where ( COALESCE(:accountingAccountIds) =0 or r.id_accounting_account in (:accountingAccountIds)) "
+         * +
+         * " and (:hideLettered = false or coalesce(r.lettering_date_time,:endDate)>=:endDate ) "
+         * +
+         * " and (greatest(r.operation_date_time,'2023-01-01') between :startDate and :endDate)  "
+         * +
+         * " and r.id_sage_record is not null" +
+         * " order by  r.operation_date_time  " +
+         * " ")
+         * List<AccountingRecordSearchResult> searchAccountingPayJournalRecords(
+         * 
+         * @Param("accountingAccountIds") List<Integer> accountingAccountIds,
+         * 
+         * @Param("hideLettered") Boolean hideLettered,
+         * 
+         * @Param("startDate") LocalDateTime startDate,
+         * 
+         * @Param("endDate") LocalDateTime endDate);
+         */
 }
