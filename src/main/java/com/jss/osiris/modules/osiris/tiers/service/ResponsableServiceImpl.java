@@ -103,7 +103,7 @@ public class ResponsableServiceImpl implements ResponsableService {
                         && !order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
                     for (Document documentToSet : order.getDocuments())
                         if (documentToSet.getDocumentType().getId().equals(documentType.getId()))
-                            documentService.cloneDocument(document, documentToSet);
+                            documentService.addOrUpdateDocument(documentService.cloneDocument(document, documentToSet));
             }
         }
 
@@ -114,7 +114,7 @@ public class ResponsableServiceImpl implements ResponsableService {
                         && !quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
                     for (Document documentToSet : quotation.getDocuments())
                         if (documentToSet.getDocumentType().getId().equals(documentType.getId()))
-                            documentService.cloneDocument(document, documentToSet);
+                            documentService.addOrUpdateDocument(documentService.cloneDocument(document, documentToSet));
             }
         }
         return document;

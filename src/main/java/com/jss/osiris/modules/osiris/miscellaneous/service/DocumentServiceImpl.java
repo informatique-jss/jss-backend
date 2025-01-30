@@ -149,6 +149,6 @@ public class DocumentServiceImpl implements DocumentService {
         newDocument.setBillingLabelIsIndividual(document.getBillingLabelIsIndividual());
         newDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
         newDocument.setAddToClientMailList(document.getAddToClientMailList());
-        return addOrUpdateDocument(newDocument);
+        return newDocument;
     }
 }
