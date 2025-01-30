@@ -49,6 +49,7 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
         List<Attachment> findByDocumentAssocieInfogreffe(@Param("urlTelechargement") String urlTelechargement);
 
         @Query(value = "select a.* from attachment a where id_missing_attachment_query =:idMissingAttachmentQuery", nativeQuery = true)
-        List<Attachment> findByMissingAttachmentQuery(@Param("urlTelechargement") String idMissingAttachmentQuery);
+        List<Attachment> findByMissingAttachmentQuery(
+                        @Param("idMissingAttachmentQuery") Integer idMissingAttachmentQuery);
 
 }

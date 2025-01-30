@@ -376,7 +376,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
             attachments = attachmentRepository.findByTypeDocumentCode(codeEntity);
         } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
-            attachments = attachmentRepository.findByMissingAttachmentQuery(codeEntity);
+            attachments = attachmentRepository.findByMissingAttachmentQuery(idEntity);
         }
         return attachments;
     }

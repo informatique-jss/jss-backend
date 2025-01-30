@@ -1,15 +1,16 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 import { formatBytes } from 'src/app/libs/FormatHelper';
-import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { MultipleUploadComponent } from 'src/app/modules/miscellaneous/components/multiple-upload/multiple-upload.component';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
+import { AttachmentService } from '../../../../../../../client-myjss/src/app/modules/my-account/services/attachment.service';
 import { MISSING_ATTACHMENT_QUERY_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
@@ -36,17 +37,21 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   tableAssoServiceFieldTypes: AssoServiceFieldType[] = [];
   missingAttachmentQuery: MissingAttachmentQuery = {} as MissingAttachmentQuery;
   editMode: boolean = true;
+  filesToSave: any[] = [];
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
   SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
   SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   MISSING_ATTACHMENT_QUERY_ENTITY_TYPE = MISSING_ATTACHMENT_QUERY_ENTITY_TYPE;
+
+  @ViewChild(MultipleUploadComponent) multipleUploadComponent: MultipleUploadComponent | undefined;
   formatBytes = formatBytes;
 
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
     protected uploadAttachmentService: UploadAttachmentService,
+    private attachmentService: AttachmentService,
     public dialogRef: MatDialogRef<SelectAttachmentsDialogComponent>,
     private missingAttachmentQueryService: MissingAttachmentQueryService,
     private serviceService: ServiceService,
@@ -185,7 +190,6 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
     return [];
   }
 
-
   getFormStatus(): boolean {
     return this.attachmentTypeForm.valid;
   }
@@ -196,42 +200,28 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
         this.missingAttachmentQuery.assoServiceDocument = this.selectedAssoServiceDocument;
       if (this.selectedAssoServiceFieldType.length > 0)
         this.missingAttachmentQuery.assoServiceFieldType = this.selectedAssoServiceFieldType;
-      this.dialogRef.close(this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery).subscribe(response => this.closeDialog()));
+      this.dialogRef.close(this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery).subscribe(response => {
+        if (response) {
+          this.missingAttachmentQuery = response;
+          this.entity.id = response.id;
+          this.multipleUploadComponent?.uploadFiles();
+          this.closeDialog();
+        }
+      }));
     }
   }
 
-  completeDocumentAttachment($event: any, missingAttachmentQuery: MissingAttachmentQuery) {
-    missingAttachmentQuery.attachments = $event;
-  }
-
-  deleteAttachment(attachment: Attachment) {
-    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-      maxWidth: "400px",
-      data: {
-        title: "Supprimer le type de document",
-        content: "Êtes-vous sûr de vouloir supprimer le fichier " + attachment.uploadedFile.filename + " ?",
-        closeActionText: "Annuler",
-        validationActionText: "Supprimer"
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult && this.service)
-        this.uploadAttachmentService.disableAttachment(attachment).subscribe(response => {
-          attachment.isDisabled = true;
-        })
-    });
-  }
-
-  previewAttachment(attachment: Attachment) {
-    this.uploadAttachmentService.previewAttachment(attachment);
-  }
-
-  downloadAttachment(attachment: Attachment) {
-    this.uploadAttachmentService.downloadAttachment(attachment);
+  deleteAttachment(file: Attachment) {
+    if (file) {
+      this.missingAttachmentQuery.attachments.splice(this.missingAttachmentQuery.attachments.indexOf(file));
+      this.uploadAttachmentService.disableAttachment(file).subscribe(response => {
+        file.isDisabled = true;
+      })
+    }
   }
 
   closeDialog() {
+    this.multipleUploadComponent?.resetForm();
     this.dialogRef.close(null);
   }
 }
