@@ -1136,6 +1136,7 @@ public class MiscellaneousController {
 
         if (!entityType.equals(Tiers.class.getSimpleName())
                 && !entityType.equals("Ofx")
+                && !entityType.equals("Sage")
                 && !entityType.equals(Responsable.class.getSimpleName())
                 && !entityType.equals(Quotation.class.getSimpleName())
                 && !entityType.equals(CustomerOrder.class.getSimpleName())
