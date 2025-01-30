@@ -338,7 +338,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     if (!responsable)
       return null;
 
-    let refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), responsable);
+    let refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), responsable.tiers);
 
     if (!refundDocument || !refundDocument.refundIBAN)
       return null;
