@@ -4,8 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,6 +20,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -31,6 +35,11 @@ public class MissingAttachmentQuery {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_service")
     private Service service;
+
+    @OneToMany(targetEntity = Attachment.class, mappedBy = "missingAttachmentQuery", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "missingAttachmentQuery" }, allowSetters = true)
+    @IndexedField
+    private List<Attachment> attachments;
 
     @ManyToMany
     @JoinTable(name = "asso_service_document_missing_attachment_query", joinColumns = @JoinColumn(name = "id_missing_attchment_query"), inverseJoinColumns = @JoinColumn(name = "id_asso_service_document"))
@@ -151,4 +160,13 @@ public class MissingAttachmentQuery {
     public void setEmployeeSentBy(Employee employeeSentBy) {
         this.employeeSentBy = employeeSentBy;
     }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
 }

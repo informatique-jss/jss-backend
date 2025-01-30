@@ -19,7 +19,7 @@ import { UploadAttachmentService } from '../../services/upload.attachment.servic
   styleUrls: ['./multiple-upload.component.css']
 })
 export class MultipleUploadComponent implements OnInit {
-
+  @Input() isForMissingAttachmentQuery: boolean = false;
   @Input() entity: IAttachment | IAttachmentCode = {} as IAttachment;
   @Input() editMode: boolean = false;
   @Input() entityType: string = "";
