@@ -37,7 +37,6 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
@@ -50,7 +49,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.CivilityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
@@ -300,9 +298,6 @@ public class QuotationController {
   ProvisionService provisionService;
 
   @Autowired
-  DocumentService documentService;
-
-  @Autowired
   MailHelper mailHelper;
 
   @Autowired
@@ -337,9 +332,6 @@ public class QuotationController {
 
   @Autowired
   BankTransfertService bankTransfertService;
-
-  @Autowired
-  PaymentService paymentService;
 
   @Autowired
   InvoiceService invoiceService;

@@ -5,6 +5,7 @@ import java.util.List;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface DocumentService {
 
@@ -30,5 +31,7 @@ public interface DocumentService {
 
     public Document getRefundDocument(List<Document> documents) throws OsirisException;
 
-    public Document cloneDocument(Document document);
+    public Document cloneOrMergeDocument(Document document, Document documentToMergeTo);
+
+    public Document findDocumentByDocumentTypeAndResponsable(DocumentType documentType, Responsable responsable);
 }
