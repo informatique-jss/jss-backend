@@ -208,6 +208,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.attachmentTypeQuotation;
   }
 
+  getAttachmentTypeClientCommunication() {
+    return this.constant.attachmentTypeClientCommunication;
+  }
+
   getCountryFrance() {
     return this.constant.countryFrance;
   }
