@@ -677,6 +677,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.accountingSharedMaiblox;
   }
 
+  getRecoverySharedMaiblox() {
+    return this.constant.recoverySharedMaiblox;
+  }
+
   getBillingClosureRecipientTypeOther() {
     return this.constant.billingClosureRecipientTypeOther;
   }
