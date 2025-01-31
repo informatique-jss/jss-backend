@@ -31,7 +31,7 @@ public interface DocumentService {
 
     public Document getRefundDocument(List<Document> documents) throws OsirisException;
 
-    public Document cloneDocument(Document document, Document documentToSet);
+    public Document cloneOrMergeDocument(Document document, Document documentToMergeTo);
 
     public Document findDocumentByDocumentTypeAndResponsable(DocumentType documentType, Responsable responsable);
 }

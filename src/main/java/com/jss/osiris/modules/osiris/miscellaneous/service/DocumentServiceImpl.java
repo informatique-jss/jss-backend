@@ -97,58 +97,62 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.findByDocumentTypeAndResponsable(documentType, responsable);
     }
 
+    /**
+     * Clone or merge a document to an existing or a new document
+     * Set documentToMergeTo to merge to an existing document
+     */
     @Override
-    public Document cloneDocument(Document document, Document newDocument) {
-        if (newDocument == null)
-            newDocument = new Document();
-        newDocument.setTiers(document.getTiers());
-        newDocument.setConfrere(document.getConfrere());
-        newDocument.setResponsable(document.getResponsable());
-        newDocument.setQuotation(document.getQuotation());
-        newDocument.setCustomerOrder(document.getCustomerOrder());
-        newDocument.setDocumentType(document.getDocumentType());
-        newDocument.setIsRecipientClient(document.getIsRecipientClient());
-        if (newDocument.getIsRecipientClient() == null)
-            newDocument.setIsRecipientClient(false);
-        newDocument.setIsRecipientAffaire(document.getIsRecipientAffaire());
-        if (newDocument.getIsRecipientAffaire() == null)
-            newDocument.setIsRecipientAffaire(false);
-        newDocument.setAffaireAddress(document.getAffaireAddress());
-        newDocument.setAffaireRecipient(document.getAffaireRecipient());
-        newDocument.setClientAddress(document.getClientAddress());
-        newDocument.setClientRecipient(document.getClientRecipient());
-        newDocument.setNumberMailingAffaire(document.getNumberMailingAffaire());
-        newDocument.setNumberMailingClient(document.getNumberMailingClient());
-        newDocument.setBillingLabelType(document.getBillingLabelType());
+    public Document cloneOrMergeDocument(Document document, Document documentToMergeTo) {
+        if (documentToMergeTo == null)
+            documentToMergeTo = new Document();
+        documentToMergeTo.setTiers(document.getTiers());
+        documentToMergeTo.setConfrere(document.getConfrere());
+        documentToMergeTo.setResponsable(document.getResponsable());
+        documentToMergeTo.setQuotation(document.getQuotation());
+        documentToMergeTo.setCustomerOrder(document.getCustomerOrder());
+        documentToMergeTo.setDocumentType(document.getDocumentType());
+        documentToMergeTo.setIsRecipientClient(document.getIsRecipientClient());
+        if (documentToMergeTo.getIsRecipientClient() == null)
+            documentToMergeTo.setIsRecipientClient(false);
+        documentToMergeTo.setIsRecipientAffaire(document.getIsRecipientAffaire());
+        if (documentToMergeTo.getIsRecipientAffaire() == null)
+            documentToMergeTo.setIsRecipientAffaire(false);
+        documentToMergeTo.setAffaireAddress(document.getAffaireAddress());
+        documentToMergeTo.setAffaireRecipient(document.getAffaireRecipient());
+        documentToMergeTo.setClientAddress(document.getClientAddress());
+        documentToMergeTo.setClientRecipient(document.getClientRecipient());
+        documentToMergeTo.setNumberMailingAffaire(document.getNumberMailingAffaire());
+        documentToMergeTo.setNumberMailingClient(document.getNumberMailingClient());
+        documentToMergeTo.setBillingLabelType(document.getBillingLabelType());
 
-        newDocument.setMailsClient(new ArrayList<Mail>());
+        documentToMergeTo.setMailsClient(new ArrayList<Mail>());
         if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
             for (Mail mail : document.getMailsClient())
-                newDocument.getMailsClient().add(mail);
+                documentToMergeTo.getMailsClient().add(mail);
 
-        newDocument.setMailsAffaire(new ArrayList<Mail>());
+        documentToMergeTo.setMailsAffaire(new ArrayList<Mail>());
         if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
             for (Mail mail : document.getMailsAffaire())
-                newDocument.getMailsAffaire().add(mail);
+                documentToMergeTo.getMailsAffaire().add(mail);
 
-        newDocument.setIsResponsableOnBilling(document.getIsResponsableOnBilling());
-        newDocument.setIsCommandNumberMandatory(document.getIsCommandNumberMandatory());
-        newDocument.setCommandNumber(document.getCommandNumber());
-        newDocument.setPaymentDeadlineType(document.getPaymentDeadlineType());
-        newDocument.setRefundType(document.getRefundType());
-        newDocument.setRefundIBAN(document.getRefundIBAN());
-        newDocument.setBillingClosureType(document.getBillingClosureType());
-        newDocument.setBillingClosureRecipientType(document.getBillingClosureRecipientType());
-        newDocument.setBillingLabel(document.getBillingLabel());
-        newDocument.setBillingAddress(document.getBillingAddress());
-        newDocument.setBillingPostalCode(document.getBillingPostalCode());
-        newDocument.setExternalReference(document.getExternalReference());
-        newDocument.setCedexComplement(document.getCedexComplement());
-        newDocument.setBillingLabelCity(document.getBillingLabelCity());
-        newDocument.setBillingLabelCountry(document.getBillingLabelCountry());
-        newDocument.setBillingLabelIsIndividual(document.getBillingLabelIsIndividual());
-        newDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
-        newDocument.setAddToClientMailList(document.getAddToClientMailList());
-        return newDocument;
+        documentToMergeTo.setIsResponsableOnBilling(document.getIsResponsableOnBilling());
+        documentToMergeTo.setIsCommandNumberMandatory(document.getIsCommandNumberMandatory());
+        documentToMergeTo.setCommandNumber(document.getCommandNumber());
+        documentToMergeTo.setPaymentDeadlineType(document.getPaymentDeadlineType());
+        documentToMergeTo.setRefundType(document.getRefundType());
+        documentToMergeTo.setRefundIBAN(document.getRefundIBAN());
+        documentToMergeTo.setBillingClosureType(document.getBillingClosureType());
+        documentToMergeTo.setBillingClosureRecipientType(document.getBillingClosureRecipientType());
+        documentToMergeTo.setBillingLabel(document.getBillingLabel());
+        documentToMergeTo.setBillingAddress(document.getBillingAddress());
+        documentToMergeTo.setBillingPostalCode(document.getBillingPostalCode());
+        documentToMergeTo.setExternalReference(document.getExternalReference());
+        documentToMergeTo.setCedexComplement(document.getCedexComplement());
+        documentToMergeTo.setBillingLabelCity(document.getBillingLabelCity());
+        documentToMergeTo.setBillingLabelCountry(document.getBillingLabelCountry());
+        documentToMergeTo.setBillingLabelIsIndividual(document.getBillingLabelIsIndividual());
+        documentToMergeTo.setAddToAffaireMailList(document.getAddToAffaireMailList());
+        documentToMergeTo.setAddToClientMailList(document.getAddToClientMailList());
+        return documentToMergeTo;
     }
 }

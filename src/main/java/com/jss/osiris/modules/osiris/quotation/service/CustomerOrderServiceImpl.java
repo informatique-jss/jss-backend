@@ -860,7 +860,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder2.getDocuments() != null) {
             ArrayList<Document> documents = new ArrayList<Document>();
             for (Document document : customerOrder2.getDocuments()) {
-                document = documentService.cloneDocument(document, null);
+                document = documentService.cloneOrMergeDocument(document, null);
                 document.setId(null);
                 documents.add(document);
             }
@@ -1374,7 +1374,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder2.getDocuments() != null) {
             ArrayList<Document> documents = new ArrayList<Document>();
             for (Document document : customerOrder2.getDocuments()) {
-                document = documentService.cloneDocument(document, null);
+                document = documentService.cloneOrMergeDocument(document, null);
                 document.setId(null);
                 documents.add(document);
             }
@@ -1778,9 +1778,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         customerOrder.setDocuments(new ArrayList<Document>());
-        customerOrder.getDocuments().add(documentService.cloneDocument(order.getBillingDocument(), null));
-        customerOrder.getDocuments().add(documentService.cloneDocument(order.getDigitalDocument(), null));
-        customerOrder.getDocuments().add(documentService.cloneDocument(order.getPaperDocument(), null));
+        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getBillingDocument(), null));
+        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getDigitalDocument(), null));
+        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getPaperDocument(), null));
 
         customerOrder.setCustomerOrderStatus(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN));
@@ -1821,9 +1821,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         userCustomerOrder.getPaperDocument().setDocumentType(constantService.getDocumentTypePaper());
 
         responsable.setDocuments(new ArrayList<Document>());
-        responsable.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getBillingDocument(), null));
-        responsable.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getDigitalDocument(), null));
-        responsable.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getPaperDocument(), null));
+        responsable.getDocuments()
+                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(), null));
+        responsable.getDocuments()
+                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(), null));
+        responsable.getDocuments()
+                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(), null));
 
         Tiers tiers = new Tiers();
         tiers.setIsNewTiers(true);
@@ -1848,9 +1851,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         tiers.setPaymentType(constantService.getPaymentTypeCB());
 
         tiers.setDocuments(new ArrayList<Document>());
-        tiers.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getBillingDocument(), null));
-        tiers.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getDigitalDocument(), null));
-        tiers.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getPaperDocument(), null));
+        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(), null));
+        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(), null));
+        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(), null));
 
         Document documentDunning = new Document();
         documentDunning.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
