@@ -74,7 +74,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " bi.id = ii.id_billing_item " +
                         " left join billing_type bt on " +
                         " bt.id = bi.id_billing_type " +
-                        " left join responsable r on " +
+                        "  join responsable r on " +
                         " r.id = i.id_responsable " +
                         " left join tiers t2 on " +
                         " t2.id = r.id_tiers " +
