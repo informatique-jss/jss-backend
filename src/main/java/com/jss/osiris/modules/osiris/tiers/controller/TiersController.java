@@ -758,6 +758,18 @@ public class TiersController {
         if (document.getPaymentDeadlineType() == null) {
           document.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
         }
+
+        if (document.getDocumentType() != null
+            && document.getDocumentType().getId() == constantService.getDocumentTypeBilling().getId()
+            && document.getBillingLabelType() == null) {
+          document.setBillingLabelType(constantService.getBillingLabelTypeCodeAffaire());
+        }
+
+        if (document.getDocumentType() != null
+            && document.getDocumentType().getId() == constantService.getDocumentTypeRefund().getId()
+            && document.getRefundType() == null) {
+          document.setRefundType(constantService.getRefundTypeVirement());
+        }
       }
     }
 
