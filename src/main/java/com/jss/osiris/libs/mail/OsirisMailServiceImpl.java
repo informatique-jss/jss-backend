@@ -64,8 +64,7 @@ public class OsirisMailServiceImpl implements OsirisMailService {
             attachmentService.addAttachment(currentExportedMail.getMailPdf(), entitiesFound.get(0).getEntityId(), null,
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeClientCommunication(),
-                    ("Mail client n°" + (currentExportedMail.getId() + "") + " - "
-                            + currentExportedMail.getSubject().replace(":", " ")
+                    ("Mail client - " + currentExportedMail.getSubject().replace(":", " ")
                             + ".html"),
                     false, null, null, null, null);
         }

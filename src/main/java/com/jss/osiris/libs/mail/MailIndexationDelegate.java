@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +58,10 @@ public class MailIndexationDelegate {
     private String mailImapMechanism;
     @Value("${mail.imap.tls.version}")
     private String mailImapTlsVersion;
+    @Value("${microsoft.host}")
+    private String microsoftHost;
+    @Value("${outlook.default.url}")
+    private String outlookDefaultUrl;
 
     @Autowired
     OsirisMailService osirisMailService;
@@ -71,9 +73,9 @@ public class MailIndexationDelegate {
         try {
             ConfidentialClientApplication app = ConfidentialClientApplication
                     .builder(mailImapAppId, ClientCredentialFactory.createFromSecret(mailImapSecretValue))
-                    .authority("https://login.microsoftonline.com/" + mailImapTenantId).build();
+                    .authority(microsoftHost + mailImapTenantId).build();
             ClientCredentialParameters parameters = ClientCredentialParameters
-                    .builder(Collections.singleton("https://outlook.office365.com/.default")).build();
+                    .builder(Collections.singleton(outlookDefaultUrl)).build();
 
             IAuthenticationResult result = app.acquireToken(parameters).join();
             return result.accessToken();
@@ -96,7 +98,7 @@ public class MailIndexationDelegate {
         return session;
     }
 
-    public void getPdfMailsFromInbox() throws OsirisException {
+    public void checkMailsToIndex() throws OsirisException {
         Store store = null;
         Folder folder = null;
 
@@ -212,21 +214,23 @@ public class MailIndexationDelegate {
                 if (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "") == id) {
                     Address[] fromAddresses = message.getFrom();
                     Address[] toAddresses = message.getAllRecipients();
-                    String from = String.join(" / ",
+                    String fromName = String.join(" / ",
                             Arrays.asList(fromAddresses).stream().map(Address::toString).toList());
-                    String to = String.join(" / ",
+                    String toName = String.join(" / ",
                             Arrays.asList(toAddresses).stream().map(Address::toString).toList());
-                    String mailHtml = autoCloseTags(getHtmlContent(message)).replace("</head>",
+                    String linkMailFrom = createEmailLink(extractEmail(String.join(" / ",
+                            Arrays.asList(fromAddresses).stream().map(Address::toString).toList())));
+                    String linkMailTo = createEmailLink(extractEmail(String.join(" / ",
+                            Arrays.asList(toAddresses).stream().map(Address::toString).toList())));
+                    String mailHtml = getHtmlContent(message).replace("</head>",
                             "</head><div><p class=\"MsoNormal\">Objet : " + message.getSubject()
                                     + "</p><br><p class=\"MsoNormal\">De : "
-                                    + from.replaceAll("<", "").replaceAll(">", "")
+                                    + fromName + " " + linkMailFrom
                                     + "</p><p class=\"MsoNormal\">A :"
-                                    + to.replaceAll("<", "").replaceAll(">", "")
-                                    + "</p></div><hr/>")
-                            .replaceAll("(?m)^(\\s*)<(\\w+)>([^<]+)$", "$1<$2>$3</$2>");
+                                    + toName + " " + linkMailTo
+                                    + "</p></div><hr/>");
 
                     mail.setSubject(message.getSubject());
-                    mail.setId(id);
                     mail.setMailPdf(new ByteArrayInputStream(mailHtml.getBytes()));
 
                     if (osirisMailService.attachIndexationMailToEntity(mail)) {
@@ -266,29 +270,10 @@ public class MailIndexationDelegate {
             folderTrash.expunge();
             folderTrash.close();
             store.close();
+            closeConnection(store, null, folderTrash);
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to write into Trash folder");
         }
-    }
-
-    // Outlook html is not clean, corrections on tags needed
-    private String autoCloseTags(String html) {
-        html = html.replace("text/html", "texthtml");
-        html = html.replace("span.", "").replace("div.", "").replace(":&quot;", ":").replace("&quot;,", ",")
-                .replace("mso-ignore:vglayout", "").replace("mso-ignore:vglayout;", "");
-        String selfClosingTags = "img|br|hr|input|meta|link|area|base|col|command|embed|keygen|param|source|track|wbr";
-        Pattern tagPattern = Pattern
-                .compile("<(" + selfClosingTags + ")([^>/]*?)>");
-        Matcher matcher = tagPattern.matcher(html);
-        StringBuffer correctedHtml = new StringBuffer();
-        while (matcher.find()) {
-            String tagName = matcher.group(1);
-            String attributes = matcher.group(2);
-            matcher.appendReplacement(correctedHtml, "<" + tagName + attributes + " />");
-        }
-        matcher.appendTail(correctedHtml);
-
-        return correctedHtml.toString();
     }
 
     private String getHtmlContent(Message message) throws Exception, MessagingException,
@@ -301,8 +286,30 @@ public class MailIndexationDelegate {
         return htmlContent;
     }
 
+    // exctract email from text
+    private String extractEmail(String adresses) {
+        if (adresses != null) {
+            String emailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(emailPattern);
+            java.util.regex.Matcher matcher = pattern.matcher(adresses);
+
+            if (matcher.find()) {
+                return matcher.group(0);
+            }
+        }
+        return adresses;
+    }
+
+    // create link href tag like <a href="mailto:...">...</a>
+    private String createEmailLink(String email) {
+        if (email != null) {
+            return "<a href=\"mailto:" + email + "\">" + email + "</a>";
+        }
+        return null;
+    }
+
     // method to get images from html and display it into attachment
-    private static String processMultipart(Multipart multipart) throws Exception {
+    private String processMultipart(Multipart multipart) throws Exception {
         StringBuilder htmlBuilder = new StringBuilder();
         Map<String, String> base64Images = new HashMap<>();
 
@@ -330,7 +337,7 @@ public class MailIndexationDelegate {
         return htmlContent;
     }
 
-    private static String extractCid(BodyPart part) throws MessagingException {
+    private String extractCid(BodyPart part) throws MessagingException {
         String[] disposition = part.getHeader("Content-ID");
         if (disposition != null && disposition.length > 0) {
             String cid = disposition[0];
@@ -339,7 +346,7 @@ public class MailIndexationDelegate {
         return null;
     }
 
-    private static String convertToBase64(InputStream is) throws IOException {
+    private String convertToBase64(InputStream is) throws IOException {
         byte[] bytes = is.readAllBytes();
         return Base64.getEncoder().encodeToString(bytes);
     }

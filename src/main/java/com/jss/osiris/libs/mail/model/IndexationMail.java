@@ -4,8 +4,6 @@ import java.io.InputStream;
 
 public class IndexationMail {
 
-    private Integer id;
-
     private InputStream mailPdf;
 
     private String subject;
@@ -34,14 +32,6 @@ public class IndexationMail {
 
     public void setMailPdf(InputStream mailPdf) {
         this.mailPdf = mailPdf;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
 }

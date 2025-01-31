@@ -24,6 +24,6 @@ public class CheckMailToIndexThread implements IOsirisThread {
     public void executeTask(Integer entityId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException,
             OsirisDuplicateException {
-        mailIndexationDelegate.getPdfMailsFromInbox();
+        mailIndexationDelegate.checkMailsToIndex();
     }
 }
