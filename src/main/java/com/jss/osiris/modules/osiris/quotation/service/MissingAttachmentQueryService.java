@@ -16,8 +16,11 @@ public interface MissingAttachmentQueryService {
         public MissingAttachmentQuery addOrUpdateMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery);
 
         public MissingAttachmentQuery sendMissingAttachmentQueryToCustomer(MissingAttachmentQuery query,
-                        boolean isForcedReminder)
+                        boolean isForcedReminder, Boolean isWaitingForAttachmentToUpload)
                         throws OsirisException, OsirisClientMessageException;
+
+        public MissingAttachmentQuery sendMissingAttachmentQueryWithUploadedFiles(MissingAttachmentQuery query)
+                        throws OsirisClientMessageException, OsirisException;
 
         public void sendRemindersToCustomerForMissingAttachmentQuery() throws OsirisException;
 
