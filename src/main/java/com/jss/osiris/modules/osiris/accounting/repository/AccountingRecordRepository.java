@@ -420,4 +420,10 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("endDate") LocalDate endDate,
                         @Param("canViewRestricted") boolean canViewRestricted);
 
+        @Modifying
+        @Query(nativeQuery = true, value = "delete from accounting_record where id_accounting_account =:idAccountingAccount and id_accounting_journal =:idSalaryJournal and date(operation_date_time) = date(:operationDate) ;")
+        void deleteRecordsByAccountingAccountAndJournalAndOperationDate(
+                        @Param("idAccountingAccount") Integer idAccountingAccount,
+                        @Param("idSalaryJournal") Integer idSalaryJournal,
+                        @Param("operationDate") LocalDate operationDate);
 }

@@ -2,17 +2,15 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
-import { ServiceService } from 'src/app/modules/quotation/services/service.service';
-import { ConstantService } from '../../modules/miscellaneous/services/constant.service';
 import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';
 import { IndexEntity } from './IndexEntity';
 import { IndexEntityService } from './index.entity.service';
 
 export const OFX_ENTITY_TYPE: EntityType = { entityType: 'Ofx', tabName: 'Ofx', entryPoint: 'ofx' };
+export const SAGE_ENTITY_TYPE: EntityType = { entityType: 'Sage', tabName: 'Sage', entryPoint: 'sage' };
 export const TIERS_ENTITY_TYPE: EntityType = { entityType: 'Tiers', tabName: 'Tiers', entryPoint: 'tiers' };
 export const RESPONSABLE_ENTITY_TYPE: EntityType = { entityType: 'Responsable', tabName: 'Responsable', entryPoint: 'tiers/responsable' };
 export const CONFRERE_ENTITY_TYPE: EntityType = { entityType: 'Confrere', tabName: 'Confrère', entryPoint: 'confrere' };
@@ -49,10 +47,7 @@ export class SearchComponent implements OnInit {
   constructor(private searchDialogRef: MatDialogRef<SearchComponent>,
     protected indexEntityService: IndexEntityService,
     private appService: AppService,
-    private serviceService: ServiceService,
-    private constantService: ConstantService,
-    protected formBuilder: UntypedFormBuilder,
-    private router: Router) { }
+    protected formBuilder: UntypedFormBuilder,) { }
 
   TIERS_ENTITY_TYPE = TIERS_ENTITY_TYPE;
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
