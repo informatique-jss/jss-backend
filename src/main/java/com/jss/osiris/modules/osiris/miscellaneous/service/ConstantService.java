@@ -151,6 +151,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeAutreInfogreffe() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeClientCommunication() throws OsirisException;
+
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;

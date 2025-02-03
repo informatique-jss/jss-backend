@@ -1474,4 +1474,33 @@ public class GeneratePdfDelegate {
         }
         return tempFile;
     }
+
+    public File generateGenericFromHtml(String htmlContent, Integer mailId)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("genericMail", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        try {
+            renderer.setDocumentFromString(
+                    htmlContent.replaceAll("\\p{C}", " ")
+                            .replace("&mail", "mail").replace("&validationToken", "validationToken")
+                            .replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
+
+            renderer.setScaleToFit(true);
+            renderer.layout();
+            renderer.createPDF(outputStream);
+
+            outputStream.close();
+        } catch (Exception e) {
+            throw new OsirisException(e, "Unable to create PDF file for mail " + mailId);
+        }
+        return tempFile;
+    }
 }
