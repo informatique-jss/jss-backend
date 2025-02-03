@@ -9,23 +9,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
 
-@Entity
 public class SageRecord {
 
     public static String CREDIT_SAGE = "C";
     public static String DEBIT_SAGE = "D";
-    @Id
-    @SequenceGenerator(name = "sage_record_sequence", sequenceName = "sage_record_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sage_record_sequence")
-    private Integer id;
 
     private String targetAccountingAccountCode;
 
@@ -35,7 +25,9 @@ public class SageRecord {
 
     private String creditOrDebit;
 
-    private BigDecimal amount;
+    private BigDecimal creditAmount;
+
+    private BigDecimal debitAmount;
 
     private LocalDateTime createdDate;
 
@@ -43,14 +35,6 @@ public class SageRecord {
     @JsonIgnoreProperties(value = { "sageRecord" }, allowSetters = true)
     @IndexedField
     private List<AccountingRecord> accountingRecords;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getTargetAccountingAccountCode() {
         return targetAccountingAccountCode;
@@ -76,12 +60,12 @@ public class SageRecord {
         this.creditOrDebit = creditOrDebit;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public BigDecimal getCreditAmount() {
+        return creditAmount;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setCreditAmount(BigDecimal amount) {
+        this.creditAmount = amount;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -106,6 +90,14 @@ public class SageRecord {
 
     public void setOperationDate(LocalDate operationDate) {
         this.operationDate = operationDate;
+    }
+
+    public BigDecimal getDebitAmount() {
+        return debitAmount;
+    }
+
+    public void setDebitAmount(BigDecimal debitAmount) {
+        this.debitAmount = debitAmount;
     }
 
 }

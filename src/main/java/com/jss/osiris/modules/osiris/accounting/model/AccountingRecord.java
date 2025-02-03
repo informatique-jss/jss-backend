@@ -129,10 +129,6 @@ public class AccountingRecord implements Serializable, IId {
 			"customerOrder" }, allowSetters = true)
 	private AccountingRecord contrePasse;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_sage_record")
-	private SageRecord sageRecord;
-
 	private Integer letteringNumber;
 
 	private LocalDateTime letteringDateTime;
@@ -368,14 +364,6 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setIsManual(Boolean isManual) {
 		this.isManual = isManual;
-	}
-
-	public SageRecord getSageRecord() {
-		return sageRecord;
-	}
-
-	public void setSageRecord(SageRecord sageRecord) {
-		this.sageRecord = sageRecord;
 	}
 
 }

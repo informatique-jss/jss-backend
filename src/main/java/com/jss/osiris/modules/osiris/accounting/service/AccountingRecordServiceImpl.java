@@ -77,9 +77,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Autowired
   AccountingBalanceHelper accountingBalanceHelper;
 
-  @Autowired
-  SageRecordService sageRecordService;
-
   private String ACCOUNTING_RECORD_TABLE_NAME = "accounting_record";
   private String CLOSED_ACCOUNTING_RECORD_TABLE_NAME = "closed_accounting_record";
 
@@ -648,18 +645,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   @Transactional(rollbackFor = Exception.class)
   public void uploadSageFile(InputStream file) throws OsirisException {
-    List<SageRecord> sageRecords = parsePnmFile(file);
-
+    List<SageRecord> sageRecords = parseSageFile(file);
     if (sageRecords != null && !sageRecords.isEmpty()) {
-      sageRecordService.deleteExistingSageRecords(sageRecords);
-      for (SageRecord currentRecord : sageRecords) {
-        sageRecordService.addOrUpdateSageRecord(currentRecord);
-      }
       accountingRecordGenerationService.generateAccountingRecordForSageRecord(sageRecords);
     }
   }
 
-  private List<SageRecord> parsePnmFile(InputStream file) throws OsirisException {
+  private List<SageRecord> parseSageFile(InputStream file) throws OsirisException {
     List<SageRecord> records = new ArrayList<>();
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(file))) {
       String line;
@@ -671,7 +663,14 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         record.setTargetAccountingAccountCode(line.substring(11, 17).trim());
         record.setLabel(line.substring(51, 76).trim());
         record.setCreditOrDebit(line.substring(83, 84).trim());
-        record.setAmount(BigDecimal.valueOf(Double.parseDouble(line.substring(93, 104).replace(",", ".").trim())));
+        if (line.substring(83, 84).trim().equals(SageRecord.CREDIT_SAGE))
+          record
+              .setCreditAmount(
+                  BigDecimal.valueOf(Double.parseDouble(line.substring(93, 104).replace(",", ".").trim())));
+        if (line.substring(83, 84).trim().equals(SageRecord.DEBIT_SAGE))
+          record
+              .setDebitAmount(
+                  BigDecimal.valueOf(Double.parseDouble(line.substring(93, 104).replace(",", ".").trim())));
         record.setCreatedDate(LocalDateTime.now());
         records.add(record);
       }
