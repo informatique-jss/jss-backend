@@ -2331,7 +2331,8 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/mail/generate/missing-attachment")
-  public ResponseEntity<MissingAttachmentQuery> generateAttachmentTypeMail(@RequestBody MissingAttachmentQuery query)
+  public ResponseEntity<MissingAttachmentQuery> generateAttachmentTypeMail(
+      @RequestParam Boolean isWaitingForAttachmentToUpload, @RequestBody MissingAttachmentQuery query)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
     if ((query.getAssoServiceDocument() == null || query.getAssoServiceDocument().size() == 0)
@@ -2367,7 +2368,23 @@ public class QuotationController {
       throw new OsirisValidationException("MailTo");
 
     return new ResponseEntity<MissingAttachmentQuery>(
-        missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false), HttpStatus.OK);
+        missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false,
+            isWaitingForAttachmentToUpload),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/missing-attachment-upload/sender")
+  public ResponseEntity<MissingAttachmentQuery> sendMissingAttachmentQueryWithUploadedFiles(
+      @RequestParam Integer missingAttachmentQueryId)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+
+    MissingAttachmentQuery query = missingAttachmentQueryService.getMissingAttachmentQuery(missingAttachmentQueryId);
+
+    if (missingAttachmentQueryId == null)
+      throw new OsirisValidationException("missingAttachmentQuery");
+
+    return new ResponseEntity<MissingAttachmentQuery>(
+        missingAttachmentQueryService.sendMissingAttachmentQueryWithUploadedFiles(query), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mail/generate/missing-attachment/reminder")

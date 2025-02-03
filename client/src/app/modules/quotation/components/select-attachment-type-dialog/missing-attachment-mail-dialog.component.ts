@@ -5,12 +5,10 @@ import { Subject } from 'rxjs';
 import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 import { formatBytes } from 'src/app/libs/FormatHelper';
 import { MultipleUploadComponent } from 'src/app/modules/miscellaneous/components/multiple-upload/multiple-upload.component';
-import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
-import { AttachmentService } from '../../../../../../../client-myjss/src/app/modules/my-account/services/attachment.service';
 import { MISSING_ATTACHMENT_QUERY_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
@@ -37,7 +35,7 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   tableAssoServiceFieldTypes: AssoServiceFieldType[] = [];
   missingAttachmentQuery: MissingAttachmentQuery = {} as MissingAttachmentQuery;
   editMode: boolean = true;
-  filesToSave: any[] = [];
+  isWaitingForAttachmentToUpload: boolean = false;
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
   SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
@@ -51,7 +49,6 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
     protected uploadAttachmentService: UploadAttachmentService,
-    private attachmentService: AttachmentService,
     public dialogRef: MatDialogRef<SelectAttachmentsDialogComponent>,
     private missingAttachmentQueryService: MissingAttachmentQueryService,
     private serviceService: ServiceService,
@@ -92,6 +89,7 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
         this.missingAttachmentQuery.id = undefined;
       this.selectedAssoServiceDocument = this.missingAttachmentQuery.assoServiceDocument;
       this.selectedAssoServiceFieldType = this.missingAttachmentQuery.assoServiceFieldType;
+      this.missingAttachmentQuery.attachments = [];
     }
 
     // display specific one
@@ -200,28 +198,27 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
         this.missingAttachmentQuery.assoServiceDocument = this.selectedAssoServiceDocument;
       if (this.selectedAssoServiceFieldType.length > 0)
         this.missingAttachmentQuery.assoServiceFieldType = this.selectedAssoServiceFieldType;
-      this.dialogRef.close(this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery).subscribe(response => {
-        if (response) {
+      if (this.multipleUploadComponent && this.multipleUploadComponent.files && this.multipleUploadComponent.files.length > 0)
+        this.isWaitingForAttachmentToUpload = true;
+      this.dialogRef.close(this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery, this.isWaitingForAttachmentToUpload).subscribe(response => {
+        if (response && this.multipleUploadComponent && this.multipleUploadComponent.files && this.multipleUploadComponent.files.length > 0) {
           this.missingAttachmentQuery = response;
           this.entity.id = response.id;
-          this.multipleUploadComponent?.uploadFiles();
-          this.closeDialog();
+          this.multipleUploadComponent.uploadFiles();
+          this.missingAttachmentQueryService.sendMissingAttachmentQueryWithUploadedFiles(this.missingAttachmentQuery).subscribe();
         }
+        if (response)
+          this.closeDialog();
       }));
     }
   }
 
-  deleteAttachment(file: Attachment) {
-    if (file) {
-      this.missingAttachmentQuery.attachments.splice(this.missingAttachmentQuery.attachments.indexOf(file));
-      this.uploadAttachmentService.disableAttachment(file).subscribe(response => {
-        file.isDisabled = true;
-      })
-    }
+  closeDialog() {
+    this.dialogRef.close(null);
   }
 
-  closeDialog() {
-    this.multipleUploadComponent?.resetForm();
-    this.dialogRef.close(null);
+  sendMailQuery($event: any) {
+    // if ($event)
+    //  this.missingAttachmentQueryService.sendMissingAttachmentQueryImmediatly(this.missingAttachmentQuery).subscribe();
   }
 }

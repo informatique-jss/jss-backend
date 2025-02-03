@@ -92,14 +92,12 @@
   <multiple-upload class="document-upload" [entity]="entity"
     [entityType]="MISSING_ATTACHMENT_QUERY_ENTITY_TYPE.entityType" [editMode]="true"
     [forcedAttachmentType]="constantService.getAttachmentTypeAutomaticMail()" [isForMissingAttachmentQuery]="true"
-    [isDirectUpload]="false"></multiple-upload>
+    [isDirectUpload]="false" (endOfUpload)="sendMailQuery($event)"></multiple-upload>
 </div>
 <mat-card-content>
   <div *ngIf="missingAttachmentQuery.attachments && missingAttachmentQuery.attachments.length>0">
     <div *ngFor="let attachment of missingAttachmentQuery.attachments">
       <ng-container *ngIf="!attachment.isDisabled">
-        <mat-icon *ngIf="editMode" color="accent" mat-list-icon (click)="deleteAttachment(attachment)" class="pointer"
-          matTooltip="Supprimer le fichier">delete_forever</mat-icon>
         {{attachment.uploadedFile.filename }}
         {{attachment.uploadedFile.size ? ("("+formatBytes(attachment.uploadedFile.size,2)+")"):"" }}
       </ng-container>

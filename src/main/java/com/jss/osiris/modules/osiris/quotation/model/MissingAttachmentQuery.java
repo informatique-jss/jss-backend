@@ -8,7 +8,6 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,7 +35,7 @@ public class MissingAttachmentQuery {
     @JoinColumn(name = "id_service")
     private Service service;
 
-    @OneToMany(targetEntity = Attachment.class, mappedBy = "missingAttachmentQuery", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Attachment.class, mappedBy = "missingAttachmentQuery", orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "missingAttachmentQuery" }, allowSetters = true)
     @IndexedField
     private List<Attachment> attachments;
