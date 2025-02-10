@@ -61,6 +61,7 @@ export class AddInvoiceComponent implements OnInit {
     public deboursAmontInvoicedDialog: MatDialog,
     private indexEntityService: IndexEntityService,
     private habilitationsService: HabilitationsService,
+    private constantService: ConstantService
   ) {
   }
 
@@ -235,9 +236,7 @@ export class AddInvoiceComponent implements OnInit {
   saveInvoice() {
     if (this.invoiceForm.valid && (this.invoiceItems && this.invoiceItems.length > 0) || this.invoice.id) {
       if (this.invoice.manualAccountingDocumentDate && !this.habilitationsService.canAddNewInvoiceForPreviousExercize()) {
-        let limitDateInvocing = new Date();
-        limitDateInvocing.setMonth(0);
-        limitDateInvocing.setDate(1);
+        let limitDateInvocing = new Date(this.constantService.getDateAccountingClosureForAll());
 
         let limitDateAdding = new Date();
         limitDateAdding.setMonth(0);

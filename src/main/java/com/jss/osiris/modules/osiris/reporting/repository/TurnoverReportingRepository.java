@@ -92,7 +92,6 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " where " +
                         " i.id_invoice_status in :invoiceStatusId " +
                         " and i.id_provider is null " +
-                        " and i.is_credit_note = false " +
                         " group by " +
                         " date_trunc('year', " +
                         " i.created_date), " +
