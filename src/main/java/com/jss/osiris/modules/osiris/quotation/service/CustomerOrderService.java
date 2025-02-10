@@ -111,6 +111,9 @@ public interface CustomerOrderService {
                         boolean printLetters)
                         throws OsirisException, OsirisClientMessageException;
 
+        public ResponseEntity<byte[]> printRegisteredLetterLabel(Integer customerOrderId)
+                        throws OsirisException, OsirisClientMessageException;
+
         public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;

@@ -11,7 +11,7 @@ import { Quotation } from '../model/Quotation';
 @Injectable({
   providedIn: 'root'
 })
-export class CustomerOrderService extends AppRestService<IQuotation>{
+export class CustomerOrderService extends AppRestService<IQuotation> {
   constructor(http: HttpClient) {
     super(http, "quotation");
   }
@@ -42,6 +42,10 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
 
   generateMailingLabel(customerOrders: string[], printLabel: boolean, printLetters: boolean) {
     return this.get(new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters), "customer-order/print/label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
+  }
+
+  generateRegisteredLabel(customerOrderId: number) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrderId), "customer-order/print/registered-letter-label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
   }
 
   updateAssignedToForCustomerOrder(customerOrder: CustomerOrder, employee: Employee) {

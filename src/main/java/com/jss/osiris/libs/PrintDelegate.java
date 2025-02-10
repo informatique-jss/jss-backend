@@ -237,4 +237,44 @@ public class PrintDelegate {
       throw new OsirisException(e, "Error when printing");
     }
   }
+
+  public void printRegisteredLabel(InvoiceLabelResult invoiceLabelResult) throws OsirisException {
+    Socket socket = null;
+    DataOutputStream dOut = null;
+    try {
+      socket = new Socket(printerIp, printerPort);
+      dOut = new DataOutputStream(socket.getOutputStream());
+
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("  " + invoiceLabelResult.getBillingLabel());
+      dOut.writeUTF("\r\n");
+      dOut.flush();
+      dOut.writeUTF("\r\n");
+      dOut.flush();
+
+      dOut.flush();
+      dOut.writeUTF("\r\n");
+
+      dOut.flush();
+      dOut.writeUTF("\r\n");
+      dOut.flush();
+
+    } catch (IOException e) {
+      throw new OsirisException(e, "Error when printing");
+    } finally {
+      if (dOut != null)
+        try {
+          dOut.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+    }
+
+    try {
+      if (socket != null)
+        socket.close();
+    } catch (IOException e) {
+      throw new OsirisException(e, "Error when printing");
+    }
+  }
 }

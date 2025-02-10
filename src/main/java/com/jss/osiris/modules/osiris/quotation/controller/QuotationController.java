@@ -2449,6 +2449,13 @@ public class QuotationController {
     return customerOrderService.printMailingLabel(customerOrders, printLabel, printLetters);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order/print/registered-letter-label")
+  public ResponseEntity<byte[]> printRegisteredLetterLabel(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    return customerOrderService.printRegisteredLetterLabel(customerOrderId);
+  }
+
   @PostMapping(inputEntryPoint + "/dashboard/employee")
   public ResponseEntity<List<ProvisionBoardResult>> getDashboardEmployee(@RequestBody List<Employee> employees)
       throws OsirisValidationException, OsirisException {

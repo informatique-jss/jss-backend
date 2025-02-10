@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            font-family: 'Times New Roman', Times, serif
+        }
+
+        @page {
+            size: a4 portrait;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .cgv {
+            width: 297px;
+        }
+
+        .cgv h3 {
+            margin: 0;
+            margin-top: 5px;
+            font-size: 15px;
+        }
+
+        .cgv p {
+            margin: 0;
+            text-align: justify;
+            margin-top: 5px;
+            line-height: 9px;
+            font-size: 9px
+        }
+
+        .td-with-price {
+            width: 130px;
+        }
+    </style>
+</head>
+
+<body style="background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+
+    <table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF;">
+        <tr>
+            <td style="padding-left:10px;padding-right:10px;text-align:center;width:100%;">
+                <h1
+                    style="margin: 0; white-space: nowrap;color: rgb(35, 61, 86); direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: normal; line-height: 24px; text-align: center; margin-top: 0; margin-bottom: 0;">
+                    <strong><span>Recommandé avec avis de réception</span></strong>
+                </h1>
+            </td>
+
+            <td><span th:if="${toAdress!=null}" th:text="${toAdress}"></span>
+            <td><span th:if="${toName!=null}" th:text="${toName}"></span>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

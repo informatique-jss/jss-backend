@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
-import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -73,7 +72,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
-import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -188,17 +186,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     MailComputeHelper mailComputeHelper;
 
-    @Autowired
-    QuotationValidationHelper quotationValidationHelper;
-
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     CentralPayPaymentRequestService centralPayPaymentRequestService;
-
-    @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
 
     @Autowired
     InvoiceItemService invoiceItemService;
@@ -1214,6 +1206,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 file.delete();
             }
             return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+        }
+        return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<byte[]> printRegisteredLetterLabel(Integer customerOrderId)
+            throws OsirisException, OsirisClientMessageException {
+        CustomerOrder customerOrder = getCustomerOrder(customerOrderId);
+        try {
+            printDelegate.printRegisteredLabel(mailComputeHelper.computePaperLabelResult(customerOrder));
+        } catch (NumberFormatException e) {
+        } catch (OsirisException e) {
+            throw new OsirisException(e, "Error when printing label");
         }
         return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
     }

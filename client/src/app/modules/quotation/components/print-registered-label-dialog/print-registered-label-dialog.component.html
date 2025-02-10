@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>Choix des pièces jointes</h1>
+<div mat-dialog-content>
+  <p>Indiquez ci-dessous la liste des numéros de commande pour lesquels imprimer une étiquette de lettre recommandée:
+  </p>
+  <table class="full-width ">
+    <tr>
+      <td>
+        <ng-container *ngIf="invoiceLabelResult">
+          <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabel}">
+            {{invoiceLabelResult.billingLabel?invoiceLabelResult.billingLabel:"Libellé inconnu"}}</p>
+          <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelAddress}">
+            {{invoiceLabelResult.billingLabelAddress?invoiceLabelResult.billingLabelAddress:"Adresse"}}</p>
+          <p
+            [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelPostalCode || !invoiceLabelResult.billingLabelCity || !invoiceLabelResult.billingLabelCountry}">
+            {{invoiceLabelResult.billingLabelPostalCode?invoiceLabelResult.billingLabelPostalCode:"Code postalinconnu"}}
+            {{invoiceLabelResult.billingLabelCity?invoiceLabelResult.billingLabelCity.label:"Ville inconnue"}}
+            {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays inconnu"}}
+          </p>
+        </ng-container>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      </td>
+
+    </tr>
+
+  </table>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="generateLabel()">Valider</button>
+</div>
