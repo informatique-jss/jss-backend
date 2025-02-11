@@ -3,14 +3,6 @@ package com.jss.osiris.modules.osiris.accounting.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.libs.search.model.IndexedField;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
 
 public class SageRecord {
 
@@ -30,11 +22,6 @@ public class SageRecord {
     private BigDecimal debitAmount;
 
     private LocalDateTime createdDate;
-
-    @OneToMany(targetEntity = AccountingRecord.class, mappedBy = "sageRecord", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "sageRecord" }, allowSetters = true)
-    @IndexedField
-    private List<AccountingRecord> accountingRecords;
 
     public String getTargetAccountingAccountCode() {
         return targetAccountingAccountCode;
@@ -74,14 +61,6 @@ public class SageRecord {
 
     public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public List<AccountingRecord> getAccountingRecords() {
-        return accountingRecords;
-    }
-
-    public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
-        this.accountingRecords = accountingRecords;
     }
 
     public LocalDate getOperationDate() {

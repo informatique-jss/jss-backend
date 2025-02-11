@@ -17,5 +17,4 @@ export interface AccountingRecordSearch {
   idBankTransfert: number;
   isFromAs400: boolean;
   isManual: boolean;
-  isFromSage: boolean;
 }

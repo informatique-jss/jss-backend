@@ -18,7 +18,6 @@ public class AccountingRecordSearch {
   private Integer idBankTransfert;
   private Boolean isFromAs400;
   private Boolean isManual;
-  private Boolean isFromSage;
 
   public AccountingAccountClass getAccountingClass() {
     return accountingClass;
@@ -130,14 +129,6 @@ public class AccountingRecordSearch {
 
   public void setIsManual(Boolean isManual) {
     this.isManual = isManual;
-  }
-
-  public Boolean getIsFromSage() {
-    return isFromSage;
-  }
-
-  public void setIsFromSage(Boolean isFromSage) {
-    this.isFromSage = isFromSage;
   }
 
 }

@@ -60,6 +60,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   AccountingExportHelper accountingExportHelper;
 
   @Autowired
+  AccountingAccountService accountingAccountService;
+
+  @Autowired
   TiersService tiersService;
 
   @Autowired
@@ -323,13 +326,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       accountingRecordSearch.setIdInvoice(0);
     if (accountingRecordSearch.getIdRefund() == null)
       accountingRecordSearch.setIdRefund(0);
-
-    // if (accountingRecordSearch.getIsFromSage() == true)
-    // return
-    // accountingRecordRepository.searchAccountingPayJournalRecords(accountingAccountId,
-    // accountingRecordSearch.getHideLettered(),
-    // accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
-    // accountingRecordSearch.getEndDate().withHour(23).withMinute(59));
 
     if (getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME)) {
@@ -644,9 +640,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void uploadSageFile(InputStream file) throws OsirisException {
+  public void generateAccountingRecordForSageRecord(InputStream file) throws OsirisException {
     List<SageRecord> sageRecords = parseSageFile(file);
     if (sageRecords != null && !sageRecords.isEmpty()) {
+      deleteExistingRecords(sageRecords);
       accountingRecordGenerationService.generateAccountingRecordForSageRecord(sageRecords);
     }
   }
@@ -677,6 +674,51 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     } catch (IOException ex) {
     }
     return records;
+  }
+
+  private void deleteExistingRecords(List<SageRecord> sageRecords)
+      throws OsirisException {
+    AccountingJournal salaryJournal = constantService.getAccountingJournalSalary();
+    List<AccountingRecord> recordsToDelete = new ArrayList<>();
+    List<AccountingAccount> targetAccountingAccounts = new ArrayList<>();
+
+    if (sageRecords != null && !sageRecords.isEmpty()) {
+      for (SageRecord sageRecord : sageRecords) {
+        if (sageRecord.getTargetAccountingAccountCode() == null)
+          throw new OsirisException(null,
+              "No target accounting account provided for sage record ");
+        targetAccountingAccounts = accountingAccountService
+            .getAccountingAccountByLabelOrCode(sageRecord.getTargetAccountingAccountCode());
+        if (!targetAccountingAccounts.isEmpty())
+          recordsToDelete.addAll(accountingRecordRepository
+              .findToDeleteRecordsByAccountingAccountAndJournalAndOperationDate(
+                  targetAccountingAccounts.get(0).getId(), salaryJournal.getId(),
+                  sageRecord.getOperationDate()));
+      }
+
+      BigDecimal balance = new BigDecimal(0);
+      for (AccountingRecord accountingRecord : removeDuplicatesRecords(recordsToDelete)) {
+        if (accountingRecord.getCreditAmount() != null)
+          balance = balance.add(accountingRecord.getCreditAmount());
+        if (accountingRecord.getDebitAmount() != null)
+          balance = balance.subtract(accountingRecord.getDebitAmount());
+      }
+      if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_EVEN).abs()
+          .compareTo(new BigDecimal(1)) > 0)
+        throw new OsirisValidationException("Balance not null");
+
+      accountingRecordRepository.deleteAll(recordsToDelete);
+    }
+  }
+
+  private List<AccountingRecord> removeDuplicatesRecords(List<AccountingRecord> list) {
+    List<AccountingRecord> newList = new ArrayList<AccountingRecord>();
+    for (AccountingRecord element : list) {
+      if (!newList.contains(element)) {
+        newList.add(element);
+      }
+    }
+    return newList;
   }
 
   private LocalDate parseDateFromString(String date) {

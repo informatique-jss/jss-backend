@@ -176,7 +176,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         if (entityType.equals("Sage")) {
             if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)
                     || activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
-                this.accountingRecordService.uploadSageFile(file);
+                this.accountingRecordService.generateAccountingRecordForSageRecord(file);
             return null;
         }
         if (filename.toLowerCase().endsWith(".pdf")) {

@@ -19,7 +19,6 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
-import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -58,9 +57,6 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Autowired
     CustomerOrderService customerOrderService;
-
-    @Autowired
-    AccountingRecordRepository accountingRecordRepository;
 
     private Integer getNewTemporaryOperationId() {
         return ThreadLocalRandom.current().nextInt(1, 1000000000);
@@ -1157,7 +1153,6 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         BigDecimal balance = new BigDecimal(0);
 
         if (sageRecords != null && !sageRecords.isEmpty()) {
-            deleteExistingRecords(sageRecords);
             for (SageRecord sageRecord : sageRecords) {
                 targetAccountingAccount = accountingAccountService
                         .getAccountingAccountByLabelOrCode(sageRecord.getTargetAccountingAccountCode());
@@ -1171,7 +1166,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                             sageRecord.getCreditAmount().abs(), null, targetAccountingAccount.get(0), null, null,
                             null,
                             salaryJournal, null, null, null);
-                    balance.add(sageRecord.getCreditAmount());
+                    balance = balance.add(sageRecord.getCreditAmount());
                 }
                 if (sageRecord.getDebitAmount() != null) {
                     generateNewAccountingRecord(sageRecord.getOperationDate().atTime(0, 0), operationId, null, null,
@@ -1179,31 +1174,11 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                             null, sageRecord.getDebitAmount(), targetAccountingAccount.get(0), null, null,
                             null,
                             salaryJournal, null, null, null);
-                    balance.add(sageRecord.getDebitAmount());
+                    balance = balance.subtract(sageRecord.getDebitAmount());
                 }
             }
             checkBalance(balance);
         }
     }
 
-    private void deleteExistingRecords(List<SageRecord> sageRecords)
-            throws OsirisException {
-        AccountingJournal salaryJournal = constantService.getAccountingJournalSalary();
-
-        if (sageRecords != null && !sageRecords.isEmpty()) {
-            for (SageRecord sageRecord : sageRecords) {
-                if (sageRecord.getTargetAccountingAccountCode() == null)
-                    throw new OsirisException(null,
-                            "No target accounting account provided for sage record ");
-                List<AccountingAccount> targetAccountingAccount = accountingAccountService
-                        .getAccountingAccountByLabelOrCode(sageRecord.getTargetAccountingAccountCode());
-                if (targetAccountingAccount != null && !targetAccountingAccount.isEmpty())
-                    accountingRecordRepository
-                            .deleteRecordsByAccountingAccountAndJournalAndOperationDate(
-                                    targetAccountingAccount.get(0).getId(), salaryJournal.getId(),
-                                    sageRecord.getOperationDate());
-
-            }
-        }
-    }
 }
