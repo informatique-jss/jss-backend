@@ -258,15 +258,17 @@
           <!-- Card item START -->
           <ng-container *ngFor="let serie of series; let index = index">
             <div *ngIf="index<4" #sliderSeriesPage class="col-sm-6">
-              <div class="card card-overlay-bottom card-img-scale">
-                <!-- Card Image -->
-                <img class="card-img" height="415" [src]="serie.picture.urlMedium" alt="">
+              <div class="card card-overlay-bottom card-img-scale card-bg-scale"
+                [ngStyle]="{'background-image': 'url(' + serie.picture.urlMedium + ')'}"
+                style="height:140px; background-size:cover; background-position:center">
                 <!-- Card Image overlay -->
                 <div class="card-img-overlay d-flex flex-column p-3 p-sm-4">
                   <div class="w-100 mt-auto">
                     <!-- Card title -->
-                    <h4 class="text-white"><a style="cursor: pointer;" (click)="openSeriePosts(serie, $event)"
-                        class="btn-link text-reset stretched-link" [innerHTML]="serie.titleText| trustHtml"></a></h4>
+                    <h4 class="text-white">
+                      <a style="cursor: pointer;" (click)="openSeriePosts(serie, $event)"
+                        class="btn-link text-reset stretched-link" [innerHTML]="serie.titleText| trustHtml"></a>
+                    </h4>
                   </div>
                 </div>
               </div>
