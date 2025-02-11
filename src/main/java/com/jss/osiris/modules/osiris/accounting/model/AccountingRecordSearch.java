@@ -130,4 +130,5 @@ public class AccountingRecordSearch {
   public void setIsManual(Boolean isManual) {
     this.isManual = isManual;
   }
+
 }
