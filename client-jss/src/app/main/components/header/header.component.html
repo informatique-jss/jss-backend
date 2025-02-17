@@ -1,9 +1,9 @@
 <header class="navbar-light navbar-sticky header-static">
-  <div class="navbar-top d-none d-lg-block small">
+  <div class="navbar-top small">
     <div class="container">
-      <div class="d-md-flex justify-content-between align-items-center my-2">
+      <div class="d-md-flex justify-content-between align-items-center my-2 row">
         <!-- Top bar left -->
-        <ul class="nav">
+        <ul class="nav flex-xs-column col-6">
           <li class="nav-item">
             <a class="nav-link" style="cursor: pointer;" (click)="openSubscribe($event)">S'abonner</a><!-- TODO -->
           </li>
@@ -12,10 +12,11 @@
           </li>
         </ul>
         <!-- Top bar right -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center col-6 col-md-auto">
 
           <!-- Font size accessibility START -->
-          <div class="btn-group me-3" role="group" aria-label="font size changer">
+          <div class="btn-group me-3 d-flex flex-grow-1 justify-content-end" role="group"
+            aria-label="font size changer">
             <input type="radio" class="btn-check" name="fntradio" id="font-sm">
             <label class="btn btn-xs btn-outline-primary mb-0" for="font-sm">A-</label>
 
@@ -26,14 +27,14 @@
             <label class="btn btn-xs btn-outline-primary mb-0" for="font-lg">A+</label>
           </div>
 
-          <div class="nav-item">
+          <div class="nav-item d-flex flex-grow-1 justify-content-end">
             <a class="nav-link px-2 fs-5" role="button" data-bs-toggle="modal" data-bs-target="#searchModal">
               <i class="bi bi-search fs-4"> </i>
             </a>
           </div>
 
           <!-- Dark mode options START -->
-          <div class="nav-item dropdown mx-2">
+          <div class="nav-item dropdown mx-2 d-flex flex-grow-1 justify-content-end">
             <!-- Switch button -->
             <button class="modeswitch" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown"
               data-bs-display="static">
@@ -78,7 +79,7 @@
           </div>
           <!-- Dark mode options END -->
 
-          <ul class="nav">
+          <ul class="nav d-none d-md-flex">
             <li class="nav-item">
               <a class="nav-link px-2 fs-5" href="https://www.facebook.com/Journal.Special.des.Societes"
                 target="_blank"><i class="fab fa-facebook-square"></i></a>
