@@ -114,12 +114,6 @@
       </a>
       <!-- Logo END -->
 
-      <!-- Responsive navbar toggler -->
-      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="text-body h6 d-none d-sm-inline-block">Menu</span>
-        <span class="navbar-toggler-icon"></span>
-      </button>
 
       <!-- Main navbar START -->
       <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -175,18 +169,25 @@
       <!-- Main navbar END -->
 
       <!-- Nav right START -->
-      <div class="nav flex-nowrap align-items-center">
+      <div class="nav flex-nowrap align-items-center d-flex flex-grow-1 justify-content-end">
         <!-- Nav Button -->
-        <div class="nav-item d-none d-md-block">
+        <div class="nav-item d-md-block">
           <a style="cursor: pointer;" (click)="openNewFormality($event)"
             class="btn btn-sm btn-warning mb-0 mx-2">Déposer une formalité</a><!-- TODO -->
         </div>
-        <div class="nav-item d-none d-md-block">
+        <div class="nav-item d-md-block">
           <a style="cursor: pointer;" (click)="openMyJss($event)"
             class="btn btn-sm btn-primary mb-0 mx-2">MyJSS</a><!-- TODO -->
         </div>
       </div>
       <!-- Nav right END -->
+
+      <!-- Responsive navbar toggler -->
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="text-body h6 d-none d-sm-inline-block">Menu</span>
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </div>
   </nav>
   <!-- Logo Nav END -->
