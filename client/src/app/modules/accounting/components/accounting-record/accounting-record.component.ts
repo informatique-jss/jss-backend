@@ -284,7 +284,7 @@ export class AccountingRecordComponent implements OnInit {
       }
 
       if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-        if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear()) {
+        if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
           this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
           return;
         }
