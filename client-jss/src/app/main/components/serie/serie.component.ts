@@ -56,6 +56,7 @@ export class SerieComponent implements OnInit {
     this.postService.getPostSerieBySlug(this.slug).subscribe(posts => {
       if (posts && posts.length > 0) {
         this.posts = posts;
+        this.postService.completeMediaInPosts(posts);
       }
     });
   }
