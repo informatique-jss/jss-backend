@@ -159,6 +159,11 @@ public class Responsable implements IAttachment, IId {
 	@JsonView(JacksonViews.MyJssView.class)
 	private Mail mail;
 
+	// TODO : remove after new webstie
+	@ManyToMany
+	@JoinTable(name = "asso_responsable_mail_old", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> mails;
+
 	@ManyToMany
 	@JoinTable(name = "asso_responsable_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	@JsonView(JacksonViews.MyJssView.class)
@@ -558,4 +563,13 @@ public class Responsable implements IAttachment, IId {
 	public void setLoginTokenExpirationDateTime(LocalDateTime loginTokenExpirationDateTime) {
 		this.loginTokenExpirationDateTime = loginTokenExpirationDateTime;
 	}
+
+	public List<Mail> getMails() {
+		return mails;
+	}
+
+	public void setMails(List<Mail> mails) {
+		this.mails = mails;
+	}
+
 }

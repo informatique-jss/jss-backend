@@ -203,10 +203,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         // Define status
-        if (invoice.getProvider() != null)
-            invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
-        else if (invoice.getProvider() != null && invoice.getIsCreditNote())
+        if (invoice.getProvider() != null && invoice.getIsCreditNote())
             invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
+        else if (invoice.getProvider() != null)
+            invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
         else if (invoice.getInvoiceStatus() == null)
             invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
 
@@ -255,7 +255,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         // Handle provider and customer payment
-        if (invoice.getProvider() != null || invoice.getRff() != null) {
+        if ((invoice.getProvider() != null || invoice.getRff() != null)
+                && (invoice.getIsCreditNote() == null || invoice.getIsCreditNote() == false)) {
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
                 invoice.setBankTransfert(bankTransfertService.generateBankTransfertForManualInvoice(invoice));
             }

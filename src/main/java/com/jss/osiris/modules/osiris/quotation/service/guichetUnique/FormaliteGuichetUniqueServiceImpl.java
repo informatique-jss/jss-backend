@@ -562,8 +562,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisException, OsirisClientMessageException,
             OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
-        // invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
-        // TODO refonte
         invoice.setProvider(constantService.getCompetentAuthorityInpi().getProvider());
         invoice.setCustomerOrderForInboundInvoice(provision.getService().getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +
@@ -597,57 +595,57 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             if (provision.getId().equals(inProvision.getId())) {
                                 cart.getCartRates()
                                         .sort((o1, o2) -> ((Long) o1.getAmount()).compareTo((Long) (o2.getAmount())));
-                                InvoiceItem firstItemTaxable = null;
-                                InvoiceItem firstItemNonTaxable = null;
+                                InvoiceItem itemTaxable = new InvoiceItem();
+                                itemTaxable.setDiscountAmount(zeroValue);
+                                itemTaxable.setIsGifted(false);
+                                itemTaxable.setIsOverridePrice(false);
+                                itemTaxable.setPreTaxPrice(new BigDecimal(0));
+                                itemTaxable.setBillingItem(pricingHelper.getAppliableBillingItem(
+                                        constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));
+                                itemTaxable
+                                        .setLabel(itemTaxable.getBillingItem().getBillingType().getLabel());
+
+                                InvoiceItem itemNonTaxable = new InvoiceItem();
+                                itemNonTaxable.setDiscountAmount(zeroValue);
+                                itemNonTaxable.setIsGifted(false);
+                                itemNonTaxable.setIsOverridePrice(false);
+                                itemNonTaxable.setPreTaxPrice(new BigDecimal(0));
+                                itemNonTaxable.setVat(constantService.getVatZero());
+                                itemNonTaxable.setVatPrice(new BigDecimal(0));
+                                itemNonTaxable.setBillingItem(pricingHelper.getAppliableBillingItem(
+                                        constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));
+                                itemNonTaxable
+                                        .setLabel(itemTaxable.getBillingItem().getBillingType().getLabel());
+
                                 for (CartRate cartRate : cart.getCartRates()) {
                                     if (cartRate.getRate() != null && cartRate.getAmount() != 0) {
-                                        boolean initItem = true;
-                                        if (cartRate.getAmount() != 0) {
-                                            InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                                            if (invoiceItem.getBillingItem().getBillingType().getId()
-                                                    .equals(constantService.getBillingTypeDeboursNonTaxable()
-                                                            .getId())) {
-                                                if (firstItemNonTaxable != null) {
-                                                    firstItemNonTaxable.setPreTaxPrice(
-                                                            firstItemNonTaxable.getPreTaxPrice()
-                                                                    .subtract(invoiceItem.getPreTaxPrice().abs()));
-                                                    firstItemNonTaxable.setPreTaxPriceReinvoiced(
-                                                            firstItemNonTaxable.getPreTaxPrice().abs().negate());
-                                                    initItem = false;
-                                                }
-                                            } else {
-                                                if (firstItemTaxable != null) {
-                                                    firstItemTaxable.setPreTaxPrice(
-                                                            firstItemTaxable.getPreTaxPrice()
-                                                                    .subtract(invoiceItem.getPreTaxPrice().abs()));
-                                                    firstItemTaxable.setPreTaxPriceReinvoiced(
-                                                            firstItemTaxable.getPreTaxPrice().abs().negate());
-                                                    initItem = false;
-                                                }
-                                            }
-                                        }
-                                        if (initItem) {
-                                            InvoiceItem invoiceItem = getInvoiceItemForCartRate(cartRate, cart);
-                                            invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().abs());
-                                            invoiceItem
-                                                    .setPreTaxPriceReinvoiced(
-                                                            invoiceItem.getPreTaxPrice().abs().negate());
-                                            invoiceItem.setProvision(null);
-                                            invoice.getInvoiceItems().add(invoiceItem);
-                                            provision.getInvoiceItems().add(invoiceItem);
-
-                                            if (invoiceItem.getBillingItem().getBillingType().getId()
-                                                    .equals(constantService.getBillingTypeDeboursNonTaxable()
-                                                            .getId())) {
-                                                if (firstItemNonTaxable == null)
-                                                    firstItemNonTaxable = invoiceItem;
-                                            } else {
-                                                if (firstItemTaxable == null)
-                                                    firstItemTaxable = invoiceItem;
-                                            }
+                                        BigDecimal amount = new BigDecimal(cartRate.getAmount()).setScale(0,
+                                                RoundingMode.HALF_EVEN);
+                                        if (Math.abs(cartRate.getAmount()) == Math.abs(cartRate.getHtAmount())) {
+                                            itemNonTaxable.setPreTaxPrice(itemNonTaxable.getPreTaxPrice().add(amount));
+                                        } else {
+                                            if (itemTaxable.getVat() == null)
+                                                itemTaxable
+                                                        .setVat(extractVatFromCartRate(itemTaxable, cartRate));
+                                            BigDecimal rate = (new BigDecimal(1)).add(itemTaxable.getVat().getRate()
+                                                    .divide(new BigDecimal(100), 2, RoundingMode.HALF_EVEN));
+                                            itemTaxable.setPreTaxPrice(
+                                                    itemTaxable.getPreTaxPrice()
+                                                            .add(amount.divide(rate, 2, RoundingMode.HALF_EVEN)));
                                         }
                                     }
                                 }
+                                itemNonTaxable.setPreTaxPrice(
+                                        itemNonTaxable.getPreTaxPrice().abs().divide(new BigDecimal(100)));
+                                itemTaxable
+                                        .setPreTaxPrice(itemTaxable.getPreTaxPrice().abs().divide(new BigDecimal(100)));
+                                itemNonTaxable.setPreTaxPriceReinvoiced(itemNonTaxable.getPreTaxPrice());
+                                itemTaxable.setPreTaxPriceReinvoiced(itemTaxable.getPreTaxPrice());
+
+                                if (itemNonTaxable.getPreTaxPrice().compareTo(new BigDecimal(0)) > 0)
+                                    invoice.getInvoiceItems().add(itemNonTaxable);
+                                if (itemTaxable.getPreTaxPrice().compareTo(new BigDecimal(0)) > 0)
+                                    invoice.getInvoiceItems().add(itemTaxable);
                             }
                         }
 
@@ -695,19 +693,14 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         return invoiceItem;
     }
 
-    private void extractVatFromCartRate(InvoiceItem invoiceItem, CartRate cartRate) throws OsirisException {
-        if (Math.abs(cartRate.getAmount()) == Math.abs(cartRate.getHtAmount())) {
-            invoiceItem.setVat(constantService.getVatZero());
-            invoiceItem.setVatPrice(zeroValue);
-            invoiceItem.setBillingItem(
-                    pricingHelper.getAppliableBillingItem(constantService.getBillingTypeDeboursNonTaxable(), null));
+    private Vat extractVatFromCartRate(InvoiceItem invoiceItem, CartRate cartRate) throws OsirisException {
+        if (cartRate.getHtAmount() == 0) {
+            return constantService.getVatDeductible();
         } else {
             BigDecimal vatRate = BigDecimal
                     .valueOf((cartRate.getAmount() - cartRate.getHtAmount()) * 1.0 / cartRate.getHtAmount() * 100.0);
             vatRate = vatRate.multiply(BigDecimal.TEN).setScale(0, RoundingMode.HALF_EVEN).divide(BigDecimal.TEN);
             Vat vat = null;
-            invoiceItem.setBillingItem(pricingHelper
-                    .getAppliableBillingItem(constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));
 
             if (isVatEqual(vatRate, constantService.getVatDeductible().getRate()))
                 vat = constantService.getVatDeductible();
@@ -727,9 +720,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             }
 
             if (vat != null) {
-                invoiceItem.setVat(vat);
+                return vat;
             }
         }
+        return constantService.getVatDeductible();
     }
 
     private boolean isVatEqual(BigDecimal vat1, BigDecimal vat2) {
