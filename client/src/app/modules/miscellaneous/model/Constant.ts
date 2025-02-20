@@ -94,6 +94,7 @@ export interface Constant {
   attachmentTypeQuotation: AttachmentType;
   attachmentTypeRefusInfogreffe: AttachmentType;
   attachmentTypeAutreInfogreffe: AttachmentType;
+  attachmentTypeClientCommunication: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeDeboursNonTaxable: BillingType;

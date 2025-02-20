@@ -1,9 +1,7 @@
 package com.jss.osiris.libs.mail;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.util.IOUtils;
@@ -33,8 +30,6 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.xhtmlrenderer.pdf.ITextRenderer;
-import org.xhtmlrenderer.util.XRLog;
 
 import com.jss.osiris.libs.QrCodeHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -158,6 +153,12 @@ public class MailHelper {
 
     @Autowired
     ServiceService serviceService;
+
+    @Autowired
+    FormaliteInfogreffeService formaliteInfogreffeService;
+
+    @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -345,32 +346,7 @@ public class MailHelper {
         } catch (Exception e) {
             throw new OsirisException(e, "Unable to parse HTML for mail " + mail.getId());
         }
-
-        File tempFile;
-        OutputStream outputStream;
-        try {
-            tempFile = File.createTempFile("genericMail", "pdf");
-            outputStream = new FileOutputStream(tempFile);
-        } catch (IOException e) {
-            throw new OsirisException(e, "Unable to create temp file");
-        }
-        ITextRenderer renderer = new ITextRenderer();
-        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        try {
-            renderer.setDocumentFromString(
-                    htmlContent.replaceAll("\\p{C}", " ")
-                            .replace("&mail", "mail").replace("&validationToken", "validationToken")
-                            .replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
-
-            renderer.setScaleToFit(true);
-            renderer.layout();
-            renderer.createPDF(outputStream);
-
-            outputStream.close();
-        } catch (Exception e) {
-            throw new OsirisException(e, "Unable to create PDF file for mail " + mail.getId());
-        }
-        return tempFile;
+        return generatePdfDelegate.generateGenericFromHtml(htmlContent, mail.getId());
     }
 
     private void setContextVariable(Context ctx, CustomerMail mail, boolean setPlainPictures)

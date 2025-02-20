@@ -387,6 +387,15 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeClientCommunication"
+                label="Type de pièce-jointe - communication client" [form]="constantForm"
+                propertyName="attachmentTypeClientCommunication" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-country [(model)]="constant.countryFrance" [form]="constantForm" label="Pays - France"
                 propertyName="countryFrance" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>
@@ -1573,7 +1582,7 @@
           <tr>
             <td>
               <autocomplete-responsable [(model)]="constant.responsableDummyCustomerFrance" [form]="constantForm"
-                propertyName="responsableDummyCustomerFrance" [isMandatory]="true"
+                propertyName="responsableDummyCustomerFrance" [isMandatory]="false"
                 label="Responsable - Responsable utilisé pour le pricing non connecté MyJSS"
                 [isDisabled]="!editMode"></autocomplete-responsable>
             </td>
