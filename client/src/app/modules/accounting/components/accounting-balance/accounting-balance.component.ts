@@ -4,6 +4,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AccountingAccountClass } from '../../model/AccountingAccountClass';
@@ -26,7 +27,8 @@ export class AccountingBalanceComponent implements OnInit {
     private accountingBalanceService: AccountingBalanceService,
     private userPreferenceService: UserPreferenceService,
     private appService: AppService,
-    private accountingAccountClassService: AccountingAccountClassService
+    private accountingAccountClassService: AccountingAccountClassService,
+    private constantService: ConstantService
   ) { }
 
   accumulatedDataSource = new MatTableDataSource<AccountingBalance>();
@@ -104,7 +106,7 @@ export class AccountingBalanceComponent implements OnInit {
     }
 
     if (this.accountingBalanceSearch.startDate && this.accountingBalanceSearch.endDate)
-      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear()) {
+      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear() && this.accountingBalanceSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
