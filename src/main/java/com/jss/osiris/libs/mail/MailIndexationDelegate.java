@@ -4,9 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -26,7 +29,7 @@ import com.microsoft.aad.msal4j.IAuthenticationResult;
 
 import jakarta.mail.Address;
 import jakarta.mail.BodyPart;
-import jakarta.mail.Flags;
+import jakarta.mail.Flags.Flag;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -62,6 +65,8 @@ public class MailIndexationDelegate {
     private String microsoftHost;
     @Value("${outlook.default.url}")
     private String outlookDefaultUrl;
+
+    private Integer numberDaysToKeepInTrash = 10;
 
     @Autowired
     OsirisMailService osirisMailService;
@@ -236,8 +241,8 @@ public class MailIndexationDelegate {
                     if (osirisMailService.attachIndexationMailToEntity(mail)) {
                         // Move to trash
                         folderInbox.copyMessages(new Message[] { message }, folderTrash);
-                        message.setFlag(Flags.Flag.DELETED, true);
-                        return;
+                        message.setFlag(Flag.DELETED, true);
+                        break;
                     }
                 }
             } catch (Exception e) {
@@ -267,6 +272,25 @@ public class MailIndexationDelegate {
         try {
             folderTrash = store.getFolder("Éléments supprimés");
             folderTrash.open(Folder.READ_WRITE);
+            Message[] messages;
+            try {
+                messages = folderTrash.getMessages();
+            } catch (MessagingException e) {
+                throw new OsirisException(e, "Impossible to get messages from Trash folder");
+            }
+
+            for (Message message : messages) {
+                try {
+                    LocalDate dateToFlush = LocalDate.now().minusDays(numberDaysToKeepInTrash);
+                    if (message.getReceivedDate()
+                            .before(Date.from(dateToFlush.atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
+                        message.setFlag(Flag.DELETED, true);
+                    }
+                } catch (Exception e) {
+                    throw new OsirisException(e, "Impossible to process message deleted");
+                }
+            }
+
             folderTrash.expunge();
             folderTrash.close();
             store.close();
