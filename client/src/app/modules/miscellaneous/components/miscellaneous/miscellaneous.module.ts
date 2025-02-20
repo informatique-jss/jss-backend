@@ -194,6 +194,7 @@ import { RadioGroupBillingLabelComponent } from '../forms/radio-group-billing-la
 import { RadioGroupCivilityComponent } from '../forms/radio-group-civility/radio-group-civility.component';
 import { RadioGroupJournalTypeComponent } from '../forms/radio-group-journal-type/radio-group-journal-type.component';
 import { RadioGroupLanguageComponent } from '../forms/radio-group-language/radio-group-language.component';
+import { RadioGroupRecipientLabelComponent } from '../forms/radio-group-recipient-label/radio-group-recipient-label.component';
 import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/radio-group-record-type.component';
 import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
@@ -550,6 +551,7 @@ const routes: Routes = [
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
     SelectCategoryComponent,
+    RadioGroupRecipientLabelComponent
   ],
   exports: [
     HistoryComponent,
@@ -791,7 +793,8 @@ const routes: Routes = [
     SelectFormaliteInfogreffeStatusComponent,
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
-    SelectCategoryComponent
+    SelectCategoryComponent,
+    RadioGroupRecipientLabelComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

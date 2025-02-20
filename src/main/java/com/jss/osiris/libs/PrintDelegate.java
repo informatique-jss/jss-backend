@@ -238,25 +238,92 @@ public class PrintDelegate {
     }
   }
 
-  public void printRegisteredLabel(InvoiceLabelResult invoiceLabelResult) throws OsirisException {
+  public void printRegisteredLabel(InvoiceLabelResult label, CustomerOrder customerOrder) throws OsirisException {
     Socket socket = null;
     DataOutputStream dOut = null;
     try {
       socket = new Socket(printerIp, printerPort);
       dOut = new DataOutputStream(socket.getOutputStream());
 
+      // Handle manual adresses
+      if (label.getBillingLabelCity() == null) {
+        List<String> lines = Arrays.asList(label.getBillingLabelAddress().split("\\R"));
+        if (lines != null && lines.size() > 1) {
+          label.setBillingLabelAddress(lines.get(0));
+          label.setBillingLabelPostalCode("");
+          for (int i = 1; i < lines.size(); i++)
+            label.setBillingLabelPostalCode(label.getBillingLabelPostalCode() + " " + lines.get(i));
+        }
+      }
       dOut.writeUTF("\r\n");
-      dOut.writeUTF("  " + invoiceLabelResult.getBillingLabel());
+      if (label.getBillingLabel() != null) {
+        List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\n"));
+        if (labelLines != null) {
+          for (String line : labelLines) {
+            List<String> lineToPrint = new ArrayList<String>();
+            if (line.contains("\r\n")) {
+              lineToPrint = Arrays.asList(line.split("\r\n"));
+            } else
+              lineToPrint.add(line);
+            for (String lin : lineToPrint) {
+              dOut.writeUTF("   " + StringUtils.stripAccents(lin).toUpperCase());
+              dOut.writeUTF("\r\n");
+              dOut.flush();
+            }
+          }
+        }
+      }
+
+      dOut.writeUTF("   "
+          + StringUtils
+              .stripAccents(
+                  (label.getBillingLabelAddress() != null ? label.getBillingLabelAddress() : ""))
+              .replaceAll("\\p{C}", "").toUpperCase()
+          +
+          "    "
+          + (StringUtils.stripAccents((customerOrder.getResponsable().getTiers().getIntercom() != null
+              ? customerOrder.getResponsable().getTiers().getIntercom()
+              : "")).replaceAll("\\p{C}", "").toUpperCase() + " ")
+          +
+          (customerOrder.getResponsable() != null ? (customerOrder.getResponsable().getBuilding() != null
+              ? (" | " + customerOrder.getResponsable().getBuilding())
+              : "") + " " +
+              (customerOrder.getResponsable().getFloor() != null
+                  ? (" | " + customerOrder.getResponsable().getFloor())
+                  : "")
+              : ""));
+
+      dOut.flush();
       dOut.writeUTF("\r\n");
+      dOut.flush();
+      dOut.writeUTF("   "
+          + (label.getBillingLabelPostalCode() != null
+              ? label.getBillingLabelPostalCode().replaceAll("\\p{C}", "")
+              : "")
+          + " "
+          + (label.getBillingLabelComplementCedex() != null
+              ? StringUtils.stripAccents(label.getBillingLabelComplementCedex()).toUpperCase()
+                  .replaceAll("\\p{C}", "")
+              : "")
+          + " "
+          + StringUtils.stripAccents(label.getBillingLabelCity() != null
+              ? label.getBillingLabelCity().getLabel()
+              : "").replaceAll("\\p{C}", "")
+          + " "
+          + ((label.getBillingLabelCountry() == null || label.getBillingLabelCountry().getId()
+              .equals(constantService.getCountryFrance().getId())) ? ""
+                  : label.getBillingLabelCountry().getLabel().replaceAll("\\p{C}", "")));
+
       dOut.flush();
       dOut.writeUTF("\r\n");
       dOut.flush();
 
-      dOut.flush();
+      dOut.writeUTF("      " + "Journal Spécial des Sociétés");
       dOut.writeUTF("\r\n");
-
-      dOut.flush();
       dOut.writeUTF("\r\n");
+      dOut.writeUTF("10" + " " + "Boulevard Haussman");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("7 5 0 0 9" + "  " + "Paris");
       dOut.flush();
 
     } catch (IOException e) {

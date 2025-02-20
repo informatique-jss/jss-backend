@@ -1,26 +1,46 @@
 <h1 mat-dialog-title>Choix des pièces jointes</h1>
 <div mat-dialog-content>
   <p>Indiquez ci-dessous la liste des numéros de commande pour lesquels imprimer une étiquette :</p>
-  <table class="full-width ">
-    <tr>
-      <td>
-        <generic-chips-input [(model)]="customerOrders" label="N° de commande" [form]="printLabelForm"
-          propertyName="customerOrders" [isMandatory]="true" [isDisabled]="false"></generic-chips-input>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <generic-toggle [(model)]="printLabel" label="Imprimer les étiquettes ?" [form]="printLabelForm"
-          propertyName="printLabel"></generic-toggle>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <generic-toggle [(model)]="printLetters" label="Générer les lettres ?" [form]="printLabelForm"
-          propertyName="printLetters"></generic-toggle>
-      </td>
-    </tr>
-  </table>
+  <form [formGroup]="printLabelForm">
+    <table class="full-width ">
+      <tr>
+        <td>
+          <generic-chips-input [(model)]="customerOrders" label="N° de commande" [form]="printLabelForm"
+            propertyName="customerOrders" [isMandatory]="true" [isDisabled]="false"></generic-chips-input>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <generic-toggle [(model)]="printLabel" label="Imprimer les étiquettes ?" [form]="printLabelForm"
+            propertyName="printLabel"></generic-toggle>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <radio-group-recipient-label [(model)]="selectedRecipient" [form]="printLabelForm"
+            propertyName="selectedRecipient" label="Destinataire"></radio-group-recipient-label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <autocomplete-competent-authority [(model)]="selectedCompetentAuthority" propertyName="competentAuthority"
+            [isMandatory]="false" label="RCS" [form]="printLabelForm"></autocomplete-competent-authority>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <generic-toggle [(model)]="printRegisteredLetter" label="Imprimer les étiquettes pour lettre recommandée ?"
+            [form]="printLabelForm" propertyName="printRegisteredLetter"></generic-toggle>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <generic-toggle [(model)]="printLetters" label="Générer les lettres ?" [form]="printLabelForm"
+            propertyName="printLetters"></generic-toggle>
+        </td>
+      </tr>
+    </table>
+  </form>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>

@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { Employee } from '../../profile/model/Employee';
 import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
@@ -36,12 +37,18 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.get(new HttpParams().set("idAnnouncement", announcement.id), "customer-order/announcement");
   }
 
-  generateMailingLabelDownload(customerOrders: string[], printLabel: boolean, printLetters: boolean) {
-    return this.downloadGet(new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters), "customer-order/print/label");
+  generateMailingLabelDownload(customerOrders: string[], printLabel: boolean, competentAuthority: CompetentAuthority, printLetters: boolean, printRegisteredLetter: boolean) {
+    let params = new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters).set("printRegisteredLetter", printRegisteredLetter);
+    if (competentAuthority)
+      params.set("competentAuthorityId", competentAuthority.id + "");
+    return this.downloadGet(params, "customer-order/print/label");
   }
 
-  generateMailingLabel(customerOrders: string[], printLabel: boolean, printLetters: boolean) {
-    return this.get(new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters), "customer-order/print/label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
+  generateMailingLabel(customerOrders: string[], printLabel: boolean, competentAuthority: CompetentAuthority, printLetters: boolean, printRegisteredLetter: boolean) {
+    let params = new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters).set("printRegisteredLetter", printRegisteredLetter);
+    if (competentAuthority)
+      params.set("competentAuthorityId", competentAuthority.id + "");
+    return this.get(params, "customer-order/print/label");
   }
 
   generateRegisteredLabel(customerOrderId: number) {

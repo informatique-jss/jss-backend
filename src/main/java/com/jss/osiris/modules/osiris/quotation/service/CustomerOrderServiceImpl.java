@@ -52,24 +52,25 @@ import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
-import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -121,9 +122,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     CustomerOrderRepository customerOrderRepository;
 
     @Autowired
-    PhoneService phoneService;
-
-    @Autowired
     MailService mailService;
 
     @Autowired
@@ -133,7 +131,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     InvoiceService invoiceService;
 
     @Autowired
-    InvoiceHelper invoiceHelper;
+    CompetentAuthorityService competentAuthorityService;
 
     @Autowired
     GeneratePdfDelegate generatePdfDelegate;
@@ -1157,23 +1155,51 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrdersIn, boolean printLabel,
-            boolean printLetters)
+            String competentAuthorityId,
+            boolean printLetters, boolean printRegisteredLetter)
             throws OsirisException, OsirisClientMessageException {
         ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
         for (String id : customerOrdersIn) {
             customerOrders.add(getCustomerOrder(Integer.parseInt(id)));
         }
 
+        InvoiceLabelResult invoiceLabelResult = null;
+        CompetentAuthority competentAuthority = null;
+        if (competentAuthorityId != null && !competentAuthorityId.equals("")) {
+            competentAuthority = competentAuthorityService
+                    .getCompetentAuthority(Integer.valueOf(competentAuthorityId));
+            if (competentAuthority != null)
+                invoiceLabelResult = mailComputeHelper.computeCompetentAuthorityLabelResult(competentAuthority);
+        }
+        printLabel = false;
         if (printLabel)
             for (CustomerOrder customerOrder : customerOrders) {
                 try {
-                    printDelegate.printMailingLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
-                            customerOrder);
+                    if (competentAuthority != null)
+                        printDelegate.printMailingLabel(invoiceLabelResult, customerOrder);
+                    else
+                        printDelegate.printMailingLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
+                                customerOrder);
                 } catch (NumberFormatException e) {
                 } catch (Exception e) {
                     throw new OsirisException(e, "Error when printing label");
                 }
             }
+
+        if (printRegisteredLetter) {
+            for (CustomerOrder customerOrder : customerOrders) {
+                try {
+                    if (competentAuthority != null)
+                        printDelegate.printRegisteredLabel(invoiceLabelResult, customerOrder);
+                    else
+                        printDelegate.printRegisteredLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
+                                customerOrder);
+                } catch (NumberFormatException e) {
+                } catch (Exception e) {
+                    throw new OsirisException(e, "Error when printing label");
+                }
+            }
+        }
         if (printLetters) {
 
             byte[] data = null;
@@ -1206,20 +1232,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 file.delete();
             }
             return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
-        }
-        return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<byte[]> printRegisteredLetterLabel(Integer customerOrderId)
-            throws OsirisException, OsirisClientMessageException {
-        CustomerOrder customerOrder = getCustomerOrder(customerOrderId);
-        try {
-            printDelegate.printRegisteredLabel(mailComputeHelper.computePaperLabelResult(customerOrder));
-        } catch (NumberFormatException e) {
-        } catch (OsirisException e) {
-            throw new OsirisException(e, "Error when printing label");
         }
         return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
     }
