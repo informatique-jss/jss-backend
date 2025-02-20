@@ -91,8 +91,8 @@
 <div *ngIf="editMode">
   <multiple-upload class="document-upload" [entity]="entity"
     [entityType]="MISSING_ATTACHMENT_QUERY_ENTITY_TYPE.entityType" [editMode]="true"
-    [forcedAttachmentType]="constantService.getAttachmentTypeAutomaticMail()" [isForMissingAttachmentQuery]="true"
-    [isDirectUpload]="false" (endOfUpload)="sendMailQuery($event)"></multiple-upload>
+    [forcedAttachmentType]="getAttachmentTypeAutomaticMail()" [isDirectUpload]="false"
+    (endOfUpload)="sendMailQuery($event)"></multiple-upload>
 </div>
 <mat-card-content>
   <div *ngIf="missingAttachmentQuery.attachments && missingAttachmentQuery.attachments.length>0">

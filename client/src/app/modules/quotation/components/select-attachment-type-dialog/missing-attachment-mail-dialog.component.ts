@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -24,8 +24,7 @@ import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/s
   styleUrls: ['./missing-attachment-mail-dialog.component.css']
 })
 export class MissingAttachmentMailDialogComponent implements OnInit {
-  @Input() entity: IAttachment = { id: 1 } as IAttachment;
-  @Input() entityType: string = "";
+  entity: IAttachment = { id: undefined } as IAttachment;
   service: Service | undefined;
   displayedColumns: SortTableColumn<AssoServiceDocument>[] = [];
   displayedFieldTypes: SortTableColumn<AssoServiceFieldType>[] = [];
@@ -48,14 +47,15 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
-    protected uploadAttachmentService: UploadAttachmentService,
+    private uploadAttachmentService: UploadAttachmentService,
     public dialogRef: MatDialogRef<SelectAttachmentsDialogComponent>,
     private missingAttachmentQueryService: MissingAttachmentQueryService,
     private serviceService: ServiceService,
-    public constantService: ConstantService,
+    private constantService: ConstantService,
   ) { }
 
   refreshTable: Subject<void> = new Subject<void>();
+  getAttachmentTypeAutomaticMail = this.constantService.getAttachmentTypeAutomaticMail;
 
   getServiceLabel(service: Service) {
     return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
