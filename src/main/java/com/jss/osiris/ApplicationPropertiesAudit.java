@@ -128,6 +128,19 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("mail.imap.tls.version");
         isOk = isOk && checkProperty("schedulling.mail.purge.indexation");
 
+        isOk = isOk && checkProperty("mail.imap.host");
+        isOk = isOk && checkProperty("mail.imap.port");
+        isOk = isOk && checkProperty("mail.imap.username");
+        isOk = isOk && checkProperty("mail.imap.password");
+        isOk = isOk && checkProperty("mail.imap.auth");
+        isOk = isOk && checkProperty("mail.imap.ssl.enable");
+        isOk = isOk && checkProperty("mail.imap.auth.mechanisms");
+        isOk = isOk && checkProperty("mail.imap.app.id");
+        isOk = isOk && checkProperty("mail.imap.tenant.id");
+        isOk = isOk && checkProperty("mail.imap.secret.value");
+        isOk = isOk && checkProperty("mail.imap.secret.id");
+        isOk = isOk && checkProperty("schedulling.mail.automatic.indexation");
+
         if (!isOk)
             System.exit(-1);
     }

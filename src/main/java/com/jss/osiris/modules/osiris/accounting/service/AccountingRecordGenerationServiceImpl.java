@@ -18,6 +18,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -28,7 +29,6 @@ import com.jss.osiris.modules.osiris.invoicing.service.RefundService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 
 @Service
@@ -51,9 +51,6 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Autowired
     RefundService refundService;
-
-    @Autowired
-    BankTransfertService bankTransfertService;
 
     @Autowired
     AccountingRecordService accountingRecordService;
@@ -1147,4 +1144,41 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             return closedDate;
         return payment.getPaymentDate();
     }
+
+    @Override
+    public void generateAccountingRecordForSageRecord(List<SageRecord> sageRecords) throws OsirisException {
+        Integer operationId = getNewTemporaryOperationId();
+        AccountingJournal salaryJournal = constantService.getAccountingJournalSalary();
+        List<AccountingAccount> targetAccountingAccount = new ArrayList<AccountingAccount>();
+        BigDecimal balance = new BigDecimal(0);
+
+        if (sageRecords != null && !sageRecords.isEmpty()) {
+            for (SageRecord sageRecord : sageRecords) {
+                targetAccountingAccount = accountingAccountService
+                        .getAccountingAccountByLabelOrCode(sageRecord.getTargetAccountingAccountCode());
+                if (targetAccountingAccount == null || targetAccountingAccount.isEmpty())
+                    throw new OsirisException(null,
+                            "Invalid target accounting account provided for sage record ");
+
+                if (sageRecord.getCreditAmount() != null) {
+                    generateNewAccountingRecord(sageRecord.getOperationDate().atTime(0, 0), operationId, null, null,
+                            "OD paie - " + sageRecord.getOperationDate() + " - " + sageRecord.getLabel(),
+                            sageRecord.getCreditAmount().abs(), null, targetAccountingAccount.get(0), null, null,
+                            null,
+                            salaryJournal, null, null, null);
+                    balance = balance.add(sageRecord.getCreditAmount());
+                }
+                if (sageRecord.getDebitAmount() != null) {
+                    generateNewAccountingRecord(sageRecord.getOperationDate().atTime(0, 0), operationId, null, null,
+                            "OD paie - " + sageRecord.getOperationDate() + " - " + sageRecord.getLabel(),
+                            null, sageRecord.getDebitAmount(), targetAccountingAccount.get(0), null, null,
+                            null,
+                            salaryJournal, null, null, null);
+                    balance = balance.subtract(sageRecord.getDebitAmount());
+                }
+            }
+            checkBalance(balance);
+        }
+    }
+
 }

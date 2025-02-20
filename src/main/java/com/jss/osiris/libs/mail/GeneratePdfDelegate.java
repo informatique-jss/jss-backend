@@ -546,19 +546,28 @@ public class GeneratePdfDelegate {
                         : ""));
 
         if (customerOrder != null) {
+            List<String> externalReferences = new ArrayList<String>();
             Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
                     constantService.getDocumentTypeBilling());
             if (billingDocument != null) {
                 if (billingDocument.getExternalReference() != null)
-                    ctx.setVariable("externalReference", billingDocument.getExternalReference());
-
+                    externalReferences.add(billingDocument.getExternalReference());
                 // Responsable on billing
-                if (billingDocument.getIsResponsableOnBilling() != null && billingDocument.getIsResponsableOnBilling()
+                if (billingDocument.getIsResponsableOnBilling() != null
+                        && billingDocument.getIsResponsableOnBilling()
                         && customerOrder.getResponsable() != null)
                     ctx.setVariable("responsableOnBilling", customerOrder.getResponsable().getFirstname() + " "
                             + customerOrder.getResponsable().getLastname());
-
             }
+
+            if (customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                    if (asso.getAffaire() != null && asso.getAffaire().getExternalReference() != null
+                            && asso.getAffaire().getExternalReference().length() > 0)
+                        externalReferences.add(asso.getAffaire().getExternalReference());
+
+            if (externalReferences.size() > 0)
+                ctx.setVariable("externalReference", String.join(" / ", externalReferences));
 
             ctx.setVariable("customerOrder", customerOrder);
 

@@ -83,4 +83,6 @@ public interface QuotationService {
 
         public Boolean checkValidationIdQuotation(Integer validationId);
 
+        public List<Quotation> findQuotationByResponsable(Responsable responsable);
+
 }

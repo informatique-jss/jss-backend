@@ -2,17 +2,15 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
-import { ServiceService } from 'src/app/modules/quotation/services/service.service';
-import { ConstantService } from '../../modules/miscellaneous/services/constant.service';
 import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';
 import { IndexEntity } from './IndexEntity';
 import { IndexEntityService } from './index.entity.service';
 
 export const OFX_ENTITY_TYPE: EntityType = { entityType: 'Ofx', tabName: 'Ofx', entryPoint: 'ofx' };
+export const SAGE_ENTITY_TYPE: EntityType = { entityType: 'Sage', tabName: 'Sage', entryPoint: 'sage' };
 export const TIERS_ENTITY_TYPE: EntityType = { entityType: 'Tiers', tabName: 'Tiers', entryPoint: 'tiers' };
 export const RESPONSABLE_ENTITY_TYPE: EntityType = { entityType: 'Responsable', tabName: 'Responsable', entryPoint: 'tiers/responsable' };
 export const CONFRERE_ENTITY_TYPE: EntityType = { entityType: 'Confrere', tabName: 'Confrère', entryPoint: 'confrere' };
@@ -37,6 +35,7 @@ export const BANK_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'BankTransfe
 export const DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'DirectDebitTransfert', tabName: 'Prélèvements', entryPoint: 'invoicing/directDebit' };
 export const ASSO_SERVICE_DOCUMENT_ENTITY_TYPE: EntityType = { entityType: 'AssoServiceDocument', tabName: 'Documents du service', entryPoint: 'quotation/service' };
 export const TYPE_DOCUMENT_ATTACHMENT_TYPE: EntityType = { entityType: 'TypeDocument', tabName: 'Type de document', entryPoint: 'administration/type-document' };
+export const MISSING_ATTACHMENT_QUERY_ENTITY_TYPE: EntityType = { entityType: 'MissingAttachmentQuery', tabName: 'Demande de pièces manquantes', entryPoint: 'provision/missing-attachment-query' };
 
 @Component({
   selector: 'app-search',
@@ -49,10 +48,7 @@ export class SearchComponent implements OnInit {
   constructor(private searchDialogRef: MatDialogRef<SearchComponent>,
     protected indexEntityService: IndexEntityService,
     private appService: AppService,
-    private serviceService: ServiceService,
-    private constantService: ConstantService,
-    protected formBuilder: UntypedFormBuilder,
-    private router: Router) { }
+    protected formBuilder: UntypedFormBuilder,) { }
 
   TIERS_ENTITY_TYPE = TIERS_ENTITY_TYPE;
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;

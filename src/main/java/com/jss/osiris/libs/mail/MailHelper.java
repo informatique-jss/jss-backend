@@ -38,7 +38,6 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
-import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
@@ -50,9 +49,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -69,7 +66,6 @@ import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
-import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.FormaliteInfogreffeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Rff;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
@@ -126,9 +122,6 @@ public class MailHelper {
     DocumentService documentService;
 
     @Autowired
-    EmployeeService employeeService;
-
-    @Autowired
     CustomerOrderService customerOrderService;
 
     @Autowired
@@ -136,9 +129,6 @@ public class MailHelper {
 
     @Autowired
     InvoiceHelper invoiceHelper;
-
-    @Autowired
-    AccountingRecordService accountingRecordService;
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
@@ -157,9 +147,6 @@ public class MailHelper {
 
     @Autowired
     CustomerMailService mailService;
-
-    @Autowired
-    VatService vatService;
 
     @Autowired
     ResponsableService responsableService;
@@ -1158,7 +1145,7 @@ public class MailHelper {
 
         mail.setAttachments(attachments);
         mail.setHeaderPicture("images/mails/customer-order-finalization.png");
-        mail.setReplyToMail(constantService.getStringAccountingSharedMaiblox());
+        mail.setReplyToMail(constantService.getRecoverySharedMaiblox());
         mail.setSendToMe(sendToMe);
         mail.setMailTemplate(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION);
 
@@ -1314,6 +1301,12 @@ public class MailHelper {
                             && asso.getTypeDocument().getAttachments().size() > 0)
                         for (Attachment attachment : asso.getTypeDocument().getAttachments())
                             attachments.add(attachment);
+        }
+        if (mail.getMissingAttachmentQuery() != null
+                && mail.getMissingAttachmentQuery().getAttachments() != null
+                && mail.getMissingAttachmentQuery().getAttachments().size() > 0) {
+            for (Attachment attachment : mail.getMissingAttachmentQuery().getAttachments())
+                attachments.add(attachment);
         }
 
         mail.setAttachments(attachments);

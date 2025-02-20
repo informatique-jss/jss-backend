@@ -914,6 +914,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public String getRecoverySharedMaiblox() throws OsirisException {
+        return getConstants().getRecoverySharedMaiblox();
+    }
+
+    @Override
     public String getStringSalesSharedMailbox() throws OsirisException {
         return getConstants().getSalesSharedMailbox();
     }

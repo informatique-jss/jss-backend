@@ -71,6 +71,11 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                                 "approval",
                                 false, false, AggregateStatus.AGGREGATE_STATUS_WAITING, 10);
 
+                updateStatus(FormaliteStatus.FORMALITE_AUTHORITY_TECHNICAL_BLOCKING,
+                                "Blocage technique par l'autorité compétente",
+                                "bug_report",
+                                false, false, AggregateStatus.AGGREGATE_STATUS_WAITING, 12);
+
                 updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true,
                                 AggregateStatus.AGGREGATE_STATUS_DONE, 1);
 
@@ -86,6 +91,9 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                                 FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY);
                 setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
                                 FormaliteStatus.FORMALITE_DONE);
+
+                setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
+                                FormaliteStatus.FORMALITE_AUTHORITY_TECHNICAL_BLOCKING);
 
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED,
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
@@ -107,6 +115,9 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
 
                 setPredecessor(FormaliteStatus.FORMALITE_WAITING_LINKED_PROVISION,
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
+
+                setPredecessor(FormaliteStatus.FORMALITE_AUTHORITY_TECHNICAL_BLOCKING,
+                                FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY);
 
         }
 

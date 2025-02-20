@@ -190,4 +190,5 @@ public interface CustomerOrderRepository
         List<CustomerOrder> searchOrders(List<Responsable> responsables,
                         List<CustomerOrderStatus> customerOrderStatusToFilter);
 
+        List<CustomerOrder> findByResponsable(Responsable responsable);
 }

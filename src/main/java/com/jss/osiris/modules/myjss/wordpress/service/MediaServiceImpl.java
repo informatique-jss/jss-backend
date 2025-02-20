@@ -48,21 +48,35 @@ public class MediaServiceImpl implements MediaService {
             if (media.getMedia_details() != null && media.getMedia_details().getFile() != null) {
                 if (media.getMedia_details().getSizes() != null) {
                     MediaSizes sizes = media.getMedia_details().getSizes();
+                    String smallestNonNullImageUrl = ""; // At least the Full size is present
                     if (sizes.getFull() != null) {
-                        media.setUrlFull(
-                                sizes.getFull().getSource_url().replace(wordpressMediaBaseUrl, apacheMediaBaseUrl));
+                        String newUrl = sizes.getFull().getSource_url().replace(wordpressMediaBaseUrl,
+                                apacheMediaBaseUrl);
+                        media.setUrlFull(newUrl);
+                        smallestNonNullImageUrl = newUrl;
                     }
                     if (sizes.getLarge() != null) {
-                        media.setUrlLarge(
-                                sizes.getLarge().getSource_url().replace(wordpressMediaBaseUrl, apacheMediaBaseUrl));
+                        String newUrl = sizes.getLarge().getSource_url().replace(wordpressMediaBaseUrl,
+                                apacheMediaBaseUrl);
+                        media.setUrlLarge(newUrl);
+                        smallestNonNullImageUrl = newUrl;
+                    } else {
+                        media.setUrlLarge(smallestNonNullImageUrl);
                     }
                     if (sizes.getMedium() != null) {
-                        media.setUrlMedium(
-                                sizes.getMedium().getSource_url().replace(wordpressMediaBaseUrl, apacheMediaBaseUrl));
+                        String newUrl = sizes.getMedium().getSource_url().replace(wordpressMediaBaseUrl,
+                                apacheMediaBaseUrl);
+                        media.setUrlMedium(newUrl);
+                        smallestNonNullImageUrl = newUrl;
+                    } else {
+                        media.setUrlMedium(smallestNonNullImageUrl);
                     }
                     if (sizes.getMedium_large() != null) {
-                        media.setUrlMediumLarge(sizes.getMedium_large().getSource_url().replace(wordpressMediaBaseUrl,
-                                apacheMediaBaseUrl));
+                        String newUrl = sizes.getMedium_large().getSource_url().replace(wordpressMediaBaseUrl,
+                                apacheMediaBaseUrl);
+                        media.setUrlMediumLarge(newUrl);
+                    } else {
+                        media.setUrlMediumLarge(smallestNonNullImageUrl);
                     }
                     if (sizes.getThumbnail() != null) {
                         media.setUrlThumbnail(

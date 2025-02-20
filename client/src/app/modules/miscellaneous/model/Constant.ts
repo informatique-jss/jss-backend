@@ -209,6 +209,7 @@ export interface Constant {
   typeFormaliteCorrection: TypeFormalite;
   salesSharedMailbox: string;
   accountingSharedMaiblox: string;
+  recoverySharedMaiblox: string;
   billingClosureRecipientTypeOther: BillingClosureRecipientType;
   billingClosureRecipientTypeResponsable: BillingClosureRecipientType;
   billingClosureRecipientTypeClient: BillingClosureRecipientType;

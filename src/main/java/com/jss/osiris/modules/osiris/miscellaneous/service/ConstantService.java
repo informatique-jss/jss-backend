@@ -387,6 +387,8 @@ public interface ConstantService {
 
     public String getStringSalesSharedMailbox() throws OsirisException;
 
+    public String getRecoverySharedMaiblox() throws OsirisException;
+
     public BillingClosureRecipientType getBillingClosureRecipientTypeOther() throws OsirisException;
 
     public BillingClosureRecipientType getBillingClosureRecipientTypeClient() throws OsirisException;

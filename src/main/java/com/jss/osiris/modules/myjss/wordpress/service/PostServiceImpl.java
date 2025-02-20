@@ -150,9 +150,60 @@ public class PostServiceImpl implements PostService {
             post.setVideoUrl(url.replace(wordpressMediaBaseUrl, apacheMediaBaseUrl));
         }
 
+        // Changing HTML file from Wordpress to correct wrong formatting of quotes
+        pattern = Pattern.compile("(?s)<blockquote[^>]*\\sclass=\"([^\"]+)\".*?</blockquote>");
+
+        matcher = pattern.matcher(post.getContentText());
+
+        while (matcher.find()) {
+            String blockquoteElement = matcher.group();
+
+            // Addind a <figure> tag encapsulating the quote
+            post.setContentText(post.getContentText().replaceFirst(escapeRegexSpecialChars(blockquoteElement),
+                    "<figure class=\"my-5\">" + blockquoteElement + "</figure>"));
+
+            // Replacing the <blockquote> wordpress classes by the "blockquote" class
+            String wordpressQuoteClasses = matcher.group(1);
+            post.setContentText(
+                    post.getContentText().replaceFirst(escapeRegexSpecialChars(wordpressQuoteClasses), "blockquote"));
+
+        }
+
+        // We modify all the <cite> tag classes with good format
+        final String CITE_TAG = "<cite";
+        post.setContentText(post.getContentText().replace(CITE_TAG,
+                CITE_TAG + " class=\"blockquote-footer\" style=\"padding-left:0\""));
+
+        // Adding _blank to all href in contentText to open them in a new tab when
+        // clicked
+        final String TARGET_BLANK = " target=\"_blank\"";
+        pattern = Pattern.compile("<a\\s+[^>]*href=\"([^\"]+)\".*?>(.*?)<\\/a>");
+
+        matcher = pattern.matcher(post.getContentText());
+
+        int insertions = 0; // Keeps track of the number of insertions of the ATTRIBUTE_TO_INSERT attribute
+        while (matcher.find()) {
+            String hrefElement = matcher.group();
+            if (!hrefElement.contains(TARGET_BLANK)) {
+                // We want to insert after the " of the found url (+1) and shift the end index
+                // everytime we add the attribute TARGET_BLANK
+                int indexToInsert = matcher.end(1) + 1 + insertions * TARGET_BLANK.length();
+                String newString = post.getContentText().substring(0, indexToInsert)
+                        + TARGET_BLANK
+                        + post.getContentText().substring(indexToInsert);
+                post.setContentText(newString);
+                insertions++;
+            }
+        }
+
         postRepository.save(computePost(post));
         batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
         return post;
+    }
+
+    // The method allow to escape all characters that a regex could interpret
+    private static String escapeRegexSpecialChars(String textToFind) {
+        return textToFind.replaceAll("([\\^\\$\\.\\|\\?\\*\\+\\(\\)\\[\\]\\{\\}\\\\])", "\\\\$1");
     }
 
     @Override
@@ -274,6 +325,26 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reindexPosts() throws OsirisException {
+        List<Post> posts = IterableUtils.toList(postRepository.findAll());
+        if (posts != null)
+            for (Post post : posts)
+                batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
+    }
+
+    public List<Post> getPostExcludedId(List<Integer> postFetchedId) {
+
+        return postRepository.findPostExcludIds(postFetchedId);
+    }
+
+    public void cancelPost(Post post) {
+        post = getPost(post.getId());
+        post.setIsCancelled(true);
+        postRepository.save(post);
+    }
+
     private Post computePost(Post post) {
         if (post.getFeatured_media() != null && post.getFeatured_media() > 0) {
             post.setMedia(mediaService.getMedia(post.getFeatured_media()));
@@ -358,24 +429,5 @@ public class PostServiceImpl implements PostService {
             post.setPostSerie(series);
         }
         return post;
-    }
-
-    public List<Post> getPostExcludedId(List<Integer> postFetchedId) {
-        return postRepository.findPostExcludIds(postFetchedId);
-    }
-
-    public void cancelPost(Post post) {
-        post = getPost(post.getId());
-        post.setIsCancelled(true);
-        postRepository.save(post);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void reindexPosts() throws OsirisException {
-        List<Post> posts = IterableUtils.toList(postRepository.findAll());
-        if (posts != null)
-            for (Post post : posts)
-                batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
     }
 }

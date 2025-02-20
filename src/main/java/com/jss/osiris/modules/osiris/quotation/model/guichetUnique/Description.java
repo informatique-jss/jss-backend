@@ -31,7 +31,7 @@ public class Description implements Serializable, IId {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_sequence")
     private Integer id;
 
-    @Column(length = 4000)
+    @Column(length = 8000)
     private String objet;
 
     @Column(length = 255)

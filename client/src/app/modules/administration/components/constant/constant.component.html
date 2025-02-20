@@ -1307,6 +1307,13 @@
           </tr>
           <tr>
             <td>
+              <generic-input [(model)]="constant.recoverySharedMaiblox" label="Adresse mail de la boite Recouvrement"
+                [form]="constantForm" propertyName="recoverySharedMaiblox" [isMandatory]="true" [isDisabled]="!editMode"
+                type="email"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-input [(model)]="constant.salesSharedMailbox" label="Adresse mail de la boite Commercial"
                 [form]="constantForm" propertyName="salesSharedMailbox" [isMandatory]="true" [isDisabled]="!editMode"
                 type="email"></generic-input>

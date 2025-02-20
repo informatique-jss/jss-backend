@@ -164,7 +164,7 @@ export class HabilitationsService {
   }
 
   canMovePaymentToWaitingAccount() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING_RESPONSIBLE])
   }
 
   canPutInAnyAccountingAccount() {
@@ -201,6 +201,10 @@ export class HabilitationsService {
 
   canByPassProvisionLockOnBilledOrder() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canImportSageFile() {
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING_RESPONSIBLE]);
   }
 }
 

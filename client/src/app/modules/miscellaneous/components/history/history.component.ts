@@ -32,6 +32,7 @@ export class HistoryComponent implements OnInit {
   @Input() parseTypeList: IReferential[] | undefined;
 
   audits: Audit[] = [] as Array<Audit>;
+  finalAudits: Audit[] = [] as Array<Audit>;
 
   ddisplayedColumns: string[] = ['', '', '', '', ''];
 
@@ -115,6 +116,7 @@ export class HistoryComponent implements OnInit {
   }
 
   refreshTable() {
+    this.finalAudits = this.audits;
     if (this.audits != undefined && this.audits != null && this.audits.length > 0) {
       this.audits.sort(function (a: Audit, b: Audit) {
         return new Date(b.datetime).getTime() - new Date(a.datetime).getTime();

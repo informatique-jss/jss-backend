@@ -286,7 +286,7 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/payment/waiting")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
     public ResponseEntity<Payment> movePaymentToWaitingAccount(@RequestParam Integer paymentId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         Payment payment = paymentService.getPayment(paymentId);

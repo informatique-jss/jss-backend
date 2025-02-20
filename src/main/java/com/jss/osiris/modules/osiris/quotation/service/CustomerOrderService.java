@@ -65,6 +65,8 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable);
+
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
 
         public List<IOrderingSearchTaggedResult> searchOrdersTagged(OrderingSearchTagged orderingSearchResult);

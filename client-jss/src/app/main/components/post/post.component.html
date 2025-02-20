@@ -85,7 +85,8 @@ Main START -->
                 <!-- Card img -->
                 <div class="position-relative">
                   <img class="card-img" [src]="relatedPost.media.urlMedium" alt="Card image">
-                  <div class="card-img-overlay d-flex align-items-start flex-column p-3">
+                  <div class="card-img-overlay d-flex align-items-start flex-column p-3" style="cursor: pointer;"
+                    (click)="openPost(relatedPost, $event)">
                     <!-- Card overlay bottom -->
                     <div class="w-100 mt-auto">
                       <ng-container *ngIf="relatedPost.myJssCategories!=null && relatedPost.myJssCategories.length>0">

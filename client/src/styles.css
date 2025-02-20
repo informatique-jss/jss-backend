@@ -91,12 +91,16 @@ mini-fab-add mat-form-field.mat-mdc-form-field, mat-option, .mat-mdc-cell {
   cursor: pointer;
 }
 
-.visibility{
+.visibility {
   margin-top: 10px;
 }
 
 .tooltip {
   margin-top: 5px !important;
+}
+
+.icon-padding {
+  padding-right: 10px;
 }
 
 .mat-mdc-menu-content {
