@@ -150,6 +150,30 @@ public class PostServiceImpl implements PostService {
             post.setVideoUrl(url.replace(wordpressMediaBaseUrl, apacheMediaBaseUrl));
         }
 
+        // Changing HTML file from Wordpress to correct wrong formatting of quotes
+        pattern = Pattern.compile("(?s)<blockquote[^>]*\\sclass=\"([^\"]+)\".*?</blockquote>");
+
+        matcher = pattern.matcher(post.getContentText());
+
+        while (matcher.find()) {
+            String blockquoteElement = matcher.group();
+
+            // Addind a <figure> tag encapsulating the quote
+            post.setContentText(post.getContentText().replaceFirst(escapeRegexSpecialChars(blockquoteElement),
+                    "<figure class=\"my-5\">" + blockquoteElement + "</figure>"));
+
+            // Replacing the <blockquote> wordpress classes by the "blockquote" class
+            String wordpressQuoteClasses = matcher.group(1);
+            post.setContentText(
+                    post.getContentText().replaceFirst(escapeRegexSpecialChars(wordpressQuoteClasses), "blockquote"));
+
+        }
+
+        // We modify all the <cite> tag classes with good format
+        final String CITE_TAG = "<cite";
+        post.setContentText(post.getContentText().replace(CITE_TAG,
+                CITE_TAG + " class=\"blockquote-footer\" style=\"padding-left:0\""));
+
         // Adding _blank to all href in contentText to open them in a new tab when
         // clicked
         final String TARGET_BLANK = " target=\"_blank\"";
@@ -175,6 +199,11 @@ public class PostServiceImpl implements PostService {
         postRepository.save(computePost(post));
         batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
         return post;
+    }
+
+    // The method allow to escape all characters that a regex could interpret
+    private static String escapeRegexSpecialChars(String textToFind) {
+        return textToFind.replaceAll("([\\^\\$\\.\\|\\?\\*\\+\\(\\)\\[\\]\\{\\}\\\\])", "\\\\$1");
     }
 
     @Override

@@ -32,6 +32,26 @@ export class PostService extends AppRestService<Post> {
     return this.getList(new HttpParams().set("slug", slug), "posts/serie/slug");
   }
 
+  completeMediaInPosts(posts: Post[]) {
+    posts.forEach(post => {
+      if (!post.media) {
+        post.media = {
+          id: 0,
+          date: new Date(),
+          media_type: 'image',
+          alt_text: 'Logo JSS',
+          file: 'JSS-logo.png',
+          urlFull: 'assets/images/logo.png',
+          urlLarge: 'assets/images/logo.png',
+          urlMedium: 'assets/images/logo.png',
+          urlMediumLarge: 'assets/images/logo.png',
+          urlThumbnail: 'assets/images/logo.png',
+          length: 0
+        };
+      }
+    });
+  }
+
   getTopPostByMyJssCategory(page: number, myJssCategory: MyJssCategory) {
     return this.getList(new HttpParams().set("page", page).set("categoryId", myJssCategory.id), "posts/top/myjss-category");
   }
