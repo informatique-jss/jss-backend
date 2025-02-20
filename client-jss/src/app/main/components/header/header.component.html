@@ -1,5 +1,5 @@
 <header class="navbar-light navbar-sticky header-static">
-  <div class="navbar-top small">
+  <div class="navbar-top d-none d-lg-block small">
     <div class="container">
       <div class="d-md-flex justify-content-between align-items-center my-2 row">
         <!-- Top bar left -->
@@ -79,7 +79,7 @@
           </div>
           <!-- Dark mode options END -->
 
-          <ul class="nav d-none d-md-flex">
+          <ul class="nav">
             <li class="nav-item">
               <a class="nav-link px-2 fs-5" href="https://www.facebook.com/Journal.Special.des.Societes"
                 target="_blank"><i class="fab fa-facebook-square"></i></a>
@@ -114,11 +114,20 @@
       </a>
       <!-- Logo END -->
 
-
       <!-- Main navbar START -->
       <div class="collapse navbar-collapse" id="navbarCollapse">
+        <!-- Signin collapse -->
+        <ul class="nav d-lg-none row">
+          <li class="nav-item col">
+            <a class="nav-link" style="cursor: pointer; text-align: center;"
+              (click)="openSubscribe($event)">S'abonner</a><!-- TODO -->
+          </li>
+          <li class="nav-item col">
+            <a class="nav-link" style="cursor: pointer; text-align: center;" (click)="openSignIn($event)">Se
+              connecter</a><!-- TODO -->
+          </li>
+        </ul>
         <ul class="navbar-nav navbar-nav-scroll mx-auto">
-
           <!-- Nav item articles -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="homeMenu" data-bs-toggle="dropdown" aria-haspopup="true"
@@ -158,22 +167,34 @@
                   style="text-transform: none;cursor: pointer">Consultez
                   nos annonces légales</a></li>
               <li> <a class="dropdown-item" (click)="openNewAnnouncement($event)"
-                  style="text-transform: none;cursor: pointer">Déposer
-                  une
-                  annonce légale</a></li>
+                  style="text-transform: none;cursor: pointer">Déposer une annonce légale</a>
+              </li>
             </ul>
+          </li>
+
+          <li class="nav-item d-lg-none">
+            <div class="nav-item d-md-block">
+              <a style="cursor: pointer;" (click)="openNewFormality($event)" class="btn btn-sm btn-warning">Déposer
+                une formalité</a><!-- TODO -->
+            </div>
+          </li>
+          <li class="nav-item d-lg-none">
+            <div class="nav-item d-md-block">
+              <a style="cursor: pointer;" (click)="openMyJss($event)"
+                class="btn btn-sm btn-primary">MyJSS</a><!-- TODO -->
+            </div>
           </li>
 
         </ul>
       </div>
       <!-- Main navbar END -->
-
       <!-- Nav right START -->
-      <div class="nav flex-nowrap align-items-center d-flex flex-grow-1 justify-content-end">
+      <div class="nav flex-nowrap align-items-center flex-grow-1 justify-content-end mb-2 d-none d-lg-flex">
         <!-- Nav Button -->
         <div class="nav-item d-md-block">
           <a style="cursor: pointer;" (click)="openNewFormality($event)"
-            class="btn btn-sm btn-warning mb-0 mx-2">Déposer une formalité</a><!-- TODO -->
+            class="btn btn-sm btn-warning mb-0 mx-2">Déposer une
+            formalité</a><!-- TODO -->
         </div>
         <div class="nav-item d-md-block">
           <a style="cursor: pointer;" (click)="openMyJss($event)"
