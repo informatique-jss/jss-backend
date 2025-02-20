@@ -29,6 +29,7 @@ public class FormaliteStatus implements Serializable, IId {
 	public static String FORMALITE_WAITING_LINKED_PROVISION = "FORMALITE_WAITING_LINKED_PROVISION";
 	public static String FORMALITE_AUTHORITY_REJECTED = "FORMALITE_AUTHORITY_REJECTED";
 	public static String FORMALITE_AUTHORITY_VALIDATED = "FORMALITE_AUTHORITY_VALIDATED";
+	public static String FORMALITE_AUTHORITY_TECHNICAL_BLOCKING = "FORMALITE_AUTHORITY_TECHNICAL_BLOCKING";
 	public static String FORMALITE_DONE = "FORMALITE_DONE";
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)

@@ -613,7 +613,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 itemNonTaxable.setVat(constantService.getVatZero());
                                 itemNonTaxable.setVatPrice(new BigDecimal(0));
                                 itemNonTaxable.setBillingItem(pricingHelper.getAppliableBillingItem(
-                                        constantService.getBillingTypeEmolumentsDeGreffeDebour(), null));
+                                        constantService.getBillingTypeDeboursNonTaxable(), null));
                                 itemNonTaxable
                                         .setLabel(itemTaxable.getBillingItem().getBillingType().getLabel());
 
@@ -639,8 +639,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                         itemNonTaxable.getPreTaxPrice().abs().divide(new BigDecimal(100)));
                                 itemTaxable
                                         .setPreTaxPrice(itemTaxable.getPreTaxPrice().abs().divide(new BigDecimal(100)));
-                                itemNonTaxable.setPreTaxPriceReinvoiced(itemNonTaxable.getPreTaxPrice());
-                                itemTaxable.setPreTaxPriceReinvoiced(itemTaxable.getPreTaxPrice());
+                                itemNonTaxable.setPreTaxPriceReinvoiced(itemNonTaxable.getPreTaxPrice().negate());
+                                itemTaxable.setPreTaxPriceReinvoiced(itemTaxable.getPreTaxPrice().negate());
 
                                 if (itemNonTaxable.getPreTaxPrice().compareTo(new BigDecimal(0)) > 0)
                                     invoice.getInvoiceItems().add(itemNonTaxable);
@@ -659,10 +659,19 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     private InvoiceItem getInvoiceItemForCartRate(CartRate cartRate, Cart cart) throws OsirisException {
         InvoiceItem invoiceItem = new InvoiceItem();
-        extractVatFromCartRate(invoiceItem, cartRate);
+        invoiceItem.setVat(extractVatFromCartRate(invoiceItem, cartRate));
         invoiceItem.setDiscountAmount(zeroValue);
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
+
+        if (invoiceItem.getVat().getId().equals(constantService.getVatZero().getId())) {
+            invoiceItem.setBillingItem(
+                    pricingHelper.getAppliableBillingItem(constantService.getBillingTypeDeboursNonTaxable(), null));
+        } else {
+            invoiceItem.setBillingItem(
+                    pricingHelper.getAppliableBillingItem(constantService.getBillingTypeEmolumentsDeGreffeDebour(),
+                            null));
+        }
 
         List<CompetentAuthority> competentAuthorities = competentAuthorityService
                 .getCompetentAuthorityByInpiReference(cartRate.getRecipientCode());

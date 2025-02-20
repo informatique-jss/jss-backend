@@ -19,6 +19,20 @@
         </div>
       </div>
       <div class="form-div">
+        <table class="full-width">
+          <tr *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus">
+            <td>
+              <autocomplete-competent-authority [(model)]="formalite.waitedCompetentAuthority" [form]="formaliteForm"
+                propertyName="waitedCompetentAuthority" [isMandatory]="false"
+                label="Autorité compétente en attente"></autocomplete-competent-authority>
+            </td>
+            <td><generic-datepicker *ngIf="provision.lastCompetentAuthorityReminderDateTime" [isMandatory]="false"
+                [(model)]="provision.lastCompetentAuthorityReminderDateTime" label="Dernière relance de l'AC"
+                [form]="formaliteForm" propertyName="lastCompetentAuthorityReminderDateTime"></generic-datepicker></td>
+          </tr>
+        </table>
+      </div>
+      <div class="form-div">
         <mat-divider class="margin-mat-divider"></mat-divider>
         <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
       </div>
