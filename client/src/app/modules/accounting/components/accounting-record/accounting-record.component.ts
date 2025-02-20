@@ -409,11 +409,11 @@ export class AccountingRecordComponent implements OnInit {
     return balance;
   }
 
-  canImportPnmFile() {
-    return this.habilitationService.canImportPnmFile();
+  canImportSageFile() {
+    return this.habilitationService.canImportSageFile();
   }
 
-  importPnmFile() {
+  importSageFile() {
     this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
     });
     this.uploadAttachementDialogRef.componentInstance.entity = { id: 1 } as IAttachment;

@@ -697,7 +697,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       }
 
       BigDecimal balance = new BigDecimal(0);
-      for (AccountingRecord accountingRecord : removeDuplicatesRecords(recordsToDelete)) {
+      recordsToDelete = removeDuplicatesRecords(recordsToDelete);
+      for (AccountingRecord accountingRecord : recordsToDelete) {
         if (accountingRecord.getCreditAmount() != null)
           balance = balance.add(accountingRecord.getCreditAmount());
         if (accountingRecord.getDebitAmount() != null)

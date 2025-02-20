@@ -133,7 +133,7 @@
   *ngIf="tiersToDisplay" (click)="sendBillingClosureReceipt()">
   <mat-icon>outgoing_mail</mat-icon>
 </button>
-<button *ngIf="canImportPnmFile()" matTooltip="Importer un fichier PNM" mat-fab color="accent" class="fifth-fab-button"
-  (click)="importPnmFile()">
+<button *ngIf="canImportSageFile()" matTooltip="Importer un fichier Sage (PNM)" mat-fab color="accent"
+  class="fifth-fab-button" (click)="importSageFile()">
   <mat-icon>upload</mat-icon>
 </button>

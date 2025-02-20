@@ -203,7 +203,7 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
 
-  canImportPnmFile() {
+  canImportSageFile() {
     return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING_RESPONSIBLE]);
   }
 }
