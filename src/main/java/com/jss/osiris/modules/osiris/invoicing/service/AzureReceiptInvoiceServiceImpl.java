@@ -84,8 +84,9 @@ public class AzureReceiptInvoiceServiceImpl implements AzureReceiptInvoiceServic
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices)
                 if (((invoice.getTotalPrice().multiply(oneHundredConstant)).setScale(0).divide(
-                        oneHundredConstant)) == ((azureReceiptInvoice.getInvoiceTotal().multiply(oneHundredConstant))
-                                .setScale(0).divide(oneHundredConstant)))
+                        oneHundredConstant)).equals(
+                                ((azureReceiptInvoice.getInvoiceTotal().multiply(oneHundredConstant))
+                                        .setScale(0).divide(oneHundredConstant))))
                     finalInvoices.add(invoice);
 
         status.setInvoices(finalInvoices);

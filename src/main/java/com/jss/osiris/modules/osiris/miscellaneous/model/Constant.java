@@ -755,6 +755,7 @@ public class Constant implements Serializable, IId {
 
 	private String salesSharedMailbox;
 	private String accountingSharedMaiblox;
+	private String recoverySharedMaiblox;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_bank_central_pay")
@@ -2547,12 +2548,24 @@ public class Constant implements Serializable, IId {
 	public void setProvisionFamilyTypeDeposit(ProvisionFamilyType provisionFamilyTypeDeposit) {
 		this.provisionFamilyTypeDeposit = provisionFamilyTypeDeposit;
 	}
-  
+
 	public AccountingJournal getAccountingJournalSalary() {
 		return accountingJournalSalary;
 	}
 
 	public void setAccountingJournalSalary(AccountingJournal accountingJournalSalary) {
 		this.accountingJournalSalary = accountingJournalSalary;
+	}
+
+	public String getRecoverySharedMaiblox() {
+		return recoverySharedMaiblox;
+	}
+
+	public void setRecoverySharedMaiblox(String recoverySharedMaiblox) {
+		this.recoverySharedMaiblox = recoverySharedMaiblox;
+	}
+
+	public void setProvisionTypeRbe(ProvisionType provisionTypeRbe) {
+		this.provisionTypeRbe = provisionTypeRbe;
 	}
 }

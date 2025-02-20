@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -113,6 +114,8 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                                 || fieldResult instanceof LocalDate || fieldResult instanceof LocalDateTime
                                 || fieldResult instanceof Boolean || fieldResult instanceof Float) {
                             outObject.put(field.getName(), getter.invoke(entity));
+                        } else if (fieldResult instanceof BigDecimal) {
+                            outObject.put(field.getName(), ((BigDecimal) getter.invoke(entity)).floatValue());
                         } else if (fieldResult instanceof List) {
                             ArrayList<Object> cleanOutList = new ArrayList<Object>();
                             for (Object fieldResultObject : (List<Object>) fieldResult) {

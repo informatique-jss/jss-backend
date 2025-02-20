@@ -5,7 +5,7 @@
         <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
       </mat-form-field>
     </div>
-    <sort-table [columns]="displayedColumns" [values]="audits" tableName="Historique" [filterText]="searchText"
+    <sort-table [columns]="displayedColumns" [values]="finalAudits" tableName="Historique" [filterText]="searchText"
       [noPaddingBottom]="true" [noMaxHeight]="true">
     </sort-table>
   </div>

@@ -1169,7 +1169,7 @@ public class MailHelper {
 
         mail.setAttachments(attachments);
         mail.setHeaderPicture("images/mails/customer-order-finalization.png");
-        mail.setReplyToMail(constantService.getStringAccountingSharedMaiblox());
+        mail.setReplyToMail(constantService.getRecoverySharedMaiblox());
         mail.setSendToMe(sendToMe);
         mail.setMailTemplate(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION);
 
