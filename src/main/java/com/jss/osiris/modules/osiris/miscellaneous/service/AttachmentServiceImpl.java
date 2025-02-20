@@ -28,6 +28,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -78,6 +79,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     QuotationService quotationService;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
 
     @Autowired
     ProvisionService provisionService;
@@ -170,6 +174,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             else
                 return null;
 
+        if (entityType.equals("Sage")) {
+            if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
+                this.accountingRecordService.generateAccountingRecordForSageRecord(file);
+            return null;
+        }
         if (filename.toLowerCase().endsWith(".pdf")) {
             if (pageSelection != null && !pageSelection.equals("") && !pageSelection.equals("null"))
                 file = pdfTools.keepPages(file, pageSelection);
