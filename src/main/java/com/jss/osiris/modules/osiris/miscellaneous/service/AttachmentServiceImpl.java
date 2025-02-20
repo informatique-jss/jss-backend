@@ -28,6 +28,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -46,11 +47,8 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
-import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.osiris.quotation.service.DomiciliationService;
-import com.jss.osiris.modules.osiris.quotation.service.FormaliteService;
 import com.jss.osiris.modules.osiris.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
@@ -82,13 +80,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     QuotationService quotationService;
 
     @Autowired
-    DomiciliationService domiciliationService;
-
-    @Autowired
-    AnnouncementService announcementService;
-
-    @Autowired
-    FormaliteService formaliteService;
+    AccountingRecordService accountingRecordService;
 
     @Autowired
     ProvisionService provisionService;
@@ -181,6 +173,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             else
                 return null;
 
+        if (entityType.equals("Sage")) {
+            if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
+                this.accountingRecordService.generateAccountingRecordForSageRecord(file);
+            return null;
+        }
         if (filename.toLowerCase().endsWith(".pdf")) {
             if (pageSelection != null && !pageSelection.equals("") && !pageSelection.equals("null"))
                 file = pdfTools.keepPages(file, pageSelection);
