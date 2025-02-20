@@ -17,14 +17,16 @@
       </tr>
       <tr>
         <td>
-          <radio-group-recipient-label [(model)]="selectedRecipient" [form]="printLabelForm"
-            propertyName="selectedRecipient" label="Destinataire"></radio-group-recipient-label>
+          <select-print-label-recipient [(model)]="selectedRecipient" label="Destinataire de l'étiquette"
+            [form]="printLabelForm" propertyName="selectedRecipient" [isMandatory]="true"
+            [isDisabled]="false"></select-print-label-recipient>
         </td>
       </tr>
       <tr>
         <td>
-          <autocomplete-competent-authority [(model)]="selectedCompetentAuthority" propertyName="competentAuthority"
-            [isMandatory]="false" label="RCS" [form]="printLabelForm"></autocomplete-competent-authority>
+          <autocomplete-competent-authority [(model)]="selectedCompetentAuthority" [form]="printLabelForm"
+            propertyName="competentAuthority" [isMandatory]="true"
+            label="Autorité compétente"></autocomplete-competent-authority>
         </td>
       </tr>
       <tr>

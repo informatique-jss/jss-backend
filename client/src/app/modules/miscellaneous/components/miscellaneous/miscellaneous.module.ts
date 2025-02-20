@@ -194,7 +194,6 @@ import { RadioGroupBillingLabelComponent } from '../forms/radio-group-billing-la
 import { RadioGroupCivilityComponent } from '../forms/radio-group-civility/radio-group-civility.component';
 import { RadioGroupJournalTypeComponent } from '../forms/radio-group-journal-type/radio-group-journal-type.component';
 import { RadioGroupLanguageComponent } from '../forms/radio-group-language/radio-group-language.component';
-import { RadioGroupRecipientLabelComponent } from '../forms/radio-group-recipient-label/radio-group-recipient-label.component';
 import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/radio-group-record-type.component';
 import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
@@ -233,6 +232,7 @@ import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/selec
 import { SelectPaperSetTypeComponent } from '../forms/select-paper-set-type/select-paper-set-type.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
+import { SelectPrintLabelRecipientComponent } from '../forms/select-print-label-recipient/select-print-label-recipient.component';
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
 import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-screen-type/select-provision-screen-type.component';
 import { SelectProvisionStautsComponent } from '../forms/select-provision-stauts/select-provision-stauts.component';
@@ -551,7 +551,7 @@ const routes: Routes = [
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
     SelectCategoryComponent,
-    RadioGroupRecipientLabelComponent
+    SelectPrintLabelRecipientComponent
   ],
   exports: [
     HistoryComponent,
@@ -794,7 +794,7 @@ const routes: Routes = [
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
     SelectCategoryComponent,
-    RadioGroupRecipientLabelComponent
+    SelectPrintLabelRecipientComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

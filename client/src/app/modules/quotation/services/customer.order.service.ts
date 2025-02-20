@@ -37,14 +37,14 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.get(new HttpParams().set("idAnnouncement", announcement.id), "customer-order/announcement");
   }
 
-  generateMailingLabelDownload(customerOrders: string[], printLabel: boolean, competentAuthority: CompetentAuthority, printLetters: boolean, printRegisteredLetter: boolean) {
+  generateMailingLabelDownload(customerOrders: string[], printLabel: boolean, competentAuthority: CompetentAuthority | undefined, printLetters: boolean, printRegisteredLetter: boolean) {
     let params = new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters).set("printRegisteredLetter", printRegisteredLetter);
     if (competentAuthority)
       params.set("competentAuthorityId", competentAuthority.id + "");
     return this.downloadGet(params, "customer-order/print/label");
   }
 
-  generateMailingLabel(customerOrders: string[], printLabel: boolean, competentAuthority: CompetentAuthority, printLetters: boolean, printRegisteredLetter: boolean) {
+  generateMailingLabel(customerOrders: string[], printLabel: boolean, competentAuthority: CompetentAuthority | undefined, printLetters: boolean, printRegisteredLetter: boolean) {
     let params = new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters).set("printRegisteredLetter", printRegisteredLetter);
     if (competentAuthority)
       params.set("competentAuthorityId", competentAuthority.id + "");
