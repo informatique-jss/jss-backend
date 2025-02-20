@@ -1,9 +1,9 @@
 <header class="navbar-light navbar-sticky header-static">
   <div class="navbar-top d-none d-lg-block small">
     <div class="container">
-      <div class="d-md-flex justify-content-between align-items-center my-2 row">
+      <div class="d-md-flex justify-content-between align-items-center my-2">
         <!-- Top bar left -->
-        <ul class="nav flex-xs-column col-6">
+        <ul class="nav">
           <li class="nav-item">
             <a class="nav-link" style="cursor: pointer;" (click)="openSubscribe($event)">S'abonner</a><!-- TODO -->
           </li>
@@ -12,11 +12,10 @@
           </li>
         </ul>
         <!-- Top bar right -->
-        <div class="d-flex align-items-center col-6 col-md-auto">
+        <div class="d-flex align-items-center">
 
           <!-- Font size accessibility START -->
-          <div class="btn-group me-3 d-flex flex-grow-1 justify-content-end" role="group"
-            aria-label="font size changer">
+          <div class="btn-group me-3" role="group" aria-label="font size changer">
             <input type="radio" class="btn-check" name="fntradio" id="font-sm">
             <label class="btn btn-xs btn-outline-primary mb-0" for="font-sm">A-</label>
 
@@ -27,14 +26,14 @@
             <label class="btn btn-xs btn-outline-primary mb-0" for="font-lg">A+</label>
           </div>
 
-          <div class="nav-item d-flex flex-grow-1 justify-content-end">
+          <div class="nav-item">
             <a class="nav-link px-2 fs-5" role="button" data-bs-toggle="modal" data-bs-target="#searchModal">
               <i class="bi bi-search fs-4"> </i>
             </a>
           </div>
 
           <!-- Dark mode options START -->
-          <div class="nav-item dropdown mx-2 d-flex flex-grow-1 justify-content-end">
+          <div class="nav-item dropdown mx-2">
             <!-- Switch button -->
             <button class="modeswitch" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown"
               data-bs-display="static">
@@ -128,6 +127,7 @@
           </li>
         </ul>
         <ul class="navbar-nav navbar-nav-scroll mx-auto">
+
           <!-- Nav item articles -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="homeMenu" data-bs-toggle="dropdown" aria-haspopup="true"
@@ -188,13 +188,13 @@
         </ul>
       </div>
       <!-- Main navbar END -->
+
       <!-- Nav right START -->
       <div class="nav flex-nowrap align-items-center flex-grow-1 justify-content-end mb-2 d-none d-lg-flex">
         <!-- Nav Button -->
         <div class="nav-item d-md-block">
           <a style="cursor: pointer;" (click)="openNewFormality($event)"
-            class="btn btn-sm btn-warning mb-0 mx-2">Déposer une
-            formalité</a><!-- TODO -->
+            class="btn btn-sm btn-warning mb-0 mx-2">Déposer une formalité</a><!-- TODO -->
         </div>
         <div class="nav-item d-md-block">
           <a style="cursor: pointer;" (click)="openMyJss($event)"
