@@ -131,7 +131,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "    ( :tiersId =0 or t.id = :tiersId) " +
                         "   and ( :isNewTiers =false or coalesce(t.is_new_tiers,false) = true) " +
                         " and  ( :salesEmployeeId =0 or e1.id = :salesEmployeeId) " +
-                        " and ( :mail='' or exists (select 1 from mail m  where r.id_mail = m.id and m.mail like '%' || lower(trim(:mail))  || '%')) "
+                        " and (:mail='' or exists (select 1 from asso_tiers_mail a join mail m on m.id = a.id_mail where t.id = a.id_tiers and m.mail like '%' || lower(trim(:mail)) || '%')) "
                         +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(concat(t.firstname, ' ',t.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' ) "
                         +
