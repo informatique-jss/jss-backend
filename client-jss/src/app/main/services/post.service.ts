@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../services/appRest.service';
 import { Author } from '../model/Author';
+import { Media } from '../model/Media';
 import { MyJssCategory } from '../model/MyJssCategory';
 import { Post } from '../model/Post';
 import { PublishingDepartment } from '../model/PublishingDepartment';
@@ -35,19 +36,18 @@ export class PostService extends AppRestService<Post> {
   completeMediaInPosts(posts: Post[]) {
     posts.forEach(post => {
       if (!post.media) {
-        post.media = {
-          id: 0,
-          date: new Date(),
-          media_type: 'image',
-          alt_text: 'Logo JSS',
-          file: 'JSS-logo.png',
-          urlFull: 'assets/images/logo.png',
-          urlLarge: 'assets/images/logo.png',
-          urlMedium: 'assets/images/logo.png',
-          urlMediumLarge: 'assets/images/logo.png',
-          urlThumbnail: 'assets/images/logo.png',
-          length: 0
-        };
+        post.media = {} as Media;
+        post.media.id = 0;
+        post.media.date = new Date();
+        post.media.media_type = 'image';
+        post.media.alt_text = 'Logo JSS';
+        post.media.file = 'JSS-logo.png';
+        post.media.urlFull = 'assets/images/logo.png';
+        post.media.urlLarge = 'assets/images/logo.png';
+        post.media.urlMedium = 'assets/images/logo.png';
+        post.media.urlMediumLarge = 'assets/images/logo.png';
+        post.media.urlThumbnail = 'assets/images/logo.png';
+        post.media.length = 0;
       }
     });
   }
