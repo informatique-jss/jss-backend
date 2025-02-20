@@ -17,7 +17,8 @@
                 <img class="card-img" *ngIf="post.media"
                   [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlMedium"
                   alt="Card image">
-                <div class="card-img-overlay d-flex align-items-start flex-column p-3">
+                <div class="card-img-overlay d-flex align-items-start flex-column p-3" style="cursor: pointer;"
+                  (click)="openPost(post, $event)">
                   <!-- Card overlay bottom -->
                   <div class="w-100 mt-auto">
                     <ng-container *ngIf="post.myJssCategories!=null && post.myJssCategories.length>0">
@@ -200,7 +201,8 @@
             <!-- Card img -->
             <div class="position-relative">
               <img class="card-img" [src]="interview.media.urlMedium" alt="Card image">
-              <div class="card-img-overlay d-flex align-items-start flex-column p-3">
+              <div class="card-img-overlay d-flex align-items-start flex-column p-3" style="cursor: pointer;"
+                (click)="openPost(interview, $event)">
                 <!-- Card overlay bottom -->
                 <div class="w-100 mt-auto">
                   <ng-container *ngIf="interview.myJssCategories!=null && interview.myJssCategories.length>0">
@@ -258,7 +260,7 @@
           <!-- Card item START -->
           <ng-container *ngFor="let serie of series; let index = index">
             <div *ngIf="index<4" #sliderSeriesPage class="col-sm-6">
-              <div class="card card-overlay-bottom card-img-scale">
+              <div class="card card-overlay-bottom">
                 <!-- Card Image -->
                 <img class="card-img" height="415" [src]="serie.picture.urlMedium" alt="">
                 <!-- Card Image overlay -->
