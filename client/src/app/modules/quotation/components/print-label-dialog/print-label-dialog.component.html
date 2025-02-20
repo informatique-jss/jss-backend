@@ -16,14 +16,14 @@
         </td>
       </tr>
       <tr>
-        <td>
+        <td *ngIf="printLabel">
           <select-print-label-recipient [(model)]="selectedRecipient" label="Destinataire de l'étiquette"
             [form]="printLabelForm" propertyName="selectedRecipient" [isMandatory]="true"
             [isDisabled]="false"></select-print-label-recipient>
         </td>
       </tr>
       <tr>
-        <td>
+        <td *ngIf="selectedRecipient == competentAuthorityRecipient">
           <autocomplete-competent-authority [(model)]="selectedCompetentAuthority" [form]="printLabelForm"
             propertyName="competentAuthority" [isMandatory]="true"
             label="Autorité compétente"></autocomplete-competent-authority>

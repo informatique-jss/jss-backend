@@ -1,7 +1,7 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { PRINT_LABEL_RECIPIENT_CUSTOMER } from 'src/app/libs/Constants';
+import { PRINT_LABEL_RECIPIENT_AC, PRINT_LABEL_RECIPIENT_CUSTOMER } from 'src/app/libs/Constants';
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
 import { AppService } from 'src/app/services/app.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
@@ -21,6 +21,7 @@ export class PrintLabelDialogComponent implements OnInit {
   printRegisteredLetter: boolean = false;
   selectedCompetentAuthority: CompetentAuthority | undefined;
   selectedRecipient: string = PRINT_LABEL_RECIPIENT_CUSTOMER;
+  competentAuthorityRecipient = PRINT_LABEL_RECIPIENT_AC;
 
   constructor(private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<AddAffaireDialogComponent>,

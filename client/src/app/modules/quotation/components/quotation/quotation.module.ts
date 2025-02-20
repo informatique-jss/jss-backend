@@ -60,7 +60,6 @@ import { PaperSetListComponent } from '../paper-set-list/paper-set-list.componen
 import { PaperSetComponent } from '../paper-set/paper-set.component';
 import { PaymentListComponent } from '../payment-list/payment-list.component';
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
-import { PrintRegisteredLabelDialogComponent } from '../print-registered-label-dialog/print-registered-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { ProvisionListComponent } from '../provision-list/provision-list.component';
 import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
@@ -189,7 +188,6 @@ const routes: Routes = [
     FormaliteAssociateDialog,
     InfogreffeStatusComponent,
     SelectMultiServiceTypeDialogComponent,
-    PrintRegisteredLabelDialogComponent,
   ],
   exports: [
     OrderingListComponent,

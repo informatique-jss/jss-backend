@@ -51,7 +51,6 @@ import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialo
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
-import { PrintRegisteredLabelDialogComponent } from '../print-registered-label-dialog/print-registered-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
@@ -1043,20 +1042,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     });
 
     dialogRef.componentInstance.customerOrders.push(this.quotation.id + "");
-  }
-
-  generateRegisteredLetterLabel() {
-    const dialogRef = this.mailLabelDialog.open(PrintRegisteredLabelDialogComponent, {
-      maxWidth: "600px",
-    });
-
-    if (this.quotationManagementComponent?.invoiceLabelResult)
-      dialogRef.componentInstance.invoiceLabelResult = this.quotationManagementComponent.invoiceLabelResult;
-    if (this.quotation.assoAffaireOrders[0].affaire.competentAuthority)
-      dialogRef.componentInstance.competentAuthority = this.quotation.assoAffaireOrders[0].affaire.competentAuthority;
-    if (this.quotation.id && instanceOfCustomerOrder(this.quotation))
-      dialogRef.componentInstance.customerOrderId = this.quotation.id;
-
   }
 
   displayAffaire(event: any, affaire: Affaire) {
