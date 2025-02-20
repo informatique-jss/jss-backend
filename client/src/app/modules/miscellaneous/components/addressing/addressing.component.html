@@ -4,9 +4,10 @@
       <td *ngIf="displayConsignee">
         <h4>Destinataire(s)</h4>
         <generic-checkbox [(model)]="document.isRecipientAffaire" label="Affaire" [form]="adressingForm"
-          (onFormChange)="changeDocument()" propertyName="isRecipientAffaire"></generic-checkbox>
-        <generic-checkbox [(model)]="document.isRecipientClient" label="Client" [form]="adressingForm"
-          (onFormChange)="changeDocument()" propertyName="isRecipientClient"></generic-checkbox>
+          (onFormChange)="changeDocument()" [isDisabled]="!editMode"
+          propertyName="isRecipientAffaire"></generic-checkbox>
+        <generic-checkbox [(model)]="document.isRecipientClient" [isDisabled]="!editMode" label="Client"
+          [form]="adressingForm" (onFormChange)="changeDocument()" propertyName="isRecipientClient"></generic-checkbox>
       </td>
       <td>
         <button matTooltip="Modifier les adresses postales par défaut" *ngIf="editMode && displayOverrideMail"

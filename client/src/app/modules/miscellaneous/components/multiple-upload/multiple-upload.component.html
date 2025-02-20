@@ -40,8 +40,7 @@
       </div>
     </div>
     <div align="center" class="send-button"
-      *ngIf="!isForMissingAttachmentQuery && !isDirectUpload && files && files.length>0 && attachmentType!=null && !isSending"
-      (click)="uploadFiles()">
+      *ngIf="!isDirectUpload && files && files.length>0 && attachmentType!=null && !isSending" (click)="uploadFiles()">
       <button mat-raised-button color="warn">{{files.length>1?"Uploader les fichiers":"Uploader
         le fichier"}}</button>
     </div>
