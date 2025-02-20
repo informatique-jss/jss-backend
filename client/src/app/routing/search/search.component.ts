@@ -35,6 +35,7 @@ export const BANK_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'BankTransfe
 export const DIRECT_DEBIT_TRANSFERT_ENTITY_TYPE: EntityType = { entityType: 'DirectDebitTransfert', tabName: 'Prélèvements', entryPoint: 'invoicing/directDebit' };
 export const ASSO_SERVICE_DOCUMENT_ENTITY_TYPE: EntityType = { entityType: 'AssoServiceDocument', tabName: 'Documents du service', entryPoint: 'quotation/service' };
 export const TYPE_DOCUMENT_ATTACHMENT_TYPE: EntityType = { entityType: 'TypeDocument', tabName: 'Type de document', entryPoint: 'administration/type-document' };
+export const MISSING_ATTACHMENT_QUERY_ENTITY_TYPE: EntityType = { entityType: 'MissingAttachmentQuery', tabName: 'Demande de pièces manquantes', entryPoint: 'provision/missing-attachment-query' };
 
 @Component({
   selector: 'app-search',

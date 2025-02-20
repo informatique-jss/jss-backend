@@ -41,6 +41,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
@@ -301,6 +302,12 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (mail == null)
                 return new ArrayList<Attachment>();
             attachment.setCustomerMail(mail);
+        } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
+            MissingAttachmentQuery missingAttachmentQuery = missingAttachmentQueryService
+                    .getMissingAttachmentQuery(idEntity);
+            if (missingAttachmentQuery == null)
+                return new ArrayList<Attachment>();
+            attachment.setMissingAttachmentQuery(missingAttachmentQuery);
         }
         addOrUpdateAttachment(attachment);
         attachment = getAttachment(attachment.getId());
@@ -377,6 +384,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByCompetentAuthorityId(idEntity);
         } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
             attachments = attachmentRepository.findByTypeDocumentCode(codeEntity);
+        } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
+            attachments = attachmentRepository.findByMissingAttachmentQuery(idEntity);
         }
         return attachments;
     }

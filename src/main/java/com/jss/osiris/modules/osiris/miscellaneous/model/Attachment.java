@@ -19,6 +19,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
@@ -46,6 +47,7 @@ import jakarta.persistence.Table;
 		@Index(name = "idx_customer_order_attachment", columnList = "id_customer_order"),
 		@Index(name = "idx_quotation_attachment", columnList = "id_quotation"),
 		@Index(name = "idx_customer_mail_attachment", columnList = "id_customer_mail"),
+		@Index(name = "idx_missing_attachment_query_attachment", columnList = "id_missing_attachment_query"),
 		@Index(name = "idx_provider_attachment", columnList = "id_provider"),
 		@Index(name = "idx_competent_authority_attachment", columnList = "id_competent_authority"),
 		@Index(name = "idx_providion_attachment", columnList = "id_provision"),
@@ -79,6 +81,11 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_customer_mail")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private CustomerMail customerMail;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_missing_attachment_query")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private MissingAttachmentQuery missingAttachmentQuery;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -406,6 +413,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe) {
 		this.documentAssocieInfogreffe = documentAssocieInfogreffe;
+	}
+
+	public MissingAttachmentQuery getMissingAttachmentQuery() {
+		return missingAttachmentQuery;
+	}
+
+	public void setMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery) {
+		this.missingAttachmentQuery = missingAttachmentQuery;
 	}
 
 }

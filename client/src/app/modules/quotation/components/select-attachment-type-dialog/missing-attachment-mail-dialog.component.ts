@@ -1,11 +1,15 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
+import { formatBytes } from 'src/app/libs/FormatHelper';
+import { MultipleUploadComponent } from 'src/app/modules/miscellaneous/components/multiple-upload/multiple-upload.component';
+import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { AppService } from 'src/app/services/app.service';
+import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
+import { MISSING_ATTACHMENT_QUERY_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
 import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
@@ -20,7 +24,7 @@ import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/s
   styleUrls: ['./missing-attachment-mail-dialog.component.css']
 })
 export class MissingAttachmentMailDialogComponent implements OnInit {
-
+  entity: IAttachment = { id: undefined } as IAttachment;
   service: Service | undefined;
   displayedColumns: SortTableColumn<AssoServiceDocument>[] = [];
   displayedFieldTypes: SortTableColumn<AssoServiceFieldType>[] = [];
@@ -30,15 +34,20 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   tableAssoServiceFieldTypes: AssoServiceFieldType[] = [];
   missingAttachmentQuery: MissingAttachmentQuery = {} as MissingAttachmentQuery;
   editMode: boolean = true;
+  isWaitingForAttachmentToUpload: boolean = false;
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
   SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
   SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
+  MISSING_ATTACHMENT_QUERY_ENTITY_TYPE = MISSING_ATTACHMENT_QUERY_ENTITY_TYPE;
+
+  @ViewChild(MultipleUploadComponent) multipleUploadComponent: MultipleUploadComponent | undefined;
+  formatBytes = formatBytes;
 
   constructor(private formBuilder: FormBuilder,
-    private appService: AppService,
-    private dialog: MatDialog,
+    public confirmationDialog: MatDialog,
+    private uploadAttachmentService: UploadAttachmentService,
     public dialogRef: MatDialogRef<SelectAttachmentsDialogComponent>,
     private missingAttachmentQueryService: MissingAttachmentQueryService,
     private serviceService: ServiceService,
@@ -46,6 +55,7 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   ) { }
 
   refreshTable: Subject<void> = new Subject<void>();
+  getAttachmentTypeAutomaticMail = this.constantService.getAttachmentTypeAutomaticMail;
 
   getServiceLabel(service: Service) {
     return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
@@ -79,6 +89,7 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
         this.missingAttachmentQuery.id = undefined;
       this.selectedAssoServiceDocument = this.missingAttachmentQuery.assoServiceDocument;
       this.selectedAssoServiceFieldType = this.missingAttachmentQuery.assoServiceFieldType;
+      this.missingAttachmentQuery.attachments = [];
     }
 
     // display specific one
@@ -177,7 +188,6 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
     return [];
   }
 
-
   getFormStatus(): boolean {
     return this.attachmentTypeForm.valid;
   }
@@ -188,11 +198,27 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
         this.missingAttachmentQuery.assoServiceDocument = this.selectedAssoServiceDocument;
       if (this.selectedAssoServiceFieldType.length > 0)
         this.missingAttachmentQuery.assoServiceFieldType = this.selectedAssoServiceFieldType;
-      this.dialogRef.close(this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery).subscribe(response => this.closeDialog()));
+      if (this.multipleUploadComponent && this.multipleUploadComponent.files && this.multipleUploadComponent.files.length > 0)
+        this.isWaitingForAttachmentToUpload = true;
+      this.dialogRef.close(this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery, this.isWaitingForAttachmentToUpload).subscribe(response => {
+        if (response && this.multipleUploadComponent && this.multipleUploadComponent.files && this.multipleUploadComponent.files.length > 0) {
+          this.missingAttachmentQuery = response;
+          this.entity.id = response.id;
+          this.multipleUploadComponent.uploadFiles();
+          this.missingAttachmentQueryService.sendMissingAttachmentQueryWithUploadedFiles(this.missingAttachmentQuery).subscribe();
+        }
+        if (response)
+          this.closeDialog();
+      }));
     }
   }
 
   closeDialog() {
     this.dialogRef.close(null);
+  }
+
+  sendMailQuery($event: any) {
+    // if ($event)
+    //  this.missingAttachmentQueryService.sendMissingAttachmentQueryImmediatly(this.missingAttachmentQuery).subscribe();
   }
 }

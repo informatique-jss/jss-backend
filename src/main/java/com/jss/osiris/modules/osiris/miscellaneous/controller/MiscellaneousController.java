@@ -105,6 +105,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
@@ -1136,6 +1137,7 @@ public class MiscellaneousController {
 
         if (!entityType.equals(Tiers.class.getSimpleName())
                 && !entityType.equals("Ofx")
+                && !entityType.equals(MissingAttachmentQuery.class.getSimpleName())
                 && !entityType.equals("Sage")
                 && !entityType.equals(Responsable.class.getSimpleName())
                 && !entityType.equals(Quotation.class.getSimpleName())

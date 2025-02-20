@@ -93,7 +93,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
     @Transactional(rollbackFor = Exception.class)
     @Override
     public MissingAttachmentQuery sendMissingAttachmentQueryToCustomer(MissingAttachmentQuery query,
-            boolean isForcedReminder)
+            boolean isForcedReminder, Boolean isWaitingForAttachmentToUpload)
             throws OsirisException, OsirisClientMessageException {
         Service service = new Service();
 
@@ -156,10 +156,16 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
         }
         query.setService(service);
         addOrUpdateMissingAttachmentQuery(query);
-
-        if (toSend)
+        if (toSend && !isWaitingForAttachmentToUpload)
             mailHelper.sendMissingAttachmentQueryToCustomer(query, isLastReminder);
 
+        return query;
+    }
+
+    @Override
+    public MissingAttachmentQuery sendMissingAttachmentQueryWithUploadedFiles(MissingAttachmentQuery query)
+            throws OsirisClientMessageException, OsirisException {
+        mailHelper.sendMissingAttachmentQueryToCustomer(query, false);
         return query;
     }
 
@@ -186,7 +192,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
     @Transactional(rollbackFor = Exception.class)
     public void sendReminderToCustomerForMissingAttachmentQuery(MissingAttachmentQuery query)
             throws OsirisException, OsirisClientMessageException {
-        sendMissingAttachmentQueryToCustomer(query, false);
+        sendMissingAttachmentQueryToCustomer(query, false, false);
     }
 
     @Override
@@ -194,7 +200,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
     public MissingAttachmentQuery sendMissingAttachmentQueryImmediatly(MissingAttachmentQuery query)
             throws OsirisException, OsirisClientMessageException {
         query = getMissingAttachmentQuery(query.getId());
-        sendMissingAttachmentQueryToCustomer(query, true);
+        sendMissingAttachmentQueryToCustomer(query, true, false);
         return query;
     }
 
