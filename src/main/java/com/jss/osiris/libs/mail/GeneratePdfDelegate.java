@@ -291,44 +291,6 @@ public class GeneratePdfDelegate {
         return tempFile;
     }
 
-    public File generateRegisteredLabelPdf(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
-        final Context ctx = new Context();
-        ctx.setVariable("localDate", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-
-        if (customerOrder != null && customerOrder.getResponsable() != null) {
-            ctx.setVariable("toAdress", customerOrder.getResponsable().getAddress());
-            ctx.setVariable("toName",
-                    customerOrder.getResponsable().getLastname() + customerOrder.getResponsable().getFirstname());
-        }
-        // Create the HTML body using Thymeleaf
-        String htmlContent = StringEscapeUtils
-                .unescapeHtml4(mailHelper.emailTemplateEngine().process("registered-letter-label", ctx));
-
-        File tempFile;
-        OutputStream outputStream;
-        try {
-            tempFile = File.createTempFile("registered-letter-label", "pdf");
-            outputStream = new FileOutputStream(tempFile);
-        } catch (IOException e) {
-            throw new OsirisException(e, "Unable to create temp file");
-        }
-        ITextRenderer renderer = new ITextRenderer();
-        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        renderer.setDocumentFromString(
-                htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
-                        .replaceAll("line-height: normal",
-                                "line-height: normal;padding:0;margin:0"));
-        renderer.layout();
-        try {
-            renderer.createPDF(outputStream);
-            outputStream.close();
-        } catch (DocumentException | IOException e) {
-            throw new OsirisException(e, "Unable to create PDF file for letters");
-        }
-        return tempFile;
-    }
-
     public File getBillingClosureReceiptFile(Tiers tier, Responsable responsable,
             List<BillingClosureReceiptValue> billingClosureValues)
             throws OsirisException, OsirisClientMessageException {

@@ -51,10 +51,6 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.get(params, "customer-order/print/label");
   }
 
-  generateRegisteredLabel(customerOrderId: number) {
-    return this.get(new HttpParams().set("customerOrderId", customerOrderId), "customer-order/print/registered-letter-label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
-  }
-
   updateAssignedToForCustomerOrder(customerOrder: CustomerOrder, employee: Employee) {
     return this.get(new HttpParams().set("customerOrderId", customerOrder.id).set("employeeId", employee.id), "customer-order/assign");
   }

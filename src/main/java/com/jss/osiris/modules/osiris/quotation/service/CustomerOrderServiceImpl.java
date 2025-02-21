@@ -1171,7 +1171,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (competentAuthority != null)
                 invoiceLabelResult = mailComputeHelper.computeCompetentAuthorityLabelResult(competentAuthority);
         }
-        printLabel = false;
         if (printLabel)
             for (CustomerOrder customerOrder : customerOrders) {
                 try {
@@ -1201,7 +1200,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
         if (printLetters) {
-
             byte[] data = null;
             HttpHeaders headers = null;
             File file = generatePdfDelegate.generateLetterPdf(customerOrders);
