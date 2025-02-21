@@ -262,7 +262,7 @@ public class PrintDelegate {
       dOut.writeUTF("\r\n");
       dOut.writeUTF("\r\n");
       dOut.writeUTF("\r\n");
-      dOut.writeUTF("  " + customerOrder.getId() + '/' + username);
+      dOut.writeUTF("    " + customerOrder.getId() + '/' + username);
       dOut.writeUTF("\r\n");
       dOut.writeUTF("\r\n");
       dOut.writeUTF("\r\n");
@@ -327,8 +327,6 @@ public class PrintDelegate {
                   : label.getBillingLabelCountry().getLabel().replaceAll("\\p{C}", "")));
 
       dOut.flush();
-      dOut.writeUTF("\r\n");
-      dOut.writeUTF("\r\n");
       dOut.writeUTF("\r\n");
       dOut.writeUTF("\r\n");
       dOut.writeUTF("\r\n");
