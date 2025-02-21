@@ -41,11 +41,11 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
                         " 		where " +
                         " 			(sp.id_simple_provision_status = :simpleProvisionStatusWaitingAttachmentId " +
                         " 				or f.id_formalite_status = :formaliteStatusWaitingAttachmentId ) " +
-                        " 			and ma.third_customer_reminder_date_time is null and co.id_customer_order_status <> :customerOrderStatusIdAbandonned "
+                        " 			and co.id_customer_order_status <> :customerOrderStatusIdAbandonned "
                         +
                         " 				) t " +
                         " 	where " +
-                        " 		t.n = 1) ")
+                        " 		t.n = 1) and third_customer_reminder_date_time is null  ")
         List<MissingAttachmentQuery> getMissingAttachmentQueriesForCustomerReminder(
                         @Param("simpleProvisionStatusWaitingAttachmentId") Integer simpleProvisionStatusWaitingAttachmentId,
                         @Param("formaliteStatusWaitingAttachmentId") Integer formaliteStatusWaitingAttachmentId,
