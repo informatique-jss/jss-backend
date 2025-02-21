@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
@@ -1151,5 +1152,10 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Category getCategorySerie() throws OsirisException {
         return this.getConstants().getCategorySerie();
+    }
+
+    @Override
+    public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException {
+        return this.getConstants().getAccountingAccountClassProduct();
     }
 }

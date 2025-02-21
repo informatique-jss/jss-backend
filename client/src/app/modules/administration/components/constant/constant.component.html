@@ -1622,6 +1622,13 @@
                 [isDisabled]="!editMode"></select-category>
             </td>
           </tr>
+          <tr>
+            <td>
+              <select-accounting-account-class [(model)]="constant.accountingAccountClassProduct"
+                label="Classe comptable - Produits" [form]="constantForm" propertyName="accountingAccountClassProduct"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-accounting-account-class>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

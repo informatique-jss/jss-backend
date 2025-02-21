@@ -1,5 +1,6 @@
 import { Provider } from '@angular/core';
 import { AccountingAccount } from '../../accounting/model/AccountingAccount';
+import { AccountingAccountClass } from '../../accounting/model/AccountingAccountClass';
 import { AccountingJournal } from "../../accounting/model/AccountingJournal";
 import { PrincipalAccountingAccount } from '../../accounting/model/PrincipalAccountingAccount';
 import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
@@ -257,4 +258,5 @@ export interface Constant {
   categoryPodcast: Category;
   categoryArticle: Category;
   categorySerie: Category;
+  accountingAccountClassProduct: AccountingAccountClass;
 }

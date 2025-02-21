@@ -855,4 +855,8 @@ export class ConstantService extends AppRestService<Constant> {
   getCategorySerie() {
     return this.constant.categorySerie;
   }
+
+  getAccountingAccountClassProduct() {
+    return this.constant.accountingAccountClassProduct;
+  }
 }

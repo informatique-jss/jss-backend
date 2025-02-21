@@ -16,6 +16,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingVatValue;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
@@ -426,4 +427,22 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("idAccountingAccount") Integer idAccountingAccount,
                         @Param("idSalaryJournal") Integer idSalaryJournal,
                         @Param("operationDate") LocalDate operationDate);
+
+        @Query(nativeQuery = true, value = "" +
+                        " select  vat.code as vatCode, vat.label as vatLabel, sum(coalesce(debit_amount, 0))-sum(coalesce(credit_amount, 0)) as amount "
+                        +
+                        " from accounting_record ar  join accounting_account aa on aa.id =ar.id_accounting_account  " +
+                        " join principal_accounting_account paa on paa.id = aa.id_principal_accounting_account  " +
+                        " left join invoice_item ii on ii.id = ar.id_invoice_item  " +
+                        " left join vat on vat.id =ii.id_vat " +
+                        " where  ar.operation_date_time  >=:startDate and ar.operation_date_time <=:endDate " +
+                        " and ar.id_accounting_journal =:idAccountingJournal  and paa.id_accounting_account_class =:idAccountingClass  "
+                        +
+                        " group by vat.label, vat.code,vat.id ")
+        List<AccountingVatValue> getAccountingVatValueForJournal(
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate,
+                        @Param("idAccountingJournal") Integer idAccountingJournal,
+                        @Param("idAccountingClass") Integer idAccountingClass);
+
 }

@@ -235,6 +235,8 @@ export class AccountingRecordComponent implements OnInit {
       }
     if (this.accountingRecordSearch.startDate) {
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+      if (this.accountingRecordSearch.endDate)
+        this.accountingRecordSearch.endDate = new Date(this.accountingRecordSearch.endDate.setHours(12));
       this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch);
     }
   }
@@ -247,6 +249,8 @@ export class AccountingRecordComponent implements OnInit {
       }
     if (this.accountingRecordSearch.startDate) {
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+      if (this.accountingRecordSearch.endDate)
+        this.accountingRecordSearch.endDate = new Date(this.accountingRecordSearch.endDate.setHours(12));
       this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch);
     }
   }
@@ -259,6 +263,8 @@ export class AccountingRecordComponent implements OnInit {
       }
     if (this.accountingRecordSearch.startDate) {
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+      if (this.accountingRecordSearch.endDate)
+        this.accountingRecordSearch.endDate = new Date(this.accountingRecordSearch.endDate.setHours(12));
       this.accountingRecordService.exportJournal(this.accountingRecordSearch);
     }
   }
@@ -271,6 +277,8 @@ export class AccountingRecordComponent implements OnInit {
       }
     if (this.accountingRecordSearch.startDate) {
       this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
+      if (this.accountingRecordSearch.endDate)
+        this.accountingRecordSearch.endDate = new Date(this.accountingRecordSearch.endDate.setHours(12));
       this.accountingRecordService.exportAccountingAccount(this.accountingRecordSearch);
     }
   }
