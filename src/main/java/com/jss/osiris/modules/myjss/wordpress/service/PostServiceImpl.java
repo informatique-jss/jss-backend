@@ -126,7 +126,23 @@ public class PostServiceImpl implements PostService {
         if (post.getContent() != null)
             post.setContentText(post.getContent().getRendered());
 
-        // Matching podcast tag
+        modifyPodcastUrls(post);
+        modifyVideoUrls(post);
+        modifyHrefToOpenInNewTab(post);
+        reformatQuotes(post);
+        reformatFootnotes(post);
+
+        postRepository.save(computePost(post));
+        batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
+        return post;
+    }
+
+    /**
+     * Matching podcast tag
+     * 
+     * @param post
+     */
+    private void modifyPodcastUrls(Post post) {
         Pattern pattern = Pattern.compile("<audio[^>]*\\ssrc=\"(.*?)\"");
         Matcher matcher = pattern.matcher(post.getContentText());
         if (matcher.find()) {
@@ -137,10 +153,16 @@ public class PostServiceImpl implements PostService {
 
             post.setPodcastUrl(url.replace(wordpressMediaBaseUrl, apacheMediaBaseUrl));
         }
+    }
 
-        // Matching video tag
-        pattern = Pattern.compile("<video[^>]*\\ssrc=\"(.*?)\"");
-        matcher = pattern.matcher(post.getContentText());
+    /**
+     * Matching video tag
+     * 
+     * @param post
+     */
+    private void modifyVideoUrls(Post post) {
+        Pattern pattern = Pattern.compile("<video[^>]*\\ssrc=\"(.*?)\"");
+        Matcher matcher = pattern.matcher(post.getContentText());
         if (matcher.find()) {
             String url = matcher.group(1);
             Media videoMedia = mediaService.getMediaByUrl(url);
@@ -149,33 +171,16 @@ public class PostServiceImpl implements PostService {
 
             post.setVideoUrl(url.replace(wordpressMediaBaseUrl, apacheMediaBaseUrl));
         }
+    }
 
-        // Changing HTML file from Wordpress to correct wrong formatting of quotes
-        pattern = Pattern.compile("(?s)<blockquote[^>]*\\sclass=\"([^\"]+)\".*?</blockquote>");
-
-        matcher = pattern.matcher(post.getContentText());
-
-        while (matcher.find()) {
-            String blockquoteElement = matcher.group();
-
-            // Addind a <figure> tag encapsulating the quote
-            post.setContentText(post.getContentText().replaceFirst(escapeRegexSpecialChars(blockquoteElement),
-                    "<figure class=\"my-5\">" + blockquoteElement + "</figure>"));
-
-            // Replacing the <blockquote> wordpress classes by the "blockquote" class
-            String wordpressQuoteClasses = matcher.group(1);
-            post.setContentText(
-                    post.getContentText().replaceFirst(escapeRegexSpecialChars(wordpressQuoteClasses), "blockquote"));
-
-        }
-
-        // We modify all the <cite> tag classes with good format
-        final String CITE_TAG = "<cite";
-        post.setContentText(post.getContentText().replace(CITE_TAG,
-                CITE_TAG + " class=\"blockquote-footer\" style=\"padding-left:0\""));
-
-        // Adding _blank to all href in contentText to open them in a new tab when
-        // clicked
+    /**
+     * Changing HTML to open external href in a new tab
+     * 
+     * @param post
+     */
+    private void modifyHrefToOpenInNewTab(Post post) {
+        Pattern pattern;
+        Matcher matcher;
         final String TARGET_BLANK = " target=\"_blank\"";
         pattern = Pattern.compile("<a\\s+[^>]*href=\"([^\"]+)\".*?>(.*?)<\\/a>");
 
@@ -195,15 +200,73 @@ public class PostServiceImpl implements PostService {
                 insertions++;
             }
         }
-
-        postRepository.save(computePost(post));
-        batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
-        return post;
     }
 
-    // The method allow to escape all characters that a regex could interpret
+    /**
+     * Changing HTML for formatting quotes
+     * 
+     * @param post
+     */
+    private void reformatQuotes(Post post) {
+        Pattern pattern = Pattern.compile("(?s)<blockquote[^>]*\\sclass=\"([^\"]+)\".*?</blockquote>");
+        Matcher matcher = pattern.matcher(post.getContentText());
+
+        while (matcher.find()) {
+            String blockquoteElement = matcher.group();
+
+            // Addind a <figure> tag encapsulating the quote
+            post.setContentText(post.getContentText().replaceFirst(escapeRegexSpecialChars(blockquoteElement),
+                    "<figure class=\"my-5\">" + blockquoteElement + "</figure>"));
+
+            // Replacing the <blockquote> wordpress classes by the "blockquote" class
+            String wordpressQuoteClasses = matcher.group(1);
+            post.setContentText(
+                    post.getContentText().replaceFirst(escapeRegexSpecialChars(wordpressQuoteClasses), "blockquote"));
+
+        }
+
+        // We modify all the <cite> tag classes with good format
+        final String CITE_TAG = "<cite";
+        post.setContentText(post.getContentText().replace(CITE_TAG,
+                CITE_TAG + " class=\"blockquote-footer\" style=\"padding-left:0\""));
+    }
+
+    /**
+     * The method allow to escape all characters that a regex could interpret as
+     * REGEX char so the only text that is interpreted by the REGEX matcher is the
+     * plain text that we are searching
+     * 
+     * @param textToFind
+     * @return
+     */
     private static String escapeRegexSpecialChars(String textToFind) {
         return textToFind.replaceAll("([\\^\\$\\.\\|\\?\\*\\+\\(\\)\\[\\]\\{\\}\\\\])", "\\\\$1");
+    }
+
+    /**
+     * Reformating footnotes so that the anchor is properly done in the site
+     * 
+     * @param post
+     */
+    private void reformatFootnotes(Post post) {
+        Pattern pattern = Pattern.compile(
+                "<sup\\s+data-fn=\"([0-9a-fA-F\\-]+)\"\\s+class=\"fn\"><a[^>]*id=\"\\1-link\"[^>]*>(.*?)<\\/a><\\/sup>");
+        Matcher matcher = pattern.matcher(post.getContentText());
+
+        while (matcher.find()) {
+            String id = matcher.group(1);
+            String footnoteNumber = matcher.group(2);
+            String supElement = matcher.group();
+            String newSupTag = "<sup onclick=\"scrollToElement('" + id + "')\" style=\"cursor: pointer;\" id=\"" + id
+                    + "-link\">" + footnoteNumber + "</sup>";
+
+            // Changing the <sup> tag of the footnote
+            post.setContentText(post.getContentText().replace(supElement, newSupTag));
+
+            // Changing the footnote it self to have it link to the <sup> tag
+            post.setContentText(post.getContentText().replace("<a href=\"#" + id + "-link\" target=\"_blank\"",
+                    "<a onclick=\"scrollToElement('" + id + "-link')\" style=\"cursor: pointer;\""));
+        }
     }
 
     @Override
