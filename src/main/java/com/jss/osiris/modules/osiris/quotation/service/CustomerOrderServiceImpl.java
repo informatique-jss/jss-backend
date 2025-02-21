@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
-import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -226,9 +225,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     MyJssProfileController myJssProfileController;
-
-    @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -1163,10 +1159,45 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             boolean printLetters, boolean printRegisteredLetter)
             throws OsirisException, OsirisClientMessageException {
         ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
-        String username = activeDirectoryHelper.getCurrentUsername();
+        Employee employee = employeeService.getCurrentEmployee();
+        Employee otherEmployee = null;
+        boolean employeeFound = false;
+
         for (String id : customerOrdersIn) {
             customerOrders.add(getCustomerOrder(Integer.parseInt(id)));
         }
+
+        if (customerOrders != null) {
+            outerloop: for (CustomerOrder order : customerOrders) {
+                if (order.getAssoAffaireOrders() != null) {
+                    for (AssoAffaireOrder asso : order.getAssoAffaireOrders()) {
+                        if (asso.getServices() != null) {
+                            for (Service service : asso.getServices()) {
+                                if (service.getProvisions() != null) {
+                                    for (Provision provision : service.getProvisions()) {
+                                        if (provision.getFormalite() != null
+                                                || provision.getSimpleProvision() != null) {
+                                            if (provision.getAssignedTo().getId().equals(employee.getId())) {
+                                                employeeFound = true;
+                                                break outerloop;
+                                            } else {
+                                                otherEmployee = provision.getAssignedTo();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        String username = employee.getFirstname().substring(0, 1).toUpperCase()
+                + employee.getLastname().substring(0, 1).toUpperCase();
+        if (!employeeFound && otherEmployee != null)
+            username = otherEmployee.getFirstname().substring(0, 1).toUpperCase()
+                    + otherEmployee.getLastname().substring(0, 1).toUpperCase();
 
         InvoiceLabelResult invoiceLabelResult = null;
         CompetentAuthority competentAuthority = null;

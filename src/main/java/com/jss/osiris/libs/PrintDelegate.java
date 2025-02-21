@@ -26,6 +26,9 @@ public class PrintDelegate {
   @Value("${printer.label.ip}")
   private String printerIp;
 
+  @Value("${printer.label.bis.ip}")
+  private String printerIpForRegisteredLetter;
+
   @Value("${printer.label.port}")
   private Integer printerPort;
 
@@ -243,7 +246,7 @@ public class PrintDelegate {
     Socket socket = null;
     DataOutputStream dOut = null;
     try {
-      socket = new Socket(printerIp, printerPort);
+      socket = new Socket(printerIpForRegisteredLetter, printerPort);
       dOut = new DataOutputStream(socket.getOutputStream());
 
       // Handle manual adresses
