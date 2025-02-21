@@ -88,7 +88,7 @@
   *ngIf="(!service || !service.assoServiceDocuments || service.assoServiceDocuments.length==0) && !selectedAssoServiceDocument">
   <p>Aucun type de document attendu sur ce service</p>
 </div>
-<div *ngIf="editMode">
+<div>
   <multiple-upload class="document-upload" [entity]="entity"
     [entityType]="MISSING_ATTACHMENT_QUERY_ENTITY_TYPE.entityType" [editMode]="true"
     [forcedAttachmentType]="getAttachmentTypeAutomaticMail()" [isDirectUpload]="false"
