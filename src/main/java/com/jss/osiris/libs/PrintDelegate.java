@@ -26,7 +26,7 @@ public class PrintDelegate {
   @Value("${printer.label.ip}")
   private String printerIp;
 
-  @Value("${printer.label.bis.ip}")
+  @Value("${printer.label.second.ip}")
   private String printerIpForRegisteredLetter;
 
   @Value("${printer.label.port}")
