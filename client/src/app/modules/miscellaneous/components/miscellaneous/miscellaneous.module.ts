@@ -232,6 +232,7 @@ import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/selec
 import { SelectPaperSetTypeComponent } from '../forms/select-paper-set-type/select-paper-set-type.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
+import { SelectPrintLabelRecipientComponent } from '../forms/select-print-label-recipient/select-print-label-recipient.component';
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
 import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-screen-type/select-provision-screen-type.component';
 import { SelectProvisionStautsComponent } from '../forms/select-provision-stauts/select-provision-stauts.component';
@@ -550,6 +551,7 @@ const routes: Routes = [
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
     SelectCategoryComponent,
+    SelectPrintLabelRecipientComponent
   ],
   exports: [
     HistoryComponent,
@@ -791,7 +793,8 @@ const routes: Routes = [
     SelectFormaliteInfogreffeStatusComponent,
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
-    SelectCategoryComponent
+    SelectCategoryComponent,
+    SelectPrintLabelRecipientComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent
