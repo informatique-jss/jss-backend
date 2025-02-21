@@ -256,6 +256,7 @@ public class PrintDelegate {
         }
       }
       dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
       if (label.getBillingLabel() != null) {
         List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\n"));
         if (labelLines != null) {
@@ -266,21 +267,21 @@ public class PrintDelegate {
             } else
               lineToPrint.add(line);
             for (String lin : lineToPrint) {
-              dOut.writeUTF("   " + StringUtils.stripAccents(lin).toUpperCase());
+              dOut.writeUTF("        " + StringUtils.stripAccents(lin).toUpperCase());
+              dOut.writeUTF("\r\n");
               dOut.writeUTF("\r\n");
               dOut.flush();
             }
           }
         }
       }
-
-      dOut.writeUTF("   "
+      dOut.writeUTF("     "
           + StringUtils
               .stripAccents(
                   (label.getBillingLabelAddress() != null ? label.getBillingLabelAddress() : ""))
               .replaceAll("\\p{C}", "").toUpperCase()
           +
-          "    "
+          "     "
           + (StringUtils.stripAccents((customerOrder.getResponsable().getTiers().getIntercom() != null
               ? customerOrder.getResponsable().getTiers().getIntercom()
               : "")).replaceAll("\\p{C}", "").toUpperCase() + " ")
@@ -295,12 +296,13 @@ public class PrintDelegate {
 
       dOut.flush();
       dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
       dOut.flush();
-      dOut.writeUTF("   "
+      dOut.writeUTF("     "
           + (label.getBillingLabelPostalCode() != null
               ? label.getBillingLabelPostalCode().replaceAll("\\p{C}", "")
               : "")
-          + " "
+          + "     "
           + (label.getBillingLabelComplementCedex() != null
               ? StringUtils.stripAccents(label.getBillingLabelComplementCedex()).toUpperCase()
                   .replaceAll("\\p{C}", "")
@@ -317,13 +319,16 @@ public class PrintDelegate {
       dOut.flush();
       dOut.writeUTF("\r\n");
       dOut.flush();
-
-      dOut.writeUTF("      " + "Journal Spécial des Sociétés");
+      dOut.writeUTF("                                             " + "Journal Special des Societes");
       dOut.writeUTF("\r\n");
       dOut.writeUTF("\r\n");
-      dOut.writeUTF("10" + " " + "Boulevard Haussman");
       dOut.writeUTF("\r\n");
-      dOut.writeUTF("7 5 0 0 9" + "  " + "Paris");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("                                             " + "10" + "    " + "Boulevard Haussman");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("                                             " + "7 5 0 0 9" + "      " + "Paris");
       dOut.flush();
 
     } catch (IOException e) {
