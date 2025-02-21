@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
@@ -865,6 +866,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_category_serie")
 	private Category categorySerie;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_class_product")
+	private AccountingAccountClass accountingAccountClassProduct;
 
 	public Integer getId() {
 		return id;
@@ -2509,6 +2514,14 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingJournalSalary(AccountingJournal accountingJournalSalary) {
 		this.accountingJournalSalary = accountingJournalSalary;
+	}
+
+	public AccountingAccountClass getAccountingAccountClassProduct() {
+		return accountingAccountClassProduct;
+	}
+
+	public void setAccountingAccountClassProduct(AccountingAccountClass accountingAccountClassProduct) {
+		this.accountingAccountClassProduct = accountingAccountClassProduct;
 	}
 
 }

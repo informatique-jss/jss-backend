@@ -40,6 +40,8 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingBalanceViewTitle
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingVatValue;
+import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 
 @Service
@@ -50,6 +52,9 @@ public class AccountingExportHelper {
 
         @Autowired
         ConstantService constantService;
+
+        @Autowired
+        AccountingRecordRepository accountingRecordRepository;
 
         @Value("${jss.siret}")
         private String siretJss;
@@ -288,6 +293,7 @@ public class AccountingExportHelper {
                         for (int i = 0; i < 11; i++)
                                 currentSheet.autoSizeColumn(i, true);
                 }
+
                 File file;
                 FileOutputStream outputStream;
                 try {
@@ -918,6 +924,49 @@ public class AccountingExportHelper {
                 // autosize
                 for (int i = 0; i < 11; i++)
                         currentSheet.autoSizeColumn(i, true);
+
+                // If journal, export VAT balance
+                if (accountingJournal != null) {
+                        List<AccountingVatValue> vatValues = accountingRecordRepository.getAccountingVatValueForJournal(
+                                        startDate.toLocalDate(), endDate.toLocalDate(), accountingJournal.getId(),
+                                        constantService.getAccountingAccountClassProduct().getId());
+
+                        if (vatValues != null && vatValues.size() > 0) {
+                                currentSheet = wb.createSheet("TVA");
+
+                                // Title
+                                currentLine = 0;
+                                currentRow = currentSheet.createRow(currentLine++);
+                                currentColumn = 0;
+
+                                currentCell = currentRow.createCell(currentColumn++);
+                                currentCell.setCellValue("Code");
+                                currentCell.setCellStyle(headerCellStyle);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                currentCell.setCellValue("TVA");
+                                currentCell.setCellStyle(headerCellStyle);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                currentCell.setCellValue("Montant");
+                                currentCell.setCellStyle(headerCellStyle);
+
+                                for (AccountingVatValue vatValue : vatValues) {
+                                        currentRow = currentSheet.createRow(currentLine++);
+                                        currentColumn = 0;
+
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        currentCell.setCellValue(vatValue.getVatCode());
+                                        currentCell.setCellStyle(recordCellStyle);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        currentCell.setCellValue(vatValue.getVatLabel());
+                                        currentCell.setCellStyle(recordCellStyle);
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        currentCell.setCellValue(vatValue.getAmount());
+                                        currentCell.setCellStyle(styleCurrency);
+                                }
+
+                        }
+
+                }
 
                 File file;
                 FileOutputStream outputStream;
