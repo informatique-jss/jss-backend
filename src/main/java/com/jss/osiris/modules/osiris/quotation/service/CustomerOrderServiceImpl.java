@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -225,6 +226,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     MyJssProfileController myJssProfileController;
+
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -1159,6 +1163,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             boolean printLetters, boolean printRegisteredLetter)
             throws OsirisException, OsirisClientMessageException {
         ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+        String username = activeDirectoryHelper.getCurrentUsername();
         for (String id : customerOrdersIn) {
             customerOrders.add(getCustomerOrder(Integer.parseInt(id)));
         }
@@ -1189,10 +1194,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (CustomerOrder customerOrder : customerOrders) {
                 try {
                     if (competentAuthority != null)
-                        printDelegate.printRegisteredLabel(invoiceLabelResult, customerOrder);
+                        printDelegate.printRegisteredLabel(invoiceLabelResult, customerOrder, username);
                     else
                         printDelegate.printRegisteredLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
-                                customerOrder);
+                                customerOrder, username);
                 } catch (NumberFormatException e) {
                 } catch (Exception e) {
                     throw new OsirisException(e, "Error when printing label");

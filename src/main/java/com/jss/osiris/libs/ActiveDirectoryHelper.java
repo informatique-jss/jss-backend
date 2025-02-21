@@ -1,12 +1,11 @@
 package com.jss.osiris.libs;
 
-import static org.springframework.ldap.query.LdapQueryBuilder.query;
+import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -16,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 
 @Service
 public class ActiveDirectoryHelper {
@@ -43,9 +41,6 @@ public class ActiveDirectoryHelper {
 
     @Value("${ldap.group.jss.users}")
     private String ldapGroupJssUsers;
-
-    @Autowired
-    EmployeeService employeeService;
 
     public static final String ADMINISTRATEUR = "@activeDirectoryHelper.isUserHasGroup('"
             + ActiveDirectoryHelper.ADMINISTRATEUR_GROUP + "')";

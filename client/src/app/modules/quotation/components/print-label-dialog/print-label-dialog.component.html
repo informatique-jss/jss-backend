@@ -16,7 +16,7 @@
         </td>
       </tr>
       <tr>
-        <td *ngIf="printLabel">
+        <td *ngIf="printLabel || printRegisteredLetter">
           <select-print-label-recipient [(model)]="selectedRecipient" label="Destinataire de l'étiquette"
             [form]="printLabelForm" propertyName="selectedRecipient" [isMandatory]="true"
             [isDisabled]="false"></select-print-label-recipient>

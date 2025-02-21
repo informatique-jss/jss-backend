@@ -238,7 +238,8 @@ public class PrintDelegate {
     }
   }
 
-  public void printRegisteredLabel(InvoiceLabelResult label, CustomerOrder customerOrder) throws OsirisException {
+  public void printRegisteredLabel(InvoiceLabelResult label, CustomerOrder customerOrder, String username)
+      throws OsirisException {
     Socket socket = null;
     DataOutputStream dOut = null;
     try {
@@ -257,6 +258,16 @@ public class PrintDelegate {
       }
       dOut.writeUTF("\r\n");
       dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("  " + customerOrder.getId() + '/' + username);
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
       if (label.getBillingLabel() != null) {
         List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\n"));
         if (labelLines != null) {
@@ -267,15 +278,15 @@ public class PrintDelegate {
             } else
               lineToPrint.add(line);
             for (String lin : lineToPrint) {
-              dOut.writeUTF("        " + StringUtils.stripAccents(lin).toUpperCase());
-              dOut.writeUTF("\r\n");
+              dOut.writeUTF(
+                  "                                          " + StringUtils.stripAccents(lin).toUpperCase());
               dOut.writeUTF("\r\n");
               dOut.flush();
             }
           }
         }
       }
-      dOut.writeUTF("     "
+      dOut.writeUTF("                                          "
           + StringUtils
               .stripAccents(
                   (label.getBillingLabelAddress() != null ? label.getBillingLabelAddress() : ""))
@@ -296,9 +307,8 @@ public class PrintDelegate {
 
       dOut.flush();
       dOut.writeUTF("\r\n");
-      dOut.writeUTF("\r\n");
       dOut.flush();
-      dOut.writeUTF("     "
+      dOut.writeUTF("                                          "
           + (label.getBillingLabelPostalCode() != null
               ? label.getBillingLabelPostalCode().replaceAll("\\p{C}", "")
               : "")
@@ -307,28 +317,28 @@ public class PrintDelegate {
               ? StringUtils.stripAccents(label.getBillingLabelComplementCedex()).toUpperCase()
                   .replaceAll("\\p{C}", "")
               : "")
-          + " "
+          + "     "
           + StringUtils.stripAccents(label.getBillingLabelCity() != null
               ? label.getBillingLabelCity().getLabel()
               : "").replaceAll("\\p{C}", "")
-          + " "
+          + "     "
           + ((label.getBillingLabelCountry() == null || label.getBillingLabelCountry().getId()
               .equals(constantService.getCountryFrance().getId())) ? ""
                   : label.getBillingLabelCountry().getLabel().replaceAll("\\p{C}", "")));
 
       dOut.flush();
       dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
+      dOut.writeUTF("\r\n");
       dOut.flush();
-      dOut.writeUTF("                                             " + "Journal Special des Societes");
+      dOut.writeUTF("                                          " + "Journal Special des Societes");
       dOut.writeUTF("\r\n");
+      dOut.writeUTF("                                          " + "10" + "    " + "Boulevard Haussman");
       dOut.writeUTF("\r\n");
-      dOut.writeUTF("\r\n");
-      dOut.writeUTF("\r\n");
-      dOut.writeUTF("                                             " + "10" + "    " + "Boulevard Haussman");
-      dOut.writeUTF("\r\n");
-      dOut.writeUTF("\r\n");
-      dOut.writeUTF("\r\n");
-      dOut.writeUTF("                                             " + "7 5 0 0 9" + "      " + "Paris");
+      dOut.writeUTF("                                          " + "75009" + "      " + "Paris");
       dOut.flush();
 
     } catch (IOException e) {
