@@ -40,14 +40,14 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
   generateMailingLabelDownload(customerOrders: string[], printLabel: boolean, competentAuthority: CompetentAuthority | undefined, printLetters: boolean, printRegisteredLetter: boolean) {
     let params = new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters).set("printRegisteredLetter", printRegisteredLetter);
     if (competentAuthority)
-      params.set("competentAuthorityId", competentAuthority.id + "");
+      params = params.set("competentAuthorityId", competentAuthority.id + "");
     return this.downloadGet(params, "customer-order/print/label");
   }
 
   generateMailingLabel(customerOrders: string[], printLabel: boolean, competentAuthority: CompetentAuthority | undefined, printLetters: boolean, printRegisteredLetter: boolean) {
     let params = new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters).set("printRegisteredLetter", printRegisteredLetter);
     if (competentAuthority)
-      params.set("competentAuthorityId", competentAuthority.id + "");
+      params = params.set("competentAuthorityId", competentAuthority.id + "");
     return this.get(params, "customer-order/print/label");
   }
 

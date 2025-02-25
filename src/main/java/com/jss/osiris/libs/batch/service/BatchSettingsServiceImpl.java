@@ -621,7 +621,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.PURGE_MAIL_TO_INDEX);
             batchSettings.setLabel("Purge des mails reçus déjà indexés");
-            batchSettings.setFixedRate(60 * 60 * 1000);
+            batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(true);
