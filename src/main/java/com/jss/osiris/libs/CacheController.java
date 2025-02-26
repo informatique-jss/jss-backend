@@ -7,19 +7,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hazelcast.core.HazelcastInstance;
-
-import jakarta.annotation.PreDestroy;
-
 @RestController
 @CrossOrigin
 @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
 public class CacheController {
 	@Autowired
 	private CacheManager cacheManager;
-
-	@Autowired
-	HazelcastInstance hazelcastInstance;
 
 	private static final String inputEntryPoint = "/cache";
 
@@ -31,10 +24,5 @@ public class CacheController {
 				cacheManager.getCache(name).clear();
 			}
 		}
-	}
-
-	@PreDestroy
-	public void shutDownHazelcast() {
-		hazelcastInstance.shutdown();
 	}
 }
