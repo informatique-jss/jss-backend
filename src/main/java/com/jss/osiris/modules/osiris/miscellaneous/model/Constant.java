@@ -2528,7 +2528,7 @@ public class Constant implements Serializable, IId {
 	public void setCategorySerie(Category categorySerie) {
 		this.categorySerie = categorySerie;
 	}
-
+ 
 	public AttachmentType getAttachmentTypeClientCommunication() {
 		return attachmentTypeClientCommunication;
 	}
@@ -2564,7 +2564,7 @@ public class Constant implements Serializable, IId {
 	public void setProvisionFamilyTypeDeposit(ProvisionFamilyType provisionFamilyTypeDeposit) {
 		this.provisionFamilyTypeDeposit = provisionFamilyTypeDeposit;
 	}
-
+ 
 	public AccountingJournal getAccountingJournalSalary() {
 		return accountingJournalSalary;
 	}
@@ -2572,7 +2572,7 @@ public class Constant implements Serializable, IId {
 	public void setAccountingJournalSalary(AccountingJournal accountingJournalSalary) {
 		this.accountingJournalSalary = accountingJournalSalary;
 	}
-
+ 
 	public String getRecoverySharedMaiblox() {
 		return recoverySharedMaiblox;
 	}
@@ -2584,7 +2584,7 @@ public class Constant implements Serializable, IId {
 	public void setProvisionTypeRbe(ProvisionType provisionTypeRbe) {
 		this.provisionTypeRbe = provisionTypeRbe;
 	}
-
+ 
 	public AccountingAccountClass getAccountingAccountClassProduct() {
 		return accountingAccountClassProduct;
 	}

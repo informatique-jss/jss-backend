@@ -448,7 +448,8 @@ public class PaymentServiceImpl implements PaymentService {
                     if (foundEntity.getEntityType().equals(BankTransfert.class.getSimpleName())) {
                         BankTransfert bankTransfert = bankTransfertService.getBankTransfert(foundEntity.getEntityId());
                         if (bankTransfert != null
-                                && (bankTransfert.getIsMatched() == null || bankTransfert.getIsMatched() == false))
+                                && (bankTransfert.getIsMatched() == null || bankTransfert.getIsMatched() == false)
+                                && (bankTransfert.getIsCancelled() == null || bankTransfert.getIsCancelled() == false))
                             bankTransfertFound = bankTransfert;
                     }
                 }

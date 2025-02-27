@@ -79,7 +79,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   AccountingBalanceHelper accountingBalanceHelper;
-
+ 
+  @Autowired
+  AccountingRecordGenerationService accountingRecordGenerationService;
+ 
   private String ACCOUNTING_RECORD_TABLE_NAME = "accounting_record";
   private String CLOSED_ACCOUNTING_RECORD_TABLE_NAME = "closed_accounting_record";
 
@@ -89,9 +92,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       return this.ACCOUNTING_RECORD_TABLE_NAME;
     return this.CLOSED_ACCOUNTING_RECORD_TABLE_NAME;
   }
-
-  @Autowired
-  AccountingRecordGenerationService accountingRecordGenerationService;
 
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {
@@ -636,7 +636,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     ArrayList<AccountingBalanceViewTitle> outBilanPassif = new ArrayList<AccountingBalanceViewTitle>();
     outBilanPassif.add(accountingBalanceHelper.getBilanPassif(accountingRecords, accountingRecordsN1));
     return accountingExportHelper.getBilan(outBilanActif, outBilanPassif);
-  }
+  } 
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -730,5 +730,5 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     year += 2000;
 
     return LocalDate.of(year, month, day);
-  }
+  } 
 }

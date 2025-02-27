@@ -1,4 +1,4 @@
-import { Provider } from "@angular/core";
+import { Provider } from "../../miscellaneous/model/Provider";
 
 export interface BankTransfertSearch {
   startDate: Date | undefined;

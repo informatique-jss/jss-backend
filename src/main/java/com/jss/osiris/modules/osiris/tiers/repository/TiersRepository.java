@@ -149,8 +149,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         +
                         "")
         List<ITiersSearchResult> searchTiers(@Param("tiersId") Integer tiersId,
-                        @Param("salesEmployeeId") Integer salesEmployeeId,
-                        @Param("mail") String mail,
+                        @Param("salesEmployeeId") Integer salesEmployeeId, 
+                        @Param("mail") String mail, 
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate, @Param("label") String label,
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,

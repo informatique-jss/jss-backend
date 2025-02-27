@@ -409,8 +409,8 @@ public class TiersServiceImpl implements TiersService {
 
         if (tiersSearch.getIsNewTiers() == null)
             tiersSearch.setIsNewTiers(false);
-
-        return tiersRepository.searchTiers(tiersId, salesEmployeeId, tiersSearch.getMail(),
+ 
+        return tiersRepository.searchTiers(tiersId, salesEmployeeId, tiersSearch.getMail(), 
                 tiersSearch.getStartDate().atTime(0, 0),
                 tiersSearch.getEndDate().atTime(23, 59, 59), tiersSearch.getLabel(),
                 constantService.getConfrereJssSpel().getId(),

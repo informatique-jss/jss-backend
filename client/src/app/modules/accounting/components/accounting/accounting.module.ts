@@ -56,8 +56,8 @@ const routes: Routes = [
     AccountingBalanceComponent,
     AccountingBalanceGeneraleComponent,
     AddAccountingRecordComponent,
-    AccountingBilanComponent,
-    AccountingProfitLostComponent,
+    AccountingBilanComponent, 
+    AccountingProfitLostComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

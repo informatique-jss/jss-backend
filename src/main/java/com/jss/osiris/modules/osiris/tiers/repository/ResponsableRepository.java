@@ -136,8 +136,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         "")
         List<IResponsableSearchResult> searchResponsable(@Param("tiersId") Integer tiersId,
                         @Param("responsableId") Integer responsableId,
-                        @Param("salesEmployeeId") Integer salesEmployeeId,
-                        @Param("mail") String mail,
+                        @Param("salesEmployeeId") Integer salesEmployeeId, 
+                        @Param("mail") String mail, 
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate, @Param("label") String label,
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,

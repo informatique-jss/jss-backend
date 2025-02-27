@@ -236,10 +236,10 @@ public class MailHelper {
             if (mail.getCopyToMail() != null)
                 message.addCc(mail.getCopyToMail());
 
-            if (mail.getCopyToMe() != null && mail.getCopyToMe())
+            if (mail.getCopyToMe() != null && mail.getCopyToMe() && mail.getSendToMeEmployee() != null)
                 message.addCc(mail.getSendToMeEmployee().getMail());
 
-            if (mail.getSendToMe() != null && mail.getSendToMe()) {
+            if (mail.getSendToMe() != null && mail.getSendToMe() && mail.getSendToMeEmployee() != null) {
                 message.addTo(mail.getSendToMeEmployee().getMail());
             } else {
                 if (mail.getMailComputeResult().getRecipientsMailTo() == null

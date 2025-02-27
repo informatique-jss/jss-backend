@@ -420,14 +420,14 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate,
                         @Param("canViewRestricted") boolean canViewRestricted);
-
+ 
         @Modifying
         @Query(nativeQuery = true, value = "select * from accounting_record where id_accounting_account =:idAccountingAccount and id_accounting_journal =:idSalaryJournal and date(operation_date_time) = date(:operationDate) ;")
         List<AccountingRecord> findToDeleteRecordsByAccountingAccountAndJournalAndOperationDate(
                         @Param("idAccountingAccount") Integer idAccountingAccount,
                         @Param("idSalaryJournal") Integer idSalaryJournal,
                         @Param("operationDate") LocalDate operationDate);
-
+ 
         @Query(nativeQuery = true, value = "" +
                         " select  vat.code as vatCode, vat.label as vatLabel, sum(coalesce(debit_amount, 0))-sum(coalesce(credit_amount, 0)) as amount "
                         +

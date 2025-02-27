@@ -104,6 +104,6 @@ public interface AccountingRecordService {
         public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
 
         public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
-
-        public void generateAccountingRecordForSageRecord(InputStream file) throws OsirisException;
+ 
+        public void generateAccountingRecordForSageRecord(InputStream file) throws OsirisException; 
 }
