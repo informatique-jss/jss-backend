@@ -102,9 +102,13 @@ public class ResponsableServiceImpl implements ResponsableService {
                         && !order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)
                         && !order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
                     for (Document documentToSet : order.getDocuments())
-                        if (documentToSet.getDocumentType().getId().equals(documentType.getId()))
-                            documentService
-                                    .addOrUpdateDocument(documentService.cloneOrMergeDocument(document, documentToSet));
+                        if (documentToSet.getDocumentType().getId().equals(documentType.getId())) {
+                            documentService.cloneOrMergeDocument(document, documentToSet);
+                            documentToSet.setTiers(null);
+                            documentToSet.setResponsable(null);
+                            documentToSet.setCustomerOrder(order);
+                            documentService.addOrUpdateDocument(documentToSet);
+                        }
             }
         }
 
@@ -114,9 +118,13 @@ public class ResponsableServiceImpl implements ResponsableService {
                         && !quotation.getQuotationStatus().getCode().equals(QuotationStatus.ABANDONED)
                         && !quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
                     for (Document documentToSet : quotation.getDocuments())
-                        if (documentToSet.getDocumentType().getId().equals(documentType.getId()))
-                            documentService
-                                    .addOrUpdateDocument(documentService.cloneOrMergeDocument(document, documentToSet));
+                        if (documentToSet.getDocumentType().getId().equals(documentType.getId())) {
+                            documentService.cloneOrMergeDocument(document, documentToSet);
+                            documentToSet.setTiers(null);
+                            documentToSet.setResponsable(null);
+                            documentToSet.setQuotation(quotation);
+                            documentService.addOrUpdateDocument(documentToSet);
+                        }
             }
         }
         return document;

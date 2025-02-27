@@ -656,18 +656,18 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         reader.skip(reader.readLine().length() + 1);
       while ((line = reader.readLine()) != null) {
         SageRecord record = new SageRecord();
-        record.setOperationDate(parseDateFromString(line.substring(3, 9)));
-        record.setTargetAccountingAccountCode(line.substring(11, 17).trim());
-        record.setLabel(line.substring(51, 76).trim());
-        record.setCreditOrDebit(line.substring(83, 84).trim());
-        if (line.substring(83, 84).trim().equals(SageRecord.CREDIT_SAGE))
+        record.setOperationDate(parseDateFromString(line.substring(3, 11)));
+        record.setTargetAccountingAccountCode(line.substring(11, 19).trim());
+        record.setLabel(line.substring(53, 78).trim());
+        record.setCreditOrDebit(line.substring(85, 86).trim());
+        if (record.getCreditOrDebit().equals(SageRecord.CREDIT_SAGE))
           record
               .setCreditAmount(
-                  BigDecimal.valueOf(Double.parseDouble(line.substring(93, 104).replace(",", ".").trim())));
-        if (line.substring(83, 84).trim().equals(SageRecord.DEBIT_SAGE))
+                  BigDecimal.valueOf(Double.parseDouble(line.substring(96, 106).replace(",", ".").trim())));
+        if (record.getCreditOrDebit().equals(SageRecord.DEBIT_SAGE))
           record
               .setDebitAmount(
-                  BigDecimal.valueOf(Double.parseDouble(line.substring(93, 104).replace(",", ".").trim())));
+                  BigDecimal.valueOf(Double.parseDouble(line.substring(96, 106).replace(",", ".").trim())));
         record.setCreatedDate(LocalDateTime.now());
         records.add(record);
       }

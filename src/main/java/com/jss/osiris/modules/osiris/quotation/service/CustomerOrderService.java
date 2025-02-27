@@ -108,7 +108,7 @@ public interface CustomerOrderService {
         public BigDecimal getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
         public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrders, boolean printLabel,
-                        String competentAuthorityId,
+                        Integer competentAuthorityId,
                         boolean printLetters, boolean printRegisteredLetter)
                         throws OsirisException, OsirisClientMessageException;
 

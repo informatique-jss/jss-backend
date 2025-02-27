@@ -2460,7 +2460,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/customer-order/print/label")
   public ResponseEntity<byte[]> printMailingLabel(@RequestParam List<String> customerOrders,
-      @RequestParam Boolean printLabel, @RequestParam(required = false) String competentAuthorityId,
+      @RequestParam Boolean printLabel, @RequestParam(required = false) Integer competentAuthorityId,
       @RequestParam Boolean printLetters, @RequestParam Boolean printRegisteredLetter)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     return customerOrderService.printMailingLabel(customerOrders, printLabel, competentAuthorityId,

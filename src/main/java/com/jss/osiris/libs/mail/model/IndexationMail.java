@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 public class IndexationMail {
 
-    private InputStream mailPdf;
+    private InputStream mailText;
 
     private String subject;
 
@@ -26,12 +26,12 @@ public class IndexationMail {
         this.fileName = fileName;
     }
 
-    public InputStream getMailPdf() {
-        return mailPdf;
+    public InputStream getMailText() {
+        return mailText;
     }
 
-    public void setMailPdf(InputStream mailPdf) {
-        this.mailPdf = mailPdf;
+    public void setMailText(InputStream mailPdf) {
+        this.mailText = mailPdf;
     }
 
 }
