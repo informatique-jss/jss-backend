@@ -65,6 +65,8 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable);
+
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
 
         public List<IOrderingSearchTaggedResult> searchOrdersTagged(OrderingSearchTagged orderingSearchResult);
@@ -106,7 +108,8 @@ public interface CustomerOrderService {
         public BigDecimal getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
         public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrders, boolean printLabel,
-                        boolean printLetters)
+                        Integer competentAuthorityId,
+                        boolean printLetters, boolean printRegisteredLetter)
                         throws OsirisException, OsirisClientMessageException;
 
         public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)

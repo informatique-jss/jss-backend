@@ -13,9 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.libs.search.service.SearchService;
-import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
+import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.IResponsableSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
@@ -28,16 +35,19 @@ public class ResponsableServiceImpl implements ResponsableService {
     ResponsableRepository responsableRepository;
 
     @Autowired
-    SearchService searchService;
-
-    @Autowired
-    InvoiceService invoiceService;
-
-    @Autowired
     ConstantService constantService;
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
+
+    @Autowired
+    DocumentService documentService;
+
+    @Autowired
+    QuotationService quotationService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -81,6 +91,46 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
+    public Document applyParametersDocumentToQuotation(DocumentType documentType, Responsable responsable) {
+        List<CustomerOrder> orders = customerOrderService.findCustomerOrderByResponsable(responsable);
+        List<Quotation> quotations = quotationService.findQuotationByResponsable(responsable);
+        Document document = documentService.findDocumentByDocumentTypeAndResponsable(documentType, responsable);
+
+        if (orders != null) {
+            for (CustomerOrder order : orders) {
+                if (!order.getDocuments().isEmpty()
+                        && !order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)
+                        && !order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
+                    for (Document documentToSet : order.getDocuments())
+                        if (documentToSet.getDocumentType().getId().equals(documentType.getId())) {
+                            documentService.cloneOrMergeDocument(document, documentToSet);
+                            documentToSet.setTiers(null);
+                            documentToSet.setResponsable(null);
+                            documentToSet.setCustomerOrder(order);
+                            documentService.addOrUpdateDocument(documentToSet);
+                        }
+            }
+        }
+
+        if (quotations != null) {
+            for (Quotation quotation : quotations) {
+                if (quotation.getDocuments().isEmpty()
+                        && !quotation.getQuotationStatus().getCode().equals(QuotationStatus.ABANDONED)
+                        && !quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+                    for (Document documentToSet : quotation.getDocuments())
+                        if (documentToSet.getDocumentType().getId().equals(documentType.getId())) {
+                            documentService.cloneOrMergeDocument(document, documentToSet);
+                            documentToSet.setTiers(null);
+                            documentToSet.setResponsable(null);
+                            documentToSet.setQuotation(quotation);
+                            documentService.addOrUpdateDocument(documentToSet);
+                        }
+            }
+        }
+        return document;
+    }
+
+    @Override
     public List<IResponsableSearchResult> searchResponsables(TiersSearch tiersSearch) throws OsirisException {
         Integer tiersId = 0;
         if (tiersSearch.getTiers() != null)
@@ -94,6 +144,9 @@ public class ResponsableServiceImpl implements ResponsableService {
         if (tiersSearch.getSalesEmployee() != null)
             salesEmployeeId = tiersSearch.getSalesEmployee().getId();
 
+        if (tiersSearch.getMail() == null)
+            tiersSearch.setMail("");
+
         if (tiersSearch.getStartDate() == null)
             tiersSearch.setStartDate(LocalDate.now().minusYears(10));
 
@@ -105,8 +158,8 @@ public class ResponsableServiceImpl implements ResponsableService {
 
         if (tiersSearch.getWithNonNullTurnover() == null)
             tiersSearch.setWithNonNullTurnover(false);
-
-        return responsableRepository.searchResponsable(tiersId, responsableId, salesEmployeeId,
+ 
+        return responsableRepository.searchResponsable(tiersId, responsableId, salesEmployeeId, tiersSearch.getMail(), 
                 tiersSearch.getStartDate().atTime(0, 0),
                 tiersSearch.getEndDate().atTime(23, 59, 59), tiersSearch.getLabel(),
                 constantService.getConfrereJssSpel().getId(),

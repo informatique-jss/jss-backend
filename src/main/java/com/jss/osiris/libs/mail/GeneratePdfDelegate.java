@@ -56,13 +56,11 @@ import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -119,13 +117,7 @@ public class GeneratePdfDelegate {
     InvoiceHelper invoiceHelper;
 
     @Autowired
-    VatService vatService;
-
-    @Autowired
     ProvisionService provisionService;
-
-    @Autowired
-    PaymentService paymentService;
 
     @Autowired
     InvoiceService invoiceService;
@@ -323,7 +315,7 @@ public class GeneratePdfDelegate {
         if (tier != null) {
             ctx.setVariable("denomination",
                     tier.getDenomination() != null
-                            ? tier.getDenomination()
+                            ? tier.getDenomination().replaceAll("&", "<![CDATA[&]]>")
                             : (tier.getFirstname() + " " + tier.getLastname()));
             ctx.setVariable("address", tier.getAddress());
             ctx.setVariable("postalCode", tier.getPostalCode());
@@ -546,19 +538,28 @@ public class GeneratePdfDelegate {
                         : ""));
 
         if (customerOrder != null) {
+            List<String> externalReferences = new ArrayList<String>();
             Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
                     constantService.getDocumentTypeBilling());
             if (billingDocument != null) {
                 if (billingDocument.getExternalReference() != null)
-                    ctx.setVariable("externalReference", billingDocument.getExternalReference());
-
+                    externalReferences.add(billingDocument.getExternalReference());
                 // Responsable on billing
-                if (billingDocument.getIsResponsableOnBilling() != null && billingDocument.getIsResponsableOnBilling()
+                if (billingDocument.getIsResponsableOnBilling() != null
+                        && billingDocument.getIsResponsableOnBilling()
                         && customerOrder.getResponsable() != null)
                     ctx.setVariable("responsableOnBilling", customerOrder.getResponsable().getFirstname() + " "
                             + customerOrder.getResponsable().getLastname());
-
             }
+
+            if (customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                    if (asso.getAffaire() != null && asso.getAffaire().getExternalReference() != null
+                            && asso.getAffaire().getExternalReference().length() > 0)
+                        externalReferences.add(asso.getAffaire().getExternalReference());
+
+            if (externalReferences.size() > 0)
+                ctx.setVariable("externalReference", String.join(" / ", externalReferences));
 
             ctx.setVariable("customerOrder", customerOrder);
 
@@ -1462,6 +1463,35 @@ public class GeneratePdfDelegate {
             outputStream.close();
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for tracking sheet document");
+        }
+        return tempFile;
+    }
+
+    public File generateGenericFromHtml(String htmlContent, Integer mailId)
+            throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("genericMail", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        try {
+            renderer.setDocumentFromString(
+                    htmlContent.replaceAll("\\p{C}", " ")
+                            .replace("&mail", "mail").replace("&validationToken", "validationToken")
+                            .replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
+
+            renderer.setScaleToFit(true);
+            renderer.layout();
+            renderer.createPDF(outputStream);
+
+            outputStream.close();
+        } catch (Exception e) {
+            throw new OsirisException(e, "Unable to create PDF file for mail " + mailId);
         }
         return tempFile;
     }

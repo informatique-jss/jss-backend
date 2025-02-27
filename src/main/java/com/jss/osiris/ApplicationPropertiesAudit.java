@@ -72,6 +72,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("fr.gouv.etablissements.publics.api.entry.point");
         isOk = isOk && checkProperty("fr.gouv.geo.api.entry.point");
         isOk = isOk && checkProperty("printer.label.ip");
+        isOk = isOk && checkProperty("printer.label.second.ip");
         isOk = isOk && checkProperty("printer.label.port");
         isOk = isOk && checkProperty("jss.sepa.identification");
         isOk = isOk && checkProperty("jss.bic");
@@ -113,6 +114,35 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.infogreffe.refresh.all");
         isOk = isOk && checkProperty("schedulling.infogreffe.refresh.last.day");
         isOk = isOk && checkProperty("login.token.entry.point");
+        isOk = isOk && checkProperty("mail.imap.host");
+        isOk = isOk && checkProperty("mail.imap.port");
+        isOk = isOk && checkProperty("mail.imap.username");
+        isOk = isOk && checkProperty("mail.imap.password");
+        isOk = isOk && checkProperty("mail.imap.auth");
+        isOk = isOk && checkProperty("mail.imap.ssl.enable");
+        isOk = isOk && checkProperty("mail.imap.auth.mechanisms");
+        isOk = isOk && checkProperty("mail.imaps.sasl.mechanisms");
+        isOk = isOk && checkProperty("mail.imap.app.id");
+        isOk = isOk && checkProperty("mail.imap.tenant.id");
+        isOk = isOk && checkProperty("mail.imap.secret.value");
+        isOk = isOk && checkProperty("mail.imap.secret.id");
+        isOk = isOk && checkProperty("mail.imap.tls.version");
+        isOk = isOk && checkProperty("schedulling.mail.purge.indexation");
+
+        isOk = isOk && checkProperty("mail.imap.host");
+        isOk = isOk && checkProperty("mail.imap.port");
+        isOk = isOk && checkProperty("mail.imap.username");
+        isOk = isOk && checkProperty("mail.imap.password");
+        isOk = isOk && checkProperty("mail.imap.auth");
+        isOk = isOk && checkProperty("mail.imap.ssl.enable");
+        isOk = isOk && checkProperty("mail.imap.auth.mechanisms");
+        isOk = isOk && checkProperty("mail.imap.app.id");
+        isOk = isOk && checkProperty("mail.imap.tenant.id");
+        isOk = isOk && checkProperty("mail.imap.secret.value");
+        isOk = isOk && checkProperty("mail.imap.secret.id");
+        isOk = isOk && checkProperty("schedulling.mail.automatic.indexation");
+        isOk = isOk && checkProperty("outlook.default.url");
+        isOk = isOk && checkProperty("microsoft.host");
 
         if (!isOk)
             System.exit(-1);

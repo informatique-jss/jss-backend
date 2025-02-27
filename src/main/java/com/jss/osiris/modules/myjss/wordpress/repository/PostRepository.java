@@ -32,7 +32,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p where id not in :postFetchedId")
         List<Post> findPostExcludIds(@Param("postFetchedId") List<Integer> postFetchedId);
 
-        @Query("select p.id  from Post p join p.postViews v where v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories  group by p.id order by sum(v.count) desc ")
+        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
         List<Integer> findPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
                         @Param("category") Category category, Pageable pageable);
 
@@ -45,11 +45,11 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         List<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, Pageable pageableRequest);
 
-        @Query("select p from Post p where :myJssCategories member of p.myJssCategories and p.date>:date")
+        @Query("select p from Post p where p.isCancelled = false and :myJssCategories member of p.myJssCategories and p.date>:date")
         List<Post> findNextArticle(@Param("myJssCategories") MyJssCategory myJssCategories,
                         @Param("date") LocalDateTime date, Pageable pageableRequest);
 
-        @Query("select p from Post p where :myJssCategories member of p.myJssCategories and p.date<:date")
+        @Query("select p from Post p where p.isCancelled = false and :myJssCategories member of p.myJssCategories and p.date<:date")
         List<Post> findPreviousArticle(@Param("myJssCategories") MyJssCategory myJssCategories,
                         @Param("date") LocalDateTime date, Pageable pageableRequest);
 

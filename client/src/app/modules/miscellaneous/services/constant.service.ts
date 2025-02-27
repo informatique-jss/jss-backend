@@ -101,6 +101,12 @@ export class ConstantService extends AppRestService<Constant> {
   getDocumentTypeDunning() {
     return this.constant.documentTypeDunning;
   }
+  getDocumentTypeSynthesisRbeSigned() {
+    return this.constant.documentTypeSynthesisRbeSigned;
+  }
+  getDocumentTypeSynthesisRbeUnsigned() {
+    return this.constant.documentTypeSynthesisRbeUnsigned;
+  }
 
   getDocumentTypeRefund() {
     return this.constant.documentTypeRefund;
@@ -200,6 +206,10 @@ export class ConstantService extends AppRestService<Constant> {
 
   getAttachmentTypeQuotation() {
     return this.constant.attachmentTypeQuotation;
+  }
+
+  getAttachmentTypeClientCommunication() {
+    return this.constant.attachmentTypeClientCommunication;
   }
 
   getCountryFrance() {
@@ -346,6 +356,13 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.provisionTypeRegistrationAct;
   }
 
+  getProvisionTypeRbe() {
+    return this.constant.provisionTypeRbe;
+  }
+
+  getProvisionFamilyTypeDeposit() {
+    return this.constant.provisionFamilyTypeDeposit;
+  }
   getBillingTypeInfogreffeDebour() {
     return this.constant.billingTypeInfogreffeDebour;
   }
@@ -662,6 +679,10 @@ export class ConstantService extends AppRestService<Constant> {
 
   getAccountingSharedMaiblox() {
     return this.constant.accountingSharedMaiblox;
+  }
+
+  getRecoverySharedMaiblox() {
+    return this.constant.recoverySharedMaiblox;
   }
 
   getBillingClosureRecipientTypeOther() {

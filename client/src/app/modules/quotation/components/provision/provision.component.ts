@@ -449,7 +449,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           this.saveAsso();
         });
       } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_CONFRERE && provision.announcement.confrere) {
-        if (!provision.announcement.isAnnouncementAlreadySentToConfrere) {
+        if (!provision.announcement.isAnnouncementAlreadySentToConfrere || !provision.announcement.firstConfrereSentMailDateTime) {
           saveAsso = false;
           const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
             maxWidth: "400px",

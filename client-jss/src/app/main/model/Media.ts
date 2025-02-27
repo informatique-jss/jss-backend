@@ -2,7 +2,7 @@ import { Author } from "./Author";
 
 export interface Media {
   id: number;
-  fullAuthor: Author;
+  fullAuthor?: Author;
   date: Date;
   media_type: string;
   alt_text: string;

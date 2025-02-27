@@ -1,9 +1,7 @@
 package com.jss.osiris.libs.mail;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.util.IOUtils;
@@ -33,8 +30,6 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.xhtmlrenderer.pdf.ITextRenderer;
-import org.xhtmlrenderer.util.XRLog;
 
 import com.jss.osiris.libs.QrCodeHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -43,7 +38,6 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
-import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
@@ -55,9 +49,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -131,9 +123,6 @@ public class MailHelper {
     DocumentService documentService;
 
     @Autowired
-    EmployeeService employeeService;
-
-    @Autowired
     CustomerOrderService customerOrderService;
 
     @Autowired
@@ -141,9 +130,6 @@ public class MailHelper {
 
     @Autowired
     InvoiceHelper invoiceHelper;
-
-    @Autowired
-    AccountingRecordService accountingRecordService;
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
@@ -164,9 +150,6 @@ public class MailHelper {
     CustomerMailService mailService;
 
     @Autowired
-    VatService vatService;
-
-    @Autowired
     ResponsableService responsableService;
 
     @Autowired
@@ -174,6 +157,9 @@ public class MailHelper {
 
     @Autowired
     FormaliteInfogreffeService formaliteInfogreffeService;
+
+    @Autowired
+    GeneratePdfDelegate generatePdfDelegate;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -361,32 +347,7 @@ public class MailHelper {
         } catch (Exception e) {
             throw new OsirisException(e, "Unable to parse HTML for mail " + mail.getId());
         }
-
-        File tempFile;
-        OutputStream outputStream;
-        try {
-            tempFile = File.createTempFile("genericMail", "pdf");
-            outputStream = new FileOutputStream(tempFile);
-        } catch (IOException e) {
-            throw new OsirisException(e, "Unable to create temp file");
-        }
-        ITextRenderer renderer = new ITextRenderer();
-        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        try {
-            renderer.setDocumentFromString(
-                    htmlContent.replaceAll("\\p{C}", " ")
-                            .replace("&mail", "mail").replace("&validationToken", "validationToken")
-                            .replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
-
-            renderer.setScaleToFit(true);
-            renderer.layout();
-            renderer.createPDF(outputStream);
-
-            outputStream.close();
-        } catch (Exception e) {
-            throw new OsirisException(e, "Unable to create PDF file for mail " + mail.getId());
-        }
-        return tempFile;
+        return generatePdfDelegate.generateGenericFromHtml(htmlContent, mail.getId());
     }
 
     private void setContextVariable(Context ctx, CustomerMail mail, boolean setPlainPictures)
@@ -1185,7 +1146,7 @@ public class MailHelper {
 
         mail.setAttachments(attachments);
         mail.setHeaderPicture("images/mails/customer-order-finalization.png");
-        mail.setReplyToMail(constantService.getStringAccountingSharedMaiblox());
+        mail.setReplyToMail(constantService.getRecoverySharedMaiblox());
         mail.setSendToMe(sendToMe);
         mail.setMailTemplate(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION);
 
@@ -1341,6 +1302,12 @@ public class MailHelper {
                             && asso.getTypeDocument().getAttachments().size() > 0)
                         for (Attachment attachment : asso.getTypeDocument().getAttachments())
                             attachments.add(attachment);
+        }
+        if (mail.getMissingAttachmentQuery() != null
+                && mail.getMissingAttachmentQuery().getAttachments() != null
+                && mail.getMissingAttachmentQuery().getAttachments().size() > 0) {
+            for (Attachment attachment : mail.getMissingAttachmentQuery().getAttachments())
+                attachments.add(attachment);
         }
 
         mail.setAttachments(attachments);

@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.accounting.service;
 
 import java.io.File;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -103,5 +104,6 @@ public interface AccountingRecordService {
         public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
 
         public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
-
+ 
+        public void generateAccountingRecordForSageRecord(InputStream file) throws OsirisException; 
 }

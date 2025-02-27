@@ -724,4 +724,9 @@ public class QuotationServiceImpl implements QuotationService {
                 validationIdQuotationMap.remove(id);
         lastFloodFlush = LocalDateTime.now();
     }
+
+    @Override
+    public List<Quotation> findQuotationByResponsable(Responsable responsable) {
+        return quotationRepository.findByResponsable(responsable);
+    }
 }

@@ -38,8 +38,8 @@ dependencies {
     implementation 'org.springframework.security:spring-security-ldap:6.2.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.4'
     implementation 'org.springframework.boot:spring-boot-starter-cache:3.2.4'
-    implementation 'com.hazelcast:hazelcast-all:4.2.7'
-    implementation 'com.hazelcast:hazelcast-hibernate53:5.0.0'
+    implementation 'com.hazelcast:hazelcast:5.5.0'
+    implementation 'com.hazelcast:hazelcast-hibernate53:5.2.0'
 
     // Database 
     implementation 'org.hibernate.orm:hibernate-c3p0:6.4.4.Final'
@@ -74,7 +74,7 @@ dependencies {
 }
  
 group = 'com.jss.osiris'
-version = '23' 
+version = '24' 
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '17'
 targetCompatibility = '17'

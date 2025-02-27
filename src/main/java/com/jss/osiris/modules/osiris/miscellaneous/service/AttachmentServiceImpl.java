@@ -28,6 +28,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -40,17 +41,15 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
-import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.osiris.quotation.service.DomiciliationService;
-import com.jss.osiris.modules.osiris.quotation.service.FormaliteService;
 import com.jss.osiris.modules.osiris.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
@@ -82,13 +81,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     QuotationService quotationService;
 
     @Autowired
-    DomiciliationService domiciliationService;
-
-    @Autowired
-    AnnouncementService announcementService;
-
-    @Autowired
-    FormaliteService formaliteService;
+    AccountingRecordService accountingRecordService;
 
     @Autowired
     ProvisionService provisionService;
@@ -181,6 +174,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             else
                 return null;
 
+        if (entityType.equals("Sage")) {
+            if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
+                this.accountingRecordService.generateAccountingRecordForSageRecord(file);
+            return null;
+        }
         if (filename.toLowerCase().endsWith(".pdf")) {
             if (pageSelection != null && !pageSelection.equals("") && !pageSelection.equals("null"))
                 file = pdfTools.keepPages(file, pageSelection);
@@ -304,6 +302,12 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (mail == null)
                 return new ArrayList<Attachment>();
             attachment.setCustomerMail(mail);
+        } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
+            MissingAttachmentQuery missingAttachmentQuery = missingAttachmentQueryService
+                    .getMissingAttachmentQuery(idEntity);
+            if (missingAttachmentQuery == null)
+                return new ArrayList<Attachment>();
+            attachment.setMissingAttachmentQuery(missingAttachmentQuery);
         }
         addOrUpdateAttachment(attachment);
         attachment = getAttachment(attachment.getId());
@@ -380,6 +384,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByCompetentAuthorityId(idEntity);
         } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
             attachments = attachmentRepository.findByTypeDocumentCode(codeEntity);
+        } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
+            attachments = attachmentRepository.findByMissingAttachmentQuery(idEntity);
         }
         return attachments;
     }

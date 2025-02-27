@@ -41,11 +41,13 @@ import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.JournalType;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureRecipientType;
@@ -198,6 +200,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public TypeDocument getDocumentTypeSynthesisRbeSigned() throws OsirisException {
+        return getConstants().getDocumentTypeSynthesisRbeSigned();
+    }
+
+    @Override
+    public TypeDocument getDocumentTypeSynthesisRbeUnsigned() throws OsirisException {
+        return getConstants().getDocumentTypeSynthesisRbeUnsigned();
+    }
+
+    @Override
     public DocumentType getDocumentTypeBillingClosure() throws OsirisException {
         return getConstants().getDocumentTypeBillingClosure();
     }
@@ -315,6 +327,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AttachmentType getAttachmentTypeQuotation() throws OsirisException {
         return getConstants().getAttachmentTypeQuotation();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeClientCommunication() throws OsirisException {
+        return getConstants().getAttachmentTypeClientCommunication();
     }
 
     @Override
@@ -490,6 +507,16 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ProvisionType getProvisionTypeRegistrationAct() throws OsirisException {
         return getConstants().getProvisionTypeRegistrationAct();
+    }
+
+    @Override
+    public ProvisionType getProvisionTypeRbe() throws OsirisException {
+        return getConstants().getProvisionTypeRbe();
+    }
+
+    @Override
+    public ProvisionFamilyType getProvisionFamilyTypeDeposit() throws OsirisException {
+        return getConstants().getProvisionFamilyTypeDeposit();
     }
 
     @Override
@@ -885,6 +912,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public String getStringAccountingSharedMaiblox() throws OsirisException {
         return getConstants().getAccountingSharedMaiblox();
+    }
+
+    @Override
+    public String getRecoverySharedMaiblox() throws OsirisException {
+        return getConstants().getRecoverySharedMaiblox();
     }
 
     @Override

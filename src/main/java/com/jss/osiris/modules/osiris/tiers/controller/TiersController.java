@@ -20,10 +20,10 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
+import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PhoneSearch;
@@ -46,7 +46,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.SalesComplainService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
-import com.jss.osiris.modules.osiris.quotation.service.ConfrereService;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
@@ -148,10 +147,7 @@ public class TiersController {
   CompetitorService competitorService;
 
   @Autowired
-  SearchService searchService;
-
-  @Autowired
-  ConfrereService confrereService;
+  DocumentTypeService documentTypeService;
 
   @Autowired
   InvoiceService invoiceService;
@@ -674,7 +670,7 @@ public class TiersController {
         throw new OsirisValidationException("IntercommunityVat");
     }
 
-    validationHelper.validateReferential(tiers.getTiersCategory(), false, "TiersCategory");
+    validationHelper.validateReferential(tiers.getTiersCategory(), true, "TiersCategory");
     validationHelper.validateReferential(tiers.getSalesEmployee(), true, "SalesEmployee");
     validationHelper.validateReferential(tiers.getDefaultCustomerOrderEmployee(), false,
         "DefaultCustomerOrderEmployee");
@@ -762,6 +758,18 @@ public class TiersController {
         if (document.getPaymentDeadlineType() == null) {
           document.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
         }
+
+        if (document.getDocumentType() != null
+            && document.getDocumentType().getId() == constantService.getDocumentTypeBilling().getId()
+            && document.getBillingLabelType() == null) {
+          document.setBillingLabelType(constantService.getBillingLabelTypeCodeAffaire());
+        }
+
+        if (document.getDocumentType() != null
+            && document.getDocumentType().getId() == constantService.getDocumentTypeRefund().getId()
+            && document.getRefundType() == null) {
+          document.setRefundType(constantService.getRefundTypeVirement());
+        }
       }
     }
 
@@ -802,7 +810,7 @@ public class TiersController {
         if (responsable.getLastname() != null)
           responsable.setLastname(responsable.getLastname().toUpperCase());
         validationHelper.validateReferential(responsable.getTiersType(), true, "TiersType");
-        validationHelper.validateReferential(responsable.getTiersCategory(), false, "TiersCategory");
+        validationHelper.validateReferential(responsable.getTiersCategory(), true, "TiersCategory");
         validationHelper.validateReferential(responsable.getSalesEmployee(), true, "SalesEmployee");
         validationHelper.validateReferential(responsable.getDefaultCustomerOrderEmployee(), false,
             "DefaultCustomerOrderEmployee");
@@ -865,6 +873,20 @@ public class TiersController {
 
     printDelegate.printTiersLabel(tiers);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/document/apply")
+  public ResponseEntity<Document> applyParametersDocumentToQuotation(@RequestParam Integer idDocumentType,
+      @RequestParam Integer idResponsable) throws OsirisValidationException {
+    if (idResponsable == null)
+      throw new OsirisValidationException("idResponsable");
+    if (idDocumentType == null)
+      throw new OsirisValidationException("idDocumentType");
+    Responsable responsable = responsableService.getResponsable(idResponsable);
+    DocumentType documentType = documentTypeService.getDocumentType(idDocumentType);
+    return new ResponseEntity<Document>(
+        responsableService.applyParametersDocumentToQuotation(documentType, responsable),
+        HttpStatus.OK);
   }
 
 }

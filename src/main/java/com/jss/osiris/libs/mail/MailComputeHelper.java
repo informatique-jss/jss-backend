@@ -11,6 +11,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -73,7 +74,7 @@ public class MailComputeHelper {
 
     public MailComputeResult computeMailForDepositRequest(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -304,6 +305,23 @@ public class MailComputeHelper {
         }
 
         return mailComputeResult;
+    }
+
+    public InvoiceLabelResult computeCompetentAuthorityLabelResult(CompetentAuthority competentAuthority)
+            throws OsirisClientMessageException {
+        InvoiceLabelResult invoiceLabelResult = new InvoiceLabelResult();
+        if (competentAuthority.getLabel() != null && !competentAuthority.getLabel().equals("")
+                && competentAuthority.getAddress() != null &&
+                !competentAuthority.getAddress().equals("") && competentAuthority.getCity() != null
+                && competentAuthority.getPostalCode() != null && !competentAuthority.getPostalCode().equals("")) {
+            invoiceLabelResult.setBillingLabel(competentAuthority.getLabel());
+            invoiceLabelResult.setBillingLabelAddress(competentAuthority.getAddress());
+            invoiceLabelResult.setBillingLabelCity(competentAuthority.getCity());
+            invoiceLabelResult.setBillingLabelPostalCode(competentAuthority.getPostalCode());
+            invoiceLabelResult.setLabelOrigin("adresse de l'autorité compétente");
+        } else
+            throw new OsirisClientMessageException("Aucune adresse postale trouvée pour l'autorité compétente");
+        return invoiceLabelResult;
     }
 
     public InvoiceLabelResult computePaperLabelResult(IQuotation customerOrder)

@@ -392,6 +392,9 @@ public class TiersServiceImpl implements TiersService {
         if (tiersSearch.getSalesEmployee() != null)
             salesEmployeeId = tiersSearch.getSalesEmployee().getId();
 
+        if (tiersSearch.getMail() == null)
+            tiersSearch.setMail("");
+
         if (tiersSearch.getStartDate() == null)
             tiersSearch.setStartDate(LocalDate.now().minusYears(10));
 
@@ -406,8 +409,8 @@ public class TiersServiceImpl implements TiersService {
 
         if (tiersSearch.getIsNewTiers() == null)
             tiersSearch.setIsNewTiers(false);
-
-        return tiersRepository.searchTiers(tiersId, salesEmployeeId,
+ 
+        return tiersRepository.searchTiers(tiersId, salesEmployeeId, tiersSearch.getMail(), 
                 tiersSearch.getStartDate().atTime(0, 0),
                 tiersSearch.getEndDate().atTime(23, 59, 59), tiersSearch.getLabel(),
                 constantService.getConfrereJssSpel().getId(),

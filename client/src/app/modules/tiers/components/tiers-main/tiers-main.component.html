@@ -57,7 +57,7 @@
           <tr>
             <td>
               <select-tiers-category [(model)]="tiers.tiersCategory" label="Catégorie" [form]="principalForm"
-                [isDisabled]="!editMode" propertyName="tiersCategory"></select-tiers-category>
+                [isDisabled]="!editMode" [isMandatory]="true" propertyName="tiersCategory"></select-tiers-category>
             </td>
             <td>
               <autocomplete-employee [(model)]="tiers.salesEmployee" [isDisabled]="!editMode" label="Commercial"

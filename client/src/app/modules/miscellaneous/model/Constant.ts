@@ -11,11 +11,13 @@ import { Confrere } from "../../quotation/model/Confrere";
 import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
+import { ProvisionFamilyType } from '../../quotation/model/ProvisionFamilyType';
 import { ProvisionScreenType } from '../../quotation/model/ProvisionScreenType';
 import { ProvisionType } from '../../quotation/model/ProvisionType';
 import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
 import { ServiceType } from '../../quotation/model/ServiceType';
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
+import { TypeDocument } from '../../quotation/model/guichet-unique/referentials/TypeDocument';
 import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials/TypeFormalite';
 import { TypePersonne } from '../../quotation/model/guichet-unique/referentials/TypePersonne';
 import { BillingClosureRecipientType } from '../../tiers/model/BillingClosureRecipientType';
@@ -65,6 +67,8 @@ export interface Constant {
   documentTypeBilling: DocumentType;
   documentTypeDunning: DocumentType;
   documentTypeRefund: DocumentType;
+  documentTypeSynthesisRbeSigned: TypeDocument;
+  documentTypeSynthesisRbeUnsigned: TypeDocument;
   documentTypeBillingClosure: DocumentType;
   documentTypeProvisionnalReceipt: DocumentType;
   attachmentTypeKbis: AttachmentType;
@@ -91,6 +95,7 @@ export interface Constant {
   attachmentTypeQuotation: AttachmentType;
   attachmentTypeRefusInfogreffe: AttachmentType;
   attachmentTypeAutreInfogreffe: AttachmentType;
+  attachmentTypeClientCommunication: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeDeboursNonTaxable: BillingType;
@@ -205,6 +210,7 @@ export interface Constant {
   typeFormaliteCorrection: TypeFormalite;
   salesSharedMailbox: string;
   accountingSharedMaiblox: string;
+  recoverySharedMaiblox: string;
   billingClosureRecipientTypeOther: BillingClosureRecipientType;
   billingClosureRecipientTypeResponsable: BillingClosureRecipientType;
   billingClosureRecipientTypeClient: BillingClosureRecipientType;
@@ -238,6 +244,8 @@ export interface Constant {
   serviceTypeOther: ServiceType;
   provisionTypeBilanPublication: ProvisionType;
   provisionTypeRegistrationAct: ProvisionType;
+  provisionFamilyTypeDeposit: ProvisionFamilyType;
+  provisionTypeRbe: ProvisionType;
   dateAccountingClosureForAll: Date;
   dateAccountingClosureForAccountant: Date;
   activeDirectoryGroupFormalites: ActiveDirectoryGroup;

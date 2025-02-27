@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
-import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -53,27 +52,27 @@ import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
-import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
-import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -123,9 +122,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     CustomerOrderRepository customerOrderRepository;
 
     @Autowired
-    PhoneService phoneService;
-
-    @Autowired
     MailService mailService;
 
     @Autowired
@@ -135,7 +131,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     InvoiceService invoiceService;
 
     @Autowired
-    InvoiceHelper invoiceHelper;
+    CompetentAuthorityService competentAuthorityService;
 
     @Autowired
     GeneratePdfDelegate generatePdfDelegate;
@@ -188,17 +184,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     MailComputeHelper mailComputeHelper;
 
-    @Autowired
-    QuotationValidationHelper quotationValidationHelper;
-
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     CentralPayPaymentRequestService centralPayPaymentRequestService;
-
-    @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
 
     @Autowired
     InvoiceItemService invoiceItemService;
@@ -860,7 +850,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder2.getDocuments() != null) {
             ArrayList<Document> documents = new ArrayList<Document>();
             for (Document document : customerOrder2.getDocuments()) {
-                document = documentService.cloneDocument(document);
+                document = documentService.cloneOrMergeDocument(document, null);
                 document.setId(null);
                 documents.add(document);
             }
@@ -1165,25 +1155,87 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrdersIn, boolean printLabel,
-            boolean printLetters)
+            Integer competentAuthorityId,
+            boolean printLetters, boolean printRegisteredLetter)
             throws OsirisException, OsirisClientMessageException {
         ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+        Employee employee = employeeService.getCurrentEmployee();
+        Employee otherEmployee = null;
+        boolean employeeFound = false;
+
         for (String id : customerOrdersIn) {
             customerOrders.add(getCustomerOrder(Integer.parseInt(id)));
         }
 
+        if (customerOrders != null) {
+            outerloop: for (CustomerOrder order : customerOrders) {
+                if (order.getAssoAffaireOrders() != null) {
+                    for (AssoAffaireOrder asso : order.getAssoAffaireOrders()) {
+                        if (asso.getServices() != null) {
+                            for (Service service : asso.getServices()) {
+                                if (service.getProvisions() != null) {
+                                    for (Provision provision : service.getProvisions()) {
+                                        if (provision.getFormalite() != null
+                                                || provision.getSimpleProvision() != null) {
+                                            if (provision.getAssignedTo().getId().equals(employee.getId())) {
+                                                employeeFound = true;
+                                                break outerloop;
+                                            } else {
+                                                otherEmployee = provision.getAssignedTo();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        String username = employee.getFirstname().substring(0, 1).toUpperCase()
+                + employee.getLastname().substring(0, 1).toUpperCase();
+        if (!employeeFound && otherEmployee != null)
+            username = otherEmployee.getFirstname().substring(0, 1).toUpperCase()
+                    + otherEmployee.getLastname().substring(0, 1).toUpperCase();
+
+        InvoiceLabelResult invoiceLabelResult = null;
+        CompetentAuthority competentAuthority = null;
+        if (competentAuthorityId != null) {
+            competentAuthority = competentAuthorityService
+                    .getCompetentAuthority(competentAuthorityId);
+            if (competentAuthority != null)
+                invoiceLabelResult = mailComputeHelper.computeCompetentAuthorityLabelResult(competentAuthority);
+        }
         if (printLabel)
             for (CustomerOrder customerOrder : customerOrders) {
                 try {
-                    printDelegate.printMailingLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
-                            customerOrder);
+                    if (competentAuthority != null)
+                        printDelegate.printMailingLabel(invoiceLabelResult, customerOrder);
+                    else
+                        printDelegate.printMailingLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
+                                customerOrder);
                 } catch (NumberFormatException e) {
                 } catch (Exception e) {
                     throw new OsirisException(e, "Error when printing label");
                 }
             }
-        if (printLetters) {
 
+        if (printRegisteredLetter) {
+            for (CustomerOrder customerOrder : customerOrders) {
+                try {
+                    if (competentAuthority != null)
+                        printDelegate.printRegisteredLabel(invoiceLabelResult, customerOrder, username);
+                    else
+                        printDelegate.printRegisteredLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
+                                customerOrder, username);
+                } catch (NumberFormatException e) {
+                } catch (Exception e) {
+                    throw new OsirisException(e, "Error when printing label");
+                }
+            }
+        }
+        if (printLetters) {
             byte[] data = null;
             HttpHeaders headers = null;
             File file = generatePdfDelegate.generateLetterPdf(customerOrders);
@@ -1374,7 +1426,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder2.getDocuments() != null) {
             ArrayList<Document> documents = new ArrayList<Document>();
             for (Document document : customerOrder2.getDocuments()) {
-                document = documentService.cloneDocument(document);
+                document = documentService.cloneOrMergeDocument(document, null);
                 document.setId(null);
                 documents.add(document);
             }
@@ -1778,9 +1830,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         customerOrder.setDocuments(new ArrayList<Document>());
-        customerOrder.getDocuments().add(documentService.cloneDocument(order.getBillingDocument()));
-        customerOrder.getDocuments().add(documentService.cloneDocument(order.getDigitalDocument()));
-        customerOrder.getDocuments().add(documentService.cloneDocument(order.getPaperDocument()));
+        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getBillingDocument(), null));
+        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getDigitalDocument(), null));
+        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getPaperDocument(), null));
 
         customerOrder.setCustomerOrderStatus(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN));
@@ -1821,9 +1873,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         userCustomerOrder.getPaperDocument().setDocumentType(constantService.getDocumentTypePaper());
 
         responsable.setDocuments(new ArrayList<Document>());
-        responsable.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getBillingDocument()));
-        responsable.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getDigitalDocument()));
-        responsable.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getPaperDocument()));
+        responsable.getDocuments()
+                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(), null));
+        responsable.getDocuments()
+                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(), null));
+        responsable.getDocuments()
+                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(), null));
 
         Tiers tiers = new Tiers();
         tiers.setIsNewTiers(true);
@@ -1848,9 +1903,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         tiers.setPaymentType(constantService.getPaymentTypeCB());
 
         tiers.setDocuments(new ArrayList<Document>());
-        tiers.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getBillingDocument()));
-        tiers.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getDigitalDocument()));
-        tiers.getDocuments().add(documentService.cloneDocument(userCustomerOrder.getPaperDocument()));
+        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(), null));
+        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(), null));
+        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(), null));
 
         Document documentDunning = new Document();
         documentDunning.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
@@ -1874,5 +1929,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         tiersService.addOrUpdateTiers(tiers);
         return responsableService.getResponsable(responsable.getId());
+    }
+
+    @Override
+    public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable) {
+        return customerOrderRepository.findByResponsable(responsable);
     }
 }

@@ -202,6 +202,10 @@ export class HabilitationsService {
   canByPassProvisionLockOnBilledOrder() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
+
+  canImportSageFile() {
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING_RESPONSIBLE]);
+  }
 }
 
 

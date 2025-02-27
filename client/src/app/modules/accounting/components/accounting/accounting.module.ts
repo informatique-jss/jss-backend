@@ -56,7 +56,7 @@ const routes: Routes = [
     AccountingBalanceComponent,
     AccountingBalanceGeneraleComponent,
     AddAccountingRecordComponent,
-    AccountingBilanComponent,
+    AccountingBilanComponent, 
     AccountingProfitLostComponent
   ],
   providers: [

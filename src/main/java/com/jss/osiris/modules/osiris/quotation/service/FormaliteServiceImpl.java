@@ -25,6 +25,9 @@ public class FormaliteServiceImpl implements FormaliteService {
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
 
+    @Autowired
+    FormaliteStatusService formaliteStatusService;
+
     @Override
     public Formalite getFormalite(Integer id) {
         Optional<Formalite> formalite = formaliteRepository.findById(id);

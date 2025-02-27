@@ -1,6 +1,10 @@
 package com.jss.osiris.modules.osiris.accounting.service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -23,7 +27,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingBalanceBilan;
@@ -34,13 +37,13 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
+import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
 import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
-import com.jss.osiris.modules.osiris.quotation.service.ConfrereService;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -57,19 +60,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   AccountingExportHelper accountingExportHelper;
 
   @Autowired
-  TiersService tiersService;
+  AccountingAccountService accountingAccountService;
 
   @Autowired
-  ConfrereService confrereService;
+  TiersService tiersService;
 
   @Autowired
   ActiveDirectoryHelper activeDirectoryHelper;
 
   @Autowired
   BillingClosureReceiptHelper billingClosureReceiptDelegate;
-
-  @Autowired
-  CustomerMailService customerMailService;
 
   @Autowired
   BatchService batchService;
@@ -79,10 +79,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   AccountingBalanceHelper accountingBalanceHelper;
-
+ 
   @Autowired
   AccountingRecordGenerationService accountingRecordGenerationService;
-
+ 
   private String ACCOUNTING_RECORD_TABLE_NAME = "accounting_record";
   private String CLOSED_ACCOUNTING_RECORD_TABLE_NAME = "closed_accounting_record";
 
@@ -636,5 +636,99 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     ArrayList<AccountingBalanceViewTitle> outBilanPassif = new ArrayList<AccountingBalanceViewTitle>();
     outBilanPassif.add(accountingBalanceHelper.getBilanPassif(accountingRecords, accountingRecordsN1));
     return accountingExportHelper.getBilan(outBilanActif, outBilanPassif);
+  } 
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void generateAccountingRecordForSageRecord(InputStream file) throws OsirisException {
+    List<SageRecord> sageRecords = parseSageFile(file);
+    if (sageRecords != null && !sageRecords.isEmpty()) {
+      deleteExistingRecords(sageRecords);
+      accountingRecordGenerationService.generateAccountingRecordForSageRecord(sageRecords);
+    }
   }
+
+  private List<SageRecord> parseSageFile(InputStream file) throws OsirisException {
+    List<SageRecord> records = new ArrayList<>();
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(file))) {
+      String line;
+      if (reader.readLine().contains("SPPS - Sté"))
+        reader.skip(reader.readLine().length() + 1);
+      while ((line = reader.readLine()) != null) {
+        SageRecord record = new SageRecord();
+        record.setOperationDate(parseDateFromString(line.substring(3, 11)));
+        record.setTargetAccountingAccountCode(line.substring(11, 19).trim());
+        record.setLabel(line.substring(53, 78).trim());
+        record.setCreditOrDebit(line.substring(85, 86).trim());
+        if (record.getCreditOrDebit().equals(SageRecord.CREDIT_SAGE))
+          record
+              .setCreditAmount(
+                  BigDecimal.valueOf(Double.parseDouble(line.substring(96, 106).replace(",", ".").trim())));
+        if (record.getCreditOrDebit().equals(SageRecord.DEBIT_SAGE))
+          record
+              .setDebitAmount(
+                  BigDecimal.valueOf(Double.parseDouble(line.substring(96, 106).replace(",", ".").trim())));
+        record.setCreatedDate(LocalDateTime.now());
+        records.add(record);
+      }
+    } catch (IOException ex) {
+    }
+    return records;
+  }
+
+  private void deleteExistingRecords(List<SageRecord> sageRecords)
+      throws OsirisException {
+    AccountingJournal salaryJournal = constantService.getAccountingJournalSalary();
+    List<AccountingRecord> recordsToDelete = new ArrayList<>();
+    List<AccountingAccount> targetAccountingAccounts = new ArrayList<>();
+
+    if (sageRecords != null && !sageRecords.isEmpty()) {
+      for (SageRecord sageRecord : sageRecords) {
+        if (sageRecord.getTargetAccountingAccountCode() == null)
+          throw new OsirisException(null,
+              "No target accounting account provided for sage record ");
+        targetAccountingAccounts = accountingAccountService
+            .getAccountingAccountByLabelOrCode(sageRecord.getTargetAccountingAccountCode());
+        if (!targetAccountingAccounts.isEmpty())
+          recordsToDelete.addAll(accountingRecordRepository
+              .findToDeleteRecordsByAccountingAccountAndJournalAndOperationDate(
+                  targetAccountingAccounts.get(0).getId(), salaryJournal.getId(),
+                  sageRecord.getOperationDate()));
+      }
+
+      BigDecimal balance = new BigDecimal(0);
+      recordsToDelete = removeDuplicatesRecords(recordsToDelete);
+      for (AccountingRecord accountingRecord : recordsToDelete) {
+        if (accountingRecord.getCreditAmount() != null)
+          balance = balance.add(accountingRecord.getCreditAmount());
+        if (accountingRecord.getDebitAmount() != null)
+          balance = balance.subtract(accountingRecord.getDebitAmount());
+      }
+      if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_EVEN).abs()
+          .compareTo(new BigDecimal(1)) > 0)
+        throw new OsirisValidationException("Balance not null");
+
+      accountingRecordRepository.deleteAll(recordsToDelete);
+    }
+  }
+
+  private List<AccountingRecord> removeDuplicatesRecords(List<AccountingRecord> list) {
+    List<AccountingRecord> newList = new ArrayList<AccountingRecord>();
+    for (AccountingRecord element : list) {
+      if (!newList.contains(element)) {
+        newList.add(element);
+      }
+    }
+    return newList;
+  }
+
+  private LocalDate parseDateFromString(String date) {
+    int day = Integer.parseInt(date.substring(0, 2));
+    int month = Integer.parseInt(date.substring(2, 4));
+    int year = Integer.parseInt(date.substring(4, 6));
+
+    year += 2000;
+
+    return LocalDate.of(year, month, day);
+  } 
 }

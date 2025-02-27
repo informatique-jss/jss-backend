@@ -37,7 +37,6 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
-import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
@@ -50,7 +49,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.CivilityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
@@ -300,9 +298,6 @@ public class QuotationController {
   ProvisionService provisionService;
 
   @Autowired
-  DocumentService documentService;
-
-  @Autowired
   MailHelper mailHelper;
 
   @Autowired
@@ -337,9 +332,6 @@ public class QuotationController {
 
   @Autowired
   BankTransfertService bankTransfertService;
-
-  @Autowired
-  PaymentService paymentService;
 
   @Autowired
   InvoiceService invoiceService;
@@ -2331,7 +2323,8 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/mail/generate/missing-attachment")
-  public ResponseEntity<MissingAttachmentQuery> generateAttachmentTypeMail(@RequestBody MissingAttachmentQuery query)
+  public ResponseEntity<MissingAttachmentQuery> generateAttachmentTypeMail(
+      @RequestParam Boolean isWaitingForAttachmentToUpload, @RequestBody MissingAttachmentQuery query)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
     if ((query.getAssoServiceDocument() == null || query.getAssoServiceDocument().size() == 0)
@@ -2367,7 +2360,23 @@ public class QuotationController {
       throw new OsirisValidationException("MailTo");
 
     return new ResponseEntity<MissingAttachmentQuery>(
-        missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false), HttpStatus.OK);
+        missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false,
+            isWaitingForAttachmentToUpload),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/missing-attachment-upload/sender")
+  public ResponseEntity<MissingAttachmentQuery> sendMissingAttachmentQueryWithUploadedFiles(
+      @RequestParam Integer missingAttachmentQueryId)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+
+    MissingAttachmentQuery query = missingAttachmentQueryService.getMissingAttachmentQuery(missingAttachmentQueryId);
+
+    if (missingAttachmentQueryId == null)
+      throw new OsirisValidationException("missingAttachmentQuery");
+
+    return new ResponseEntity<MissingAttachmentQuery>(
+        missingAttachmentQueryService.sendMissingAttachmentQueryWithUploadedFiles(query), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mail/generate/missing-attachment/reminder")
@@ -2451,10 +2460,11 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/customer-order/print/label")
   public ResponseEntity<byte[]> printMailingLabel(@RequestParam List<String> customerOrders,
-      @RequestParam boolean printLabel, @RequestParam boolean printLetters)
+      @RequestParam Boolean printLabel, @RequestParam(required = false) Integer competentAuthorityId,
+      @RequestParam Boolean printLetters, @RequestParam Boolean printRegisteredLetter)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-
-    return customerOrderService.printMailingLabel(customerOrders, printLabel, printLetters);
+    return customerOrderService.printMailingLabel(customerOrders, printLabel, competentAuthorityId,
+        printLetters, printRegisteredLetter);
   }
 
   @PostMapping(inputEntryPoint + "/dashboard/employee")

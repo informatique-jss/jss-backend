@@ -194,7 +194,7 @@ public class QuotationValidationHelper {
                 Document billingDocument = documentService
                                 .getBillingDocument(quotation.getResponsable().getDocuments());
                 if (documentService.getBillingDocument(quotation.getDocuments()) == null && billingDocument != null) {
-                        billingDocument = documentService.cloneDocument(billingDocument);
+                        billingDocument = documentService.cloneOrMergeDocument(billingDocument, null);
                         billingDocument.setTiers(null);
                         billingDocument.setResponsable(null);
                         billingDocument.setConfrere(null);
@@ -212,7 +212,7 @@ public class QuotationValidationHelper {
                                 constantService.getDocumentTypeDigital());
                 if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
                                 constantService.getDocumentTypeDigital()) == null && digitalDocument != null) {
-                        digitalDocument = documentService.cloneDocument(digitalDocument);
+                        digitalDocument = documentService.cloneOrMergeDocument(digitalDocument, null);
                         digitalDocument.setTiers(null);
                         digitalDocument.setResponsable(null);
                         digitalDocument.setConfrere(null);
@@ -230,7 +230,7 @@ public class QuotationValidationHelper {
                                 constantService.getDocumentTypePaper());
                 if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
                                 constantService.getDocumentTypePaper()) == null && paperDocument != null) {
-                        paperDocument = documentService.cloneDocument(paperDocument);
+                        paperDocument = documentService.cloneOrMergeDocument(paperDocument, null);
                         paperDocument.setTiers(null);
                         paperDocument.setResponsable(null);
                         paperDocument.setConfrere(null);

@@ -117,3 +117,7 @@ export const SAUVEGARDE = "SAUVEGARDE";
 export const ENVOYE_AU_GRF = "ENVOYE_AU_GRF";
 export const ENVOI_EN_COURS = "ENVOI_EN_COURS";
 export const VALIDE = "VALIDE";
+
+// Print label recipient
+export const PRINT_LABEL_RECIPIENT_CUSTOMER = "Client";
+export const PRINT_LABEL_RECIPIENT_AC = "Autorité compétente";

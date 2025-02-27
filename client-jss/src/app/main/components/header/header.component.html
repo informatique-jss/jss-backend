@@ -113,15 +113,19 @@
       </a>
       <!-- Logo END -->
 
-      <!-- Responsive navbar toggler -->
-      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="text-body h6 d-none d-sm-inline-block">Menu</span>
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
       <!-- Main navbar START -->
       <div class="collapse navbar-collapse" id="navbarCollapse">
+        <!-- Signin collapse -->
+        <ul class="nav d-lg-none row">
+          <li class="nav-item col">
+            <a class="nav-link" style="cursor: pointer; text-align: center;"
+              (click)="openSubscribe($event)">S'abonner</a><!-- TODO -->
+          </li>
+          <li class="nav-item col">
+            <a class="nav-link" style="cursor: pointer; text-align: center;" (click)="openSignIn($event)">Se
+              connecter</a><!-- TODO -->
+          </li>
+        </ul>
         <ul class="navbar-nav navbar-nav-scroll mx-auto">
 
           <!-- Nav item articles -->
@@ -163,10 +167,22 @@
                   style="text-transform: none;cursor: pointer">Consultez
                   nos annonces légales</a></li>
               <li> <a class="dropdown-item" (click)="openNewAnnouncement($event)"
-                  style="text-transform: none;cursor: pointer">Déposer
-                  une
-                  annonce légale</a></li>
+                  style="text-transform: none;cursor: pointer">Déposer une annonce légale</a>
+              </li>
             </ul>
+          </li>
+
+          <li class="nav-item d-lg-none">
+            <div class="nav-item d-md-block">
+              <a style="cursor: pointer;" (click)="openNewFormality($event)" class="btn btn-sm btn-warning">Déposer
+                une formalité</a><!-- TODO -->
+            </div>
+          </li>
+          <li class="nav-item d-lg-none">
+            <div class="nav-item d-md-block">
+              <a style="cursor: pointer;" (click)="openMyJss($event)"
+                class="btn btn-sm btn-primary">MyJSS</a><!-- TODO -->
+            </div>
           </li>
 
         </ul>
@@ -174,18 +190,25 @@
       <!-- Main navbar END -->
 
       <!-- Nav right START -->
-      <div class="nav flex-nowrap align-items-center">
+      <div class="nav flex-nowrap align-items-center ">
         <!-- Nav Button -->
-        <div class="nav-item d-none d-md-block">
+        <div class="nav-item d-md-block">
           <a style="cursor: pointer;" (click)="openNewFormality($event)"
             class="btn btn-sm btn-warning mb-0 mx-2">Déposer une formalité</a><!-- TODO -->
         </div>
-        <div class="nav-item d-none d-md-block">
+        <div class="nav-item d-md-block">
           <a style="cursor: pointer;" (click)="openMyJss($event)"
             class="btn btn-sm btn-primary mb-0 mx-2">MyJSS</a><!-- TODO -->
         </div>
       </div>
       <!-- Nav right END -->
+
+      <!-- Responsive navbar toggler -->
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="text-body h6 d-none d-sm-inline-block">Menu</span>
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </div>
   </nav>
   <!-- Logo Nav END -->

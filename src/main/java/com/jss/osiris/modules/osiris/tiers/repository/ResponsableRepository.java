@@ -111,6 +111,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         "  ( :tiersId =0 or t.id = :tiersId) " +
                         " and  ( :salesEmployeeId =0 or e2.id = :salesEmployeeId) " +
                         " and  ( :responsableId =0 or r.id = :responsableId) " +
+                        " and ( :mail='' or exists (select 1 from mail m  where r.id_mail = m.id and lower(m.mail) like '%' || lower(trim(:mail))  || '%')) "
+                        +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%'  ) "
                         +
                         " group by " +
@@ -134,7 +136,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         "")
         List<IResponsableSearchResult> searchResponsable(@Param("tiersId") Integer tiersId,
                         @Param("responsableId") Integer responsableId,
-                        @Param("salesEmployeeId") Integer salesEmployeeId,
+                        @Param("salesEmployeeId") Integer salesEmployeeId, 
+                        @Param("mail") String mail, 
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate, @Param("label") String label,
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,

@@ -15,6 +15,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.mail.IndexationMailService;
 import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -129,6 +130,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	ConstantService constantService;
+
+	@Autowired
+	IndexationMailService osirisMailService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -388,6 +392,26 @@ public class OsirisScheduller {
 		try {
 			if (nodeService.shouldIBatch())
 				customerOrderService.generateRecurringCustomerOrders();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.mail.automatic.indexation}")
+	private void generateAttachmentsFromMails() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.CHECK_MAIL_TO_INDEX, 1);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.mail.purge.indexation}")
+	private void purgeMailDeleted() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.PURGE_MAIL_TO_INDEX, 1);
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
