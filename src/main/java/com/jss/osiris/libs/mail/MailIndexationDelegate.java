@@ -70,7 +70,7 @@ public class MailIndexationDelegate {
     private Integer numberDaysToKeepInTrash = 10;
 
     @Autowired
-    OsirisMailService osirisMailService;
+    IndexationMailService osirisMailService;
 
     @Autowired
     BatchService batchService;

@@ -15,7 +15,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
-import com.jss.osiris.libs.mail.OsirisMailService;
+import com.jss.osiris.libs.mail.IndexationMailService;
 import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -132,7 +132,7 @@ public class OsirisScheduller {
 	ConstantService constantService;
 
 	@Autowired
-	OsirisMailService osirisMailService;
+	IndexationMailService osirisMailService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {

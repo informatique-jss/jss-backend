@@ -500,8 +500,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     announcement.setFirstConfrereSentMailDateTime(LocalDateTime.now());
                 } else if (announcement.getIsAnnouncementAlreadySentToConfrere() != null
                         && announcement.getIsAnnouncementAlreadySentToConfrere() &&
-                        (announcement.getIsAnnouncementAlreadySentToConfrere() == null
-                                || !announcement.getIsAnnouncementAlreadySentToConfrere())) {
+                        announcement.getFirstConfrereSentMailDateTime() != null) {
                     mailHelper.sendAnnouncementErratumToConfrere(
                             customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
                             false, provision, announcement);

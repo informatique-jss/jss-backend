@@ -24,7 +24,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @Service
-public class OsirisMailServiceImpl implements OsirisMailService {
+public class IndexationMailServiceImpl implements IndexationMailService {
 
     @Autowired
     SearchService searchService;
