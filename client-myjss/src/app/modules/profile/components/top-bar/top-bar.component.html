@@ -1,0 +1,235 @@
+<header class="fixed-top" style="backdrop-filter: blur(40px)">
+  <!-- [ngStyle]="isNavbarCollapsed ? {background: '#FFFFFF'} : null" -->
+  <div class="container">
+    <div class="row navbar d-flex justify-content-between align-items-center">
+
+      <!-- Mobile menu toggler (Hamburger) -->
+      <div class="col-4 d-flex justify-content-start">
+        <button class="navbar-toggler" id="navToggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarCollapse" aria-controls="navbarNav" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="text-body h6"></span>
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+
+
+      <!-- Logo -->
+      <div class="col-4 d-flex justify-content-center">
+        <a href="">
+          <img ui-sref='main.tiers' [src]="logoJss" />
+        </a>
+      </div>
+
+      <!-- User not signed in state.   -->
+      <div class="order-lg-3 col-4 d-flex justify-content-end" *ngIf="!currentUser || !currentUser.id">
+        <a class="btn btn-outline-light my-4 col-md-auto" [routerLink]="['/account/signin']" rel="noopener">
+          Se connecter
+        </a>
+      </div>
+
+      <!-- User signed in state. Account dropdown on screens > 576px -->
+      <div class="dropdown nav d-none d-sm-block order-lg-3" *ngIf="currentUser && currentUser.id">
+        <a class="nav-link d-flex align-items-center p-0" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+          <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
+          <div class="ps-2">
+            <div class="fs-xs lh-1 opacity-60">Bonjour,</div>
+            <div class="fs-sm dropdown-toggle">{{capitalizeName(currentUser.firstname + " " +currentUser.lastname)}}
+            </div>
+          </div>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end my-1">
+          <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte</h6>
+          <ng-container *ngFor="let service of services">
+            <a class="dropdown-item" [routerLink]="service.route">
+              <i class=" fs-lg opacity-70 me-2" [ngClass]="service.iconClass"></i>
+              {{service.label}}
+            </a>
+          </ng-container>
+          <div class="dropdown-divider"></div>
+          <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de bord</h6>
+          <ng-container *ngFor="let service of services">
+            <a class="dropdown-item" [routerLink]="service.route">
+              <i class="fs-lg opacity-70 me-2" [ngClass]="service.iconClass"></i>
+              {{service.label}}
+            </a>
+          </ng-container>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" [routerLink]="'/account/signout'">
+            <i class="ai-logout fs-lg opacity-70 me-2"></i>
+            Se déconnecter
+          </a>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- Navbar collapsed with all page presentation -->
+
+    <div class="navbar align-items-start">
+      <nav class="collapse w-100" id="navbarCollapse" data-bs-parent="#navToggler"
+        (show.bs.collapse)="navbarCollapsed()" (hide.bs.collapse)="navbarUncollapsed()">
+        <div class="d-flex flex-column w-100">
+          <ul class="navbar-nav navbar-nav-scroll flex-column" style="--ar-scroll-height: 520px; overflow: hidden;">
+            <li class="nav-item dropdown d-block col col-md-auto">
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                aria-expanded="false">Services</a>
+              <ul class="dropdown-menu">
+                <li *ngFor="let service of services"><a class="dropdown-item" [routerLink]="service.route">
+                    {{service.label}}</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown col col-md-auto">
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">La
+                société</a>
+              <ul class="dropdown-menu">
+                <li *ngFor="let item of companyItems"><a class="dropdown-item" [routerLink]="item.route">
+                    {{item.label}}</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown col col-md-auto ">
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Outils</a>
+              <ul class="dropdown-menu">
+                <li *ngFor="let tool of tools"><a class="dropdown-item" [routerLink]="tool.route">
+                    {{tool.label}}</a></li>
+              </ul>
+            </li>
+            <li class="nav-item col col-md-auto ">
+              <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Commande / Devis</a>
+            </li>
+            <li class="nav-item col col-md-auto ">
+              <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Démo</a>
+            </li>
+            <li class="nav-item col col-md-auto ">
+              <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Contact</a>
+            </li>
+            <li class="nav-item col col-md-auto ">
+              <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Journal Spécial des
+                Sociétés</a>
+            </li>
+          </ul>
+        </div>
+        <hr>
+        <div class="row justify-content-start mx-2">
+          <!-- Première colonne pour les liens utiles et localisation -->
+          <div class="col-6">
+            <div class="d-flex justify-content-between">
+              <!-- LIENS UTILES -->
+              <div class="col-auto">
+                <div class="lead-text-menu">
+                  LIENS UTILES
+                </div>
+                <p>
+                  <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Commande / Devis</a>
+                </p>
+                <p>
+                  <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Démo</a>
+                </p>
+                <p>
+                  <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Contact</a>
+                </p>
+                <hr>
+                <p>
+                  <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Journal Spécial des
+                    Sociétés</a>
+                </p>
+              </div>
+
+              <!-- LOCALISATION -->
+              <div class="col-auto">
+                <div class="lead-text-menu">
+                  LOCALISATION
+                </div>
+                <p class="mb-0">10 Bd Haussmann,</p>
+                <p>75009 Paris</p>
+                <a class="mb-0" href="mailto:contact@jss.fr">contact&#64;jss.fr</a>
+                <p>01.47.03.10.10</p>
+                <hr>
+                <p class="mb-0">lun-ven : 9h00 - 12h30</p>
+                <p>14h00 - 18h00</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deuxième colonne pour l'image -->
+          <div class="col-6">
+            <img [src]="map" class="w-100" alt="Map" />
+          </div>
+        </div>
+
+        <hr>
+        <div>
+          <div class="row d-flex justify-content-between align-items-center mx-2">
+            <div class="col d-flex align-items-center justify-content-start">
+              <a href="" class="mr-2">
+                <img ui-sref='main.tiers' [src]="logoJss" />
+              </a>
+              <div class="col d-flex align-items-center mr-2">
+                <a class="btn btn-icon btn-sm btn-outline-secondary btn-facebook rounded-circle mx-2 ms-sm-0 me-sm-3"
+                  href="#" aria-label="LinkedIn">
+                  <i class="ai-linkedin"></i>
+                </a>
+                <a class="btn btn-icon btn-sm btn-outline-secondary btn-telegram rounded-circle mx-2 ms-sm-0 me-sm-3"
+                  href="#" aria-label="Facebook">
+                  <i class="ai-facebook"></i>
+                </a>
+                <a class="btn btn-icon btn-sm btn-outline-secondary btn-instagram rounded-circle mx-2 ms-sm-0 me-sm-3"
+                  href="#" aria-label="Instagram">
+                  <i class="ai-instagram"></i>
+                </a>
+              </div>
+            </div>
+            <div class="col-2">
+              <img [src]="paymentMethods" alt="Payment Methods" />
+            </div>
+          </div>
+
+        </div>
+      </nav>
+    </div>
+
+
+    <div *ngIf="!isNavbarCollapsed" class="row ">
+      <!-- Navbar collapse (Main navigation) -->
+      <nav class="align-items-center navbar-expand" id="navbarNav">
+        <ul class="navbar-nav navbar-nav-scroll justify-content-between" style="--ar-scroll-height: 520px;">
+          <li class="nav-item dropdown d-block col col-md-auto">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+              aria-expanded="false">Services</a>
+            <ul class="dropdown-menu">
+              <li *ngFor="let service of services"><a class="dropdown-item" [routerLink]="service.route">
+                  {{service.label}}</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown col col-md-auto">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">La société</a>
+            <ul class="dropdown-menu">
+              <li *ngFor="let item of companyItems"><a class="dropdown-item" [routerLink]="item.route">
+                  {{item.label}}</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown col col-md-auto">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Outils</a>
+            <ul class="dropdown-menu">
+              <li *ngFor="let tool of tools"><a class="dropdown-item" [routerLink]="tool.route">
+                  {{tool.label}}</a></li>
+            </ul>
+          </li>
+          <li class="nav-item col col-md-auto">
+            <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Commande / Devis</a>
+          </li>
+          <li class="nav-item col col-md-auto">
+            <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Démo</a>
+          </li>
+          <li class="nav-item col col-md-auto">
+            <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Contact</a>
+          </li>
+          <li class="nav-item col col-md-auto">
+            <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Journal Spécial des
+              Sociétés</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

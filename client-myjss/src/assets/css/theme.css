@@ -152,7 +152,7 @@
   --ar-body-font-size: 1rem;
   --ar-body-font-weight: 400;
   --ar-body-line-height: 1.5;
-  --ar-body-color: #576071;
+  --ar-body-color: #FFFFFFB2;
   --ar-body-color-rgb: 87, 96, 113;
   --ar-body-bg: #fff;
   --ar-body-bg-rgb: 255, 255, 255;
@@ -681,6 +681,26 @@ progress {
 
 [hidden] {
   display: none !important;
+}
+
+.background-blue {
+  /* Background color definition */
+  background-color: #1C2D41;
+  width: 100%;
+  height: 100%;
+
+  /* background-image usage to add multiple SVG images */
+  background-image:
+    /* First image (on top) */
+    url('../images/background1.svg'),
+    /* Second image (repeted) */
+    url('../images/background2.svg');
+
+  /* Positionning of both images */
+  background-position: top, 2541px;
+  background-repeat: no-repeat, repeat-y;
+  background-size: cover, cover;
+  background-attachment: fixed, scroll;
 }
 
 .lead {
@@ -3818,14 +3838,13 @@ textarea.form-control-lg {
   --ar-dropdown-spacer: 0.25rem;
   --ar-dropdown-font-size: calc(var(--ar-body-font-size) * 0.875);
   --ar-dropdown-color: var(--ar-body-color);
-  --ar-dropdown-bg: #fff;
-  --ar-dropdown-border-color: #f0f3f6;
+  --ar-dropdown-bg: #D9D9D91A;
+  --ar-dropdown-border-color: #FFFFFF1F;
   --ar-dropdown-border-radius: var(--ar-border-radius-lg);
   --ar-dropdown-border-width: var(--ar-border-width);
   --ar-dropdown-inner-border-radius: calc(var(--ar-border-radius-lg) - var(--ar-border-width));
   --ar-dropdown-divider-bg: var(--ar-border-color);
   --ar-dropdown-divider-margin-y: 0.375rem;
-  --ar-dropdown-box-shadow: 0 0.4375rem 1.25rem rgba(208, 208, 196, 0.32);
   --ar-dropdown-link-color: var(--ar-gray-100);
   --ar-dropdown-link-hover-color: var(--ar-primary);
   --ar-dropdown-link-hover-bg: transparent;
@@ -3848,6 +3867,7 @@ textarea.form-control-lg {
   text-align: left;
   list-style: none;
   background-color: var(--ar-dropdown-bg);
+  backdrop-filter: blur(40px);
   background-clip: padding-box;
   border: var(--ar-dropdown-border-width) solid var(--ar-dropdown-border-color);
   border-radius: var(--ar-dropdown-border-radius);
@@ -4402,7 +4422,7 @@ textarea.form-control-lg {
 .navbar {
   --ar-navbar-padding-x: 0;
   --ar-navbar-padding-y: 0.75rem;
-  --ar-navbar-color: var(--ar-gray-800);
+  --ar-navbar-color: var(--ar-gray-100);
   --ar-navbar-hover-color: var(--ar-primary);
   --ar-navbar-disabled-color: var(--ar-gray-600);
   --ar-navbar-active-color: var(--ar-primary);

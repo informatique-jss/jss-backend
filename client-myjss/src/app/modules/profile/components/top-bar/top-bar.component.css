@@ -1,0 +1,23 @@
+.headerstyle {
+    backdrop-filter: blur(40px);
+    background: rgba(217, 217, 217, 0.1);
+}
+
+.navbar {
+    padding: 0px;
+}
+
+.lead-text-menu {
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
