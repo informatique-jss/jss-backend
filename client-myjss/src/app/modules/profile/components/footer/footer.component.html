@@ -1,0 +1,116 @@
+<footer class="footer">
+  <div class="container mx-0">
+
+    <!-- First column for liens utiles & localisation -->
+    <div class="row justify-content-start mx-2">
+      <!-- SERVICES, LA SOCIÉTÉ, OUTILS, LIENS UTILES & LOCALISATION (responsive) -->
+      <div *ngIf="!isInNavbar" class="col-12 col-md-6 ms-0 ps-0">
+        <div class="d-flex justify-content-between flex-column flex-md-row">
+
+          <!-- SERVICES -->
+          <div class="col-auto me-md-4">
+            <div class="lead-text-menu">
+              SERVICES
+            </div>
+            <p *ngFor="let service of services">
+              <a class="nav-link" style="cursor: pointer;" [routerLink]="service.route">{{service.label}}</a>
+            </p>
+          </div>
+
+          <!-- LA SOCIÉTÉ -->
+          <div *ngIf="!isInNavbar" class="col-auto me-md-4">
+            <div class="lead-text-menu">
+              LA SOCIÉTÉ
+            </div>
+            <p *ngFor="let companyItem of companyItems">
+              <a class="nav-link" style="cursor: pointer;" [routerLink]="companyItem.route">{{companyItem.label}}</a>
+            </p>
+          </div>
+
+          <!-- OUTILS -->
+          <div *ngIf="!isInNavbar" class="col-auto me-md-4">
+            <div class="lead-text-menu">
+              OUTILS
+            </div>
+            <p *ngFor="let tool of tools">
+              <a class="nav-link" style="cursor: pointer;" [routerLink]="tool.route">{{tool.label}}</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 ms-0 ps-0">
+        <div class="d-flex justify-content-between flex-column flex-md-row">
+          <!-- LIENS UTILES -->
+          <div class="col-auto me-md-4">
+            <div class="lead-text-menu">
+              LIENS UTILES
+            </div>
+            <p>
+              <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Commande / Devis</a>
+            </p>
+            <p>
+              <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Démo</a>
+            </p>
+            <p>
+              <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Contact</a>
+            </p>
+            <hr>
+            <p>
+              <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Journal Spécial des
+                Sociétés</a>
+            </p>
+          </div>
+
+          <!-- LOCALISATION -->
+          <div class="col-auto me-md-4">
+            <div class="lead-text-menu">
+              LOCALISATION
+            </div>
+            <p class="mb-0">10 Bd Haussmann,</p>
+            <p>75009 Paris</p>
+            <a class="mb-0" href="mailto:contact@jss.fr">contact&#64;jss.fr</a>
+            <p>01.47.03.10.10</p>
+            <hr>
+            <p class="mb-0">lun-ven : 9h00 - 12h30</p>
+            <p>14h00 - 18h00</p>
+          </div>
+        </div>
+      </div>
+      <!-- Second column for the image (responsive) -->
+      <div *ngIf="isInNavbar" class="col-12 col-md-6 d-none d-lg-block">
+        <img [src]="map" class="w-100" alt="Map" />
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Footer with logo, social media and payments -->
+    <div class="mb-3">
+      <div class="row d-flex justify-content-between align-items-center mx-2">
+        <div class="col d-flex align-items-center justify-content-start">
+          <a href="" class="me-4 d-none d-sm-block">
+            <img ui-sref='main.tiers' [src]="logoJss" />
+          </a>
+          <div class="col d-flex align-items-center me-2">
+            <a class="btn btn-icon btn-sm btn-outline-secondary btn-facebook rounded-circle mx-2 ms-sm-0 me-sm-3"
+              href="#" aria-label="LinkedIn">
+              <i class="ai-linkedin"></i>
+            </a>
+            <a class="btn btn-icon btn-sm btn-outline-secondary btn-telegram rounded-circle mx-2 ms-sm-0 me-sm-3"
+              href="#" aria-label="Facebook">
+              <i class="ai-facebook"></i>
+            </a>
+            <a class="btn btn-icon btn-sm btn-outline-secondary btn-instagram rounded-circle mx-2 ms-sm-0 me-sm-3"
+              href="#" aria-label="Instagram">
+              <i class="ai-instagram"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-2 d-none d-sm-block">
+          <img [src]="paymentMethods" alt="Payment Methods" />
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -12,6 +12,8 @@ import { ToastComponent } from './libs/toast/toast.component';
 import { GeneralModule } from './modules/general/components/general/general.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from './modules/my-account/components/my-account/my-account.module';
+import { FooterComponent } from './modules/profile/components/footer/footer.component';
+import { SearchComponent } from './modules/profile/components/search/search.component';
 import { TopBarComponent } from './modules/profile/components/top-bar/top-bar.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
 registerLocaleData(localeFr, 'fr');
@@ -24,8 +26,10 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
+    FooterComponent,
     TopBarComponent,
-    ToastComponent
+    ToastComponent,
+    SearchComponent,
   ],
   exports: [],
   bootstrap: [AppComponent],

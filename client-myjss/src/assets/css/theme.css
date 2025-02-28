@@ -280,7 +280,8 @@ body {
 }
 
 hr {
-  margin: 0 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   color: #D9D9D91A;
   border: 0;
   border-top: var(--ar-border-width) solid;
