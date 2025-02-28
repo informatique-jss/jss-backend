@@ -1,10 +1,9 @@
+import { MenuItem } from "../../general/model/MenuItem";
+
 export const MAIN_ITEM_ACCOUNT: string = "MAIN_ITEM_ACCOUNT";
 export const MAIN_ITEM_DASHBOARD: string = "MAIN_ITEM_DASHBOARD";
 
-export interface AccountMenuItem {
+export interface AccountMenuItem extends MenuItem {
   mainItem: string;
-  label: string;
-  iconClass: string;
-  route: string;
 }
 
