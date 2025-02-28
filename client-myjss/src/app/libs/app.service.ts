@@ -78,31 +78,25 @@ export class AppService {
     menuItem.push({ label: "Domiciliation", iconClass: "ai-slider", route: "/account/quotations" } as MenuItem);
     menuItem.push({ label: "Fourniture de documents", iconClass: "ai-cart", route: "/services/document" } as MenuItem);
     menuItem.push({ label: "Affaires", iconClass: "ai-briefcase", route: "/account/affaires" } as MenuItem);
-
-    // Display only if I have more than one responsible potential
-    this.responsableService.getPotentialUserScope().subscribe(response => {
-      if (response.length > 1)
-        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Vue d'ensemble", iconClass: "ai-grid", route: "/account/scope" } as AccountMenuItem);
-    })
     return menuItem;
   }
 
   getAllCompanyMenuItems(): MenuItem[] {
     let menuItem = [] as MenuItem[];
-    menuItem.push({ label: "À propos", iconClass: "ai-user-check", route: "/services/announcement" } as MenuItem);
-    menuItem.push({ label: "Notre histoire", iconClass: "ai-wallet", route: "/services/formality" } as MenuItem);
-    menuItem.push({ label: "Nos équipes", iconClass: "ai-chart", route: "/services/legalization" } as MenuItem);
-    menuItem.push({ label: "Nous rejoindre", iconClass: "ai-slider", route: "/account/quotations" } as MenuItem);
+    menuItem.push({ label: "À propos", iconClass: "ai-user-check", route: "" } as MenuItem);
+    menuItem.push({ label: "Notre histoire", iconClass: "ai-wallet", route: "" } as MenuItem);
+    menuItem.push({ label: "Nos équipes", iconClass: "ai-chart", route: "" } as MenuItem);
+    menuItem.push({ label: "Nous rejoindre", iconClass: "ai-slider", route: "" } as MenuItem);
 
     return menuItem;
   }
 
   getAllToolsMenuItems(): MenuItem[] {
     let menuItem = [] as MenuItem[];
-    menuItem.push({ label: "Pièces obligatoires", iconClass: "ai-user-check", route: "/services/announcement" } as MenuItem);
-    menuItem.push({ label: "Nos fiches pratiques", iconClass: "ai-wallet", route: "/services/formality" } as MenuItem);
-    menuItem.push({ label: "Webinaires", iconClass: "ai-chart", route: "/services/legalization" } as MenuItem);
-    menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "/account/quotations" } as MenuItem);
+    menuItem.push({ label: "Pièces obligatoires", iconClass: "ai-user-check", route: "" } as MenuItem);
+    menuItem.push({ label: "Nos fiches pratiques", iconClass: "ai-wallet", route: "" } as MenuItem);
+    menuItem.push({ label: "Webinaires", iconClass: "ai-chart", route: "" } as MenuItem);
+    menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "" } as MenuItem);
 
     return menuItem;
   }

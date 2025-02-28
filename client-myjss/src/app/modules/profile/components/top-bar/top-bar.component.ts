@@ -15,7 +15,7 @@ declare var bootstrap: any;
 })
 export class TopBarComponent implements OnInit {
 
-  logoJss: string = '/assets/images/Logo-blanc.svg';
+  logoJss: string = '/assets/images/white-logo.svg';
   paymentMethods: string = '/assets/images/payment-methods.png';
   map: string = '/assets/images/map.png';
   anonymousConnexion: string = '/assets/images/anonymous.svg';
