@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
 import { formatBytes } from 'src/app/libs/FormatHelper';
 import { MultipleUploadComponent } from 'src/app/modules/miscellaneous/components/multiple-upload/multiple-upload.component';
+import { AttachmentType } from 'src/app/modules/miscellaneous/model/AttachmentType';
 import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -24,7 +25,7 @@ import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/s
   styleUrls: ['./missing-attachment-mail-dialog.component.css']
 })
 export class MissingAttachmentMailDialogComponent implements OnInit {
-  entity: IAttachment = { id: undefined } as IAttachment;
+  entity: IAttachment = { id: 1 } as IAttachment;
   service: Service | undefined;
   displayedColumns: SortTableColumn<AssoServiceDocument>[] = [];
   displayedFieldTypes: SortTableColumn<AssoServiceFieldType>[] = [];
@@ -55,7 +56,7 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
   ) { }
 
   refreshTable: Subject<void> = new Subject<void>();
-  getAttachmentTypeAutomaticMail = this.constantService.getAttachmentTypeAutomaticMail;
+  attachmentTypeAutomaticMail: AttachmentType = this.constantService.getAttachmentTypeAutomaticMail();
 
   getServiceLabel(service: Service) {
     return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
@@ -217,8 +218,4 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
     this.dialogRef.close(null);
   }
 
-  sendMailQuery($event: any) {
-    // if ($event)
-    //  this.missingAttachmentQueryService.sendMissingAttachmentQueryImmediatly(this.missingAttachmentQuery).subscribe();
-  }
 }

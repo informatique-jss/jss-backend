@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../../../../libs/app.service';
 import { capitalizeName } from '../../../../libs/FormatHelper';
+import { MenuItem } from '../../../general/model/MenuItem';
 import { initTooltips } from '../../../my-account/components/orders/orders.component';
-import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
 import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
 
@@ -15,13 +15,18 @@ declare var bootstrap: any;
 })
 export class TopBarComponent implements OnInit {
 
-  logoJss: string = '/assets/images/logo.png';
+  logoJss: string = '/assets/images/white-logo.svg';
+  paymentMethods: string = '/assets/images/payment-methods.png';
+  map: string = '/assets/images/map.png';
+  anonymousConnexion: string = '/assets/images/anonymous.svg';
+
   currentUser: Responsable | undefined;
 
+  services: MenuItem[] = this.appService.getAllServicesMenuItems();
+  companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
+  tools: MenuItem[] = this.appService.getAllToolsMenuItems();
 
-  MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
-  MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
-  menuItems: AccountMenuItem[] = this.appService.getAllAccountMenuItems();
+  isNavbarCollapsed: boolean = false;
 
   constructor(private loginService: LoginService,
     private appService: AppService,
@@ -55,6 +60,14 @@ export class TopBarComponent implements OnInit {
 
   openNewOrder(event: any) {
     this.appService.openRoute(event, "order/new/" + "", undefined);
+  }
+
+  navbarCollapsed() {
+    this.isNavbarCollapsed = true;
+  }
+
+  navbarUncollapsed() {
+    this.isNavbarCollapsed = false;
   }
 
 }

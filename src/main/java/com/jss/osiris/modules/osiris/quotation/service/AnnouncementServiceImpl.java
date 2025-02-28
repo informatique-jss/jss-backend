@@ -498,7 +498,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             false, provision, announcement, false);
                     announcement.setIsAnnouncementAlreadySentToConfrere(true);
                     announcement.setFirstConfrereSentMailDateTime(LocalDateTime.now());
-                } else {
+                } else if (announcement.getIsAnnouncementAlreadySentToConfrere() != null
+                        && announcement.getIsAnnouncementAlreadySentToConfrere() &&
+                        announcement.getFirstConfrereSentMailDateTime() != null) {
                     mailHelper.sendAnnouncementErratumToConfrere(
                             customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
                             false, provision, announcement);

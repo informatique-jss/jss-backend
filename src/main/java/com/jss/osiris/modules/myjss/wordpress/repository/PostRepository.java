@@ -45,11 +45,11 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         List<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, Pageable pageableRequest);
 
-        @Query("select p from Post p where :myJssCategories member of p.myJssCategories and p.date>:date")
+        @Query("select p from Post p where p.isCancelled = false and :myJssCategories member of p.myJssCategories and p.date>:date")
         List<Post> findNextArticle(@Param("myJssCategories") MyJssCategory myJssCategories,
                         @Param("date") LocalDateTime date, Pageable pageableRequest);
 
-        @Query("select p from Post p where :myJssCategories member of p.myJssCategories and p.date<:date")
+        @Query("select p from Post p where p.isCancelled = false and :myJssCategories member of p.myJssCategories and p.date<:date")
         List<Post> findPreviousArticle(@Param("myJssCategories") MyJssCategory myJssCategories,
                         @Param("date") LocalDateTime date, Pageable pageableRequest);
 

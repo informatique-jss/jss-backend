@@ -25,4 +25,5 @@ export interface Announcement extends IDocument {
   actuLegaleId: number;
   confrere: Confrere;
   isComplexAnnouncement: boolean;
+  firstConfrereSentMailDateTime: boolean;
 }

@@ -24,7 +24,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @Service
-public class OsirisMailServiceImpl implements OsirisMailService {
+public class IndexationMailServiceImpl implements IndexationMailService {
 
     @Autowired
     SearchService searchService;
@@ -61,7 +61,7 @@ public class OsirisMailServiceImpl implements OsirisMailService {
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
         List<IndexEntity> entitiesFound = searchService.searchForEntities(idToFind + "", entityType, true);
         if (entitiesFound != null && entitiesFound.size() == 1) {
-            attachmentService.addAttachment(currentExportedMail.getMailPdf(), entitiesFound.get(0).getEntityId(), null,
+            attachmentService.addAttachment(currentExportedMail.getMailText(), entitiesFound.get(0).getEntityId(), null,
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeClientCommunication(),
                     ("Mail client - " + currentExportedMail.getSubject().replace(":", " ")

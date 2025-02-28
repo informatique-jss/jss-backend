@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -69,7 +70,7 @@ public class MailIndexationDelegate {
     private Integer numberDaysToKeepInTrash = 10;
 
     @Autowired
-    OsirisMailService osirisMailService;
+    IndexationMailService osirisMailService;
 
     @Autowired
     BatchService batchService;
@@ -233,10 +234,14 @@ public class MailIndexationDelegate {
                                     + fromName + " " + linkMailFrom
                                     + "</p><p class=\"MsoNormal\">A :"
                                     + toName + " " + linkMailTo
-                                    + "</p></div><hr/>");
+                                    + "</p></div><hr/>")
+                            .replace("charset=iso-8859-1", "charset=utf-8");
+
+                    // Correct encoding
+                    mailHtml = new String(mailHtml.getBytes(StandardCharsets.UTF_8));
 
                     mail.setSubject(message.getSubject());
-                    mail.setMailPdf(new ByteArrayInputStream(mailHtml.getBytes()));
+                    mail.setMailText(new ByteArrayInputStream(mailHtml.getBytes(StandardCharsets.UTF_8)));
 
                     if (osirisMailService.attachIndexationMailToEntity(mail)) {
                         // Move to trash

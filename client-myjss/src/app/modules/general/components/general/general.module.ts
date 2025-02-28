@@ -4,9 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Routes } from '@angular/router';
+import { HomepageComponent } from '../homepage/homepage.component';
 import { GeneralComponent } from './general.component';
 
 const routes: Routes = [
+  { path: 'home', component: HomepageComponent },
 ];
 
 
@@ -19,7 +21,8 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
   ],
-  declarations: [GeneralComponent
+  declarations: [GeneralComponent,
+    HomepageComponent
   ]
 })
 export class GeneralModule { }

@@ -1155,7 +1155,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrdersIn, boolean printLabel,
-            String competentAuthorityId,
+            Integer competentAuthorityId,
             boolean printLetters, boolean printRegisteredLetter)
             throws OsirisException, OsirisClientMessageException {
         ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
@@ -1201,9 +1201,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         InvoiceLabelResult invoiceLabelResult = null;
         CompetentAuthority competentAuthority = null;
-        if (competentAuthorityId != null && !competentAuthorityId.equals("")) {
+        if (competentAuthorityId != null) {
             competentAuthority = competentAuthorityService
-                    .getCompetentAuthority(Integer.valueOf(competentAuthorityId));
+                    .getCompetentAuthority(competentAuthorityId);
             if (competentAuthority != null)
                 invoiceLabelResult = mailComputeHelper.computeCompetentAuthorityLabelResult(competentAuthority);
         }

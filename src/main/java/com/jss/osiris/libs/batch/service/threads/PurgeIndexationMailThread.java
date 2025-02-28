@@ -19,7 +19,7 @@ public class PurgeIndexationMailThread implements IOsirisThread {
 
     @Override
     public String getBatchCode() {
-        return Batch.INDEX_MAIL_TO_ENTITY;
+        return Batch.PURGE_MAIL_TO_INDEX;
     }
 
     @Transactional(rollbackFor = Exception.class)

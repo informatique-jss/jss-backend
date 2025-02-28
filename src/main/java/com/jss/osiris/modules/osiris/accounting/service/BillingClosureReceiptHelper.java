@@ -187,7 +187,6 @@ public class BillingClosureReceiptHelper {
         // Find customer orders
         ArrayList<Responsable> responsableList = new ArrayList<Responsable>();
 
-        boolean hadSomeValues = false;
         if (tiers != null && tiers.getResponsables() != null) {
             values.add(new BillingClosureReceiptValue(
                     tiers.getDenomination() != null ? tiers.getDenomination()
@@ -197,7 +196,6 @@ public class BillingClosureReceiptHelper {
         }
         if (responsable != null) {
             responsableList.add(responsable);
-            values.add(new BillingClosureReceiptValue((responsable.getFirstname() + " " + responsable.getLastname())));
         }
 
         List<CustomerOrder> customerOrders = customerOrderService
@@ -207,127 +205,134 @@ public class BillingClosureReceiptHelper {
                         .collect(Collectors.toList()), null);
 
         // Find invoices
-        List<Invoice> invoices = invoiceService.searchInvoices(Arrays.asList(constantService.getInvoiceStatusSend()),
-                responsableList);
+        for (Responsable responsableToCheck : responsableList) {
+            boolean hadSomeValues = false;
+            values.add(new BillingClosureReceiptValue(
+                    (responsableToCheck.getFirstname() + " " + responsableToCheck.getLastname())));
+            List<Invoice> invoices = invoiceService.searchInvoices(
+                    Arrays.asList(constantService.getInvoiceStatusSend()),
+                    Arrays.asList(responsableToCheck));
 
-        if (isOrderingByEventDate) {
-            ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
-            if (customerOrders != null && customerOrders.size() > 0) {
-                for (CustomerOrder customerOrder : customerOrders) {
-                    allInputs.add(customerOrder);
-                    if (customerOrder.getPayments() != null && customerOrder.getPayments().size() > 0)
-                        for (Payment payment : customerOrder.getPayments())
-                            if (!payment.getIsCancelled())
-                                allInputs.add(payment);
-                }
-            }
-
-            if (invoices != null && invoices.size() > 0) {
-                for (Invoice invoice : invoices) {
-                    allInputs.add(invoice);
-                    if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
-                        for (Payment payment : invoice.getPayments())
-                            if (!payment.getIsCancelled())
-                                allInputs.add(payment);
-                }
-            }
-
-            if (allInputs.size() > 0) {
-                hadSomeValues = true;
-                allInputs.sort(new Comparator<ICreatedDate>() {
-                    @Override
-                    public int compare(ICreatedDate o1, ICreatedDate o2) {
-                        return o1.getCreatedDate().compareTo(o2.getCreatedDate());
+            if (isOrderingByEventDate) {
+                ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
+                if (customerOrders != null && customerOrders.size() > 0) {
+                    for (CustomerOrder customerOrder : customerOrders) {
+                        allInputs.add(customerOrder);
+                        if (customerOrder.getPayments() != null && customerOrder.getPayments().size() > 0)
+                            for (Payment payment : customerOrder.getPayments())
+                                if (!payment.getIsCancelled())
+                                    allInputs.add(payment);
                     }
-                });
+                }
 
-                for (ICreatedDate input : allInputs) {
-                    if (input instanceof Invoice)
-                        values.add(
-                                getBillingClosureReceiptValueForInvoice((Invoice) input, hideAffaires, hideServices));
-                    if (input instanceof Payment) {
-                        CustomerOrder customerOrder = null;
-                        Payment payment = (Payment) input;
-                        if (payment.getIsDeposit()) {
-                            if (payment.getCustomerOrder() != null)
-                                customerOrder = payment.getCustomerOrder();
-                            else if (payment.getInvoice() != null)
-                                customerOrder = payment.getInvoice().getCustomerOrder();
-                            values.add(getBillingClosureReceiptValueForDeposit(payment, customerOrder, true));
-                        } else {
-                            values.add(getBillingClosureReceiptValueForPayment(payment, true));
+                if (invoices != null && invoices.size() > 0) {
+                    for (Invoice invoice : invoices) {
+                        allInputs.add(invoice);
+                        if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
+                            for (Payment payment : invoice.getPayments())
+                                if (!payment.getIsCancelled())
+                                    allInputs.add(payment);
+                    }
+                }
+
+                if (allInputs.size() > 0) {
+                    hadSomeValues = true;
+                    allInputs.sort(new Comparator<ICreatedDate>() {
+                        @Override
+                        public int compare(ICreatedDate o1, ICreatedDate o2) {
+                            return o1.getCreatedDate().compareTo(o2.getCreatedDate());
+                        }
+                    });
+
+                    for (ICreatedDate input : allInputs) {
+                        if (input instanceof Invoice)
+                            values.add(
+                                    getBillingClosureReceiptValueForInvoice((Invoice) input, hideAffaires,
+                                            hideServices));
+                        if (input instanceof Payment) {
+                            CustomerOrder customerOrder = null;
+                            Payment payment = (Payment) input;
+                            if (payment.getIsDeposit()) {
+                                if (payment.getCustomerOrder() != null)
+                                    customerOrder = payment.getCustomerOrder();
+                                else if (payment.getInvoice() != null)
+                                    customerOrder = payment.getInvoice().getCustomerOrder();
+                                values.add(getBillingClosureReceiptValueForDeposit(payment, customerOrder, true));
+                            } else {
+                                values.add(getBillingClosureReceiptValueForPayment(payment, true));
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            // Order by affaire
-            ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
-            if (customerOrders != null && customerOrders.size() > 0)
-                allInputs.addAll(customerOrders);
-            if (invoices != null && invoices.size() > 0)
-                allInputs.addAll(invoices);
+            } else {
+                // Order by affaire
+                ArrayList<ICreatedDate> allInputs = new ArrayList<ICreatedDate>();
+                if (customerOrders != null && customerOrders.size() > 0)
+                    allInputs.addAll(customerOrders);
+                if (invoices != null && invoices.size() > 0)
+                    allInputs.addAll(invoices);
 
-            if (allInputs.size() > 0) {
-                hadSomeValues = true;
-                allInputs.sort(new Comparator<ICreatedDate>() {
+                if (allInputs.size() > 0) {
+                    hadSomeValues = true;
+                    allInputs.sort(new Comparator<ICreatedDate>() {
 
-                    @Override
-                    public int compare(ICreatedDate o1, ICreatedDate o2) {
-                        if (o1 != null && o2 == null)
-                            return 1;
-                        if (o1 == null && o2 != null)
-                            return -1;
-                        if (o1 == null && o2 == null)
+                        @Override
+                        public int compare(ICreatedDate o1, ICreatedDate o2) {
+                            if (o1 != null && o2 == null)
+                                return 1;
+                            if (o1 == null && o2 != null)
+                                return -1;
+                            if (o1 == null && o2 == null)
+                                return 0;
+                            if (o1 != null && o2 != null)
+                                return o1.getCreatedDate().compareTo(o2.getCreatedDate());
                             return 0;
-                        if (o1 != null && o2 != null)
-                            return o1.getCreatedDate().compareTo(o2.getCreatedDate());
-                        return 0;
-                    }
-                });
-            }
+                        }
+                    });
+                }
 
-            for (Object input : allInputs) {
-                if (input instanceof CustomerOrder) {
-                    CustomerOrder customerOrder = (CustomerOrder) input;
-                    if (customerOrder.getPayments() != null && customerOrder.getPayments().size() > 0) {
-                        for (Payment payment : customerOrder.getPayments())
-                            if (!payment.getIsCancelled())
-                                values.add(getBillingClosureReceiptValueForDeposit(payment, customerOrder,
-                                        customerOrder.getPayments()
-                                                .indexOf(payment) == customerOrder.getPayments().size() - 1));
+                for (Object input : allInputs) {
+                    if (input instanceof CustomerOrder) {
+                        CustomerOrder customerOrder = (CustomerOrder) input;
+                        if (customerOrder.getPayments() != null && customerOrder.getPayments().size() > 0) {
+                            for (Payment payment : customerOrder.getPayments())
+                                if (!payment.getIsCancelled())
+                                    values.add(getBillingClosureReceiptValueForDeposit(payment, customerOrder,
+                                            customerOrder.getPayments()
+                                                    .indexOf(payment) == customerOrder.getPayments().size() - 1));
+                        }
+                    }
+                    if (input instanceof Invoice) {
+                        Invoice invoice = (Invoice) input;
+                        BillingClosureReceiptValue valueInvoice = getBillingClosureReceiptValueForInvoice(invoice,
+                                hideAffaires, hideServices);
+                        values.add(valueInvoice);
+                        if (invoice.getPayments() != null && invoice.getPayments().size() > 0) {
+                            valueInvoice.setDisplayBottomBorder(false);
+                            for (Payment payment : invoice.getPayments())
+                                if (!payment.getIsCancelled() && payment.getIsDeposit())
+                                    values.add(getBillingClosureReceiptValueForDeposit(payment,
+                                            invoice.getCustomerOrder(),
+                                            invoice.getCustomerOrder().getPayments()
+                                                    .indexOf(payment) == invoice.getCustomerOrder().getPayments().size()
+                                                            - 1));
+                        }
+                        if (invoice.getPayments() != null && invoice.getPayments().size() > 0) {
+                            valueInvoice.setDisplayBottomBorder(false);
+                            for (Payment payment : invoice.getPayments())
+                                if (!payment.getIsCancelled() && !payment.getIsDeposit())
+                                    values.add(getBillingClosureReceiptValueForPayment(payment,
+                                            invoice.getPayments().indexOf(payment) == invoice.getPayments().size()
+                                                    - 1));
+                        }
+
                     }
                 }
-                if (input instanceof Invoice) {
-                    Invoice invoice = (Invoice) input;
-                    BillingClosureReceiptValue valueInvoice = getBillingClosureReceiptValueForInvoice(invoice,
-                            hideAffaires, hideServices);
-                    values.add(valueInvoice);
-                    if (invoice.getPayments() != null && invoice.getPayments().size() > 0) {
-                        valueInvoice.setDisplayBottomBorder(false);
-                        for (Payment payment : invoice.getPayments())
-                            if (!payment.getIsCancelled() && payment.getIsDeposit())
-                                values.add(getBillingClosureReceiptValueForDeposit(payment,
-                                        invoice.getCustomerOrder(),
-                                        invoice.getCustomerOrder().getPayments()
-                                                .indexOf(payment) == invoice.getCustomerOrder().getPayments().size()
-                                                        - 1));
-                    }
-                    if (invoice.getPayments() != null && invoice.getPayments().size() > 0) {
-                        valueInvoice.setDisplayBottomBorder(false);
-                        for (Payment payment : invoice.getPayments())
-                            if (!payment.getIsCancelled() && !payment.getIsDeposit())
-                                values.add(getBillingClosureReceiptValueForPayment(payment,
-                                        invoice.getPayments().indexOf(payment) == invoice.getPayments().size()
-                                                - 1));
-                    }
-
-                }
             }
+
+            if (!hadSomeValues)
+                values.remove(values.size() - 1);
         }
-
-        if (!hadSomeValues)
-            values.remove(values.size() - 1);
         return values;
     }
 
@@ -488,7 +493,10 @@ public class BillingClosureReceiptHelper {
         }
 
         try {
-            mailHelper.sendBillingClosureToCustomer(attachments, tiers, responsable, false);
+            if (tiers == null)
+                mailHelper.sendBillingClosureToCustomer(attachments, responsable.getTiers(), responsable, false);
+            else
+                mailHelper.sendBillingClosureToCustomer(attachments, tiers, responsable, false);
         } catch (Exception e) {
             globalExceptionHandler.persistLog(
                     new OsirisException(e,
