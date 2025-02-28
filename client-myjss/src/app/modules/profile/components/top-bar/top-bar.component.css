@@ -1,0 +1,17 @@
+.navbar {
+    padding: 0px;
+}
+
+.lead-text-menu {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
