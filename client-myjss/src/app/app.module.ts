@@ -12,12 +12,13 @@ import { ToastComponent } from './libs/toast/toast.component';
 import { GeneralModule } from './modules/general/components/general/general.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from './modules/my-account/components/my-account/my-account.module';
+import { MyServicesModule } from './modules/my-services/jss-services/jss-services.module';
 import { SearchComponent } from './modules/profile/components/search/search.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
 registerLocaleData(localeFr, 'fr');
 
 const routes: Routes = [
-  { path: '', redirectTo: 'offers', pathMatch: 'full' },
+  { path: '', redirectTo: 'services', pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -38,6 +39,7 @@ const routes: Routes = [
     MiscellaneousModule,
     QuotationModule,
     GeneralModule,
+    MyServicesModule,
   ], providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: HttpErrorInterceptor,

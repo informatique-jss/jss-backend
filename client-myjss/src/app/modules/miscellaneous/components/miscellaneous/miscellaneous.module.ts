@@ -2,9 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { CarouselComponent } from '../carousel/carousel.component';
+import { DescriptionMyAccountComponent } from '../description-my-account/description-my-account.component';
+import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
+import { ExplainationVideoComponent } from '../explaination-video/explaination-video.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
@@ -17,7 +21,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
+    // RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
     BrowserModule,
     FormsModule,
@@ -28,7 +32,11 @@ const routes: Routes = [
     GenericInputComponent,
     SingleUploadComponent,
     TrustHtmlPipe,
-    GenericTextareaComponent
+    GenericTextareaComponent,
+    DoubleButtonsComponent,
+    ExplainationVideoComponent,
+    DescriptionMyAccountComponent,
+    CarouselComponent
   ],
   exports: [
     AvatarComponent,
@@ -36,6 +44,10 @@ const routes: Routes = [
     SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
+    DoubleButtonsComponent,
+    ExplainationVideoComponent,
+    DescriptionMyAccountComponent,
+    CarouselComponent
   ]
 })
 export class MiscellaneousModule { }
