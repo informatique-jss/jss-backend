@@ -1,6 +1,6 @@
 <header class="fixed-top" style="backdrop-filter: blur(40px)">
   <!-- [ngStyle]="isNavbarCollapsed ? {background: '#FFFFFF'} : null" -->
-  <div class="container">
+  <div class="container mt-3">
     <div class="row navbar d-flex justify-content-between align-items-center">
 
       <!-- Mobile menu toggler (Hamburger) -->
@@ -22,14 +22,24 @@
       </div>
 
       <!-- User not signed in state.   -->
-      <div class="order-lg-3 col-4 d-flex justify-content-end" *ngIf="!currentUser || !currentUser.id">
-        <a class="btn btn-outline-light my-4 col-md-auto" [routerLink]="['/account/signin']" rel="noopener">
-          Se connecter
-        </a>
+      <div class="col-4 d-flex justify-content-end align-items-center">
+        <!-- 'Sign In' button visible only on medium to large screens (d-md-block) -->
+        <div *ngIf="!currentUser || !currentUser.id" class="d-none d-md-block">
+          <a class="btn btn-outline-light col-md-auto btn-sm" [routerLink]="['/account/signin']" rel="noopener">
+            Se connecter
+          </a>
+        </div>
+
+        <!-- 'Sign In' icon visible only on small screens (d-md-none) -->
+        <div *ngIf="!currentUser || !currentUser.id" class="d-block d-md-none">
+          <a class="btn col-md-auto btn-sm" [routerLink]="['/account/signin']" rel="noopener">
+            <img [src]="anonymousConnexion" />
+          </a>
+        </div>
       </div>
 
       <!-- User signed in state. Account dropdown on screens > 576px -->
-      <div class="dropdown nav d-none d-sm-block order-lg-3" *ngIf="currentUser && currentUser.id">
+      <div class="dropdown nav d-none d-sm-block" *ngIf="currentUser && currentUser.id">
         <a class="nav-link d-flex align-items-center p-0" href="#" data-bs-toggle="dropdown" aria-expanded="false">
           <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
           <div class="ps-2">
@@ -55,17 +65,15 @@
             </a>
           </ng-container>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" [routerLink]="'/account/signout'">
-            <i class="ai-logout fs-lg opacity-70 me-2"></i>
+          <a class="dropdown-item btn-outline-light" [routerLink]="'/account/signout'">
             Se déconnecter
           </a>
         </div>
       </div>
     </div>
-    <hr>
+    <hr style="margin-bottom: 0rem">
 
     <!-- Navbar collapsed with all page presentation -->
-
     <div class="navbar align-items-start">
       <nav class="collapse w-100" id="navbarCollapse" data-bs-parent="#navToggler"
         (show.bs.collapse)="navbarCollapsed()" (hide.bs.collapse)="navbarUncollapsed()">
@@ -87,35 +95,37 @@
                     {{item.label}}</a></li>
               </ul>
             </li>
-            <li class="nav-item dropdown col col-md-auto ">
+            <li class="nav-item dropdown col col-md-auto">
               <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Outils</a>
               <ul class="dropdown-menu">
                 <li *ngFor="let tool of tools"><a class="dropdown-item" [routerLink]="tool.route">
                     {{tool.label}}</a></li>
               </ul>
             </li>
-            <li class="nav-item col col-md-auto ">
+            <li class="nav-item col col-md-auto">
               <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Commande / Devis</a>
             </li>
-            <li class="nav-item col col-md-auto ">
+            <li class="nav-item col col-md-auto">
               <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Démo</a>
             </li>
-            <li class="nav-item col col-md-auto ">
+            <li class="nav-item col col-md-auto">
               <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Contact</a>
             </li>
-            <li class="nav-item col col-md-auto ">
+            <li class="nav-item col col-md-auto">
               <a class="nav-link " style="cursor: pointer;" (click)="openNewOrder($event)">Journal Spécial des
                 Sociétés</a>
             </li>
           </ul>
         </div>
         <hr>
+
+        <!-- First column for liens utiles & localisation -->
         <div class="row justify-content-start mx-2">
-          <!-- Première colonne pour les liens utiles et localisation -->
-          <div class="col-6">
-            <div class="d-flex justify-content-between">
+          <!-- LIENS UTILES & LOCALISATION (responsive) -->
+          <div class="col-12 col-md-6">
+            <div class="d-flex justify-content-between flex-column flex-md-row">
               <!-- LIENS UTILES -->
-              <div class="col-auto">
+              <div class="col-auto me-md-4">
                 <div class="lead-text-menu">
                   LIENS UTILES
                 </div>
@@ -151,20 +161,21 @@
             </div>
           </div>
 
-          <!-- Deuxième colonne pour l'image -->
-          <div class="col-6">
+          <!-- Second column for the image (responsive) -->
+          <div class="col-12 col-md-6 d-none d-md-block">
             <img [src]="map" class="w-100" alt="Map" />
           </div>
         </div>
-
         <hr>
-        <div>
+
+        <!-- Footer with logo, social media and payments -->
+        <div class="d-none d-sm-block">
           <div class="row d-flex justify-content-between align-items-center mx-2">
             <div class="col d-flex align-items-center justify-content-start">
-              <a href="" class="mr-2">
+              <a href="" class="me-4">
                 <img ui-sref='main.tiers' [src]="logoJss" />
               </a>
-              <div class="col d-flex align-items-center mr-2">
+              <div class="col d-flex align-items-center me-2">
                 <a class="btn btn-icon btn-sm btn-outline-secondary btn-facebook rounded-circle mx-2 ms-sm-0 me-sm-3"
                   href="#" aria-label="LinkedIn">
                   <i class="ai-linkedin"></i>
@@ -183,13 +194,12 @@
               <img [src]="paymentMethods" alt="Payment Methods" />
             </div>
           </div>
-
         </div>
       </nav>
     </div>
 
 
-    <div *ngIf="!isNavbarCollapsed" class="row ">
+    <div *ngIf="!isNavbarCollapsed" class="row d-none d-lg-block">
       <!-- Navbar collapse (Main navigation) -->
       <nav class="align-items-center navbar-expand" id="navbarNav">
         <ul class="navbar-nav navbar-nav-scroll justify-content-between" style="--ar-scroll-height: 520px;">
