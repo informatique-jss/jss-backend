@@ -2,5 +2,4 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* La vidéo est entièrement visible sans déformation, mais il peut y avoir des espaces vides */
 }

@@ -21,8 +21,8 @@ export class ExplainationVideoComponent implements OnInit {
   playVideo(): void {
     if (this.videoPlayer) {
       const video = this.videoPlayer.nativeElement;
-      video.classList.remove('d-none'); // Afficher la vidéo
-      video.play(); // Lancer la lecture de la vidéo
+      video.classList.remove('d-none');
+      video.play();
       this.videoPlaying = true;
     }
   }

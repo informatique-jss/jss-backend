@@ -27,11 +27,9 @@ export class CarouselComponent implements OnInit {
         clickable: true,
       },
       breakpoints: {
-        // Si la taille de l'écran est plus petite que 768px, afficher 1 élément
         768: {
           slidesPerView: 1,
         },
-        // Si la taille de l'écran est plus grande ou égale à 768px, afficher 2 éléments
         1024: {
           slidesPerView: 2,
         },
