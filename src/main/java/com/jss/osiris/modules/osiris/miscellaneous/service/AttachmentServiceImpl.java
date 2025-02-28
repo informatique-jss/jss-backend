@@ -184,6 +184,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                 file = pdfTools.keepPages(file, pageSelection);
         }
 
+        filename = filename.replaceAll("/", " ");
         String absoluteFilePath = storageFileService.saveFile(file, filename,
                 entityType + File.separator + idEntity);
 
