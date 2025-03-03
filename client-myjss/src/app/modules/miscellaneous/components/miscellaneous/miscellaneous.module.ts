@@ -5,7 +5,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { Routes } from '@angular/router';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
-import { CarouselComponent } from '../carousel/carousel.component';
 import { DescriptionMyAccountComponent } from '../description-my-account/description-my-account.component';
 import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
 import { ExplainationVideoComponent } from '../explaination-video/explaination-video.component';
@@ -36,7 +35,6 @@ const routes: Routes = [
     DoubleButtonsComponent,
     ExplainationVideoComponent,
     DescriptionMyAccountComponent,
-    CarouselComponent
   ],
   exports: [
     AvatarComponent,
@@ -47,7 +45,6 @@ const routes: Routes = [
     DoubleButtonsComponent,
     ExplainationVideoComponent,
     DescriptionMyAccountComponent,
-    CarouselComponent
   ]
 })
 export class MiscellaneousModule { }
