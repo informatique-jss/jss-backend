@@ -4,14 +4,6 @@ video {
     position: relative;
 }
 
-@media (max-width: 768px) {
-
-    /* Adjust max-width for small screens */
-    video {
-        margin-top: 60px;
-    }
-}
-
 header {
     position: relative;
     width: 100%;
