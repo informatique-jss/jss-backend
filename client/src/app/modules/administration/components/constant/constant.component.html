@@ -1637,6 +1637,14 @@
                 [isMandatory]="true" [isDisabled]="!editMode"></select-accounting-account-class>
             </td>
           </tr>
+          <tr>
+            <td>
+              <select-service-family [(model)]="constant.serviceFamilyImmatriculationAlAndFormality"
+                label="Famille de service - Immatriculation AL et Formalité" [form]="constantForm"
+                propertyName="serviceFamilyImmatriculationAlAndFormality" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-family>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

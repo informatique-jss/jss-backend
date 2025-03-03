@@ -864,4 +864,8 @@ export class ConstantService extends AppRestService<Constant> {
   getAccountingAccountClassProduct() {
     return this.constant.accountingAccountClassProduct;
   }
+
+  getServiceFamilyImmatriculationAlAndFormality() {
+    return this.constant.serviceFamilyImmatriculationAlAndFormality;
+  }
 }
