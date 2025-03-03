@@ -14,6 +14,7 @@ import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
 import { ProvisionFamilyType } from '../../quotation/model/ProvisionFamilyType';
 import { ProvisionScreenType } from '../../quotation/model/ProvisionScreenType';
 import { ProvisionType } from '../../quotation/model/ProvisionType';
+import { ServiceFamily } from '../../quotation/model/ServiceFamily';
 import { ServiceFieldType } from '../../quotation/model/ServiceFieldType';
 import { ServiceType } from '../../quotation/model/ServiceType';
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
@@ -69,6 +70,7 @@ export interface Constant {
   documentTypeRefund: DocumentType;
   documentTypeSynthesisRbeSigned: TypeDocument;
   documentTypeSynthesisRbeUnsigned: TypeDocument;
+  documentTypeSynthesisUnsigned: TypeDocument;
   documentTypeBillingClosure: DocumentType;
   documentTypeProvisionnalReceipt: DocumentType;
   attachmentTypeKbis: AttachmentType;
@@ -259,4 +261,5 @@ export interface Constant {
   categoryArticle: Category;
   categorySerie: Category;
   accountingAccountClassProduct: AccountingAccountClass;
+  serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
 }

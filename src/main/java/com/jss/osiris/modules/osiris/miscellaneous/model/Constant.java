@@ -21,6 +21,7 @@ import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
@@ -143,9 +144,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_synthesis_rbe_signed")
 	private TypeDocument documentTypeSynthesisRbeSigned;
+
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_synthesis_rbe_unsigned")
 	private TypeDocument documentTypeSynthesisRbeUnsigned;
+
+	@ManyToOne
+	@JoinColumn(name = "id_document_type_synthesis_unsigned")
+	private TypeDocument documentTypeSynthesisUnsigned;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_provisionnal_receipt")
@@ -891,6 +897,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class_product")
 	private AccountingAccountClass accountingAccountClassProduct;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_family_immatriculation_al_and_formality")
+	private ServiceFamily serviceFamilyImmatriculationAlAndFormality;
 
 	public Integer getId() {
 		return id;
@@ -2591,6 +2601,23 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingAccountClassProduct(AccountingAccountClass accountingAccountClassProduct) {
 		this.accountingAccountClassProduct = accountingAccountClassProduct;
+	}
+
+	public TypeDocument getDocumentTypeSynthesisUnsigned() {
+		return documentTypeSynthesisUnsigned;
+	}
+
+	public void setDocumentTypeSynthesisUnsigned(TypeDocument documentTypeSynthesisUnsigned) {
+		this.documentTypeSynthesisUnsigned = documentTypeSynthesisUnsigned;
+	}
+
+	public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() {
+		return serviceFamilyImmatriculationAlAndFormality;
+	}
+
+	public void setServiceFamilyImmatriculationAlAndFormality(
+			ServiceFamily serviceFamilyImmatriculationAlAndFormality) {
+		this.serviceFamilyImmatriculationAlAndFormality = serviceFamilyImmatriculationAlAndFormality;
 	}
 
 }

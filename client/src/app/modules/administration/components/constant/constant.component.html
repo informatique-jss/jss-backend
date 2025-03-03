@@ -135,7 +135,7 @@
           <tr>
             <td>
               <select-type-document [(model)]="constant.documentTypeSynthesisRbeSigned"
-                label="Type de document - Synthèse RBE signé" [form]="constantForm"
+                label="Type de document - Synthèse RBE signée" [form]="constantForm"
                 propertyName="documentTypeSynthesisRbeSigned" [isMandatory]="true" [isDisabled]="!editMode">
               </select-type-document>
             </td>
@@ -143,8 +143,16 @@
           <tr>
             <td>
               <select-type-document [(model)]="constant.documentTypeSynthesisRbeUnsigned"
-                label="Type de document - Synthèse RBE non signé" [form]="constantForm"
+                label="Type de document - Synthèse RBE non signée" [form]="constantForm"
                 propertyName="documentTypeSynthesisRbeUnsigned" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-type-document>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-type-document [(model)]="constant.documentTypeSynthesisUnsigned"
+                label="Type de document - Synthèse non signée" [form]="constantForm"
+                propertyName="documentTypeSynthesisUnsigned" [isMandatory]="true" [isDisabled]="!editMode">
               </select-type-document>
             </td>
           </tr>
@@ -1627,6 +1635,14 @@
               <select-accounting-account-class [(model)]="constant.accountingAccountClassProduct"
                 label="Classe comptable - Produits" [form]="constantForm" propertyName="accountingAccountClassProduct"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-accounting-account-class>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-service-family [(model)]="constant.serviceFamilyImmatriculationAlAndFormality"
+                label="Famille de service - Immatriculation AL et Formalité" [form]="constantForm"
+                propertyName="serviceFamilyImmatriculationAlAndFormality" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-family>
             </td>
           </tr>
         </table>

@@ -390,9 +390,13 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         if (signedBe != null)
             signature.setBeSignedDocument("/api/attachments/" + signedBe.getAttachmentId());
 
-        new RestTemplate().postForEntity(
-                guichetUniqueEntryPoint + signaturesRequestUrl, new HttpEntity<Object>(signature, headers),
-                String.class);
+        try {
+            new RestTemplate().postForEntity(
+                    guichetUniqueEntryPoint + signaturesRequestUrl, new HttpEntity<Object>(signature, headers),
+                    String.class);
+        } catch (Exception e) {
+            throw new OsirisException(e, "Impossible de signe formality n°" + formaliteGuichetUnique.getId());
+        }
 
         return;
     }
