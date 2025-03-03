@@ -8,8 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class DoubleButtonsComponent implements OnInit {
   @Input() orderActionLabel: string = "";
   @Input() quotationActionLabel: string = "";
-  @Input() linkPage: string = "";
-  @Input() labelLink: string = "";
+  @Input() linkLabel: string = "";
   constructor() { }
 
   ngOnInit() {

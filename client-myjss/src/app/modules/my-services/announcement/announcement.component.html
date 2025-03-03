@@ -8,8 +8,8 @@
       <div class="col-md-6 col-xl-5 offset-xl-1">
         <p class="text-body fs-xl mb-5">Publiez vos annonces légales en ligne sur myjss.fr partout en France
           grâce à notre réseau. Profitez de l'assistance de nos experts par téléphone et par mail. </p>
-        <double-buttons orderActionLabel="Publier une annonce" quotationActionLabel="Demander un devis"
-          labelLink="Consulter une annonce légale">
+        <double-buttons [orderActionLabel]="orderActionLabel" [quotationActionLabel]="quotationActionLabel"
+          [linkLabel]="linkLabel">
         </double-buttons>
       </div>
     </div>
@@ -21,7 +21,7 @@
 
 <section class="container pt-5 mt-lg-3 mt-xl-4 mt-xxl-5">
   <div class="bg-primary rounded-5 overflow-hidden mt-2 mt-sm-4 mt-lg-5">
-    <img class="position-absolute top-50 start-0 translate-middle-y d-none d-md-block"
+    <img class="position-absolute top-50 start-0 translate-middle-y d-none d-md-block" style="z-index: 0;"
       src="assets/img/landing/yoga-studio/cta/bg.svg" width="186" alt="Background flower">
     <div class="row position-relative z-2 align-items-center">
       <div class="col-md-6 col-lg-5 offset-lg-1">
@@ -32,8 +32,8 @@
             <span class="fs-xs fw-semibold text-white opacity-70 text-uppercase">Annonce légale </span>
           </div>
           <h2 class="h1 text-white pb-2 pb-sm-3">N'attendez plus et accédez à nos solutions</h2>
-          <double-buttons orderActionLabel="Publier une annonce" quotationActionLabel="Demander un devis"
-            labelLink="Consulter une annonce légale"></double-buttons>
+          <double-buttons [orderActionLabel]="orderActionLabel" [quotationActionLabel]="quotationActionLabel"
+            [linkLabel]="linkLabel"></double-buttons>
         </div>
       </div>
       <div class="col-md-6">
