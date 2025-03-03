@@ -143,9 +143,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_synthesis_rbe_signed")
 	private TypeDocument documentTypeSynthesisRbeSigned;
+
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_synthesis_rbe_unsigned")
 	private TypeDocument documentTypeSynthesisRbeUnsigned;
+
+	@ManyToOne
+	@JoinColumn(name = "id_document_type_synthesis_unsigned")
+	private TypeDocument documentTypeSynthesisUnsigned;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_provisionnal_receipt")
@@ -2591,6 +2596,14 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingAccountClassProduct(AccountingAccountClass accountingAccountClassProduct) {
 		this.accountingAccountClassProduct = accountingAccountClassProduct;
+	}
+
+	public TypeDocument getDocumentTypeSynthesisUnsigned() {
+		return documentTypeSynthesisUnsigned;
+	}
+
+	public void setDocumentTypeSynthesisUnsigned(TypeDocument documentTypeSynthesisUnsigned) {
+		this.documentTypeSynthesisUnsigned = documentTypeSynthesisUnsigned;
 	}
 
 }

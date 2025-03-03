@@ -69,6 +69,7 @@ export interface Constant {
   documentTypeRefund: DocumentType;
   documentTypeSynthesisRbeSigned: TypeDocument;
   documentTypeSynthesisRbeUnsigned: TypeDocument;
+  documentTypeSynthesisUnsigned: TypeDocument;
   documentTypeBillingClosure: DocumentType;
   documentTypeProvisionnalReceipt: DocumentType;
   attachmentTypeKbis: AttachmentType;

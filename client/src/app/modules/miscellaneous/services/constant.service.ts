@@ -104,8 +104,13 @@ export class ConstantService extends AppRestService<Constant> {
   getDocumentTypeSynthesisRbeSigned() {
     return this.constant.documentTypeSynthesisRbeSigned;
   }
+
   getDocumentTypeSynthesisRbeUnsigned() {
     return this.constant.documentTypeSynthesisRbeUnsigned;
+  }
+
+  getDocumentTypeSynthesisUnsigned() {
+    return this.constant.documentTypeSynthesisUnsigned;
   }
 
   getDocumentTypeRefund() {

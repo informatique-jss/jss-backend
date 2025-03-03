@@ -210,6 +210,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public TypeDocument getDocumentTypeSynthesisUnsigned() throws OsirisException {
+        return getConstants().getDocumentTypeSynthesisUnsigned();
+    }
+
+    @Override
     public DocumentType getDocumentTypeBillingClosure() throws OsirisException {
         return getConstants().getDocumentTypeBillingClosure();
     }

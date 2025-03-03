@@ -112,7 +112,7 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
                 for (PiecesJointe piecesJointe : formaliteGuichetUnique.getContent().getPiecesJointes()) {
 
                     if (piecesJointe.getTypeDocument().getCode()
-                            .equals(constantService.getDocumentTypeSynthesisRbeUnsigned().getCode())) {
+                            .equals(constantService.getDocumentTypeSynthesisUnsigned().getCode())) {
                         if (lastSynthesis == null || LocalDateTime.parse(lastSynthesis.getCreated().substring(0, 19),
                                 JacksonLocalDateTimeDeserializer.formatter)
                                 .isBefore(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
@@ -120,7 +120,7 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
                             lastSynthesis = piecesJointe;
                     }
                     if (piecesJointe.getTypeDocument().getCode()
-                            .equals(constantService.getDocumentTypeSynthesisRbeSigned().getCode())) {
+                            .equals(constantService.getDocumentTypeSynthesisRbeUnsigned().getCode())) {
                         if (lastBe == null || LocalDateTime.parse(lastBe.getCreated().substring(0, 19),
                                 JacksonLocalDateTimeDeserializer.formatter)
                                 .isBefore(LocalDateTime.parse(piecesJointe.getCreated().substring(0, 19),
