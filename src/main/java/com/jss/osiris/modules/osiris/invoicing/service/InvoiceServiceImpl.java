@@ -324,7 +324,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         false, "Facture n°" + invoice.getId(), null, null, null);
 
             for (Attachment attachment : attachments)
-                if (attachment.getDescription().contains(invoice.getId() + "")) {
+                if (attachment.getDescription() != null && attachment.getDescription().contains(invoice.getId() + "")) {
                     attachment.setInvoice(invoice);
                     attachmentService.addOrUpdateAttachment(attachment);
                 }
@@ -449,7 +449,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                         false, "Avoir n°" + creditNote.getId(), null, null, null);
 
                 for (Attachment attachment : attachments)
-                    if (attachment.getDescription().contains(creditNote.getId() + "")) {
+                    if (attachment.getDescription() != null
+                            && attachment.getDescription().contains(creditNote.getId() + "")) {
                         attachment.setInvoice(creditNote);
                         attachmentService.addOrUpdateAttachment(attachment);
                     }

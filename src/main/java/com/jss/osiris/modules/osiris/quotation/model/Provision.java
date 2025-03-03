@@ -50,7 +50,7 @@ public class Provision implements IId, IAttachment {
 	private Service service;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider", "billingTypes" }, allowSetters = true)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
 	private ProvisionType provisionType;

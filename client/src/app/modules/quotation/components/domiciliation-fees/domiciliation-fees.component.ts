@@ -11,6 +11,7 @@ import { DomiciliationFee } from '../../model/DomiciliationFee';
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { DomiciliationFeeService } from '../../services/domiciliation.fee.service';
+import { ProvisionTypeService } from '../../services/provision.type.service';
 
 @Component({
   selector: 'domiciliation-fees',
@@ -33,11 +34,20 @@ export class DomiciliationFeesComponent implements OnInit {
     private appService: AppService,
     private formBuilder: FormBuilder,
     private domiciliationFeeService: DomiciliationFeeService,
+    private provisionTypeService: ProvisionTypeService
   ) { }
 
   domiciliationFeesForm = this.formBuilder.group({});
 
   ngOnInit() {
+    this.provisionTypeService.getProvisionTypes().subscribe(responses => {
+      if (responses)
+        for (let response of responses)
+          if (this.provision && response.id == this.provision.provisionType.id) {
+            this.provision.provisionType = response;
+            break;
+          }
+    })
     this.domiciliationFeesDisplayedColumns = [];
     this.domiciliationFeesDisplayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<DomiciliationFee>);
     this.domiciliationFeesDisplayedColumns.push({ id: "feeDate", fieldName: "feeDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn<DomiciliationFee>);
