@@ -1,0 +1,86 @@
+<!--<drag-scroll style="margin-top: 200px;" #nav>
+  <button type="button" class="btn btn-prev btn-icon btn-sm btn-outline-primary rounded-circle me-2" aria-label="Prev"
+    (click)="moveLeft()">
+    <i class="ai-arrow-left"></i>
+  </button>
+  <button type="button" class="btn btn-next btn-icon btn-sm btn-outline-primary rounded-circle ms-2" aria-label="Next"
+    (click)="moveRight()">
+    <i class="ai-arrow-right"></i>
+  </button>
+  <div class="carousel-container">
+    <div drag-scroll-item class="col-sm-6 col-lg-4 order-lg-1">
+      <a class="card background-card border-0 h-100 text-decoration-none" style="cursor: pointer;"
+        (click)="clickItem($event)">
+        <div class="card">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Card title</h4>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div drag-scroll-item class="col-sm-6 col-lg-4 order-lg-1">
+      <a class="card background-card border-0 h-100 text-decoration-none" style="cursor: pointer;"
+        (click)="clickItem($event)">
+        <div class="card">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Card title</h4>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div drag-scroll-item class="col-sm-6 col-lg-4 order-lg-1">
+      <a class="card background-card border-0 h-100 text-decoration-none" style="cursor: pointer;"
+        (click)="clickItem($event)">
+        <div class="card">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Card title</h4>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div drag-scroll-item class="col-sm-6 col-lg-4 order-lg-1">
+      <a class="card background-card border-0 h-100 text-decoration-none" style="cursor: pointer;"
+        (click)="clickItem($event)">
+        <div class="card">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Card title</h4>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</drag-scroll>
+-->
+
+<drag-scroll #nav class="carousel-container" style="margin-top: 200px;">
+  <div *ngFor="let item of items" class="card">
+    <img drag-scroll-item [src]="item.image" class="card-img-top" alt="Card image">
+    <div class="card-body">
+      <h4 class="card-title">{{ item.title }}</h4>
+      <p class="card-text">{{ item.description }}</p>
+    </div>
+  </div>
+</drag-scroll>
+
+<button type="button" class="btn btn-prev btn-icon btn-sm btn-outline-primary rounded-circle me-2" aria-label="Prev"
+  (click)="moveLeft()">
+  <i class="ai-arrow-left"></i>
+</button>
+<button type="button" class="btn btn-next btn-icon btn-sm btn-outline-primary rounded-circle ms-2" aria-label="Next"
+  (click)="moveRight()">
+  <i class="ai-arrow-right"></i>
+</button>

@@ -37,7 +37,7 @@
                 "bundleName": "swiper.min.css"
               },
               {
-                "input": "src/assets/css/theme.min.css",
+                "input": "src/assets/css/theme.css",
                 "inject": true,
                 "bundleName": "theme.min.css"
               }
