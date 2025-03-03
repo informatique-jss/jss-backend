@@ -10,20 +10,9 @@ video {
   height: auto;
   border-radius: 8px;
   display: block;
+  object-fit: cover;
 }
 
-.controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 10px;
-  border-radius: 5px;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  left: 0;
-}
 
 button {
   background-color: transparent;
@@ -33,8 +22,7 @@ button {
   cursor: pointer;
 }
 
-.progress-bar {
-  width: 80%;
-  margin: 0 10px;
-  cursor: pointer;
+.background-card {
+  background-color: #FFFFFF08;
+  background-size: cover;
 }
