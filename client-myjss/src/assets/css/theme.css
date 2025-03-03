@@ -700,8 +700,8 @@ progress {
   /* Positionning of both images */
   background-position: top, 2541px;
   background-repeat: no-repeat, repeat-y;
-  background-size: cover, cover;
-  background-attachment: fixed, scroll;
+  background-size: 100% auto, 100% auto;
+  background-attachment: scroll, scroll;
 }
 
 .lead {
@@ -3584,11 +3584,11 @@ textarea.form-control-lg {
 }
 
 .btn-outline-primary {
-  --ar-btn-color:rgba(255, 255, 255, 0.95);
-  --ar-btn-border-color:rgba(194, 194, 194, 0.94);
+  --ar-btn-color: rgba(255, 255, 255, 0.95);
+  --ar-btn-border-color: rgba(194, 194, 194, 0.94);
   --ar-btn-hover-color: #fff;
-  --ar-btn-hover-bg:rgba(150, 152, 153, 0.96);
-  --ar-btn-hover-border-color:rgb(138, 138, 138);
+  --ar-btn-hover-bg: rgba(150, 152, 153, 0.96);
+  --ar-btn-hover-border-color: rgb(138, 138, 138);
   --ar-btn-focus-shadow-rgb: 68, 140, 116;
   --ar-btn-active-color: #fff;
   --ar-btn-active-bg: #448c74;
