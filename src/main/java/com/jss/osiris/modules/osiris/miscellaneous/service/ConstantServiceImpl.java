@@ -44,6 +44,7 @@ import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
@@ -207,6 +208,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public TypeDocument getDocumentTypeSynthesisRbeUnsigned() throws OsirisException {
         return getConstants().getDocumentTypeSynthesisRbeUnsigned();
+    }
+
+    @Override
+    public TypeDocument getDocumentTypeSynthesisUnsigned() throws OsirisException {
+        return getConstants().getDocumentTypeSynthesisUnsigned();
     }
 
     @Override
@@ -1157,5 +1163,10 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException {
         return this.getConstants().getAccountingAccountClassProduct();
+    }
+
+    @Override
+    public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException {
+        return this.getConstants().getServiceFamilyImmatriculationAlAndFormality();
     }
 }

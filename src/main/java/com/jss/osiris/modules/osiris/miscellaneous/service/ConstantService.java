@@ -35,6 +35,7 @@ import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
@@ -99,6 +100,8 @@ public interface ConstantService {
     public TypeDocument getDocumentTypeSynthesisRbeSigned() throws OsirisException;
 
     public TypeDocument getDocumentTypeSynthesisRbeUnsigned() throws OsirisException;
+
+    public TypeDocument getDocumentTypeSynthesisUnsigned() throws OsirisException;
 
     public DocumentType getDocumentTypeBillingClosure() throws OsirisException;
 
@@ -479,4 +482,6 @@ public interface ConstantService {
     public Category getCategorySerie() throws OsirisException;
 
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException;
+
+    public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException;
 }
