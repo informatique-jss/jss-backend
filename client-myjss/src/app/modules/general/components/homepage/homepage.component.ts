@@ -7,6 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomepageComponent implements OnInit {
 
+  logoJss: string = '/assets/images/white-logo.svg';
+  videoParis: string = 'assets/videos/paris-home-video.webm'
+
   constructor() { }
 
   ngOnInit() {
