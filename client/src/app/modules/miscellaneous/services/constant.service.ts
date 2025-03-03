@@ -104,8 +104,13 @@ export class ConstantService extends AppRestService<Constant> {
   getDocumentTypeSynthesisRbeSigned() {
     return this.constant.documentTypeSynthesisRbeSigned;
   }
+
   getDocumentTypeSynthesisRbeUnsigned() {
     return this.constant.documentTypeSynthesisRbeUnsigned;
+  }
+
+  getDocumentTypeSynthesisUnsigned() {
+    return this.constant.documentTypeSynthesisUnsigned;
   }
 
   getDocumentTypeRefund() {
@@ -858,5 +863,9 @@ export class ConstantService extends AppRestService<Constant> {
 
   getAccountingAccountClassProduct() {
     return this.constant.accountingAccountClassProduct;
+  }
+
+  getServiceFamilyImmatriculationAlAndFormality() {
+    return this.constant.serviceFamilyImmatriculationAlAndFormality;
   }
 }

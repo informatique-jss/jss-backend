@@ -753,6 +753,11 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 || piecesJointe.getTypeDocument().getCode()
                         .equals(constantService.getDocumentTypeSynthesisRbeUnsigned().getCode())) {
             Boolean isProvisionRbe = false;
+
+            if (currentService.getServiceType().getServiceFamily().getId()
+                    .equals(constantService.getServiceFamilyImmatriculationAlAndFormality().getId()))
+                return false;
+
             for (Provision provision : currentService.getProvisions()) {
                 if (provision.getProvisionType().getId()
                         .equals(constantService.getProvisionTypeRbe().getId())) {
