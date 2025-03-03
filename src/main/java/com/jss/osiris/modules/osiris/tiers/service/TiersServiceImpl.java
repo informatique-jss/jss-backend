@@ -131,9 +131,9 @@ public class TiersServiceImpl implements TiersService {
             for (Responsable responsable : tiers.getResponsables()) {
 
                 // Remove MyJSS scope cache
-                if (cacheManager.getCache("potential-user-scope") != null)
+                if (cacheManager.getCache("potential-user-scope") != null && responsable.getId() != null)
                     cacheManager.getCache("potential-user-scope").evict(responsable.getId());
-                if (cacheManager.getCache("user-scope") != null)
+                if (cacheManager.getCache("user-scope") != null && responsable.getId() != null)
                     cacheManager.getCache("user-scope").evict(responsable.getId());
 
                 if (responsable.getId() == null) {

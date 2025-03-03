@@ -97,6 +97,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	@JsonView(JacksonViews.MyJssView.class)
 	private Responsable responsable;
 
@@ -107,6 +108,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	@JsonView(JacksonViews.MyJssView.class)
+	@JsonIgnoreProperties(value = { "assoSpecialOfferBillingTypes" }, allowSetters = true)
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)

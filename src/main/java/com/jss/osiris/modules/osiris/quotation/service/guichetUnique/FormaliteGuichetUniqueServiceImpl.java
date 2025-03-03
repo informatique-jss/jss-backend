@@ -308,16 +308,17 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode())) {
                             downloadPieceJointeOnProvision(formalite.getProvision().get(0), piecesJointe);
                         }
-                        if (!isRbeProvisionCreationInProgress && currentService != null)
+                        if (!isRbeProvisionCreationInProgress && currentService != null) {
                             isRbeProvisionCreationInProgress = createNewRbeProvisionForRbeAttachmentFromLiasse(
                                     piecesJointe, currentService);
+                            // with current Formalite get current affaire and order to set the new asso
+                            if (currentService != null && currentService.getAssoAffaireOrder() != null
+                                    && currentService.getAssoAffaireOrder().getCustomerOrder() != null)
+                                assoAffaireOrderService.completeAssoAffaireOrder(
+                                        currentService.getAssoAffaireOrder(),
+                                        currentService.getAssoAffaireOrder().getCustomerOrder(), false);
+                        }
                     }
-                    // with current Formalite get current affaire and order to set the new asso
-                    if (currentService != null && currentService.getAssoAffaireOrder() != null
-                            && currentService.getAssoAffaireOrder().getCustomerOrder() != null)
-                        assoAffaireOrderService.completeAssoAffaireOrder(
-                                currentService.getAssoAffaireOrder(),
-                                currentService.getAssoAffaireOrder().getCustomerOrder(), false);
                 }
             }
 

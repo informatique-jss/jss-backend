@@ -51,6 +51,8 @@ public class Service implements Serializable, IId {
 	@JoinColumn(name = "id_service_type")
 	@IndexedField
 	@JsonView(JacksonViews.MyJssView.class)
+	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments", "assoServiceTypeFieldTypes",
+			"assoServiceProvisionTypes" }, allowSetters = true)
 	private ServiceType serviceType;
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
