@@ -3839,7 +3839,7 @@ textarea.form-control-lg {
   --ar-dropdown-spacer: 0.25rem;
   --ar-dropdown-font-size: calc(var(--ar-body-font-size) * 0.875);
   --ar-dropdown-color: var(--ar-body-color);
-  --ar-dropdown-bg: #D9D9D91A;
+  --ar-dropdown-bg: #1c2d41b6;
   --ar-dropdown-border-color: #FFFFFF1F;
   --ar-dropdown-border-radius: var(--ar-border-radius-lg);
   --ar-dropdown-border-width: var(--ar-border-width);
