@@ -47,17 +47,17 @@
               LIENS UTILES
             </div>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Commande / Devis</a>
+              <a class="nav-link" style="cursor: pointer;" (click)="$event">Commande / Devis</a>
             </p>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Démo</a>
+              <a class="nav-link" style="cursor: pointer;" (click)="$event">Démo</a>
             </p>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Contact</a>
+              <a class="nav-link" style="cursor: pointer;" (click)="$event">Contact</a>
             </p>
             <hr>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="openNewOrder($event)">Journal Spécial des
+              <a class="nav-link" style="cursor: pointer;" (click)="$event">Journal Spécial des
                 Sociétés</a>
             </p>
           </div>
@@ -90,7 +90,7 @@
       <div class="row d-flex justify-content-between align-items-center mx-2">
         <div class="col d-flex align-items-center justify-content-start">
           <a href="" class="me-4 d-none d-sm-block">
-            <img ui-sref='main.tiers' [src]="logoJss" />
+            <img [src]="logoJss" />
           </a>
           <div class="col d-flex align-items-center me-2">
             <a class="btn btn-icon btn-sm btn-outline-primary btn-linkedin rounded-circle mx-2 ms-sm-0 me-sm-3" href="#"
@@ -101,8 +101,8 @@
               aria-label="Facebook">
               <i class="ai-facebook"></i>
             </a>
-            <a class="btn btn-icon btn-sm btn-outline-primary btn-instagram rounded-circle mx-2 ms-sm-0 me-sm-3" href="#"
-              aria-label="Instagram">
+            <a class="btn btn-icon btn-sm btn-outline-primary btn-instagram rounded-circle mx-2 ms-sm-0 me-sm-3"
+              href="#" aria-label="Instagram">
               <i class="ai-instagram"></i>
             </a>
           </div>

@@ -8,7 +8,7 @@ import { MenuItem } from '../../../general/model/MenuItem';
   styleUrls: ['./footer.component.css']
 })
 export class FooterComponent implements OnInit {
-  logoJss: string = '/assets/images/white-logo.svg';
+  logoJss: string = '/assets/images/white-logo-myjss.svg';
   paymentMethods: string = '/assets/images/payment-methods.png';
   map: string = '/assets/images/map.png';
 
