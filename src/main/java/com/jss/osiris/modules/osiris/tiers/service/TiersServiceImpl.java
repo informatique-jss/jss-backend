@@ -131,8 +131,10 @@ public class TiersServiceImpl implements TiersService {
             for (Responsable responsable : tiers.getResponsables()) {
 
                 // Remove MyJSS scope cache
-                cacheManager.getCache("potential-user-scope").evict(responsable.getId());
-                cacheManager.getCache("user-scope").evict(responsable.getId());
+                if (cacheManager.getCache("potential-user-scope") != null)
+                    cacheManager.getCache("potential-user-scope").evict(responsable.getId());
+                if (cacheManager.getCache("user-scope") != null)
+                    cacheManager.getCache("user-scope").evict(responsable.getId());
 
                 if (responsable.getId() == null) {
                     List<Responsable> responsablesDuplicates = new ArrayList<Responsable>();
