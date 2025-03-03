@@ -143,9 +143,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_synthesis_rbe_signed")
 	private TypeDocument documentTypeSynthesisRbeSigned;
+
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_synthesis_rbe_unsigned")
 	private TypeDocument documentTypeSynthesisRbeUnsigned;
+
+	@ManyToOne
+	@JoinColumn(name = "id_document_type_synthesis_unsigned")
+	private TypeDocument documentTypeSynthesisUnsigned;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_provisionnal_receipt")
@@ -2528,7 +2533,7 @@ public class Constant implements Serializable, IId {
 	public void setCategorySerie(Category categorySerie) {
 		this.categorySerie = categorySerie;
 	}
- 
+
 	public AttachmentType getAttachmentTypeClientCommunication() {
 		return attachmentTypeClientCommunication;
 	}
@@ -2564,7 +2569,7 @@ public class Constant implements Serializable, IId {
 	public void setProvisionFamilyTypeDeposit(ProvisionFamilyType provisionFamilyTypeDeposit) {
 		this.provisionFamilyTypeDeposit = provisionFamilyTypeDeposit;
 	}
- 
+
 	public AccountingJournal getAccountingJournalSalary() {
 		return accountingJournalSalary;
 	}
@@ -2572,7 +2577,7 @@ public class Constant implements Serializable, IId {
 	public void setAccountingJournalSalary(AccountingJournal accountingJournalSalary) {
 		this.accountingJournalSalary = accountingJournalSalary;
 	}
- 
+
 	public String getRecoverySharedMaiblox() {
 		return recoverySharedMaiblox;
 	}
@@ -2584,13 +2589,21 @@ public class Constant implements Serializable, IId {
 	public void setProvisionTypeRbe(ProvisionType provisionTypeRbe) {
 		this.provisionTypeRbe = provisionTypeRbe;
 	}
- 
+
 	public AccountingAccountClass getAccountingAccountClassProduct() {
 		return accountingAccountClassProduct;
 	}
 
 	public void setAccountingAccountClassProduct(AccountingAccountClass accountingAccountClassProduct) {
 		this.accountingAccountClassProduct = accountingAccountClassProduct;
+	}
+
+	public TypeDocument getDocumentTypeSynthesisUnsigned() {
+		return documentTypeSynthesisUnsigned;
+	}
+
+	public void setDocumentTypeSynthesisUnsigned(TypeDocument documentTypeSynthesisUnsigned) {
+		this.documentTypeSynthesisUnsigned = documentTypeSynthesisUnsigned;
 	}
 
 }

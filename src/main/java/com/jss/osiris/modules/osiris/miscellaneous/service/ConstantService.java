@@ -100,6 +100,8 @@ public interface ConstantService {
 
     public TypeDocument getDocumentTypeSynthesisRbeUnsigned() throws OsirisException;
 
+    public TypeDocument getDocumentTypeSynthesisUnsigned() throws OsirisException;
+
     public DocumentType getDocumentTypeBillingClosure() throws OsirisException;
 
     public DocumentType getDocumentTypeProvisionnalReceipt() throws OsirisException;

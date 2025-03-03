@@ -135,7 +135,7 @@
           <tr>
             <td>
               <select-type-document [(model)]="constant.documentTypeSynthesisRbeSigned"
-                label="Type de document - Synthèse RBE signé" [form]="constantForm"
+                label="Type de document - Synthèse RBE signée" [form]="constantForm"
                 propertyName="documentTypeSynthesisRbeSigned" [isMandatory]="true" [isDisabled]="!editMode">
               </select-type-document>
             </td>
@@ -143,8 +143,16 @@
           <tr>
             <td>
               <select-type-document [(model)]="constant.documentTypeSynthesisRbeUnsigned"
-                label="Type de document - Synthèse RBE non signé" [form]="constantForm"
+                label="Type de document - Synthèse RBE non signée" [form]="constantForm"
                 propertyName="documentTypeSynthesisRbeUnsigned" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-type-document>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-type-document [(model)]="constant.documentTypeSynthesisUnsigned"
+                label="Type de document - Synthèse non signée" [form]="constantForm"
+                propertyName="documentTypeSynthesisUnsigned" [isMandatory]="true" [isDisabled]="!editMode">
               </select-type-document>
             </td>
           </tr>
