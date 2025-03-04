@@ -66,9 +66,8 @@ public class NotificationServiceImpl implements NotificationService {
         Employee currentEmployee = (Employee) employeeService.getCurrentEmployee();
         if (currentEmployee == null)
             return null;
-        return notificationRepository
-                .findByEmployees(employeeService.getMyHolidaymaker(currentEmployee), currentEmployee,
-                        displayFuture);
+        return notificationRepository.findByEmployees(employeeService.getMyHolidaymaker(currentEmployee),
+                currentEmployee, displayFuture);
     }
 
     @Override

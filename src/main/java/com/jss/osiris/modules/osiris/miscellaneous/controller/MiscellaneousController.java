@@ -1392,4 +1392,17 @@ public class MiscellaneousController {
         return new ResponseEntity<List<CustomerMail>>(customerMailService.getMailsByConfrere(confrere),
                 HttpStatus.OK);
     }
+
+    @GetMapping(inputEntryPoint + "/providers/search")
+    public ResponseEntity<List<Provider>> getProviderByValue(@RequestParam String value)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+        List<Provider> providers = null;
+
+        if (value != null && value.length() > 2) {
+            providers = providerService.getProviderByValue(value.toUpperCase());
+        }
+
+        return new ResponseEntity<List<Provider>>(providers, HttpStatus.OK);
+    }
 }

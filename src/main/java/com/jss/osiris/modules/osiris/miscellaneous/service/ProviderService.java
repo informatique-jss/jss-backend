@@ -11,4 +11,6 @@ public interface ProviderService {
     public Provider getProvider(Integer id);
 
     public Provider addOrUpdateProvider(Provider provider) throws OsirisException;
+
+    public List<Provider> getProviderByValue(String upperCase);
 }
