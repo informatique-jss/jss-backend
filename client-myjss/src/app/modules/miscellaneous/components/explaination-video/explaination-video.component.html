@@ -5,7 +5,7 @@
   </div>
   <div class="row pt-2 pt-md-4 pt-lg-3 pt-xl-4 g-4 g-sm-3 g-md-4">
     <div class="col-lg-8 order-lg-2">
-      <div class="d-md-flex h-100 bg-primary rounded-5 overflow-hidden px-4 px-sm-5 pt-5">
+      <div class="d-md-flex h-100 rounded-5 overflow-hidden px-4 px-sm-5 pt-5 ">
         <div class="d-md-flex px-2 px-sm-0 px-xl-2 px-xxl-4 pt-xl-3">
           <div class="position-absolute top-50 start-50 translate-middle" *ngIf="!videoPlaying">
             <button class="btn btn-icon btn-xl btn-primary rounded-circle" aria-label="Play video"
@@ -14,9 +14,9 @@
             </button>
           </div>
 
-          <div class="w-100 flex-md-shrink-0 rounded-5 mx-auto video-display">
-            <video #videoPlayer class="w-100 h-100 d-none position-absolute top-0 start-0" controls
-              poster="assets/images/logo.png">
+          <div class="w-100 flex-md-shrink-0 rounded-5 mx-auto video-display ">
+            <video #videoPlayer class="w-100 h-100 position-absolute top-0 start-0" controls
+              poster="assets/img/announcement/annonce_bandeau_img.jpg">
               <source src="assets/images/test_video.mp4" type="video/mp4">
             </video>
           </div>
