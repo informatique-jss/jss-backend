@@ -161,6 +161,7 @@ public class Affaire implements IId, IAttachment {
 	@JoinColumn(name = "id_competent_authority")
 	@IndexedField
 	@JsonView(JacksonViews.MyJssView.class)
+	@JsonIgnoreProperties(value = { "attachments", "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
 	@OneToMany(mappedBy = "affaire")
