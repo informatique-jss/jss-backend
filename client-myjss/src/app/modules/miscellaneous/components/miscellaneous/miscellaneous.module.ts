@@ -5,7 +5,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { Routes } from '@angular/router';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
-import { DescriptionMyAccountComponent } from '../description-my-account/description-my-account.component';
 import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
 import { ExplainationVideoComponent } from '../explaination-video/explaination-video.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
@@ -34,7 +33,6 @@ const routes: Routes = [
     GenericTextareaComponent,
     DoubleButtonsComponent,
     ExplainationVideoComponent,
-    DescriptionMyAccountComponent,
   ],
   exports: [
     AvatarComponent,
@@ -44,7 +42,6 @@ const routes: Routes = [
     GenericTextareaComponent,
     DoubleButtonsComponent,
     ExplainationVideoComponent,
-    DescriptionMyAccountComponent,
   ]
 })
 export class MiscellaneousModule { }

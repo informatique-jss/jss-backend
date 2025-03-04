@@ -14,6 +14,6 @@ export class DoubleButtonsComponent implements OnInit {
   ngOnInit() {
   }
   openRoute(event: any) {
-
+    console.log(this.linkLabel);
   }
 }

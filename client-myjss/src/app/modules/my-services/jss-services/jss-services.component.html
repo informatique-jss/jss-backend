@@ -3,259 +3,49 @@
   <nav aria-label="breadcrumb">
     <ol class="pt-lg-3 pb-lg-4 pb-2 breadcrumb">
       <li class="breadcrumb-item"><a href="index.html">Accueil</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Services</li>
-      <li class="breadcrumb-item active" aria-current="page">Annonces légales</li>
+      <li class="breadcrumb-item" *ngFor="let item of breadcrumbItems; let last = last" [ngClass]="{'active': last}"
+        aria-current="page">
+        <a *ngIf="!last" href="">{{ item }}</a>
+        <span *ngIf="last">{{ item }}</span>
+      </li>
     </ol>
   </nav>
 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item">
-      <a href="#announcement" class="nav-link active" data-bs-toggle="tab" role="tab">
+    <li class="nav-item" *ngFor="let tab of tabs; let i = index">
+      <a class="nav-link" [class.active]="tab.active" (click)="onTabClick(i)">
         <i class="fi-home me-2"></i>
-        Annonces légales
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#formality" class="nav-link" data-bs-toggle="tab" role="tab">
-        <i class="fi-user me-2"></i>
-        Formalités légales
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="#apostille" class="nav-link" data-bs-toggle="tab" role="tab">
-        <i class="fi-user me-2"></i>
-        Apostilles-Légalisation
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#domiciliation" class="nav-link" data-bs-toggle="tab" role="tab">
-        <i class="fi-user me-2"></i>
-        Domiciliation
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#document" class="nav-link" data-bs-toggle="tab" role="tab">
-        <i class="fi-user me-2"></i>
-        Fourniture de documents
+        {{ tab.name }}
       </a>
     </li>
   </ul>
-</section>
-<!-- Tabs content -->
-<div class="tab-content">
-  <div class="tab-pane fade show active" id="announcement" role="tabpanel">
-    <announcement></announcement>
-  </div>
-  <div class="tab-pane fade" id="formality" role="tabpanel">
 
-  </div>
-  <div class="tab-pane fade" id="apostille" role="tabpanel">
-
-  </div>
-  <div class="tab-pane fade" id="domiciliation" role="tabpanel">
-
-  </div>
-</div>
-
-<section class="pb-5 pt-2 pt-sm-3 pt-md-4 pt-lg-5 my-xl-3 my-xxl-5">
-  <div class="container pb-4 mb-2 mb-lg-3">
-    <h2 class="h1 text-center">Nos clients</h2>
-    <p class="text-center mb-0">Plus de 2 000 professionnels simplifient leurs démarches juridiques en ligne grâce à
-      MYJSS.</p>
-  </div>
-  <div class="swiper pb-4" data-swiper-options='{
-    "spaceBetween": 24,
-    "loop": true,
-    "grabCursor": false,
-    "centeredSlides": true,
-    "autoplay": {
-      "delay": 0,
-      "disableOnInteraction": false
-    },
-    "freeMode": true,
-    "speed": 10000,
-    "freeModeMomentum": false,
-    "breakpoints": {
-      "0": { "slidesPerView": 2 },
-      "400": { "slidesPerView": 3 },
-      "600": { "slidesPerView": 4 },
-      "800": { "slidesPerView": 5 },
-      "1200": { "slidesPerView": 6 },
-      "1400": { "slidesPerView": 7 },
-      "1600": { "slidesPerView": 8 }
-    }
-  }'>
-    <div class="swiper-wrapper" style="transition-timing-function: linear !important;">
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/01-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/01-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/02-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/02-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/03-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/03-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/04-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/04-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/05-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/05-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/06-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/06-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/03-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/03-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/05-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/05-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/02-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/02-light.svg" width="196" alt="Logo">
-        </div>
+  <!-- Content Section -->
+  <div class="tab-content">
+    <div *ngIf="tabs[0].active">
+      <div class="tab-pane" id="announcement">
+        <announcement></announcement>
       </div>
     </div>
-  </div>
-  <div class="swiper" dir="rtl" data-swiper-options='{
-    "spaceBetween": 24,
-    "loop": true,
-    "grabCursor": false,
-    "centeredSlides": true,
-    "autoplay": {
-      "delay": 0,
-      "disableOnInteraction": false
-    },
-    "freeMode": true,
-    "speed": 8500,
-    "freeModeMomentum": false,
-    "breakpoints": {
-      "0": { "slidesPerView": 2 },
-      "400": { "slidesPerView": 3 },
-      "600": { "slidesPerView": 4 },
-      "800": { "slidesPerView": 5 },
-      "1200": { "slidesPerView": 6 },
-      "1400": { "slidesPerView": 7 },
-      "1600": { "slidesPerView": 8 }
-    }
-  }'>
-    <div class="swiper-wrapper" style="transition-timing-function: linear !important;">
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/06-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/06-light.svg" width="196" alt="Logo">
-        </div>
+    <div *ngIf="tabs[1].active">
+      <div class="tab-pane" id="formality">
+        <p>Contenu pour Formalités légales...</p>
       </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/05-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/05-light.svg" width="196" alt="Logo">
-        </div>
+    </div>
+    <div *ngIf="tabs[2].active">
+      <div class="tab-pane" id="apostille">
+        <p>Contenu pour Apostilles-Légalisation...</p>
       </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/04-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/04-light.svg" width="196" alt="Logo">
-        </div>
+    </div>
+    <div *ngIf="tabs[3].active">
+      <div class="tab-pane" id="domiciliation">
+        <p>Contenu pour Domiciliation...</p>
       </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/02-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/02-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/03-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/03-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/01-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/01-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/04-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/04-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/02-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/02-light.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/img/landing/business-consulting/clients/03-dark.svg"
-            width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto"
-            src="assets/img/landing/business-consulting/clients/03-light.svg" width="196" alt="Logo">
-        </div>
+    </div>
+    <div *ngIf="tabs[4].active">
+      <div class="tab-pane" id="document">
+        <p>Contenu pour Fourniture de documents...</p>
       </div>
     </div>
   </div>

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from '../../miscellaneous/components/miscellaneous/miscellaneous.module';
+import { MyAccountModule } from "../../my-account/components/my-account/my-account.module";
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { JssServicesComponent } from './jss-services.component';
 
@@ -15,7 +16,8 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
-    MiscellaneousModule
+    MiscellaneousModule,
+    MyAccountModule
   ],
   declarations: [JssServicesComponent,
     AnnouncementComponent

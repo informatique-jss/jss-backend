@@ -7,12 +7,6 @@ import { AppService } from '../../../libs/app.service';
   styleUrls: ['./announcement.component.css']
 })
 export class AnnouncementComponent implements OnInit {
-
-  orderActionLabel: string = "Publier une annonce légale";
-  quotationActionLabel: string = "Demander un devis";
-  pathAnnouncementSearch: string = "announcement/search";
-  linkLabel: string = "Consultez une annonce légale";
-
   constructor(private appService: AppService) {
   }
 

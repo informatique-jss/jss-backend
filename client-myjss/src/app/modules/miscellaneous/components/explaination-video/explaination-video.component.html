@@ -1,6 +1,6 @@
-<section class="container pt-5 mt-lg-3 mt-xl-4 mt-xxl-5 mb-5">
+<section class=" background-blue container pt-5 mt-lg-3 mt-xl-4 mt-xxl-5 mb-5">
   <div class="text-center ">
-    <h2 class=" h1 pb-2 pb-md-3 mb-lg-4">Tout comprendre en quelques minutes</h2>
+    <h2 class=" h1 pb-2 pb-md-3 mb-lg-4 text-white">Tout comprendre en quelques minutes</h2>
     <p>Facilitez votre quotidien, regardez notre vidéo de présentation</p>
   </div>
   <div class="row pt-2 pt-md-4 pt-lg-3 pt-xl-4 g-4 g-sm-3 g-md-4">
@@ -8,27 +8,26 @@
       <div class="d-md-flex h-100 bg-primary rounded-5 overflow-hidden px-4 px-sm-5 pt-5">
         <div class="d-md-flex px-2 px-sm-0 px-xl-2 px-xxl-4 pt-xl-3">
           <div class="position-absolute top-50 start-50 translate-middle" *ngIf="!videoPlaying">
-            <button class="btn btn-icon btn-xl btn-warning rounded-circle" aria-label="Play video"
+            <button class="btn btn-icon btn-xl btn-primary rounded-circle" aria-label="Play video"
               (click)="playVideo()">
               <i class="ai-play-filled"></i>
             </button>
           </div>
 
-          <div class="w-100 flex-md-shrink-0 rounded-5 mx-auto"
-            style="width:100%; height: 100%; padding-bottom: 56.25%">
+          <div class="w-100 flex-md-shrink-0 rounded-5 mx-auto video-display">
             <video #videoPlayer class="w-100 h-100 d-none position-absolute top-0 start-0" controls
-              poster="assets/images/logo.png" style="object-fit: cover;">
+              poster="assets/images/logo.png">
               <source src="assets/images/test_video.mp4" type="video/mp4">
             </video>
           </div>
         </div>
       </div>
     </div>
+
     <div class="col-sm-6 col-lg-4 order-lg-1">
-      <a class="card background-card border-0 h-100 text-decoration-none " style="cursor: pointer; "
-        (click)="jumpTo(5)">
-        <div class="card background-card border-0 h-100 py-lg-2 py-xl-4">
-          <div class="card-body background-card">
+      <a class="card border-0 h-100 text-decoration-none " style="cursor: pointer; " (click)="jumpTo(5)">
+        <div class="card border-0 h-100 py-lg-2 py-xl-4">
+          <div class="card-body ">
             <p class="text-grey">Etape 01</p>
             <h3 class="text-white">Sélectionnez votre formulaire </h3>
             <p class="mb-0 text-grey">Accédez à une bibliothèque complète de formulaires adaptés à vos besoins
@@ -39,12 +38,13 @@
       </a>
     </div>
     <div class="col-sm-6 col-lg-4 order-lg-3">
-      <a class="card  bg-secondary border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(10)">
-        <div class="card border-0 bg-secondary h-100 py-lg-2 py-xl-4">
+      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(10)">
+        <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body">
-            <p>Etape 02</p>
-            <h3 class="h4 card-title mt-0">Remplacez, visualisez et validez votre annonce</h3>
-            <p class="card-text">Profitez d'une saisie libre ou guidée grâce à nos modèles intuitifs. Obtenez un devis
+            <p class="text-grey">Etape 02</p>
+            <h3 class="h4 card-title mt-0 text-white">Remplacez, visualisez et validez votre annonce</h3>
+            <p class="card-text text-grey">Profitez d'une saisie libre ou guidée grâce à nos modèles intuitifs. Obtenez
+              un devis
               instantané et envoyez directement votre attestation légale en ligne. </p>
 
           </div>
@@ -52,24 +52,26 @@
       </a>
     </div>
     <div class="col-sm-6 col-lg-4 order-lg-4">
-      <a class="card bg-secondary border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(20)">
-        <div class="card border-0 bg-secondary h-100 py-lg-2 py-xl-4">
+      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(20)">
+        <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body">
-            <p>Etape 03</p>
-            <h3>Complétez vos coordonnées et payez</h3>
-            <p class="mb-0">Bénéficiez d'une interface sécurisée et optimisée pour un traitement rapide et fiable de vos
+            <p class="text-grey">Etape 03</p>
+            <h3 class="text-white">Complétez vos coordonnées et payez</h3>
+            <p class="mb-0 text-grey">Bénéficiez d'une interface sécurisée et optimisée pour un traitement rapide et
+              fiable de vos
               informations.</p>
           </div>
         </div>
       </a>
     </div>
     <div class="col-sm-6 col-lg-4 order-lg-5">
-      <a class="card bg-secondary border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(30)">
-        <div class="card border-0 bg-secondary h-100 py-lg-2 py-xl-4">
+      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(30)">
+        <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body">
-            <p>Etape 04</p>
-            <h3>Téléchargez vos documents</h3>
-            <p class="mb-0">Recevez immédiatemment votre attestation, votre facture et le témoin de parution, avec
+            <p class="text-grey">Etape 04</p>
+            <h3 class="text-white">Téléchargez vos documents</h3>
+            <p class="mb-0 text-grey">Recevez immédiatemment votre attestation, votre facture et le témoin de parution,
+              avec
               possibilité de programmation selon vos besoins.</p>
           </div>
         </div>

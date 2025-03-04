@@ -7,6 +7,7 @@ import { MiscellaneousModule } from '../../../miscellaneous/components/miscellan
 import { AccountMenuComponent } from '../account-menu/account-menu.component';
 import { AffairesComponent } from '../affaires/affaires.component';
 import { BillingClosureComponent } from '../billing-closure/billing-closure.component';
+import { DescriptionMyAccountComponent } from '../description-my-account/description-my-account.component';
 import { EditAddressComponent } from '../edit-address/edit-address.component';
 import { EditAffaireComponent } from '../edit-affaire/edit-affaire.component';
 import { OrderDetailsComponent } from '../order-details/order-details.component';
@@ -76,6 +77,10 @@ const routes: Routes = [
     PayQuotationComponent,
     BillingClosureComponent,
     UserSettingsComponent,
+    DescriptionMyAccountComponent
+  ],
+  exports: [
+    DescriptionMyAccountComponent
   ]
 })
 export class MyAccountModule { }
