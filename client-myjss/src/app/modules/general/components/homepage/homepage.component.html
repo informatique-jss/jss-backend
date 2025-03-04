@@ -39,7 +39,7 @@
     <div class="col">
       <div class="card h-100 border-0 rounded-5">
         <div class="card-body pb-3">
-          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="annoncesLegalesPicto" />
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="alPictogram" />
           <h3 class="h4">Annonces légales</h3>
           <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
         </div>
@@ -56,7 +56,7 @@
     <div class="col">
       <div class="card h-100 border-0 rounded-5">
         <div class="card-body pb-3">
-          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="formalitesPicto" />
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="formalityPictogram" />
           <h3 class="h4">Formalité légales</h3>
           <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
         </div>
@@ -75,7 +75,7 @@
     <div class="col">
       <div class="card h-100 border-0 rounded-5">
         <div class="card-body pb-3">
-          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="apostilleLegaPicto" />
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="apostilePictogram" />
           <h3 class="h4">Apostille & Légalisation</h3>
           <p class="mb-0">Authentification rapide et conforme de vos documents valable à internationale.</p>
         </div>
@@ -93,7 +93,7 @@
     <div class="col">
       <div class="card h-100 border-0 rounded-5">
         <div class="card-body pb-3">
-          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="domiciliationPicto" />
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="domiciliationPictogram" />
           <h3 class="h4">Domiciliation</h3>
           <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
         </div>
@@ -110,7 +110,7 @@
     <div class="col">
       <div class="card h-100 border-0 rounded-5">
         <div class="card-body pb-3">
-          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="fournitureDocumentsPicto" />
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="documentsProvidingPictogram" />
           <h3 class="h4">Fourniture de documents</h3>
           <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
         </div>
@@ -124,5 +124,13 @@
     </div>
   </div>
 </div>
-
-<app-our-clients></app-our-clients>
+<section>
+  <div class="text-center">
+    <h1>
+      Nos clients
+    </h1>
+    <p>Plus de 2 000 professionnels simplifient leurs démarches juridiques en ligne grâce à MyJSS.</p>
+  </div>
+  <app-our-clients scrollDirection="normal"></app-our-clients>
+  <app-our-clients scrollDirection="reverse"></app-our-clients>
+</section>

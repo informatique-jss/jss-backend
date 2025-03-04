@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-our-clients',
@@ -6,6 +6,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./our-clients.component.css']
 })
 export class OurClientsComponent implements OnInit {
+
+  engieLogo: string = "assets/images/engie-logo.png";
+
+  @Input()
+  scrollDirection: 'normal' | 'reverse' = 'normal';
 
   constructor() { }
 

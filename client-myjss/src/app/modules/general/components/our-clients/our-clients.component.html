@@ -1,166 +1,28 @@
-<!-- Clients (Logos autoplay slider) -->
-<section class="pb-5 pt-2 pt-sm-3 pt-md-4 pt-lg-5 my-xl-3 my-xxl-5">
-  <div class="container pb-4 mb-2 mb-lg-3">
-    <h2 class="h1 text-center">Nos clients</h2>
-    <p class="text-center mb-0">Plus de 2 000 professionnels simplifient leurs démarches juridiques en ligne grâce à
-      MyJSS.</p>
+<div id="container">
+  <!-- TODO : Fill with the logos of the clients -->
+  <div class="scroll align-items-center" [ngStyle]="{'animation-direction': scrollDirection}" id="scroll-one">
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
   </div>
-  <div class="swiper pb-4" data-swiper-options='{
-            "spaceBetween": 24,
-            "loop": true,
-            "grabCursor": false,
-            "centeredSlides": true,
-            "autoplay": {
-              "delay": 0,
-              "disableOnInteraction": false
-            },
-            "freeMode": true,
-            "speed": 10000,
-            "freeModeMomentum": false,
-            "breakpoints": {
-              "0": { "slidesPerView": 2 },
-              "400": { "slidesPerView": 3 },
-              "600": { "slidesPerView": 4 },
-              "800": { "slidesPerView": 5 },
-              "1200": { "slidesPerView": 6 },
-              "1400": { "slidesPerView": 7 },
-              "1600": { "slidesPerView": 8 }
-            }
-          }'>
-    <div class="swiper-wrapper" style="transition-timing-function: linear !important;">
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-    </div>
+  <div class="scroll align-items-center" [ngStyle]="{'animation-direction': scrollDirection}" id="scroll-two">
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
+    <img class='item' [src]="engieLogo" />
   </div>
-  <div class="swiper" dir="rtl" data-swiper-options='{
-            "spaceBetween": 24,
-            "loop": true,
-            "grabCursor": false,
-            "centeredSlides": true,
-            "autoplay": {
-              "delay": 0,
-              "disableOnInteraction": false
-            },
-            "freeMode": true,
-            "speed": 8500,
-            "freeModeMomentum": false,
-            "breakpoints": {
-              "0": { "slidesPerView": 2 },
-              "400": { "slidesPerView": 3 },
-              "600": { "slidesPerView": 4 },
-              "800": { "slidesPerView": 5 },
-              "1200": { "slidesPerView": 6 },
-              "1400": { "slidesPerView": 7 },
-              "1600": { "slidesPerView": 8 }
-            }
-          }'>
-    <div class="swiper-wrapper" style="transition-timing-function: linear !important;">
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="bg-gray rounded-4">
-          <img class="d-block d-dark-mode-none mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-          <img class="d-none d-dark-mode-block mx-auto" src="assets/images/white-logo.svg" width="196" alt="Logo">
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+  <div class='fade'></div>
+</div>
