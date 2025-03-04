@@ -154,7 +154,7 @@
   --ar-body-line-height: 1.5;
   --ar-body-color: #FFFFFFB2;
   --ar-body-color-rgb: 87, 96, 113;
-  --ar-body-bg: #fff;
+  --ar-body-bg: #FFFFFF08;
   --ar-body-bg-rgb: 255, 255, 255;
   --ar-emphasis-color: #000;
   --ar-emphasis-color-rgb: 0, 0, 0;
@@ -166,7 +166,7 @@
   --ar-tertiary-color-rgb: 87, 96, 113;
   --ar-tertiary-bg: #f6f9fc;
   --ar-tertiary-bg-rgb: 246, 249, 252;
-  --ar-heading-color: var(--ar-gray-900);
+  --ar-heading-color: var(--ar-gray-100);
   --ar-link-color: #448c74;
   --ar-link-color-rgb: 68, 140, 116;
   --ar-link-decoration: underline;
@@ -3584,11 +3584,11 @@ textarea.form-control-lg {
 }
 
 .btn-outline-primary {
-  --ar-btn-color:rgba(255, 255, 255, 0.95);
-  --ar-btn-border-color:rgba(194, 194, 194, 0.94);
+  --ar-btn-color: rgba(255, 255, 255, 0.95);
+  --ar-btn-border-color: rgba(194, 194, 194, 0.94);
   --ar-btn-hover-color: #fff;
-  --ar-btn-hover-bg:rgba(150, 152, 153, 0.96);
-  --ar-btn-hover-border-color:rgb(138, 138, 138);
+  --ar-btn-hover-bg: rgba(150, 152, 153, 0.96);
+  --ar-btn-hover-border-color: rgb(138, 138, 138);
   --ar-btn-focus-shadow-rgb: 68, 140, 116;
   --ar-btn-active-color: #fff;
   --ar-btn-active-bg: #448c74;
@@ -14912,7 +14912,7 @@ textarea.form-control-lg {
 
 :root {
   --ar-user-selection-color: rgba(var(--ar-primary-rgb), 0.22);
-  --ar-heading-color: var(--ar-gray-900);
+  --ar-heading-color: var(--ar-gray-100);
   --ar-heading-font-weight: 600;
   --ar-heading-link-color: var(--ar-gray-800);
   --ar-heading-link-hover-color: var(--ar-primary);
