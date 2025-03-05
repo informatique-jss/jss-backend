@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from '../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from "../../my-account/components/my-account/my-account.module";
 import { AnnouncementComponent } from '../announcement/announcement.component';
+import { ExplainationVideoComponent } from '../explaination-video/explaination-video.component';
 import { JssServicesComponent } from './jss-services.component';
 
 const routes: Routes = [
@@ -20,7 +21,8 @@ const routes: Routes = [
     MyAccountModule
   ],
   declarations: [JssServicesComponent,
-    AnnouncementComponent
+    AnnouncementComponent,
+    ExplainationVideoComponent
   ]
 })
 export class MyServicesModule { }

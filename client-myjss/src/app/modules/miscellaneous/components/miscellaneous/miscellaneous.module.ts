@@ -6,7 +6,6 @@ import { Routes } from '@angular/router';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
-import { ExplainationVideoComponent } from '../explaination-video/explaination-video.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
@@ -32,7 +31,6 @@ const routes: Routes = [
     TrustHtmlPipe,
     GenericTextareaComponent,
     DoubleButtonsComponent,
-    ExplainationVideoComponent,
   ],
   exports: [
     AvatarComponent,
@@ -41,7 +39,6 @@ const routes: Routes = [
     TrustHtmlPipe,
     GenericTextareaComponent,
     DoubleButtonsComponent,
-    ExplainationVideoComponent,
   ]
 })
 export class MiscellaneousModule { }
