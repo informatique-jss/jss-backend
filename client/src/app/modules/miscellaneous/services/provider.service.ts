@@ -6,7 +6,7 @@ import { Provider } from '../../miscellaneous/model/Provider';
 @Injectable({
   providedIn: 'root'
 })
-export class ProviderService extends AppRestService<Provider>{
+export class ProviderService extends AppRestService<Provider> {
 
   constructor(http: HttpClient) {
     super(http, "miscellaneous");
@@ -14,6 +14,10 @@ export class ProviderService extends AppRestService<Provider>{
 
   getProviders() {
     return this.getList(new HttpParams(), "providers");
+  }
+
+  getProviderByValue(value: string) {
+    return this.getList(new HttpParams().set("value", value), "providers/search");
   }
 
   addOrUpdateProvider(provider: Provider) {

@@ -1,3 +1,125 @@
-<div>
-  Homepage works
+<header>
+  <div class="overlay"></div>
+
+  <!-- The HTML5 video element that will create the background video on the header -->
+  <video class="mt-5 mt-lg-0" playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
+    <source [src]="videoParis" type="video/webm">
+  </video>
+
+  <!-- The header content -->
+  <div class="container h-100 mt-5 mt-sm-0">
+    <div class="row justify-content-between align-items-center">
+      <div class="col-lg-6 col-auto h-100 text-left">
+        <div class="w-100 text-white">
+          <h1 class="display-3 text-white">Votre esprit libre, notre savoir-faire</h1>
+          <p class="lead mb-0">Avec MyJSS, accédez à une information juridique fiable et actualisée pour prendre des
+            décisions éclairées.</p>
+        </div>
+      </div>
+      <div class="col-auto h-100 d-none d-lg-block ">
+        <a href="">
+          <img ui-sref='' [src]="logoJss" class="img-fluid" />
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container my-4">
+  <div class="text-center">
+    <h1>
+      Nos services
+    </h1>
+    <p>Nous proposons une large gamme de services de formalités, adaptés à vos besoins pour simplifier vos démarches
+      administratives.</p>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 g-4 py-2 pb-xl-3">
+    <!-- ANNONCES LEGALES -->
+    <div class="col">
+      <div class="card h-100 border-0 rounded-5">
+        <div class="card-body pb-3">
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="annoncesLegalesPicto" />
+          <h3 class="h4">Annonces légales</h3>
+          <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
+        </div>
+        <div class="card-footer border-0 pt-3 mb-3">
+          <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            aria-label="Learn more">
+            <i class="ai-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMALITÉ LEGALES -->
+    <div class="col">
+      <div class="card h-100 border-0 rounded-5">
+        <div class="card-body pb-3">
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="formalitesPicto" />
+          <h3 class="h4">Formalité légales</h3>
+          <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
+        </div>
+        <div class="card-footer border-0 pt-3 mb-3">
+          <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            aria-label="Learn more">
+            <i class="ai-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 py-2 pb-xl-3">
+    <!-- APOSTILLE & LEGALISATION -->
+    <div class="col">
+      <div class="card h-100 border-0 rounded-5">
+        <div class="card-body pb-3">
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="apostilleLegaPicto" />
+          <h3 class="h4">Apostille & Légalisation</h3>
+          <p class="mb-0">Authentification rapide et conforme de vos documents valable à internationale.</p>
+        </div>
+        <div class="card-footer border-0 pt-3 mb-3">
+          <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            aria-label="Learn more">
+            <i class="ai-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOMICILIATION -->
+    <div class="col">
+      <div class="card h-100 border-0 rounded-5">
+        <div class="card-body pb-3">
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="domiciliationPicto" />
+          <h3 class="h4">Domiciliation</h3>
+          <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
+        </div>
+        <div class="card-footer border-0 pt-3 mb-3">
+          <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            aria-label="Learn more">
+            <i class="ai-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOURNITURE DE DOCUMENTS -->
+    <div class="col">
+      <div class="card h-100 border-0 rounded-5">
+        <div class="card-body pb-3">
+          <img class="d-block mt-1 mt-sm-0 mb-4" [src]="fournitureDocumentsPicto" />
+          <h3 class="h4">Fourniture de documents</h3>
+          <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
+        </div>
+        <div class="card-footer border-0 pt-3 mb-3">
+          <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            aria-label="Learn more">
+            <i class="ai-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

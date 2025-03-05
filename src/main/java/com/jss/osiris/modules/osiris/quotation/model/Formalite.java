@@ -42,7 +42,7 @@ public class Formalite implements IId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_waited_competent_authority")
-    @JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "attachments", "departments", "cities", "regions" }, allowSetters = true)
     private CompetentAuthority waitedCompetentAuthority;
 
     @OneToMany(mappedBy = "formalite")
