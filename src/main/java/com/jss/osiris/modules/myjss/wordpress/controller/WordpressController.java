@@ -139,6 +139,21 @@ public class WordpressController {
 		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPosts(page)), HttpStatus.OK);
 	}
 
+	@GetMapping("myjss" + inputEntryPoint + "/posts/top")
+	public ResponseEntity<List<Post>> getTopPostsMyJss(@RequestParam Integer page) throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPosts(page)), HttpStatus.OK);
+	}
+
+	@GetMapping("myjss" + inputEntryPoint + "/announcement/top")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Announcement>> getTopAnnouncementMyJss(@RequestParam Integer page,
+			HttpServletRequest request)
+			throws OsirisException {
+		detectFlood(request);
+		return new ResponseEntity<List<Announcement>>(announcementService.getTopAnnouncementForWebSite(page),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/tendency")
 	public ResponseEntity<List<Post>> getPostsTendency() throws OsirisException {
 		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostTendency()), HttpStatus.OK);

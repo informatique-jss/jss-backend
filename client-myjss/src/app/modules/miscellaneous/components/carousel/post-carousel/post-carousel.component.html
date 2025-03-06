@@ -1,0 +1,55 @@
+<section class="container py-5 mt-md-4 mt-3">
+  <div class="py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
+    <div class="row">
+      <div class="col">
+        <h1 class="text-white">{{title}}</h1>
+      </div>
+      <div class="col text-end pt-3">
+        <button type=" button"
+          class="btn btn-prev btn-icon btn-sm btn-outline-primary rounded-circle me-2 d-none d-md-inline-flex"
+          aria-label="Prev" (click)="moveLeft()">
+          <i class="ai-arrow-left"></i>
+        </button>
+        <button type="button"
+          class="btn btn-next btn-icon btn-sm btn-outline-primary rounded-circle ms-2 d-none d-md-inline-flex"
+          aria-label="Next" (click)="moveRight()">
+          <i class="ai-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 pb-xl-2 pb-xxl-3">
+      <drag-scroll #nav class="carousel-container">
+        <div *ngFor="let item of carouselItems" class="card card-carousel mx-2 my-5 h-100 border-0 rounded-5">
+          <div drag-scroll-item class="border-0">
+            <a href="#">
+              <img class="card-img-top" src="assets/img/blog/grid/01.jpg" alt="Post image">
+            </a>
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <span class="fs-sm text-body-secondary">{{item.post.date | date:'yyyy-MM-dd'}}</span>
+                <span class="fs-xs opacity-20 mx-3">|</span>
+                <a class="badge text-nav fs-xs border" *ngIf="item.post.postTags[0]"
+                  href="#">{{item.post.postTags[0].name}}</a>
+              </div>
+              <h3 class="h4 card-title card-title-carousel text-truncate w-100">
+                <a href="#" class="card-title-carousel">{{item.post.titleText}}</a>
+              </h3>
+              <p class="card-text text-color-post-carousel text-truncate w-100">{{ sanitizeText(item.post.excerptText)
+                }}</p>
+            </div>
+            <div class="card-footer">
+              <a class="d-flex text-decoration-none" href="#">
+                <img class="rounded-circle" src="assets/img/avatar/06.jpg" width="48" alt="Post author">
+                <h6 class="ps-3 pt-2 mb-0 text-color-post-carousel">{{item.post.fullAuthor.name}}</h6>
+              </a>
+            </div>
+          </div>
+        </div>
+      </drag-scroll>
+    </div>
+    <div class=" pagination-bullets ">
+      <span *ngFor="let page of pages; let i = index" [class.active]="i === currentPage" (click)="goToPage(i)">
+      </span>
+    </div>
+  </div>
+</section>

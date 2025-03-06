@@ -337,7 +337,7 @@ public class PrintDelegate {
       dOut.flush();
       dOut.writeUTF("                                          " + "Journal Special des Societes");
       dOut.writeUTF("\r\n");
-      dOut.writeUTF("                                          " + "10" + "    " + "Boulevard Haussman");
+      dOut.writeUTF("                                          " + "10" + "    " + "Boulevard Haussmann");
       dOut.writeUTF("\r\n");
       dOut.writeUTF("                                          " + "75009" + "      " + "Paris");
       dOut.flush();

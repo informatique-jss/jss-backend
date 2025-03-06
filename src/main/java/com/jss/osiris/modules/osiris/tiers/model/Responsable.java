@@ -56,7 +56,7 @@ public class Responsable implements IAttachment, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
-	@JsonIgnoreProperties(value = { "responsables" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "responsables", "attachments" }, allowSetters = true)
 	@JsonView(JacksonViews.MyJssView.class)
 	private Tiers tiers;
 

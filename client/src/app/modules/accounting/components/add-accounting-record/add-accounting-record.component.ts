@@ -159,6 +159,10 @@ export class AddAccountingRecordComponent implements OnInit {
           record.operationDateTime = new Date(record.operationDateTime);
           record.operationDateTime.setHours(12);
         }
+        if (record.manualAccountingDocumentDate) {
+          record.manualAccountingDocumentDate = new Date(record.manualAccountingDocumentDate);
+          record.manualAccountingDocumentDate.setHours(12);
+        }
         if (journalId > 0 && journalId != record.accountingJournal.id) {
           this.appService.displaySnackBar("Le journal doit être identique sur l'ensemble des lignes", true, 10);
           return;

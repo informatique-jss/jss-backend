@@ -76,4 +76,9 @@ public class ProviderServiceImpl implements ProviderService {
 
         return providerRepository.save(provider);
     }
+
+    @Override
+    public List<Provider> getProviderByValue(String value) {
+        return providerRepository.findByValue(value);
+    }
 }
