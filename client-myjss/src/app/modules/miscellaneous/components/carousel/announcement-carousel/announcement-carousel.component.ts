@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Announcement } from '../../../../general/model/Announcement';
-import { AnnouncementService } from '../../../../general/services/announcement.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { Post } from '../../../../general/model/Post';
+import { PostService } from '../../../../general/services/post.service';
 import { CarouselItem } from '../../../model/CarouselItem';
 import { GenericCarouselComponent } from '../generic-carousel/generic-carousel.component';
 
@@ -10,29 +10,29 @@ import { GenericCarouselComponent } from '../generic-carousel/generic-carousel.c
   styleUrls: ['../generic-carousel/generic-carousel.component.css']
 })
 export class AnnouncementCarouselComponent extends GenericCarouselComponent implements OnInit {
-  topAnnouncements: Announcement[] = [] as Array<Announcement>;
-
+  topAnnouncements: Post[] = [] as Array<Post>;
+  @Input() page: number = 0;
   override title = "Les annonces légales les plus courantes";
 
-  constructor(private announcementService: AnnouncementService) {
+  constructor(private postService: PostService) {
     super();
   }
 
   override ngOnInit(): void {
-    this.announcementService.getTopAnnouncement(0).subscribe(response => {
+    //TODO récupérer du back les articles qui traitent des AL
+    this.postService.getTopPost(this.page).subscribe(response => {
       if (response) {
+        let firstItem = {} as CarouselItem;
+        firstItem.title = '';
+        firstItem.description = '';
+        firstItem.image = '/assets/img/carousel/carousel_announcement_init.jpg';
+        this.carouselItems.push(firstItem);
         this.topAnnouncements.push(...response);
-
-        let carouselImageItem = {} as CarouselItem;
-        carouselImageItem.title = '';
-        carouselImageItem.description = '';
-        carouselImageItem.image = '/assets/img/carousel/carousel_announcement_init.jpg';
-        this.carouselItems.push(carouselImageItem);
       }
       for (let announcement of this.topAnnouncements) {
         let carouselItem = {} as CarouselItem;
-        carouselItem.title = announcement.noticeTypeFamily.label;
-        carouselItem.description = announcement.notice;
+        carouselItem.title = announcement.slug;
+        carouselItem.description = announcement.excerptText;
         carouselItem.image = '';
         this.carouselItems.push(carouselItem);
       }

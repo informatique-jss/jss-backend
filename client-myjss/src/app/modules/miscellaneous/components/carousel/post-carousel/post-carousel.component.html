@@ -39,7 +39,8 @@
             </div>
             <div class="card-footer">
               <a class="d-flex text-decoration-none" href="#">
-                <img class="rounded-circle" src="assets/img/avatar/06.jpg" width="48" alt="Post author">
+                <img class="rounded-circle" [src]="item.post.fullAuthor.avatar_url_size_24" width="48"
+                  alt="Post author">
                 <h6 class="ps-3 pt-2 mb-0 text-color-post-carousel">{{item.post.fullAuthor.name}}</h6>
               </a>
             </div>

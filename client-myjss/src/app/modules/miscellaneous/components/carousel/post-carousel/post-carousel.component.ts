@@ -22,7 +22,6 @@ export class PostCarouselComponent extends GenericCarouselComponent implements O
   override ngOnInit(): void {
 
     this.fetchNextPosts();
-    console.log(this.pages);
   }
 
   fetchNextPosts() {

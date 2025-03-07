@@ -8,6 +8,7 @@ import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { AnnouncementCarouselComponent } from '../carousel/announcement-carousel/announcement-carousel.component';
 import { GenericCarouselComponent } from '../carousel/generic-carousel/generic-carousel.component';
+import { OfficeCarouselComponent } from '../carousel/office-carousel/office-carousel.component';
 import { PostCarouselComponent } from '../carousel/post-carousel/post-carousel.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
@@ -38,7 +39,8 @@ const routes: Routes = [
     GenericTextareaComponent,
     GenericCarouselComponent,
     AnnouncementCarouselComponent,
-    PostCarouselComponent
+    PostCarouselComponent,
+    OfficeCarouselComponent
   ],
   exports: [
     AvatarComponent,
@@ -48,7 +50,8 @@ const routes: Routes = [
     GenericTextareaComponent,
     GenericCarouselComponent,
     AnnouncementCarouselComponent,
-    PostCarouselComponent
+    PostCarouselComponent,
+    OfficeCarouselComponent
   ]
 })
 export class MiscellaneousModule { }

@@ -20,25 +20,33 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 pb-xl-2 pb-xxl-3">
       <drag-scroll #nav class="carousel-container">
         <div *ngFor="let item of carouselItems" class="card card-carousel mx-2 h-100 border-0 rounded-5">
-          <div *ngIf="item.image&&(item.title || item.description)">
-            <img drag-scroll-item [src]="item.image" class="card-img-top " alt="Card image">
-            <div class="card-body">
-              <h4 class="card-title text-white">{{ item.title }}</h4>
-              <p class="card-text text-grey">{{ sanitizeText(item.description)
-                }}</p>
-            </div>
+          <div drag-scroll-item *ngIf="item.image && !item.title && !item.description" class="card-img">
+            <a class="card-hover zoom-effect" [href]="item.image">
+              <div
+                class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0">
+                <i class="ai-zoom-in fs-2 text-white position-relative z-2"></i>
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-40"></div>
+              </div>
+              <div class="zoom-effect-wrapper rounded-5">
+                <div class="zoom-effect-img image-only">
+                  <img [src]="item.image" alt="Gallery image">
+                </div>
+              </div>
+            </a>
           </div>
 
-          <div *ngIf="item.image && !item.title && !item.description" class="image-only">
-            <img class="rounded-5 card-img-full" [src]="item.image" alt="Gallery image">
-          </div>
-
-          <div *ngIf="item.title && item.description &&!item.image">
+          <div class="card h-100 border-0 rounded-5 " *ngIf="item.title && item.description &&!item.image">
             <div drag-scroll-item
-              class="card-body text-center d-flex flex-column align-items-center justify-content-center h-100">
+              class="card-body d-flex flex-column align-items-center justify-content-center h-100 pb-3">
               <h4 class="card-title text-white">{{ item.title }}</h4>
-              <p class="card-text text-grey ">{{ sanitizeText(item.description) }}
+              <p class="card-text text-grey mb-0">{{ sanitizeText(item.description) }}
               </p>
+            </div>
+            <div class="card-footer border-0 pt-3 mb-3">
+              <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+                aria-label="Learn more">
+                <i class="ai-arrow-right"></i>
+              </a>
             </div>
           </div>
         </div>

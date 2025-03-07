@@ -12,12 +12,12 @@ export class GenericCarouselComponent implements OnInit {
   @ViewChild('nav') dragScroll: DragScrollComponent | undefined;
   carouselItems: CarouselItem[] = [] as Array<CarouselItem>;
   title: string = "";
+  itemsPerPage: number = 3;
+  pages: number[] = [];
+  currentPage = 0;
 
   ngOnInit() {
   }
-  itemsPerPage = 3;
-  pages: number[] = [];
-  currentPage = 0;
 
   ngAfterViewInit() {
     this.calculatePages();
@@ -60,6 +60,6 @@ export class GenericCarouselComponent implements OnInit {
   }
   sanitizeText(html: string): string {
     let doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || "";
+    return doc.body.textContent || "...";
   }
 }
