@@ -46,7 +46,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public class WordpressController {
 
-	private static final String inputEntryPoint = "/wordpress";
+	private static final String inputEntryPoint = "myjss/wordpress";
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 10;
@@ -137,6 +137,21 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/posts/top")
 	public ResponseEntity<List<Post>> getTopPosts(@RequestParam Integer page) throws OsirisException {
 		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPosts(page)), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/top")
+	public ResponseEntity<List<Post>> getTopPostsMyJss(@RequestParam Integer page) throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPosts(page)), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/announcement/top")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Announcement>> getTopAnnouncementMyJss(@RequestParam Integer page,
+			HttpServletRequest request)
+			throws OsirisException {
+		detectFlood(request);
+		return new ResponseEntity<List<Announcement>>(announcementService.getTopAnnouncementForWebSite(page),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/tendency")

@@ -3,8 +3,13 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { Routes } from '@angular/router';
+import { DragScrollComponent, DragScrollItemDirective } from 'ngx-drag-scroll';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { AnnouncementCarouselComponent } from '../carousel/announcement-carousel/announcement-carousel.component';
+import { GenericCarouselComponent } from '../carousel/generic-carousel/generic-carousel.component';
+import { OfficeCarouselComponent } from '../carousel/office-carousel/office-carousel.component';
+import { PostCarouselComponent } from '../carousel/post-carousel/post-carousel.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
@@ -22,13 +27,20 @@ const routes: Routes = [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
+    DragScrollComponent,
+    DragScrollItemDirective,
+
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
     GenericInputComponent,
     SingleUploadComponent,
     TrustHtmlPipe,
-    GenericTextareaComponent
+    GenericTextareaComponent,
+    GenericCarouselComponent,
+    AnnouncementCarouselComponent,
+    PostCarouselComponent,
+    OfficeCarouselComponent
   ],
   exports: [
     AvatarComponent,
@@ -36,6 +48,10 @@ const routes: Routes = [
     SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
+    GenericCarouselComponent,
+    AnnouncementCarouselComponent,
+    PostCarouselComponent,
+    OfficeCarouselComponent
   ]
 })
 export class MiscellaneousModule { }

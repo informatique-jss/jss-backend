@@ -5012,7 +5012,7 @@ textarea.form-control-lg {
 .card-footer {
   padding: var(--ar-card-cap-padding-y) var(--ar-card-cap-padding-x);
   color: var(--ar-card-cap-color);
-  background-color: var(--ar-card-cap-bg);
+  background-color: transparent;
   border-top: var(--ar-card-border-width) solid var(--ar-card-border-color);
 }
 
