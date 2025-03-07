@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { CopyClipboardDirective } from '../../../../libs/CopyClipboard.directive';
+import { DescriptionMyAccountComponent } from '../../../miscellaneous/components/description-my-account/description-my-account.component';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountMenuComponent } from '../account-menu/account-menu.component';
 import { AffairesComponent } from '../affaires/affaires.component';
@@ -76,6 +77,10 @@ const routes: Routes = [
     PayQuotationComponent,
     BillingClosureComponent,
     UserSettingsComponent,
+    DescriptionMyAccountComponent
+  ],
+  exports: [
+    DescriptionMyAccountComponent
   ]
 })
 export class MyAccountModule { }

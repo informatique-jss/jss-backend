@@ -9360,6 +9360,11 @@ textarea.form-control-lg {
   color: rgba(var(--ar-black-rgb), var(--ar-text-opacity)) !important;
 }
 
+.text-blue {
+  --ar-text-opacity: 1;
+  color: rgba(#2C4057, var(--ar-text-opacity)) !important;
+}
+
 .text-white {
   --ar-text-opacity: 1;
   color: #fff !important;
