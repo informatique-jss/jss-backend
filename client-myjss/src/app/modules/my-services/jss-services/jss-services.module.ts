@@ -4,7 +4,11 @@ import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from '../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from "../../my-account/components/my-account/my-account.module";
 import { AnnouncementComponent } from '../announcement/announcement.component';
+import { ApostilleComponent } from '../apostille/apostille.component';
+import { DocumentComponent } from '../document/document.component';
+import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { ExplainationVideoComponent } from '../explaination-video/explaination-video.component';
+import { FormalityComponent } from '../formality/formality.component';
 import { JssServicesComponent } from './jss-services.component';
 
 const routes: Routes = [
@@ -22,7 +26,11 @@ const routes: Routes = [
   ],
   declarations: [JssServicesComponent,
     AnnouncementComponent,
-    ExplainationVideoComponent
+    ExplainationVideoComponent,
+    FormalityComponent,
+    DomiciliationComponent,
+    ApostilleComponent,
+    DocumentComponent
   ]
 })
 export class MyServicesModule { }

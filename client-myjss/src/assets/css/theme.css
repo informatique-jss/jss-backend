@@ -704,6 +704,17 @@ progress {
   background-attachment: fixed, scroll;
 }
 
+.background-gold {
+  background-color: #1C2D41;
+  width: 100%;
+  height: 100%;
+  background-image:
+    url('../images/background2.svg');
+  background-position: top, 2541px;
+  background-repeat: no-repeat, repeat-y;
+  background-size: cover, cover;
+}
+
 .lead {
   font-size: calc(1.275rem + 0.3vw);
   font-weight: 400;
@@ -20138,6 +20149,68 @@ img-comparison-slider:focus {
 
 .blinking {
   animation: blinking 1s infinite;
+}
+
+.bg-yellow-custom {
+  background: #F3E3CA;
+}
+
+.checkbox-custom {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.bg-yellow-custom img {
+  position: absolute;
+  top: 50%;
+  right: 200px;
+  transform: translateY(-50%);
+  max-height: 100%;
+  z-index: 0;
+}
+
+.bg-yellow-custom {
+  background-color: rgba(243, 227, 202) !important;
+  background: url('/assets/images/background1.svg') no-repeat left center,
+    url('/assets/images/background2.svg') no-repeat right center;
+  background-size: cover, cover;
+  background-position: left center, right center;
+}
+
+.bg-yellow-custom::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/assets/images/background1.svg') no-repeat left center,
+    url('/assets/images/background2.svg') no-repeat right center;
+  background-size: cover, cover;
+  background-position: left center, right center;
+  filter: brightness(0.2);
+  z-index: -1;
+}
+
+.holo-img img {
+  position: absolute;
+  bottom: 0;
+  right: 10%;
+  max-height: 100%;
+  min-height: 500px;
+  object-fit: cover;
+  z-index: 2;
+}
+
+
+.text-container {
+  z-index: 2;
+  position: relative;
+}
+
+.jarallax {
+  height: 400px;
 }
 
 /*# sourceMappingURL=theme.css.map */

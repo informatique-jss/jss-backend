@@ -6,6 +6,10 @@ video {
   object-fit: cover;
 }
 
+.card-top {
+  min-height: 350px;
+
+}
 
 button {
   background-color: transparent;

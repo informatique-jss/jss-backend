@@ -1,7 +1,6 @@
 <section class=" background-blue container pt-5 mt-lg-3 mt-xl-4 mt-xxl-5 mb-5">
   <div class="text-center ">
-    <h2 class=" h1 pb-2 pb-md-3 mb-lg-4 text-white">Tout comprendre en quelques minutes</h2>
-    <p>Facilitez votre quotidien, regardez notre vidéo de présentation</p>
+    <h2 class=" h1 pb-2 pb-md-3 mb-lg-4 text-white">{{title}}</h2>
   </div>
   <div class="row pt-2 pt-md-4 pt-lg-3 pt-xl-4 g-4 g-sm-3 g-md-4">
     <div class="col-lg-8 order-lg-2">
@@ -25,54 +24,34 @@
     </div>
 
     <div class="col-sm-6 col-lg-4 order-lg-1">
-      <a class="card border-0 h-100 text-decoration-none " style="cursor: pointer; " (click)="jumpTo(5)">
+      <a class="card card-top border-0 h-100 text-decoration-none " style="cursor: pointer; " (click)="jumpTo(5)">
         <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body ">
             <p class="text-grey">Etape 01</p>
-            <h3 class="text-white">Sélectionnez votre formulaire </h3>
-            <p class="mb-0 text-grey">Accédez à une bibliothèque complète de formulaires adaptés à vos besoins
-              juridiques et
-              professionnels.</p>
+            <h3 class="text-white"> {{firstStepTitle}} </h3>
+            <p class="mb-0 text-grey">{{firstStepDescription}}</p>
           </div>
         </div>
       </a>
     </div>
-    <div class="col-sm-6 col-lg-4 order-lg-3">
-      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(10)">
+    <div [ngClass]="thirdStepTitle ? 'col-sm-6 col-lg-6 order-lg-3' : 'col-sm-12 col-lg-12 order-lg-3'">
+      <a class=" card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(10)">
         <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body">
             <p class="text-grey">Etape 02</p>
-            <h3 class="h4 card-title mt-0 text-white">Remplacez, visualisez et validez votre annonce</h3>
-            <p class="card-text text-grey">Profitez d'une saisie libre ou guidée grâce à nos modèles intuitifs. Obtenez
-              un devis
-              instantané et envoyez directement votre attestation légale en ligne. </p>
-
+            <h3 class="h4 card-title mt-0 text-white">{{secondStepTitle}}</h3>
+            <p class="card-text text-grey">{{secondStepDescription}}</p>
           </div>
         </div>
       </a>
     </div>
-    <div class="col-sm-6 col-lg-4 order-lg-4">
+    <div *ngIf="thirdStepTitle && thirdStepDescription" class="col-sm-6 col-lg-6 order-lg-4">
       <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(20)">
         <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body">
             <p class="text-grey">Etape 03</p>
-            <h3 class="text-white">Complétez vos coordonnées et payez</h3>
-            <p class="mb-0 text-grey">Bénéficiez d'une interface sécurisée et optimisée pour un traitement rapide et
-              fiable de vos
-              informations.</p>
-          </div>
-        </div>
-      </a>
-    </div>
-    <div class="col-sm-6 col-lg-4 order-lg-5">
-      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(30)">
-        <div class="card border-0 h-100 py-lg-2 py-xl-4">
-          <div class="card-body">
-            <p class="text-grey">Etape 04</p>
-            <h3 class="text-white">Téléchargez vos documents</h3>
-            <p class="mb-0 text-grey">Recevez immédiatemment votre attestation, votre facture et le témoin de parution,
-              avec
-              possibilité de programmation selon vos besoins.</p>
+            <h3 class="text-white">{{thirdStepTitle}}</h3>
+            <p class="mb-0 text-grey">{{thirdStepDescription}}</p>
           </div>
         </div>
       </a>

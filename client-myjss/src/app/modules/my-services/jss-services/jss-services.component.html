@@ -1,7 +1,7 @@
-<section class="container py-sm-3 py-md-4 py-lg-5 my-xxl-3">
+<section class="container mt-4 py-sm-3 py-md-4 py-lg-5 my-xxl-3">
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb">
-    <ol class="pt-lg-3 pb-lg-4 pb-2 breadcrumb">
+    <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
       <li class="breadcrumb-item"><a href="index.html">Accueil</a></li>
       <li class="breadcrumb-item" *ngFor="let item of breadcrumbItems; let last = last" [ngClass]="{'active': last}"
         aria-current="page">
@@ -12,10 +12,10 @@
   </nav>
 
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
+  <ul class="nav nav-tabs " role="tablist">
     <li class="nav-item" *ngFor="let tab of tabs; let i = index">
       <a class="nav-link" [class.active]="tab.active" (click)="onTabClick(i)">
-        <i class="fi-home me-2"></i>
+        <i class="fi-home me-2 "></i>
         {{ tab.name }}
       </a>
     </li>
@@ -30,22 +30,22 @@
     </div>
     <div *ngIf="tabs[1].active">
       <div class="tab-pane" id="formality">
-        <p>Contenu pour Formalités légales...</p>
+        <formality></formality>
       </div>
     </div>
     <div *ngIf="tabs[2].active">
       <div class="tab-pane" id="apostille">
-        <p>Contenu pour Apostilles-Légalisation...</p>
+        <apostille></apostille>
       </div>
     </div>
     <div *ngIf="tabs[3].active">
       <div class="tab-pane" id="domiciliation">
-        <p>Contenu pour Domiciliation...</p>
+        <domiciliation></domiciliation>
       </div>
     </div>
     <div *ngIf="tabs[4].active">
       <div class="tab-pane" id="document">
-        <p>Contenu pour Fourniture de documents...</p>
+        <document></document>
       </div>
     </div>
   </div>

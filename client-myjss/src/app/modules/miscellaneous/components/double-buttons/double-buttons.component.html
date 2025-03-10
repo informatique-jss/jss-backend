@@ -1,9 +1,11 @@
-<div class="d-block ">
-  <button type="button" href="#" class="btn btn-secondary mb-2 me-5">{{orderActionLabel}} <i
-      class="ai-arrow-right"></i></button>
-  <button type="button" href="#" class="btn btn-outline-secondary mb-2  me-5">{{quotationActionLabel}} <i
-      class="ai-arrow-right"></i></button>
+<div class="d-flex flex-column flex-md-row">
+  <button type="button" href="#" class="btn btn-secondary me-3 mb-2 mb-md-0">{{orderActionLabel}}
+    <i class="ai-arrow-right"></i>
+  </button>
+  <button type="button" href="#" class="btn btn-outline-secondary mb-2 mb-md-0">{{quotationActionLabel}}
+    <i class="ai-arrow-right"></i>
+  </button>
 </div>
-<div class="d-block">
-  <a href="#" (click)="openRoute($event)" class="text-blue mb-2">{{linkLabel}}</a>
+<div class="mt-2">
+  <a href="#" (click)="openRoute($event)" class="text-blue">{{linkLabel}}</a>
 </div>

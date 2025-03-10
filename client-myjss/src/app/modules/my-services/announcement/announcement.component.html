@@ -22,37 +22,35 @@
 </section>
 
 
-<explaination-video></explaination-video>
+<explaination-video [title]="title" [firstStepTitle]="firstStepTitle" [firstStepDescription]="firstStepDescription"
+  [secondStepTitle]="secondStepTitle" [secondStepDescription]="secondStepDescription" [thirdStepTitle]="thirdStepTitle"
+  [thirdStepDescription]="thirdStepDescription"></explaination-video>
 
 <description-my-account></description-my-account>
 
 <section class="container mt-lg-3 mt-xl-4 mt-xxl-5">
-  <div class="bg-primary rounded-5 overflow-hidden mt-2 mt-sm-4 mt-lg-5" style="position: relative;">
-    <img class="position-absolute top-50 start-0 translate-middle-y d-none d-md-block"
-      style="z-index: 0; width: 186px; max-height: 100%;" src="assets/img/landing/yoga-studio/cta/bg.svg"
-      alt="Background flower">
-
-    <div class="row position-relative z-2 align-items-center">
-      <div class="col-md-6 col-lg-5 offset-lg-1">
+  <div class="bg-yellow-custom rounded-5 overflow-hidden mt-2 mt-sm-4 mt-lg-5">
+    <div class="row align-items-center position-relative">
+      <div class="col-md-6 col-lg-5 offset-lg-1 text-container">
         <div class="text-center text-md-start py-5 px-4 px-sm-5 pe-md-0 ps-lg-4 ps-xl-5">
           <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-2">
-            <span class="bg-white opacity-70 me-2 d-none d-md-block"
+            <span class="text-blue opacity-70 me-2 d-none d-md-block"
               style="width: 40px; height: 1px; margin-top: -1px;"></span>
-            <span class="fs-xs fw-semibold text-white opacity-70 text-uppercase">Annonce légale</span>
+            <span class="fs-xs fw-semibold text-blue opacity-70 text-uppercase">Annonce légale</span>
           </div>
-          <h2 class="h1 pb-2 pb-sm-3 text-white">N'attendez plus et accédez à nos solutions</h2>
+          <h2 class="h1 pb-2 pb-sm-3 text-blue">N'attendez plus et accédez à nos solutions</h2>
           <double-buttons orderActionLabel="Publier une annonce légale" quotationActionLabel="Demander un devis"
-            linkLabel="Consulter une annonce légale"></double-buttons>
+            linkLabel="Consulter une annonce légale">
+          </double-buttons>
         </div>
       </div>
+
       <div class="col-md-6 holo-img">
-        <img class="d-block mx-auto mx-md-0 mt-n4 mt-md-0" src="assets/img/announcement/holo_employe.png" alt="Image">
+        <img class="d-none d-md-block" src="assets/img/announcement/holo_employe.png" alt="Image">
       </div>
     </div>
   </div>
 </section>
-
-
 
 <section class="py-5">
   <div class="container py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
@@ -142,6 +140,43 @@
   </div>
 </section>
 
+<section class="overflow-hidden pb-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-7 order-md-2">
+        <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/announcement/announcement_office.jpg"
+          alt="Image">
+      </div>
+      <div class="col-md-5 order-md-1">
+        <div class="d-flex flex-column h-100 card border-0 rounded-3 py-5 px-4 px-lg-5">
+          <h2 class="mb-xl-4">Le JSS vous propose de publier toutes vos insertions</h2>
+          <p class="mb-4 mb-xl-5">Une annonce légale est soumise à une législation précise encadrée par une loi ou un
+            décret et comporte certaines mentions obligatoires. Si certaines sont manquantes, elle peut être refusée.
+            Notre équipe vous conseille et vous accompagne de la rédaction à la publication pour :</p>
+          <ul class="list-unstyled mb-4 mb-xl-5">
+            <li class="d-flex pb-2 mb-1">
+              <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
+              Vos annonces légales
+            </li>
+            <li class="d-flex pb-2 mb-1">
+              <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
+              Vos publications au BALO
+            </li>
+            <li class="d-flex pb-2 mb-1">
+              <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
+              Vos publications au BODACC
+            </li>
+            <li class="d-flex">
+              <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
+              Vos annonces dans le Journal Officiel
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="container mt-lg-3 mt-xl-4 mt-xxl-5">
   <div class="row align-items-center pt-md-4 mt-2 mt-sm-3">
     <div class="col-md-6 position-relative pb-3 pb-md-0 mb-2 mb-sm-3 mb-md-0">
@@ -184,14 +219,15 @@
 
 
 <section class=" py-5">
-  <div class="container py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
-    <div class="text-center">
+  <div class="container py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5 ">
+    <div class=" text-center">
       <h2 class="h1 pb-3 mb-lg-4 text-white">Nos services</h2>
       <p>Nous proposons une large gamme de services de formalités, adaptés à vos besoins pour simplifier vos démarches
         administratives.</p>
     </div>
-    <div class="row row-cols-1 g-4 pb-xl-2 pb-xxl-3">
-      <div class="col">
+    <div
+      class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 pb-xl-2 pb-xxl-3 justify-content-center align-items-center">
+      <div class="col-lg-5">
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body pb-3">
             <img src="assets/img/icons/Formalite.svg" alt="Icon">
@@ -206,14 +242,14 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 pb-xl-2 pb-xxl-3">
-      <div class="col">
+
+      <div class="col-lg-5">
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body pb-3">
             <img src="assets/img/icons/Apostille.svg" alt="Icon">
             <h3 class="h4 text-white">Apostille & Légalisation</h3>
-            <p class="mb-0">Authentification rapide et conforme de vos documents valable à internationale.</p>
+            <p class="mb-0">Authentification et certification rapide et conforme de vos documents valables à
+              l’international.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
             <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
@@ -223,8 +259,10 @@
           </div>
         </div>
       </div>
-
-      <div class="col">
+    </div>
+    <div
+      class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 pb-xl-2 pb-xxl-3 justify-content-center align-items-center">
+      <div class="col-lg-5">
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body pb-3">
             <img src="assets/img/icons/Domiciliation.svg" alt="Icon">
@@ -240,7 +278,7 @@
         </div>
       </div>
 
-      <div class="col">
+      <div class="col-lg-5">
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body pb-3">
             <img src="assets/img/icons/Fourniture_documents.svg" alt="Icon">

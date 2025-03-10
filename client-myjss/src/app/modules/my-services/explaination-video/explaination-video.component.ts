@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'explaination-video',
@@ -6,8 +6,14 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
   styleUrls: ['./explaination-video.component.css']
 })
 export class ExplainationVideoComponent implements OnInit {
+  @Input() title: string = '';
+  @Input() firstStepTitle: string = '';
+  @Input() secondStepTitle: string = '';
+  @Input() thirdStepTitle: string = '';
+  @Input() firstStepDescription: string = '';
+  @Input() secondStepDescription: string = '';
+  @Input() thirdStepDescription: string = '';
 
-  @ViewChild('videoPlayer') videoElementRef!: ElementRef;
   isPlaying: boolean = false;
   currentTime: number = 0;
   videoPlaying = false;
@@ -31,7 +37,7 @@ export class ExplainationVideoComponent implements OnInit {
     if (!this.isPlaying) {
       this.playVideo();
     }
-    if (seconds)
-      this.videoElementRef.nativeElement.currentTime = seconds;
+    if (seconds && this.videoPlayer)
+      this.videoPlayer.nativeElement.currentTime = seconds;
   }
 }
