@@ -31,6 +31,7 @@ const routes: Routes = [
       { path: 'overview', component: OverviewComponent },
       { path: 'scope', component: ScopeComponent },
       { path: 'closure', component: BillingClosureComponent },
+      { path: 'communication-preference', component: CommunicationPreferenceComponent },
       { path: 'quotations', component: QuotationsComponent },
       { path: 'orders', component: OrdersComponent },
       { path: 'orders/details/:id', component: OrderDetailsComponent },
