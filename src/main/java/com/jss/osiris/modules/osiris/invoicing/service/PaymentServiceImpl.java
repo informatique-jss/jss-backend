@@ -654,9 +654,9 @@ public class PaymentServiceImpl implements PaymentService {
 
                 } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
                         .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
-                    if (invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i))
-                            .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN) != payment
-                                    .getPaymentAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN))
+                    if (!invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i))
+                            .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).equals(payment
+                                    .getPaymentAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)))
                         throw new OsirisException(null,
                                 "Wrong amount to pay on invoice " + correspondingInvoices.get(i).getId()
                                         + " and payment bank id " + payment.getBankId() + " " + payment.getId());

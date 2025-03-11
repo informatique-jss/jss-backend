@@ -628,9 +628,10 @@ public class InvoicingController {
 
                     if (invoice.getInvoiceStatus().getId()
                             .equals(constantService.getInvoiceStatusCreditNoteReceived().getId()))
-                        if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0,
-                                RoundingMode.HALF_EVEN) != paymentAssociate.getPayment().getPaymentAmount()
-                                        .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN))
+                        if (!invoice.getTotalPrice().multiply(oneHundredValue).setScale(0,
+                                RoundingMode.HALF_EVEN).equals(
+                                        paymentAssociate.getPayment().getPaymentAmount()
+                                                .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)))
                             throw new OsirisValidationException("Wrong payment amount");
 
                     if (invoice.getInvoiceStatus().getId()
