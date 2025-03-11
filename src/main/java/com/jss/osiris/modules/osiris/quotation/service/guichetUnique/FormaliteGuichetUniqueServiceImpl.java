@@ -314,7 +314,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         }
                     }
                     // with current Formalite get current affaire and order to set the new asso
-                    if (!isRbeProvisionCreationInProgress && currentService != null
+                    if (isRbeProvisionCreationInProgress && currentService != null
                             && currentService.getAssoAffaireOrder() != null
                             && currentService.getAssoAffaireOrder().getCustomerOrder() != null)
                         assoAffaireOrderService.completeAssoAffaireOrder(
