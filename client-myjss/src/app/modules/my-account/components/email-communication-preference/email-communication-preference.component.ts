@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 export class EmailCommunicationPreferenceComponent implements OnInit {
 
   urlMail: string = '';
+  validationToken: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -16,7 +17,10 @@ export class EmailCommunicationPreferenceComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.urlMail = params.get('mail') || '';
+      if (params.get("mail"))
+        this.urlMail = params.get("mail")!;
+      if (params.get("validationToken"))
+        this.urlMail = params.get("validationToken")!;
     });
   }
 

@@ -24,22 +24,16 @@ public class CommunicationPreferenceServiceImpl implements CommunicationPreferen
     public CommunicationPreference getCommunicationPreferenceByMail(String mailString, String validationToken)
             throws OsirisValidationException {
 
-        if (validationToken == null) {
-            CommunicationPreference communicationPreference = communicationPreferenceRepository
-                    .findByMail_Mail(mailString);
-        } else {
-
-            CommunicationPreference communicationPreference = communicationPreferenceRepository
-                    .findByValidationTokenAndMail_Mail(validationToken, mailString);
-            if (!validationToken.equals(communicationPreference.getValidationToken())) {
+        CommunicationPreference communicationPreference = null;
+        if (validationToken != null) {
+            communicationPreference = communicationPreferenceRepository.findByValidationToken(validationToken);
+            if (communicationPreference == null || !communicationPreference.getMail().getMail().toLowerCase().trim()
+                    .equals(mailString.trim().toLowerCase()))
                 throw new OsirisValidationException("validationToken");
+        } else
+            communicationPreference = communicationPreferenceRepository.findByMail_Mail(mailString);
 
-            }
-        }
-
-        if (communicationPreference == null)
-
-        {
+        if (communicationPreference == null) {
             Mail mail = new Mail();
             mail.setMail(mailString);
             Mail communicationPreferenceMail = mailService.populateMailId(mail);
@@ -55,32 +49,38 @@ public class CommunicationPreferenceServiceImpl implements CommunicationPreferen
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommunicationPreference subscribeToNewspaperNewsletter(String emailToSubscribe) {
-        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe);
+    public CommunicationPreference subscribeToNewspaperNewsletter(String emailToSubscribe)
+            throws OsirisValidationException {
+        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe, null);
         communicationPreference.setIsSubscribedToNewspaperNewletter(true);
         return communicationPreferenceRepository.save(communicationPreference);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommunicationPreference unsubscribeToNewspaperNewsletter(String emailToSubscribe) {
-        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe);
+    public CommunicationPreference unsubscribeToNewspaperNewsletter(String emailToSubscribe, String validationToken)
+            throws OsirisValidationException {
+        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe,
+                validationToken);
         communicationPreference.setIsSubscribedToNewspaperNewletter(false);
         return communicationPreferenceRepository.save(communicationPreference);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommunicationPreference subscribeToCorporateNewsletter(String emailToSubscribe) {
-        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe);
+    public CommunicationPreference subscribeToCorporateNewsletter(String emailToSubscribe)
+            throws OsirisValidationException {
+        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe, null);
         communicationPreference.setIsSubscribedToCorporateNewsletter(true);
         return communicationPreferenceRepository.save(communicationPreference);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommunicationPreference unsubscribeToCorporateNewsletter(String emailToSubscribe) {
-        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe);
+    public CommunicationPreference unsubscribeToCorporateNewsletter(String emailToSubscribe, String validationToken)
+            throws OsirisValidationException {
+        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe,
+                validationToken);
         communicationPreference.setIsSubscribedToCorporateNewsletter(false);
         return communicationPreferenceRepository.save(communicationPreference);
     }

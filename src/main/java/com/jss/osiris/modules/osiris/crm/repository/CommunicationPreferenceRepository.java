@@ -7,5 +7,5 @@ public interface CommunicationPreferenceRepository extends QueryCacheCrudReposit
 
     CommunicationPreference findByMail_Mail(String mail);
 
-    CommunicationPreference findByValidationTokenAndMail_Mail(String validationToken, String mail);
+    CommunicationPreference findByValidationToken(String validationToken);
 }

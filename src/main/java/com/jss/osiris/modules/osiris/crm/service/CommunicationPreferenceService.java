@@ -8,11 +8,15 @@ public interface CommunicationPreferenceService {
     public CommunicationPreference getCommunicationPreferenceByMail(String mail, String validationToken)
             throws OsirisValidationException;
 
-    public CommunicationPreference subscribeToNewspaperNewsletter(String emailToSubscribe);
+    public CommunicationPreference subscribeToNewspaperNewsletter(String emailToSubscribe)
+            throws OsirisValidationException;
 
-    public CommunicationPreference unsubscribeToNewspaperNewsletter(String emailToSubscribe);
+    public CommunicationPreference unsubscribeToNewspaperNewsletter(String emailToSubscribe, String validationToken)
+            throws OsirisValidationException;
 
-    public CommunicationPreference subscribeToCorporateNewsletter(String emailToSubscribe);
+    public CommunicationPreference subscribeToCorporateNewsletter(String emailToSubscribe)
+            throws OsirisValidationException;
 
-    public CommunicationPreference unsubscribeToCorporateNewsletter(String emailToSubscribe);
+    public CommunicationPreference unsubscribeToCorporateNewsletter(String emailToSubscribe, String validationToken)
+            throws OsirisValidationException;
 }
