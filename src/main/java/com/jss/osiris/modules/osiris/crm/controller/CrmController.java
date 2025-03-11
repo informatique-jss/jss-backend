@@ -33,7 +33,7 @@ public class CrmController {
 
                 if (validationHelper.validateMail(userMail)) {
                         CommunicationPreference communicationPreference = communicationPreferenceService
-                                        .populateCommunicationPreferenceByMail(userMail);
+                                        .getCommunicationPreferenceByMail(userMail);
 
                         return new ResponseEntity<CommunicationPreference>(communicationPreference, HttpStatus.OK);
 

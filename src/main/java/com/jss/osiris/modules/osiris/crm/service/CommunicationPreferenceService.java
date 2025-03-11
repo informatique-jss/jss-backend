@@ -1,10 +1,12 @@
 package com.jss.osiris.modules.osiris.crm.service;
 
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 
 public interface CommunicationPreferenceService {
 
-    public CommunicationPreference populateCommunicationPreferenceByMail(String mail);
+    public CommunicationPreference getCommunicationPreferenceByMail(String mail, String validationToken)
+            throws OsirisValidationException;
 
     public CommunicationPreference subscribeToNewspaperNewsletter(String emailToSubscribe);
 

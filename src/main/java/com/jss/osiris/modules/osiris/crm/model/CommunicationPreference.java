@@ -38,6 +38,8 @@ public class CommunicationPreference implements Serializable {
     @JsonView(JacksonViews.MyJssView.class)
     private Boolean isSubscribedToCorporateNewsletter;
 
+    private String validationToken;
+
     public Mail getMail() {
         return mail;
     }
@@ -60,6 +62,14 @@ public class CommunicationPreference implements Serializable {
 
     public void setIsSubscribedToCorporateNewsletter(Boolean isSubscribedToCorporateNewsletter) {
         this.isSubscribedToCorporateNewsletter = isSubscribedToCorporateNewsletter;
+    }
+
+    public String getValidationToken() {
+        return validationToken;
+    }
+
+    public void setValidationToken(String validationToken) {
+        this.validationToken = validationToken;
     }
 
 }

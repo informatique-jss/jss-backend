@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.repository.CommunicationPreferenceRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -20,12 +21,25 @@ public class CommunicationPreferenceServiceImpl implements CommunicationPreferen
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommunicationPreference populateCommunicationPreferenceByMail(String mailString) {
+    public CommunicationPreference getCommunicationPreferenceByMail(String mailString, String validationToken)
+            throws OsirisValidationException {
 
-        CommunicationPreference communicationPreference = communicationPreferenceRepository
-                .findByMail_Mail(mailString);
+        if (validationToken == null) {
+            CommunicationPreference communicationPreference = communicationPreferenceRepository
+                    .findByMail_Mail(mailString);
+        } else {
 
-        if (communicationPreference == null) {
+            CommunicationPreference communicationPreference = communicationPreferenceRepository
+                    .findByValidationTokenAndMail_Mail(validationToken, mailString);
+            if (!validationToken.equals(communicationPreference.getValidationToken())) {
+                throw new OsirisValidationException("validationToken");
+
+            }
+        }
+
+        if (communicationPreference == null)
+
+        {
             Mail mail = new Mail();
             mail.setMail(mailString);
             Mail communicationPreferenceMail = mailService.populateMailId(mail);
@@ -42,7 +56,7 @@ public class CommunicationPreferenceServiceImpl implements CommunicationPreferen
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CommunicationPreference subscribeToNewspaperNewsletter(String emailToSubscribe) {
-        CommunicationPreference communicationPreference = populateCommunicationPreferenceByMail(emailToSubscribe);
+        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe);
         communicationPreference.setIsSubscribedToNewspaperNewletter(true);
         return communicationPreferenceRepository.save(communicationPreference);
     }
@@ -50,7 +64,7 @@ public class CommunicationPreferenceServiceImpl implements CommunicationPreferen
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CommunicationPreference unsubscribeToNewspaperNewsletter(String emailToSubscribe) {
-        CommunicationPreference communicationPreference = populateCommunicationPreferenceByMail(emailToSubscribe);
+        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe);
         communicationPreference.setIsSubscribedToNewspaperNewletter(false);
         return communicationPreferenceRepository.save(communicationPreference);
     }
@@ -58,7 +72,7 @@ public class CommunicationPreferenceServiceImpl implements CommunicationPreferen
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CommunicationPreference subscribeToCorporateNewsletter(String emailToSubscribe) {
-        CommunicationPreference communicationPreference = populateCommunicationPreferenceByMail(emailToSubscribe);
+        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe);
         communicationPreference.setIsSubscribedToCorporateNewsletter(true);
         return communicationPreferenceRepository.save(communicationPreference);
     }
@@ -66,7 +80,7 @@ public class CommunicationPreferenceServiceImpl implements CommunicationPreferen
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CommunicationPreference unsubscribeToCorporateNewsletter(String emailToSubscribe) {
-        CommunicationPreference communicationPreference = populateCommunicationPreferenceByMail(emailToSubscribe);
+        CommunicationPreference communicationPreference = getCommunicationPreferenceByMail(emailToSubscribe);
         communicationPreference.setIsSubscribedToCorporateNewsletter(false);
         return communicationPreferenceRepository.save(communicationPreference);
     }
