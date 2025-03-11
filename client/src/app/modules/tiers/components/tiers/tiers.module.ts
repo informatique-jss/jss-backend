@@ -16,6 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
+import { CrmModule } from 'src/app/modules/crm/components/crm/crm.module';
 import { SelectComplainCauseComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-causes/select-complain-causes.component';
 import { SelectComplainOriginComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-origin/select-complain-origin.component';
 import { SelectComplainProblemComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-problem/select-complain-problem.component';
@@ -69,6 +70,7 @@ const routes: Routes = [
     QuotationModule,
     InvoicingModule,
     ReportingModule,
+    CrmModule,
   ],
   declarations: [TiersComponent,
     PrincipalComponent,

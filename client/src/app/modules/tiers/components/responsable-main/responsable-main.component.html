@@ -257,6 +257,14 @@
             <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
           </ng-template>
         </mat-tab>
+        <mat-tab label="Préférences de communication"
+          *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
+          <ng-template matTabContent>
+            <div class="mat-elevation-z2 form-div">
+              <communication-preference [responsable]="selectedResponsable"></communication-preference>
+            </div>
+          </ng-template>
+        </mat-tab>
       </mat-tab-group>
     </form>
   </div>
