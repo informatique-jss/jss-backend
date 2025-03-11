@@ -15484,7 +15484,7 @@ label {
 }
 
 .form-switch .form-check-input:checked {
-  background-color: var(--ar-primary);
+  background-color: #46668a;
 }
 
 .form-switch .form-check-input:disabled {

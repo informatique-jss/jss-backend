@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../../../../libs/app.service';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
-import { NewsletterService } from '../../../my-account/services/newsletter.service';
+import { CommunicationPreferencesService } from '../../../my-account/services/communication.preference.service';
 
 @Component({
   selector: 'app-newsletter',
@@ -10,31 +10,36 @@ import { NewsletterService } from '../../../my-account/services/newsletter.servi
 })
 export class NewsletterComponent implements OnInit {
 
-  email: string = '';
+  mail: string = '';
 
   constructor(
-    private newsletterService: NewsletterService,
+    private communicationPreferencesService: CommunicationPreferencesService,
     private appService: AppService,
   ) { }
 
   ngOnInit() {
   }
 
-  registerEmail(emailToRegister: string) {
-    if (emailToRegister) {
-      if (!validateEmail(emailToRegister)) {
-        this.appService.displayToast("Impossible de finaliser votre inscription. Vérifiez votre adresse e-mail et réessayez.", true, "Une erreur s’est produite...", 3000);
-        return;
-      }
-    } else {
+
+  registerEmail(mailToRegister: string) {
+    // Email verifications
+    if (!mailToRegister) {
       this.appService.displayToast("Merci de renseigner une adresse e-mail.", true, "Une erreur s’est produite...", 3000);
       return;
     }
 
-    this.newsletterService.saveEmailForNewsletter(emailToRegister).subscribe(response => {
-      if (response)
-        this.appService.displayToast("Bienvenue ! Vous recevrez bientôt notre newsletter avec l\’essentiel de l\’actualité chaque semaine.", true, "Inscription confirmée !", 3000);
-      this.email = '';
+    if (!validateEmail(mailToRegister)) {
+      this.appService.displayToast("Impossible de finaliser votre inscription. Vérifiez votre adresse e-mail et réessayez.", true, "Une erreur s’est produite...", 3000);
+      return;
+    }
+
+    this.communicationPreferencesService.subscribeToCorporateNewsletter(mailToRegister).subscribe(response => {
+      if (response) {
+        this.mail = '';
+        this.appService.displayToast("Bienvenue ! Vous recevrez bientôt notre newsletter avec l\’essentiel de l\’actualité chaque semaine.", false, "Inscription confirmée !", 3000);
+      } else {
+        this.appService.displayToast("Inscription à la newsletter impossible, merci de réessayer plus tard.", true, "Erreur !", 3000);
+      }
     })
   }
 }

@@ -24,7 +24,7 @@ const routes: Routes = [
   ],
   declarations: [GeneralComponent,
     HomepageComponent,
-    NewsletterComponent
+    NewsletterComponent,
   ]
 })
 export class GeneralModule { }
