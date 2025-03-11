@@ -110,7 +110,7 @@
   --ar-danger: #ed5050;
   --ar-light: #fff;
   --ar-dark: #121519;
-  --ar-primary-rgb: 68, 140, 116;
+  --ar-primary-rgb: 255, 255, 255;
   --ar-secondary-rgb: 237, 241, 245;
   --ar-success-rgb: 63, 202, 144;
   --ar-info-rgb: 63, 127, 202;
@@ -166,9 +166,9 @@
   --ar-tertiary-color-rgb: 87, 96, 113;
   --ar-tertiary-bg: #f6f9fc;
   --ar-tertiary-bg-rgb: 246, 249, 252;
-  --ar-heading-color: var(--ar-gray-900);
-  --ar-link-color: #448c74;
-  --ar-link-color-rgb: 68, 140, 116;
+  --ar-heading-color: var(--ar-gray-100);
+  --ar-link-color: #ffffff;
+  --ar-link-color-rgb: 255, 255, 255;
   --ar-link-decoration: underline;
   --ar-link-hover-color: #37715d;
   --ar-link-hover-color-rgb: 55, 113, 93;
@@ -243,7 +243,7 @@
   --ar-heading-color: #fff;
   --ar-link-color: #8fbaac;
   --ar-link-hover-color: #a5c8bd;
-  --ar-link-color-rgb: 143, 186, 172;
+  --ar-link-color-rgb: 255, 255, 255;
   --ar-link-hover-color-rgb: 165, 200, 189;
   --ar-code-color: #ee70a7;
   --ar-highlight-color: rgba(255, 255, 255, 0.7);
@@ -3867,8 +3867,8 @@ textarea.form-control-lg {
   color: var(--ar-dropdown-color);
   text-align: left;
   list-style: none;
+  backdrop-filter: blur(3px);
   background-color: var(--ar-dropdown-bg);
-  backdrop-filter: blur(40px);
   background-clip: padding-box;
   border: var(--ar-dropdown-border-width) solid var(--ar-dropdown-border-color);
   border-radius: var(--ar-dropdown-border-radius);
