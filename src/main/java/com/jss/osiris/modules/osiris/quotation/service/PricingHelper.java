@@ -336,7 +336,7 @@ public class PricingHelper {
 
         // Domiciliation pricing
         // First one => double price for base
-        if (provision.getDomiciliation() != null && quotation.getId() != null) {
+        if (quotation instanceof CustomerOrder && provision.getDomiciliation() != null && quotation.getId() != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
             CustomerOrder masterCustomerOrder = (customerOrder.getIsRecurring() != null
                     && customerOrder.getIsRecurring()) ? customerOrder
