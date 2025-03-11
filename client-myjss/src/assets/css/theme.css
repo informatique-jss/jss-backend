@@ -172,8 +172,8 @@
   --ar-tertiary-bg-rgb: 246, 249, 252;
   --ar-heading-color: var(--ar-gray-100);
   --ar-heading-secondary-color: var(--ar-secondary);
-  --ar-link-color: #448c74;
-  --ar-link-color-rgb: 68, 140, 116;
+  --ar-link-color: #ffffff;
+  --ar-link-color-rgb: 255, 255, 255;
   --ar-link-decoration: underline;
   --ar-link-hover-color: #37715d;
   --ar-link-hover-color-rgb: 55, 113, 93;
