@@ -199,7 +199,7 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_piece_jointe")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "attachments", "content" }, allowSetters = true)
 	private PiecesJointe piecesJointe;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -154,7 +154,7 @@
   --ar-body-line-height: 1.5;
   --ar-body-color: #FFFFFFB2;
   --ar-body-color-rgb: 87, 96, 113;
-  --ar-body-bg: #fff;
+  --ar-body-bg: #FFFFFF08;
   --ar-body-bg-rgb: 255, 255, 255;
   --ar-emphasis-color: #000;
   --ar-emphasis-color-rgb: 0, 0, 0;
@@ -14912,7 +14912,7 @@ textarea.form-control-lg {
 
 :root {
   --ar-user-selection-color: rgba(var(--ar-primary-rgb), 0.22);
-  --ar-heading-color: var(--ar-gray-900);
+  --ar-heading-color: var(--ar-gray-100);
   --ar-heading-font-weight: 600;
   --ar-heading-link-color: var(--ar-gray-800);
   --ar-heading-link-hover-color: var(--ar-primary);

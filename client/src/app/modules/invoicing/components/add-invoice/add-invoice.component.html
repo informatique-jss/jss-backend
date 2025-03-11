@@ -25,7 +25,7 @@
           </td-->
         </tr>
       </table>
-      <table class="full-width" *ngIf="!invoice.provider && !invoice.isCreditNote">
+      <table class="full-width" *ngIf="!invoice.provider && !invoice.isCreditNote && !isRff">
         <tr>
           <td>
             <radio-group-billing-label [(model)]="invoice.billingLabelType" [form]="invoiceForm"
@@ -87,7 +87,7 @@
       </table>
       <table class="full-width">
         <tr>
-          <td *ngIf="!invoice.isCreditNote && invoice.provider">
+          <td *ngIf="!invoice.isCreditNote && invoice.provider || isRff">
             <generic-input [(model)]="invoice.commandNumber" label="N° de commande" [form]="invoiceForm"
               propertyName="commandNumber" [isMandatory]="false" [isDisabled]="!editMode || !isManualInvoice()"
               [maxLength]="40">

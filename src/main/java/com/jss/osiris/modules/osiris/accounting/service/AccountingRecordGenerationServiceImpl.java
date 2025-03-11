@@ -552,12 +552,17 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         String labelPrefix = invoice.getCustomerOrder() != null ? ("Commande n°" + invoice.getCustomerOrder().getId())
                 : ("Facture libre n°" + invoice.getId());
 
-        labelPrefix += " - " + invoice.getProvider().getLabel();
+        if (invoice.getRff() != null)
+            labelPrefix += " - " + invoice.getResponsable().getTiers().getDenomination();
+
+        else
+            labelPrefix += " - " + invoice.getProvider().getLabel();
 
         AccountingAccount accountingAccountProvider = null;
         if (invoice.getRff() != null)
             accountingAccountProvider = invoice.getResponsable().getTiers().getAccountingAccountCustomer();
-        accountingAccountProvider = invoice.getProvider().getAccountingAccountProvider();
+        else
+            accountingAccountProvider = invoice.getProvider().getAccountingAccountProvider();
 
         BigDecimal balance = new BigDecimal(0);
         balance = balance.add(invoiceHelper.getPriceTotal(invoice));
