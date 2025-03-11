@@ -103,7 +103,7 @@
   --ar-gray-800: #434a57;
   --ar-gray-900: #121519;
   --ar-primary: rgba(255, 255, 255, 1);
-  --ar-secondary: #edf1f5;
+  --ar-secondary: #2C4057;
   --ar-success: #4b6380;
   --ar-info: #3f7fca;
   --ar-warning: #edcb50;
@@ -164,9 +164,10 @@
   --ar-secondary-bg-rgb: 237, 241, 245;
   --ar-tertiary-color: rgba(87, 96, 113, 0.5);
   --ar-tertiary-color-rgb: 87, 96, 113;
-  --ar-tertiary-bg: #f6f9fc;
+  --ar-tertiary-bg: #F3E3CA;
   --ar-tertiary-bg-rgb: 246, 249, 252;
   --ar-heading-color: var(--ar-gray-100);
+  --ar-heading-secondary-color: var(--ar-secondary);
   --ar-link-color: #448c74;
   --ar-link-color-rgb: 68, 140, 116;
   --ar-link-decoration: underline;

@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { AppService } from '../../../../libs/app.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { CommunicationPreference } from '../../model/CommunicationPreference';
@@ -22,7 +23,8 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
     private communicationPreferenceService: CommunicationPreferencesService,
     private loginService: LoginService,
     private formBuilder: FormBuilder,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private appService: AppService
   ) { }
 
   communicationPreferenceForm = this.formBuilder.group({});
@@ -32,17 +34,17 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
       this.loginService.getCurrentUser().subscribe((user) => {
         this.currentUser = user;
         this.mail = user.mail.mail;
-        if (this.mail) {
-          this.communicationPreferenceService.getCommunicationPreferenceByMail(this.mail).subscribe((preferences) => {
-            this.communicationPreference = preferences;
-          });
-        }
+        this.loadPreferenceByMail(this.mail);
       })
     } else {
-      this.communicationPreferenceService.getCommunicationPreferenceByMail(this.mail).subscribe((preferences) => {
-        this.communicationPreference = preferences;
-      });
+      this.loadPreferenceByMail(this.mail);
     }
+  }
+
+  private loadPreferenceByMail(mail: string) {
+    this.communicationPreferenceService.getCommunicationPreferenceByMail(mail).subscribe((preferences) => {
+      this.communicationPreference = preferences;
+    });
   }
 
   ngAfterContentChecked(): void {
@@ -52,16 +54,20 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
   toggleNewspaperNewsletter() {
     if (this.communicationPreference.isSubscribedToNewspaperNewletter) {
       this.communicationPreferenceService.subscribeToNewspaperNewsletter(this.mail!).subscribe();
+      this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
     } else {
       this.communicationPreferenceService.unsubscribeToNewspaperNewsletter(this.mail!).subscribe();
+      this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
     }
   }
 
   toggleCorporateNewsletter() {
     if (this.communicationPreference.isSubscribedToCorporateNewsletter) {
       this.communicationPreferenceService.subscribeToCorporateNewsletter(this.mail!).subscribe();
+      this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
     } else {
       this.communicationPreferenceService.unsubscribeToCorporateNewsletter(this.mail!).subscribe();
+      this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
     }
   }
 }

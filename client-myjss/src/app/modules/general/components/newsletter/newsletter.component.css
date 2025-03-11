@@ -1,7 +1,7 @@
 .newsletter {
-    background-color: #F3E3CA;
+    background-color: var(--ar-tertiary-bg);
 }
 
 h2 {
-    color: #2C4057;
+    color: var(--ar-heading-secondary-color);
 }
