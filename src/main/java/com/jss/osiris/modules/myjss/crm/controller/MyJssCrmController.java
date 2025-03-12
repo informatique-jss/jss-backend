@@ -1,5 +1,9 @@
 package com.jss.osiris.modules.myjss.crm.controller;
 
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +21,8 @@ import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 public class MyJssCrmController {
 
@@ -28,11 +34,29 @@ public class MyJssCrmController {
     @Autowired
     private ValidationHelper validationHelper;
 
+    private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
+    private final long rateLimit = 1000;
+    private LocalDateTime lastFloodFlush = LocalDateTime.now();
+    private int floodFlushDelayMinute = 1;
+
+    private ResponseEntity<String> detectFlood(HttpServletRequest request) {
+        if (lastFloodFlush.isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
+            requestCount.clear();
+
+        String ipAddress = request.getRemoteAddr();
+        AtomicLong count = requestCount.computeIfAbsent(ipAddress, k -> new AtomicLong());
+
+        if (count.incrementAndGet() > rateLimit) {
+            return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.TOO_MANY_REQUESTS);
+        }
+        return null;
+    }
+
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
     public ResponseEntity<CommunicationPreference> getCommunicationPreferenceByMail(@RequestParam String userMail,
-            @RequestParam String validationToken) throws OsirisValidationException {
-
+            @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
+        detectFlood(request);
         if (validationHelper.validateMail(userMail)) {
 
             CommunicationPreference communicationPreference = communicationPreferenceService
@@ -56,8 +80,8 @@ public class MyJssCrmController {
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-newspaper-newsletter")
     public ResponseEntity<Boolean> subscribeToNewspaperNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken) throws OsirisException {
-
+            @RequestParam String validationToken, HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.subscribeToNewspaperNewsletter(userMail);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -77,7 +101,8 @@ public class MyJssCrmController {
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/unsubscribe-to-newspaper-newsletter")
     public ResponseEntity<Boolean> unsubscribeToNewspaperNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken) throws OsirisException {
+            @RequestParam String validationToken, HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.unsubscribeToNewspaperNewsletter(userMail);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -97,7 +122,8 @@ public class MyJssCrmController {
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-corporate-newsletter")
     public ResponseEntity<Boolean> subscribeToCorporateNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken) throws OsirisException {
+            @RequestParam String validationToken, HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.subscribeToCorporateNewsletter(userMail);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -117,7 +143,8 @@ public class MyJssCrmController {
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/unsubscribe-to-corporate-newsletter")
     public ResponseEntity<Boolean> unsubscribeToCorporateNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken) throws OsirisException {
+            @RequestParam String validationToken, HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.unsubscribeToCorporateNewsletter(userMail);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
