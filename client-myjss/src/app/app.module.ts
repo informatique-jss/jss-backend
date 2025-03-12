@@ -16,6 +16,7 @@ import { FooterComponent } from './modules/profile/components/footer/footer.comp
 import { SearchComponent } from './modules/profile/components/search/search.component';
 import { TopBarComponent } from './modules/profile/components/top-bar/top-bar.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
+import { ToolsModule } from './modules/tools/components/tools/tools.module';
 registerLocaleData(localeFr, 'fr');
 
 const routes: Routes = [
@@ -43,6 +44,7 @@ const routes: Routes = [
     MiscellaneousModule,
     QuotationModule,
     GeneralModule,
+    ToolsModule,
   ], providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: HttpErrorInterceptor,

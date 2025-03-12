@@ -1,0 +1,17 @@
+<section>
+  <div class="container">
+    <h1 class="m-4">
+      Les fiches pratiques de MyJSS
+    </h1>
+    <h3>
+      Quelles informations recherchez-vous ?
+    </h3>
+    <div>
+      <div class="w-100">
+        <generic-input [(model)]="practicalSheetsSearched" label="Rechercher" [form]="practicalSheetsForm"
+          propertyName="siretSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+          (onFormChange)="searchPracticalSheet()" [icon]="'search'"></generic-input>
+      </div>
+    </div>
+  </div>
+</section>
