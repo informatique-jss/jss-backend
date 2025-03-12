@@ -9,6 +9,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HttpErrorInterceptor } from '../../httpErrorInterceptor.service';
 import { AppComponent } from './app.component';
 import { ToastComponent } from './libs/toast/toast.component';
+import { CompanyModule } from './modules/company/company/company.module';
 import { GeneralModule } from './modules/general/components/general/general.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from './modules/my-account/components/my-account/my-account.module';
@@ -16,16 +17,11 @@ import { FooterComponent } from './modules/profile/components/footer/footer.comp
 import { SearchComponent } from './modules/profile/components/search/search.component';
 import { TopBarComponent } from './modules/profile/components/top-bar/top-bar.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
-import { AboutUsComponent } from './modules/society/about-us/about-us.component';
-import { SocietyComponent } from './modules/society/society/society.component';
-import { SocietyModule } from './modules/society/society/society.module';
 registerLocaleData(localeFr, 'fr');
 
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'society', component: SocietyComponent },
-  { path: 'society/about-us', component: AboutUsComponent },
 ];
 
 @NgModule({
@@ -49,7 +45,7 @@ const routes: Routes = [
     MiscellaneousModule,
     QuotationModule,
     GeneralModule,
-    SocietyModule,
+    CompanyModule,
   ], providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: HttpErrorInterceptor,

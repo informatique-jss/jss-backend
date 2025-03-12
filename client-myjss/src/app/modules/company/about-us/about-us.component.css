@@ -19,7 +19,7 @@
 }
 
 .bg-yellow-color {
-  background-color: rgba(243, 227, 202) !important;
+  background-color: var(--ar-tertiary) !important;
   background: url('/assets/images/background1.svg') no-repeat center,
     url('/assets/images/background2.svg') no-repeat center;
   background-size: contain, contain;

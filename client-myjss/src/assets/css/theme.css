@@ -105,15 +105,17 @@
   --ar-blue-step: #4B6380;
   --ar-step-active-custom: #F3E3CA;
   --ar-primary: rgba(255, 255, 255, 1);
-  --ar-secondary: #edf1f5;
+  --ar-secondary: #1c2d41;
+  --ar-tertiary: #f3e3ca;
   --ar-success: #4b6380;
   --ar-info: #3f7fca;
   --ar-warning: #edcb50;
   --ar-danger: #ed5050;
   --ar-light: #fff;
   --ar-dark: #121519;
-  --ar-primary-rgb: 68, 140, 116;
-  --ar-secondary-rgb: 237, 241, 245;
+  --ar-primary-rgb: 255, 255, 255;
+  --ar-secondary-rgb: 28, 45, 65;
+  --ar-terciery-rgb: 243, 227, 202;
   --ar-success-rgb: 63, 202, 144;
   --ar-info-rgb: 63, 127, 202;
   --ar-warning-rgb: 237, 203, 80;
@@ -5992,7 +5994,7 @@ textarea.form-control-lg {
 }
 
 .btn-close {
-  --ar-btn-close-color: #000;
+  --ar-btn-close-color: var(--ar-primary);
   --ar-btn-close-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath d='M8 1.2A6.74 6.74 0 0 0 1.2 8 6.74 6.74 0 0 0 8 14.8 6.74 6.74 0 0 0 14.8 8 6.74 6.74 0 0 0 8 1.2zM0 8c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8zm10.6-2.6a.61.61 0 0 1 0 .8L8.8 8l1.9 1.9a.61.61 0 0 1 0 .8.61.61 0 0 1-.8 0L8 8.8l-1.9 1.9a.61.61 0 0 1-.8 0 .61.61 0 0 1 0-.8L7.2 8 5.4 6.1a.61.61 0 0 1 0-.8.61.61 0 0 1 .8 0l1.9 1.9L10 5.3c.1-.1.4-.1.6.1z' fill-rule='evenodd' fill='%23000'/%3e%3c/svg%3e");
   --ar-btn-close-opacity: 0.55;
   --ar-btn-close-hover-opacity: 0.85;
@@ -6118,8 +6120,8 @@ textarea.form-control-lg {
   --ar-modal-padding: 2.375rem;
   --ar-modal-margin: 0.5rem;
   --ar-modal-color: ;
-  --ar-modal-bg: var(--ar-body-bg);
-  --ar-modal-border-color: var(--ar-border-color);
+  --ar-modal-bg: var(--ar-secondary);
+  --ar-modal-border-color: var(--ar-secondary);
   --ar-modal-border-width: var(--ar-border-width);
   --ar-modal-border-radius: var(--ar-border-radius-2xl);
   --ar-modal-box-shadow: none;
@@ -9507,7 +9509,7 @@ textarea.form-control-lg {
 
 .bg-primary {
   --ar-bg-opacity: 1;
-  background-color: rgba(var(--ar-primary-rgb), var(--ar-bg-opacity)) !important;
+  background-color: rgba(var(--ar-terciery-rgb), var(--ar-bg-opacity)) !important;
 }
 
 .bg-secondary {

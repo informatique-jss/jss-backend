@@ -1,11 +1,17 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { jarallax } from 'jarallax';
 import { SwiperContainer } from 'swiper/element';
+// import { register } from 'swiper/element/bundle';
+// register();
 
 @Component({
   selector: 'our-story',
+  standalone: true,
+  imports: [RouterOutlet],
   templateUrl: './our-story.component.html',
-  styleUrls: ['./our-story.component.css']
+  styleUrls: ['./our-story.component.css'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class OurStoryComponent implements OnInit {
 

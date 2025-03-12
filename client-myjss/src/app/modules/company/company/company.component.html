@@ -13,35 +13,35 @@
 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs " role="tablist">
-    <li class="nav-item" *ngFor="let tab of tabs; let i = index">
-      <a class="nav-link" [class.active]="tab.active" (click)="onTabClick(i)">
+    <li class="nav-item" *ngFor="let item of companyItems;">
+      <a class="nav-link" [class.active]="item == selectedTab" (click)="onTabClick(item)" [routerLink]="item.route">
         <i class="fi-home me-2 "></i>
-        {{ tab.name }}
+        {{ item.label }}
       </a>
     </li>
   </ul>
 
   <!-- Content Section -->
   <div class="tab-content">
-    <div *ngIf="tabs[0].active">
+    <div *ngIf="'/company/about-us' == selectedTab.route">
       <div class="tab-pane" id="aboutUs">
         <about-us></about-us>
       </div>
     </div>
-    <div *ngIf="tabs[1].active">
-      <div class="tab-pane" id="ourStory">
-        <our-story></our-story>
-      </div>
+  </div>
+  <div *ngIf="'/company/our-story' == selectedTab.route">
+    <div class="tab-pane" id="ourStory">
+      <our-story></our-story>
     </div>
-    <div *ngIf="tabs[2].active">
-      <div class="tab-pane" id="ourTeams">
+  </div>
+  <div *ngIf="'/company/' == selectedTab.route">
+    <div class="tab-pane" id="ourTeams">
 
-      </div>
     </div>
-    <div *ngIf="tabs[3].active">
-      <div class="tab-pane" id="joinUs">
+  </div>
+  <div *ngIf="'/company/' == selectedTab.route">
+    <div class="tab-pane" id="joinUs">
 
-      </div>
     </div>
   </div>
 </section>
