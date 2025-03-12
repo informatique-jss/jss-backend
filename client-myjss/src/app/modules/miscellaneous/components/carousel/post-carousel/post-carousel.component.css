@@ -1,0 +1,110 @@
+.carousel-container {
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+  width: 100%;
+  flex-wrap: nowrap;
+  cursor: grab;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.card-carousel {
+  flex-shrink: 0;
+  width: 25%;
+  max-height: 400px;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .carousel-container {
+    display: flex;
+    overflow: hidden;
+  }
+
+  .card-carousel {
+    flex: 0 0 100%;
+  }
+}
+
+.card-footer {
+  background: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-img-top {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+
+.pagination-bullets {
+  text-align: center;
+}
+
+.pagination-bullets span {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  background-color: #5c5a70;
+  opacity: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination-bullets span.active {
+  background-color: #fff;
+}
+
+
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.carousel-buttons {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.image-only {
+  width: 100%;
+  height: 100%;
+}
+
+img.card-img-full {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-title-carousel {
+  color: #FFFFFFE5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+
+}
+
+.text-color-post-carousel {
+  color: #FFFFFFB2;
+}
+
+.card-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+}
