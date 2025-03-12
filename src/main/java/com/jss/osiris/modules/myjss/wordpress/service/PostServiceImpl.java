@@ -25,8 +25,8 @@ import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Media;
-import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
@@ -44,7 +44,7 @@ public class PostServiceImpl implements PostService {
     AuthorService authorService;
 
     @Autowired
-    MyJssCategoryService myJssCategoryService;
+    JssCategoryService myJssCategoryService;
 
     @Autowired
     CategoryService categoryService;
@@ -275,11 +275,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) {
+    public List<Post> getPostsByJssCategory(int page, JssCategory jssCategory) {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false, pageableRequest);
+        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
     }
 
     @Override
@@ -336,11 +336,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post getNextPost(Post post) {
-        if (post != null && post.getMyJssCategories() != null && post.getMyJssCategories().size() > 0) {
+        if (post != null && post.getJssCategories() != null && post.getJssCategories().size() > 0) {
             Order order = new Order(Direction.ASC, "date");
             Sort sort = Sort.by(Arrays.asList(order));
             Pageable pageableRequest = PageRequest.of(0, 1, sort);
-            List<Post> posts = postRepository.findNextArticle(post.getMyJssCategories().get(0), post.getDate(),
+            List<Post> posts = postRepository.findNextArticle(post.getJssCategories().get(0), post.getDate(),
                     pageableRequest);
             if (posts != null && posts.size() > 0)
                 return posts.get(0);
@@ -350,11 +350,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post getPreviousPost(Post post) {
-        if (post != null && post.getMyJssCategories() != null && post.getMyJssCategories().size() > 0) {
+        if (post != null && post.getJssCategories() != null && post.getJssCategories().size() > 0) {
             Order order = new Order(Direction.DESC, "date");
             Sort sort = Sort.by(Arrays.asList(order));
             Pageable pageableRequest = PageRequest.of(0, 1, sort);
-            List<Post> posts = postRepository.findPreviousArticle(post.getMyJssCategories().get(0), post.getDate(),
+            List<Post> posts = postRepository.findPreviousArticle(post.getJssCategories().get(0), post.getDate(),
                     pageableRequest);
             if (posts != null && posts.size() > 0)
                 return posts.get(0);
@@ -425,18 +425,18 @@ public class PostServiceImpl implements PostService {
         }
         if (post.getAuthor() != null && post.getAuthor() > 0)
             post.setFullAuthor(authorService.getAuthor(post.getAuthor()));
-        if (post.getMyjss_category() != null && post.getMyjss_category().length > 0) {
-            List<MyJssCategory> categories = new ArrayList<MyJssCategory>();
-            List<MyJssCategory> availableCategories = myJssCategoryService.getAvailableMyJssCategories();
-            for (Integer i : post.getMyjss_category()) {
-                for (MyJssCategory availableCategory : availableCategories) {
+        if (post.getJss_category() != null && post.getJss_category().length > 0) {
+            List<JssCategory> categories = new ArrayList<JssCategory>();
+            List<JssCategory> availableCategories = myJssCategoryService.getAvailableJssCategories();
+            for (Integer i : post.getJss_category()) {
+                for (JssCategory availableCategory : availableCategories) {
                     if (availableCategory.getId().equals(i)) {
                         categories.add(availableCategory);
                         break;
                     }
                 }
             }
-            post.setMyJssCategories(categories);
+            post.setJssCategories(categories);
         }
         if (post.getCategories() != null && post.getCategories().length > 0) {
             List<Category> categories = new ArrayList<Category>();

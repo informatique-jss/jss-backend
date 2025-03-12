@@ -3,9 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { getTimeReading } from '../../../libs/FormatHelper';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
-import { MyJssCategory } from '../../model/MyJssCategory';
+import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
-import { MyJssCategoryService } from '../../services/myjss.category.service';
+import { JssCategoryService } from '../../services/jss.category.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
@@ -17,8 +17,8 @@ export class ArticlesCategoryComponent implements OnInit {
 
   page: number = 0;
   posts: Post[] = [];
-  categories: MyJssCategory[] = [];
-  currentCategory: MyJssCategory | null = null;
+  categories: JssCategory[] = [];
+  currentCategory: JssCategory | null = null;
   slug: string = "";
   displayLoadMoreButton: boolean = true;
 
@@ -26,7 +26,7 @@ export class ArticlesCategoryComponent implements OnInit {
 
   constructor(
     private postService: PostService,
-    private myJssCategoryService: MyJssCategoryService,
+    private jssCategoryService: JssCategoryService,
     private activatedRoute: ActivatedRoute,
     private appService: AppService
   ) { }
@@ -34,7 +34,7 @@ export class ArticlesCategoryComponent implements OnInit {
   ngOnInit() {
     this.slug = this.activatedRoute.snapshot.params['slug'];
     if (this.slug && this.slug.length > 0)
-      this.myJssCategoryService.getAvailableMyJssCategories().subscribe(categories => {
+      this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
         if (categories && categories.length > 0) {
           this.categories = categories;
           for (let category of this.categories) {
@@ -54,7 +54,7 @@ export class ArticlesCategoryComponent implements OnInit {
     this.fetchNextPosts();
   }
 
-  openCategoryPosts(category: MyJssCategory, event: any) {
+  openCategoryPosts(category: JssCategory, event: any) {
     this.appService.openRoute(event, "category/" + category.slug, undefined);
   }
 
@@ -68,7 +68,7 @@ export class ArticlesCategoryComponent implements OnInit {
 
   fetchNextPosts() {
     if (this.currentCategory)
-      this.postService.getTopPostByMyJssCategory(this.page, this.currentCategory).subscribe(posts => {
+      this.postService.getTopPostByJssCategory(this.page, this.currentCategory).subscribe(posts => {
         if (posts && posts.length > 0) {
           this.posts.push(...posts);
         } else {

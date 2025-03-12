@@ -5,7 +5,7 @@ import { MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { getTimeReading } from '../../../libs/FormatHelper';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
-import { MyJssCategory } from '../../model/MyJssCategory';
+import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
 import { PostService } from '../../services/post.service';
@@ -91,7 +91,7 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.appService.openRoute(event, "author/" + author.slug, undefined);
   }
 
-  openCategoryPosts(category: MyJssCategory, event: any) {
+  openCategoryPosts(category: JssCategory, event: any) {
     this.appService.openRoute(event, "category/" + category.slug, undefined);
   }
 

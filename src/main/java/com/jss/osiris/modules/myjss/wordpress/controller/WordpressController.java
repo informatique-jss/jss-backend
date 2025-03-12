@@ -22,7 +22,7 @@ import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
-import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Page;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
@@ -30,7 +30,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
-import com.jss.osiris.modules.myjss.wordpress.service.MyJssCategoryService;
+import com.jss.osiris.modules.myjss.wordpress.service.JssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.PageService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
@@ -57,7 +57,7 @@ public class WordpressController {
 	PublishingDepartmentService publishingDepartmentService;
 
 	@Autowired
-	MyJssCategoryService myJssCategoryService;
+	JssCategoryService jssCategoryService;
 
 	@Autowired
 	CategoryService categoryService;
@@ -103,9 +103,9 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/myjss-categories")
-	public ResponseEntity<List<MyJssCategory>> getAvailableMyJssCategories() {
-		return new ResponseEntity<List<MyJssCategory>>(myJssCategoryService.getAvailableMyJssCategories(),
+	@GetMapping(inputEntryPoint + "/jss-categories")
+	public ResponseEntity<List<JssCategory>> getAvailableJssCategories() {
+		return new ResponseEntity<List<JssCategory>>(jssCategoryService.getAvailableJssCategories(),
 				HttpStatus.OK);
 	}
 
@@ -163,14 +163,14 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
+	@GetMapping(inputEntryPoint + "/posts/top/jss-category")
 	public ResponseEntity<List<Post>> getTopPostByCategory(@RequestParam Integer page,
 			@RequestParam Integer categoryId) {
-		MyJssCategory category = myJssCategoryService.getMyJssCategory(categoryId);
+		JssCategory category = jssCategoryService.getJssCategory(categoryId);
 		if (category == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
 		return new ResponseEntity<List<Post>>(
-				postService.applyPremium(postService.getPostsByMyJssCategory(page, category)), HttpStatus.OK);
+				postService.applyPremium(postService.getPostsByJssCategory(page, category)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/tag")

@@ -7,21 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
-import com.jss.osiris.modules.myjss.wordpress.repository.MyJssCategoryRepository;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
+import com.jss.osiris.modules.myjss.wordpress.repository.JssCategoryRepository;
 
 @Service
-public class MyJssCategoryServiceImpl implements MyJssCategoryService {
+public class JssCategoryServiceImpl implements JssCategoryService {
 
     @Autowired
     MediaService mediaService;
 
     @Autowired
-    MyJssCategoryRepository myJssCategoryRepository;
+    JssCategoryRepository jssCategoryRepository;
 
     @Override
-    public MyJssCategory getMyJssCategory(Integer id) {
-        Optional<MyJssCategory> category = myJssCategoryRepository.findById(id);
+    public JssCategory getJssCategory(Integer id) {
+        Optional<JssCategory> category = jssCategoryRepository.findById(id);
         if (category.isPresent())
             return category.get();
         return null;
@@ -29,18 +29,18 @@ public class MyJssCategoryServiceImpl implements MyJssCategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MyJssCategory addOrUpdateMyJssCategory(MyJssCategory category) {
+    public JssCategory addOrUpdateJssCategory(JssCategory category) {
         if (category.getAcf() != null) {
             category.setColor(category.getAcf().getColor());
             if (category.getAcf().getPicture() != null)
                 category.setPicture(mediaService.getMedia(category.getAcf().getPicture()));
             category.setCategoryOrder(category.getAcf().getOrdre());
         }
-        return myJssCategoryRepository.save(category);
+        return jssCategoryRepository.save(category);
     }
 
     @Override
-    public List<MyJssCategory> getAvailableMyJssCategories() {
-        return myJssCategoryRepository.findAllByOrderByName();
+    public List<JssCategory> getAvailableJssCategories() {
+        return jssCategoryRepository.findAllByOrderByName();
     }
 }

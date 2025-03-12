@@ -1,6 +1,6 @@
 import { Media } from "./Media";
 
-export interface MyJssCategory {
+export interface JssCategory {
   id: number;
   name: string;
   slug: string;

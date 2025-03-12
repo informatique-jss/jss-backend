@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 
 @Entity
-public class MyJssCategory {
+public class JssCategory {
     @Id
     private Integer id;
     @IndexedField
