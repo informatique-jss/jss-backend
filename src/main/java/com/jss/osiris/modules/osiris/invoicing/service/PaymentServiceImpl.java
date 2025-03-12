@@ -966,7 +966,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, BigDecimal paymentAmount,
-            Provider providerToPay)
+            Provider providerToPay, Responsable responsableToPay)
             throws OsirisException {
         Payment newPayment = new Payment();
         newPayment.setIsAppoint(false);
@@ -980,7 +980,10 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setBankTransfert(bankTransfert);
         newPayment.setPaymentType(constantService.getPaymentTypeVirement());
         newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
-        newPayment.setTargetAccountingAccount(providerToPay.getAccountingAccountProvider());
+        if (responsableToPay != null)
+            newPayment.setTargetAccountingAccount(responsableToPay.getTiers().getAccountingAccountCustomer());
+        else
+            newPayment.setTargetAccountingAccount(providerToPay.getAccountingAccountProvider());
 
         return addOrUpdatePayment(newPayment);
     }
