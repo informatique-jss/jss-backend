@@ -102,6 +102,8 @@
   --ar-gray-700: #576071;
   --ar-gray-800: #434a57;
   --ar-gray-900: #121519;
+  --ar-blue-step: #4B6380;
+  --ar-step-active-custom: #F3E3CA;
   --ar-primary: rgba(255, 255, 255, 1);
   --ar-secondary: #edf1f5;
   --ar-success: #4b6380;
@@ -18686,7 +18688,6 @@ a.badge {
 
 .jarallax .jarallax-img {
   position: absolute;
-  top: 0;
   left: 0;
   z-index: -1;
   width: 100%;
@@ -19332,7 +19333,7 @@ tr.event-custom-style {
   width: var(--ar-steps-number-inner-size);
   height: var(--ar-steps-number-inner-size);
   color: var(--ar-steps-number-color);
-  background-color: var(--ar-steps-number-inner-bg);
+  background-color: var(--ar-blue-step);
   border-radius: var(--ar-steps-number-border-radius);
   transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
   font-size: var(--ar-steps-number-font-size);
@@ -19352,7 +19353,7 @@ tr.event-custom-style {
 .steps-hoverable .step:hover .step-number-inner,
 .step.active .step-number-inner {
   color: var(--ar-steps-active-number-color);
-  background-color: var(--ar-steps-active-number-inner-bg);
+  background-color: var(--ar-step-active-custom);
 }
 
 .steps-no-connector .step::before, .steps-no-connector .step::after {
@@ -20133,6 +20134,55 @@ img-comparison-slider:focus {
 
 .blinking {
   animation: blinking 1s infinite;
+}
+
+.jarallax {
+  height: 400px;
+}
+
+.checkbox-custom {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+
+.checkbox-custom {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.bg-yellow-custom img {
+  position: absolute;
+  top: 50%;
+  right: 200px;
+  transform: translateY(-50%);
+  max-height: 100%;
+  z-index: 0;
+}
+
+.bg-yellow-custom {
+  background-color: rgba(243, 227, 202) !important;
+  background: url('/assets/images/background1.svg') no-repeat left center,
+    url('/assets/images/background2.svg') no-repeat right center;
+  background-size: cover, cover;
+  background-position: left center, right center;
+}
+
+.bg-yellow-custom::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/assets/images/background1.svg') no-repeat left center,
+    url('/assets/images/background2.svg') no-repeat right center;
+  background-size: cover, cover;
+  background-position: left center, right center;
+  filter: brightness(0.2);
+  z-index: -1;
 }
 
 /*# sourceMappingURL=theme.css.map */
