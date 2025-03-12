@@ -277,9 +277,16 @@ public class BankTransfertServiceImpl implements BankTransfertService {
                     if (completeTransfert.getInvoices() != null && completeTransfert.getInvoices().size() == 1) {
                         completeTransfert.setPayments(new ArrayList<Payment>());
 
-                        Payment payment = paymentService.generateNewBankTransfertPayment(
-                                completeTransfert, completeTransfert.getTransfertAmount().negate(),
-                                completeTransfert.getInvoices().get(0).getProvider());
+                        Payment payment;
+                        if (completeTransfert.getInvoices().get(0).getRff() != null)
+                            payment = paymentService.generateNewBankTransfertPayment(
+                                    completeTransfert, completeTransfert.getTransfertAmount().negate(), null,
+                                    completeTransfert.getInvoices().get(0).getRff().getResponsable());
+                        else
+                            payment = paymentService.generateNewBankTransfertPayment(
+                                    completeTransfert, completeTransfert.getTransfertAmount().negate(),
+                                    completeTransfert.getInvoices().get(0).getProvider(), null);
+
                         completeTransfert.getPayments().add(payment);
                         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment,
                                 false);
