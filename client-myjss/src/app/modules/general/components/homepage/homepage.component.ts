@@ -7,13 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomepageComponent implements OnInit {
 
-  annoncesLegalesPicto: string = "assets/pictos/Annonces.svg"
-  formalitesPicto: string = "assets/pictos/Formalités.svg"
-  apostilleLegaPicto: string = "assets/pictos/Apostille&Légalisation.svg"
-  domiciliationPicto: string = "assets/pictos/Domiciliation.svg"
-  fournitureDocumentsPicto: string = "assets/pictos/Fourniture-documents.svg"
-  logoJss: string = '/assets/images/white-logo.svg';
-  videoParis: string = 'assets/videos/paris-home-video.webm'
+  alPictogram: string = "assets/pictograms/AL.svg";
+  formalityPictogram: string = "assets/pictograms/Formalities.svg";
+  apostilePictogram: string = "assets/pictograms/Apostile.svg";
+  domiciliationPictogram: string = "assets/pictograms/Domiciliation.svg";
+  documentsProvidingPictogram: string = "assets/pictograms/Documents-providing.svg";
+  logoJss: string = 'assets/images/white-logo.svg';
+  videoParis: string = 'assets/videos/paris-home-video.webm';
 
   constructor() { }
 

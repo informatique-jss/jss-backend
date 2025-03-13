@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { HomepageComponent } from '../homepage/homepage.component';
+import { OurClientsComponent } from '../our-clients/our-clients.component';
 import { GeneralComponent } from './general.component';
 
 const routes: Routes = [
@@ -22,7 +23,8 @@ const routes: Routes = [
     ReactiveFormsModule,
   ],
   declarations: [GeneralComponent,
-    HomepageComponent
+    HomepageComponent,
+    OurClientsComponent
   ]
 })
 export class GeneralModule { }
