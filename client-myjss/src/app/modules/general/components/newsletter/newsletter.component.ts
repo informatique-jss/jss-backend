@@ -4,7 +4,7 @@ import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { CommunicationPreferencesService } from '../../../my-account/services/communication.preference.service';
 
 @Component({
-  selector: 'app-newsletter',
+  selector: 'newsletter',
   templateUrl: './newsletter.component.html',
   styleUrls: ['./newsletter.component.css']
 })
@@ -33,13 +33,6 @@ export class NewsletterComponent implements OnInit {
       return;
     }
 
-    this.communicationPreferencesService.subscribeToCorporateNewsletter(mailToRegister).subscribe(response => {
-      if (response) {
-        this.mail = '';
-        this.appService.displayToast("Bienvenue ! Vous recevrez bientôt notre newsletter avec l\’essentiel de l\’actualité chaque semaine.", false, "Inscription confirmée !", 3000);
-      } else {
-        this.appService.displayToast("Inscription à la newsletter impossible, merci de réessayer plus tard.", true, "Erreur !", 3000);
-      }
-    })
+    this.communicationPreferencesService.subscribeToCorporateNewsletter(mailToRegister).subscribe();
   }
 }

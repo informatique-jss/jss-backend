@@ -1,7 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AppService } from '../../../../libs/app.service';
-import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { CommunicationPreference } from '../../model/CommunicationPreference';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
@@ -16,7 +15,6 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
 
   @Input() mail: string | undefined;
   @Input() validationToken: string | null = null;
-  currentUser: Responsable | undefined;
 
   communicationPreference: CommunicationPreference = {} as CommunicationPreference;
 
@@ -33,7 +31,6 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
   ngOnInit() {
     if (!this.mail) {
       this.loginService.getCurrentUser().subscribe((user) => {
-        this.currentUser = user;
         this.mail = user.mail.mail;
         this.loadPreferenceByMail(this.mail);
       })
@@ -42,7 +39,7 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
     }
   }
 
-  private loadPreferenceByMail(mail: string) {
+  loadPreferenceByMail(mail: string) {
     this.communicationPreferenceService.getCommunicationPreferenceByMail(mail, this.validationToken).subscribe((preferences) => {
       this.communicationPreference = preferences;
     });

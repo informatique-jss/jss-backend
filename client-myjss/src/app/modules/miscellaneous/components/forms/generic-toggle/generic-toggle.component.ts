@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { AppService } from '../../../../../libs/app.service';
-import { CommunicationPreference } from '../../../../my-account/model/CommunicationPreference';
-import { Responsable } from '../../../../profile/model/Responsable';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
@@ -28,12 +26,10 @@ export class GenericToggleComponent extends GenericFormComponent implements OnIn
   */
   @Output() onToggleChange: EventEmitter<Boolean> = new EventEmitter();
 
-  currentUser: Responsable | undefined;
-
-  communicationPreference: CommunicationPreference = {} as CommunicationPreference;
-
   constructor(
-    private formBuilder3: UntypedFormBuilder, private appService2: AppService) {
+    private formBuilder3: UntypedFormBuilder,
+    private appService2: AppService
+  ) {
     super(formBuilder3);
   }
 

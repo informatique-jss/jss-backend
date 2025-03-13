@@ -37,7 +37,7 @@ public class CommunicationPreferenceServiceImpl implements CommunicationPreferen
 
         if (communicationPreference == null) {
             Mail mail = new Mail();
-            mail.setMail(mailString);
+            mail.setMail(mailString.trim().toLowerCase());
             Mail communicationPreferenceMail = mailService.populateMailId(mail);
 
             communicationPreference = new CommunicationPreference();

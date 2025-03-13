@@ -6,5 +6,4 @@ export interface CommunicationPreference {
     mail: Mail;
     isSubscribedToNewspaperNewletter: boolean;
     isSubscribedToCorporateNewsletter: boolean;
-    validationToken: string;
 }
