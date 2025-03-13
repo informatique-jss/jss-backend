@@ -653,9 +653,9 @@ public class PaymentServiceImpl implements PaymentService {
 
                 } else if (correspondingInvoices.get(i).getInvoiceStatus().getId()
                         .equals(constantService.getInvoiceStatusCreditNoteReceived().getId())) {
-                    if (invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i))
-                            .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN) != payment
-                                    .getPaymentAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN))
+                    if (!invoiceService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i))
+                            .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).equals(payment
+                                    .getPaymentAmount().multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)))
                         throw new OsirisException(null,
                                 "Wrong amount to pay on invoice " + correspondingInvoices.get(i).getId()
                                         + " and payment bank id " + payment.getBankId() + " " + payment.getId());
@@ -966,7 +966,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, BigDecimal paymentAmount,
-            Provider providerToPay)
+            Provider providerToPay, Responsable responsableToPay)
             throws OsirisException {
         Payment newPayment = new Payment();
         newPayment.setIsAppoint(false);
@@ -980,7 +980,10 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setBankTransfert(bankTransfert);
         newPayment.setPaymentType(constantService.getPaymentTypeVirement());
         newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
-        newPayment.setTargetAccountingAccount(providerToPay.getAccountingAccountProvider());
+        if (responsableToPay != null)
+            newPayment.setTargetAccountingAccount(responsableToPay.getTiers().getAccountingAccountCustomer());
+        else
+            newPayment.setTargetAccountingAccount(providerToPay.getAccountingAccountProvider());
 
         return addOrUpdatePayment(newPayment);
     }

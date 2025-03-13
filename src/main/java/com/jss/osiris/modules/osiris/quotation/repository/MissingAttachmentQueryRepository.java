@@ -26,7 +26,7 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
                         " 			ma.id, " +
                         " 			sum(1) over(partition by s.id " +
                         " 		order by " +
-                        " 			ma.created_date_time desc) as n " +
+                        " 			ma.created_date_time desc, p.id) as n " +
                         " 		from " +
                         " 			missing_attachment_query ma " +
                         " 		join service s on " +

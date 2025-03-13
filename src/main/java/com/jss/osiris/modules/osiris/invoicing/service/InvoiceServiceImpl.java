@@ -177,19 +177,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Defined billing label
         // If it's a credit note, no need, label is taken from invoice clone
-        if (invoice.getResponsable() != null && !invoice.getIsCreditNote()
+        if (invoice.getRff() == null && invoice.getResponsable() != null && !invoice.getIsCreditNote()
                 && (invoice.getBillingLabelType() == null || !constantService.getBillingLabelTypeOther().getId()
                         .equals(invoice.getBillingLabelType().getId()))) {
             Document billingDocument = null;
 
-            if (invoice.getRff() != null) {
-                if (invoice.getRff().getTiers() != null) {
-                    billingDocument = documentService.getBillingDocument(invoice.getRff().getTiers().getDocuments());
-                } else {
-                    billingDocument = documentService
-                            .getBillingDocument(invoice.getRff().getResponsable().getDocuments());
-                }
-            } else if (invoice.getCustomerOrder() != null)
+            if (invoice.getCustomerOrder() != null)
                 billingDocument = documentService.getBillingDocument(invoice.getCustomerOrder().getDocuments());
             else
                 billingDocument = documentService.getBillingDocument(invoice.getResponsable().getDocuments());
@@ -205,7 +198,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Define status
         if (invoice.getProvider() != null && invoice.getIsCreditNote())
             invoice.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
-        else if (invoice.getProvider() != null)
+        else if (invoice.getProvider() != null || invoice.getRff() != null)
             invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
         else if (invoice.getInvoiceStatus() == null)
             invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
