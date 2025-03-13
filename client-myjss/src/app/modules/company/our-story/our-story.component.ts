@@ -2,8 +2,6 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from
 import { RouterOutlet } from '@angular/router';
 import { jarallax } from 'jarallax';
 import { SwiperContainer } from 'swiper/element';
-// import { register } from 'swiper/element/bundle';
-// register();
 
 @Component({
   selector: 'our-story',
