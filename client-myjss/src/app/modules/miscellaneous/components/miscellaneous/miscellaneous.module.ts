@@ -7,6 +7,7 @@ import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
+import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
@@ -28,7 +29,8 @@ const routes: Routes = [
     GenericInputComponent,
     SingleUploadComponent,
     TrustHtmlPipe,
-    GenericTextareaComponent
+    GenericTextareaComponent,
+    GenericToggleComponent,
   ],
   exports: [
     AvatarComponent,
@@ -36,6 +38,7 @@ const routes: Routes = [
     SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
+    GenericToggleComponent,
   ]
 })
 export class MiscellaneousModule { }

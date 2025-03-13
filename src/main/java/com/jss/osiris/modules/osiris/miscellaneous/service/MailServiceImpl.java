@@ -50,7 +50,7 @@ public class MailServiceImpl implements MailService {
         if (mail != null)
             if (mail.getId() == null) {
                 List<Mail> existingMails = findMails(mail.getMail());
-                if (existingMails != null && existingMails.size() == 1) {
+                if (existingMails != null && existingMails.size() >= 1) {
                     mail.setId(existingMails.get(0).getId());
                 }
                 mailRepository.save(mail);

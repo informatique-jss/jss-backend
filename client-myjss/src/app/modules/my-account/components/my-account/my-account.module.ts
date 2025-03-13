@@ -7,8 +7,10 @@ import { MiscellaneousModule } from '../../../miscellaneous/components/miscellan
 import { AccountMenuComponent } from '../account-menu/account-menu.component';
 import { AffairesComponent } from '../affaires/affaires.component';
 import { BillingClosureComponent } from '../billing-closure/billing-closure.component';
+import { CommunicationPreferenceComponent } from '../communication-preference/communication-preference.component';
 import { EditAddressComponent } from '../edit-address/edit-address.component';
 import { EditAffaireComponent } from '../edit-affaire/edit-affaire.component';
+import { EmailCommunicationPreferenceComponent } from '../email-communication-preference/email-communication-preference.component';
 import { OrderDetailsComponent } from '../order-details/order-details.component';
 import { OrdersComponent } from '../orders/orders.component';
 import { OverviewComponent } from '../overview/overview.component';
@@ -29,6 +31,7 @@ const routes: Routes = [
       { path: 'overview', component: OverviewComponent },
       { path: 'scope', component: ScopeComponent },
       { path: 'closure', component: BillingClosureComponent },
+      { path: 'communication-preference', component: CommunicationPreferenceComponent },
       { path: 'quotations', component: QuotationsComponent },
       { path: 'orders', component: OrdersComponent },
       { path: 'orders/details/:id', component: OrderDetailsComponent },
@@ -47,7 +50,8 @@ const routes: Routes = [
   },
   { path: 'account/signin', component: SignInComponent },
   { path: 'account/signout', component: SignOutComponent },
-  { path: 'profile/login', component: OverviewComponent }
+  { path: 'profile/login', component: OverviewComponent },
+  { path: 'email-unsubscribe/:mail/:validationToken', component: EmailCommunicationPreferenceComponent },
 ];
 
 @NgModule({
@@ -76,6 +80,8 @@ const routes: Routes = [
     PayQuotationComponent,
     BillingClosureComponent,
     UserSettingsComponent,
+    CommunicationPreferenceComponent,
+    EmailCommunicationPreferenceComponent,
   ]
 })
 export class MyAccountModule { }
