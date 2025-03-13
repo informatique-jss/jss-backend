@@ -20,6 +20,7 @@ import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -84,7 +85,7 @@ public class MyJssCrmController {
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-newspaper-newsletter")
     public ResponseEntity<Boolean> subscribeToNewspaperNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
+            HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.subscribeToNewspaperNewsletter(userMail);
@@ -108,8 +109,16 @@ public class MyJssCrmController {
             @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
 
-        if (employeeService.getCurrentMyJssUser() == null && (validationToken == null || validationToken.equals("")))
+        if (validationToken == "null")
+            validationToken = null;
+
+        Responsable responsable = employeeService.getCurrentMyJssUser();
+
+        if (responsable == null && (validationToken == null || validationToken.equals("")))
             throw new OsirisValidationException("validationToken");
+
+        if (responsable != null)
+            userMail = responsable.getMail().getMail();
 
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.unsubscribeToNewspaperNewsletter(userMail, validationToken);
@@ -130,7 +139,7 @@ public class MyJssCrmController {
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-corporate-newsletter")
     public ResponseEntity<Boolean> subscribeToCorporateNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
+            HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.subscribeToCorporateNewsletter(userMail);
@@ -154,8 +163,16 @@ public class MyJssCrmController {
             @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
 
-        if (employeeService.getCurrentMyJssUser() == null && (validationToken == null || validationToken.equals("")))
+        if (validationToken == "null")
+            validationToken = null;
+
+        Responsable responsable = employeeService.getCurrentMyJssUser();
+
+        if (responsable == null && (validationToken == null || validationToken.equals("")))
             throw new OsirisValidationException("validationToken");
+
+        if (responsable != null)
+            userMail = responsable.getMail().getMail();
 
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.unsubscribeToCorporateNewsletter(userMail, validationToken);

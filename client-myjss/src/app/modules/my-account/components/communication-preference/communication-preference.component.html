@@ -30,13 +30,13 @@
                 <!-- Toggle for "Newsletter du journal JSS" -->
                 <generic-toggle [(model)]="communicationPreference.isSubscribedToNewspaperNewletter"
                   label="Recevoir la newsletter du journal JSS" [form]="communicationPreferenceForm"
-                  (onToggleChange)="toggleNewspaperNewsletter()" propertyName="isSubscribedToNewspaperNewletter">
+                  (click)="toggleNewspaperNewsletter()" propertyName="isSubscribedToNewspaperNewletter">
                 </generic-toggle>
 
                 <!-- Toggle for "Newsletter marketing de MyJSS" -->
                 <generic-toggle [(model)]="communicationPreference.isSubscribedToCorporateNewsletter"
                   label="Newsletter marketing de MyJSS" [form]="communicationPreferenceForm"
-                  (onToggleChange)="toggleCorporateNewsletter()" propertyName="isSubscribedToCorporateNewsletter">
+                  (click)="toggleCorporateNewsletter()" propertyName="isSubscribedToCorporateNewsletter">
                 </generic-toggle>
               </form>
             </div>

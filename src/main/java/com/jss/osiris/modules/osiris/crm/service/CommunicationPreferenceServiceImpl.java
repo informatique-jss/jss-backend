@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.crm.service;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +44,7 @@ public class CommunicationPreferenceServiceImpl implements CommunicationPreferen
             communicationPreference.setMail(communicationPreferenceMail);
             communicationPreference.setIsSubscribedToCorporateNewsletter(false);
             communicationPreference.setIsSubscribedToNewspaperNewletter(false);
+            communicationPreference.setValidationToken(UUID.randomUUID().toString());
             communicationPreferenceRepository.save(communicationPreference);
         }
         return communicationPreference;

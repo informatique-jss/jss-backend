@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { AppService } from 'src/app/services/app.service';
 import { Responsable } from '../../../tiers/model/Responsable';
 import { CommunicationPreference } from '../../model/CommunicationPreference';
 import { CommunicationPreferenceService } from '../../services/communication.preference.service';
@@ -19,7 +20,8 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
   constructor(
     private communicationPreferenceService: CommunicationPreferenceService,
     private formBuilder: FormBuilder,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private appService: AppService
   ) { }
 
   communicationPreferenceForm = this.formBuilder.group({});
@@ -39,16 +41,20 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
   toggleNewspaperNewsletter() {
     if (this.communicationPreference.isSubscribedToNewspaperNewletter) {
       this.communicationPreferenceService.subscribeToNewspaperNewsletter(this.responsable!.mail.mail).subscribe();
+      this.appService.displaySnackBar("Préférences de communication mises à jours.", false, 2000);
     } else {
       this.communicationPreferenceService.unsubscribeToNewspaperNewsletter(this.responsable!.mail.mail).subscribe();
+      this.appService.displaySnackBar("Préférences de communication mises à jours.", false, 2000);
     }
   }
 
   toggleCorporateNewsletter() {
     if (this.communicationPreference.isSubscribedToCorporateNewsletter) {
       this.communicationPreferenceService.subscribeToCorporateNewsletter(this.responsable!.mail.mail).subscribe();
+      this.appService.displaySnackBar("Préférences de communication mises à jours.", false, 2000);
     } else {
       this.communicationPreferenceService.unsubscribeToCorporateNewsletter(this.responsable!.mail.mail).subscribe();
+      this.appService.displaySnackBar("Préférences de communication mises à jours.", false, 2000);
     }
   }
 }
