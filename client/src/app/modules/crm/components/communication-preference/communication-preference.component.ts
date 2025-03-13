@@ -41,20 +41,16 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
   toggleNewspaperNewsletter() {
     if (this.communicationPreference.isSubscribedToNewspaperNewletter) {
       this.communicationPreferenceService.subscribeToNewspaperNewsletter(this.responsable!.mail.mail).subscribe();
-      this.appService.displaySnackBar("Préférences de communication mises à jours.", false, 2000);
     } else {
       this.communicationPreferenceService.unsubscribeToNewspaperNewsletter(this.responsable!.mail.mail).subscribe();
-      this.appService.displaySnackBar("Préférences de communication mises à jours.", false, 2000);
     }
   }
 
   toggleCorporateNewsletter() {
     if (this.communicationPreference.isSubscribedToCorporateNewsletter) {
       this.communicationPreferenceService.subscribeToCorporateNewsletter(this.responsable!.mail.mail).subscribe();
-      this.appService.displaySnackBar("Préférences de communication mises à jours.", false, 2000);
     } else {
       this.communicationPreferenceService.unsubscribeToCorporateNewsletter(this.responsable!.mail.mail).subscribe();
-      this.appService.displaySnackBar("Préférences de communication mises à jours.", false, 2000);
     }
   }
 }

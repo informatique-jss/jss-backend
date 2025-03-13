@@ -12,16 +12,11 @@ export class EmailCommunicationPreferenceComponent implements OnInit {
   validationToken: string = '';
 
   constructor(
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      if (params.get("mail"))
-        this.urlMail = params.get("mail")!;
-      if (params.get("validationToken"))
-        this.urlMail = params.get("validationToken")!;
-    });
+    this.urlMail = this.activatedRoute.snapshot.params["mail"];
+    this.validationToken = this.activatedRoute.snapshot.params["validationToken"];
   }
-
 }

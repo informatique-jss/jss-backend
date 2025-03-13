@@ -64,6 +64,9 @@ public class MyJssCrmController {
         if (employeeService.getCurrentMyJssUser() == null && (validationToken == null || validationToken.equals("")))
             throw new OsirisValidationException("validationToken");
 
+        if (validationToken.equals("null"))
+            validationToken = null;
+
         if (validationHelper.validateMail(userMail)) {
             CommunicationPreference communicationPreference = communicationPreferenceService
                     .getCommunicationPreferenceByMail(userMail, validationToken);
@@ -109,7 +112,7 @@ public class MyJssCrmController {
             @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
 
-        if (validationToken == "null")
+        if (validationToken.equals("null"))
             validationToken = null;
 
         Responsable responsable = employeeService.getCurrentMyJssUser();
@@ -163,7 +166,7 @@ public class MyJssCrmController {
             @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
 
-        if (validationToken == "null")
+        if (validationToken.equals("null"))
             validationToken = null;
 
         Responsable responsable = employeeService.getCurrentMyJssUser();
