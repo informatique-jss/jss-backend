@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
@@ -29,11 +30,12 @@ public class CrmController {
 
         @JsonView(JacksonViews.MyJssView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
-        public ResponseEntity<CommunicationPreference> getCommunicationPreferenceByMail(@RequestParam String userMail) {
+        public ResponseEntity<CommunicationPreference> getCommunicationPreferenceByMail(@RequestParam String userMail)
+                        throws OsirisValidationException {
 
                 if (validationHelper.validateMail(userMail)) {
                         CommunicationPreference communicationPreference = communicationPreferenceService
-                                        .getCommunicationPreferenceByMail(userMail);
+                                        .getCommunicationPreferenceByMail(userMail, null);
 
                         return new ResponseEntity<CommunicationPreference>(communicationPreference, HttpStatus.OK);
 
@@ -77,7 +79,7 @@ public class CrmController {
         public ResponseEntity<Boolean> unsubscribeToNewspaperNewsletter(@RequestParam String userMail)
                         throws OsirisException {
                 if (validationHelper.validateMail(userMail)) {
-                        communicationPreferenceService.unsubscribeToNewspaperNewsletter(userMail);
+                        communicationPreferenceService.unsubscribeToNewspaperNewsletter(userMail, null);
                         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
                 } else {
                         return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
@@ -117,7 +119,7 @@ public class CrmController {
         public ResponseEntity<Boolean> unsubscribeToCorporateNewsletter(@RequestParam String userMail)
                         throws OsirisException {
                 if (validationHelper.validateMail(userMail)) {
-                        communicationPreferenceService.unsubscribeToCorporateNewsletter(userMail);
+                        communicationPreferenceService.unsubscribeToCorporateNewsletter(userMail, null);
                         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
                 } else {
                         return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);

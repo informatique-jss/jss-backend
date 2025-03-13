@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ValidationHelper;
-import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -33,6 +33,9 @@ public class MyJssCrmController {
 
     @Autowired
     private ValidationHelper validationHelper;
+
+    @Autowired
+    EmployeeService employeeService;
 
     private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
     private final long rateLimit = 1000;
@@ -57,13 +60,14 @@ public class MyJssCrmController {
     public ResponseEntity<CommunicationPreference> getCommunicationPreferenceByMail(@RequestParam String userMail,
             @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
-        if (validationHelper.validateMail(userMail)) {
+        if (employeeService.getCurrentMyJssUser() == null && (validationToken == null || validationToken.equals("")))
+            throw new OsirisValidationException("validationToken");
 
+        if (validationHelper.validateMail(userMail)) {
             CommunicationPreference communicationPreference = communicationPreferenceService
                     .getCommunicationPreferenceByMail(userMail, validationToken);
 
             return new ResponseEntity<CommunicationPreference>(communicationPreference, HttpStatus.OK);
-
         } else {
             return new ResponseEntity<CommunicationPreference>(null, new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
@@ -75,12 +79,12 @@ public class MyJssCrmController {
      * 
      * @param email
      * @return
-     * @throws OsirisException
+     * @throws OsirisValidationException
      */
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-newspaper-newsletter")
     public ResponseEntity<Boolean> subscribeToNewspaperNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken, HttpServletRequest request) throws OsirisException {
+            @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.subscribeToNewspaperNewsletter(userMail);
@@ -96,15 +100,19 @@ public class MyJssCrmController {
      * 
      * @param email
      * @return
-     * @throws OsirisException
+     * @throws OsirisValidationException
      */
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/unsubscribe-to-newspaper-newsletter")
     public ResponseEntity<Boolean> unsubscribeToNewspaperNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken, HttpServletRequest request) throws OsirisException {
+            @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
+
+        if (employeeService.getCurrentMyJssUser() == null && (validationToken == null || validationToken.equals("")))
+            throw new OsirisValidationException("validationToken");
+
         if (validationHelper.validateMail(userMail)) {
-            communicationPreferenceService.unsubscribeToNewspaperNewsletter(userMail);
+            communicationPreferenceService.unsubscribeToNewspaperNewsletter(userMail, validationToken);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
         } else {
             return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
@@ -117,12 +125,12 @@ public class MyJssCrmController {
      * 
      * @param email
      * @return
-     * @throws OsirisException
+     * @throws OsirisValidationException
      */
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-corporate-newsletter")
     public ResponseEntity<Boolean> subscribeToCorporateNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken, HttpServletRequest request) throws OsirisException {
+            @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
         if (validationHelper.validateMail(userMail)) {
             communicationPreferenceService.subscribeToCorporateNewsletter(userMail);
@@ -138,15 +146,19 @@ public class MyJssCrmController {
      * 
      * @param email
      * @return
-     * @throws OsirisException
+     * @throws OsirisValidationException
      */
     @JsonView(JacksonViews.MyJssView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/unsubscribe-to-corporate-newsletter")
     public ResponseEntity<Boolean> unsubscribeToCorporateNewsletter(@RequestParam String userMail,
-            @RequestParam String validationToken, HttpServletRequest request) throws OsirisException {
+            @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
         detectFlood(request);
+
+        if (employeeService.getCurrentMyJssUser() == null && (validationToken == null || validationToken.equals("")))
+            throw new OsirisValidationException("validationToken");
+
         if (validationHelper.validateMail(userMail)) {
-            communicationPreferenceService.unsubscribeToCorporateNewsletter(userMail);
+            communicationPreferenceService.unsubscribeToCorporateNewsletter(userMail, validationToken);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
         } else {
             return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);

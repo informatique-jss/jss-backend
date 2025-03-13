@@ -13,16 +13,16 @@ export class CommunicationPreferencesService extends AppRestService<Communicatio
   }
 
 
-  getCommunicationPreferenceByMail(mail: string) {
-    return this.get(new HttpParams().set("userMail", mail), "communication-preferences/communication-preference");
+  getCommunicationPreferenceByMail(mail: string, validationToken: string | null) {
+    return this.get(new HttpParams().set("userMail", mail).set("validationToken", validationToken ? validationToken : "null"), "communication-preferences/communication-preference");
   }
 
   subscribeToNewspaperNewsletter(mail: string) {
     return this.get(new HttpParams().set("userMail", mail), "communication-preferences/subscribe-to-newspaper-newsletter");
   }
 
-  unsubscribeToNewspaperNewsletter(mail: string) {
-    return this.get(new HttpParams().set("userMail", mail), "communication-preferences/unsubscribe-to-newspaper-newsletter");
+  unsubscribeToNewspaperNewsletter(mail: string, validationToken: string | null) {
+    return this.get(new HttpParams().set("userMail", mail).set("validationToken", validationToken ? validationToken : "null"), "communication-preferences/unsubscribe-to-newspaper-newsletter");
 
   }
 
@@ -31,8 +31,8 @@ export class CommunicationPreferencesService extends AppRestService<Communicatio
 
   }
 
-  unsubscribeToCorporateNewsletter(mail: string) {
-    return this.get(new HttpParams().set("userMail", mail), "communication-preferences/unsubscribe-to-corporate-newsletter");
+  unsubscribeToCorporateNewsletter(mail: string, validationToken: string | null) {
+    return this.get(new HttpParams().set("userMail", mail).set("validationToken", validationToken ? validationToken : "null"), "communication-preferences/unsubscribe-to-corporate-newsletter");
 
   }
 

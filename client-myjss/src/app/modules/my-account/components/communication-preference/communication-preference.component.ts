@@ -15,6 +15,7 @@ import { CommunicationPreferencesService } from '../../services/communication.pr
 export class CommunicationPreferenceComponent implements OnInit, AfterContentChecked {
 
   @Input() mail: string | undefined;
+  @Input() validationToken: string | null = null;
   currentUser: Responsable | undefined;
 
   communicationPreference: CommunicationPreference = {} as CommunicationPreference;
@@ -42,7 +43,7 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
   }
 
   private loadPreferenceByMail(mail: string) {
-    this.communicationPreferenceService.getCommunicationPreferenceByMail(mail).subscribe((preferences) => {
+    this.communicationPreferenceService.getCommunicationPreferenceByMail(mail, this.validationToken).subscribe((preferences) => {
       this.communicationPreference = preferences;
     });
   }
@@ -52,22 +53,24 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
   }
 
   toggleNewspaperNewsletter() {
-    if (this.communicationPreference.isSubscribedToNewspaperNewletter) {
-      this.communicationPreferenceService.subscribeToNewspaperNewsletter(this.mail!).subscribe();
-      this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
-    } else {
-      this.communicationPreferenceService.unsubscribeToNewspaperNewsletter(this.mail!).subscribe();
-      this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
-    }
+    if (this.mail)
+      if (this.communicationPreference.isSubscribedToNewspaperNewletter) {
+        this.communicationPreferenceService.subscribeToNewspaperNewsletter(this.mail).subscribe();
+        this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
+      } else {
+        this.communicationPreferenceService.unsubscribeToNewspaperNewsletter(this.mail, this.validationToken).subscribe();
+        this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
+      }
   }
 
   toggleCorporateNewsletter() {
-    if (this.communicationPreference.isSubscribedToCorporateNewsletter) {
-      this.communicationPreferenceService.subscribeToCorporateNewsletter(this.mail!).subscribe();
-      this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
-    } else {
-      this.communicationPreferenceService.unsubscribeToCorporateNewsletter(this.mail!).subscribe();
-      this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
-    }
+    if (this.mail)
+      if (this.communicationPreference.isSubscribedToCorporateNewsletter) {
+        this.communicationPreferenceService.subscribeToCorporateNewsletter(this.mail).subscribe();
+        this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
+      } else {
+        this.communicationPreferenceService.unsubscribeToCorporateNewsletter(this.mail, this.validationToken).subscribe();
+        this.appService.displayToast("Préférences de communication mises à jours.", false, "Mise à jour effectuée", 2000);
+      }
   }
 }

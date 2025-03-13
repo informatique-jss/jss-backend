@@ -50,7 +50,8 @@ const routes: Routes = [
   },
   { path: 'account/signin', component: SignInComponent },
   { path: 'account/signout', component: SignOutComponent },
-  { path: 'profile/login', component: OverviewComponent }
+  { path: 'profile/login', component: OverviewComponent },
+  { path: 'email-unsubscribe/:mail/:validationToken', component: EmailCommunicationPreferenceComponent },
 ];
 
 @NgModule({
