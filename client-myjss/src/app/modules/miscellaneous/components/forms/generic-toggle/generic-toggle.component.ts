@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { AppService } from 'src/app/services/app.service';
+import { AppService } from '../../../../../libs/app.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
@@ -9,24 +9,28 @@ import { GenericFormComponent } from '../generic-form.components';
   styleUrls: ['./generic-toggle.component.css']
 })
 export class GenericToggleComponent extends GenericFormComponent implements OnInit {
+
   /**
-   * Indicate if the field is required or not in the formgroup provided
-   * Default : false
-   */
-  @Input() isMandatory: boolean = true;
+  * Indicate if the field is required or not in the formgroup provided
+  * Default : false
+  */
+  @Input() override isMandatory: boolean = true;
+
   /**
- * Hint to display
- */
+  * Hint to display
+  */
   @Input() hint: string | undefined;
+
   /**
-   * Fired when input is modified by user
-   */
+  * Fired when input is modified by user
+  */
   @Output() onToggleChange: EventEmitter<Boolean> = new EventEmitter();
 
-
   constructor(
-    private formBuilder3: UntypedFormBuilder, private appService2: AppService) {
-    super(formBuilder3, appService2);
+    private formBuilder3: UntypedFormBuilder,
+    private appService2: AppService
+  ) {
+    super(formBuilder3);
   }
 
   callOnNgInit(): void {
@@ -42,14 +46,11 @@ export class GenericToggleComponent extends GenericFormComponent implements OnIn
       )
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  override ngOnChanges(changes: SimpleChanges): void {
     super.ngOnChanges(changes);
     if (this.form && (this.model == null || this.model == undefined)) {
       this.model = false;
       this.modelChange.emit(this.model);
     }
-  }
-  getPreviewActionLinkFunction(entity: any): string[] | undefined {
-    return undefined;
   }
 }

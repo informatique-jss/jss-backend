@@ -57,6 +57,7 @@ export class AppService {
     let menuItem = [] as AccountMenuItem[];
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Relevé de compte", iconClass: "ai-wallet", route: "/account/closure" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Préférences de communication", iconClass: "ai-messages", route: "/account/communication-preference" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Tableau de bord", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Devis", iconClass: "ai-slider", route: "/account/quotations" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Commandes", iconClass: "ai-cart", route: "/account/orders" } as AccountMenuItem);
