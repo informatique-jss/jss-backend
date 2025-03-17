@@ -1,7 +1,7 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
 import { MenuItem } from '../../../general/model/MenuItem';
-import { TabService } from '../../services/tab.service';
 
 @Component({
   selector: 'company',
@@ -18,18 +18,21 @@ export class CompanyComponent implements OnInit, AfterContentChecked {
 
   constructor(
     private appService: AppService,
-    private tabService: TabService,
     private changeDetectorRef: ChangeDetectorRef,
+    private router: Router
   ) { }
 
   ngOnInit() {
-    this.selectedTab = this.companyItems[0];
-    this.updateBreadcrumb(this.selectedTab);
+    this.router.events.subscribe(url => {
+      if (url instanceof NavigationEnd) {
+        for (let route of this.companyItems) {
+          if (url && url.url && url.url.indexOf(route.route) >= 0) {
+            this.selectedTab = route;
+          }
+        }
+        this.updateBreadcrumb(this.selectedTab);
 
-    // Listen to breadcrumb updates
-    this.tabService.selectedTab$.subscribe(tab => {
-      this.selectedTab = tab;
-      this.updateBreadcrumb(this.selectedTab);
+      }
     });
   }
 

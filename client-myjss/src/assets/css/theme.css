@@ -115,7 +115,7 @@
   --ar-dark: #121519;
   --ar-primary-rgb: 255, 255, 255;
   --ar-secondary-rgb: 28, 45, 65;
-  --ar-terciery-rgb: 243, 227, 202;
+  --ar-tertiary-rgb: 243, 227, 202;
   --ar-success-rgb: 63, 202, 144;
   --ar-info-rgb: 63, 127, 202;
   --ar-warning-rgb: 237, 203, 80;
@@ -3559,7 +3559,7 @@ textarea.form-control-lg {
   --ar-btn-bg: #fff;
   --ar-btn-border-color: #fff;
   --ar-btn-hover-color: #000;
-  --ar-btn-hover-bg: #d9d9d9;
+  --ar-btn-hover-bg: #F3E3CA;
   --ar-btn-hover-border-color: #cccccc;
   --ar-btn-focus-shadow-rgb: 217, 217, 217;
   --ar-btn-active-color: #000;
@@ -4328,9 +4328,9 @@ textarea.form-control-lg {
   --ar-nav-tabs-border-color: transparent;
   --ar-nav-tabs-border-radius: var(--ar-border-radius);
   --ar-nav-tabs-link-hover-border-color: transparent;
-  --ar-nav-tabs-link-active-color: var(--ar-primary);
+  --ar-nav-tabs-link-active-color: var(--ar-tertiary);
   --ar-nav-tabs-link-active-bg: transparent;
-  --ar-nav-tabs-link-active-border-color: var(--ar-primary);
+  --ar-nav-tabs-link-active-border-color: var(--ar-tertiary);
   border-bottom: var(--ar-nav-tabs-border-width) solid var(--ar-nav-tabs-border-color);
 }
 
@@ -4921,10 +4921,10 @@ textarea.form-control-lg {
   --ar-card-spacer-y: 2.375rem;
   --ar-card-spacer-x: 2.375rem;
   --ar-card-title-spacer-y: 1rem;
-  --ar-card-title-color: var(--ar-gray-900);
+  --ar-card-title-color: var(--ar-gray-100);
   --ar-card-subtitle-color: ;
   --ar-card-border-width: var(--ar-border-width);
-  --ar-card-border-color: var(--ar-border-color);
+  --ar-card-border-color: transparent;
   --ar-card-border-radius: var(--ar-border-radius-xxl);
   --ar-card-box-shadow: ;
   --ar-card-inner-border-radius: calc(var(--ar-border-radius-xxl) - (var(--ar-border-width)));
@@ -4948,6 +4948,10 @@ textarea.form-control-lg {
   background-clip: border-box;
   border: var(--ar-card-border-width) solid var(--ar-card-border-color);
   border-radius: var(--ar-card-border-radius);
+}
+
+.swiper-initialized {
+  background-color: red;
 }
 
 .card>hr {
@@ -9510,7 +9514,7 @@ textarea.form-control-lg {
 
 .bg-primary {
   --ar-bg-opacity: 1;
-  background-color: rgba(var(--ar-terciery-rgb), var(--ar-bg-opacity)) !important;
+  background-color: rgba(var(--ar-tertiary-rgb), var(--ar-bg-opacity)) !important;
 }
 
 .bg-secondary {
@@ -16087,7 +16091,7 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
 .btn-light,
 .card-hover-primary:hover .btn-primary,
 [data-bs-theme=dark] .btn-dark:not([data-bs-theme=light]) {
-  --ar-btn-color: #fff !important;
+  --ar-btn-color: #000000 !important;
   --ar-btn-hover-color: #121519 !important;
   --ar-btn-active-color: #121519 !important;
   --ar-btn-disabled-color: #576071;
@@ -18424,6 +18428,7 @@ a.badge {
   --ar-carousel-pagination-progressbar-height: 0.1875rem;
   --ar-carousel-pagination-progressbar-bg: var(--ar-border-color);
   --ar-carousel-pagination-progressbar-fill-bg: var(--ar-primary);
+  --swiper-pagination-color: white;
   bottom: 1.25rem;
   display: flex;
   align-items: center;
@@ -18447,6 +18452,7 @@ a.badge {
 
 .swiper-pagination-bullet-active {
   background-color: var(--ar-carousel-pagination-bullet-active-bg);
+  background: white;
   border-color: var(--ar-carousel-pagination-bullet-active-border-color);
 }
 
@@ -18459,6 +18465,7 @@ a.badge {
 .swiper-pagination-bullets.swiper-pagination-horizontal .swiper-pagination-bullet {
   margin-right: calc(var(--ar-carousel-pagination-bullet-spacer) * 0.5);
   margin-left: calc(var(--ar-carousel-pagination-bullet-spacer) * 0.5);
+  background: white;
 }
 
 .swiper-vertical>.swiper-pagination-bullets,
