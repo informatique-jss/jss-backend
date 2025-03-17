@@ -9,7 +9,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HttpErrorInterceptor } from '../../httpErrorInterceptor.service';
 import { AppComponent } from './app.component';
 import { ToastComponent } from './libs/toast/toast.component';
-import { CompanyModule } from './modules/company/company/company.module';
+import { CompanyModule } from './modules/company/components/company/company.module';
 import { GeneralModule } from './modules/general/components/general/general.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from './modules/my-account/components/my-account/my-account.module';

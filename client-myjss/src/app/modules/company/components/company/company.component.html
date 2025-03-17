@@ -1,4 +1,4 @@
-<section class="pt-5 mt-5">
+<section class="pt-5 mt-5 container">
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb">
     <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
@@ -25,8 +25,8 @@
 
 <!-- Content Section -->
 <div class="tab-content">
-  <div *ngIf="'/company/about-us' == selectedTab.route">
-    <div class="tab-pane" id="aboutUs">
+  <div>
+    <div class="tab-pane">
       <router-outlet></router-outlet>
     </div>
   </div>

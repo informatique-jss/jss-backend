@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { jarallax } from 'jarallax';
+import { AppService } from '../../../../libs/app.service';
+import { MenuItem } from '../../../general/model/MenuItem';
+import { TabService } from '../../services/tab.service';
 
 @Component({
   selector: 'about-us',
@@ -10,9 +13,17 @@ export class AboutUsComponent implements OnInit {
 
   modalImage: HTMLImageElement | null = null;
 
-  constructor() { }
+  companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
+
+  constructor(
+    private appService: AppService,
+    private tabService: TabService,
+  ) {
+  }
 
   ngOnInit() {
+    const tab = this.companyItems[0];
+    this.tabService.updateSelectedTab(tab);
   }
 
   ngAfterViewInit(): void {

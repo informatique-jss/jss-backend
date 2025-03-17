@@ -19,12 +19,10 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
-    OurStoryComponent
   ],
   declarations: [CompanyComponent,
     AboutUsComponent,
   ], exports: [
-    OurStoryComponent
   ]
 })
 
