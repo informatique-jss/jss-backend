@@ -16748,6 +16748,7 @@ hr.dropdown-divider {
 
 .nav-item {
   margin-bottom: 0;
+  cursor: pointer;
 }
 
 .nav-link {

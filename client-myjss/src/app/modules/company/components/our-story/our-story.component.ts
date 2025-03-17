@@ -123,7 +123,6 @@ export class OurStoryComponent implements OnInit, AfterViewInit {
 
 
     this.mainSwiper.nativeElement.addEventListener('mousewheel', handleMouseWheel);
-    // this.datesSwiper.nativeElement.addEventListener('mousewheel', handleMouseWheel);
 
     // Initial hide extremes
     updateVisibleSlides();
