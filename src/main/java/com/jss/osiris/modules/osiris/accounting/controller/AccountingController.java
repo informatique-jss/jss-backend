@@ -42,6 +42,7 @@ import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService
 import com.jss.osiris.modules.osiris.accounting.service.AccountingJournalService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.accounting.service.PrincipalAccountingAccountService;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -312,6 +313,42 @@ public class AccountingController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<Number>(
                 accountingRecordService.getDirectDebitTransfertTotal(accountingDate),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/bank-transfert-list")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<Payment>> getBankTransfertList(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
+        return new ResponseEntity<List<Payment>>(
+                accountingRecordService.getBankTransfertList(accountingDate),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/refund-list")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<Payment>> getRefundList(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
+        return new ResponseEntity<List<Payment>>(
+                accountingRecordService.getRefundList(accountingDate),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/check-list")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<Payment>> getCheckList(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
+        return new ResponseEntity<List<Payment>>(
+                accountingRecordService.getCheckList(accountingDate),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/direct-debit-transfert-list")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<Payment>> getDirectDebitTransfertList(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
+        return new ResponseEntity<List<Payment>>(
+                accountingRecordService.getDirectDebitTransfertList(accountingDate),
                 HttpStatus.OK);
     }
 

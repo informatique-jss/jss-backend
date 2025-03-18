@@ -26,16 +26,6 @@ public interface AccountingRecordService {
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer id);
 
-        public Number getAccountingRecordBalanceByAccountingAccountId(Integer id, LocalDateTime accountingDate);
-
-        public Number getBankTransfertTotal(LocalDateTime accountingDate);
-
-        public Number getRefundTotal(LocalDateTime accountingDate);
-
-        public Number getCheckTotal(LocalDateTime accountingDate);
-
-        public Number getDirectDebitTransfertTotal(LocalDateTime accountingDate);
-
         public void deleteDuplicateAccountingRecord();
 
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords)
@@ -104,6 +94,26 @@ public interface AccountingRecordService {
         public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
 
         public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
- 
-        public void generateAccountingRecordForSageRecord(InputStream file) throws OsirisException; 
+
+        public void generateAccountingRecordForSageRecord(InputStream file) throws OsirisException;
+
+        // Bank balance
+        public Number getAccountingRecordBalanceByAccountingAccountId(Integer id, LocalDateTime accountingDate);
+
+        public Number getBankTransfertTotal(LocalDateTime accountingDate);
+
+        public Number getRefundTotal(LocalDateTime accountingDate);
+
+        public Number getCheckTotal(LocalDateTime accountingDate);
+
+        public Number getDirectDebitTransfertTotal(LocalDateTime accountingDate);
+
+        public List<Payment> getBankTransfertList(LocalDateTime accountingDate);
+
+        public List<Payment> getRefundList(LocalDateTime accountingDate);
+
+        public List<Payment> getCheckList(LocalDateTime accountingDate);
+
+        public List<Payment> getDirectDebitTransfertList(LocalDateTime accountingDate);
+
 }

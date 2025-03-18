@@ -14,7 +14,7 @@ import { PaymentSearchResult } from '../model/PaymentSearchResult';
 @Injectable({
   providedIn: 'root'
 })
-export class PaymentService extends AppRestService<Payment>{
+export class PaymentService extends AppRestService<Payment> {
   constructor(http: HttpClient) {
     super(http, "invoicing");
   }
@@ -77,4 +77,5 @@ export class PaymentService extends AppRestService<Payment>{
   cutPayment(payment: PaymentSearchResult, amount: number) {
     return this.get(new HttpParams().set("paymentId", payment.id).set("amount", amount + ""), "payment/cut");
   }
+
 }

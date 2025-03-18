@@ -42,6 +42,7 @@ import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepos
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
+import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
@@ -79,10 +80,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   AccountingBalanceHelper accountingBalanceHelper;
- 
+
   @Autowired
   AccountingRecordGenerationService accountingRecordGenerationService;
- 
+
+  @Autowired
+  PaymentService paymentService;
+
   private String ACCOUNTING_RECORD_TABLE_NAME = "accounting_record";
   private String CLOSED_ACCOUNTING_RECORD_TABLE_NAME = "closed_accounting_record";
 
@@ -115,23 +119,90 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public Number getBankTransfertTotal(LocalDateTime accountingDate) {
-    return accountingRecordRepository.getBankTransfertTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
+    BigDecimal total = new BigDecimal(0);
+    List<Payment> payments = getBankTransfertList(accountingDate);
+    if (payments != null)
+      for (Payment payment : payments) {
+        total = total.add(payment.getPaymentAmount());
+      }
+    return total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
+  }
+
+  @Override
+  public List<Payment> getBankTransfertList(LocalDateTime accountingDate) {
+    List<Payment> payments = new ArrayList<Payment>();
+    List<Integer> paymentIds = accountingRecordRepository
+        .getBankTransfertTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
+    if (paymentIds != null)
+      for (Integer id : paymentIds)
+        payments.add(paymentService.getPayment(id));
+    return payments;
   }
 
   @Override
   public Number getRefundTotal(LocalDateTime accountingDate) {
-    return accountingRecordRepository.getRefundTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
+    BigDecimal total = new BigDecimal(0);
+    List<Payment> payments = getRefundList(accountingDate);
+    if (payments != null)
+      for (Payment payment : payments) {
+        total = total.add(payment.getPaymentAmount());
+      }
+    return total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
+  }
+
+  @Override
+  public List<Payment> getRefundList(LocalDateTime accountingDate) {
+    List<Payment> payments = new ArrayList<Payment>();
+    List<Integer> paymentIds = accountingRecordRepository
+        .getRefundTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
+    if (paymentIds != null)
+      for (Integer id : paymentIds)
+        payments.add(paymentService.getPayment(id));
+    return payments;
   }
 
   @Override
   public Number getCheckTotal(LocalDateTime accountingDate) {
-    return accountingRecordRepository.getCheckTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
+    BigDecimal total = new BigDecimal(0);
+    List<Payment> payments = getCheckList(accountingDate);
+    if (payments != null)
+      for (Payment payment : payments) {
+        total = total.add(payment.getPaymentAmount());
+      }
+    return total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
+  }
+
+  @Override
+  public List<Payment> getCheckList(LocalDateTime accountingDate) {
+    List<Payment> payments = new ArrayList<Payment>();
+    List<Integer> paymentIds = accountingRecordRepository
+        .getCheckTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
+    if (paymentIds != null)
+      for (Integer id : paymentIds)
+        payments.add(paymentService.getPayment(id));
+    return payments;
   }
 
   @Override
   public Number getDirectDebitTransfertTotal(LocalDateTime accountingDate) {
-    return accountingRecordRepository
+    BigDecimal total = new BigDecimal(0);
+    List<Payment> payments = getDirectDebitTransfertList(accountingDate);
+    if (payments != null)
+      for (Payment payment : payments) {
+        total = total.add(payment.getPaymentAmount());
+      }
+    return total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
+  }
+
+  @Override
+  public List<Payment> getDirectDebitTransfertList(LocalDateTime accountingDate) {
+    List<Payment> payments = new ArrayList<Payment>();
+    List<Integer> paymentIds = accountingRecordRepository
         .getDirectDebitTransfertTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
+    if (paymentIds != null)
+      for (Integer id : paymentIds)
+        payments.add(paymentService.getPayment(id));
+    return payments;
   }
 
   @Override
@@ -636,7 +707,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     ArrayList<AccountingBalanceViewTitle> outBilanPassif = new ArrayList<AccountingBalanceViewTitle>();
     outBilanPassif.add(accountingBalanceHelper.getBilanPassif(accountingRecords, accountingRecordsN1));
     return accountingExportHelper.getBilan(outBilanActif, outBilanPassif);
-  } 
+  }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -730,5 +801,5 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     year += 2000;
 
     return LocalDate.of(year, month, day);
-  } 
+  }
 }
