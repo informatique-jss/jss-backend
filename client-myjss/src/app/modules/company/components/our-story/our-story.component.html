@@ -1,0 +1,62 @@
+<section class="container mb-5">
+  <div class="row pt-md-2 pt-lg-3 pt-xl-4 ">
+    <div class="col-md-6">
+      <h1 class="h1 pe-xxl-5 me-xl-4 mb-md-0 text-white">Depuis 1898 au service des entreprises</h1>
+    </div>
+
+    <div class="col-md-6 col-xl-5 offset-xl-1">
+      <p class="text-body fs-sm mb-5 text-white">Le JSS, c’est avant tout une entreprise familiale et indépendante de
+        plus de 125 ans.<br />
+        Ce sont aussi des millions d’entreprises qui nous ont fait confiance.<br />
+        Acteur reconnu et incontournable des annonces et formalités légales, le JSS accompagne les entreprises dans
+        toutes les étapes de leur vie.<br />
+        Notre histoire continue de s’écrire au rythme des défis et innovations.<br />
+        Découvrez les grandes étapes qui ont façonné notre parcours.<br />
+      </p>
+    </div>
+  </div>
+</section>
+<div>
+</div>
+
+<section class="pb-5 my-5">
+  <div class="jarallax" data-jarallax>
+    <div class="jarallax-img" style="background-image: url(assets/img/societe/our_story_banner.png);">
+    </div>
+  </div>
+</section>
+
+<section class="container overflow-hidden pb-5">
+  <div class="card-info">
+    <div class="row">
+      <div class="col-1">
+        <swiper-container #datesSwiper class="datesSwiper" direction="vertical" space-between="10" mousewheel="true"
+          speed="500" slides-per-view="3">
+          <swiper-slide *ngFor="let item of history">
+            <div class="d-flex flex-column border-0 rounded-3">{{item.year}}</div>
+          </swiper-slide>
+        </swiper-container>
+      </div>
+
+      <div class="col-11">
+        <swiper-container #mainSwiper direction="vertical" thumbs-swiper=".datesSwiper" space-between="50"
+          mousewheel="true">
+          <swiper-slide *ngFor="let item of history" auto-height="true">
+            <div class="row flex-grow-1 ms-2">
+              <div class="card rounded-3 col-8 order-md-2 d-none d-md-block p-0 overflow-hidden">
+                <img class="object-fit-contain w-100" src={{item.image}} alt="Image">
+              </div>
+              <div class="col-lg-4 order-md-2">
+                <div class="d-flex flex-column card border-0 rounded-3 h-100 p-4 px-lg-5">
+                  <h1 class="mb-xl-4">{{item.year}}</h1>
+                  <small class="mb-xl-4">{{item.category}}</small>
+                  <p class="fs-2 mb-4 mb-xl-5">{{item.text}}</p>
+                </div>
+              </div>
+            </div>
+          </swiper-slide>
+        </swiper-container>
+      </div>
+    </div>
+  </div>
+</section>

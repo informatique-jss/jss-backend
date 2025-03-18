@@ -815,7 +815,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                     .getClosedAccountingRecordsForPayment(payment);
             for (AccountingRecord record : accountingRecords) {
                 if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                        .equals(constantService.getPrincipalAccountingAccountBank().getId())) {
+                        .equals(constantService.getPrincipalAccountingAccountBank().getId())
+                        || record.getAccountingAccount().getId()
+                                .equals(constantService.getAccountingAccountCaisse().getId())) {
                     accountingRecord = record;
                 }
             }

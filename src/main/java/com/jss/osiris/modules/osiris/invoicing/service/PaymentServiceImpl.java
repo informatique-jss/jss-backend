@@ -188,7 +188,7 @@ public class PaymentServiceImpl implements PaymentService {
                 outboundCheckSearch.getStartDate().withHour(0).withMinute(0),
                 outboundCheckSearch.getEndDate().withHour(23).withMinute(59), outboundCheckSearch.getMinAmount(),
                 outboundCheckSearch.getMaxAmount(),
-                outboundCheckSearch.getLabel(), outboundCheckSearch.isHideMatchedOutboundChecks());
+                outboundCheckSearch.getLabel(), outboundCheckSearch.getIsDisplayNonMatchedOutboundChecks());
     }
 
     @Override
@@ -730,6 +730,7 @@ public class PaymentServiceImpl implements PaymentService {
             refundService.addOrUpdateRefund(refund);
             payment.setRefund(refund);
             addOrUpdatePayment(payment);
+            cancelPayment(payment);
         }
     }
 
@@ -803,7 +804,9 @@ public class PaymentServiceImpl implements PaymentService {
         cancelPayment(payment);
     }
 
-    private Payment cancelPayment(Payment paymentToCancel) throws OsirisException, OsirisValidationException {
+    @Transactional(rollbackFor = Exception.class)
+    public Payment cancelPayment(Payment paymentToCancel) throws OsirisException, OsirisValidationException {
+        paymentToCancel = getPayment(paymentToCancel.getId());
         if (paymentToCancel.getIsCancelled())
             return paymentToCancel;
         paymentToCancel.setIsCancelled(true);
@@ -966,7 +969,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, BigDecimal paymentAmount,
-            Provider providerToPay)
+            Provider providerToPay, Responsable responsableToPay)
             throws OsirisException {
         Payment newPayment = new Payment();
         newPayment.setIsAppoint(false);
@@ -980,7 +983,10 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setBankTransfert(bankTransfert);
         newPayment.setPaymentType(constantService.getPaymentTypeVirement());
         newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
-        newPayment.setTargetAccountingAccount(providerToPay.getAccountingAccountProvider());
+        if (responsableToPay != null)
+            newPayment.setTargetAccountingAccount(responsableToPay.getTiers().getAccountingAccountCustomer());
+        else
+            newPayment.setTargetAccountingAccount(providerToPay.getAccountingAccountProvider());
 
         return addOrUpdatePayment(newPayment);
     }

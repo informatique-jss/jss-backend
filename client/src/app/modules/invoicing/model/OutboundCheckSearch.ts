@@ -4,5 +4,5 @@ export interface OutboundCheckSearch {
   minAmount: number;
   maxAmount: number;
   label: string;
-  isHideMatchedOutboundChecks: boolean;
+  isDisplayNonMatchedOutboundChecks: boolean;
 }

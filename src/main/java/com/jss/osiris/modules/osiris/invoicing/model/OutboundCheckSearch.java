@@ -11,8 +11,8 @@ public class OutboundCheckSearch {
     private Float maxAmount;
     private String label;
 
-    @JsonProperty("isHideMatchedOutboundChecks")
-    private boolean isHideMatchedOutboundChecks;
+    @JsonProperty("isDisplayNonMatchedOutboundChecks")
+    private Boolean isDisplayNonMatchedOutboundChecks;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -54,12 +54,12 @@ public class OutboundCheckSearch {
         this.label = label;
     }
 
-    public boolean isHideMatchedOutboundChecks() {
-        return isHideMatchedOutboundChecks;
+    public Boolean getIsDisplayNonMatchedOutboundChecks() {
+        return isDisplayNonMatchedOutboundChecks;
     }
 
-    public void setHideMatchedOutboundChecks(boolean isHideMatchedOutboundChecks) {
-        this.isHideMatchedOutboundChecks = isHideMatchedOutboundChecks;
+    public void setIsDisplayNonMatchedOutboundChecks(Boolean isDisplayNonMatchedOutboundChecks) {
+        this.isDisplayNonMatchedOutboundChecks = isDisplayNonMatchedOutboundChecks;
     }
 
 }

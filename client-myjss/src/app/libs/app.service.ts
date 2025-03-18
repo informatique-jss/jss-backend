@@ -57,6 +57,7 @@ export class AppService {
     let menuItem = [] as AccountMenuItem[];
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Relevé de compte", iconClass: "ai-wallet", route: "/account/closure" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Préférences de communication", iconClass: "ai-messages", route: "/account/communication-preference" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Tableau de bord", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Devis", iconClass: "ai-slider", route: "/account/quotations" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Commandes", iconClass: "ai-cart", route: "/account/orders" } as AccountMenuItem);
@@ -83,10 +84,10 @@ export class AppService {
 
   getAllCompanyMenuItems(): MenuItem[] {
     let menuItem = [] as MenuItem[];
-    menuItem.push({ label: "À propos", iconClass: "ai-user-check", route: "" } as MenuItem);
-    menuItem.push({ label: "Notre histoire", iconClass: "ai-wallet", route: "" } as MenuItem);
-    menuItem.push({ label: "Nos équipes", iconClass: "ai-chart", route: "" } as MenuItem);
-    menuItem.push({ label: "Nous rejoindre", iconClass: "ai-slider", route: "" } as MenuItem);
+    menuItem.push({ label: "À propos", iconClass: "ai-user-check", route: "/company/about-us" } as MenuItem);
+    menuItem.push({ label: "Notre histoire", iconClass: "ai-wallet", route: "/company/our-story" } as MenuItem);
+    menuItem.push({ label: "Nos équipes", iconClass: "ai-chart", route: "/company/our-team" } as MenuItem);
+    menuItem.push({ label: "Nous rejoindre", iconClass: "ai-slider", route: "/company/join-us" } as MenuItem);
 
     return menuItem;
   }
