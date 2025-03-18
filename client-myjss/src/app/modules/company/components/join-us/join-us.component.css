@@ -24,7 +24,3 @@ swiper-container {
         height: 37vh;
     }
 }
-
-.swiper-initialized {
-    background-color: red;
-}

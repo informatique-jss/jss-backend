@@ -24,6 +24,8 @@ export class JoinUsComponent implements OnInit {
     "assets/img/societe/join_us_caroussel3.png",
   ];
 
+  modalImage: HTMLImageElement | null = null;
+
   constructor() { }
 
   ngOnInit() {
@@ -31,7 +33,7 @@ export class JoinUsComponent implements OnInit {
 
   ngAfterViewInit(): void {
     jarallax(document.querySelectorAll('.jarallax'), {
-      speed: 0.5
+      speed: 0.6
     });
 
     // Initialize main Swiper
@@ -64,6 +66,8 @@ export class JoinUsComponent implements OnInit {
 
     Object.assign(this.imagesSwiper.nativeElement, params);
     this.imagesSwiper.nativeElement.initialize();
+
+    this.initImageModal();
   }
 
   slideNext(): void {
@@ -77,5 +81,25 @@ export class JoinUsComponent implements OnInit {
       this.imagesSwiper.nativeElement.swiper.slidePrev();
     }
   }
+
+  initImageModal(): void {
+    // Select modal image
+    this.modalImage = document.getElementById('modal-image') as HTMLImageElement;
+
+    // Select clickable links for modal
+    const imageLinks = document.querySelectorAll('[data-bs-toggle="modal"]');
+
+    // Add click event for each link
+    imageLinks.forEach(link => {
+      link.addEventListener('click', (event) => {
+        const target = event.currentTarget as HTMLElement;
+        const imageUrl = target.getAttribute('data-bs-img');
+        if (this.modalImage && imageUrl) {
+          this.modalImage.src = imageUrl;
+        }
+      });
+    });
+  }
+
 
 }
