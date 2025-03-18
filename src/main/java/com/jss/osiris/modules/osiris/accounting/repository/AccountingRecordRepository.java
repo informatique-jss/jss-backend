@@ -386,7 +386,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("accountingDateTime") LocalDateTime accountingDateTime);
 
         @Query(nativeQuery = true, value = "" +
-                        "         select sum( p.payment_amount) " +
+                        "         select p.id " +
                         " from " +
                         " 	payment p join bank_transfert bt on bt.id = p.id_bank_transfert " +
                         " left join payment p_origin on " +
@@ -399,10 +399,10 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " 		or (p_origin.bank_id like 'H%' " +
                         " 			and p_origin.payment_date >:accountingDateTime)) " +
                         " 	and p.payment_amount < 0 ")
-        Number getBankTransfertTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
+        List<Integer> getBankTransfertTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
         @Query(nativeQuery = true, value = "" +
-                        "         select  sum( p.payment_amount) " +
+                        "         select  p.id " +
                         " from " +
                         " 	payment p join refund bt on bt.id = p.id_refund " +
                         " left join payment p_origin on " +
@@ -415,16 +415,16 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " 		or (p_origin.bank_id like 'H%' " +
                         " 			and p_origin.payment_date >:accountingDateTime)) " +
                         " 	and p.payment_amount < 0 ")
-        Number getRefundTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
+        List<Integer> getRefundTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
-        @Query(nativeQuery = true, value = "select sum(p.payment_amount) from payment p left join payment p_origin on p.id_origin_payment = p_origin.id "
+        @Query(nativeQuery = true, value = "select p.id from payment p left join payment p_origin on p.id_origin_payment = p_origin.id "
                         + " where p.bank_id is null  and p.payment_date <= :accountingDateTime and p.check_number is not null  "
                         + " and (p.id_origin_payment is null or (p_origin.bank_id like 'H%' and p_origin.payment_date >:accountingDateTime)) and p.payment_amount < 0 ")
-        Number getCheckTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
+        List<Integer> getCheckTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
-        @Query(nativeQuery = true, value = "select sum(transfert_amount) from direct_debit_transfert ddt "
-                        + "where is_already_exported = true and exists (select 1 from payment p where p.payment_date <=:accountingDateTime and p.bank_id is null and p.id_direct_debit_transfert = ddt.id) and (is_cancelled is null or is_cancelled=false) and (is_matched = false or exists (select 1 from payment p where p.id_direct_debit_transfert=ddt.id and p.bank_id like 'H%' and p.payment_date >:accountingDateTime))")
-        Number getDirectDebitTransfertTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
+        @Query(nativeQuery = true, value = "select p2.id from direct_debit_transfert ddt join payment p2 on p2.id_direct_debit_transfert = ddt.id and p2.bank_id is null "
+                        + "where is_already_exported = true and exists (select 1 from payment p where p.payment_date <=:accountingDateTime and p.bank_id is null and p.id_direct_debit_transfert = ddt.id) and (ddt.is_cancelled is null or ddt.is_cancelled=false) and (is_matched = false or exists (select 1 from payment p where p.id_direct_debit_transfert=ddt.id and p.bank_id like 'H%' and p.payment_date >:accountingDateTime))")
+        List<Integer> getDirectDebitTransfertTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
         @Modifying
         @Query(nativeQuery = true, value = "delete from accounting_record where id_invoice in (select id from reprise_inpi_del) ")
