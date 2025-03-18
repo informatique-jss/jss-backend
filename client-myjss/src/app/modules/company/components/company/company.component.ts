@@ -22,19 +22,25 @@ export class CompanyComponent implements OnInit, AfterContentChecked {
   ngOnInit() {
     this.companyItems = this.appService.getAllCompanyMenuItems();
 
-    if (this.companyItems.length > 0) {
+    if (this.companyItems.length > 0 && this.router.url) {
+      this.matchRoute(this.router.url);
+    } else {
       this.selectedTab = this.companyItems[0];
     }
 
     this.router.events.subscribe(url => {
       if (url instanceof NavigationEnd) {
-        for (let route of this.companyItems) {
-          if (url && url.url && url.url.indexOf(route.route) >= 0) {
-            this.selectedTab = route;
-          }
-        }
+        this.matchRoute(url.url);
       }
     });
+  }
+
+  private matchRoute(url: string) {
+    for (let route of this.companyItems) {
+      if (url && url.indexOf(route.route) >= 0) {
+        this.selectedTab = route;
+      }
+    }
   }
 
   ngAfterContentChecked(): void {
