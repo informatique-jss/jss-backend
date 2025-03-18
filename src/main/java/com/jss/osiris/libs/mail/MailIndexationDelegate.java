@@ -165,7 +165,7 @@ public class MailIndexationDelegate {
         }
     }
 
-    public void exportMailToFile(Integer id) throws OsirisException, IOException {
+    public void exportMailToFile(Integer id) throws OsirisException {
         IndexationMail mail = new IndexationMail();
 
         Store store = null;
@@ -355,6 +355,10 @@ public class MailIndexationDelegate {
             if (part.isMimeType("text/html")) {
                 String content = (String) part.getContent();
                 htmlBuilder.append(content);
+            }
+
+            if (part.isMimeType("multipart/*")) {
+                htmlBuilder.append(processMultipart((Multipart) part.getContent()));
             }
         }
 

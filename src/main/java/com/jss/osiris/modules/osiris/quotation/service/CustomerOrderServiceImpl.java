@@ -517,10 +517,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             Invoice invoice = generateInvoice(customerOrder);
 
             // If deposit already set, associate them to invoice
+            List<Payment> paymentToMove = new ArrayList<Payment>();
             if (customerOrder.getPayments() != null)
                 for (Payment payment : customerOrder.getPayments())
                     if (!payment.getIsCancelled())
-                        paymentService.movePaymentFromCustomerOrderToInvoice(payment, customerOrder, invoice);
+                        paymentToMove.add(payment);
+
+            if (paymentToMove.size() > 0)
+                for (Payment payment : paymentToMove)
+                    paymentService.movePaymentFromCustomerOrderToInvoice(payment, customerOrder, invoice);
 
             entityManager.flush();
             entityManager.clear();

@@ -1,13 +1,13 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { OutboundCheckSearch } from '../../model/OutboundCheckSearch';
 import { OutboundCheckSearchResult } from '../../model/OutboundCheckSearchResult';
-import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
-import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
-import { FormBuilder } from '@angular/forms';
-import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { OutboundCheckSearchResultService } from '../../services/outbound.check.search.service';
 import { Payment } from '../../model/Payment';
+import { OutboundCheckSearchResultService } from '../../services/outbound.check.search.service';
 import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
 
 @Component({
@@ -54,7 +54,7 @@ export class OutboundCheckListComponent implements OnInit, AfterContentChecked {
 
     this.setColumns();
 
-    this.outboundCheckSearch.isHideMatchedOutboundChecks = true;
+    this.outboundCheckSearch.isDisplayNonMatchedOutboundChecks = true;
 
     if (this.isForDashboard && !this.outboundChecks && this.outboundCheckSearch) {
       this.searchOutboundChecks();
