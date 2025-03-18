@@ -84,10 +84,10 @@ export class AppService {
 
   getAllCompanyMenuItems(): MenuItem[] {
     let menuItem = [] as MenuItem[];
-    menuItem.push({ label: "À propos", iconClass: "ai-user-check", route: "" } as MenuItem);
-    menuItem.push({ label: "Notre histoire", iconClass: "ai-wallet", route: "" } as MenuItem);
-    menuItem.push({ label: "Nos équipes", iconClass: "ai-chart", route: "" } as MenuItem);
-    menuItem.push({ label: "Nous rejoindre", iconClass: "ai-slider", route: "" } as MenuItem);
+    menuItem.push({ label: "À propos", iconClass: "ai-user-check", route: "/company/about-us" } as MenuItem);
+    menuItem.push({ label: "Notre histoire", iconClass: "ai-wallet", route: "/company/our-story" } as MenuItem);
+    menuItem.push({ label: "Nos équipes", iconClass: "ai-chart", route: "/company/our-team" } as MenuItem);
+    menuItem.push({ label: "Nous rejoindre", iconClass: "ai-slider", route: "/company/join-us" } as MenuItem);
 
     return menuItem;
   }

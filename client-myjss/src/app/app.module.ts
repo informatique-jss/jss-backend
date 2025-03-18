@@ -9,6 +9,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HttpErrorInterceptor } from '../../httpErrorInterceptor.service';
 import { AppComponent } from './app.component';
 import { ToastComponent } from './libs/toast/toast.component';
+import { CompanyModule } from './modules/company/components/company/company.module';
 import { GeneralModule } from './modules/general/components/general/general.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from './modules/my-account/components/my-account/my-account.module';
@@ -16,8 +17,8 @@ import { FooterComponent } from './modules/profile/components/footer/footer.comp
 import { SearchComponent } from './modules/profile/components/search/search.component';
 import { TopBarComponent } from './modules/profile/components/top-bar/top-bar.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
-import { ToolsModule } from './modules/tools/components/tools/tools.module';
 registerLocaleData(localeFr, 'fr');
+
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -30,6 +31,7 @@ const routes: Routes = [
     TopBarComponent,
     ToastComponent,
     SearchComponent,
+
   ],
   exports: [],
   bootstrap: [AppComponent],
@@ -43,7 +45,7 @@ const routes: Routes = [
     MiscellaneousModule,
     QuotationModule,
     GeneralModule,
-    ToolsModule,
+    CompanyModule,
   ], providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: HttpErrorInterceptor,

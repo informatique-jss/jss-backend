@@ -385,20 +385,45 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("accountingAccountId") Integer accountingAccountId,
                         @Param("accountingDateTime") LocalDateTime accountingDateTime);
 
-        @Query(nativeQuery = true, value = "select sum(transfert_amount) from bank_transfert bt "
-                        + "where is_already_exported = true and exists (select 1 from payment p where p.payment_date <=:accountingDateTime and p.bank_id is null and p.id_bank_transfert = bt.id)  and (is_cancelled is null or is_cancelled=false) and (is_matched = false or exists (select 1 from payment p where p.id_bank_transfert =bt.id and p.bank_id like 'H%' and p.payment_date >:accountingDateTime))")
+        @Query(nativeQuery = true, value = "" +
+                        "         select sum( p.payment_amount) " +
+                        " from " +
+                        " 	payment p join bank_transfert bt on bt.id = p.id_bank_transfert " +
+                        " left join payment p_origin on " +
+                        " 	p.id_origin_payment = p_origin.id " +
+                        " where " +
+                        " 	p.bank_id is null " +
+                        " 	and p.payment_date <= :accountingDateTime " +
+                        " and coalesce(bt.is_already_exported,false)= true " +
+                        " 	and (p.id_origin_payment is null  " +
+                        " 		or (p_origin.bank_id like 'H%' " +
+                        " 			and p_origin.payment_date >:accountingDateTime)) " +
+                        " 	and p.payment_amount < 0 ")
         Number getBankTransfertTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
-        @Query(nativeQuery = true, value = "select sum(refund_amount) from refund r where is_already_exported = true and exists (select 1 from payment p where p.payment_date <=:accountingDateTime and p.bank_id is null and p.id_refund = r.id) and (is_matched = false  or exists (select 1 from payment p where p.id_refund =r.id and p.bank_id like 'H%' and p.payment_date >:accountingDateTime))")
+        @Query(nativeQuery = true, value = "" +
+                        "         select  sum( p.payment_amount) " +
+                        " from " +
+                        " 	payment p join refund bt on bt.id = p.id_refund " +
+                        " left join payment p_origin on " +
+                        " 	p.id_refund = p_origin.id_refund and p.id <>p_origin.id " +
+                        " where " +
+                        " 	p.bank_id is null " +
+                        " 	and p.payment_date <= :accountingDateTime " +
+                        " and coalesce(bt.is_already_exported,false)= true " +
+                        " 	and (p.id_origin_payment is null  " +
+                        " 		or (p_origin.bank_id like 'H%' " +
+                        " 			and p_origin.payment_date >:accountingDateTime)) " +
+                        " 	and p.payment_amount < 0 ")
         Number getRefundTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
         @Query(nativeQuery = true, value = "select sum(p.payment_amount) from payment p left join payment p_origin on p.id_origin_payment = p_origin.id "
-                        + " where p.bank_id is null  and p.payment_date <= :accountingDateTime and p.check_number is not null and (p.is_cancelled=false or p.is_cancelled is null) "
-                        + " and (p.id_origin_payment is null or p_origin.bank_id not like 'H%' or (p_origin.bank_id like 'H%' and p_origin.payment_date >:accountingDateTime)) and p.payment_amount < 0 ")
+                        + " where p.bank_id is null  and p.payment_date <= :accountingDateTime and p.check_number is not null  "
+                        + " and (p.id_origin_payment is null or (p_origin.bank_id like 'H%' and p_origin.payment_date >:accountingDateTime)) and p.payment_amount < 0 ")
         Number getCheckTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
         @Query(nativeQuery = true, value = "select sum(transfert_amount) from direct_debit_transfert ddt "
-                        + "where is_already_exported = true and exists (select 1 from payment p where p.payment_date <=:accountingDateTime and p.bank_id is null and p.id_direct_debit_transfert = ddt.id) and (is_cancelled is null or is_cancelled=false) and (is_matched = false or exists (select 1 from payment p where p.id_direct_debit_transfert=ddt.id and p.bank_id like 'H%' and p.payment_date >'2024-12-31'))")
+                        + "where is_already_exported = true and exists (select 1 from payment p where p.payment_date <=:accountingDateTime and p.bank_id is null and p.id_direct_debit_transfert = ddt.id) and (is_cancelled is null or is_cancelled=false) and (is_matched = false or exists (select 1 from payment p where p.id_direct_debit_transfert=ddt.id and p.bank_id like 'H%' and p.payment_date >:accountingDateTime))")
         Number getDirectDebitTransfertTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
         @Modifying
