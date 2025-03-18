@@ -1,15 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { jarallax } from 'jarallax';
 import { SwiperContainer } from 'swiper/element';
 
 @Component({
   selector: 'join-us',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './join-us.component.html',
   styleUrls: ['./join-us.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class JoinUsComponent implements OnInit {
 

@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { jarallax } from 'jarallax';
 import { SwiperContainer } from 'swiper/element';
 import { AppService } from '../../../../libs/app.service';
@@ -7,11 +6,8 @@ import { MenuItem } from '../../../general/model/MenuItem';
 
 @Component({
   selector: 'our-story',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './our-story.component.html',
   styleUrls: ['./our-story.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class OurStoryComponent implements OnInit, AfterViewInit {
 
