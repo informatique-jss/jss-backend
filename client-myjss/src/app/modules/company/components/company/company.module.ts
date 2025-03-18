@@ -32,7 +32,6 @@ const routes: Routes = [
   ], exports: [
     OurStoryComponent
   ], schemas: [CUSTOM_ELEMENTS_SCHEMA] // To let Angular accept Swiper components
-
 })
 
 export class CompanyModule { }

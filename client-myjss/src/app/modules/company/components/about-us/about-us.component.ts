@@ -10,8 +10,6 @@ import { MenuItem } from '../../../general/model/MenuItem';
 })
 export class AboutUsComponent implements OnInit {
 
-  modalImage: HTMLImageElement | null = null;
-
   companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
 
   @ViewChild('modalImage') modalImageRef!: ElementRef<HTMLImageElement>;
