@@ -175,7 +175,7 @@
     <swiper-slide *ngFor="let image of images" class="pb-5">
       <div class="d-flex align-items-stretch h-100">
         <a class="d-block gallery-item card-hover zoom-effect h-100 w-100 position-relative" href="#"
-          data-bs-toggle="modal" data-bs-target="#imageModal" [attr.data-bs-img]="image">
+          (click)="openImageModal(image)" data-bs-toggle="modal" data-bs-target="#imageModal">
           <div
             class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0">
             <i class="ai-zoom-in fs-2 text-white position-relative z-2"></i>
@@ -196,7 +196,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body d-flex justify-content-center align-items-center">
-          <img id="modal-image" class="img-fluid w-100" src="" alt="Image">
+          <img #modalImage id="modal-image" class="img-fluid w-100" src="" alt="Image">
         </div>
       </div>
     </div>
@@ -215,16 +215,14 @@
   </div>
   <div class="row align-items-center my-2 py-2 py-sm-4 py-lg-5 my-xxl-2">
     <div class="col position-relative mx-auto" style="max-width: 510px;">
-      <img class="d-block d-dark-mode-none" src="assets/img/landing/saas-2/tools/circle-gray-1.png"
+      <img class="d-block d-dark-mode-none" src="assets/img/societe/circle-gray-1.png"
         style="animation: rotate-cw 100s linear infinite;" alt="Circle">
-      <img class="d-none d-dark-mode-block" src="assets/img/landing/saas-2/tools/circle-light-1.png"
+      <img class="d-none d-dark-mode-block" src="assets/img/societe/circle-light-1.png"
         style="animation: rotate-cw 100s linear infinite;" alt="Circle">
-      <img class="d-block d-dark-mode-none position-absolute top-0 start-0"
-        src="assets/img/landing/saas-2/tools/circle-gray-2.png" style="animation: rotate-ccw 50s linear infinite;"
-        alt="Circle">
-      <img class="d-none d-dark-mode-block position-absolute top-0 start-0"
-        src="assets/img/landing/saas-2/tools/circle-light-2.png" style="animation: rotate-ccw 50s linear infinite;"
-        alt="Circle">
+      <img class="d-block d-dark-mode-none position-absolute top-0 start-0" src="assets/img/societe/circle-gray-2.png"
+        style="animation: rotate-ccw 50s linear infinite;" alt="Circle">
+      <img class="d-none d-dark-mode-block position-absolute top-0 start-0" src="assets/img/societe/circle-light-2.png"
+        style="animation: rotate-ccw 50s linear infinite;" alt="Circle">
       <img class="position-absolute top-0 start-0 z-2" src="assets/img/societe/join_us_logo.png" alt="Icon">
     </div>
     <div class="col-md-5 text-center text-md-start pe-md-5 pe-lg-0 pe-xxl-4 ps-xl-5 mb-5 mb-md-0 m-3">

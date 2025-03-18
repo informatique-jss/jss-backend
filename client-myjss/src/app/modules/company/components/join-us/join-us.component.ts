@@ -24,7 +24,7 @@ export class JoinUsComponent implements OnInit {
     "assets/img/societe/join_us_caroussel3.png",
   ];
 
-  modalImage: HTMLImageElement | null = null;
+  @ViewChild('modalImage') modalImageRef!: ElementRef<HTMLImageElement>;
 
   constructor() { }
 
@@ -48,7 +48,6 @@ export class JoinUsComponent implements OnInit {
         text-align: center;
         line-height: 20px;
         font-size: 12px;
-        color: red;
         opacity: 1;
         background: rgba(255, 255, 255, 0);
         border: white solid 1px;
@@ -66,8 +65,6 @@ export class JoinUsComponent implements OnInit {
 
     Object.assign(this.imagesSwiper.nativeElement, params);
     this.imagesSwiper.nativeElement.initialize();
-
-    this.initImageModal();
   }
 
   slideNext(): void {
@@ -82,23 +79,10 @@ export class JoinUsComponent implements OnInit {
     }
   }
 
-  initImageModal(): void {
-    // Select modal image
-    this.modalImage = document.getElementById('modal-image') as HTMLImageElement;
-
-    // Select clickable links for modal
-    const imageLinks = document.querySelectorAll('[data-bs-toggle="modal"]');
-
-    // Add click event for each link
-    imageLinks.forEach(link => {
-      link.addEventListener('click', (event) => {
-        const target = event.currentTarget as HTMLElement;
-        const imageUrl = target.getAttribute('data-bs-img');
-        if (this.modalImage && imageUrl) {
-          this.modalImage.src = imageUrl;
-        }
-      });
-    });
+  openImageModal(imageUrl: string): void {
+    if (this.modalImageRef) {
+      this.modalImageRef.nativeElement.src = imageUrl;
+    }
   }
 
 

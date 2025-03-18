@@ -3,11 +3,9 @@
   <nav aria-label="breadcrumb">
     <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
       <li class="breadcrumb-item"><a href="index.html">Accueil</a></li>
-      <li class="breadcrumb-item"><a href="index.html">Accueil</a></li>
-      <li class="breadcrumb-item" *ngFor="let item of breadcrumbItems; let last = last" [ngClass]="{'active': last}"
-        aria-current="page">
-        <a *ngIf="!last" href="">{{ item }}</a>
-        <span *ngIf="last">{{ item }}</span>
+      <li class="breadcrumb-item"><a href="/company/about-us">La société</a></li>
+      <li class="breadcrumb-item">
+        <span *ngIf="selectedTab">{{ selectedTab.label }}</span>
       </li>
     </ol>
   </nav>
@@ -15,7 +13,7 @@
   <!-- Nav tabs -->
   <ul class="nav nav-tabs " role="tablist">
     <li class="nav-item" *ngFor="let item of companyItems;">
-      <a class="nav-link" [class.active]="item == selectedTab" (click)="onTabClick(item)" [routerLink]="item.route">
+      <a class="nav-link" [class.active]="item == selectedTab" [routerLink]="item.route">
         <i class="fi-home me-2 "></i>
         {{ item.label }}
       </a>

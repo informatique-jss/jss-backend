@@ -12,17 +12,20 @@ export class CompanyComponent implements OnInit, AfterContentChecked {
 
   companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
 
-  selectedTab: MenuItem = this.companyItems[0];
-
-  breadcrumbItems = ['La société'];
+  selectedTab: MenuItem | null = null;
 
   constructor(
     private appService: AppService,
     private changeDetectorRef: ChangeDetectorRef,
-    private router: Router
-  ) { }
+    private router: Router) { }
 
   ngOnInit() {
+    this.companyItems = this.appService.getAllCompanyMenuItems();
+
+    if (this.companyItems.length > 0) {
+      this.selectedTab = this.companyItems[0];
+    }
+
     this.router.events.subscribe(url => {
       if (url instanceof NavigationEnd) {
         for (let route of this.companyItems) {
@@ -30,22 +33,11 @@ export class CompanyComponent implements OnInit, AfterContentChecked {
             this.selectedTab = route;
           }
         }
-        this.updateBreadcrumb(this.selectedTab);
-
       }
     });
   }
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
-  }
-
-  onTabClick(tab: MenuItem): void {
-    this.selectedTab = tab;
-    this.updateBreadcrumb(this.selectedTab);
-  }
-
-  updateBreadcrumb(tab: MenuItem): void {
-    this.breadcrumbItems = ['La société', tab.label];
   }
 }

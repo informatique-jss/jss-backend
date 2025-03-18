@@ -4,7 +4,6 @@ import { jarallax } from 'jarallax';
 import { SwiperContainer } from 'swiper/element';
 import { AppService } from '../../../../libs/app.service';
 import { MenuItem } from '../../../general/model/MenuItem';
-import { TabService } from '../../services/tab.service';
 
 @Component({
   selector: 'our-story',
@@ -39,13 +38,10 @@ export class OurStoryComponent implements OnInit, AfterViewInit {
   companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
 
   constructor(
-    private tabService: TabService,
     private appService: AppService,
   ) { }
 
   ngOnInit(): void {
-    const tab = this.companyItems[0];
-    this.tabService.updateSelectedTab(tab);
   }
 
   ngAfterViewInit(): void {
