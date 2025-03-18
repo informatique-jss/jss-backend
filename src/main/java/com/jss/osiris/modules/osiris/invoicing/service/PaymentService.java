@@ -121,7 +121,7 @@ public interface PaymentService {
                         throws OsirisException;
 
         public Payment generateNewBankTransfertPayment(BankTransfert bankTransfert, BigDecimal paymentAmount,
-                        Provider tiersToPay)
+                        Provider tiersToPay, Responsable responsableToPay)
                         throws OsirisException;
 
         public Payment getOriginalPaymentOfPayment(Payment payment);
