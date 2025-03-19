@@ -709,6 +709,11 @@ progress {
   background-attachment: scroll, scroll;
 }
 
+.white-tranlucid-bg {
+  background-color: var(--ar-body-bg);
+}
+
+
 .lead {
   font-size: calc(1.275rem + 0.3vw);
   font-weight: 400;
@@ -14923,7 +14928,7 @@ textarea.form-control-lg {
   --ar-user-selection-color: rgba(var(--ar-primary-rgb), 0.22);
   --ar-heading-color: var(--ar-gray-100);
   --ar-heading-font-weight: 600;
-  --ar-heading-link-color: var(--ar-gray-800);
+  --ar-heading-link-color: var(--ar-gray-300);
   --ar-heading-link-hover-color: var(--ar-primary);
   --ar-blockquote-color: var(--ar-gray-900);
   --ar-blockquote-font-size: 1.5rem;

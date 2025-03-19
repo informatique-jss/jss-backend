@@ -9,6 +9,7 @@ import { GenericInputComponent } from '../forms/generic-input/generic-input.comp
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
+import { GenericSwiperComponent } from '../generic-swiper/generic-swiper.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
 const routes: Routes = [
@@ -18,11 +19,11 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    // RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
+    GenericSwiperComponent
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
@@ -39,6 +40,7 @@ const routes: Routes = [
     TrustHtmlPipe,
     GenericTextareaComponent,
     GenericToggleComponent,
+    GenericSwiperComponent
   ]
 })
 export class MiscellaneousModule { }

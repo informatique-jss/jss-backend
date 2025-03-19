@@ -152,27 +152,8 @@
 </section>
 
 <section class="container overflow-hidden py-5 my-5">
-  <p>NOS BUREAUX</p>
-  <div class="row justify-content-between">
-    <div class="col">
-      <h2 class="h1 pb-3 mb-lg-4 text-white">Un espace de travail ouvert et inspirant </h2>
-    </div>
-    <div class="col-auto ms-auto d-flex justify-content-end align-items-center">
-      <div class="d-md-block d-none">
-        <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle m-2" (click)="slidePrev()"
-          aria-label="Previous slide">
-          <i class="ai-arrow-left"></i>
-        </a>
-        <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle m-2" (click)="slideNext()"
-          aria-label="Next slide">
-          <i class="ai-arrow-right"></i>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <swiper-container #imagesSwiper class="imagesSwiper" init="false">
-    <swiper-slide *ngFor="let image of images" class="pb-5">
+  <generic-swiper [items]="images" subtitle="NOS BUREAUX" title="Un espace de travail ouvert et inspirant">
+    <ng-template let-image>
       <div class="d-flex align-items-stretch h-100">
         <a class="d-block gallery-item card-hover zoom-effect h-100 w-100 position-relative" href="#"
           (click)="openImageModal(image)" data-bs-toggle="modal" data-bs-target="#imageModal">
@@ -185,8 +166,8 @@
           </div>
         </a>
       </div>
-    </swiper-slide>
-  </swiper-container>
+    </ng-template>
+  </generic-swiper>
 
   <!-- Modal Bootstrap -->
   <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" data-bs-backdrop="true">
@@ -201,7 +182,6 @@
       </div>
     </div>
   </div>
-
 </section>
 
 
@@ -256,102 +236,104 @@
 </section>
 
 <!-- Un cadre epanouissant -->
-<section class="container py-5 my-5">
-  <p>Équilibre professionnel</p>
-  <div class="row justify-content-between">
-    <div class="col">
-      <h2 class="h1 pb-3 mb-lg-4 text-white">Un cadre épanouissant</h2>
+<section class="white-tranlucid-bg">
+  <div class="container py-5 my-5">
+    <p>Équilibre professionnel</p>
+    <div class="row justify-content-between">
+      <div class="col">
+        <h2 class="h1 pb-3 mb-lg-4 text-white">Un cadre épanouissant</h2>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-12 col-lg-4 mb-4">
-      <div class="card h-100">
-        <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
-        <div class="card-body">
-          <h4 class="card-title">Événements toute l’année</h4>
-          <p class="card-text">La Com’ remue ciel et terre pour animer le quotidien des salariés : déjeuner,
-            teambuilding, animations...Rien n’est trop beau pour être heureux au bureau.</p>
+    <div class="row">
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Événements toute l’année</h4>
+            <p class="card-text">La Com’ remue ciel et terre pour animer le quotidien des salariés : déjeuner,
+              teambuilding, animations...Rien n’est trop beau pour être heureux au bureau.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Une équipe bienveillante</h4>
+            <p class="card-text">Rejoignez une équipe accueillante et engagée où la bienveillance et la passion sont au
+              cœur de notre culture d’entreprise.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Fruits frais chaque semaine</h4>
+            <p class="card-text">Chaque semaine, des corbeilles de fruits frais sont mises à disposition pour une touche
+              de fraîcheur et d’énergie.</p>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-12 col-lg-4 mb-4">
-      <div class="card h-100">
-        <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
-        <div class="card-body">
-          <h4 class="card-title">Une équipe bienveillante</h4>
-          <p class="card-text">Rejoignez une équipe accueillante et engagée où la bienveillance et la passion sont au
-            cœur de notre culture d’entreprise.</p>
+    <div class="row mb-4">
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Participation à tous les transports</h4>
+            <p class="card-text">Nous prenons en charge une partie des transports en commun et versons également une
+              indemnité kilométrique vélo (IKV) pour les trajets du domicile au bureau.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Bureaux au cœur de Paris</h4>
+            <p class="card-text">Nos bureaux haussmanniens situés en plein cœur de Paris dans le quartier d’Opéra
+              offrent un environnement stimulant et dynamique.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Charte de télétravail</h4>
+            <p class="card-text">Profitez d’un rythme de travail souple avec 1 jour de télétravail par semaine et 1 jour
+              flottant par mois à poser quand vous le souhaitez.</p>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-12 col-lg-4 mb-4">
-      <div class="card h-100">
-        <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
-        <div class="card-body">
-          <h4 class="card-title">Fruits frais chaque semaine</h4>
-          <p class="card-text">Chaque semaine, des corbeilles de fruits frais sont mises à disposition pour une touche
-            de fraîcheur et d’énergie.</p>
+    <div class="row mb-4">
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Carte ticket restaurant </h4>
+            <p class="card-text">Nous prenons soin de votre pause déjeuner avec une carte tickets restaurant Edenred à
+              utiliser quand vous le souhaitez.</p>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="row mb-4">
-    <div class="col-12 col-lg-4 mb-4">
-      <div class="card h-100">
-        <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
-        <div class="card-body">
-          <h4 class="card-title">Participation à tous les transports</h4>
-          <p class="card-text">Nous prenons en charge une partie des transports en commun et versons également une
-            indemnité kilométrique vélo (IKV) pour les trajets du domicile au bureau.</p>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Mutuelle de qualité</h4>
+            <p class="card-text">Bénéficiez d’une mutuelle avantageuse, prise en charge en partie par le JSS pour un
+              accès facilité aux soins.</p>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-12 col-lg-4 mb-4">
-      <div class="card h-100">
-        <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
-        <div class="card-body">
-          <h4 class="card-title">Bureaux au cœur de Paris</h4>
-          <p class="card-text">Nos bureaux haussmanniens situés en plein cœur de Paris dans le quartier d’Opéra offrent
-            un environnement stimulant et dynamique.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-lg-4 mb-4">
-      <div class="card h-100">
-        <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
-        <div class="card-body">
-          <h4 class="card-title">Charte de télétravail</h4>
-          <p class="card-text">Profitez d’un rythme de travail souple avec 1 jour de télétravail par semaine et 1 jour
-            flottant par mois à poser quand vous le souhaitez.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-4">
-    <div class="col-12 col-lg-4 mb-4">
-      <div class="card h-100">
-        <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
-        <div class="card-body">
-          <h4 class="card-title">Carte ticket restaurant </h4>
-          <p class="card-text">Nous prenons soin de votre pause déjeuner avec une carte tickets restaurant Edenred à
-            utiliser quand vous le souhaitez.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-lg-4 mb-4">
-      <div class="card h-100">
-        <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
-        <div class="card-body">
-          <h4 class="card-title">Mutuelle de qualité</h4>
-          <p class="card-text">Bénéficiez d’une mutuelle avantageuse, prise en charge en partie par le JSS pour un accès
-            facilité aux soins.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-lg-4 mb-4">
-      <div class="card yellow-card h-100 d-flex align-items-center justify-content-center">
-        <div class="text-center">
-          <h2 class="blue-title py-5 py-lg-3 px-5">Un environnement de travail respecté et respectueux</h2>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card yellow-card h-100 d-flex align-items-center justify-content-center">
+          <div class="text-center">
+            <h2 class="blue-title py-5 py-lg-3 px-5">Un environnement de travail respecté et respectueux</h2>
+          </div>
         </div>
       </div>
     </div>
