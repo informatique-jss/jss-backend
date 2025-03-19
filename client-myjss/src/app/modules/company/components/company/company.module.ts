@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
 import { AboutUsComponent } from '../about-us/about-us.component';
@@ -33,7 +33,7 @@ const routes: Routes = [
     JoinUsComponent
   ], exports: [
     OurStoryComponent
-  ], schemas: [CUSTOM_ELEMENTS_SCHEMA] // To let Angular accept Swiper components
+  ]
 })
 
 export class CompanyModule { }
