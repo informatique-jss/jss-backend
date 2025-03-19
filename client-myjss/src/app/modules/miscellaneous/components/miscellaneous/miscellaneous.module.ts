@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { Routes } from '@angular/router';
@@ -9,6 +9,7 @@ import { GenericInputComponent } from '../forms/generic-input/generic-input.comp
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
+import { GenericSwiperComponent } from '../generic-swiper/generic-swiper.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
 const routes: Routes = [
@@ -31,6 +32,7 @@ const routes: Routes = [
     TrustHtmlPipe,
     GenericTextareaComponent,
     GenericToggleComponent,
+    GenericSwiperComponent,
   ],
   exports: [
     AvatarComponent,
@@ -39,6 +41,7 @@ const routes: Routes = [
     TrustHtmlPipe,
     GenericTextareaComponent,
     GenericToggleComponent,
-  ]
+    GenericSwiperComponent
+  ], schemas: [CUSTOM_ELEMENTS_SCHEMA] // To let Angular accept Swiper components
 })
 export class MiscellaneousModule { }
