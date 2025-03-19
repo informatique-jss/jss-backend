@@ -13,7 +13,7 @@ import { CompanyModule } from './modules/company/components/company/company.modu
 import { GeneralModule } from './modules/general/components/general/general.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from './modules/my-account/components/my-account/my-account.module';
-import { MyServicesModule } from './modules/my-services/jss-services/jss-services.module';
+import { MyJssServicesModule } from './modules/my-services/myjss-services/myjss-services.module';
 import { FooterComponent } from './modules/profile/components/footer/footer.component';
 import { SearchComponent } from './modules/profile/components/search/search.component';
 import { TopBarComponent } from './modules/profile/components/top-bar/top-bar.component';
@@ -45,7 +45,7 @@ const routes: Routes = [
     MyAccountModule,
     MiscellaneousModule,
     QuotationModule,
-    MyServicesModule,
+    MyJssServicesModule,
     GeneralModule,
     CompanyModule,
   ], providers: [{

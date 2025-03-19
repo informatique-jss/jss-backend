@@ -1,0 +1,9 @@
+.double-button-custom {
+  --ar-btn-hover-color: #fff;
+  --ar-btn-active-color: #2C4057 !important;
+  --ar-btn-hover-bg: #e7e7e7;
+  --ar-btn-active-bg: #2C4057 !important;
+  --ar-btn-hover-border-color: #2C4057 !important;
+  --ar-btn-active-border-color: #2C4057 !important;
+  --ar-btn-disabled-color: #2C4057 !important;
+}

@@ -9,12 +9,19 @@ import { DocumentComponent } from '../document/document.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { ExplainationVideoComponent } from '../explaination-video/explaination-video.component';
 import { FormalityComponent } from '../formality/formality.component';
-import { JssServicesComponent } from './jss-services.component';
+import { MyJssServicesComponent } from './myjss-services.component';
 
 const routes: Routes = [
-  { path: 'services', component: JssServicesComponent },
-  { path: 'services/announcement', component: AnnouncementComponent },
-
+  {
+    path: 'services', component: MyJssServicesComponent,
+    children: [
+      { path: 'announcement', component: AnnouncementComponent },
+      { path: 'formality', component: FormalityComponent },
+      { path: 'apostille', component: ApostilleComponent },
+      { path: 'domiciliation', component: DomiciliationComponent },
+      { path: 'document', component: DocumentComponent },
+    ]
+  },
 ];
 
 @NgModule({
@@ -24,7 +31,7 @@ const routes: Routes = [
     MiscellaneousModule,
     MyAccountModule
   ],
-  declarations: [JssServicesComponent,
+  declarations: [MyJssServicesComponent,
     AnnouncementComponent,
     ExplainationVideoComponent,
     FormalityComponent,
@@ -33,4 +40,4 @@ const routes: Routes = [
     DocumentComponent
   ]
 })
-export class MyServicesModule { }
+export class MyJssServicesModule { }
