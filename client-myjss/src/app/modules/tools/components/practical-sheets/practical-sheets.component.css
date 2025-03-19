@@ -1,0 +1,240 @@
+/*.card-custom {
+  height: 180px;
+  display: flex;
+  overflow: hidden;
+}
+
+.card-custom {
+  overflow: hidden;
+  transition: all 0.5s ease-in-out;
+  height: 200px;
+}
+
+.card-custom .row {
+  flex: 1;
+}
+
+.card-custom .col-4 {
+  display: flex;
+}
+
+.card-custom .col-8 {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-custom h6 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  cursor: pointer;
+}
+
+.card-custom p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  cursor: pointer;
+} */
+
+ul {
+  cursor: pointer;
+}
+
+.container {
+  /*   background: gray; */
+  width: 100%;
+}
+
+
+/* Appliquer la scrollbar uniquement aux dropdown dans la card-body */
+.card-body {
+  max-height: 200px;
+  /* Définir une hauteur maximale, ajustez selon vos besoins */
+  overflow-y: auto;
+  /* Active le défilement vertical seulement si nécessaire */
+}
+
+/* Personnaliser la scrollbar pour la card-body */
+.card-body::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.card-body::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.card-body::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
+
+generic-input label .search-icon, generic-input i, generic-input svg {
+  color: #576071 !important;
+}
+
+/*
+.card-custom-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-custom-header button {
+  background: none;
+  border: none;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.card-custom-header button:hover {
+  text-decoration: underline;
+}
+
+.card-custom-header i {
+  margin-right: 8px;
+  font-size: 1.2rem;
+  z-index: 1;
+}
+
+
+.card-custom-body ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.card-custom-body li {
+  margin: 5px 0;
+}
+
+*/
+
+
+.card-body {
+  padding: 1rem;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.expanded-card {
+  height: auto;
+  max-height: 350px;
+}
+
+.toggle-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out;
+}
+
+.toggle-content.expanded {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.toggle-content.expanded::-webkit-scrollbar {
+  width: 6px;
+}
+
+.toggle-content.expanded::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6a11cb, #2575fc);
+  border-radius: 4px;
+}
+
+.toggle-content.expanded::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #4a00e0, #00c6ff);
+}
+
+.toggle-content.expanded::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+
+.circle-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+}
+
+/*
+
+.custom-btn:focus,
+.custom-btn:hover {
+  outline: none !important;
+  border: none !important;
+}
+
+
+
+i {
+  color: #ffffff;
+}
+.custom-input-group {
+  background-color: white;
+  border-radius: 0.375rem;
+  border: 1px solid #ccc;
+}
+
+.generic-input i {
+  color: #333 !important;
+}
+
+.input-group input {
+  background-color: white;
+  border: none;
+  box-shadow: none;
+  color: #333 !important;
+  outline: none;
+  caret-color: #333 !important;
+  padding-left: 2.5rem;
+}
+
+.input-group .generic-input input:focus {
+  color: #333 !important;
+  box-shadow: none;
+}
+
+.input-group .dropdown-toggle {
+  background-color: white;
+  border: none;
+  box-shadow: none;
+  padding: 0.5rem 1rem;
+}
+
+.input-group .dropdown-item {
+  color: #6c757d;
+}
+
+.input-group .dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.input-group .dropdown-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.input-group .dropdown-menu {
+  min-width: 200px;
+}*/

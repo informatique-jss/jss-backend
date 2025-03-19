@@ -27,6 +27,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Media;
+import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
@@ -44,7 +45,10 @@ public class PostServiceImpl implements PostService {
     AuthorService authorService;
 
     @Autowired
-    JssCategoryService myJssCategoryService;
+    JssCategoryService jssCategoryService;
+
+    @Autowired
+    MyJssCategoryService myJssCategoryService;
 
     @Autowired
     CategoryService categoryService;
@@ -283,6 +287,27 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory) {
+        Order order = new Order(Direction.DESC, "date");
+        Sort sort = Sort.by(Arrays.asList(order));
+        return postRepository.searchPostsByTitleAndMyJssCategory(searchText, myJssCategory, Pageable.unpaged());
+    }
+
+    @Override
+    public List<Post> getFirstPostsByMyJssCategories(String searchText, MyJssCategory selectedMyJssCategory) {
+        List<Post> firstPostsByMyJssCategory = new ArrayList<Post>();
+        if (selectedMyJssCategory != null)
+            return postRepository.searchPostsByTitleAndMyJssCategory(searchText, selectedMyJssCategory,
+                    PageRequest.of(0, 3));
+        for (MyJssCategory myJssCategory : myJssCategoryService.getAvailableMyJssCategories()) {
+            firstPostsByMyJssCategory
+                    .addAll(postRepository.searchPostsByTitleAndMyJssCategory(searchText, myJssCategory,
+                            PageRequest.of(0, 3)));
+        }
+        return firstPostsByMyJssCategory;
+    }
+
+    @Override
     public List<Post> getPostsByTag(Integer page, Tag tag) {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
@@ -427,7 +452,7 @@ public class PostServiceImpl implements PostService {
             post.setFullAuthor(authorService.getAuthor(post.getAuthor()));
         if (post.getJss_category() != null && post.getJss_category().length > 0) {
             List<JssCategory> categories = new ArrayList<JssCategory>();
-            List<JssCategory> availableCategories = myJssCategoryService.getAvailableJssCategories();
+            List<JssCategory> availableCategories = jssCategoryService.getAvailableJssCategories();
             for (Integer i : post.getJss_category()) {
                 for (JssCategory availableCategory : availableCategories) {
                     if (availableCategory.getId().equals(i)) {

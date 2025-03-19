@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
@@ -893,6 +894,13 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_category_serie")
 	private Category categorySerie;
+
+	@ManyToOne
+	@JoinColumn(name = "id_announcement_myjss_category")
+	private MyJssCategory announcementMyJssCategory;
+	@ManyToOne
+	@JoinColumn(name = "id_formality_myjss_category")
+	private MyJssCategory formalityMyJssCategory;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class_product")
@@ -2618,6 +2626,22 @@ public class Constant implements Serializable, IId {
 	public void setServiceFamilyImmatriculationAlAndFormality(
 			ServiceFamily serviceFamilyImmatriculationAlAndFormality) {
 		this.serviceFamilyImmatriculationAlAndFormality = serviceFamilyImmatriculationAlAndFormality;
+	}
+
+	public MyJssCategory getAnnouncementMyJssCategory() {
+		return announcementMyJssCategory;
+	}
+
+	public void setAnnouncementMyJssCategory(MyJssCategory announcementMyJssCategory) {
+		this.announcementMyJssCategory = announcementMyJssCategory;
+	}
+
+	public MyJssCategory getFormalityMyJssCategory() {
+		return formalityMyJssCategory;
+	}
+
+	public void setFormalityMyJssCategory(MyJssCategory formalityMyJssCategory) {
+		this.formalityMyJssCategory = formalityMyJssCategory;
 	}
 
 }

@@ -301,6 +301,21 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
   color: var(--ar-heading-color);
 }
 
+h6.secondary-heading,
+.h6.secondary-heading,
+h5.secondary-heading,
+.h5.secondary-heading,
+h4.secondary-heading,
+.h4.secondary-heading,
+h3.secondary-heading,
+.h3.secondary-heading,
+h2.secondary-heading,
+.h2.secondary-heading,
+h1.secondary-heading,
+.h1.secondary-heading {
+  color: var(--ar-heading-secondary-color);
+}
+
 h1, .h1 {
   font-size: calc(1.375rem + 1.5vw);
 }
@@ -16125,6 +16140,7 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
 .btn-link {
   --ar-btn-font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .btn-icon {
@@ -20144,6 +20160,16 @@ img-comparison-slider:focus {
 
 .blinking {
   animation: blinking 1s infinite;
+}
+
+.text-gray {
+  color: var(--ar-gray-700);
+}
+
+.checkbox-custom {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
 }
 
 .jarallax {

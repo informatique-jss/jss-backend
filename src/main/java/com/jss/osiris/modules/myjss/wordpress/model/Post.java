@@ -91,6 +91,11 @@ public class Post implements IId {
     private List<JssCategory> jssCategories;
 
     @ManyToMany
+    @JoinTable(name = "asso_post_myjss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_myjss_category"))
+    @IndexedField
+    private List<MyJssCategory> myJssCategories;
+
+    @ManyToMany
     @JoinTable(name = "asso_post_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_category"))
     private List<Category> postCategories;
 
@@ -402,6 +407,14 @@ public class Post implements IId {
 
     public void setIsPremium(Boolean isPremium) {
         this.isPremium = isPremium;
+    }
+
+    public List<MyJssCategory> getMyJssCategories() {
+        return myJssCategories;
+    }
+
+    public void setMyJssCategories(List<MyJssCategory> myJssCategories) {
+        this.myJssCategories = myJssCategories;
     }
 
 }

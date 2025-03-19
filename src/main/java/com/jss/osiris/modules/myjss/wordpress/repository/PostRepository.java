@@ -12,6 +12,7 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
@@ -24,6 +25,8 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         List<Post> findByJssCategoriesAndIsCancelled(JssCategory jssCategory, Boolean isCancelled,
                         Pageable pageableRequest);
+
+        List<Post> findByMyJssCategoriesAndIsCancelled(MyJssCategory myJssCategory, Boolean isCancelled);
 
         List<Post> findByPostCategoriesAndIsCancelled(Category category, Boolean isCancelled, Pageable pageableRequest);
 
@@ -52,5 +55,13 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p where p.isCancelled = false and :jssCategories member of p.jssCategories and p.date<:date")
         List<Post> findPreviousArticle(@Param("jssCategories") JssCategory jssCategories,
                         @Param("date") LocalDateTime date, Pageable pageableRequest);
+
+        @Query("select p from Post p "
+                        + "where (coalesce(:searchText, '') = '' or lower(p.titleText) like '%' || lower(coalesce(:searchText, '')) || '%' "
+                        + "or lower(p.excerptText) like '%' || lower(coalesce(:searchText, '')) || '%') "
+                        + "and (:myJssCategory is null or :myJssCategory member of p.myJssCategories)")
+        List<Post> searchPostsByTitleAndMyJssCategory(@Param("searchText") String searchText,
+                        @Param("myJssCategory") MyJssCategory myJssCategory,
+                        Pageable pageable);
 
 }

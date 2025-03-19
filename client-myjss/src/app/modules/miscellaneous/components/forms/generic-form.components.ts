@@ -4,9 +4,9 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 @Directive()
 export abstract class GenericFormComponent implements OnInit {
   /**
-   * The model of input property
-   * Mandatory
-   */
+  * The model of input property
+  * Mandatory
+  */
   @Input() model: any | undefined;
   @Output() modelChange: EventEmitter<any> = new EventEmitter<any>();
   /**
@@ -137,4 +137,5 @@ export abstract class GenericFormComponent implements OnInit {
       return object;
     return "";
   }
+
 }

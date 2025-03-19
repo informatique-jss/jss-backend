@@ -1,0 +1,111 @@
+<section class="bg-yellow-custom">
+  <div class="container py-5">
+    <div class="text-center">
+      <h1 class="secondary-heading">Les fiches pratiques de MyJSS</h1>
+      <h3 class="secondary-heading">Quelles informations recherchez-vous ?</h3>
+    </div>
+    <div class="row w-100 mt-3 d-flex justify-content-between">
+      <div class="col-12">
+        <div class="input-group custom-input-group">
+          <generic-input class="" style="flex-grow: 1;" [(model)]="searchText" label="Rechercher"
+            [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false"
+            [isDisplayLabel]="false" (onFormChange)="searchForPosts()" [icon]="'search'"></generic-input>
+
+          <button *ngIf="searchText" class="btn btn-link" (click)="clearSearch()">
+            <i class="ai ai-x"></i>
+          </button>
+
+          <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            {{ selectedMyJssCategory.name || 'Catégories' }}
+          </button>
+          <ul class="dropdown-menu bg-white">
+            <li *ngFor="let category of myJssCategories">
+              <a class="dropdown-item text-gray" (click)="selectMyJssCategory(category, 'input1')">{{ category.name
+                }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <div class="row justify-content-center mt-3">
+    <div *ngIf="searchResults">
+      <div class="card mb-3" *ngFor="let post of searchResults">
+        <div class="row g-3">
+          <div class="col-2">
+            <img class="object-fit-cover rounded-5" *ngIf="post.media && post.media.urlThumbnail"
+              [src]="post.media.urlThumbnail" alt="">
+          </div>
+          <div class="col-10 py-3">
+            <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
+              <h6 class="fw-bold" [innerHTML]="post.titleText | trustHtml"></h6>
+            </a>
+            <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
+
+              <p>{{truncateChar(post.excerptText, 100)}}</p>
+            </a>
+            <div class="small mt-1">{{ post.date | date:'EEEE d MMMM' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="container py-5">
+  <h1 class="m-4">Guides juridiques</h1>
+  <div class="row w-100 mt-3 d-flex justify-content-between ">
+    <div class="col-12 ">
+      <div class="input-group custom-input-group">
+        <generic-input style="flex-grow: 1;" [(model)]="secondSearchText" label="Rechercher"
+          [form]="practicalSheetsForm" propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false"
+          [isDisplayLabel]="false" (onFormChange)="filterForPosts()" [icon]="'search'"
+          placeholder="Input 2"></generic-input>
+
+        <button *ngIf="secondSearchText" class="btn btn-link" (click)="clearFilter()">
+          <i class="ai ai-x"></i>
+        </button>
+        <button class="btn btn-light dropdown-toggle " type="button" data-bs-toggle="dropdown">
+          {{ secondSelectedMyJssCategory.name || 'Catégories' }}
+        </button>
+        <ul class="dropdown-menu bg-white ">
+          <li *ngFor="let category of myJssCategories">
+            <a class="dropdown-item text-gray" (click)=" selectMyJssCategory(category, 'input2')">{{ category.name
+              }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngFor="let myJssCategory of myJssCategories; let i = index">
+    <div class="card card-custom my-3" [ngClass]="{ 'expanded-card': isExpanded(i) }"
+      *ngIf="hasPostsForCategory(myJssCategory)">
+      <div class="card-header d-flex justify-content-between ">
+        <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
+        <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(i, myJssCategory)">
+          <span class="circle-icon">
+            <i [ngClass]="isExpanded(i) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+          </span>
+        </button>
+      </div>
+
+      <div class="card-body ">
+        <div class=" row">
+          <div class="col-4" *ngFor="let post of (isExpanded(i) ? allPostsForOneCategory[i] || [] : postsInitDropdown)">
+            <div *ngIf="isPostInCategory(post, myJssCategory)">
+              <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
+              <a class="text-decoration-none text-white" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
+                data-bs-placement="top">
+                {{truncateChar(post.titleText, 30) }} </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</section>
