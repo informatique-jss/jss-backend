@@ -1,10 +1,12 @@
-import { Component, ContentChild, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ContentChild, CUSTOM_ELEMENTS_SCHEMA, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { SwiperContainer } from 'swiper/element';
 
 @Component({
   selector: 'generic-swiper',
+  standalone: true,
   templateUrl: './generic-swiper.component.html',
-  styleUrls: ['./generic-swiper.component.css']
+  styleUrls: ['./generic-swiper.component.css'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class GenericSwiperComponent implements OnInit {
 

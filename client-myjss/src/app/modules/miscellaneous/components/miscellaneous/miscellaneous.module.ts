@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { Routes } from '@angular/router';
@@ -19,11 +19,11 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    // RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
+    GenericSwiperComponent
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
@@ -32,7 +32,6 @@ const routes: Routes = [
     TrustHtmlPipe,
     GenericTextareaComponent,
     GenericToggleComponent,
-    GenericSwiperComponent,
   ],
   exports: [
     AvatarComponent,
@@ -42,6 +41,6 @@ const routes: Routes = [
     GenericTextareaComponent,
     GenericToggleComponent,
     GenericSwiperComponent
-  ], schemas: [CUSTOM_ELEMENTS_SCHEMA] // To let Angular accept Swiper components
+  ]
 })
 export class MiscellaneousModule { }
