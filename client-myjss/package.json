@@ -27,6 +27,7 @@
     "jarallax": "^2.2.1",
     "ngx-drag-scroll": "^18.0.0",
     "rxjs": "~7.8.0",
+    "swiper": "^11.2.5",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

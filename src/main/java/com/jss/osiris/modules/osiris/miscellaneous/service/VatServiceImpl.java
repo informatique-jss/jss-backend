@@ -314,7 +314,7 @@ public class VatServiceImpl implements VatService {
     @Override
     public void completeVatOnInvoiceItem(InvoiceItem invoiceItem, Invoice invoice)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        if (invoice.getResponsable() != null) {
+        if (invoice.getResponsable() != null && invoice.getRff() == null) {
             chooseCorrectVatDeductibleCollected(invoiceItem, false);
             Vat applicableVat = getGeographicalApplicableVatForSales(invoice, invoiceItem.getVat());
             if (applicableVat == null)

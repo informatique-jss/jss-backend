@@ -71,6 +71,7 @@ export class AddInvoiceComponent implements OnInit {
   attachmentTypeInvoice = this.contantService.getAttachmentTypeInvoice();
   indexedCustomerOrder: IndexEntity | undefined;
   idInvoiceForCreditNote: string | undefined;
+  isRff: boolean = false;
 
   refreshTable: Subject<void> = new Subject<void>();
 
@@ -112,6 +113,7 @@ export class AddInvoiceComponent implements OnInit {
         })
       })
     } else if (url != undefined && url != null && url[2] != undefined && url[1].path == "rff") {
+      this.isRff = true;
       this.invoiceService.createInvoiceFromRff(idInvoice).subscribe(generatedInvoice => {
         this.invoice = generatedInvoice;
         this.invoiceItems = generatedInvoice.invoiceItems;

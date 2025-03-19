@@ -6,8 +6,6 @@ import { initTooltips } from '../../../my-account/components/orders/orders.compo
 import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
 
-declare var bootstrap: any;
-
 @Component({
   selector: 'top-bar',
   templateUrl: './top-bar.component.html',

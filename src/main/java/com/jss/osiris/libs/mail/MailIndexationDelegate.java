@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -164,7 +165,7 @@ public class MailIndexationDelegate {
         }
     }
 
-    public void exportMailToFile(Integer id) throws OsirisException, IOException {
+    public void exportMailToFile(Integer id) throws OsirisException {
         IndexationMail mail = new IndexationMail();
 
         Store store = null;
@@ -241,6 +242,8 @@ public class MailIndexationDelegate {
                     mailHtml = new String(mailHtml.getBytes(StandardCharsets.UTF_8));
 
                     mail.setSubject(message.getSubject());
+                    if (mail.getSubject() == null)
+                        mail.setSubject(SSLHelper.randomPassword(10));
                     mail.setMailText(new ByteArrayInputStream(mailHtml.getBytes(StandardCharsets.UTF_8)));
 
                     if (osirisMailService.attachIndexationMailToEntity(mail)) {
@@ -297,9 +300,7 @@ public class MailIndexationDelegate {
             }
 
             folderTrash.expunge();
-            folderTrash.close();
-            store.close();
-            closeConnection(store, null, folderTrash);
+            closeConnection(store, folderTrash, null);
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to write into Trash folder");
         }
@@ -354,6 +355,10 @@ public class MailIndexationDelegate {
             if (part.isMimeType("text/html")) {
                 String content = (String) part.getContent();
                 htmlBuilder.append(content);
+            }
+
+            if (part.isMimeType("multipart/*")) {
+                htmlBuilder.append(processMultipart((Multipart) part.getContent()));
             }
         }
 

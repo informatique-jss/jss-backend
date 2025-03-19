@@ -180,7 +180,7 @@ public class InvoicingController {
         if (rff == null)
             throw new OsirisValidationException("Rff");
 
-        if (rff.getRffTotal() == null || rff.getRffTotal().compareTo(null) <= 0f)
+        if (rff.getRffTotal() == null || rff.getRffTotal().compareTo(new BigDecimal(0)) <= 0)
             throw new OsirisValidationException("Rff");
 
         if (rff.getIsCancelled() == true || rff.getIsSent() == false
@@ -628,9 +628,10 @@ public class InvoicingController {
 
                     if (invoice.getInvoiceStatus().getId()
                             .equals(constantService.getInvoiceStatusCreditNoteReceived().getId()))
-                        if (invoice.getTotalPrice().multiply(oneHundredValue).setScale(0,
-                                RoundingMode.HALF_EVEN) != paymentAssociate.getPayment().getPaymentAmount()
-                                        .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN))
+                        if (!invoice.getTotalPrice().multiply(oneHundredValue).setScale(0,
+                                RoundingMode.HALF_EVEN).equals(
+                                        paymentAssociate.getPayment().getPaymentAmount()
+                                                .multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)))
                             throw new OsirisValidationException("Wrong payment amount");
 
                     if (invoice.getInvoiceStatus().getId()
@@ -935,6 +936,10 @@ public class InvoicingController {
             doFound++;
         }
 
+        if (invoice.getRff() != null) {
+            validationHelper.validateReferential(invoice.getRff(), true, "Rff");
+        }
+
         if (invoice.getProvider() != null) {
             validationHelper.validateReferential(invoice.getProvider(), true, "Provider");
             doFound++;
@@ -955,7 +960,7 @@ public class InvoicingController {
 
         BillingLabelType billingLabelAffaire = constantService.getBillingLabelTypeCodeAffaire();
 
-        if (invoice.getProvider() == null && invoice.getIsCreditNote() == false) {
+        if (invoice.getProvider() == null && invoice.getIsCreditNote() == false && invoice.getRff() == null) {
             validationHelper.validateReferential(invoice.getBillingLabelType(), true, "BillingLabelType");
             validationHelper.validateString(invoice.getBillingLabelAddress(),
                     invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 160,

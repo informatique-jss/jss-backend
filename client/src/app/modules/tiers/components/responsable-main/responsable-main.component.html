@@ -62,7 +62,8 @@
                   </td>
                   <td>
                     <select-tiers-category [(model)]="selectedResponsable.tiersCategory" label="Catégorie"
-                      [form]="principalForm" propertyName="tiersCategory" [isDisabled]="!editMode" [isMandatory]="true">
+                      [form]="principalForm" propertyName="tiersCategory" [isDisabled]="!editMode"
+                      [isMandatory]="false">
                     </select-tiers-category>
                   </td>
                   <td>
@@ -255,6 +256,13 @@
         <mat-tab label="Historique" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
           <ng-template matTabContent>
             <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Préférences de communication" *ngIf="selectedResponsable && selectedResponsable.id">
+          <ng-template matTabContent>
+            <div class="mat-elevation-z2 form-div">
+              <communication-preference [responsable]="selectedResponsable"></communication-preference>
+            </div>
           </ng-template>
         </mat-tab>
       </mat-tab-group>
