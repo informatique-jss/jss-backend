@@ -4,10 +4,12 @@ import { combineLatest, map } from 'rxjs';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { BankBalancePaymentService } from 'src/app/modules/accounting/services/bank.balance.payment.service';
 import { BankBalanceService } from 'src/app/modules/accounting/services/bank.balance.service';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AccountingAccount } from '../../../accounting/model/AccountingAccount';
 import { Payment } from '../../model/Payment';
+import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
 
 @Component({
   selector: 'bank-balance',
@@ -20,6 +22,7 @@ export class BankBalanceComponent implements OnInit {
   totalBankTransfert = {} as any;
   totalRefund = {} as any;
   totalCheck = {} as any;
+  totalCheckReceived = {} as any;
   totalDirectDebitTransfert = {} as any;
   finalBankBalance = {} as any;
   totalJssBankBalance: any[] = [] as Array<any>;
@@ -29,10 +32,12 @@ export class BankBalanceComponent implements OnInit {
   bankBalanceForm = this.formBuilder.group({});
   displayedColumns: SortTableColumn<any>[] = [];
   displayedColumnsPayment: SortTableColumn<Payment>[] = [];
+  tableActionPayment: SortTableAction<Payment>[] = [];
 
   BANK_TRANSFERT: string = "BANK_TRANSFERT";
   DIRECT_DEBIT_TRANSFERT: string = "DIRECT_DEBIT_TRANSFERT";
   CHECK_EMITED: string = "CHECK_EMITED";
+  CHECK_RECEIVED: string = "CHECK_RECEIVED";
   REFUND: string = "REFUND";
 
   paymentList: Payment[] = [];
@@ -40,7 +45,8 @@ export class BankBalanceComponent implements OnInit {
   constructor(private bankBalanceService: BankBalanceService,
     private constantService: ConstantService,
     private formBuilder: FormBuilder,
-    private bankBalancePaymentService: BankBalancePaymentService
+    private bankBalancePaymentService: BankBalancePaymentService,
+    private paymentDetailsDialogService: PaymentDetailsDialogService
   ) { }
 
   ngOnInit() {
@@ -56,7 +62,14 @@ export class BankBalanceComponent implements OnInit {
     this.displayedColumnsPayment.push({ id: "paymentTypeLabel", fieldName: "paymentType.label", label: "Type" } as SortTableColumn<Payment>);
     this.displayedColumnsPayment.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<Payment>);
     this.displayedColumnsPayment.push({ id: "invoice", fieldName: "invoice.id", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn<Payment>);
+    this.displayedColumnsPayment.push({ id: "checkNumber", fieldName: "checkNumber", label: "N° de chèque" } as SortTableColumn<Payment>);
     this.displayedColumnsPayment.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn<Payment>);
+
+    this.tableActionPayment.push({
+      actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (column: SortTableAction<Payment>, element: Payment, event: any) => {
+        this.paymentDetailsDialogService.displayPaymentDetailsDialog(element as any);
+      }, display: true,
+    } as SortTableAction<Payment>);
 
     this.refresh();
   }
@@ -75,9 +88,10 @@ export class BankBalanceComponent implements OnInit {
         this.bankBalanceService.getBankTransfertTotal(this.accountingDate),
         this.bankBalanceService.getRefundTotal(this.accountingDate),
         this.bankBalanceService.getCheckTotal(this.accountingDate),
+        this.bankBalanceService.getCheckInboundTotal(this.accountingDate),
         this.bankBalanceService.getDirectDebitTransfertTotal(this.accountingDate)
       ]).pipe(
-        map(([accountingRecordBalance, totalBankTransfert, totalRefund, totalCheck, totalDirectDebitTransfert]) => ({ accountingRecordBalance, totalBankTransfert, totalRefund, totalCheck, totalDirectDebitTransfert })),
+        map(([accountingRecordBalance, totalBankTransfert, totalRefund, totalCheck, totalCheckInbound, totalDirectDebitTransfert]) => ({ accountingRecordBalance, totalBankTransfert, totalRefund, totalCheck, totalCheckInbound, totalDirectDebitTransfert })),
       ).subscribe(response => {
         this.totalJssBankBalance = [];
         this.accountingRecordBalance.label = "Solde du compte";
@@ -99,8 +113,12 @@ export class BankBalanceComponent implements OnInit {
         this.totalDirectDebitTransfert.label = "Prélèvements émis non rapprochés";
         this.totalDirectDebitTransfert.amount = response.totalDirectDebitTransfert;
         this.totalJssBankBalance.push(this.totalDirectDebitTransfert);
+        this.totalCheckReceived.id = this.CHECK_RECEIVED;
+        this.totalCheckReceived.label = "Chèques reçus non rapprochés";
+        this.totalCheckReceived.amount = response.totalCheckInbound;
+        this.totalJssBankBalance.push(this.totalCheckReceived);
         this.finalBankBalance.label = "Solde bancaire";
-        this.finalBankBalance.amount = +this.accountingRecordBalance.amount + this.totalBankTransfert.amount + this.totalRefund.amount + this.totalCheck.amount + this.totalDirectDebitTransfert.amount;
+        this.finalBankBalance.amount = +this.accountingRecordBalance.amount + this.totalBankTransfert.amount + this.totalRefund.amount + this.totalCheck.amount + this.totalDirectDebitTransfert.amount + this.totalCheckReceived.amount;
         this.finalBankBalance.amount = this.finalBankBalance.amount;
         this.totalJssBankBalance.push(this.finalBankBalance);
       });
@@ -115,10 +133,12 @@ export class BankBalanceComponent implements OnInit {
         this.bankBalancePaymentService.getRefundList(this.accountingDate).subscribe(response => this.paymentList = response);
       } else if (event.id == this.BANK_TRANSFERT) {
         this.bankBalancePaymentService.getBankTransfertList(this.accountingDate).subscribe(response => this.paymentList = response);
-      } if (event.id == this.CHECK_EMITED) {
+      } else if (event.id == this.CHECK_EMITED) {
         this.bankBalancePaymentService.getCheckList(this.accountingDate).subscribe(response => this.paymentList = response);
-      } if (event.id == this.DIRECT_DEBIT_TRANSFERT) {
+      } else if (event.id == this.DIRECT_DEBIT_TRANSFERT) {
         this.bankBalancePaymentService.getDirectDebitTransfertList(this.accountingDate).subscribe(response => this.paymentList = response);
+      } else if (event.id == this.CHECK_RECEIVED) {
+        this.bankBalancePaymentService.getCheckInboundList(this.accountingDate).subscribe(response => this.paymentList = response);
       }
   }
 }

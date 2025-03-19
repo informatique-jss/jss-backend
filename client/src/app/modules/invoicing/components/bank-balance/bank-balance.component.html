@@ -13,7 +13,7 @@
       tableName="Solde bancaire">
     </sort-table>
     <sort-table [columns]="displayedColumnsPayment" [values]="paymentList" *ngIf="paymentList && paymentList.length>0"
-      tableName="Solde bancaire détail">
+      [actions]="tableActionPayment" tableName="Solde bancaire détail">
     </sort-table>
   </div>
 </div>

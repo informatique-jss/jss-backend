@@ -24,8 +24,13 @@
                   [isMandatory]="false" [isDisabled]="false" [maxLength]="250"></generic-input>
               </td>
               <td>
-                <generic-input [(model)]="checkNumber" label="Numéro de chèque" [form]="addPaymentForm"
-                  propertyName="checkNumber" [isMandatory]="false" [isDisabled]="false"
+                <generic-input [(model)]="newPayment.checkNumber" label="Numéro de chèque" [form]="addPaymentForm"
+                  propertyName="checkNumber" [isMandatory]="true" [isDisabled]="false"
+                  [maxLength]="250"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="newPayment.checkDepositNumber" label="Numéro de liasse"
+                  [form]="addPaymentForm" propertyName="checkDepositNumber" [isMandatory]="true" [isDisabled]="false"
                   [maxLength]="250"></generic-input>
               </td>
               <td class="button-td">

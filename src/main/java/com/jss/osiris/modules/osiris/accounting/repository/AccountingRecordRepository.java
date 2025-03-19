@@ -388,7 +388,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
         @Query(nativeQuery = true, value = "" +
                         "         select p.id " +
                         " from " +
-                        " 	payment p join bank_transfert bt on bt.id = p.id_bank_transfert " +
+                        " 	payment p join bank_transfert bt on bt.id = p.id_bank_transfert  and bt.is_cancelled =false "
+                        +
                         " left join payment p_origin on " +
                         " 	p.id_origin_payment = p_origin.id " +
                         " where " +
@@ -419,8 +420,23 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
 
         @Query(nativeQuery = true, value = "select p.id from payment p left join payment p_origin on p.id_origin_payment = p_origin.id "
                         + " where p.bank_id is null  and p.payment_date <= :accountingDateTime and p.check_number is not null  "
-                        + " and (p.id_origin_payment is null or (p_origin.bank_id like 'H%' and p_origin.payment_date >:accountingDateTime)) and p.payment_amount < 0 ")
+                        + " and (p.id_origin_payment is null or (p_origin.bank_id like 'H%' and p_origin.payment_date >:accountingDateTime)) and p.payment_amount < 0 "
+                        + " and (p.is_cancelled = false or p.id in (select id_origin_payment from payment where id_origin_payment is not null)) ")
         List<Integer> getCheckTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
+
+        @Query(nativeQuery = true, value = "" +
+                        "         select " +
+                        " 	p.id " +
+                        " from " +
+                        " 	payment p   " +
+                        " where " +
+                        " 	p.bank_id is null " +
+                        " 	and p.payment_date <= :accountingDateTime" +
+                        " 	and p.check_deposit_number is not null " +
+                        " and p.check_deposit_number not in (select check_deposit_number from payment p2 where bank_id is not null and check_deposit_number is not null and p2.payment_date<:accountingDateTime) "
+                        +
+                        " 	and p.payment_amount >0 ")
+        List<Integer> getCheckInboundTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
         @Query(nativeQuery = true, value = "select p2.id from direct_debit_transfert ddt join payment p2 on p2.id_direct_debit_transfert = ddt.id and p2.bank_id is null "
                         + "where is_already_exported = true and exists (select 1 from payment p where p.payment_date <=:accountingDateTime and p.bank_id is null and p.id_direct_debit_transfert = ddt.id) and (ddt.is_cancelled is null or ddt.is_cancelled=false) and (is_matched = false or exists (select 1 from payment p where p.id_direct_debit_transfert=ddt.id and p.bank_id like 'H%' and p.payment_date >:accountingDateTime))")
