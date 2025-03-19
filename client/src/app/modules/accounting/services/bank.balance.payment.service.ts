@@ -25,6 +25,10 @@ export class BankBalancePaymentService extends AppRestService<Payment> {
     return this.getList(new HttpParams().set("accountingDate", toIsoString(accountingDate)), "accounting-record/check-list");
   }
 
+  getCheckInboundList(accountingDate: Date) {
+    return this.getList(new HttpParams().set("accountingDate", toIsoString(accountingDate)), "accounting-record/check-inbound-list");
+  }
+
   getDirectDebitTransfertList(accountingDate: Date) {
     return this.getList(new HttpParams().set("accountingDate", toIsoString(accountingDate)), "accounting-record/direct-debit-transfert-list");
   }

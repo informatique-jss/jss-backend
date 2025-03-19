@@ -106,6 +106,8 @@ public interface AccountingRecordService {
 
         public Number getCheckTotal(LocalDateTime accountingDate);
 
+        public Number getCheckInboundTotal(LocalDateTime accountingDate);
+
         public Number getDirectDebitTransfertTotal(LocalDateTime accountingDate);
 
         public List<Payment> getBankTransfertList(LocalDateTime accountingDate);
@@ -113,6 +115,8 @@ public interface AccountingRecordService {
         public List<Payment> getRefundList(LocalDateTime accountingDate);
 
         public List<Payment> getCheckList(LocalDateTime accountingDate);
+
+        public List<Payment> getCheckInboundList(LocalDateTime accountingDate);
 
         public List<Payment> getDirectDebitTransfertList(LocalDateTime accountingDate);
 
