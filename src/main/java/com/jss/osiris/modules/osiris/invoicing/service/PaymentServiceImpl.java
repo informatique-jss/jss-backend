@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -306,6 +307,29 @@ public class PaymentServiceImpl implements PaymentService {
             ArrayList<Invoice> correspondingInvoices = new ArrayList<Invoice>();
             ArrayList<CustomerOrder> correspondingCustomerOrder = new ArrayList<CustomerOrder>();
             ArrayList<Quotation> correspondingQuotation = new ArrayList<Quotation>();
+
+            // Match checks
+            if (correspondingEntities != null && correspondingEntities.size() > 0) {
+                BigDecimal totalAmount = new BigDecimal(0);
+                Payment lastPayment = null;
+                for (IndexEntity foundEntity : correspondingEntities) {
+                    if (foundEntity.getEntityType().equals(Payment.class.getSimpleName())) {
+                        Payment foundPayment = getPayment(foundEntity.getEntityId());
+                        lastPayment = foundPayment;
+                        if (foundPayment != null && !payment.getId().equals(foundPayment.getId())) {
+                            totalAmount = totalAmount.add(foundPayment.getPaymentAmount());
+                        }
+                    }
+                }
+
+                if (lastPayment != null && totalAmount.setScale(2, RoundingMode.HALF_EVEN)
+                        .compareTo(payment.getPaymentAmount().setScale(2, RoundingMode.HALF_EVEN)) == 0) {
+                    payment.setCheckDepositNumber(lastPayment.getCheckDepositNumber());
+                    addOrUpdatePayment(payment);
+                    cancelPayment(payment);
+                    return;
+                }
+            }
 
             DirectDebitTransfert directDebitFound = null;
 
@@ -1270,6 +1294,14 @@ public class PaymentServiceImpl implements PaymentService {
                         && payment.getLabel().contains("CHEQUE ")) {
                     // Try check on outbound payments
                     tmpEntitiesFound = searchService.searchForEntities("\"checkNumber\":\"" + idToFind + "\"",
+                            Payment.class.getSimpleName(), true);
+                }
+                if ((tmpEntitiesFound == null || tmpEntitiesFound.size() == 0)
+                        && payment.getPaymentAmount().compareTo(zeroValue) > 0
+                        && payment.getLabel().contains("REMISE CHEQUES ")) {
+                    // Try check on inbound payments
+                    tmpEntitiesFound = searchService.searchForEntities(
+                            "\"checkDepositNumber\":\"" + StringUtils.leftPad(idToFind + "", 8, "0") + "\"",
                             Payment.class.getSimpleName(), true);
                 }
                 if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {

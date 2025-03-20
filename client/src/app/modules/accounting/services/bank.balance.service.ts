@@ -27,6 +27,10 @@ export class BankBalanceService extends AppRestService<number> {
     return this.get(new HttpParams().set("accountingDate", toIsoString(accountingDate)), "accounting-record/check-total");
   }
 
+  getCheckInboundTotal(accountingDate: Date) {
+    return this.get(new HttpParams().set("accountingDate", toIsoString(accountingDate)), "accounting-record/check-inbound-total");
+  }
+
   getDirectDebitTransfertTotal(accountingDate: Date) {
     return this.get(new HttpParams().set("accountingDate", toIsoString(accountingDate)), "accounting-record/direct-debit-transfert-total");
   }

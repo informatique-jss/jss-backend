@@ -782,6 +782,8 @@ public class InvoicingController {
         checkPayment.setPaymentType(constantService.getPaymentTypeCheques());
         checkPayment.setPaymentAmount(checkPayment.getPaymentAmount().abs());
         validationHelper.validateString(checkPayment.getLabel(), true, 250, "paymentType");
+        validationHelper.validateString(checkPayment.getCheckNumber(), true, 250, "checkNumber");
+        validationHelper.validateString(checkPayment.getCheckDepositNumber(), true, 250, "checkDepositNumber");
         validationHelper.validateDateTimeMax(checkPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentType");
         checkPayment.setIsDeposit(false);
         checkPayment.setIsAppoint(false);

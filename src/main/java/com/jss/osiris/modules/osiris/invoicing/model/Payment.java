@@ -41,7 +41,8 @@ import jakarta.persistence.Table;
 		@Index(name = "idx_payment_id_direct_debit_transfert", columnList = "id_direct_debit_transfert"),
 		@Index(name = "idx_payment_id_bank_transfert", columnList = "id_bank_transfert"),
 		@Index(name = "idx_payment_id_customer_order", columnList = "id_customer_order"),
-		@Index(name = "idx_payment_id_origin_payment", columnList = "id_origin_payment")
+		@Index(name = "idx_payment_id_origin_payment", columnList = "id_origin_payment"),
+		@Index(name = "idx_payment_deposit_number", columnList = "check_deposit_number")
 })
 public class Payment implements Serializable, IId, ICreatedDate {
 
@@ -150,6 +151,9 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@IndexedField
 	private String checkNumber;
+
+	@IndexedField
+	private String checkDepositNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
@@ -369,6 +373,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setAccountingAccount(AccountingAccount accountingAccount) {
 		this.accountingAccount = accountingAccount;
+	}
+
+	public String getCheckDepositNumber() {
+		return checkDepositNumber;
+	}
+
+	public void setCheckDepositNumber(String checkDepositNumber) {
+		this.checkDepositNumber = checkDepositNumber;
 	}
 
 }
