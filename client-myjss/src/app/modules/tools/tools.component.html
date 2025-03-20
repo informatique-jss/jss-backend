@@ -1,5 +1,4 @@
 <section class="pt-5 mt-5 container">
-  <!-- Breadcrumb -->
   <nav aria-label="breadcrumb">
     <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
       <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
@@ -10,7 +9,6 @@
     </ol>
   </nav>
 
-  <!-- Nav tabs -->
   <ul class="nav nav-tabs " role="tablist">
     <li class="nav-item" *ngFor="let item of toolsItems;">
       <a class="nav-link" [class.active]="item == selectedTab" [routerLink]="item.route">
@@ -21,7 +19,6 @@
   </ul>
 </section>
 
-<!-- Content Section -->
 <div class="tab-content">
   <div>
     <div class="tab-pane">

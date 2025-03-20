@@ -2,11 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../../libs/appRest.service';
 import { Author } from '../model/Author';
-import { JssCategory } from '../model/JssCategory';
 import { Media } from '../model/Media';
 import { MyJssCategory } from '../model/MyJssCategory';
 import { Post } from '../model/Post';
-import { PublishingDepartment } from '../model/PublishingDepartment';
 import { Tag } from '../model/Tag';
 
 @Injectable({
@@ -16,14 +14,6 @@ export class PostService extends AppRestService<Post> {
 
   constructor(http: HttpClient) {
     super(http, "wordpress");
-  }
-
-  getTopPost(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/top");
-  }
-
-  getPostsTendency() {
-    return this.getList(new HttpParams(), "posts/tendency");
   }
 
   getPostBySlug(slug: string) {
@@ -77,36 +67,13 @@ export class PostService extends AppRestService<Post> {
     return this.getList(new HttpParams().set("myJssCategoryId", myJssCategory.id), "posts/myjss-category");
   }
 
-  getTopPostByJssCategory(page: number, jssCategory: JssCategory) {
-    return this.getList(new HttpParams().set("page", page).set("categoryId", jssCategory.id), "posts/top/jss-category");
-  }
-
   getTopPostByTag(page: number, tag: Tag) {
     return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
   }
 
-  getTopPostByDepartment(page: number, department: PublishingDepartment) {
-    return this.getList(new HttpParams().set("page", page).set("departmentId", department.id), "posts/top/department");
-  }
 
   getTopPostByAuthor(page: number, author: Author) {
     return this.getList(new HttpParams().set("page", page).set("authorId", author.id), "posts/top/author");
-  }
-
-  getTopPostInterview(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/top/interview");
-  }
-
-  getTopPostPodcast(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/top/podcast");
-  }
-
-  getNextArticle(post: Post) {
-    return this.get(new HttpParams().set("idPost", post.id), "post/next");
-  }
-
-  getPreviousArticle(post: Post) {
-    return this.get(new HttpParams().set("idPost", post.id), "post/previous");
   }
 
 }

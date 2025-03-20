@@ -17,7 +17,6 @@ export class PracticalSheetsComponent implements OnInit {
 
   debounce: any;
   postsInitDropdown: Post[] | undefined;
-  postsByMyJssCategory: Post[] | undefined;
   searchResults: Post[] | undefined;
   displayLoadMoreButton: boolean = true;
   searchText: string = "";
@@ -33,9 +32,9 @@ export class PracticalSheetsComponent implements OnInit {
   myJssCategories: MyJssCategory[] = [] as Array<MyJssCategory>;
   selectedMyJssCategory: MyJssCategory = {} as MyJssCategory;
 
-  expandedCards: { [key: number]: boolean } = {};
+  fetchedCategories: { [key: number]: boolean } = {};
   expandedCardIndex: number | null = null;
-  allPostsForOneCategory: { [key: number]: Array<Post> } = {};
+  postsByMyJssCategory: { [key: number]: Array<Post> } = {};
 
   constructor(
     private formBuilder: FormBuilder,
@@ -45,15 +44,34 @@ export class PracticalSheetsComponent implements OnInit {
   ) { }
   ngOnInit() {
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
-      if (response)
+      if (response) {
         this.myJssCategories = response;
+        this.postService.getFirstPostsByMyJssCategory(this.secondSearchText, this.secondSelectedMyJssCategory).subscribe(response => {
+          if (response) {
+            this.fillPostsByCategory(response);
+            console.log(this.postsByMyJssCategory);
+          }
+        });
+        this.fillFetchedCategories();
+      }
     });
+  }
 
-    this.postService.getFirstPostsByMyJssCategory(this.secondSearchText, this.secondSelectedMyJssCategory).subscribe(response => {
-      if (response)
-        this.postsInitDropdown = response;
+  fillPostsByCategory(postsInit: Post[]) {
+    postsInit.forEach(post => {
+      post.myJssCategories.forEach(category => {
+        if (!this.postsByMyJssCategory[category.id])
+          this.postsByMyJssCategory[category.id] = [];
+        this.postsByMyJssCategory[category.id].push(post);
+      });
     });
+  }
 
+  fillFetchedCategories() {
+    this.myJssCategories.forEach(category => {
+      this.fetchedCategories[category.id] = false;
+    });
+    console.log(this.fetchedCategories);
   }
 
   selectMyJssCategory(myJssCategory: MyJssCategory, inputKey: string) {
@@ -120,7 +138,7 @@ export class PracticalSheetsComponent implements OnInit {
       if (this.expandedCardIndex != null) {
         this.postService.getPostsByMyJssCategory(this.secondSearchText, this.myJssCategories[this.expandedCardIndex]).subscribe(response => {
           if (response && this.expandedCardIndex != null)
-            this.allPostsForOneCategory[this.expandedCardIndex] = response;
+            this.postsByMyJssCategory[this.expandedCardIndex] = response;
         });
       }
 
@@ -134,7 +152,7 @@ export class PracticalSheetsComponent implements OnInit {
       if (this.expandedCardIndex != null) {
         this.postService.getPostsByMyJssCategory(this.secondSearchText, this.myJssCategories[this.expandedCardIndex]).subscribe(response => {
           if (response && this.expandedCardIndex != null)
-            this.allPostsForOneCategory[this.expandedCardIndex] = response;
+            this.postsByMyJssCategory[this.expandedCardIndex] = response;
         });
       }
     }
@@ -148,16 +166,19 @@ export class PracticalSheetsComponent implements OnInit {
     return this.expandedCardIndex === index;
   }
 
-  toggleCard(index: number, myJssCategory: MyJssCategory): void {
-    if (this.expandedCardIndex === index) {
+  toggleCard(myJssCategory: MyJssCategory): void {
+    if (this.expandedCardIndex === myJssCategory.id) {
       this.expandedCardIndex = null;
     } else {
-      this.expandedCardIndex = index;
+      this.expandedCardIndex = myJssCategory.id;
     }
 
-    if (this.expandedCardIndex !== null && !this.allPostsForOneCategory[index]) {
+    if (this.expandedCardIndex !== null && this.postsByMyJssCategory[myJssCategory.id] && !this.fetchedCategories[myJssCategory.id]) {
       this.postService.getPostsByMyJssCategory(this.secondSearchText, myJssCategory).subscribe(response => {
-        this.allPostsForOneCategory[index] = response;
+        if (response) {
+          this.postsByMyJssCategory[myJssCategory.id] = response;
+          this.fetchedCategories[myJssCategory.id] = true;
+        }
       });
     }
   }
@@ -172,13 +193,4 @@ export class PracticalSheetsComponent implements OnInit {
     return shortened;
   }
 
-  isPostInCategory(post: Post, myJssCategory: MyJssCategory): boolean {
-    return post.myJssCategories.some(category => category.id === myJssCategory.id);
-  }
-
-  hasPostsForCategory(myJssCategory: MyJssCategory): boolean {
-    if (this.postsInitDropdown)
-      return this.postsInitDropdown.some(post => this.isPostInCategory(post, myJssCategory));
-    return false
-  }
 }

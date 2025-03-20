@@ -82,22 +82,22 @@
     </div>
   </div>
 
-  <ng-container *ngFor="let myJssCategory of myJssCategories; let i = index">
-    <div class="card card-custom my-3" [ngClass]="{ 'expanded-card': isExpanded(i) }"
-      *ngIf="hasPostsForCategory(myJssCategory)">
+  <ng-container *ngFor="let myJssCategory of myJssCategories;">
+    <div class="card card-custom my-3" [ngClass]="{ 'expanded-card': isExpanded(myJssCategory.id) }">
       <div class="card-header d-flex justify-content-between ">
         <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
-        <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(i, myJssCategory)">
+        <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
           <span class="circle-icon">
-            <i [ngClass]="isExpanded(i) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+            <i [ngClass]="isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
           </span>
         </button>
       </div>
 
-      <div class="card-body ">
+      <div class="card-body">
         <div class=" row">
-          <div class="col-4" *ngFor="let post of (isExpanded(i) ? allPostsForOneCategory[i] || [] : postsInitDropdown)">
-            <div *ngIf="isPostInCategory(post, myJssCategory)">
+          <div class="col-4"
+            *ngFor="let post of (isExpanded(myJssCategory.id) ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
+            <div>
               <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
               <a class="text-decoration-none text-white" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
                 data-bs-placement="top">
