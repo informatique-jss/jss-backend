@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
 import { AboutUsComponent } from '../about-us/about-us.component';
 import { JoinUsComponent } from '../join-us/join-us.component';
+import { OurStorySwiperComponent } from '../our-story-swiper/our-story-swiper.component';
 import { OurStoryComponent } from '../our-story/our-story.component';
 import { OurTeamComponent } from '../our-team/our-team.component';
 import { CompanyComponent } from './company.component';
@@ -24,7 +25,8 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
-    MiscellaneousModule
+    MiscellaneousModule,
+    OurStorySwiperComponent
   ],
   declarations: [CompanyComponent,
     AboutUsComponent,
@@ -32,7 +34,8 @@ const routes: Routes = [
     OurTeamComponent,
     JoinUsComponent
   ], exports: [
-    OurStoryComponent
+    OurStoryComponent,
+    OurStorySwiperComponent
   ]
 })
 
