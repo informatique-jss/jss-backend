@@ -12,10 +12,7 @@ import { SingleUploadComponent } from '../forms/single-upload/single-upload.comp
 import { GenericSwiperComponent } from '../generic-swiper/generic-swiper.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
-const routes: Routes = [
-  {
-  }
-];
+const routes: Routes = [{}];
 
 @NgModule({
   imports: [
@@ -23,7 +20,7 @@ const routes: Routes = [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    GenericSwiperComponent
+    GenericSwiperComponent,
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
@@ -40,7 +37,7 @@ const routes: Routes = [
     TrustHtmlPipe,
     GenericTextareaComponent,
     GenericToggleComponent,
-    GenericSwiperComponent
+    GenericSwiperComponent,
   ]
 })
 export class MiscellaneousModule { }
