@@ -19,6 +19,8 @@ import { MiscellaneousModule } from "../../../miscellaneous/components/miscellan
 import { AccountingBilanComponent } from "../accounting-bilan/accounting-bilan.component";
 import { AccountingProfitLostComponent } from "../accounting-profit-lost/accounting-profit-lost.component";
 import { AddAccountingRecordComponent } from "../add-accounting-record/add-accounting-record.component";
+import { FaeComponent } from "../fae/fae.component";
+import { FnpComponent } from "../fnp/fnp.component";
 import { AccountingBalanceGeneraleComponent } from "./../accounting-balance-generale/accounting-balance-generale.component";
 import { AccountingBalanceComponent } from "./../accounting-balance/accounting-balance.component";
 import { AccountingRecordComponent } from "./../accounting-record/accounting-record.component";
@@ -56,8 +58,10 @@ const routes: Routes = [
     AccountingBalanceComponent,
     AccountingBalanceGeneraleComponent,
     AddAccountingRecordComponent,
-    AccountingBilanComponent, 
-    AccountingProfitLostComponent
+    AccountingBilanComponent,
+    AccountingProfitLostComponent,
+    FaeComponent,
+    FnpComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

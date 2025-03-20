@@ -20,6 +20,14 @@ export class AccountingComponent implements OnInit {
     return this.habilitationService.canDisplayProfitLost();
   }
 
+  canDisplayFae() {
+    return this.habilitationService.canDisplayFae();
+  }
+
+  canDisplayFnp() {
+    return this.habilitationService.canDisplayFnp();
+  }
+
   canDisplayBilan() {
     return this.habilitationService.canDisplayBilan();
   }

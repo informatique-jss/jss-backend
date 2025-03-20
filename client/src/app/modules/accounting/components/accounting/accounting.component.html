@@ -20,7 +20,13 @@
       <accounting-bilan></accounting-bilan>
     </mat-tab>
     <mat-tab label="Compte de résultats" *ngIf="canDisplayProfitLost()">
-      <app-accounting-profit-lost></app-accounting-profit-lost>
+      <accounting-profit-lost></accounting-profit-lost>
+    </mat-tab>
+    <mat-tab label="FAE" *ngIf="canDisplayFae()">
+      <fae></fae>
+    </mat-tab>
+    <mat-tab label="FNP" *ngIf="canDisplayFnp()">
+      <fnp></fnp>
     </mat-tab>
   </mat-tab-group>
 </div>

@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,8 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
+import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
 import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepository;
@@ -823,5 +826,20 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     year += 2000;
 
     return LocalDate.of(year, month, day);
+  }
+
+  @Override
+  public List<FaeResult> getFae(LocalDate accountingDate) throws OsirisException {
+    return accountingRecordRepository.getFae(accountingDate.atTime(23, 59, 59),
+        Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
+            constantService.getInvoiceStatusReceived().getId(), constantService.getInvoiceStatusSend().getId()));
+  }
+
+  @Override
+  public List<FnpResult> getFnp(LocalDate accountingDate) throws OsirisException {
+    return accountingRecordRepository.getFnp(accountingDate.atTime(23, 59, 59),
+        Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
+            constantService.getInvoiceStatusReceived().getId(), constantService.getInvoiceStatusSend().getId()),
+        accountingDate.getYear() + "");
   }
 }
