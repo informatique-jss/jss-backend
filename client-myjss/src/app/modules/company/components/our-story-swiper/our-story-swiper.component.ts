@@ -26,7 +26,6 @@ export class OurStorySwiperComponent implements OnInit, AfterViewInit {
     { year: 2019, category: "DOMICILIATION", text: 'Création du Service Domiciliation', image: "assets/images/image-story-1898.png" },
     { year: 2020, category: "ANNONCES LÉGALES", text: 'Ouverture du Service de Presse de En Ligne (SPEL)', image: "assets/images/image-story-2020.png" },
     { year: 2022, category: "JOURNAL SPÉCIAL DES SOCIÉTÉS", text: 'Le journal devient hebdomadaire', image: "assets/images/image-story-1898.png" },
-    { year: 2023, category: "JOURNAL SPÉCIAL DES SOCIÉTÉS", text: 'Digitalisation du journal', image: "assets/images/image-story-1898.png" },
     { year: 2023, category: "JOURNAL SPÉCIAL DES SOCIÉTÉS", text: 'Digitalisation du journal', image: "assets/images/image-story-1898.png" }
   ];
 

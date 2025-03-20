@@ -34,8 +34,6 @@ const routes: Routes = [
     OurTeamComponent,
     JoinUsComponent
   ], exports: [
-    OurStoryComponent,
-    OurStorySwiperComponent
   ]
 })
 
