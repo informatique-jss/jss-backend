@@ -1,6 +1,6 @@
 
 export interface MyJssCategory {
-  id: number;
+  id: number | null;
   name: string;
   slug: string;
   categoryOrder: number;

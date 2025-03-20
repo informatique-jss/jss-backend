@@ -26,7 +26,7 @@ public interface PostService {
 
         public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory);
 
-        public List<Post> getFirstPostsByMyJssCategories(String searchText, MyJssCategory selectedMyJssCategory);
+        public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
 
         public Post getPostsBySlug(String slung);
 

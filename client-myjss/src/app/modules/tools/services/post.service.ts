@@ -43,7 +43,7 @@ export class PostService extends AppRestService<Post> {
     });
   }
 
-  getFirstPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory) {
+  getFirstPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory | undefined) {
     let httpParams = new HttpParams();
     if (searchText)
       httpParams = httpParams.set("searchText", searchText);
@@ -61,10 +61,8 @@ export class PostService extends AppRestService<Post> {
     return this.getList(httpParams, "search/myjss-category");
   }
 
-  getPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory) {
-    if (searchText != undefined && searchText != null && searchText.length > 2)
-      return this.getList(new HttpParams().set("myJssCategoryId", myJssCategory.id).set("searchText", searchText), "posts/myjss-category");
-    return this.getList(new HttpParams().set("myJssCategoryId", myJssCategory.id), "posts/myjss-category");
+  getPostsByMyJssCategory(myJssCategory: MyJssCategory) {
+    return this.getList(new HttpParams().set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null"), "posts/myjss-category");
   }
 
   getTopPostByTag(page: number, tag: Tag) {

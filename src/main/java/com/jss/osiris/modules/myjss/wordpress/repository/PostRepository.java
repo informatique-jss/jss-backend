@@ -57,11 +57,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         @Param("date") LocalDateTime date, Pageable pageableRequest);
 
         @Query("select p from Post p "
-                        + "where (coalesce(:searchText, '') = '' or lower(p.titleText) like '%' || lower(coalesce(:searchText, '')) || '%' "
-                        + "or lower(p.excerptText) like '%' || lower(coalesce(:searchText, '')) || '%') "
-                        + "and (:myJssCategory is null or :myJssCategory member of p.myJssCategories)")
-        List<Post> searchPostsByTitleAndMyJssCategory(@Param("searchText") String searchText,
-                        @Param("myJssCategory") MyJssCategory myJssCategory,
+                        + "where (:myJssCategory is null or :myJssCategory member of p.myJssCategories) and p.isCancelled = false"
+                        + " ")
+        List<Post> searchPostsByMyJssCategory(@Param("myJssCategory") MyJssCategory myJssCategory,
                         Pageable pageable);
 
 }

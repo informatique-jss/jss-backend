@@ -188,7 +188,7 @@ public class WordpressController {
 		if (myJssCategoryId != null)
 			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 
-		return new ResponseEntity<List<Post>>(postService.getFirstPostsByMyJssCategories(searchText, myJssCategory),
+		return new ResponseEntity<List<Post>>(postService.getFirstPostsByMyJssCategories(myJssCategory),
 				HttpStatus.OK);
 	}
 

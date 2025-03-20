@@ -1,3 +1,5 @@
+<!--Top search -->
+
 <section class="bg-yellow-custom">
   <div class="container py-5">
     <div class="text-center">
@@ -15,15 +17,8 @@
             <i class="ai ai-x"></i>
           </button>
 
-          <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            {{ selectedMyJssCategory.name || 'Catégories' }}
-          </button>
-          <ul class="dropdown-menu bg-white">
-            <li *ngFor="let category of myJssCategories">
-              <a class="dropdown-item text-gray" (click)="selectMyJssCategory(category, 'input1')">{{ category.name
-                }}</a>
-            </li>
-          </ul>
+          <select-myjss-category [(model)]="selectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+            propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
         </div>
       </div>
     </div>
@@ -56,6 +51,7 @@
 </section>
 
 
+<!-- Second search -->
 <section class="container py-5">
   <h1 class="m-4">Guides juridiques</h1>
   <div class="row w-100 mt-3 d-flex justify-content-between ">
@@ -63,49 +59,74 @@
       <div class="input-group custom-input-group">
         <generic-input style="flex-grow: 1;" [(model)]="secondSearchText" label="Rechercher"
           [form]="practicalSheetsForm" propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false"
-          [isDisplayLabel]="false" (onFormChange)="filterForPosts()" [icon]="'search'"
+          [isDisplayLabel]="false" (onFormChange)="searchForSecondPosts()" [icon]="'search'"
           placeholder="Input 2"></generic-input>
 
-        <button *ngIf="secondSearchText" class="btn btn-link" (click)="clearFilter()">
+        <button *ngIf="secondSearchText" class="btn btn-link" (click)="clearSecondSearch()">
           <i class="ai ai-x"></i>
         </button>
-        <button class="btn btn-light dropdown-toggle " type="button" data-bs-toggle="dropdown">
-          {{ secondSelectedMyJssCategory.name || 'Catégories' }}
-        </button>
-        <ul class="dropdown-menu bg-white ">
-          <li *ngFor="let category of myJssCategories">
-            <a class="dropdown-item text-gray" (click)=" selectMyJssCategory(category, 'input2')">{{ category.name
-              }}</a>
-          </li>
-        </ul>
+        <select-myjss-category [(model)]="selectSecondMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+          propertyName="selectSecondMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
       </div>
     </div>
   </div>
 
-  <ng-container *ngFor="let myJssCategory of myJssCategories;">
-    <div class="card card-custom my-3" [ngClass]="{ 'expanded-card': isExpanded(myJssCategory.id) }">
-      <div class="card-header d-flex justify-content-between ">
-        <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
-        <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
-          <span class="circle-icon">
-            <i [ngClass]="isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
-          </span>
-        </button>
-      </div>
+  <ng-container *ngIf="!secondSearchText">
+    <ng-container *ngFor="let myJssCategory of myJssCategories;">
+      <ng-container *ngIf="myJssCategory.id">
+        <div class="card card-custom my-3" [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
+          <div class="card-header d-flex justify-content-between ">
+            <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
+            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
+              <span class="circle-icon">
+                <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+              </span>
+            </button>
+          </div>
 
-      <div class="card-body">
-        <div class=" row">
-          <div class="col-4"
-            *ngFor="let post of (isExpanded(myJssCategory.id) ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
-            <div>
-              <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-              <a class="text-decoration-none text-white" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
-                data-bs-placement="top">
-                {{truncateChar(post.titleText, 30) }} </a>
+          <div class="card-body">
+            <div class=" row">
+              <div class="col-4"
+                *ngFor="let post of (isExpanded(myJssCategory.id) ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
+                <div>
+                  <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
+                  <a class="text-decoration-none text-white" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
+                    data-bs-placement="top">
+                    {{truncateChar(post.titleText, 30) }} </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="secondSearchText">
+    <ng-container *ngFor="let myJssCategory of myJssCategories;">
+      <ng-container
+        *ngIf="myJssCategory.id && secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0">
+        <div class="card card-custom my-3 expanded-card">
+          <div class="card-header d-flex justify-content-between ">
+            <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
+            <button type="button" class="btn btn-link rounded-circle custom-btn">
+            </button>
+          </div>
+
+          <div class="card-body">
+            <div class=" row">
+              <div class="col-4" *ngFor="let post of secondSearchResults[myJssCategory.id]">
+                <div>
+                  <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
+                  <a class="text-decoration-none text-white" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
+                    data-bs-placement="top">
+                    {{truncateChar(post.titleText, 30) }} </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
   </ng-container>
 </section>

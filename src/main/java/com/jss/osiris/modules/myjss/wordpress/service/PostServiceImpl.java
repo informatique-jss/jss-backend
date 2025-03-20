@@ -288,21 +288,31 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory) {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        return postRepository.searchPostsByTitleAndMyJssCategory(searchText, myJssCategory, Pageable.unpaged());
+        if (searchText != null) {
+            // todo : use indexed
+            return null;
+        } else {
+            Order order = new Order(Direction.ASC, "title");
+            Sort sort = Sort.by(Arrays.asList(order));
+            Pageable pageableRequest = PageRequest.of(0, 20000000, sort);
+            return postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
+        }
     }
 
     @Override
-    public List<Post> getFirstPostsByMyJssCategories(String searchText, MyJssCategory selectedMyJssCategory) {
+    public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory) {
         List<Post> firstPostsByMyJssCategory = new ArrayList<Post>();
+
+        Order order = new Order(Direction.DESC, "title");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(0, 3, sort);
+
         if (selectedMyJssCategory != null)
-            return postRepository.searchPostsByTitleAndMyJssCategory(searchText, selectedMyJssCategory,
-                    PageRequest.of(0, 3));
+            return postRepository.searchPostsByMyJssCategory(selectedMyJssCategory, pageableRequest);
+
         for (MyJssCategory myJssCategory : myJssCategoryService.getAvailableMyJssCategories()) {
             firstPostsByMyJssCategory
-                    .addAll(postRepository.searchPostsByTitleAndMyJssCategory(searchText, myJssCategory,
-                            PageRequest.of(0, 3)));
+                    .addAll(postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest));
         }
         return firstPostsByMyJssCategory;
     }

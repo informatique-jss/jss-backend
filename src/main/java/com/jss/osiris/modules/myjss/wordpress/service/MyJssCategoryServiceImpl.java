@@ -25,7 +25,7 @@ public class MyJssCategoryServiceImpl implements MyJssCategoryService {
 
     @Override
     public List<MyJssCategory> getAvailableMyJssCategories() {
-        return myJssCategoryRepository.findAllByOrderByName();
+        return myJssCategoryRepository.findAllByOrderByCategoryOrderAscNameAsc();
     }
 
     @Override
