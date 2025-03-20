@@ -20,9 +20,6 @@ export class AnnouncementComponent implements OnInit {
       speed: 0.5
     });
   }
-  openProduct(event: any) {
-    this.appService.openRoute(event, "product/" + "", undefined);
-  }
   openServices(event: any) {
     this.appService.openRoute(event, "my-services/" + "", undefined);
   }

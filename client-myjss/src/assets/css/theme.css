@@ -20250,10 +20250,6 @@ h1.secondary-heading,
   color: var(--ar-heading-secondary-color);
 }
 
-double-buttons.custom-color {
-  background-color: red;
-}
-
 .yellow-card {
   background-color: var(--ar-tertiary);
 }
