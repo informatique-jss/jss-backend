@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { AppService } from '../../../../libs/app.service';
 
 @Component({
   selector: 'double-buttons',
@@ -9,11 +10,11 @@ export class DoubleButtonsComponent implements OnInit {
   @Input() orderActionLabel: string = "";
   @Input() quotationActionLabel: string = "";
   @Input() linkLabel: string = "";
-  constructor() { }
+  constructor(private appService: AppService) { }
 
   ngOnInit() {
   }
   openRoute(event: any) {
-    console.log(this.linkLabel);
+    this.appService.openRoute(event, '', undefined);
   }
 }

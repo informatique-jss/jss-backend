@@ -1,36 +1,3 @@
-.bg-primary img {
-  position: absolute;
-  top: 50%;
-  right: 200px;
-  transform: translateY(-50%);
-  max-height: 100%;
-  z-index: 0;
-}
-
-.bg-primary {
-  background-color: rgba(243, 227, 202) !important;
-  background: url('/assets/images/background1.svg') no-repeat left center,
-    url('/assets/images/background2.svg') no-repeat right center;
-  background-size: cover, cover;
-  background-position: left center, right center;
-}
-
-
-.bg-primary::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('/assets/images/background1.svg') no-repeat left center,
-    url('/assets/images/background2.svg') no-repeat right center;
-  background-size: cover, cover;
-  background-position: left center, right center;
-  filter: brightness(0.2);
-  z-index: -1;
-}
-
 .holo-img img {
   position: absolute;
   bottom: 0;

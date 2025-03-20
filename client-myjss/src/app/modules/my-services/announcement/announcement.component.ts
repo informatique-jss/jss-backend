@@ -9,14 +9,6 @@ import { AppService } from '../../../libs/app.service';
 })
 export class AnnouncementComponent implements OnInit {
 
-  title: string = 'Publiez votre annonce en 3 étapes';
-  firstStepTitle: string = 'Sélectionnez votre modèle';
-  secondStepTitle: string = 'Remplissez, visualisez et validez votre annonce';
-  thirdStepTitle: string = 'Complétez vos coordonnées et payez';
-  firstStepDescription: string = 'Accédez à une bibliothèque complète de formulaires adaptés à vos besoins en annonces légales.';
-  secondStepDescription: string = 'Profitez d’une saisie libre ou guidée grâce à nos modèles intuitifs. Obtenez le prix instantanément.';
-  thirdStepDescription: string = 'Bénéficiez d’une interface sécurisée et fiable pour le traitement de vos informations personnelles.';
-
   constructor(private appService: AppService) {
   }
 

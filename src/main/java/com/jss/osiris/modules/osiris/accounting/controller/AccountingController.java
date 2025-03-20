@@ -307,6 +307,15 @@ public class AccountingController {
                 HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/accounting-record/check-inbound-total")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Number> getCheckInboundTotal(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
+        return new ResponseEntity<Number>(
+                accountingRecordService.getCheckInboundTotal(accountingDate),
+                HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/accounting-record/direct-debit-transfert-total")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Number> getDirectDebitTransfertTotal(
@@ -340,6 +349,15 @@ public class AccountingController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
         return new ResponseEntity<List<Payment>>(
                 accountingRecordService.getCheckList(accountingDate),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-record/check-inbound-list")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<List<Payment>> getCheckInboundList(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime accountingDate) {
+        return new ResponseEntity<List<Payment>>(
+                accountingRecordService.getCheckInboundList(accountingDate),
                 HttpStatus.OK);
     }
 

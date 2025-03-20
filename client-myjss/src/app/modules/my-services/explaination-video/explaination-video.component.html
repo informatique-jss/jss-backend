@@ -14,9 +14,8 @@
           </div>
 
           <div class="w-100 flex-md-shrink-0 rounded-5 mx-auto video-display ">
-            <video #videoPlayer class="w-100 h-100 position-absolute top-0 start-0" controls
-              poster="assets/img/announcement/annonce_bandeau_img.jpg">
-              <source src="assets/images/test_video.mp4" type="video/mp4">
+            <video #videoPlayer class="w-100 h-100 position-absolute top-0 start-0" controls [poster]="posterPath">
+              <source [src]="videoPath" type="video/mp4">
             </video>
           </div>
         </div>
@@ -24,7 +23,8 @@
     </div>
 
     <div class="col-sm-6 col-lg-4 order-lg-1">
-      <a class="card card-top border-0 h-100 text-decoration-none " style="cursor: pointer; " (click)="jumpTo(5)">
+      <a class="card card-top border-0 h-100 text-decoration-none " style="cursor: pointer; "
+        (click)="jumpTo(convertStringToInt(firstJumpTo))">
         <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body ">
             <p class="text-grey">Etape 01</p>
@@ -35,7 +35,8 @@
       </a>
     </div>
     <div [ngClass]="thirdStepTitle ? 'col-sm-6 col-lg-6 order-lg-3' : 'col-sm-12 col-lg-12 order-lg-3'">
-      <a class=" card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(10)">
+      <a class=" card border-0 h-100 text-decoration-none" style="cursor: pointer;"
+        (click)="jumpTo(convertStringToInt(secondJumpTo))">
         <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body">
             <p class="text-grey">Etape 02</p>
@@ -46,7 +47,8 @@
       </a>
     </div>
     <div *ngIf="thirdStepTitle && thirdStepDescription" class="col-sm-6 col-lg-6 order-lg-4">
-      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(20)">
+      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;"
+        (click)="jumpTo(convertStringToInt(thirdJumpTo))">
         <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body">
             <p class="text-grey">Etape 03</p>

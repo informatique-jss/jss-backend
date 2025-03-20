@@ -23,6 +23,7 @@ export interface Payment {
   paymentType: PaymentType;
   comment: string;
   checkNumber: string;
+  checkDepositNumber: string;
   originPayment: Payment;
   childrenPayments: Payment[];
   refund: Refund;

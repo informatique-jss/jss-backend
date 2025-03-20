@@ -22,9 +22,15 @@
 </section>
 
 
-<explaination-video [title]="title" [firstStepTitle]="firstStepTitle" [firstStepDescription]="firstStepDescription"
-  [secondStepTitle]="secondStepTitle" [secondStepDescription]="secondStepDescription" [thirdStepTitle]="thirdStepTitle"
-  [thirdStepDescription]="thirdStepDescription"></explaination-video>
+<explaination-video posterPath="assets/img/announcement/annonce_bandeau_img.jpg"
+  videoPath="assets/images/test_video.mp4" title="Authentifiez vos documents pour l’étranger en 3 étapes"
+  firstStepTitle="Remplissez le bon de commande"
+  firstStepDescription="Indiquez le type de document, le pays de destination et les éventuelles traductions."
+  secondStepTitle="Envoyez les originaux"
+  secondStepDescription="Transmettez les documents originaux à cette adresse : JSS - Service Apostilles Légalisations, 10 Boulevard Haussmann, 75009 Paris"
+  thirdStepTitle="Récupérez vos documents authentifiés"
+  thirdStepDescription="Recevez vos documents selon les modalités que vous aurez précisées." firstJumpTo="5"
+  secondJumpTo="15"></explaination-video>
 
 <description-my-account></description-my-account>
 
@@ -39,7 +45,7 @@
               style="width: 40px; height: 1px; margin-top: -1px;"></span>
             <span class="fs-xs fw-semibold text-blue opacity-70 text-uppercase">Apostilles et légalisation</span>
           </div>
-          <h2 class="h1 pb-2 pb-sm-3 text-blue">N'attendez plus et accédez à nos solutions</h2>
+          <h2 class="h1 secondary-heading pb-2 pb-sm-3 ">N'attendez plus et accédez à nos solutions</h2>
           <double-buttons orderActionLabel="Demander une apostille ou légalisation"
             quotationActionLabel="Demander un devis" linkLabel="Lien vers l'outil">
           </double-buttons>

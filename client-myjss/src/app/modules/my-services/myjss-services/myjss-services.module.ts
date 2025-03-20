@@ -5,6 +5,7 @@ import { MiscellaneousModule } from '../../miscellaneous/components/miscellaneou
 import { MyAccountModule } from "../../my-account/components/my-account/my-account.module";
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { ApostilleComponent } from '../apostille/apostille.component';
+import { DescriptionMyAccountComponent } from '../description-my-account/description-my-account.component';
 import { DocumentComponent } from '../document/document.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { ExplainationVideoComponent } from '../explaination-video/explaination-video.component';
@@ -37,7 +38,8 @@ const routes: Routes = [
     FormalityComponent,
     DomiciliationComponent,
     ApostilleComponent,
-    DocumentComponent
+    DocumentComponent,
+    DescriptionMyAccountComponent
   ]
 })
 export class MyJssServicesModule { }

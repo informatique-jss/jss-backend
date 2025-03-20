@@ -125,7 +125,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       for (Payment payment : payments) {
         total = total.add(payment.getPaymentAmount());
       }
-    return total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
+    return -total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
   }
 
   @Override
@@ -147,7 +147,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       for (Payment payment : payments) {
         total = total.add(payment.getPaymentAmount());
       }
-    return total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
+    return -total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
   }
 
   @Override
@@ -169,7 +169,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       for (Payment payment : payments) {
         total = total.add(payment.getPaymentAmount());
       }
-    return total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
+    return -total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
   }
 
   @Override
@@ -184,6 +184,28 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public Number getCheckInboundTotal(LocalDateTime accountingDate) {
+    BigDecimal total = new BigDecimal(0);
+    List<Payment> payments = getCheckInboundList(accountingDate);
+    if (payments != null)
+      for (Payment payment : payments) {
+        total = total.add(payment.getPaymentAmount());
+      }
+    return -total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
+  }
+
+  @Override
+  public List<Payment> getCheckInboundList(LocalDateTime accountingDate) {
+    List<Payment> payments = new ArrayList<Payment>();
+    List<Integer> paymentIds = accountingRecordRepository
+        .getCheckInboundTotal(accountingDate.withHour(23).withMinute(59).withSecond(59));
+    if (paymentIds != null)
+      for (Integer id : paymentIds)
+        payments.add(paymentService.getPayment(id));
+    return payments;
+  }
+
+  @Override
   public Number getDirectDebitTransfertTotal(LocalDateTime accountingDate) {
     BigDecimal total = new BigDecimal(0);
     List<Payment> payments = getDirectDebitTransfertList(accountingDate);
@@ -191,7 +213,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       for (Payment payment : payments) {
         total = total.add(payment.getPaymentAmount());
       }
-    return total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
+    return -total.setScale(2, RoundingMode.HALF_EVEN).floatValue();
   }
 
   @Override

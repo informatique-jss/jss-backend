@@ -1,11 +1,11 @@
 <div class="d-flex flex-column flex-md-row">
-  <button type="button" href="#" class="btn btn-light me-3 mb-2 mb-md-0">{{orderActionLabel}}
+  <button type="button" (click)="openRoute($event)" class="btn btn-light me-3 mb-2 mb-md-0">{{orderActionLabel}}
     <i class="ai-arrow-right"></i>
   </button>
-  <button type="button" href="#" class="btn btn-outline-light mb-2 mb-md-0">{{quotationActionLabel}}
+  <button type="button" (click)="openRoute($event)" class="btn btn-outline-light mb-2 mb-md-0">{{quotationActionLabel}}
     <i class="ai-arrow-right"></i>
   </button>
 </div>
-<div class="mt-2">
+<div class="mt-2" *ngIf="linkLabel && linkLabel.length>0">
   <a href="#" (click)="openRoute($event)" class="text-blue">{{linkLabel}}</a>
 </div>
