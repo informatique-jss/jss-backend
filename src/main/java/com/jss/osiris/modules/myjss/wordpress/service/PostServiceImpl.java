@@ -23,6 +23,8 @@ import com.jss.osiris.libs.HtmlTruncateHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
@@ -70,6 +72,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    SearchService searchService;
 
     @Autowired
     HtmlTruncateHelper htmlTruncateHelper;
@@ -288,22 +293,36 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory) {
-        if (searchText != null) {
-            // todo : use indexed
-            return null;
-        } else {
-            Order order = new Order(Direction.ASC, "title");
-            Sort sort = Sort.by(Arrays.asList(order));
-            Pageable pageableRequest = PageRequest.of(0, 20000000, sort);
-            return postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
-        }
+        List<IndexEntity> tmpEntitiesFound = null;
+        List<Post> matchingPosts = new ArrayList<Post>();
+        /*
+         * TODO
+         * if (searchText != null) {
+         * tmpEntitiesFound = searchService.searchForEntities("\"titleText\":\"" +
+         * searchText + "\"",
+         * Post.class.getSimpleName(), false);
+         * if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+         * for (IndexEntity entity : tmpEntitiesFound) {
+         * Optional<Post> post = postRepository.findById(entity.getEntityId());
+         * if (post.isPresent())
+         * matchingPosts.add(post.get());
+         * }
+         * }
+         * return matchingPosts;
+         * } else {
+         */
+        Order order = new Order(Direction.ASC, "titleText");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(0, 20000000, sort);
+        return postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
+        // }
     }
 
     @Override
     public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory) {
         List<Post> firstPostsByMyJssCategory = new ArrayList<Post>();
 
-        Order order = new Order(Direction.DESC, "title");
+        Order order = new Order(Direction.DESC, "titleText");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(0, 3, sort);
 

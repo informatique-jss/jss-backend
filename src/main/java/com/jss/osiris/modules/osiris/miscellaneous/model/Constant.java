@@ -896,11 +896,11 @@ public class Constant implements Serializable, IId {
 	private Category categorySerie;
 
 	@ManyToOne
-	@JoinColumn(name = "id_announcement_myjss_category")
-	private MyJssCategory announcementMyJssCategory;
+	@JoinColumn(name = "id_myjss_category_announcement")
+	private MyJssCategory myJssCategoryAnnouncement;
 	@ManyToOne
-	@JoinColumn(name = "id_formality_myjss_category")
-	private MyJssCategory formalityMyJssCategory;
+	@JoinColumn(name = "id_myjss_category_formality")
+	private MyJssCategory myJssCategoryFormality;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class_product")
@@ -2628,20 +2628,20 @@ public class Constant implements Serializable, IId {
 		this.serviceFamilyImmatriculationAlAndFormality = serviceFamilyImmatriculationAlAndFormality;
 	}
 
-	public MyJssCategory getAnnouncementMyJssCategory() {
-		return announcementMyJssCategory;
+	public MyJssCategory getMyJssCategoryAnnouncement() {
+		return myJssCategoryAnnouncement;
 	}
 
-	public void setAnnouncementMyJssCategory(MyJssCategory announcementMyJssCategory) {
-		this.announcementMyJssCategory = announcementMyJssCategory;
+	public void setMyJssCategoryAnnouncement(MyJssCategory announcementMyJssCategory) {
+		this.myJssCategoryAnnouncement = announcementMyJssCategory;
 	}
 
-	public MyJssCategory getFormalityMyJssCategory() {
-		return formalityMyJssCategory;
+	public MyJssCategory getMyJssCategoryFormality() {
+		return myJssCategoryFormality;
 	}
 
-	public void setFormalityMyJssCategory(MyJssCategory formalityMyJssCategory) {
-		this.formalityMyJssCategory = formalityMyJssCategory;
+	public void setMyJssCategoryFormality(MyJssCategory formalityMyJssCategory) {
+		this.myJssCategoryFormality = formalityMyJssCategory;
 	}
 
 }

@@ -482,9 +482,9 @@ public interface ConstantService {
 
     public Category getCategorySerie() throws OsirisException;
 
-    public MyJssCategory getAnnouncementMyJssCategory() throws OsirisException;
+    public MyJssCategory getMyJssCategoryAnnouncement() throws OsirisException;
 
-    public MyJssCategory getFormalityMyJssCategory() throws OsirisException;
+    public MyJssCategory getMyJssCategoryFormality() throws OsirisException;
 
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException;
 

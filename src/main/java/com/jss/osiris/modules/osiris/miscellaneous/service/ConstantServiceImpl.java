@@ -1162,13 +1162,13 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public MyJssCategory getAnnouncementMyJssCategory() throws OsirisException {
-        return this.getConstants().getAnnouncementMyJssCategory();
+    public MyJssCategory getMyJssCategoryAnnouncement() throws OsirisException {
+        return this.getConstants().getMyJssCategoryAnnouncement();
     }
 
     @Override
-    public MyJssCategory getFormalityMyJssCategory() throws OsirisException {
-        return this.getConstants().getFormalityMyJssCategory();
+    public MyJssCategory getMyJssCategoryFormality() throws OsirisException {
+        return this.getConstants().getMyJssCategoryFormality();
     }
 
     @Override

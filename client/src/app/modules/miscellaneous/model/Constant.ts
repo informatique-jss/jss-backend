@@ -261,8 +261,8 @@ export interface Constant {
   categoryPodcast: Category;
   categoryArticle: Category;
   categorySerie: Category;
-  announcementMyJssCategory: MyJssCategory;
-  formalityMyJssCategory: MyJssCategory;
+  myJssCategoryAnnouncement: MyJssCategory;
+  myJssCategoryFormality: MyJssCategory;
   accountingAccountClassProduct: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
 }

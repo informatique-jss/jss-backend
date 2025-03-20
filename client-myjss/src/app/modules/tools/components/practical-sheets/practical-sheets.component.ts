@@ -167,4 +167,16 @@ export class PracticalSheetsComponent implements OnInit {
     return shortened;
   }
 
+  highlightText(text: string): string {
+    const searchTerm = this.searchText.toLowerCase();
+    const index = text.toLowerCase().indexOf(searchTerm);
+
+    if (index === -1) return text;
+
+    const beforeMatch = text.substring(0, index);
+    const match = text.substring(index, index + searchTerm.length);
+    const afterMatch = text.substring(index + searchTerm.length);
+
+    return `${beforeMatch}<span style="color: #FFFF00">${match}</span>${afterMatch}`;
+  }
 }

@@ -6,10 +6,15 @@ ul {
   width: 100%;
 }
 
-.card-body {
-  max-height: 200px;
+.custom-dropdown {
+  position: absolute !important;
+}
+
+.custom-dropdown ul {
+  max-height: 400px;
   overflow-y: auto;
 }
+
 
 .card-body::-webkit-scrollbar {
   width: 5px;

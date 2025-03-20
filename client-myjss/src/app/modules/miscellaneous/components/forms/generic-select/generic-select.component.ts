@@ -16,7 +16,7 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
     super(formBuilder3,)
   }
 
-  override ngOnInit(): void {
+  callOnNgInit(): void {
     this.initTypes();
 
     if (this.types) {

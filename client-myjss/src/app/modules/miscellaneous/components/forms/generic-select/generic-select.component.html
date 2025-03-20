@@ -1,14 +1,8 @@
 <div class="form-group full-width" [formGroup]="form!">
-  <label for="{{propertyName}}">{{label}}</label>
-  <select class="form-control" id="{{propertyName}}" [formControlName]="propertyName" [required]="isMandatory ">
+  <label>{{label}}</label>
+  <select class="form-control" [formControlName]="propertyName" [required]="isMandatory ">
     <option *ngFor="let type of types" [value]="type">
       {{ displayLabel(type) }}
     </option>
   </select>
-
-  <!-- Icône "Supprimer" -->
-  <span *ngIf="!isDisabled && model != undefined" class="ml-2 text-danger pointer"
-    (click)="clearField(); $event.stopPropagation()">
-    <i class="bi bi-x-circle"></i>
-  </span>
 </div>

@@ -16,7 +16,6 @@
           <button *ngIf="searchText" class="btn btn-link" (click)="clearSearch()">
             <i class="ai ai-x"></i>
           </button>
-
           <select-myjss-category [(model)]="selectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
             propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
         </div>
@@ -25,36 +24,38 @@
   </div>
 </section>
 
-<section class="container py-5">
-  <div class="row justify-content-center mt-3">
-    <div *ngIf="searchResults">
-      <div class="card mb-3" *ngFor="let post of searchResults">
-        <div class="row g-3">
-          <div class="col-2">
-            <img class="object-fit-cover rounded-5" *ngIf="post.media && post.media.urlThumbnail"
-              [src]="post.media.urlThumbnail" alt="">
-          </div>
-          <div class="col-10 py-3">
-            <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
-              <h6 class="fw-bold" [innerHTML]="post.titleText | trustHtml"></h6>
-            </a>
-            <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
+<section class="container">
+  <ng-container *ngIf="searchResults && searchResults.length>0">
+    <div class="card border-0 custom-dropdown">
+      <ul class="list-group mt-2" *ngIf="searchResults.length > 0">
+        <li class="list-group-item card py-2" *ngFor="let post of searchResults">
+          <div class="row g-3">
+            <div class="col-2">
+              <img class="object-fit-cover rounded-5" *ngIf="post.media && post.media.urlThumbnail"
+                [src]="post.media.urlThumbnail" alt="">
+            </div>
+            <div class="col-10">
+              <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
+                <h6 class="fw-bold" [innerHTML]="highlightText(post.titleText) | trustHtml"></h6>
+              </a>
+              <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
 
-              <p>{{truncateChar(post.excerptText, 100)}}</p>
-            </a>
-            <div class="small mt-1">{{ post.date | date:'EEEE d MMMM' }}</div>
+                <p>{{truncateChar(post.excerptText, 100)}}</p>
+              </a>
+              <div class="small mt-1">{{ post.date | date:'EEEE d MMMM' }}</div>
+            </div>
           </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
-  </div>
+  </ng-container>
 </section>
 
 
 <!-- Second search -->
 <section class="container py-5">
   <h1 class="m-4">Guides juridiques</h1>
-  <div class="row w-100 mt-3 d-flex justify-content-between ">
+  <div class="row w-100 mt-3 d-flex justify-content-between">
     <div class="col-12 ">
       <div class="input-group custom-input-group">
         <generic-input style="flex-grow: 1;" [(model)]="secondSearchText" label="Rechercher"
@@ -73,7 +74,7 @@
 
   <ng-container *ngIf="!secondSearchText">
     <ng-container *ngFor="let myJssCategory of myJssCategories;">
-      <ng-container *ngIf="myJssCategory.id">
+      <ng-container *ngIf="myJssCategory.id && postsByMyJssCategory[myJssCategory.id]">
         <div class="card card-custom my-3" [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
           <div class="card-header d-flex justify-content-between ">
             <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
@@ -87,7 +88,7 @@
           <div class="card-body">
             <div class=" row">
               <div class="col-4"
-                *ngFor="let post of (isExpanded(myJssCategory.id) ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
+                *ngFor="let post of (isExpanded(myJssCategory.id)  ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
                 <div>
                   <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
                   <a class="text-decoration-none text-white" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
