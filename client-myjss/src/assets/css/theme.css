@@ -2880,7 +2880,7 @@ textarea.form-control-lg {
   margin-top: -0.25rem;
   -webkit-appearance: none;
   appearance: none;
-  background-color: var(--ar-primary);
+  background-color: var(--ar-secondary);
   border: 0;
   border-radius: 1rem;
   -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -2895,7 +2895,7 @@ textarea.form-control-lg {
 }
 
 .form-range::-webkit-slider-thumb:active {
-  background-color: var(--ar-primary);
+  background-color: var(--ar-secondary);
 }
 
 .form-range::-webkit-slider-runnable-track {
