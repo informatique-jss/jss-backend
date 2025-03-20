@@ -1,0 +1,15 @@
+<div class="mat-elevation-z2 form-div ">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-datepicker [(model)]="accountingDate" label="Date de calcul" [form]="fnpForm"
+            (onDateChange)="refresh()" propertyName="accountingDate" [isMandatory]="false"
+            [isDisabled]="false"></generic-datepicker>
+        </td>
+      </tr>
+    </table>
+    <sort-table [columns]="displayedColumns" [values]="fnpResults" tableName="FNP">
+    </sort-table>
+  </div>
+</div>

@@ -17,6 +17,8 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingVatValue;
+import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
+import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
@@ -485,5 +487,39 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("endDate") LocalDate endDate,
                         @Param("idAccountingJournal") Integer idAccountingJournal,
                         @Param("idAccountingClass") Integer idAccountingClass);
+
+        @Query(nativeQuery = true, value = "" +
+                        " select co.id as customerOrderId, case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end   as affaire, "
+                        +
+                        " vat.label as vat,sum(ii.pre_tax_price_reinvoiced ) as amount " +
+                        " from customer_order co  " +
+                        " join asso_affaire_order aao on aao.id_customer_order  = co.id " +
+                        " join affaire af on af.id = aao.id_affaire  " +
+                        " left join invoice i on i.customer_order_id  = co.id and i.id_invoice_status in (:openInvoicedStatusId) and i.created_date <:accountingDateTime "
+                        +
+                        " join invoice i2 on i2.id_customer_order_for_inbound_invoice  = co.id and i2.created_date <=:accountingDateTime and i2.id_invoice_status in (:openInvoicedStatusId) "
+                        +
+                        " join invoice_item ii on ii.id_invoice  = i2.id " +
+                        " join billing_item bi on bi.id = ii.id_billing_item  " +
+                        " join billing_type bt on bt.id = bi.id_billing_type  " +
+                        " join vat on vat.id = ii.id_vat " +
+                        " where i.id is null and co.is_gifted  = false and co.id_customer_order_status <>13  and ii.pre_tax_price_reinvoiced <>0 "
+                        +
+                        " group by co.id, case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end, vat.label "
+                        +
+                        " order by vat.label, affaire, co.id                         ")
+        List<FaeResult> getFae(LocalDateTime accountingDateTime, List<Integer> openInvoicedStatusId);
+
+        @Query(nativeQuery = true, value = "" +
+                        " select t.denomination as customerOrder, sum(rff_total) as amount  " +
+                        " from rff r " +
+                        " join tiers t on t.id = r.id_tiers  " +
+                        " left join invoice i on i.id_rff  = r.id and i.id_invoice_status in (:openInvoicedStatusId) and coalesce(i.manual_accounting_document_date, i.created_date) <:accountingDateTime "
+                        +
+                        " where is_sent  and i.id is null " +
+                        " and to_char(end_date,'YYYY') =:accountingDateTimeYear " +
+                        " group by t.denomination         ")
+        List<FnpResult> getFnp(LocalDateTime accountingDateTime, List<Integer> openInvoicedStatusId,
+                        String accountingDateTimeYear);
 
 }
