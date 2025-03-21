@@ -21,6 +21,8 @@ export class PostComponent implements OnInit {
   nextPost: Post | undefined;
   previousPost: Post | undefined;
   relatedPosts: Post[] = [];
+  recentPosts: Post[] = [];;
+  hotPosts: Post[] = [];;
 
   speechSynthesisUtterance: SpeechSynthesisUtterance | undefined;
   speechRate: number = 1;
@@ -49,6 +51,14 @@ export class PostComponent implements OnInit {
           this.relatedPosts = this.post.relatedPosts;
         }
       })
+
+    this.postService.getPostsTendency().subscribe(posts => {
+      this.hotPosts = posts;
+    });
+
+    this.postService.getTopPosts(0).subscribe(posts => {
+      this.recentPosts = posts;
+    });
   }
 
   ngOnDestroy() {

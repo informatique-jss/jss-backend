@@ -5,19 +5,20 @@
       <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
       <li class="breadcrumb-item"><a routerLink="/company/about-us">Outils</a></li>
       <li class="breadcrumb-item">
-        <!-- <span *ngIf="selectedTab">{{ selectedTab.label }}</span> -->
+        <!-- TODO <span *ngIf="selectedTab">{{ selectedTab.label }}</span> -->
       </li>
     </ol>
   </nav>
 
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs " role="tablist">
-    <!-- <li class="nav-item" *ngFor="let item of companyItems;">
+  <!-- TODO: activate the navbar only if we are not in the post page
+    <ul class="nav nav-tabs " role="tablist"> -->
+  <!-- <li class="nav-item" *ngFor="let item of companyItems;">
       <a class="nav-link" [class.active]="item == selectedTab" [routerLink]="item.route"> -->
-    <i class="fi-home me-2 "> SLAUT</i>
-    <!-- {{ item.label }} -->
-    <!-- </a>
+  <!-- <i class="fi-home me-2 "> SLAUT</i> -->
+  <!-- {{ item.label }} -->
+  <!-- </a>
     </li> -->
-  </ul>
+  <!-- </ul> -->
 </section>
 <router-outlet></router-outlet>
