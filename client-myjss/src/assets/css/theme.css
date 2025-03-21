@@ -16042,7 +16042,7 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
   --ar-btn-active-color: #fff;
   --ar-btn-hover-bg: var(--ar-secondary);
   --ar-btn-active-bg: var(--ar-secondary);
-  --ar-btn-hover-border-color: var(--ar-secondary);
+  --ar-btn-hover-border-color: var(--ar-primary);
   --ar-btn-active-border-color: var(--ar-secondary);
   --ar-btn-disabled-color: #fff;
 }

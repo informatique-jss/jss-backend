@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { AppService } from '../../../../libs/app.service';
 import { getTimeReading } from '../../../../libs/FormatHelper';
-import { Author } from '../../model/Author';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
 import { PostService } from '../../services/post.service';
@@ -66,10 +65,6 @@ export class PostComponent implements OnInit {
 
   openPost(post: Post, event: any) {
     this.appService.openRoute(event, "post/" + post.slug, undefined);
-  }
-
-  openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "author/" + author.slug, undefined);
   }
 
   openTagPosts(tag: Tag, event: any) {

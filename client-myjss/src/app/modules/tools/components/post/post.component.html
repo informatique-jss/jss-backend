@@ -85,10 +85,10 @@
 
       <!-- Submit a formality or contact us -->
       <div class="row my-5">
-        <a class="col-auto btn btn-primary m-2">Déposer ma candidature
+        <a class="col-auto btn btn-primary m-2">Déposer ma formalité
           <i class="ai-arrow-right fs-lg ms-2"></i>
         </a>
-        <a class="col-auto btn btn-outline-secondary m-2">Nous contacter pou un accompagnement
+        <a class="col-auto btn btn-outline-secondary m-2">Nous contacter pour un accompagnement
           <i class="ai-arrow-right fs-lg ms-2"></i>
         </a>
       </div>
@@ -329,7 +329,7 @@
 
 
 <!-- Related articles (carousel) -->
-<generic-swiper *ngIf="relatedPosts" [items]="relatedPosts" subtitle="" title="Articles associés">
+<generic-swiper *ngIf="relatedPosts && relatedPosts[0]" [items]="relatedPosts" subtitle="" title="Articles associés">
   <ng-template let-relatedPost>
     <!-- Post -->
     <article>
