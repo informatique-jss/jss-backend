@@ -83,6 +83,16 @@
       <!-- Post content -->
       <span class="fs-lg pt-2 pt-sm-3" [innerHTML]="post.contentText| trustHtml"></span>
 
+      <!-- Submit a formality or contact us -->
+      <div class="row my-5">
+        <a class="col-auto btn btn-primary m-2">Déposer ma candidature
+          <i class="ai-arrow-right fs-lg ms-2"></i>
+        </a>
+        <a class="col-auto btn btn-outline-secondary m-2">Nous contacter pou un accompagnement
+          <i class="ai-arrow-right fs-lg ms-2"></i>
+        </a>
+      </div>
+
       <!-- Tags -->
       <div class="d-flex flex-wrap pb-5 pt-3 pt-md-4 pt-xl-5 mt-xl-n2" *ngIf="post.postTags && post.postTags.length>0">
         <h3 class="h6 py-1 mb-0 me-4">Relevant tags:</h3>

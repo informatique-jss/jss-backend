@@ -4,7 +4,6 @@ import { environment } from '../../../../../environments/environment';
 import { AppService } from '../../../../libs/app.service';
 import { getTimeReading } from '../../../../libs/FormatHelper';
 import { Author } from '../../model/Author';
-import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
 import { PostService } from '../../services/post.service';
@@ -18,8 +17,6 @@ export class PostComponent implements OnInit {
 
   slug: string | undefined;
   post: Post | undefined;
-  nextPost: Post | undefined;
-  previousPost: Post | undefined;
   relatedPosts: Post[] = [];
   recentPosts: Post[] = [];;
   hotPosts: Post[] = [];;
@@ -46,8 +43,6 @@ export class PostComponent implements OnInit {
       this.postService.getPostBySlug(this.slug).subscribe(post => {
         this.post = post;
         if (this.post) {
-          this.postService.getNextArticle(this.post).subscribe(response => this.nextPost = response);
-          this.postService.getPreviousArticle(this.post).subscribe(response => this.previousPost = response);
           this.relatedPosts = this.post.relatedPosts;
         }
       })
@@ -75,10 +70,6 @@ export class PostComponent implements OnInit {
 
   openAuthorPosts(author: Author, event: any) {
     this.appService.openRoute(event, "author/" + author.slug, undefined);
-  }
-
-  openCategoryPosts(category: MyJssCategory, event: any) {
-    this.appService.openRoute(event, "category/" + category.slug, undefined);
   }
 
   openTagPosts(tag: Tag, event: any) {
@@ -111,10 +102,10 @@ export class PostComponent implements OnInit {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       let message = encodeURIComponent(`Découvrez cet article : ${this.extractContent(this.post.titleText)}\n\n🔗 ${url}`);
 
-      // Ouvre Instagram avec un message copiable
+      // Open Instagram with a copiable message
       window.open(`https://www.instagram.com/?text=${message}`, "_blank");
 
-      // Copie automatiquement le lien dans le presse-papier pour l'utilisateur
+      // Copies link on clipboard for the user
       navigator.clipboard.writeText(url).then(() => {
         alert("Le lien de l'article a été copié ! Vous pouvez le coller sur Instagram.");
       }).catch(err => {
@@ -122,7 +113,6 @@ export class PostComponent implements OnInit {
       });
     }
   }
-
 
   shareByMail() {
     if (this.post) {
