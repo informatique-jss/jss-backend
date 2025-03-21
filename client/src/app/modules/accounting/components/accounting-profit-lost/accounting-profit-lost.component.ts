@@ -8,7 +8,7 @@ import { AccountingBalanceViewTitle } from '../../model/AccountingBalanceViewTit
 import { AccountingBalanceViewTitleService } from '../../services/accounting.balance.view.title.service';
 
 @Component({
-  selector: 'app-accounting-profit-lost',
+  selector: 'accounting-profit-lost',
   templateUrl: './accounting-profit-lost.component.html',
   styleUrls: ['./accounting-profit-lost.component.css']
 })

@@ -30,7 +30,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         +
                         " coalesce(initcap(to_char(customer_order.created_date,'YYYY-MM-DD')),'N/A') as quotationCreatedDateDay,  "
                         +
-                        " coalesce(confrere.label, respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname)) as customerOrderLabel,  "
+                        " coalesce(  respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname)) as customerOrderLabel,  "
                         +
                         " coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname) as tiersLabel,   " +
                         " coalesce(ast.label, sps.label, ds.label,   fs.label) as provisionStatus,   " +
@@ -56,9 +56,8 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " join quotation_status customer_order_status on customer_order_status.id = customer_order.id_quotation_status  "
                         +
                         " left join responsable respo on respo.id = customer_order.id_responsable   " +
-                        " left join tiers on tiers.id = customer_order.id_tiers or tiers.id = respo.id_tiers   " +
+                        " left join tiers on tiers.id =  respo.id_tiers   " +
                         " left join employee e2 on e2.id = tiers.id_commercial   " +
-                        " left join confrere on confrere.id = customer_order.id_confrere   " +
                         " left join provision_type provision_t on provision_t.id = provision.id_provision_type   " +
                         " left join provision_family_type provision_ft on provision_ft.id = provision.id_provision_family_type  "
                         +
@@ -101,7 +100,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
                         " ntf.label ,   " +
                         "  provision_t.label  ,   " +
                         " provision_ft.label   ,     " +
-                        " coalesce(confrere.label, respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname))  ,  "
+                        " coalesce( respo.firstname || ' '||respo.lastname, coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname))  ,  "
                         +
                         " coalesce(tiers.denomination,tiers.firstname || ' ' ||tiers.lastname)     " +
                         "")
