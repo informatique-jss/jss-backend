@@ -50,7 +50,7 @@ public class WebSecurityConfig {
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests((auth) -> auth.requestMatchers(HttpMethod.OPTIONS).permitAll()
-				.requestMatchers("/wordpress/**").permitAll()
+				.requestMatchers("/myjss/wordpress/**").permitAll()
 				.requestMatchers("/profile/login").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/profile/login").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/constants").permitAll()
