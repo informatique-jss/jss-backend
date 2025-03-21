@@ -836,6 +836,10 @@ public class Constant implements Serializable, IId {
 	private ServiceType serviceTypeOther;
 
 	@ManyToOne
+	@JoinColumn(name = "id_service_type_secondary_center_opening")
+	private ServiceType serviceTypeSecondaryCenterOpeningAlAndFormality;
+
+	@ManyToOne
 	@JoinColumn(name = "id_provision_type_bilan_publication")
 	private ProvisionType provisionTypeBilanPublication;
 
@@ -2618,6 +2622,15 @@ public class Constant implements Serializable, IId {
 	public void setServiceFamilyImmatriculationAlAndFormality(
 			ServiceFamily serviceFamilyImmatriculationAlAndFormality) {
 		this.serviceFamilyImmatriculationAlAndFormality = serviceFamilyImmatriculationAlAndFormality;
+	}
+
+	public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() {
+		return serviceTypeSecondaryCenterOpeningAlAndFormality;
+	}
+
+	public void setServiceTypeSecondaryCenterOpeningAlAndFormality(
+			ServiceType serviceTypeSecondaryCenterOpeningAlAndFormality) {
+		this.serviceTypeSecondaryCenterOpeningAlAndFormality = serviceTypeSecondaryCenterOpeningAlAndFormality;
 	}
 
 }
