@@ -14955,7 +14955,7 @@ textarea.form-control-lg {
   --ar-heading-font-weight: 600;
   --ar-heading-link-color: var(--ar-gray-300);
   --ar-heading-link-hover-color: var(--ar-primary);
-  --ar-blockquote-color: var(--ar-gray-900);
+  --ar-blockquote-color: var(--ar-gray-100);
   --ar-blockquote-font-size: 1.5rem;
   --ar-blockquote-footer-color: var(--ar-gray-900);
   --ar-blockquote-footer-font-size: 1rem;
