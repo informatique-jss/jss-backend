@@ -41,6 +41,7 @@ import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
 import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
+import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
 import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -841,5 +842,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
             constantService.getInvoiceStatusReceived().getId(), constantService.getInvoiceStatusSend().getId()),
         accountingDate.getYear() + "");
+  }
+
+  @Override
+  public List<TreasureResult> getTreasure() throws OsirisException {
+    return accountingRecordRepository.getTreasure();
   }
 }

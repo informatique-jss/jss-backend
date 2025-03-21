@@ -28,6 +28,10 @@ export class AccountingComponent implements OnInit {
     return this.habilitationService.canDisplayFnp();
   }
 
+  canDisplayTreasure() {
+    return this.habilitationService.canDisplayTreasure();
+  }
+
   canDisplayBilan() {
     return this.habilitationService.canDisplayBilan();
   }
