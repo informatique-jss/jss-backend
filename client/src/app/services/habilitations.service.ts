@@ -144,11 +144,23 @@ export class HabilitationsService {
   }
 
   canDisplayBilan() {
-    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
   canDisplayProfitLost() {
-    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
+  canDisplayFae() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
+  canDisplayFnp() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
+  canDisplayTreasure() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
   canImportOfxFile() {

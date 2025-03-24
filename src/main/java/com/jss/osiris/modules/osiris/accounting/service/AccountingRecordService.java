@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.accounting.service;
 
 import java.io.File;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,6 +17,9 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingBalanceViewTitle
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
+import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
+import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
@@ -119,5 +123,11 @@ public interface AccountingRecordService {
         public List<Payment> getCheckInboundList(LocalDateTime accountingDate);
 
         public List<Payment> getDirectDebitTransfertList(LocalDateTime accountingDate);
+
+        public List<FaeResult> getFae(LocalDate accountingDate) throws OsirisException;
+
+        public List<FnpResult> getFnp(LocalDate accountingDate) throws OsirisException;
+
+        public List<TreasureResult> getTreasure() throws OsirisException;
 
 }

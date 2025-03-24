@@ -36,7 +36,10 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
+import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
+import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountClassService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingJournalService;
@@ -738,7 +741,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/bilan")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
     public ResponseEntity<List<AccountingBalanceViewTitle>> getBilan(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
@@ -750,7 +753,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/profit-lost")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
     public ResponseEntity<List<AccountingBalanceViewTitle>> getProfitAndLost(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
@@ -762,7 +765,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/profit-lost/export")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
     public ResponseEntity<byte[]> downloadProfitLost(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
@@ -792,7 +795,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/bilan/export")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
     public ResponseEntity<byte[]> downloadBilan(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
@@ -819,5 +822,34 @@ public class AccountingController {
             bilan.delete();
         }
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/fae")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<List<FaeResult>> getFae(
+            @RequestParam("accountingDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate accountingDate)
+            throws OsirisException {
+        if (accountingDate == null)
+            throw new OsirisValidationException("accountingDate");
+        return new ResponseEntity<List<FaeResult>>(
+                accountingRecordService.getFae(accountingDate), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/fnp")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<List<FnpResult>> getFnp(
+            @RequestParam("accountingDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate accountingDate)
+            throws OsirisException {
+        if (accountingDate == null)
+            throw new OsirisValidationException("accountingDate");
+        return new ResponseEntity<List<FnpResult>>(
+                accountingRecordService.getFnp(accountingDate), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/treasure")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<List<TreasureResult>> getTreasure() throws OsirisException {
+        return new ResponseEntity<List<TreasureResult>>(
+                accountingRecordService.getTreasure(), HttpStatus.OK);
     }
 }

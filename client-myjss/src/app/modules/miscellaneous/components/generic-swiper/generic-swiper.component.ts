@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, ContentChild, CUSTOM_ELEMENTS_SCHEMA, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { SwiperContainer } from 'swiper/element';
 
@@ -6,7 +7,8 @@ import { SwiperContainer } from 'swiper/element';
   standalone: true,
   templateUrl: './generic-swiper.component.html',
   styleUrls: ['./generic-swiper.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class GenericSwiperComponent implements OnInit {
 
