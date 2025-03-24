@@ -1,8 +1,6 @@
 import { Author } from "./Author";
-import { Category } from "./Category";
 import { Media } from "./Media";
 import { MyJssCategory } from "./MyJssCategory";
-import { PublishingDepartment } from "./PublishingDepartment";
 import { Tag } from "./Tag";
 
 export interface Post {
@@ -22,8 +20,6 @@ export interface Post {
   // Computed field
   fullAuthor: Author;
   myJssCategories: MyJssCategory[];
-  postCategories: Category[];
-  departments: PublishingDepartment[];
   postTags: Tag[];
   media: Media;
   premium: boolean;
