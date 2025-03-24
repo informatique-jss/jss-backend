@@ -1,6 +1,9 @@
 package com.jss.osiris.modules.osiris.crm.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,11 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.myjss.wordpress.model.Post;
+import com.jss.osiris.modules.myjss.wordpress.service.PostService;
+import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
+import com.jss.osiris.modules.osiris.crm.service.CommentService;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
@@ -27,6 +34,12 @@ public class CrmController {
 
         @Autowired
         private ValidationHelper validationHelper;
+
+        @Autowired
+        private CommentService commentService;
+
+        @Autowired
+        private PostService postService;
 
         @JsonView(JacksonViews.MyJssView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
@@ -125,4 +138,75 @@ public class CrmController {
                         return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
                 }
         }
+
+        /**
+         * Fetch all comments in DB
+         * 
+         * @param request
+         * @return
+         * @throws OsirisException
+         */
+        @GetMapping(inputEntryPoint + "/comments")
+        @JsonView(JacksonViews.MyJssView.class)
+        public ResponseEntity<List<Comment>> getComments(Pageable pageableRequest) throws OsirisException {
+
+                return new ResponseEntity<List<Comment>>(commentService.getComments(pageableRequest), HttpStatus.OK);
+        }
+
+        /**
+         * Get comment by id
+         * 
+         * @param commentId
+         * @return
+         * @throws OsirisException
+         */
+        @GetMapping(inputEntryPoint + "/comment")
+        @JsonView(JacksonViews.MyJssView.class)
+        public ResponseEntity<Comment> getComment(Integer commentId) throws OsirisException {
+
+                return new ResponseEntity<Comment>(commentService.getComment(commentId), HttpStatus.OK);
+        }
+
+        /**
+         * Save or update comment
+         * 
+         * @param comment
+         * @return
+         * @throws OsirisException
+         */
+        @GetMapping(inputEntryPoint + "/comment/add")
+        @JsonView(JacksonViews.MyJssView.class)
+        public ResponseEntity<Comment> saveOrUpdate(Comment comment) throws OsirisException {
+
+                if (comment != null && comment.getPost() != null) {
+                        Post post = postService.getPost(comment.getPost().getId());
+
+                        if (post != null) {
+                                return new ResponseEntity<Comment>(commentService.addOrUpdateComment(comment),
+                                                HttpStatus.OK);
+                        }
+                }
+                return new ResponseEntity<Comment>(new Comment(), HttpStatus.OK);
+        }
+
+        /**
+         * Deletes a comment
+         * 
+         * @param comment
+         * @return
+         * @throws OsirisException
+         */
+        @GetMapping(inputEntryPoint + "/comment/delete")
+        @JsonView(JacksonViews.MyJssView.class)
+        public ResponseEntity<Boolean> delete(Integer commentId) {
+
+                Comment comment = commentService.getComment(commentId);
+
+                if (comment != null) {
+                        return new ResponseEntity<Boolean>(commentService.delete(commentId), HttpStatus.OK);
+                }
+
+                return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+        }
+
 }

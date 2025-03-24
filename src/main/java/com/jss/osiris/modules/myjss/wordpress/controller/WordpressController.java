@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,8 @@ import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
 import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
+import com.jss.osiris.modules.osiris.crm.model.Comment;
+import com.jss.osiris.modules.osiris.crm.service.CommentService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
@@ -88,6 +91,9 @@ public class WordpressController {
 
 	@Autowired
 	CharacterPriceService characterPriceService;
+
+	@Autowired
+	CommentService commentService;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -302,6 +308,50 @@ public class WordpressController {
 
 		return new ResponseEntity<Announcement>(announcementService.getAnnouncementForWebSite(announcement),
 				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/comments")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Comment>> getComments(Pageable pageableRequest, HttpServletRequest request)
+			throws OsirisException {
+		detectFlood(request);
+
+		return new ResponseEntity<List<Comment>>(commentService.getComments(pageableRequest),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/comments")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<List<Comment>> getCommentsForPost(Pageable pageableRequest, Integer postId,
+			HttpServletRequest request)
+			throws OsirisException {
+		detectFlood(request);
+
+		Post post = postService.getPost(postId);
+
+		if (post != null) {
+			return new ResponseEntity<List<Comment>>(commentService.getCommentsForPost(pageableRequest, postId),
+					HttpStatus.OK);
+		}
+
+		return new ResponseEntity<List<Comment>>(new ArrayList<Comment>(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/comment/add")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Comment> addOrUpdateComment(Comment comment, HttpServletRequest request)
+			throws OsirisException {
+		detectFlood(request);
+
+		if (comment != null && comment.getPost() != null) {
+			Post post = postService.getPost(comment.getPost().getId());
+
+			if (post != null) {
+				return new ResponseEntity<Comment>(commentService.addOrUpdateComment(comment),
+						HttpStatus.OK);
+			}
+		}
+		return new ResponseEntity<Comment>(new Comment(), HttpStatus.OK);
 	}
 
 	private ResponseEntity<String> detectFlood(HttpServletRequest request) {
