@@ -19,6 +19,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResu
 import com.jss.osiris.modules.osiris.accounting.model.AccountingVatValue;
 import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
 import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
+import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
@@ -521,5 +522,32 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " group by t.denomination         ")
         List<FnpResult> getFnp(LocalDateTime accountingDateTime, List<Integer> openInvoicedStatusId,
                         String accountingDateTimeYear);
+
+        @Query(nativeQuery = true, value = "" +
+                        "         select " +
+                        "         to_char(ar.operation_date_time, " +
+                        "         'YYYY-MM') as month,  " +
+                        "         sum(case when  id_accounting_account = 128560 then  coalesce(debit_amount, 0)-coalesce (credit_amount, 0) end ) as cdnAmount, "
+                        +
+                        "         sum(case when  id_accounting_account = 115311 then   coalesce(debit_amount, 0)-coalesce (credit_amount, 0) end ) as bnpAmount, "
+                        +
+                        "         sum(case when  id_accounting_account = 582863 then   coalesce(debit_amount, 0)-coalesce (credit_amount, 0) end ) as sicavAmount, "
+                        +
+                        "         sum(case when  id_accounting_account = 582924 then  coalesce(debit_amount, 0)-coalesce (credit_amount, 0) end  ) as termeAmount, "
+                        +
+                        "         sum(coalesce(debit_amount, 0)-coalesce (credit_amount, 0)) as totalAmount " +
+                        " from " +
+                        "         accounting_record ar " +
+                        " join accounting_account aa on " +
+                        "         aa.id = ar.id_accounting_account " +
+                        " join principal_accounting_account pa on " +
+                        "         pa.id = aa.id_principal_accounting_account " +
+                        " where " +
+                        "         aa.id in (128560, 115311, 582924, 582863) " +
+                        " group by " +
+                        "         to_char(ar.operation_date_time, " +
+                        "         'YYYY-MM')  " +
+                        " ")
+        List<TreasureResult> getTreasure();
 
 }

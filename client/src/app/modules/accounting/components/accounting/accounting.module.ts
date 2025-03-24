@@ -21,6 +21,7 @@ import { AccountingProfitLostComponent } from "../accounting-profit-lost/account
 import { AddAccountingRecordComponent } from "../add-accounting-record/add-accounting-record.component";
 import { FaeComponent } from "../fae/fae.component";
 import { FnpComponent } from "../fnp/fnp.component";
+import { TreasureComponent } from "../treasure/treasure.component";
 import { AccountingBalanceGeneraleComponent } from "./../accounting-balance-generale/accounting-balance-generale.component";
 import { AccountingBalanceComponent } from "./../accounting-balance/accounting-balance.component";
 import { AccountingRecordComponent } from "./../accounting-record/accounting-record.component";
@@ -61,7 +62,8 @@ const routes: Routes = [
     AccountingBilanComponent,
     AccountingProfitLostComponent,
     FaeComponent,
-    FnpComponent
+    FnpComponent,
+    TreasureComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

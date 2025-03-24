@@ -40,6 +40,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
@@ -758,6 +759,18 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
             if (currentService.getServiceType().getServiceFamily().getId()
                     .equals(constantService.getServiceFamilyImmatriculationAlAndFormality().getId()))
+                return false;
+
+            if (currentService.getServiceType().getId()
+                    .equals(constantService.getServiceTypeSecondaryCenterOpeningAlAndFormality().getId()))
+                return false;
+
+            if (currentService.getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus().getCode()
+                    .equals(CustomerOrderStatus.ABANDONED))
+                return false;
+
+            if (currentService.getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus().getCode()
+                    .equals(CustomerOrderStatus.BILLED))
                 return false;
 
             for (Provision provision : currentService.getProvisions()) {
