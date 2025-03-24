@@ -10,8 +10,3 @@
     color: rgb(255, 255, 255);
     margin-bottom: 20px;
 }
-
-.jss-navbar {
-    backdrop-filter: blur(40px);
-    background-color: #1c2d41b6;
-}
