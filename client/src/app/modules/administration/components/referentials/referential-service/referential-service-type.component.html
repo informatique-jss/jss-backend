@@ -62,21 +62,27 @@
                 [isDisabled]="!editMode"></select-service-family>
             </td>
           </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.defaultDeboursPrice" label="Montant par défaut des débours (HT)"
-                [form]="entityForm" propertyName="defaultDeboursPrice" [isMandatory]="false" [isDisabled]="!editMode"
-                type="number" step="0.01"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.defaultDeboursPriceNonTaxable"
-                label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
-                propertyName="defaultDeboursPriceNonTaxable" [isMandatory]="false" [isDisabled]="!editMode"
-                type="number" step="0.01"></generic-input>
-            </td>
-          </tr>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.defaultDeboursPrice"
+                  label="Montant par défaut des débours (HT)" [form]="entityForm" propertyName="defaultDeboursPrice"
+                  [isMandatory]="false" [isDisabled]="!editMode" type="number" step="0.01"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedEntity.defaultDeboursPriceNonTaxable"
+                  label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
+                  propertyName="defaultDeboursPriceNonTaxable" [isMandatory]="false" [isDisabled]="!editMode"
+                  type="number" step="0.01"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedEntity.suspiciousMarkup"
+                  label="Majoration du prix pour les créances douteuses (%)" [form]="entityForm"
+                  propertyName="suspiciousMarkup" [isMandatory]="false" [isDisabled]="!editMode" type="number"
+                  step="1"></generic-input>
+              </td>
+            </tr>
+          </table>
         </table>
         <p>Prestations du service</p>
         <ng-container
