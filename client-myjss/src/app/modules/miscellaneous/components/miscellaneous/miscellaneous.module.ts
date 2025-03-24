@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { Routes } from '@angular/router';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
@@ -29,6 +30,7 @@ const routes: Routes = [{}];
     SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
+    DoubleButtonsComponent,
     GenericToggleComponent,
     GenericInputComponent,
     SelectMyJssCategoryComponent
@@ -39,6 +41,7 @@ const routes: Routes = [{}];
     SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
+    DoubleButtonsComponent,
     GenericToggleComponent,
     GenericSwiperComponent,
   ]
