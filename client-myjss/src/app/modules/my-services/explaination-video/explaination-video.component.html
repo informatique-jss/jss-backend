@@ -24,7 +24,7 @@
 
     <div class="col-sm-6 col-lg-4 order-lg-1">
       <a class="card card-top border-0 h-100 text-decoration-none " style="cursor: pointer; "
-        (click)="jumpTo(convertStringToInt(firstJumpTo))">
+        (click)="jumpTo( firstJumpTo)">
         <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body ">
             <p class="text-grey">Etape 01</p>
@@ -35,8 +35,7 @@
       </a>
     </div>
     <div [ngClass]="thirdStepTitle ? 'col-sm-6 col-lg-6 order-lg-3' : 'col-sm-12 col-lg-12 order-lg-3'">
-      <a class=" card border-0 h-100 text-decoration-none" style="cursor: pointer;"
-        (click)="jumpTo(convertStringToInt(secondJumpTo))">
+      <a class=" card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(secondJumpTo)">
         <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body">
             <p class="text-grey">Etape 02</p>
@@ -46,9 +45,8 @@
         </div>
       </a>
     </div>
-    <div *ngIf="thirdStepTitle && thirdStepDescription" class="col-sm-6 col-lg-6 order-lg-4">
-      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;"
-        (click)="jumpTo(convertStringToInt(thirdJumpTo))">
+    <div *ngIf="thirdStepTitle && thirdStepDescription && thirdJumpTo>0" class="col-sm-6 col-lg-6 order-lg-4">
+      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(thirdJumpTo)">
         <div class="card border-0 h-100 py-lg-2 py-xl-4">
           <div class="card-body">
             <p class="text-grey">Etape 03</p>

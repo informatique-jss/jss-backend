@@ -15,9 +15,9 @@ export class ExplainationVideoComponent implements OnInit {
   @Input() thirdStepDescription: string = '';
   @Input() posterPath: string = '';
   @Input() videoPath: string = '';
-  @Input() firstJumpTo: string = '';
-  @Input() secondJumpTo: string = '';
-  @Input() thirdJumpTo: string = '';
+  @Input() firstJumpTo: number = 0;
+  @Input() secondJumpTo: number = 0;
+  @Input() thirdJumpTo: number = 0;
 
 
   isPlaying: boolean = false;
@@ -28,11 +28,6 @@ export class ExplainationVideoComponent implements OnInit {
   @ViewChild('videoPlayer') videoPlayer: ElementRef | undefined;
 
   ngOnInit() {
-  }
-
-  convertStringToInt(stringTime: string) {
-    var Num = parseInt(stringTime);
-    return Num;
   }
 
   playVideo(): void {
