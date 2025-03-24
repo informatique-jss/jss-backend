@@ -41,6 +41,7 @@ import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
 import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
+import com.jss.osiris.modules.osiris.accounting.model.SuspiciousInvoiceResult;
 import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
 import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -847,5 +848,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public List<TreasureResult> getTreasure() throws OsirisException {
     return accountingRecordRepository.getTreasure();
+  }
+
+  @Override
+  public List<SuspiciousInvoiceResult> getSuspiciousInvoiceByTiers(LocalDate accountingDate) throws OsirisException {
+    return accountingRecordRepository.getSuspiciousInvoiceByTiers(accountingDate,
+        constantService.getInvoiceStatusSend().getId());
+  }
+
+  @Override
+  public List<SuspiciousInvoiceResult> getSuspiciousInvoice(LocalDate accountingDate) throws OsirisException {
+    return accountingRecordRepository.getSuspiciousInvoice(accountingDate,
+        constantService.getInvoiceStatusSend().getId());
   }
 }
