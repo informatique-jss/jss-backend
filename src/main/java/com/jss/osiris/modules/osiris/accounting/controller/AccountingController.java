@@ -39,6 +39,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResu
 import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
 import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
+import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountClassService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingJournalService;
@@ -843,5 +844,12 @@ public class AccountingController {
             throw new OsirisValidationException("accountingDate");
         return new ResponseEntity<List<FnpResult>>(
                 accountingRecordService.getFnp(accountingDate), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/treasure")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<List<TreasureResult>> getTreasure() throws OsirisException {
+        return new ResponseEntity<List<TreasureResult>>(
+                accountingRecordService.getTreasure(), HttpStatus.OK);
     }
 }

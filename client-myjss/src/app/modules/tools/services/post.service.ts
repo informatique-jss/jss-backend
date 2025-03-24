@@ -73,5 +73,20 @@ export class PostService extends AppRestService<Post> {
   getTopPostByAuthor(page: number, author: Author) {
     return this.getList(new HttpParams().set("page", page).set("authorId", author.id), "posts/top/author");
   }
+  getNextArticle(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/next");
+  }
+
+  getPreviousArticle(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/previous");
+  }
+
+  getTopPosts(page: number) {
+    return this.getList(new HttpParams().set("page", page), "posts/top");
+  }
+
+  getPostsTendency() {
+    return this.getList(new HttpParams(), "posts/tendency");
+  }
 
 }

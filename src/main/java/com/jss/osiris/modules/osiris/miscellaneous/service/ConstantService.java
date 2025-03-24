@@ -458,6 +458,8 @@ public interface ConstantService {
 
     public ServiceType getServiceTypeOther() throws OsirisException;
 
+    public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() throws OsirisException;
+
     public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException;
 
     public ActiveDirectoryGroup getActiveDirectoryGroupSales() throws OsirisException;

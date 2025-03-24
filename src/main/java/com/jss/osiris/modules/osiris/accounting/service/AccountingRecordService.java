@@ -19,6 +19,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
 import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
+import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
@@ -126,5 +127,7 @@ public interface AccountingRecordService {
         public List<FaeResult> getFae(LocalDate accountingDate) throws OsirisException;
 
         public List<FnpResult> getFnp(LocalDate accountingDate) throws OsirisException;
+
+        public List<TreasureResult> getTreasure() throws OsirisException;
 
 }

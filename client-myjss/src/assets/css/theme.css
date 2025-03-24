@@ -162,10 +162,14 @@
   --ar-body-bg-rgb: 255, 255, 255;
   --ar-emphasis-color: #000;
   --ar-emphasis-color-rgb: 0, 0, 0;
-  --ar-secondary-color: #858c97;
-  --ar-secondary-color-rgb: 133, 140, 151;
-  --ar-secondary-bg: #edf1f5;
-  --ar-secondary-bg-rgb: 237, 241, 245;
+  --ar-primary-color: #858c97;
+  --ar-primary-color-rgb: 133, 140, 151;
+  --ar-primary-bg: #edf1f5;
+  --ar-primary-bg-rgb: 237, 241, 245;
+  --ar-secondary-color: #ffffff;
+  --ar-secondary-color-rgb: 255, 255, 255;
+  --ar-secondary-bg: #1c2d41;
+  --ar-secondary-bg-rgb: 28, 45, 65;
   --ar-tertiary-color: rgba(87, 96, 113, 0.5);
   --ar-tertiary-color-rgb: 87, 96, 113;
   --ar-tertiary-bg: #F3E3CA;
@@ -449,6 +453,7 @@ sup {
 a {
   color: rgba(var(--ar-link-color-rgb), var(--ar-link-opacity, 1));
   text-decoration: underline;
+  cursor: pointer;
 }
 
 a:hover {
@@ -2895,7 +2900,7 @@ textarea.form-control-lg {
   margin-top: -0.25rem;
   -webkit-appearance: none;
   appearance: none;
-  background-color: var(--ar-primary);
+  background-color: var(--ar-secondary);
   border: 0;
   border-radius: 1rem;
   -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -2910,7 +2915,7 @@ textarea.form-control-lg {
 }
 
 .form-range::-webkit-slider-thumb:active {
-  background-color: var(--ar-primary);
+  background-color: var(--ar-secondary);
 }
 
 .form-range::-webkit-slider-runnable-track {
@@ -3484,7 +3489,7 @@ textarea.form-control-lg {
   --ar-btn-active-bg: #b3b3b3;
   --ar-btn-active-border-color: #b3b3b3;
   --ar-btn-active-shadow: unset;
-  --ar-btn-disabled-color: #fff;
+  --ar-btn-disabled-color: #2f4d6e;
   --ar-btn-disabled-bg: #fff;
   --ar-btn-disabled-border-color: #fff;
 }
@@ -6827,7 +6832,7 @@ textarea.form-control-lg {
   --ar-offcanvas-padding-x: 1.5rem;
   --ar-offcanvas-padding-y: 1.5rem;
   --ar-offcanvas-color: var(--ar-body-color);
-  --ar-offcanvas-bg: var(--ar-body-bg);
+  --ar-offcanvas-bg: var(--ar-secondary-bg);
   --ar-offcanvas-border-width: 0;
   --ar-offcanvas-border-color: var(--ar-border-color);
   --ar-offcanvas-box-shadow: 0 0.4375rem 1.25rem rgba(208, 208, 196, 0.32);
@@ -7023,6 +7028,7 @@ textarea.form-control-lg {
     visibility: hidden;
     background-color: var(--ar-offcanvas-bg);
     background-clip: padding-box;
+    backdrop-filter: blur(40px);
     outline: 0;
     transition: var(--ar-offcanvas-transition);
   }
@@ -7795,6 +7801,10 @@ textarea.form-control-lg {
 .visually-hidden:not(caption),
 .visually-hidden-focusable:not(:focus):not(:focus-within):not(caption) {
   position: absolute !important;
+}
+
+.stretched-link {
+  cursor: pointer;
 }
 
 .stretched-link::after {
@@ -14945,7 +14955,7 @@ textarea.form-control-lg {
   --ar-heading-font-weight: 600;
   --ar-heading-link-color: var(--ar-gray-300);
   --ar-heading-link-hover-color: var(--ar-primary);
-  --ar-blockquote-color: var(--ar-gray-900);
+  --ar-blockquote-color: var(--ar-gray-100);
   --ar-blockquote-font-size: 1.5rem;
   --ar-blockquote-footer-color: var(--ar-gray-900);
   --ar-blockquote-footer-font-size: 1rem;
@@ -16019,7 +16029,7 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
 }
 
 .btn:not([class^=btn-outline-]):not([class*=" btn-outline-"]):not(.btn-secondary):not(.btn-light):not(.btn-link) {
-  --ar-btn-color: #fff;
+  --ar-btn-color: var(--ar-secondary);
 }
 
 .btn>[class^=ai-],
@@ -16030,10 +16040,10 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
 .btn-primary {
   --ar-btn-hover-color: #fff;
   --ar-btn-active-color: #fff;
-  --ar-btn-hover-bg: #37715d;
-  --ar-btn-active-bg: #37715d;
-  --ar-btn-hover-border-color: #37715d;
-  --ar-btn-active-border-color: #37715d;
+  --ar-btn-hover-bg: var(--ar-secondary);
+  --ar-btn-active-bg: var(--ar-secondary);
+  --ar-btn-hover-border-color: var(--ar-primary);
+  --ar-btn-active-border-color: var(--ar-secondary);
   --ar-btn-disabled-color: #fff;
 }
 
@@ -16123,7 +16133,7 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
 }
 
 .btn-outline-secondary {
-  --ar-btn-color: #434a57;
+  --ar-btn-color: var(--ar-gray-100);
   --ar-btn-hover-color: #121519;
   --ar-btn-active-color: #121519;
   --ar-btn-hover-bg: #edf1f5;
@@ -20224,6 +20234,11 @@ img-comparison-slider:focus {
   background-position: left center, right center;
   filter: brightness(0.2);
   z-index: -1;
+}
+
+.jss-navbar {
+  backdrop-filter: blur(40px);
+  background-color: #1c2d41b6;
 }
 
 /*# sourceMappingURL=theme.css.map */

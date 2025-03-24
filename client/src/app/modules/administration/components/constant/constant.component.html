@@ -1660,6 +1660,14 @@
                 [isDisabled]="!editMode"></select-service-family>
             </td>
           </tr>
+          <tr>
+            <td>
+              <select-service-type [(model)]="constant.serviceTypeSecondaryCenterOpeningAlAndFormality"
+                label="Service type - Ouverture d'établissement secondaire - AL et Formalité" [form]="constantForm"
+                propertyName="serviceTypeSecondaryCenterOpeningAlAndFormality" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-type>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

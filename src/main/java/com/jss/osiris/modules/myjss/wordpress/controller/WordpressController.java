@@ -47,7 +47,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public class WordpressController {
 
-	private static final String inputEntryPoint = "/wordpress";
+	private static final String inputEntryPoint = "/myjss/wordpress";
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 10;

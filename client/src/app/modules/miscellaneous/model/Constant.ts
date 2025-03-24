@@ -245,6 +245,7 @@ export interface Constant {
   rffFrequencyQuarterly: RffFrequency;
   rffFrequencyMonthly: RffFrequency;
   serviceTypeOther: ServiceType;
+  serviceTypeSecondaryCenterOpeningAlAndFormality: ServiceType;
   provisionTypeBilanPublication: ProvisionType;
   provisionTypeRegistrationAct: ProvisionType;
   provisionFamilyTypeDeposit: ProvisionFamilyType;

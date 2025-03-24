@@ -1092,6 +1092,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() throws OsirisException {
+        return getConstants().getServiceTypeSecondaryCenterOpeningAlAndFormality();
+    }
+
+    @Override
     public LocalDate getDateAccountingClosureForAll() throws OsirisException {
         return this.getConstants().getDateAccountingClosureForAll();
     }
