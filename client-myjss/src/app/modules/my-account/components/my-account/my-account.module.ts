@@ -81,6 +81,10 @@ const routes: Routes = [
     BillingClosureComponent,
     UserSettingsComponent,
     CommunicationPreferenceComponent,
+    EmailCommunicationPreferenceComponent
+  ],
+  exports: [
+    CommunicationPreferenceComponent,
     EmailCommunicationPreferenceComponent,
   ]
 })

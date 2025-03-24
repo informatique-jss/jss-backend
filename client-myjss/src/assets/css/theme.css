@@ -734,6 +734,17 @@ progress {
 }
 
 
+.background-gold {
+  background-color: #1C2D41;
+  width: 100%;
+  height: 100%;
+  background-image:
+    url('../images/background2.svg');
+  background-position: top, 2541px;
+  background-repeat: no-repeat, repeat-y;
+  background-size: cover, cover;
+}
+
 .lead {
   font-size: calc(1.275rem + 0.3vw);
   font-weight: 400;
@@ -9397,6 +9408,15 @@ textarea.form-control-lg {
 .text-black {
   --ar-text-opacity: 1;
   color: rgba(var(--ar-black-rgb), var(--ar-text-opacity)) !important;
+}
+
+.text-blue {
+  color: var(--ar-secondary) !important;
+}
+
+.text-grey {
+  --ar-text-opacity: 1;
+  color: rgba(var(--ar-gray-700), var(--ar-text-opacity)) !important;
 }
 
 .text-white {
@@ -20176,16 +20196,11 @@ img-comparison-slider:focus {
   animation: blinking 1s infinite;
 }
 
-.jarallax {
-  height: 400px;
-}
-
 .checkbox-custom {
   width: 10px;
   height: 10px;
   border-radius: 2px;
 }
-
 
 .checkbox-custom {
   width: 10px;
@@ -20225,9 +20240,51 @@ img-comparison-slider:focus {
   z-index: -1;
 }
 
+.holo-img img {
+  position: absolute;
+  bottom: 0;
+  right: 10%;
+  max-height: 100%;
+  min-height: 500px;
+  object-fit: cover;
+  z-index: 2;
+}
+
+
+.text-container {
+  z-index: 2;
+  position: relative;
+}
+
+.jarallax {
+  height: 400px;
+}
+
+h6.secondary-heading,
+.h6.secondary-heading,
+h5.secondary-heading,
+.h5.secondary-heading,
+h4.secondary-heading,
+.h4.secondary-heading,
+h3.secondary-heading,
+.h3.secondary-heading,
+h2.secondary-heading,
+.h2.secondary-heading,
+h1.secondary-heading,
+.h1.secondary-heading {
+  color: var(--ar-heading-secondary-color);
+}
+
+.yellow-card {
+  background-color: var(--ar-tertiary);
+}
+
+.blue-title {
+  color: var(--ar-secondary);
+}
+
 .jss-navbar {
   backdrop-filter: blur(40px);
   background-color: #1c2d41b6;
 }
 
-/*# sourceMappingURL=theme.css.map */

@@ -7,11 +7,12 @@ import { MiscellaneousModule } from '../../../miscellaneous/components/miscellan
 import { QuotationComponent } from './quotation.component';
 
 const routes: Routes = [
+
 ];
 
 @NgModule({
   imports: [
-    // RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
+    //    RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
     MiscellaneousModule,
     FormsModule,
