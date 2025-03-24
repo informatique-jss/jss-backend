@@ -144,11 +144,10 @@ public class CrmController {
          * 
          * @param request
          * @return
-         * @throws OsirisException
          */
         @GetMapping(inputEntryPoint + "/comments")
         @JsonView(JacksonViews.MyJssView.class)
-        public ResponseEntity<List<Comment>> getComments(Pageable pageableRequest) throws OsirisException {
+        public ResponseEntity<List<Comment>> getComments(Pageable pageableRequest) {
 
                 return new ResponseEntity<List<Comment>>(commentService.getComments(pageableRequest), HttpStatus.OK);
         }
@@ -158,11 +157,10 @@ public class CrmController {
          * 
          * @param commentId
          * @return
-         * @throws OsirisException
          */
         @GetMapping(inputEntryPoint + "/comment")
         @JsonView(JacksonViews.MyJssView.class)
-        public ResponseEntity<Comment> getComment(Integer commentId) throws OsirisException {
+        public ResponseEntity<Comment> getComment(Integer commentId) {
 
                 return new ResponseEntity<Comment>(commentService.getComment(commentId), HttpStatus.OK);
         }
