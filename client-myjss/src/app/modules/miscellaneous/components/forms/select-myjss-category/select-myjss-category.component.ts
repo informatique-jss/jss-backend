@@ -11,10 +11,8 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
   styleUrls: ['../generic-select/generic-select.component.css']
 })
 export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCategory> implements OnInit {
-  override callOnNgInit(): void {
-  }
-
   @Input() types: MyJssCategory[] = [] as Array<MyJssCategory>;
+  @Input() additionnalType: MyJssCategory = {} as MyJssCategory;
 
   constructor(private formBuild: UntypedFormBuilder,
     private myJssCategoryService: MyJssCategoryService, private appService3: AppService) {
@@ -23,7 +21,8 @@ export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCa
 
   initTypes(): void {
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
-      this.types = response;
+      this.types.push(this.additionnalType);
+      this.types.push(...response);
     })
   }
 }

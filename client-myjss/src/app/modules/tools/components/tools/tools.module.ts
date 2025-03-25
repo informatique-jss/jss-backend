@@ -3,6 +3,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
+import { MandatoryDocumentsComponent } from '../mandatory-documents/mandatory-documents.component';
 import { PostComponent } from '../post/post.component';
 import { PracticalSheetsComponent } from '../practical-sheets/practical-sheets.component';
 import { ToolsComponent } from './tools.component';
@@ -12,6 +13,7 @@ const routes: Routes = [
     path: 'tools', component: ToolsComponent,
     children: [
       { path: 'practical-sheets', component: PracticalSheetsComponent },
+      { path: 'mandatory-documents', component: MandatoryDocumentsComponent },
     ]
   },
   { path: 'post/:slug', component: PostComponent },
@@ -26,7 +28,9 @@ const routes: Routes = [
   ],
   declarations: [
     ToolsComponent,
-    PostComponent
+    PostComponent,
+    PracticalSheetsComponent,
+    MandatoryDocumentsComponent,
   ], schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class ToolsModule { }

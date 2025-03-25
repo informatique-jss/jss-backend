@@ -29,7 +29,7 @@ export class GenericSwiperComponent implements OnInit {
       spaceBetween: "10",
       speed: "500",
       slidesPerView: "3",
-      loop: "true",
+      //loop: "true",
       injectStyles: [`
           .swiper-pagination-bullet {
             text-align: center;
@@ -39,7 +39,7 @@ export class GenericSwiperComponent implements OnInit {
             background: rgba(255, 255, 255, 0);
             border: white solid 1px;
           }
-    
+
           .swiper-pagination-bullet-active {
             color: #fff;
             background:rgb(255, 255, 255);

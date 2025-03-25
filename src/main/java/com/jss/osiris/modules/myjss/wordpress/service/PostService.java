@@ -36,6 +36,8 @@ public interface PostService {
 
         public List<Post> getPostTendency() throws OsirisException;
 
+        public List<Post> getPostMostSeen() throws OsirisException;
+
         public List<Post> getTopPostByDepartment(Integer page, PublishingDepartment department) throws OsirisException;
 
         public List<Post> getPostBySerie(Serie serie);

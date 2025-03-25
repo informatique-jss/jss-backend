@@ -85,8 +85,11 @@ export class PostService extends AppRestService<Post> {
     return this.getList(new HttpParams().set("page", page), "posts/top");
   }
 
-  getPostsTendency() {
+  getTendencyPosts() {
     return this.getList(new HttpParams(), "posts/tendency");
+  }
+  getMostSeenPosts() {
+    return this.getList(new HttpParams(), "posts/most-seen");
   }
 
 }

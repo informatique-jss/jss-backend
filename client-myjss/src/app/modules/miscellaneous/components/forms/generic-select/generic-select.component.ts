@@ -1,6 +1,7 @@
 import { Directive, EventEmitter, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { AppService } from '../../../../../libs/app.service';
+import { compareWithId } from '../../../../../libs/CompareHelper';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
@@ -9,7 +10,6 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
   @Output() selectionChange: EventEmitter<T> = new EventEmitter();
 
   abstract types: T[];
-
   constructor(
     private formBuilder3: UntypedFormBuilder, private appService2: AppService
   ) {
@@ -18,7 +18,6 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
 
   callOnNgInit(): void {
     this.initTypes();
-
     if (this.types) {
       this.types.sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)));
     }
@@ -28,28 +27,21 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
         this.selectionChange.emit(newValue);
       });
     }
+
   }
 
   abstract initTypes(): void;
 
-  compareWithId(a: any, b: any): boolean {
-    return a && b ? a.id === b.id : a === b;
-  }
+  compareWithId = compareWithId;
 
-  clearField(): void {
-    if (this.form)
-      this.form.get(this.propertyName)?.setValue(null);
-    this.selectionChange.emit(undefined);
-  }
-
-  getPreviewActionLinkFunction(entity: T): string[] | undefined {
-    return undefined;
-  }
 
   override displayLabel(object: any): string {
-    if (object && object.label) return object.label;
-    if (object && object.name) return object.name;
-    if (typeof object === 'string') return object;
-    return '';
+    if (object && object.label)
+      return object.label;
+    if (object && object.name)
+      return object.name;
+    if (typeof object === "string")
+      return object;
+    return "";
   }
 }

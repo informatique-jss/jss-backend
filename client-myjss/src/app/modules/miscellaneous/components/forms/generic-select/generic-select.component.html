@@ -1,8 +1,8 @@
-<div class="form-group full-width" [formGroup]="form!">
-  <label>{{label}}</label>
-  <select class="form-control" [formControlName]="propertyName" [required]="isMandatory ">
-    <option *ngFor="let type of types" [value]="type">
+<div class="full-width" [formGroup]="form!">
+  <select class="form-control" [formControlName]="propertyName" [required]="isMandatory" [compareWith]="compareWithId">
+    <option *ngFor="let type of types" [ngValue]="type">
       {{ displayLabel(type) }}
     </option>
+    <!-- <i class="ai ai-cross-alt"></i> -->
   </select>
 </div>

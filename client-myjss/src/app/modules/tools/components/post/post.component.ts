@@ -46,7 +46,7 @@ export class PostComponent implements OnInit {
         }
       })
 
-    this.postService.getPostsTendency().subscribe(posts => {
+    this.postService.getMostSeenPosts().subscribe(posts => {
       this.hotPosts = posts;
     });
 

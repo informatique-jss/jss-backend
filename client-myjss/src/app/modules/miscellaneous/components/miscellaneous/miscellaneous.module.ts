@@ -26,7 +26,6 @@ const routes: Routes = [{}];
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
-    GenericInputComponent,
     SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
@@ -44,6 +43,7 @@ const routes: Routes = [{}];
     DoubleButtonsComponent,
     GenericToggleComponent,
     GenericSwiperComponent,
+    SelectMyJssCategoryComponent
   ]
 })
 export class MiscellaneousModule { }

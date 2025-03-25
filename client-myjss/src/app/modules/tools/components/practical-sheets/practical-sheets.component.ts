@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import Fuse from 'fuse.js';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
 import { MyJssCategory } from '../../model/MyJssCategory';
@@ -16,15 +17,16 @@ import { PostService } from '../../services/post.service';
 export class PracticalSheetsComponent implements OnInit {
 
   debounce: any;
-
+  loading: boolean = false;
   searchObservableRef: Subscription | undefined;
   searchText: string = "";
-  selectedMyJssCategory: MyJssCategory = {} as MyJssCategory;
+  selectedMyJssCategory: MyJssCategory | undefined;
+  selectTest: string = "";
   searchResults: Post[] = [];
 
   secondSearchObservableRef: Subscription | undefined;
   secondSearchText: string = "";
-  secondSelectedMyJssCategory = {} as MyJssCategory;
+  secondSelectedMyJssCategory: MyJssCategory = {} as MyJssCategory;
   secondSearchResults: { [key: number]: Array<Post> } = {};
 
   myJssCategories: MyJssCategory[] = [];
@@ -32,6 +34,11 @@ export class PracticalSheetsComponent implements OnInit {
 
   expandedCardIndex: number = -1;
   postsByMyJssCategory: { [key: number]: Array<Post> } = {};
+
+  topPosts: Post[] = [];
+  tendencyPosts: Post[] = [];
+  mostSeenPosts: Post[] = [];
+  page: number = 0;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -41,11 +48,13 @@ export class PracticalSheetsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loading = false;
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
       if (response) {
-        // Add "Toutes les catégories"
-        this.myJssCategories.push({ id: null, categoryOrder: -1, name: 'Toutes les categories', slug: "all-categories" });
-        this.myJssCategories = response;
+        this.myJssCategories.push({ id: null, name: 'Toutes les categories', slug: "all-categories", categoryOrder: 1 });
+        this.myJssCategories.push(...response);
+        this.selectedMyJssCategory = this.myJssCategories[0];
+        this.secondSelectedMyJssCategory = this.myJssCategories[0];
         this.postService.getFirstPostsByMyJssCategory(this.secondSearchText, undefined).subscribe(response => {
           if (response) {
             for (let post of response) {
@@ -61,22 +70,17 @@ export class PracticalSheetsComponent implements OnInit {
         });
       }
     });
+    this.getTopPosts();
+    this.getTendencyPosts();
+    this.getMostSeenPosts();
   }
 
   practicalSheetsForm = this.formBuilder.group({});
 
-  selectMyJssCategory(myJssCategory: MyJssCategory) {
-    this.selectedMyJssCategory = myJssCategory;
-    this.searchForPosts();
-  }
-
-  selectSecondMyJssCategory(myJssCategory: MyJssCategory) {
-    this.secondSelectedMyJssCategory = myJssCategory;
-    this.searchForSecondPosts();
-  }
 
   searchForPosts() {
     clearTimeout(this.debounce);
+    this.loading = true;
     this.searchResults = [];
     this.debounce = setTimeout(() => {
       this.searchPosts();
@@ -95,13 +99,16 @@ export class PracticalSheetsComponent implements OnInit {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
 
-    if (this.searchText && this.searchText.length > 2)
+    if (this.searchText && this.searchText.length > 2 && this.selectedMyJssCategory)
       this.searchObservableRef = this.postService.searchPostsByMyJssCategory(this.searchText, this.selectedMyJssCategory).subscribe(response => {
+        this.loading = false;
         if (!this.searchResults)
           this.searchResults = [];
         if (response)
           this.searchResults.push(...response);
-      })
+      });
+    else
+      this.loading = false;
   }
 
   searchSecondPosts() {
@@ -168,15 +175,53 @@ export class PracticalSheetsComponent implements OnInit {
   }
 
   highlightText(text: string): string {
-    const searchTerm = this.searchText.toLowerCase();
-    const index = text.toLowerCase().indexOf(searchTerm);
+    if (!this.searchText) return text;
+    const words = text.replace(/[^\w\s]/g, '').split(' ');
+    const fuseResult = new Fuse(words, {
+      includeScore: true,
+      threshold: 0.35,
+    });
 
-    if (index === -1) return text;
+    const result = fuseResult.search(this.searchText);
+    if (result.length === 0) return text;
 
-    const beforeMatch = text.substring(0, index);
-    const match = text.substring(index, index + searchTerm.length);
-    const afterMatch = text.substring(index + searchTerm.length);
+    let highlightedText = text;
+    if (result.length > 0) {
+      result.forEach(item => {
+        const wordToHighlight = item.item;
+        const regex = new RegExp(`\\b${wordToHighlight}\\b`, 'g');
+        highlightedText = highlightedText.replace(regex, `<mark style="background-color: yellow;">${wordToHighlight}</mark>`);
+      });
+    }
+    return highlightedText;
+  }
 
-    return `${beforeMatch}<span style="color: #FFFF00">${match}</span>${afterMatch}`;
+
+  geRawText(text: string) {
+    return text.replace(/<[^>]+>/g, '');
+  }
+
+  /**************** posts carousel ***********************/
+  getTopPosts() {
+    this.postService.getTopPosts(this.page).subscribe(response => {
+      if (response && response.length > 0) {
+        this.topPosts.push(...response);
+      }
+    });
+  }
+
+  getTendencyPosts() {
+    this.postService.getTendencyPosts().subscribe(response => {
+      if (response && response.length > 0) {
+        this.tendencyPosts.push(...response);
+      }
+    });
+  }
+  getMostSeenPosts() {
+    this.postService.getMostSeenPosts().subscribe(response => {
+      if (response && response.length > 0) {
+        this.mostSeenPosts.push(...response);
+      }
+    });
   }
 }

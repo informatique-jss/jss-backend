@@ -125,6 +125,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> getPostMostSeen() throws OsirisException {
+        List<Integer> idPosts = postRepository.findPostMostSeen(getCategoryArticle(),
+                PageRequest.of(0, 5));
+        if (idPosts != null)
+            return IterableUtils.toList(postRepository.findAllById(idPosts));
+        return null;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException {
         post.setIsCancelled(false);
@@ -280,7 +289,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getPosts(int page) throws OsirisException {
-        return getPostsByCategory(page, getCategoryArticle());
+        Order order = new Order(Direction.DESC, "date");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+        return postRepository.findByPostCategoriesAndIsCancelled(getCategoryArticle(), false,
+                pageableRequest);
     }
 
     @Override
@@ -295,27 +308,27 @@ public class PostServiceImpl implements PostService {
     public List<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory) {
         List<IndexEntity> tmpEntitiesFound = null;
         List<Post> matchingPosts = new ArrayList<Post>();
-        /*
-         * TODO
-         * if (searchText != null) {
-         * tmpEntitiesFound = searchService.searchForEntities("\"titleText\":\"" +
-         * searchText + "\"",
-         * Post.class.getSimpleName(), false);
-         * if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-         * for (IndexEntity entity : tmpEntitiesFound) {
-         * Optional<Post> post = postRepository.findById(entity.getEntityId());
-         * if (post.isPresent())
-         * matchingPosts.add(post.get());
-         * }
-         * }
-         * return matchingPosts;
-         * } else {
-         */
-        Order order = new Order(Direction.ASC, "titleText");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(0, 20000000, sort);
-        return postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
-        // }
+
+        if (searchText != null) {
+            tmpEntitiesFound = searchService.searchForEntities("\"titleText\":\"" +
+                    searchText + "\"",
+                    Post.class.getSimpleName(), false);
+
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                for (IndexEntity entity : tmpEntitiesFound) {
+                    Optional<Post> post = postRepository.findById(entity.getEntityId());
+                    if (post.isPresent())
+                        matchingPosts.add(post.get());
+                }
+            }
+            return matchingPosts;
+        } else {
+
+            Order order = new Order(Direction.ASC, "titleText");
+            Sort sort = Sort.by(Arrays.asList(order));
+            Pageable pageableRequest = PageRequest.of(0, 20000000, sort);
+            return postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
+        }
     }
 
     @Override

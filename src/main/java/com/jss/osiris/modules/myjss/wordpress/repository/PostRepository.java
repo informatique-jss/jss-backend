@@ -39,8 +39,13 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         List<Integer> findPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
                         @Param("category") Category category, Pageable pageable);
 
+        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
+        List<Integer> findPostMostSeen(@Param("category") Category category, Pageable pageable);
+
         List<Post> findByPostCategoriesAndIsCancelledAndDepartments(Category categoryArticle, boolean b,
                         PublishingDepartment department, Pageable pageableRequest);
+
+        List<Post> findByPostCategoriesAndIsCancelled(Category categoryArticle, boolean b, Pageable pageableRequest);
 
         List<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b);
 

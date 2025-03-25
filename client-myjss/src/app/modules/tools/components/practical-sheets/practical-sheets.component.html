@@ -1,73 +1,149 @@
 <!--Top search -->
-
 <section class="bg-yellow-custom">
   <div class="container py-5">
     <div class="text-center">
-      <h1 class="secondary-heading">Les fiches pratiques de MyJSS</h1>
-      <h3 class="secondary-heading">Quelles informations recherchez-vous ?</h3>
+      <h1 class="secondary-heading mt-2 mb-5">Les fiches pratiques de MyJSS</h1>
+      <h3 class="secondary-heading my-5">Quelles informations recherchez-vous ?</h3>
     </div>
-    <div class="row w-100 mt-3 d-flex justify-content-between">
+    <div class="w-100 justify-content-between my-3">
       <div class="col-12">
         <div class="input-group custom-input-group">
-          <generic-input class="" style="flex-grow: 1;" [(model)]="searchText" label="Rechercher"
-            [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false"
-            [isDisplayLabel]="false" (onFormChange)="searchForPosts()" [icon]="'search'"></generic-input>
+          <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="practicalSheetsForm"
+            propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+            (onFormChange)="searchForPosts()" class="btn-search" [icon]="'search'"></generic-input>
 
-          <button *ngIf="searchText" class="btn btn-link" (click)="clearSearch()">
-            <i class="ai ai-x"></i>
+          <div *ngIf="loading" class="d-flex spinner-border rounded-circle text-dark" role="status">
+            <span class="visually-hidden"></span>
+          </div>
+          <button *ngIf="searchText" class="btn btn-search" (click)="clearSearch()">
+            <i class="ai ai-cross-alt"></i>
           </button>
-          <select-myjss-category [(model)]="selectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+          <select-myjss-category class="cursor-pointer" [additionnalType]="this.myJssCategories[0]"
+            [(model)]="selectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
             propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
         </div>
       </div>
     </div>
+
+    <section *ngIf="searchResults && searchResults.length > 0">
+      <div class="search-result border-0 rounded-3 custom-dropdown">
+        <ul class="list-group mt-2">
+          <li class="list-group-item card py-2" *ngFor="let post of searchResults">
+            <div class="row">
+              <div class="col-12">
+                <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
+                  <h6 class="fw-bold secondary-heading" [innerHTML]="highlightText(post.titleText) | trustHtml"></h6>
+                </a>
+                <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
+                  <p class="text-truncate-custom"><span [innerHTML]="geRawText(highlightText(post.excerptText))"
+                      style="white-space: nowrap;"></span></p>
+                </a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
   </div>
 </section>
 
-<section class="container">
-  <ng-container *ngIf="searchResults && searchResults.length>0">
-    <div class="card border-0 custom-dropdown">
-      <ul class="list-group mt-2" *ngIf="searchResults.length > 0">
-        <li class="list-group-item card py-2" *ngFor="let post of searchResults">
-          <div class="row g-3">
-            <div class="col-2">
-              <img class="object-fit-cover rounded-5" *ngIf="post.media && post.media.urlThumbnail"
-                [src]="post.media.urlThumbnail" alt="">
-            </div>
-            <div class="col-10">
-              <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
-                <h6 class="fw-bold" [innerHTML]="highlightText(post.titleText) | trustHtml"></h6>
-              </a>
-              <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
 
-                <p>{{truncateChar(post.excerptText, 100)}}</p>
-              </a>
-              <div class="small mt-1">{{ post.date | date:'EEEE d MMMM' }}</div>
+<section *ngIf="tendencyPosts && tendencyPosts.length>0" class="background-opacity">
+  <div class="container overflow-hidden">
+    <generic-swiper [items]="tendencyPosts" title="Articles à la une">
+      <ng-template let-post>
+        <div class="card card-carousel">
+          <img [src]="(post.media && post.media.urlThumbnail) ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg'"
+            class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <div class="mb-2">
+              <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+              <span class="fs-xs opacity-20 mx-3">|</span>
+              <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]" href="#">{{post.postTags[0].name}}</a>
             </div>
+            <h4 class="card-title">{{post.titleText}}</h4>
+            <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
+            <a class="d-flex text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+              <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
+              <h6 class="ps-3 pt-2 mb-0 text-color-post-carousel">{{post.fullAuthor.name}}</h6>
+            </a>
           </div>
-        </li>
-      </ul>
-    </div>
-  </ng-container>
+        </div>
+      </ng-template>
+    </generic-swiper>
+  </div>
 </section>
 
+<section *ngIf="topPosts && topPosts.length>0" class="container overflow-hidden">
+  <generic-swiper [items]="topPosts" title="Nos derniers articles">
+    <ng-template let-post>
+      <div class="card card-carousel">
+        <img [src]="(post.media && post.media.urlThumbnail) ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg'"
+          class="card-img-top" alt="Card image">
+        <div class="card-body">
+          <div class="mb-2">
+            <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+            <span class="fs-xs opacity-20 mx-3">|</span>
+            <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]" href="#">{{post.postTags[0].name}}</a>
+          </div>
+          <h4 class="card-title">{{post.titleText}}</h4>
+          <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
+          <a class="d-flex text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+            <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
+            <h6 class="ps-3 pt-2 mb-0 text-color-post-carousel">{{post.fullAuthor.name}}</h6>
+          </a>
+        </div>
+      </div>
+    </ng-template>
+  </generic-swiper>
+</section>
+
+<section *ngIf="mostSeenPosts && mostSeenPosts.length>0" class="background-opacity">
+  <div class="container overflow-hidden ">
+    <generic-swiper [items]="mostSeenPosts" title="Articles les plus vus">
+      <ng-template let-post>
+        <div class="card card-carousel">
+          <img [src]="(post.media && post.media.urlThumbnail) ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg'"
+            class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <div class="mb-2">
+              <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+              <span class="fs-xs opacity-20 mx-3">|</span>
+              <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]" href="#">{{post.postTags[0].name}}</a>
+            </div>
+            <h4 class="card-title">{{post.titleText}}</h4>
+            <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
+            <a class="d-flex text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+              <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
+              <h6 class="ps-3 pt-2 mb-0 text-color-post-carousel">{{post.fullAuthor.name}}</h6>
+            </a>
+          </div>
+        </div>
+      </ng-template>
+    </generic-swiper>
+  </div>
+</section>
 
 <!-- Second search -->
 <section class="container py-5">
-  <h1 class="m-4">Guides juridiques</h1>
-  <div class="row w-100 mt-3 d-flex justify-content-between">
-    <div class="col-12 ">
+  <h1 class="m-4 text-center">Guides juridiques</h1>
+  <p class="text-center">Dirigeant, professionnel du droit ou du chiffre, vous avez des questions juridiques ? <br>MyJSS
+    vous propose 1300+
+    articles mis à jour par des juristes formalistes.</p>
+  <div class="w-100 my-3 d-flex justify-content-between">
+    <div class="col-12">
       <div class="input-group custom-input-group">
         <generic-input style="flex-grow: 1;" [(model)]="secondSearchText" label="Rechercher"
           [form]="practicalSheetsForm" propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false"
           [isDisplayLabel]="false" (onFormChange)="searchForSecondPosts()" [icon]="'search'"
-          placeholder="Input 2"></generic-input>
+          class="btn-search"></generic-input>
 
-        <button *ngIf="secondSearchText" class="btn btn-link" (click)="clearSecondSearch()">
-          <i class="ai ai-x"></i>
+        <button *ngIf="secondSearchText" class="btn btn-link btn-search" (click)="clearSecondSearch()">
+          <i class="ai ai-cross-alt"></i>
         </button>
-        <select-myjss-category [(model)]="selectSecondMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
-          propertyName="selectSecondMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
+
+        <select-myjss-category [(model)]="secondSelectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+          propertyName="secondSelectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
       </div>
     </div>
   </div>
@@ -75,8 +151,9 @@
   <ng-container *ngIf="!secondSearchText">
     <ng-container *ngFor="let myJssCategory of myJssCategories;">
       <ng-container *ngIf="myJssCategory.id && postsByMyJssCategory[myJssCategory.id]">
-        <div class="card card-custom my-3" [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
-          <div class="card-header d-flex justify-content-between ">
+        <div class="card dark-blue-dropdown rounded-3 mt-3"
+          [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
+          <div class="card-header d-flex justify-content-between align-items-center p-0">
             <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
             <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
               <span class="circle-icon">
@@ -85,16 +162,15 @@
             </button>
           </div>
 
-          <div class="card-body">
-            <div class=" row">
-              <div class="col-4"
+          <div class="drop-down-body">
+            <div class="row">
+              <div class="col-4 g-2"
                 *ngFor="let post of (isExpanded(myJssCategory.id)  ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
-                <div>
-                  <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-white" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
-                    data-bs-placement="top">
-                    {{truncateChar(post.titleText, 30) }} </a>
-                </div>
+                <li class="d-flex pb-2 mb-1">
+                  <span class="bg-primary mt-2 checkbox-custom"></span>
+                  <a class="text-decoration-none text-gray" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
+                    data-bs-placement="top" [innerHTML]="post.titleText | trustHtml"></a>
+                </li>
               </div>
             </div>
           </div>
@@ -107,22 +183,25 @@
     <ng-container *ngFor="let myJssCategory of myJssCategories;">
       <ng-container
         *ngIf="myJssCategory.id && secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0">
-        <div class="card card-custom my-3 expanded-card">
-          <div class="card-header d-flex justify-content-between ">
+        <div class="card dark-blue-dropdown rounded-3 mt-3">
+          <div class="card-header d-flex justify-content-between align-items-center p-0">
             <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
-            <button type="button" class="btn btn-link rounded-circle custom-btn">
+            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
+              <span class="circle-icon">
+                <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+              </span>
             </button>
           </div>
 
           <div class="card-body">
             <div class=" row">
-              <div class="col-4" *ngFor="let post of secondSearchResults[myJssCategory.id]">
-                <div>
-                  <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-white" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
-                    data-bs-placement="top">
-                    {{truncateChar(post.titleText, 30) }} </a>
-                </div>
+              <div class="col-4"
+                *ngFor="let post of (isExpanded(myJssCategory.id)  ? secondSearchResults[myJssCategory.id] :  secondSearchResults[myJssCategory.id].slice(0,3))">
+                <li class="d-flex pb-2 mb-1">
+                  <span class="bg-primary mt-2 checkbox-custom"></span>
+                  <a class="text-decoration-none text-gray" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
+                    data-bs-placement="top" [innerHTML]="post.titleText | trustHtml"></a>
+                </li>
               </div>
             </div>
           </div>

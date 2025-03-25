@@ -1,0 +1,44 @@
+<section class="container my-5">
+  <div class="row pt-md-2 pt-lg-3 pt-xl-4 pb-lg-2 pb-xl-3">
+    <div class="col-md-6">
+      <h1 class="h1 pe-xxl-5 me-xl-4 mb-md-0 text-white">Les pièces indispensables à vos démarches</h1>
+    </div>
+
+    <div class="col-md-6 col-xl-5 offset-xl-1">
+      <p class="text-body fs-sm mb-5 text-white">Pour mener à bien vos démarches légales, certaines pièces
+        justificatives sont obligatoires.
+        Retrouvez ici la liste usuelle des documents essentiels pour constituer vos dossiers en toute conformité et
+        faciliter vos formalités légales. </p>
+    </div>
+  </div>
+</section>
+
+
+<section class="pb-3">
+  <div class="jarallax" data-jarallax>
+    <div class="jarallax-img" style="background-image: url(assets/img/landing/coworking-space/parallax-image.jpg);">
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <h1 class="m-4 text-center">Trouvez rapidement les pièces requises</h1>
+  <p class="text-center">Consultez la liste de nos services et découvrez les documents à fournir. Utilisez la barre de
+    recherche pour accéder rapidement aux pièces nécessaires.</p>
+
+  <div class="row w-100 mt-3 d-flex justify-content-between">
+    <div class="col-12 ">
+      <div class="input-group custom-input-group">
+        <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="practicalSheetsForm"
+          propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+          (onFormChange)="searchForDocuments()" [icon]="'search'" class="btn-search"
+          placeholder="Input 2"></generic-input>
+
+        <button *ngIf="searchText" class="btn btn-link btn-search" (click)="clearSearch()">
+          <i class="ai ai-cross-alt"></i>
+        </button>
+
+      </div>
+    </div>
+  </div>
+</section>

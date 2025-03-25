@@ -47,7 +47,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public class WordpressController {
 
-	private static final String inputEntryPoint = "/myjss/wordpress";
+	private static final String inputEntryPoint = "myjss/wordpress";
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 10;
@@ -145,6 +145,11 @@ public class WordpressController {
 		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostTendency()), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/most-seen")
+	public ResponseEntity<List<Post>> getPostsMostSeen() throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostMostSeen()), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/slug")
 	public ResponseEntity<Post> getPostBySlung(@RequestParam String slug, HttpServletRequest request)
 			throws OsirisException {
@@ -174,13 +179,13 @@ public class WordpressController {
 				postService.applyPremium(postService.getPostsByJssCategory(page, category)), HttpStatus.OK);
 	}
 
-	@GetMapping("myjss" + inputEntryPoint + "/myjss-categories")
+	@GetMapping(inputEntryPoint + "/myjss-categories")
 	public ResponseEntity<List<MyJssCategory>> getAvailableMyJssCategories() {
 		return new ResponseEntity<List<MyJssCategory>>(
 				myJssCategoryService.getAvailableMyJssCategories(), HttpStatus.OK);
 	}
 
-	@GetMapping("myjss" + inputEntryPoint + "/posts/first-myjss-category")
+	@GetMapping(inputEntryPoint + "/posts/first-myjss-category")
 	public ResponseEntity<List<Post>> getFirstPostsByMyJssCategories(@RequestParam(required = false) String searchText,
 			@RequestParam(required = false) Integer myJssCategoryId, HttpServletRequest request) {
 		detectFlood(request);
@@ -192,7 +197,7 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping("myjss" + inputEntryPoint + "/search/myjss-category")
+	@GetMapping(inputEntryPoint + "/search/myjss-category")
 	public ResponseEntity<List<Post>> searchPostsByMyJssCategory(@RequestParam String searchText,
 			@RequestParam(required = false) Integer myJssCategoryId,
 			HttpServletRequest request) {
@@ -213,7 +218,7 @@ public class WordpressController {
 				postService.searchPostsByMyJssCategory(searchText, myJssCategory), HttpStatus.OK);
 	}
 
-	@GetMapping("myjss" + inputEntryPoint + "/posts/myjss-category")
+	@GetMapping(inputEntryPoint + "/posts/myjss-category")
 	public ResponseEntity<List<Post>> getPostsByMyJssCategory(@RequestParam Integer myJssCategoryId,
 			@RequestParam(required = false) String searchText,
 			HttpServletRequest request) {

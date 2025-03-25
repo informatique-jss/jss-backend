@@ -1,86 +1,37 @@
-ul {
-  cursor: pointer;
-}
-
-.container {
+.custom-dropdown {
+  /* position: absolute !important; */
+  z-index: 1000;
   width: 100%;
 }
 
-.custom-dropdown {
-  position: absolute !important;
+.container {
+  position: relative;
 }
 
-.custom-dropdown ul {
+.card-img-top {
+  max-height: 20vh;
+}
+
+.search-result {
+  background-color: white;
+  position: absolute;
   max-height: 400px;
   overflow-y: auto;
+  z-index: 1000;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
 }
 
-
-.card-body::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-.card-body::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
-}
-
-.card-body::-webkit-scrollbar-thumb {
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.3);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
-}
-
-.card-body::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-generic-input label .search-icon, generic-input i, generic-input svg {
-  color: #576071 !important;
-}
-
-.card-body {
+.drop-down-body {
   padding: 1rem;
   max-height: 100px;
   overflow-y: auto;
+  padding-right: 20px;
 }
 
-.expanded-card {
-  height: auto;
-  max-height: 350px;
-}
-
-.toggle-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease-in-out;
-}
-
-.toggle-content.expanded {
-  max-height: 250px;
-  overflow-y: auto;
-}
-
-.toggle-content.expanded::-webkit-scrollbar {
-  width: 6px;
-}
-
-.toggle-content.expanded::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #6a11cb, #2575fc);
-  border-radius: 4px;
-}
-
-.toggle-content.expanded::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #4a00e0, #00c6ff);
-}
-
-.toggle-content.expanded::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-}
 
 .circle-icon {
   display: flex;
@@ -90,4 +41,60 @@ generic-input label .search-icon, generic-input i, generic-input svg {
   height: 40px;
   border: 1px solid #ccc;
   border-radius: 50%;
+}
+
+
+.checkbox-custom {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  background-color: #CEB793 !important;
+}
+
+.text-truncate-custom {
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.background-opacity {
+  background: #FFFFFF08;
+
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFFFFFB2;
+  border: 2pt solid transparent;
+  border-radius: 3pt;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, .2);
+  border: 3pt solid transparent;
+  background-clip: content-box;
+}
+
+.custom-scroll-vertical-hover::-webkit-scrollbar-thumb:vertical {
+  background: #ffffffb4;
+  border: none;
+  border-radius: 0;
+}
+
+.custom-scroll-vertical-hover::-webkit-scrollbar-track:vertical {
+  background: rgba(255, 255, 255, .2);
+  border: none;
 }
