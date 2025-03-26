@@ -343,10 +343,12 @@ public class WordpressController {
 
 	@PostMapping(inputEntryPoint + "/post/comment/add")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment)
+	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
+			@RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
+			@RequestParam Integer postId)
 			throws OsirisException {
 
-		if (comment != null && comment.getPost() != null && comment.getMail() != null) {
+		if (comment != null && postId != null && comment.getMail() != null) {
 
 			if (!validationHelper.validateMail(comment.getMail())) {
 				throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
@@ -354,10 +356,8 @@ public class WordpressController {
 
 			mailService.populateMailId(comment.getMail());
 
-			Post post = postService.getPost(comment.getPost().getId());
-
-			if (post != null) {
-				return new ResponseEntity<Comment>(commentService.addOrUpdateComment(comment),
+			if (postService.getPost(postId) != null) {
+				return new ResponseEntity<Comment>(commentService.addOrUpdateComment(comment, parentCommentId, postId),
 						HttpStatus.OK);
 			}
 		}

@@ -26,8 +26,13 @@ export class CommentService extends AppRestService<Comment> {
     return this.getPagedList(params, "post/comments", "", "");
   }
 
-  addOrUpdateComment(comment: Comment) {
-    return this.addOrUpdate(new HttpParams(), "post/comment/add", comment, "Votre commentaire a bien été posté !", "Une erreur s'est produite lors de l'enregistrement du commentaire, merci de réessayer");
+  addOrUpdateComment(comment: Comment, parentCommentId: number, postId: number) {
+    let params = new HttpParams()
+
+    if (parentCommentId)
+      params = params.set("parentCommentId", parentCommentId);
+
+    return this.addOrUpdate(params.set("postId", postId), "post/comment/add", comment, "Votre commentaire a bien été posté !", "Une erreur s'est produite lors de l'enregistrement du commentaire, merci de réessayer");
   }
 
 }

@@ -32,6 +32,7 @@ export class PostComponent implements OnInit {
 
   comments: Comment[] = [];
   newComment: Comment = {} as Comment;
+  newCommentParent: Comment = {} as Comment;
   createCommentForm = this.formBuilder.group({});
   totalElements: number = 0;
   totalPages: number = 0;
@@ -174,14 +175,16 @@ export class PostComponent implements OnInit {
   }
 
   postComment() {
-    this.commentService.addOrUpdateComment(this.newComment).subscribe(() => {
-      this.fetchComments(0);
-    });
+    if (this.post) {
+      this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
+        this.fetchComments(0);
+      });
+    }
   }
 
   replyComment(comment: Comment) {
-    this.newComment.parentComment = comment;
-
+    this.newComment = { mail: {} as Mail } as Comment;
+    this.newCommentParent = comment;
     // Scroll to new comment form
     const element = document.getElementById("commentForm");
     if (element) {
@@ -190,7 +193,8 @@ export class PostComponent implements OnInit {
   }
 
   cancelReply() {
-    this.newComment = {} as Comment;
+    this.newComment = { mail: {} as Mail } as Comment;
+    this.newCommentParent = {} as Comment;
   }
 
   fetchComments(page: number) {
@@ -201,7 +205,6 @@ export class PostComponent implements OnInit {
         this.post = post;
         if (this.post) {
           this.relatedPosts = this.post.relatedPosts;
-          this.newComment.post = post;
           this.commentService.getParentCommentsForPost(this.post.id, page, 10).subscribe(data => {
             if (page == 0) {
               this.comments = data.content;
@@ -216,7 +219,7 @@ export class PostComponent implements OnInit {
           })
         }
       })
-      this.newComment = { isDeleted: false, mail: {} as Mail } as Comment;
+      this.cancelReply()
     }
   }
 

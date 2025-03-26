@@ -43,14 +43,19 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Comment addOrUpdateComment(Comment comment) throws OsirisException {
+    public Comment addOrUpdateComment(Comment comment, Integer parentCommentId, Integer postId) throws OsirisException {
 
         // Make sure the mail exists or is created before beeing linked with the comment
         mailService.populateMailId(comment.getMail());
 
-        Post post = postService.getPost(comment.getPost().getId());
+        Post post = postService.getPost(postId);
 
         if (post != null) {
+            comment.setPost(post);
+
+            if (parentCommentId != null)
+                comment.setParentComment(this.getComment(parentCommentId));
+
             if (comment.getCreationDate() == null)
                 comment.setCreationDate(LocalDateTime.now());
 

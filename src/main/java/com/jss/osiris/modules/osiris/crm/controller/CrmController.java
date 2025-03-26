@@ -17,7 +17,6 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
@@ -169,7 +168,7 @@ public class CrmController {
          */
         @GetMapping(inputEntryPoint + "/comment")
         @JsonView(JacksonViews.MyJssView.class)
-        public ResponseEntity<Comment> getComment(Integer commentId) {
+        public ResponseEntity<Comment> getComment(@RequestParam Integer commentId) {
 
                 return new ResponseEntity<Comment>(commentService.getComment(commentId), HttpStatus.OK);
         }
@@ -183,13 +182,15 @@ public class CrmController {
          */
         @GetMapping(inputEntryPoint + "/comment/add")
         @JsonView(JacksonViews.MyJssView.class)
-        public ResponseEntity<Comment> saveOrUpdate(Comment comment) throws OsirisException {
+        public ResponseEntity<Comment> saveOrUpdate(@RequestParam Comment comment,
+                        @RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
+                        @RequestParam Integer postId) throws OsirisException {
 
-                if (comment != null && comment.getPost() != null) {
-                        Post post = postService.getPost(comment.getPost().getId());
+                if (comment != null && postId != null) {
 
-                        if (post != null) {
-                                return new ResponseEntity<Comment>(commentService.addOrUpdateComment(comment),
+                        if (postService.getPost(postId) != null) {
+                                return new ResponseEntity<Comment>(
+                                                commentService.addOrUpdateComment(comment, parentCommentId, postId),
                                                 HttpStatus.OK);
                         }
                 }

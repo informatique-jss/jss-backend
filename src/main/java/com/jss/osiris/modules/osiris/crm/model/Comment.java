@@ -33,12 +33,10 @@ public class Comment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail")
-	@JsonView(JacksonViews.MyJssView.class)
 	private Mail mail;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_parent_comment")
-	@JsonView(JacksonViews.MyJssView.class)
 	@JsonIgnoreProperties(value = { "childrenComments" }, allowSetters = true)
 	private Comment parentComment;
 
@@ -49,7 +47,6 @@ public class Comment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_post")
-	@JsonView(JacksonViews.MyJssView.class)
 	private Post post;
 
 	@Column(columnDefinition = "TEXT", nullable = false)
@@ -65,7 +62,6 @@ public class Comment implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssView.class)
 	private LocalDateTime creationDate;
 
-	@JsonView(JacksonViews.MyJssView.class)
 	private Boolean isDeleted = false;
 
 	public Integer getId() {

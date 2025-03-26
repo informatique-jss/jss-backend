@@ -14,7 +14,7 @@ public interface CommentService {
 
     public Comment getComment(Integer id);
 
-    public Comment addOrUpdateComment(Comment comment) throws OsirisException;
+    public Comment addOrUpdateComment(Comment comment, Integer parentCommentId, Integer postId) throws OsirisException;
 
     public Boolean delete(Integer commentId);
 }
