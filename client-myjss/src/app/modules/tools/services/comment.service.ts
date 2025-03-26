@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppRestService } from '../../../libs/appRest.service';
-import { Pagination } from '../../miscellaneous/model/Pagination';
+import { PagedContent } from '../../miscellaneous/model/PagedContent';
 import { Comment } from '../model/Comment';
 
 
@@ -15,7 +15,7 @@ export class CommentService extends AppRestService<Comment> {
     super(http, "wordpress");
   }
 
-  getParentCommentsForPost(postId: number, page: number, size: number, sortBy: string = 'creationDate', sortDir: string = 'desc'): Observable<Pagination<Comment>> {
+  getParentCommentsForPost(postId: number, page: number, size: number, sortBy: string = 'creationDate', sortDir: string = 'desc'): Observable<PagedContent<Comment>> {
     let params = new HttpParams()
       .set('postId', postId.toString())
       .set('page', page.toString())

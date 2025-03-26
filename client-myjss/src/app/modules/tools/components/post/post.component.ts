@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { AppService } from '../../../../libs/app.service';
 import { getTimeReading } from '../../../../libs/FormatHelper';
+import { Pagination } from '../../../miscellaneous/model/Pagination';
 import { Mail } from '../../../profile/model/Mail';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Comment } from '../../model/Comment';
@@ -34,11 +35,7 @@ export class PostComponent implements OnInit {
   newComment: Comment = {} as Comment;
   newCommentParent: Comment = {} as Comment;
   createCommentForm = this.formBuilder.group({});
-  totalElements: number = 0;
-  totalPages: number = 0;
-  currentPage: number = 0;
-  pageSize: number = 10;
-  numberOfElements: number = 10;
+  commentsPagination: Pagination = {} as Pagination;
   shownElements: number = 10; // computed
 
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
@@ -211,10 +208,7 @@ export class PostComponent implements OnInit {
             } else {
               this.comments = this.comments.concat(data.content);
             }
-            this.totalElements = data.totalElements;
-            this.totalPages = data.totalPages;
-            this.numberOfElements = data.numberOfElements;
-            this.currentPage = data.number;
+            this.commentsPagination = data.page;
             this.shownElements = this.computeShownElements(page);
           })
         }
@@ -224,7 +218,7 @@ export class PostComponent implements OnInit {
   }
 
   showMoreComments() {
-    this.fetchComments(this.currentPage + 1);
+    this.fetchComments(this.commentsPagination.pageNumber + 1);
   }
 
   showLessComments() {
@@ -233,10 +227,10 @@ export class PostComponent implements OnInit {
 
   computeShownElements(page: number) {
     page++; // the current page is indexed from 0 as an array, whereas the totalPages is the result of the .lenght array
-    if (page == this.totalPages) {
-      return ((this.totalPages - 1) * this.pageSize + this.numberOfElements);
+    if (page == this.commentsPagination.totalPages) {
+      return ((this.commentsPagination.totalPages - 1) * this.commentsPagination.pageSize + this.commentsPagination.numberOfElements);
     } else {
-      return page * this.pageSize;
+      return page * this.commentsPagination.pageSize;
     }
   }
 }

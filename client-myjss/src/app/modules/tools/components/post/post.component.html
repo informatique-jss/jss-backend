@@ -140,9 +140,9 @@
 
       <!-- Comments -->
       <div class="pt-4 pt-xl-5 my-4" id="comments">
-        <h2 class="h1 py-lg-1 py-xl-3">{{totalElements || 0}} commentaires</h2>
+        <h2 class="h1 py-lg-1 py-xl-3">{{commentsPagination.totalElements || 0}} commentaires</h2>
 
-        <div class="pt-2 pb-4" *ngIf="totalElements!=0">
+        <div class="pt-2 pb-4" *ngIf="commentsPagination.totalElements!=0">
 
           <!-- Comment -->
           <div *ngFor="let comment of comments">
@@ -185,12 +185,13 @@
             </div>
           </div>
           <div class="row d-flex justify-content-center align-items-center">
-            <a *ngIf="totalElements-shownElements > 0"
+            <a *ngIf="commentsPagination.totalElements-shownElements > 0"
               class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showMoreComments()">
-              <span class="fw-semibold">Voir plus</span><span>({{totalElements-shownElements}})</span>
+              <span class="fw-semibold">Voir
+                plus</span><span>({{commentsPagination.totalElements-shownElements}})</span>
               <i class="ai-circle-arrow-down fs-xl ms-2"></i>
             </a>
-            <a *ngIf="totalElements-shownElements <= 0"
+            <a *ngIf="commentsPagination.totalElements-shownElements <= 0"
               class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showLessComments()">
               <span class="fw-semibold">Voir moins</span>
               <i class="ai-circle-arrow-up fs-xl ms-2"></i>

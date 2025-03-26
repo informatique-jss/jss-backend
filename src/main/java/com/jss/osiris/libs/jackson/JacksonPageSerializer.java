@@ -17,13 +17,21 @@ public class JacksonPageSerializer extends StdSerializer<PageImpl> {
     @Override
     public void serialize(PageImpl value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
-        gen.writeNumberField("number", value.getNumber());
+
+        // We create the page attribute to encapsulate all the pagination fields
+        gen.writeFieldName("page");
+        gen.writeStartObject();
+        gen.writeNumberField("pageNumber", value.getNumber());
         gen.writeNumberField("numberOfElements", value.getNumberOfElements());
         gen.writeNumberField("totalElements", value.getTotalElements());
         gen.writeNumberField("totalPages", value.getTotalPages());
-        gen.writeNumberField("size", value.getSize());
+        gen.writeNumberField("pageSize", value.getSize());
+        gen.writeEndObject();
+
+        // We fill the second attribute with the content
         gen.writeFieldName("content");
         provider.defaultSerializeValue(value.getContent(), gen);
+
         gen.writeEndObject();
     }
 }
