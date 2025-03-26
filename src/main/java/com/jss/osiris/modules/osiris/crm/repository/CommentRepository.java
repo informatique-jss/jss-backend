@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.osiris.crm.repository;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
@@ -9,7 +8,9 @@ import com.jss.osiris.modules.osiris.crm.model.Comment;
 
 public interface CommentRepository extends QueryCacheCrudRepository<Comment, Integer> {
 
-    List<Comment> findAll(Pageable pageableRequest);
+    Page<Comment> findAll(Pageable pageable);
 
-    List<Comment> findAllByPostId(Pageable pageableRequest, Integer postId);
+    Page<Comment> findAllByPostId(Integer postId, Pageable pageable);
+
+    Page<Comment> findAllByPostIdAndIsDeletedFalseAndParentCommentIsNull(Integer postId, Pageable pageable);
 }

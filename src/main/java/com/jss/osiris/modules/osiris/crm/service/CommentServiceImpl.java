@@ -1,11 +1,10 @@
 package com.jss.osiris.modules.osiris.crm.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +29,8 @@ public class CommentServiceImpl implements CommentService {
     MailService mailService;
 
     @Override
-    public List<Comment> getComments(Pageable pageableRequest) {
-        return IterableUtils.toList(commentRepository.findAll(pageableRequest));
+    public Page<Comment> getComments(Pageable pageableRequest) {
+        return commentRepository.findAll(pageableRequest);
     }
 
     @Override
@@ -52,6 +51,9 @@ public class CommentServiceImpl implements CommentService {
         Post post = postService.getPost(comment.getPost().getId());
 
         if (post != null) {
+            if (comment.getCreationDate() == null)
+                comment.setCreationDate(LocalDateTime.now());
+
             return commentRepository.save(comment);
         }
 
@@ -74,13 +76,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getCommentsForPost(Pageable pageableRequest, Integer postId) {
+    public Page<Comment> getParentCommentsForPost(Pageable pageableRequest, Integer postId) {
         Post post = postService.getPost(postId);
 
         if (post != null) {
-            return IterableUtils.toList(commentRepository.findAllByPostId(pageableRequest, postId));
+            Page<Comment> comments = commentRepository.findAllByPostIdAndIsDeletedFalseAndParentCommentIsNull(postId,
+                    pageableRequest);
+            return comments;
         }
 
-        return new ArrayList<>();
+        return Page.empty();
     }
 }

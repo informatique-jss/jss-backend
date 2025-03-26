@@ -8,16 +8,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
@@ -40,6 +46,7 @@ import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.service.CommentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
@@ -55,6 +62,9 @@ public class WordpressController {
 	private final long rateLimit = 10;
 	private LocalDateTime lastFloodFlush = LocalDateTime.now();
 	private int floodFlushDelayMinute = 1;
+
+	@Autowired
+	ValidationHelper validationHelper;
 
 	@Autowired
 	PublishingDepartmentService publishingDepartmentService;
@@ -94,6 +104,9 @@ public class WordpressController {
 
 	@Autowired
 	CommentService commentService;
+
+	@Autowired
+	MailService mailService;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -310,40 +323,37 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/comments")
-	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<List<Comment>> getComments(Pageable pageableRequest, HttpServletRequest request)
-			throws OsirisException {
-		detectFlood(request);
-
-		return new ResponseEntity<List<Comment>>(commentService.getComments(pageableRequest),
-				HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/post/comments")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<List<Comment>> getCommentsForPost(Pageable pageableRequest, Integer postId,
-			HttpServletRequest request)
-			throws OsirisException {
+	public ResponseEntity<org.springframework.data.domain.Page<Comment>> getParentCommentsForPost(
+			@RequestParam Integer postId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "creationDate") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDir,
+			HttpServletRequest request) {
+
 		detectFlood(request);
 
-		Post post = postService.getPost(postId);
+		Pageable pageable = PageRequest.of(page, size,
+				Sort.by(sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy));
 
-		if (post != null) {
-			return new ResponseEntity<List<Comment>>(commentService.getCommentsForPost(pageableRequest, postId),
-					HttpStatus.OK);
-		}
-
-		return new ResponseEntity<List<Comment>>(new ArrayList<Comment>(), HttpStatus.OK);
+		return ResponseEntity.ok(commentService.getParentCommentsForPost(pageable, postId));
 	}
 
-	@GetMapping(inputEntryPoint + "/post/comment/add")
+	@PostMapping(inputEntryPoint + "/post/comment/add")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<Comment> addOrUpdateComment(Comment comment, HttpServletRequest request)
+	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment)
 			throws OsirisException {
-		detectFlood(request);
 
-		if (comment != null && comment.getPost() != null) {
+		if (comment != null && comment.getPost() != null && comment.getMail() != null) {
+
+			if (!validationHelper.validateMail(comment.getMail())) {
+				throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
+			}
+
+			mailService.populateMailId(comment.getMail());
+
 			Post post = postService.getPost(comment.getPost().getId());
 
 			if (post != null) {

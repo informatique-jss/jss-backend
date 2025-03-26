@@ -1,9 +1,10 @@
 package com.jss.osiris.modules.osiris.crm.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -147,9 +148,17 @@ public class CrmController {
          */
         @GetMapping(inputEntryPoint + "/comments")
         @JsonView(JacksonViews.MyJssView.class)
-        public ResponseEntity<List<Comment>> getComments(Pageable pageableRequest) {
+        public ResponseEntity<Page<Comment>> getComments(
+                        @RequestParam(defaultValue = "0") int page,
+                        @RequestParam(defaultValue = "10") int size,
+                        @RequestParam(defaultValue = "creationDate") String sortBy,
+                        @RequestParam(defaultValue = "desc") String sortDir) throws OsirisException {
 
-                return new ResponseEntity<List<Comment>>(commentService.getComments(pageableRequest), HttpStatus.OK);
+                Pageable pageable = PageRequest.of(page, size,
+                                Sort.by(sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
+                                                sortBy));
+
+                return ResponseEntity.ok(commentService.getComments(pageable));
         }
 
         /**

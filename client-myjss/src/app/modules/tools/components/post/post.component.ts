@@ -1,10 +1,15 @@
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { AppService } from '../../../../libs/app.service';
 import { getTimeReading } from '../../../../libs/FormatHelper';
+import { Mail } from '../../../profile/model/Mail';
+import { Responsable } from '../../../profile/model/Responsable';
+import { Comment } from '../../model/Comment';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
+import { CommentService } from '../../services/comment.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
@@ -17,34 +22,38 @@ export class PostComponent implements OnInit {
   slug: string | undefined;
   post: Post | undefined;
   relatedPosts: Post[] = [];
-  recentPosts: Post[] = [];;
-  hotPosts: Post[] = [];;
+  recentPosts: Post[] = [];
+  hotPosts: Post[] = [];
 
   speechSynthesisUtterance: SpeechSynthesisUtterance | undefined;
   speechRate: number = 1;
   isPlaying: boolean | undefined;
   audioUrl: string | undefined;
 
-  commments: Comment[] = [];
+  comments: Comment[] = [];
+  newComment: Comment = {} as Comment;
+  createCommentForm = this.formBuilder.group({});
+  totalElements: number = 0;
+  totalPages: number = 0;
+  currentPage: number = 0;
+  pageSize: number = 10;
+  numberOfElements: number = 10;
+  shownElements: number = 10; // computed
 
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
 
   constructor(private activatedRoute: ActivatedRoute,
     private postService: PostService,
+    private commentService: CommentService,
+    private formBuilder: FormBuilder,
     private appService: AppService,
   ) { }
 
   getTimeReading = getTimeReading;
 
   ngOnInit() {
-    this.slug = this.activatedRoute.snapshot.params['slug'];
-    if (this.slug)
-      this.postService.getPostBySlug(this.slug).subscribe(post => {
-        this.post = post;
-        if (this.post) {
-          this.relatedPosts = this.post.relatedPosts;
-        }
-      })
+
+    this.fetchComments(0);
 
     this.postService.getPostsTendency().subscribe(posts => {
       this.hotPosts = posts;
@@ -157,6 +166,74 @@ export class PostComponent implements OnInit {
     if (this.speechSynthesisUtterance) {
       this.speechSynthesisUtterance.rate = this.speechRate;
       window.speechSynthesis.speak(this.speechSynthesisUtterance);
+    }
+  }
+
+  getResponsable(comment: Comment): Responsable {
+    return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastName || '' } as Responsable;
+  }
+
+  postComment() {
+    this.commentService.addOrUpdateComment(this.newComment).subscribe(() => {
+      this.fetchComments(0);
+    });
+  }
+
+  replyComment(comment: Comment) {
+    this.newComment.parentComment = comment;
+
+    // Scroll to new comment form
+    const element = document.getElementById("commentForm");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }
+
+  cancelReply() {
+    this.newComment = {} as Comment;
+  }
+
+  fetchComments(page: number) {
+    this.slug = this.activatedRoute.snapshot.params['slug'];
+
+    if (this.slug) {
+      this.postService.getPostBySlug(this.slug).subscribe(post => {
+        this.post = post;
+        if (this.post) {
+          this.relatedPosts = this.post.relatedPosts;
+          this.newComment.post = post;
+          this.commentService.getParentCommentsForPost(this.post.id, page, 10).subscribe(data => {
+            if (page == 0) {
+              this.comments = data.content;
+            } else {
+              this.comments = this.comments.concat(data.content);
+            }
+            this.totalElements = data.totalElements;
+            this.totalPages = data.totalPages;
+            this.numberOfElements = data.numberOfElements;
+            this.currentPage = data.number;
+            this.shownElements = this.computeShownElements(page);
+          })
+        }
+      })
+      this.newComment = { isDeleted: false, mail: {} as Mail } as Comment;
+    }
+  }
+
+  showMoreComments() {
+    this.fetchComments(this.currentPage + 1);
+  }
+
+  showLessComments() {
+    this.fetchComments(0);
+  }
+
+  computeShownElements(page: number) {
+    page++; // the current page is indexed from 0 as an array, whereas the totalPages is the result of the .lenght array
+    if (page == this.totalPages) {
+      return ((this.totalPages - 1) * this.pageSize + this.numberOfElements);
+    } else {
+      return page * this.pageSize;
     }
   }
 }
