@@ -16,4 +16,5 @@ export interface ServiceType {
   isRequiringNewUnregisteredAffaire: boolean;
   defaultDeboursPrice: number;
   defaultDeboursPriceNonTaxable: number;
+  suspiciousMarkup: number;
 }

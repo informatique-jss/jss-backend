@@ -39,6 +39,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResu
 import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
 import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
+import com.jss.osiris.modules.osiris.accounting.model.SuspiciousInvoiceResult;
 import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountClassService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
@@ -851,5 +852,27 @@ public class AccountingController {
     public ResponseEntity<List<TreasureResult>> getTreasure() throws OsirisException {
         return new ResponseEntity<List<TreasureResult>>(
                 accountingRecordService.getTreasure(), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/suspicious-invoices")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<List<SuspiciousInvoiceResult>> getSuspiciousInvoice(
+            @RequestParam("accountingDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate accountingDate)
+            throws OsirisException {
+        if (accountingDate == null)
+            throw new OsirisValidationException("accountingDate");
+        return new ResponseEntity<List<SuspiciousInvoiceResult>>(
+                accountingRecordService.getSuspiciousInvoice(accountingDate), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/suspicious-invoices/tiers")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<List<SuspiciousInvoiceResult>> getSuspiciousInvoiceByTiers(
+            @RequestParam("accountingDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate accountingDate)
+            throws OsirisException {
+        if (accountingDate == null)
+            throw new OsirisValidationException("accountingDate");
+        return new ResponseEntity<List<SuspiciousInvoiceResult>>(
+                accountingRecordService.getSuspiciousInvoiceByTiers(accountingDate), HttpStatus.OK);
     }
 }

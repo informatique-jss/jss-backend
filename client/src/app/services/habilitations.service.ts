@@ -163,6 +163,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
+  canDisplaySuspiciousInvoice() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canImportOfxFile() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
