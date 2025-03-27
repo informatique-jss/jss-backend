@@ -10,4 +10,5 @@ export interface SuspiciousInvoiceResult {
   appliableRate: number;
   suspiciousMarkup: number;
   dueDaysNumber: number;
+  createdDate: Date;
 }

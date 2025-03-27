@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { SuspiciousInvoiceResult } from '../../model/SuspiciousInvoice';
@@ -31,6 +31,7 @@ export class SuspiciousInvoiceComponent implements OnInit {
     this.displayedColumns.push({ id: "tiers", fieldName: "tiers", label: "Tiers" } as SortTableColumn<SuspiciousInvoiceResult>);
     this.displayedColumns.push({ id: "idCommercial", fieldName: "idCommercial", label: "Commercial", displayAsEmployee: true } as SortTableColumn<SuspiciousInvoiceResult>);
     this.displayedColumns.push({ id: "idInvoice", fieldName: "idInvoice", label: "Facture" } as SortTableColumn<SuspiciousInvoiceResult>);
+    this.displayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de la facture", valueFonction: formatDateForSortTable } as SortTableColumn<SuspiciousInvoiceResult>);
     this.displayedColumns.push({ id: "affaire", fieldName: "affaire", label: "Affaire" } as SortTableColumn<SuspiciousInvoiceResult>);
     this.displayedColumns.push({ id: "htAmount", fieldName: "htAmount", label: "Montant HT", valueFonction: formatEurosForSortTable } as SortTableColumn<SuspiciousInvoiceResult>);
     this.displayedColumns.push({ id: "dueDaysNumber", fieldName: "dueDaysNumber", label: "Due depuis (en jours)" } as SortTableColumn<SuspiciousInvoiceResult>);

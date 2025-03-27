@@ -1130,12 +1130,12 @@ public class AccountingExportHelper {
                                 if (accountingRecord.getDebitAmount() != null) {
                                         currentCell.setCellValue(accountingRecord.getDebitAmount()
                                                         .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
-                                        debit.add(accountingRecord.getDebitAmount());
+                                        debit = debit.add(accountingRecord.getDebitAmount());
                                 }
                                 currentCell.setCellStyle(styleCurrency);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getCreditAmount() != null) {
-                                        credit.add(accountingRecord.getCreditAmount());
+                                        credit = credit.add(accountingRecord.getCreditAmount());
                                         currentCell.setCellValue(accountingRecord.getCreditAmount()
                                                         .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
                                 }
