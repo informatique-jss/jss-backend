@@ -625,7 +625,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                         BigDecimal amount = new BigDecimal(cartRate.getAmount()).setScale(0,
                                                 RoundingMode.HALF_EVEN);
                                         if (Math.abs(cartRate.getAmount()) == Math.abs(cartRate.getHtAmount())) {
-                                            itemNonTaxable.setPreTaxPrice(itemNonTaxable.getPreTaxPrice().add(amount));
+                                            itemNonTaxable.setPreTaxPrice(itemNonTaxable.getPreTaxPrice()
+                                                    .add(amount.multiply(new BigDecimal(cartRate.getQuantity()))));
                                         } else {
                                             if (itemTaxable.getVat() == null)
                                                 itemTaxable
@@ -634,7 +635,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                                     .divide(new BigDecimal(100), 2, RoundingMode.HALF_EVEN));
                                             itemTaxable.setPreTaxPrice(
                                                     itemTaxable.getPreTaxPrice()
-                                                            .add(amount.divide(rate, 2, RoundingMode.HALF_EVEN)));
+                                                            .add(amount.multiply(new BigDecimal(cartRate.getQuantity()))
+                                                                    .divide(rate, 2, RoundingMode.HALF_EVEN)));
                                         }
                                     }
                                 }

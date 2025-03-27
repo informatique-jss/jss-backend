@@ -20,6 +20,11 @@
                   [hint]="getPublicationDays(announcement.confrere)">
                 </autocomplete-confrere>
               </td>
+              <td *ngIf="announcement.confrere && announcement.confrere.provider">
+                <autocomplete-provider [(model)]="announcement.confrere.provider" [form]="announcementForm"
+                  label="Fournisseur" propertyName="provider" [isMandatory]="false" [isDisabled]="true">
+                </autocomplete-provider>
+              </td>
             </tr>
           </table>
           <table>

@@ -127,7 +127,8 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
             competentAuthority.setLabel(StringUtils.stripAccents(competentAuthority.getLabel()).toUpperCase());
 
         if (organisme.getProperties().getEmail() != null
-                && !isMailInList(organisme.getProperties().getEmail(), competentAuthority.getMails())) {
+                && !isMailInList(organisme.getProperties().getEmail(), competentAuthority.getMails())
+                && (competentAuthority.getMails() == null || competentAuthority.getMails().size() == 0)) {
             Mail mail = new Mail();
             mail.setMail(organisme.getProperties().getEmail());
             ArrayList<Mail> mails = new ArrayList<Mail>();
@@ -138,7 +139,8 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
 
         if (organisme.getProperties().getTelephone() != null
                 && !isPhoneInList(organisme.getProperties().getTelephone(),
-                        competentAuthority.getPhones())) {
+                        competentAuthority.getPhones())
+                && (competentAuthority.getPhones() == null || competentAuthority.getPhones().size() == 0)) {
             Phone phone = new Phone();
             phone.setPhoneNumber(organisme.getProperties().getTelephone().replaceAll(" ", ""));
             ArrayList<Phone> phones = new ArrayList<>();
