@@ -1300,14 +1300,22 @@ public class MailHelper {
                 if (asso.getTypeDocument() != null)
                     if (asso.getTypeDocument().getAttachments() != null
                             && asso.getTypeDocument().getAttachments().size() > 0)
-                        for (Attachment attachment : asso.getTypeDocument().getAttachments())
-                            attachments.add(attachment);
+                        for (Attachment attachment : asso.getTypeDocument().getAttachments()) {
+                            Attachment newAttachment = attachmentService.cloneAttachment(attachment);
+                            newAttachment.setAssoServiceDocument(null);
+                            newAttachment.setMissingAttachmentQuery(null);
+                            attachments.add(newAttachment);
+                        }
         }
         if (mail.getMissingAttachmentQuery() != null
                 && mail.getMissingAttachmentQuery().getAttachments() != null
                 && mail.getMissingAttachmentQuery().getAttachments().size() > 0) {
-            for (Attachment attachment : mail.getMissingAttachmentQuery().getAttachments())
-                attachments.add(attachment);
+            for (Attachment attachment : mail.getMissingAttachmentQuery().getAttachments()) {
+                Attachment newAttachment = attachmentService.cloneAttachment(attachment);
+                newAttachment.setAssoServiceDocument(null);
+                newAttachment.setMissingAttachmentQuery(null);
+                attachments.add(newAttachment);
+            }
         }
 
         mail.setAttachments(attachments);
