@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 
 @Component({
   selector: 'app-crm',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CrmComponent implements OnInit {
 
-  constructor() { }
+  constructor(private appService: AppService,
+    private userPreferenceService: UserPreferenceService
+
+  ) { }
 
   ngOnInit() {
+    this.appService.changeHeaderTitle("CRM");
   }
-
 }

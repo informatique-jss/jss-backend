@@ -7,7 +7,7 @@ import { IndexEntity } from './IndexEntity';
 @Injectable({
   providedIn: 'root'
 })
-export class IndexEntityService extends AppRestService<IndexEntity>{
+export class IndexEntityService extends AppRestService<IndexEntity> {
 
   constructor(http: HttpClient) {
     super(http, "search");
@@ -32,5 +32,10 @@ export class IndexEntityService extends AppRestService<IndexEntity>{
   getIndividualTiersByKeyword(searchedValue: string) {
     return this.getList(new HttpParams().set("searchedValue", searchedValue), "individual/search");
   }
+
+  getPostByKeyword(searchedValue: string) {
+    return this.getList(new HttpParams().set("searchedValue", searchedValue), "post/search");
+  }
+
 
 }

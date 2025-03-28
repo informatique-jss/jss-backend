@@ -12,6 +12,7 @@ import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidationHelper;
+import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -104,6 +105,11 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<IndexEntity> getCustomerOrdersByKeyword(String searchedValue) {
         return searchForEntities(searchedValue, CustomerOrder.class.getSimpleName(), false);
+    }
+
+    @Override
+    public List<IndexEntity> getPostByKeyword(String searchedValue) {
+        return searchForEntities(searchedValue, Post.class.getSimpleName(), false);
     }
 
     @Override

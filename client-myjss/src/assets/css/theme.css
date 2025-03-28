@@ -187,7 +187,7 @@
   --ar-highlight-bg: #fff3cd;
   --ar-border-width: 1px;
   --ar-border-style: solid;
-  --ar-border-color: #e3e9ef;
+  --ar-border-color: #FFFFFF1F;
   --ar-border-color-translucent: rgba(0, 0, 0, 0.1);
   --ar-border-radius: 1rem;
   --ar-border-radius-sm: calc(var(--ar-border-radius) * 0.75);
@@ -2400,7 +2400,7 @@ progress {
   margin-bottom: 0.3125rem;
   font-size: calc(var(--ar-body-font-size) * 0.875);
   font-weight: 500;
-  color: var(--ar-gray-900);
+  color: var(--ar-gray-200);
 }
 
 .col-form-label {
@@ -2438,13 +2438,13 @@ progress {
   font-size: calc(var(--ar-body-font-size) * 0.875);
   font-weight: 400;
   line-height: 1.4;
-  color: #2C4057;
+  color: var(--ar-gray-200);
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   background-color: transparent;
   background-clip: padding-box;
-  border: var(--ar-border-width) solid var(--ar-gray-400);
+  border: var(--ar-border-width) solid var(--ar-gray-700);
   border-radius: var(--ar-border-radius);
   transition: border-color 0.15s ease-in-out;
 }
@@ -2464,9 +2464,9 @@ progress {
 }
 
 .form-control:focus {
-  color: #2C4057;
+  color: var(--ar-gray-200);
   background-color: transparent;
-  border-color: var(--ar-gray-700);
+  border-color: var(--ar-gray-400);
   outline: 0;
   box-shadow: unset;
 }
@@ -2488,7 +2488,7 @@ progress {
 }
 
 .form-control::placeholder {
-  color: #2C4057;
+  color: #FFFFFF66;
   opacity: 1;
 }
 
@@ -9446,7 +9446,7 @@ textarea.form-control-lg {
 
 .text-body-secondary {
   --ar-text-opacity: 1;
-  color: var(--ar-secondary-color) !important;
+  color: var(--ar-gray-500) !important;
 }
 
 .text-body-tertiary {
@@ -20287,4 +20287,3 @@ h1.secondary-heading,
   backdrop-filter: blur(40px);
   background-color: #1c2d41b6;
 }
-
