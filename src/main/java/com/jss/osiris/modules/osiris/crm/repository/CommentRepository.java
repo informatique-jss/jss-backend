@@ -25,10 +25,10 @@ public interface CommentRepository extends QueryCacheCrudRepository<Comment, Int
                         + "AND (:authorFirstLastName IS NULL OR LOWER(c.authorFirstName) LIKE CONCAT('%',:authorFirstLastName, '%') "
                         + "OR LOWER(c.authorLastName) LIKE CONCAT('%',:authorFirstLastName, '%')) "
                         + "AND (:content IS NULL OR LOWER(c.content) LIKE CONCAT('%',:content, '%'))"
-                        + "AND (:postTitle IS NULL OR LOWER(p.titleText) LIKE CONCAT('%',:postTitle, '%'))")
+                        + "AND (:postId IS NULL OR p.id = :postId)")
         Page<Comment> findFiltered(
                         @Param("creationDate") LocalDateTime creationDate,
-                        @Param("postTitle") String postTitle,
+                        @Param("postId") Integer postId,
                         @Param("content") String content,
                         @Param("authorFirstLastName") String authorFirstLastName,
                         @Param("isModerated") Boolean isModerated,

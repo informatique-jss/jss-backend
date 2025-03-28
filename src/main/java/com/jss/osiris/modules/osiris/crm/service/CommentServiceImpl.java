@@ -35,18 +35,19 @@ public class CommentServiceImpl implements CommentService {
         if (commentSearch.getCreationDate() == null)
             commentSearch.setCreationDate(LocalDateTime.of(1970, 01, 01, 0, 0, 0));
 
-        if (commentSearch.getPostTitle() == null)
-            commentSearch.setPostTitle("");
-
-        if (commentSearch.getAuthorFirstLastName() == null)
-            commentSearch.setAuthorFirstLastName("");
+        Integer postId = null;
+        if (commentSearch.getPost() != null)
+            postId = commentSearch.getPost().getEntityId();
 
         if (commentSearch.getContent() == null)
             commentSearch.setContent("");
 
+        if (commentSearch.getAuthorFirstLastName() == null)
+            commentSearch.setAuthorFirstLastName("");
+
         Page<Comment> comments = commentRepository.findFiltered(
                 commentSearch.getCreationDate(),
-                commentSearch.getPostTitle().toLowerCase(),
+                postId,
                 commentSearch.getContent().toLowerCase(),
                 commentSearch.getAuthorFirstLastName().toLowerCase(),
                 commentSearch.getIsModerated(),

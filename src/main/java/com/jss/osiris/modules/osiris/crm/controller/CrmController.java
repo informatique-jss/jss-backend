@@ -148,7 +148,7 @@ public class CrmController {
          * @param request
          * @return
          */
-        @PostMapping(inputEntryPoint + "/comments")
+        @PostMapping(inputEntryPoint + "/comments/search")
         @JsonView(JacksonViews.OsirisListView.class)
         public ResponseEntity<Page<Comment>> getComments(
                         @RequestParam(defaultValue = "0") int page,

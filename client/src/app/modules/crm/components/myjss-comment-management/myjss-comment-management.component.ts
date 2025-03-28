@@ -44,7 +44,7 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
 
     this.displayedColumnsComments.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<Comment>);
     this.displayedColumnsComments.push({ id: "content", fieldName: "content", label: "Contenu du commentaire", isShrinkColumn: true } as SortTableColumn<Comment>);
-    this.displayedColumnsComments.push({ id: "titleText", fieldName: "post.titleText", label: "Titre de l'article", isShrinkColumn: true } as SortTableColumn<Comment>);
+    this.displayedColumnsComments.push({ id: "entityId", fieldName: "post.titleText", label: "Titre de l'article", isShrinkColumn: true } as SortTableColumn<Comment>);
     this.displayedColumnsComments.push({ id: "creationDate", fieldName: "creationDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Comment>);
     this.displayedColumnsComments.push({ id: "mail", fieldName: "mail.mail", label: "Mail de l'auteur" } as SortTableColumn<Comment>);
     this.displayedColumnsComments.push({ id: "firstName&lastName", fieldName: "authorFirstName " + "authorLastName", label: "Prénom & nom de l'auteur", valueFonction: (element: Comment, column: SortTableColumn<Comment>) => { return (element.authorFirstName + " " + element.authorLastName) } } as SortTableColumn<Comment>);
@@ -65,7 +65,7 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
       }, display: true,
     } as SortTableAction<Comment>);
 
-    // TODO : supprimer le commentaire, modif le comm, accéder au comm sur la page article, mettre comme modéré
+    // TODO : accéder au comm sur la page article, changer le toast message
     this.tableActionComment.push({
       actionIcon: 'mode_comment', actionName: 'Modifier le commentaire', actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
         let dialogRef = this.editCommentDialog.open(EditCommentDialogComponent, {
@@ -82,7 +82,6 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
       }, display: true,
     } as SortTableAction<Comment>);
 
-
     this.tableActionComment.push({
       actionIcon: "open_in_new", actionName: "Voir le commentaire dans l'article", actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
         this.appService.openRoute(event, "/post/" + element.post.slug, undefined);
@@ -91,7 +90,7 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
 
     this.tableActionComment.push({
       actionIcon: "delete", actionName: "Supprimer le commentaire", actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
-        element.isModerated = false;
+        element.isDeleted = true;
         this.commentService.addOrUpdateComment(element, element.post.id).subscribe();
       }, display: true,
     } as SortTableAction<Comment>);

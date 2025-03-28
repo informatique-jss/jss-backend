@@ -1,5 +1,7 @@
+import { IndexEntity } from "src/app/routing/search/IndexEntity";
+
 export interface CommentSearch {
-    postTitle: string;
+    post: IndexEntity;
     content: string;
     authorFirstLastName: string;
     creationDate: Date;

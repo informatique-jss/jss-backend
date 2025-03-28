@@ -7,7 +7,7 @@
             <table class="full-width table-fixed-layout" *ngIf=" commentSearch">
               <tr>
                 <td>
-                  <autocomplete-post [(model)]="commentSearch.postTitle" label="Titre de l'article"
+                  <autocomplete-post [(model)]="commentSearch.post" label="Titre de l'article"
                     [form]="commentSearchForm" propertyName="postTitle" [isMandatory]=" false">
                   </autocomplete-post>
                 </td>

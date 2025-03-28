@@ -3,9 +3,11 @@ package com.jss.osiris.modules.osiris.crm.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.jss.osiris.libs.search.model.IndexEntity;
+
 public class CommentSearch implements Serializable {
 
-	private String postTitle;
+	private IndexEntity post;
 
 	private String content;
 
@@ -17,12 +19,12 @@ public class CommentSearch implements Serializable {
 
 	private Boolean isDeleted = false;
 
-	public String getPostTitle() {
-		return postTitle;
+	public IndexEntity getPost() {
+		return post;
 	}
 
-	public void setPostTitle(String postTitle) {
-		this.postTitle = postTitle;
+	public void setPost(IndexEntity post) {
+		this.post = post;
 	}
 
 	public String getContent() {
