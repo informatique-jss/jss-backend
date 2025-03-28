@@ -1304,6 +1304,7 @@ public class MailHelper {
                             Attachment newAttachment = attachmentService.cloneAttachment(attachment);
                             newAttachment.setAssoServiceDocument(null);
                             newAttachment.setMissingAttachmentQuery(null);
+                            attachmentService.addOrUpdateAttachment(newAttachment);
                             attachments.add(newAttachment);
                         }
         }
@@ -1314,6 +1315,7 @@ public class MailHelper {
                 Attachment newAttachment = attachmentService.cloneAttachment(attachment);
                 newAttachment.setAssoServiceDocument(null);
                 newAttachment.setMissingAttachmentQuery(null);
+                attachmentService.addOrUpdateAttachment(newAttachment);
                 attachments.add(newAttachment);
             }
         }
