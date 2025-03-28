@@ -1,0 +1,6 @@
+<form [formGroup]="form!">
+  <div *ngFor="let type of types" [formControlName]="propertyName">
+    <input type="radio" [id]="type" name="radio" [value]="type" [checked]="model && model.id === type.id">
+    <label [for]="type"> {{type.label}}</label>
+  </div>
+</form>
