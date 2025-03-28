@@ -13,6 +13,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
+import com.jss.osiris.modules.osiris.crm.model.CommentSearch;
 import com.jss.osiris.modules.osiris.crm.repository.CommentRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 
@@ -29,8 +30,30 @@ public class CommentServiceImpl implements CommentService {
     MailService mailService;
 
     @Override
-    public Page<Comment> getComments(Pageable pageableRequest) {
-        return commentRepository.findAll(pageableRequest);
+    public Page<Comment> getComments(CommentSearch commentSearch, Pageable pageableRequest) {
+
+        if (commentSearch.getCreationDate() == null)
+            commentSearch.setCreationDate(LocalDateTime.of(1970, 01, 01, 0, 0, 0));
+
+        if (commentSearch.getPostTitle() == null)
+            commentSearch.setPostTitle("");
+
+        if (commentSearch.getAuthorFirstLastName() == null)
+            commentSearch.setAuthorFirstLastName("");
+
+        if (commentSearch.getContent() == null)
+            commentSearch.setContent("");
+
+        Page<Comment> comments = commentRepository.findFiltered(
+                commentSearch.getCreationDate(),
+                commentSearch.getPostTitle().toLowerCase(),
+                commentSearch.getContent().toLowerCase(),
+                commentSearch.getAuthorFirstLastName().toLowerCase(),
+                commentSearch.getIsModerated(),
+                commentSearch.getIsDeleted(),
+                pageableRequest);
+
+        return comments;
     }
 
     @Override

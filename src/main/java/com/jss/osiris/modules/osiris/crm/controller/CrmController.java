@@ -9,6 +9,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +21,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
+import com.jss.osiris.modules.osiris.crm.model.CommentSearch;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CommentService;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
@@ -140,24 +143,27 @@ public class CrmController {
         }
 
         /**
-         * Fetch all comments in DB
+         * Fetch all comments in DB filtered by parameters
          * 
          * @param request
          * @return
          */
-        @GetMapping(inputEntryPoint + "/comments")
-        @JsonView(JacksonViews.MyJssView.class)
+        @PostMapping(inputEntryPoint + "/comments")
+        @JsonView(JacksonViews.OsirisListView.class)
         public ResponseEntity<Page<Comment>> getComments(
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
                         @RequestParam(defaultValue = "creationDate") String sortBy,
-                        @RequestParam(defaultValue = "desc") String sortDir) throws OsirisException {
+                        @RequestParam(defaultValue = "desc") String sortDir,
+                        @RequestBody CommentSearch commentSearch)
+                        throws OsirisException {
 
                 Pageable pageable = PageRequest.of(page, size,
                                 Sort.by(sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
                                                 sortBy));
 
-                return ResponseEntity.ok(commentService.getComments(pageable));
+                return ResponseEntity
+                                .ok(commentService.getComments(commentSearch, pageable));
         }
 
         /**
@@ -180,11 +186,12 @@ public class CrmController {
          * @return
          * @throws OsirisException
          */
-        @GetMapping(inputEntryPoint + "/comment/add")
+        @PostMapping(inputEntryPoint + "/post/comment/add")
         @JsonView(JacksonViews.MyJssView.class)
-        public ResponseEntity<Comment> saveOrUpdate(@RequestParam Comment comment,
+        public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
                         @RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
-                        @RequestParam Integer postId) throws OsirisException {
+                        @RequestParam Integer postId)
+                        throws OsirisException {
 
                 if (comment != null && postId != null) {
 

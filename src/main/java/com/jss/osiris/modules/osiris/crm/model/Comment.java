@@ -28,11 +28,12 @@ public class Comment implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.OsirisListView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail")
+	@JsonView(JacksonViews.OsirisListView.class)
 	private Mail mail;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -41,27 +42,32 @@ public class Comment implements Serializable, IId {
 	private Comment parentComment;
 
 	@OneToMany(targetEntity = Comment.class, mappedBy = "parentComment")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class })
 	@JsonIgnoreProperties(value = { "parentComment", "childrenComments" }, allowSetters = true)
 	private List<Comment> childrenComments;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_post")
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Post post;
 
 	@Column(columnDefinition = "TEXT", nullable = false)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
 	private String content;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
 	private String authorFirstName;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
 	private String authorLastName;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
 	private LocalDateTime creationDate;
 
+	@JsonView(JacksonViews.OsirisListView.class)
+	private Boolean isModerated = false;
+
+	@JsonView(JacksonViews.OsirisListView.class)
 	private Boolean isDeleted = false;
 
 	public Integer getId() {
@@ -130,6 +136,14 @@ public class Comment implements Serializable, IId {
 
 	public void setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public Boolean getIsModerated() {
+		return isModerated;
+	}
+
+	public void setIsModerated(Boolean isModerated) {
+		this.isModerated = isModerated;
 	}
 
 	public Boolean getIsDeleted() {
