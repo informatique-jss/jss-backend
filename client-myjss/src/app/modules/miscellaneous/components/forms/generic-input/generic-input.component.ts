@@ -9,9 +9,9 @@ import { GenericFormComponent } from '../generic-form.components';
 })
 export class GenericInputComponent extends GenericFormComponent implements OnInit {
   /**
- * Max length of input
- * No check if not devined
- */
+  * Max length of input
+  * No check if not devined
+  */
   @Input() maxLength: number | undefined;
   /**
  * Min length of input
@@ -37,8 +37,8 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
   @Input() icon: string = "";
 
   /**
-* Fired when input blur
-*/
+ * Fired when input blur
+ */
   @Output() onEnter: EventEmitter<any> = new EventEmitter();
 
   constructor(

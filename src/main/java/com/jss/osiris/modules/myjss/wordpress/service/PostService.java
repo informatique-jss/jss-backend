@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
@@ -21,7 +22,11 @@ public interface PostService {
 
         public List<Post> getPostPodcast(int page) throws OsirisException;
 
-        public List<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory);
+        public List<Post> getPostsByJssCategory(int page, JssCategory jssCategory);
+
+        public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory);
+
+        public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
 
         public Post getPostsBySlug(String slung);
 
@@ -30,6 +35,8 @@ public interface PostService {
         public void cancelPost(Post post);
 
         public List<Post> getPostTendency() throws OsirisException;
+
+        public List<Post> getPostMostSeen() throws OsirisException;
 
         public List<Post> getTopPostByDepartment(Integer page, PublishingDepartment department) throws OsirisException;
 

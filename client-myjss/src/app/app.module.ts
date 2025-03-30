@@ -19,6 +19,7 @@ import { SearchComponent } from './modules/profile/components/search/search.comp
 import { TopBarComponent } from './modules/profile/components/top-bar/top-bar.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
 import { ToolsModule } from './modules/tools/components/tools/tools.module';
+
 registerLocaleData(localeFr, 'fr');
 
 

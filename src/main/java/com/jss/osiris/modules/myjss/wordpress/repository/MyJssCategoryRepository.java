@@ -7,6 +7,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 
 public interface MyJssCategoryRepository extends QueryCacheCrudRepository<MyJssCategory, Integer> {
 
-    List<MyJssCategory> findAllByOrderByName();
+    List<MyJssCategory> findAllByOrderByCategoryOrderAscNameAsc();
 
 }

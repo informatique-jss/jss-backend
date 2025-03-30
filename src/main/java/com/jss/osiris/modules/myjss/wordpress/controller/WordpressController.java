@@ -22,6 +22,7 @@ import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Page;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
@@ -30,6 +31,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
+import com.jss.osiris.modules.myjss.wordpress.service.JssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.MyJssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.PageService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
@@ -39,14 +41,13 @@ import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
-import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class WordpressController {
 
-	private static final String inputEntryPoint = "/myjss/wordpress";
+	private static final String inputEntryPoint = "myjss/wordpress";
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 10;
@@ -55,6 +56,9 @@ public class WordpressController {
 
 	@Autowired
 	PublishingDepartmentService publishingDepartmentService;
+
+	@Autowired
+	JssCategoryService jssCategoryService;
 
 	@Autowired
 	MyJssCategoryService myJssCategoryService;
@@ -86,9 +90,6 @@ public class WordpressController {
 	@Autowired
 	AnnouncementService announcementService;
 
-	@Autowired
-	CharacterPriceService characterPriceService;
-
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
 			"DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver");
@@ -103,9 +104,9 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/myjss-categories")
-	public ResponseEntity<List<MyJssCategory>> getAvailableMyJssCategories() {
-		return new ResponseEntity<List<MyJssCategory>>(myJssCategoryService.getAvailableMyJssCategories(),
+	@GetMapping(inputEntryPoint + "/jss-categories")
+	public ResponseEntity<List<JssCategory>> getAvailableJssCategories() {
+		return new ResponseEntity<List<JssCategory>>(jssCategoryService.getAvailableJssCategories(),
 				HttpStatus.OK);
 	}
 
@@ -144,6 +145,11 @@ public class WordpressController {
 		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostTendency()), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/most-seen")
+	public ResponseEntity<List<Post>> getPostsMostSeen() throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostMostSeen()), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/slug")
 	public ResponseEntity<Post> getPostBySlung(@RequestParam String slug, HttpServletRequest request)
 			throws OsirisException {
@@ -163,14 +169,70 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
+	@GetMapping(inputEntryPoint + "/posts/top/jss-category")
 	public ResponseEntity<List<Post>> getTopPostByCategory(@RequestParam Integer page,
 			@RequestParam Integer categoryId) {
-		MyJssCategory category = myJssCategoryService.getMyJssCategory(categoryId);
+		JssCategory category = jssCategoryService.getJssCategory(categoryId);
 		if (category == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
 		return new ResponseEntity<List<Post>>(
-				postService.applyPremium(postService.getPostsByMyJssCategory(page, category)), HttpStatus.OK);
+				postService.applyPremium(postService.getPostsByJssCategory(page, category)), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/myjss-categories")
+	public ResponseEntity<List<MyJssCategory>> getAvailableMyJssCategories() {
+		return new ResponseEntity<List<MyJssCategory>>(
+				myJssCategoryService.getAvailableMyJssCategories(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/first-myjss-category")
+	public ResponseEntity<List<Post>> getFirstPostsByMyJssCategories(@RequestParam(required = false) String searchText,
+			@RequestParam(required = false) Integer myJssCategoryId, HttpServletRequest request) {
+		detectFlood(request);
+		MyJssCategory myJssCategory = null;
+		if (myJssCategoryId != null)
+			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+
+		return new ResponseEntity<List<Post>>(postService.getFirstPostsByMyJssCategories(myJssCategory),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/search/myjss-category")
+	public ResponseEntity<List<Post>> searchPostsByMyJssCategory(@RequestParam String searchText,
+			@RequestParam(required = false) Integer myJssCategoryId,
+			HttpServletRequest request) {
+		detectFlood(request);
+
+		if (searchText == null || searchText.trim().length() == 0)
+			searchText = "";
+		searchText = searchText.trim().toLowerCase();
+
+		MyJssCategory myJssCategory = null;
+		if (myJssCategoryId != null)
+			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+
+		if (searchText.equals("") && myJssCategory == null)
+			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Post>>(
+				postService.searchPostsByMyJssCategory(searchText, myJssCategory), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/myjss-category")
+	public ResponseEntity<List<Post>> getPostsByMyJssCategory(@RequestParam Integer myJssCategoryId,
+			@RequestParam(required = false) String searchText,
+			HttpServletRequest request) {
+		detectFlood(request);
+
+		MyJssCategory myJssCategory = null;
+		if (myJssCategoryId != null)
+			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+
+		if (myJssCategory == null)
+			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Post>>(
+				postService.searchPostsByMyJssCategory(searchText, myJssCategory), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/tag")

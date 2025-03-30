@@ -22,8 +22,8 @@ Main content START -->
           <div class="row g-3">
             <div class="col-lg-5">
               <!-- Categories -->
-              <ng-container *ngIf="post.myJssCategories!=null && post.myJssCategories.length>0">
-                <a *ngFor="let category of post.myJssCategories" style="cursor: pointer;"
+              <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
+                <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
                   (click)="openCategoryPosts(category,$event)"
                   class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
                   [style.background-color]="category.color+' !important'"><i

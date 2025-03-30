@@ -44,6 +44,7 @@ import { Department } from "./Department";
 import { DocumentType } from "./DocumentType";
 import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
+import { MyJssCategory } from './MyJssCategory';
 import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
@@ -261,6 +262,8 @@ export interface Constant {
   categoryPodcast: Category;
   categoryArticle: Category;
   categorySerie: Category;
+  myJssCategoryAnnouncement: MyJssCategory;
+  myJssCategoryFormality: MyJssCategory;
   accountingAccountClassProduct: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
 }

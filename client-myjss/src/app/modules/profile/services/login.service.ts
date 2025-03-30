@@ -32,7 +32,7 @@ export class LoginService extends AppRestService<Responsable> {
           }
           localStorage.setItem('roles', JSON.stringify(roles));
           this.currentUserChange.next(true);
-          observer.next();
+          observer.next(true);
           observer.complete();
         })
       })
@@ -48,7 +48,7 @@ export class LoginService extends AppRestService<Responsable> {
     return new Observable<Boolean>(observer => {
       this.get(new HttpParams(), 'login/signout', "Vous avez été déconnecté").subscribe(response => {
         this.currentUserChange.next(false);
-        observer.next();
+        observer.next(true);
         observer.complete();
       })
     })
@@ -61,7 +61,7 @@ export class LoginService extends AppRestService<Responsable> {
   getCurrentUser(forceFetch: boolean = false, getFromCache: boolean = false): Observable<Responsable> {
     return new Observable<Responsable>(observer => {
       if (!forceFetch && (getFromCache || this.currentUser)) {
-        observer.next(this.currentUser);
+        observer.next(this.currentUser!);
         observer.complete();
       } else {
         this.get(new HttpParams(), "user", "", "", true).subscribe(response => {
