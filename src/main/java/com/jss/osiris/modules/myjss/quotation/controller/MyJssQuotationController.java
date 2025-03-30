@@ -3,7 +3,6 @@ package com.jss.osiris.modules.myjss.quotation.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,9 +68,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
-import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeFieldTypePossibleValue;
-import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
@@ -1084,127 +1081,92 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/order/user/pricing")
-	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<UserCustomerOrder> completePricingOfUserCustomerOrder(@RequestBody UserCustomerOrder order,
-			HttpServletRequest request)
-			throws OsirisValidationException, OsirisException {
-		detectFlood(request);
-		if (order.getBillingDocument() == null || order.getServiceTypes() == null
-				|| order.getServiceTypes().size() == 0)
-			return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+	// @PostMapping(inputEntryPoint + "/order/user/pricing")
+	// @JsonView(JacksonViews.MyJssView.class)
+	// public ResponseEntity<UserCustomerOrder>
+	// completePricingOfUserCustomerOrder(@RequestBody UserCustomerOrder order,
+	// HttpServletRequest request)
+	// throws OsirisValidationException, OsirisException {
+	// detectFlood(request);
+	// if (order.getBillingDocument() == null || order.getServiceTypes() == null
+	// || order.getServiceTypes().size() == 0)
+	// return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(),
+	// HttpStatus.OK);
 
-		for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
-			if (serviceTypeChosen.getAffaire().getId() == null && (serviceTypeChosen.getAffaire().getCity() == null
-					|| serviceTypeChosen.getAffaire().getCountry() == null)) {
-				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
-			}
+	// for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
+	// if (serviceTypeChosen.getAffaire().getId() == null &&
+	// (serviceTypeChosen.getAffaire().getCity() == null
+	// || serviceTypeChosen.getAffaire().getCountry() == null)) {
+	// return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(),
+	// HttpStatus.OK);
+	// }
 
-			if (serviceTypeChosen.getService() == null)
-				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
-		}
+	// if (serviceTypeChosen.getService() == null)
+	// return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(),
+	// HttpStatus.OK);
+	// }
 
-		if (order.getDummyResponsable() != null) {
-			validationHelper.validateReferential(order.getDummyResponsable(), true, "dummyReponsable");
+	// if (order.getDummyResponsable() != null) {
+	// validationHelper.validateReferential(order.getDummyResponsable(), true,
+	// "dummyReponsable");
 
-			if (!order.getDummyResponsable().getId()
-					.equals(constantService.getResponsableDummyCustomerFrance().getId()))
-				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
-		}
+	// if (!order.getDummyResponsable().getId()
+	// .equals(constantService.getResponsableDummyCustomerFrance().getId()))
+	// return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(),
+	// HttpStatus.OK);
+	// }
 
-		return new ResponseEntity<UserCustomerOrder>(pricingHelper.completePricingOfUserCustomerOrder(order),
-				HttpStatus.OK);
-	}
+	// return new
+	// ResponseEntity<UserCustomerOrder>(pricingHelper.completePricingOfUserCustomerOrder(order),
+	// HttpStatus.OK);
+	// }
 
 	@PostMapping(inputEntryPoint + "/order/user/save")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<UserCustomerOrder> saveOrder(@RequestBody UserCustomerOrder order, HttpServletRequest request)
+	public ResponseEntity<CustomerOrder> saveCustomerOrderFromMyJss(@RequestBody CustomerOrder order,
+			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
-		if (order.getBillingDocument() == null || order.getServiceTypes() == null
-				|| order.getServiceTypes().size() == 0 || order.getPaperDocument() == null
-				|| order.getDigitalDocument() == null)
-			return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
 
-		if (order.getIsCustomerOrder() == null || order.getIsDraft() == null)
-			return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+		if (order.getAssoAffaireOrders() == null || order.getAssoAffaireOrders().size() == 0)
+			throw new OsirisValidationException("assoAffaireOrders");
 
-		for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
-			if (serviceTypeChosen.getAffaire().getId() == null) {
-				if (serviceTypeChosen.getAffaire().getCity() == null
-						|| serviceTypeChosen.getAffaire().getCountry() == null)
-					return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
+		for (AssoAffaireOrder asso : order.getAssoAffaireOrders()) {
+			if (asso.getAffaire() == null)
+				throw new OsirisValidationException("affaire");
 
-				Affaire affaire = serviceTypeChosen.getAffaire();
-				validationHelper.validateReferential(affaire.getCountry(), true, "affaireCountry");
-				validationHelper.validateReferential(affaire.getCity(), true, "affaireCity");
-				validationHelper.validateString(affaire.getPostalCode(),
-						affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()),
-						"affairePostalCode");
-				validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
-
-				if (affaire.getIsIndividual()) {
-					validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
-					validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
-					validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
-					affaire.setDenomination(null);
-					if (affaire.getLastname() != null)
-						affaire.setLastname(affaire.getLastname().toUpperCase());
-				} else {
-					validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
-					affaire.setFirstname(null);
-					affaire.setLastname(null);
-				}
+			if (asso.getAffaire().getId() != null) {
+				validationHelper.validateReferential(asso.getAffaire(), true, "affaire");
+			} else {
+				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
+		}
 
-			if (serviceTypeChosen.getAffaire().getId() != null) {
-				validationHelper.validateSiret(serviceTypeChosen.getAffaire().getSiret());
-				validationHelper.validateReferential(serviceTypeChosen.getAffaire(), true, "affaire");
+		return new ResponseEntity<CustomerOrder>(customerOrderService.saveCustomerOrderFromMyJss(order, request),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/quotation/user/save")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Quotation> saveQuotationFromMyJss(@RequestBody Quotation order,
+			HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		if (order.getAssoAffaireOrders() == null || order.getAssoAffaireOrders().size() == 0)
+			throw new OsirisValidationException("assoAffaireOrders");
+
+		for (AssoAffaireOrder asso : order.getAssoAffaireOrders()) {
+			if (asso.getAffaire() == null)
+				throw new OsirisValidationException("affaire");
+
+			if (asso.getAffaire().getId() != null) {
+				validationHelper.validateReferential(asso.getAffaire(), true, "affaire");
+			} else {
+				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
-
-			if (serviceTypeChosen.getService() == null)
-				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
-
-			ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeChosen.getService().getId());
-			if (serviceType == null)
-				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
-
-			validationHelper.validateDateMin(serviceTypeChosen.getAnnouncementPublicationDate(), false, LocalDate.now(),
-					"publicationDate");
-			validationHelper.validateReferential(serviceTypeChosen.getAnnouncementNoticeFamily(), false,
-					"noticeFamily");
-			validationHelper.validateReferential(serviceTypeChosen.getAnnouncementNoticeType(), false, "noticeType");
-			validationHelper.validateReferential(serviceTypeChosen.getAnnouncementDepartment(), false, "department");
 		}
-
-		if (order.getDummyResponsable() != null) {
-			validationHelper.validateReferential(order.getDummyResponsable(), true, "dummyReponsable");
-
-			if (!order.getDummyResponsable().getId()
-					.equals(constantService.getResponsableDummyCustomerFrance().getId()))
-				return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(), HttpStatus.OK);
-		}
-
-		Responsable currentUSer = employeeService.getCurrentMyJssUser();
-		if (currentUSer == null) {
-			if (!validationHelper.validateSiret(order.getCustomerSiret()))
-				order.setCustomerSiret(null);
-
-			validationHelper.validateString(order.getCustomerDenomination(),
-					order.getCustomerIsIndividual() == null || order.getCustomerIsIndividual() == false, 80,
-					"tiersDenomination");
-			validationHelper.validateString(order.getCustomerAddress(), true, 100, "tiersAddress");
-			validationHelper.validateReferential(order.getCustomerCity(), true, "tiersCity");
-			validationHelper.validateReferential(order.getCustomerCountry(), true, "tiersCounty");
-			validationHelper.validateReferential(order.getResponsableCivility(), true, "responsableCivility");
-			validationHelper.validateString(order.getResponsableFirstname(), true, 80, "responsableFirstname");
-			validationHelper.validateString(order.getResponsableLastname(), true, 80, "responsableLastname");
-			validationHelper.validateString(order.getCustomerPostalCode(),
-					order.getCustomerCountry().getId().equals(constantService.getCountryFrance().getId()), 6,
-					"responsableLastname");
-		}
-
-		return new ResponseEntity<UserCustomerOrder>(customerOrderService.saveOrderOfUserCustomerOrder(order, request),
+		return new ResponseEntity<Quotation>(quotationService.saveQuotationFromMyJss(order, request),
 				HttpStatus.OK);
 	}
 }

@@ -24,6 +24,7 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 	/**
 	 * WARNINNG : add update in Service when adding a new status
 	 */
+	public static String DRAFT = "DRAFT";
 	public static String OPEN = "OPEN";
 	public static String ABANDONED = "ABANDONED";
 	public static String BILLED = "BILLED";

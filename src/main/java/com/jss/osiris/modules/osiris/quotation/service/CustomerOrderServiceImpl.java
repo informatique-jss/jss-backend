@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,9 +61,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
-import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -91,13 +87,10 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.PaperSet;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
-import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
-import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
-import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -272,7 +265,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         // Set default customer order assignation to sales employee if not set
-        if (customerOrder.getAssignedTo() == null)
+        if (customerOrder.getAssignedTo() == null && customerOrder.getResponsable() != null)
             if (customerOrder.getResponsable().getDefaultCustomerOrderEmployee() != null)
                 customerOrder.setAssignedTo(customerOrder.getResponsable().getDefaultCustomerOrderEmployee());
             else
@@ -300,27 +293,35 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Complete provisions
         boolean oneNewProvision = false;
+        boolean computePrice = false;
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
-                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
-                if (assoAffaireOrder.getId() != null)
-                    batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, assoAffaireOrder.getId());
-                for (Service service : assoAffaireOrder.getServices())
-                    for (Provision provision : service.getProvisions())
-                        if (provision.getId() == null)
-                            oneNewProvision = true;
+                if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
+                    assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
+                    if (assoAffaireOrder.getId() != null)
+                        batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, assoAffaireOrder.getId());
+                    for (Service service : assoAffaireOrder.getServices())
+                        if (service.getProvisions() != null && service.getProvisions().size() > 0)
+                            for (Provision provision : service.getProvisions()) {
+                                computePrice = true;
+                                if (provision.getId() == null)
+                                    oneNewProvision = true;
+                            }
+                }
             }
 
         if (oneNewProvision)
             customerOrder = customerOrderRepository.save(customerOrder);
 
-        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+        if (computePrice)
+            pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 
         customerOrder = customerOrderRepository.save(customerOrder);
 
         // Generate first comment
-        if (isNewCustomerOrder && isFromUser) {
+        // TODO : generate it when go from draft to in progress
+        if (isFromUser && customerOrder.getResponsable() != null) {
             String comment = "";
             Tiers tiers = customerOrder.getResponsable().getTiers();
             if (tiers != null && (tiers.getInstructions() != null || tiers.getObservations() != null)) {
@@ -336,7 +337,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder = getCustomerOrder(customerOrder.getId());
 
-        if (checkAllProvisionEnded)
+        if (computePrice && checkAllProvisionEnded)
             checkAllProvisionEnded(customerOrder);
 
         // Generate recurring
@@ -1747,194 +1748,106 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserCustomerOrder saveOrderOfUserCustomerOrder(UserCustomerOrder order, HttpServletRequest request)
+    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        CustomerOrder customerOrder = new CustomerOrder();
-        Responsable user = employeeService.getCurrentMyJssUser();
-        ProvisionScreenType provisionScreenTypeAnnouncement = constantService.getProvisionScreenTypeAnnouncement();
-        Boolean shouldAuthenticate = false;
-        if (user == null) {
-            user = generateTiersAndResponsableFromUserCustomerOrder(order);
-            shouldAuthenticate = true;
-        }
-
-        customerOrder.setResponsable(user);
-
-        HashMap<Integer, AssoAffaireOrder> assoAffaireOrders = new HashMap<Integer, AssoAffaireOrder>();
-
-        for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
-            serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
-
-            // Generate affaire
-            if (serviceTypeChosen.getAffaire().getId() == null) {
-                serviceTypeChosen.setAffaire(affaireService.addOrUpdateAffaire(serviceTypeChosen.getAffaire()));
-            }
-
-            Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
-                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire());
-
-            if (assoAffaireOrders.get(serviceTypeChosen.getAffaire().getId()) == null) {
-                AssoAffaireOrder asso = new AssoAffaireOrder();
-                asso.setAffaire(serviceTypeChosen.getAffaire());
-                asso.setServices(new ArrayList<Service>());
-                assoAffaireOrders.put(serviceTypeChosen.getAffaire().getId(), asso);
-            }
-
-            if (order.getIsEmergency() != null && order.getIsEmergency() && service.getProvisions() != null
-                    && service.getProvisions().size() > 0
-                    && order.getServiceTypes().indexOf(serviceTypeChosen) == 0)
-                service.getProvisions().get(0).setIsEmergency(true);
-
-            if (service != null && service.getProvisions() != null)
-                for (Provision provision : service.getProvisions()) {
-                    // map announcement
-                    if (provision.getProvisionType().getProvisionScreenType().getId()
-                            .equals(provisionScreenTypeAnnouncement.getId())) {
-                        provision.setAnnouncement(new Announcement());
-                        if (serviceTypeChosen.getAnnouncementProofReading() != null
-                                && serviceTypeChosen.getAnnouncementProofReading())
-                            provision.getAnnouncement().setIsProofReadingDocument(true);
-
-                        if (serviceTypeChosen.getAnnouncementNoticeType() != null)
-                            provision.getAnnouncement()
-                                    .setNoticeTypes(Arrays.asList(serviceTypeChosen.getAnnouncementNoticeType()));
-
-                        if (serviceTypeChosen.getAnnouncementNoticeFamily() != null)
-                            provision.getAnnouncement()
-                                    .setNoticeTypeFamily(serviceTypeChosen.getAnnouncementNoticeFamily());
-
-                        if (serviceTypeChosen.getAnnouncementNotice() != null
-                                && serviceTypeChosen.getAnnouncementProofReading())
-                            provision.getAnnouncement().setNotice(serviceTypeChosen.getAnnouncementNotice());
-                        ;
-
-                        if (serviceTypeChosen.getAnnouncementPublicationDate() != null)
-                            provision.getAnnouncement()
-                                    .setPublicationDate(serviceTypeChosen.getAnnouncementPublicationDate());
-
-                        if (serviceTypeChosen.getAnnouncementRedactedByJss() != null
-                                && serviceTypeChosen.getAnnouncementRedactedByJss())
-                            provision.setIsRedactedByJss(true);
-                    }
-                }
-            assoAffaireOrders.get(serviceTypeChosen.getAffaire().getId()).getServices().add(service);
-        }
-
-        customerOrder.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
-        for (Integer affaireId : assoAffaireOrders.keySet())
-            customerOrder.getAssoAffaireOrders().add(assoAffaireOrders.get(affaireId));
-
-        if (user.getTiers() != null && user.getTiers().getSpecialOffers() != null) {
-            List<SpecialOffer> specialOffers = null;
-            if (user.getTiers().getSpecialOffers() != null && user.getTiers().getSpecialOffers().size() > 0) {
-                specialOffers = user.getTiers().getSpecialOffers();
-                customerOrder.setSpecialOffers(new ArrayList<SpecialOffer>());
-                for (SpecialOffer specialOffer : specialOffers)
-                    customerOrder.getSpecialOffers().add(specialOffer);
-            }
-        }
-
-        customerOrder.setDocuments(new ArrayList<Document>());
-        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getBillingDocument(), null));
-        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getDigitalDocument(), null));
-        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getPaperDocument(), null));
-
-        customerOrder.setCustomerOrderStatus(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN));
-        addOrUpdateCustomerOrder(customerOrder, true, false);
-        order.setOrderId(customerOrder.getId());
-
-        if (!order.getIsDraft())
-            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, true);
-
-        if (shouldAuthenticate)
-            myJssProfileController.authenticateUser(user, request);
-
-        return order;
+        order.setResponsable(employeeService.getCurrentMyJssUser());
+        order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
+        order.setCustomerOrderStatus(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
+        return addOrUpdateCustomerOrder(order, true, false);
     }
 
-    private Responsable generateTiersAndResponsableFromUserCustomerOrder(UserCustomerOrder userCustomerOrder)
-            throws OsirisException {
-        Responsable responsable = new Responsable();
-        responsable.setIsActive(true);
-        responsable.setIsBouclette(true);
-        responsable.setCivility(userCustomerOrder.getResponsableCivility());
-        responsable.setFirstname(userCustomerOrder.getResponsableFirstname());
-        responsable.setLastname(userCustomerOrder.getResponsableLastname());
-        Mail mail = new Mail();
-        mail.setMail(userCustomerOrder.getResponsableMail());
-        responsable.setMail(mail);
-        responsable.setTiersType(constantService.getTiersTypeClient());
-        responsable.setSalesEmployee(constantService.getEmployeeSalesDirector());
-        if (userCustomerOrder.getResponsablePhone() != null) {
-            Phone phone = new Phone();
-            phone.setPhoneNumber(userCustomerOrder.getResponsablePhone());
-            responsable.setPhones(new ArrayList<Phone>());
-            responsable.getPhones().add(phone);
-        }
+    // private Responsable
+    // generateTiersAndResponsableFromUserCustomerOrder(CustomerOrder
+    // userCustomerOrder)
+    // throws OsirisException {
+    // Responsable responsable = new Responsable();
+    // responsable.setIsActive(true);
+    // responsable.setIsBouclette(true);
+    // responsable.setCivility(userCustomerOrder.getResponsableCivility());
+    // responsable.setFirstname(userCustomerOrder.getResponsableFirstname());
+    // responsable.setLastname(userCustomerOrder.getResponsableLastname());
+    // Mail mail = new Mail();
+    // mail.setMail(userCustomerOrder.getResponsableMail());
+    // responsable.setMail(mail);
+    // responsable.setTiersType(constantService.getTiersTypeClient());
+    // responsable.setSalesEmployee(constantService.getEmployeeSalesDirector());
+    // if (userCustomerOrder.getResponsablePhone() != null) {
+    // Phone phone = new Phone();
+    // phone.setPhoneNumber(userCustomerOrder.getResponsablePhone());
+    // responsable.setPhones(new ArrayList<Phone>());
+    // responsable.getPhones().add(phone);
+    // }
 
-        userCustomerOrder.getBillingDocument().setDocumentType(constantService.getDocumentTypeBilling());
-        userCustomerOrder.getDigitalDocument().setDocumentType(constantService.getDocumentTypeDigital());
-        userCustomerOrder.getPaperDocument().setDocumentType(constantService.getDocumentTypePaper());
+    // userCustomerOrder.getBillingDocument().setDocumentType(constantService.getDocumentTypeBilling());
+    // userCustomerOrder.getDigitalDocument().setDocumentType(constantService.getDocumentTypeDigital());
+    // userCustomerOrder.getPaperDocument().setDocumentType(constantService.getDocumentTypePaper());
 
-        responsable.setDocuments(new ArrayList<Document>());
-        responsable.getDocuments()
-                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(), null));
-        responsable.getDocuments()
-                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(), null));
-        responsable.getDocuments()
-                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(), null));
+    // responsable.setDocuments(new ArrayList<Document>());
+    // responsable.getDocuments()
+    // .add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(),
+    // null));
+    // responsable.getDocuments()
+    // .add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(),
+    // null));
+    // responsable.getDocuments()
+    // .add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(),
+    // null));
 
-        Tiers tiers = new Tiers();
-        tiers.setIsNewTiers(true);
-        if (userCustomerOrder.getCustomerIsIndividual() != null && userCustomerOrder.getCustomerIsIndividual()) {
-            tiers.setIsIndividual(true);
-            tiers.setFirstname(responsable.getFirstname());
-            tiers.setLastname(responsable.getLastname());
-        } else {
-            tiers.setIsIndividual(false);
-            tiers.setDenomination(userCustomerOrder.getCustomerDenomination());
-        }
-        tiers.setTiersType(constantService.getTiersTypeClient());
-        tiers.setSalesEmployee(constantService.getEmployeeSalesDirector());
-        tiers.setAddress(userCustomerOrder.getCustomerAddress());
-        tiers.setCity(userCustomerOrder.getCustomerCity());
-        tiers.setCountry(userCustomerOrder.getCustomerCountry());
-        tiers.setSiret(userCustomerOrder.getSiret());
-        tiers.setPostalCode(userCustomerOrder.getCustomerPostalCode());
-        tiers.setIsSepaMandateReceived(false);
-        tiers.setLanguage(constantService.getLanguageFrench());
+    // Tiers tiers = new Tiers();
+    // tiers.setIsNewTiers(true);
+    // if (userCustomerOrder.getCustomerIsIndividual() != null &&
+    // userCustomerOrder.getCustomerIsIndividual()) {
+    // tiers.setIsIndividual(true);
+    // tiers.setFirstname(responsable.getFirstname());
+    // tiers.setLastname(responsable.getLastname());
+    // } else {
+    // tiers.setIsIndividual(false);
+    // tiers.setDenomination(userCustomerOrder.getCustomerDenomination());
+    // }
+    // tiers.setTiersType(constantService.getTiersTypeClient());
+    // tiers.setSalesEmployee(constantService.getEmployeeSalesDirector());
+    // tiers.setAddress(userCustomerOrder.getCustomerAddress());
+    // tiers.setCity(userCustomerOrder.getCustomerCity());
+    // tiers.setCountry(userCustomerOrder.getCustomerCountry());
+    // tiers.setSiret(userCustomerOrder.getSiret());
+    // tiers.setPostalCode(userCustomerOrder.getCustomerPostalCode());
+    // tiers.setIsSepaMandateReceived(false);
+    // tiers.setLanguage(constantService.getLanguageFrench());
 
-        tiers.setPaymentType(constantService.getPaymentTypeCB());
+    // tiers.setPaymentType(constantService.getPaymentTypeCB());
 
-        tiers.setDocuments(new ArrayList<Document>());
-        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(), null));
-        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(), null));
-        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(), null));
+    // tiers.setDocuments(new ArrayList<Document>());
+    // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(),
+    // null));
+    // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(),
+    // null));
+    // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(),
+    // null));
 
-        Document documentDunning = new Document();
-        documentDunning.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
-        documentDunning.setIsRecipientAffaire(false);
-        documentDunning.setIsRecipientClient(false);
-        documentDunning.setDocumentType(constantService.getDocumentTypeDunning());
-        tiers.setIsProvisionalPaymentMandatory(true);
-        tiers.getDocuments().add(documentDunning);
+    // Document documentDunning = new Document();
+    // documentDunning.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
+    // documentDunning.setIsRecipientAffaire(false);
+    // documentDunning.setIsRecipientClient(false);
+    // documentDunning.setDocumentType(constantService.getDocumentTypeDunning());
+    // tiers.setIsProvisionalPaymentMandatory(true);
+    // tiers.getDocuments().add(documentDunning);
 
-        Document receiptDocument = new Document();
-        receiptDocument.setBillingClosureRecipientType(constantService.getBillingClosureRecipientTypeClient());
-        receiptDocument.setIsRecipientAffaire(false);
-        receiptDocument.setIsRecipientClient(false);
-        receiptDocument.setDocumentType(constantService.getDocumentTypeBillingClosure());
-        receiptDocument.setBillingClosureType(constantService.getBillingClosureTypeAffaire());
-        tiers.getDocuments().add(receiptDocument);
+    // Document receiptDocument = new Document();
+    // receiptDocument.setBillingClosureRecipientType(constantService.getBillingClosureRecipientTypeClient());
+    // receiptDocument.setIsRecipientAffaire(false);
+    // receiptDocument.setIsRecipientClient(false);
+    // receiptDocument.setDocumentType(constantService.getDocumentTypeBillingClosure());
+    // receiptDocument.setBillingClosureType(constantService.getBillingClosureTypeAffaire());
+    // tiers.getDocuments().add(receiptDocument);
 
-        tiers.setResponsables(new ArrayList<Responsable>());
-        responsable.setTiers(tiers);
-        tiers.getResponsables().add(responsable);
+    // tiers.setResponsables(new ArrayList<Responsable>());
+    // responsable.setTiers(tiers);
+    // tiers.getResponsables().add(responsable);
 
-        tiersService.addOrUpdateTiers(tiers);
-        return responsableService.getResponsable(responsable.getId());
-    }
+    // tiersService.addOrUpdateTiers(tiers);
+    // return responsableService.getResponsable(responsable.getId());
+    // }
 
     @Override
     public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable) {

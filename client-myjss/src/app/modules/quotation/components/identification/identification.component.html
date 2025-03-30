@@ -3,7 +3,7 @@
 </p>
 <div>
   <p>Type de demande</p>
-  <radio-group-quotation-type [(model)]="selectedQuotationType" [form]="idenficationForm" [isDisabled]="false"
+  <radio-group-quotation-type [(model)]="selectedQuotationType" [form]="idenficationForm" [isDisabled]="!quotation.id"
     propertyName="quotationType"></radio-group-quotation-type>
 </div>
 <div *ngIf="!hideFamilyGroupServiceSelection">
@@ -12,22 +12,24 @@
     *ngFor="let serviceFamily of familyGroupService" (click)="selectFamilyGroupService(serviceFamily)">
     {{serviceFamily.customLabel}}</div>
 </div>
-<div *ngIf="selectedFamilyGroupService">
+<div *ngIf="selectedFamilyGroupService" style="background-color: grey;">
   <div *ngFor="let asso of quotation.assoAffaireOrders; let indexAsso = index">
     <p *ngIf="indexAsso==0">Identification de l'entreprise</p>
     <div (click)="openPanel(indexAsso)">
       <button type="button" class="btn   btn-icon" aria-label="Delete" (click)="deleteAffaire(indexAsso)">
         <i class="ai-trash"></i>
       </button>
-      <span
-        *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.siret">{{this.quotation.assoAffaireOrders[indexAsso].affaire.siret}}
-        - </span><span
-        *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual">{{this.quotation.assoAffaireOrders[indexAsso].affaire.firstname}}
-        {{this.quotation.assoAffaireOrders[indexAsso].affaire.lastname}} - </span><span
-        *ngIf="!this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual">{{this.quotation.assoAffaireOrders[indexAsso].affaire.denomination}}
-        - </span><span
-        *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.city">{{this.quotation.assoAffaireOrders[indexAsso].affaire.city.label}}
-        - </span><span>{{this.quotation.assoAffaireOrders[indexAsso].affaire.address}}</span>
+      <ng-container *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire">
+        <span
+          *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.siret">{{this.quotation.assoAffaireOrders[indexAsso].affaire.siret}}
+          - </span><span
+          *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual && this.quotation.assoAffaireOrders[indexAsso].affaire.firstname">{{this.quotation.assoAffaireOrders[indexAsso].affaire.firstname}}
+          {{this.quotation.assoAffaireOrders[indexAsso].affaire.lastname}} - </span><span
+          *ngIf="!this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual && this.quotation.assoAffaireOrders[indexAsso].affaire.denomination">{{this.quotation.assoAffaireOrders[indexAsso].affaire.denomination}}
+          - </span><span
+          *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.city">{{this.quotation.assoAffaireOrders[indexAsso].affaire.city.label}}
+          - </span><span>{{this.quotation.assoAffaireOrders[indexAsso].affaire.address}}</span>
+      </ng-container>
     </div>
     <div *ngIf="indexAsso==currentOpenedPanel">
       <div>
@@ -104,9 +106,74 @@
         </div>
       </div>
       <div *ngIf="!isRegisteredAffaire[indexAsso]">
-
+        <table>
+          <tr>
+            <td>
+              <radio-group-affaire-type [(model)]="affaireTypes[indexAsso]" [form]="idenficationForm"
+                [isDisabled]="false" [propertyName]="'affaireType'+indexAsso" label=""></radio-group-affaire-type>
+            </td>
+          </tr>
+          <tr *ngIf="affaireTypes[indexAsso].id==individual.id">
+            <td>
+              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.denomination"
+                label="Dénomination" [form]="idenficationForm" [propertyName]="'denomination'+indexAsso"
+                [isMandatory]="true" [isDisabled]="false" [maxLength]="150"></generic-input>
+            </td>
+          </tr>
+          <table *ngIf="affaireTypes[indexAsso].id==notIndividual.id">
+            <tr>
+              <td>
+                <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.firstname" label="Prénom"
+                  [form]="idenficationForm" [propertyName]="'firstname'+indexAsso" [isMandatory]="true"
+                  [isDisabled]="false" [maxLength]="50"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.lastname" label="Nom"
+                  [form]="idenficationForm" [propertyName]="'lastname'+indexAsso" [isMandatory]="true"
+                  [isDisabled]="false" [maxLength]="50"></generic-input>
+              </td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+              <td>
+                <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.address" label="Adresse"
+                  [form]="idenficationForm" [propertyName]="'address'+indexAsso" [isMandatory]="true"
+                  [isDisabled]="false" [maxLength]="100"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.cedexComplement"
+                  label="Complément d'adresse" [form]="idenficationForm" [propertyName]="'cedexComplement'+indexAsso"
+                  [isMandatory]="true" [isDisabled]="false" [maxLength]="50"></generic-input>
+              </td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+              <td>
+                <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.postalCode" label="Code postal"
+                  [form]="idenficationForm" [propertyName]="'postalCode'+indexAsso" [isMandatory]="true"
+                  [isDisabled]="false" [maxLength]="10"></generic-input>
+              </td>
+              <td>
+                <autocomplete-city [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.city" label="Ville"
+                  [form]="idenficationForm" [propertyName]="'city'+indexAsso" [isMandatory]="true" [isDisabled]="false"
+                  [modelCountry]=""
+                  [preFilterPostalCode]="quotation.assoAffaireOrders[indexAsso].affaire.postalCode"></autocomplete-city>
+              </td>
+              <td>
+                <select-country [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.country" label="Pays"
+                  [form]="idenficationForm" [propertyName]="'city'+indexAsso" [isMandatory]="true"
+                  [isDisabled]="false"></select-country>
+              </td>
+            </tr>
+          </table>
+        </table>
       </div>
-      <p (click)="addAffaire()">Ajouter</p>
     </div>
   </div>
+  <div>
+    <p (click)="addAffaire()">Ajouter</p>
+  </div>
 </div>
+<button type="button" class="btn btn-primary" *ngIf="canStartQuotation()" (click)="startQuotation()">Démarrer</button>

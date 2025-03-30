@@ -22,6 +22,7 @@ public class QuotationStatus extends IWorkflowElement implements Serializable {
 	/**
 	 * WARNINNG : add update in QuotationStatutsService when adding a new status
 	 */
+	public static String DRAFT = "DRAFT";
 	public static String OPEN = "OPEN";
 	public static String TO_VERIFY = "TO_VERIFY";
 	public static String QUOTATION_WAITING_CONFRERE = "QUOTATION_WAITING_CONFRERE";

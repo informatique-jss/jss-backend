@@ -24,7 +24,6 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
-import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -143,7 +142,7 @@ public interface CustomerOrderService {
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
                         List<Responsable> responsables);
 
-        public UserCustomerOrder saveOrderOfUserCustomerOrder(UserCustomerOrder order, HttpServletRequest request)
+        public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, HttpServletRequest request)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders);

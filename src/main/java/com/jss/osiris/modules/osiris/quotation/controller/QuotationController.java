@@ -1918,40 +1918,7 @@ public class QuotationController {
   public ResponseEntity<Affaire> addOrUpdateAffaire(@RequestBody Affaire affaire)
       throws OsirisValidationException, OsirisException, OsirisDuplicateException {
 
-    validationHelper.validateReferential(affaire.getCountry(), true, "Country");
-    validationHelper.validateReferential(affaire.getMainActivity(), false, "MainActivity");
-    validationHelper.validateReferential(affaire.getLegalForm(), false, "LegalForm");
-    validationHelper.validateReferential(affaire.getCompetentAuthority(), false, "CompetentAuthority");
-    validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
-    validationHelper.validateString(affaire.getIntercommunityVat(), false, 20, "IntercommunityVat");
-    if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
-      validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
-    validationHelper.validateString(affaire.getCedexComplement(), false, 20, "CedexComplement");
-    validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
-    validationHelper.validateReferential(affaire.getCity(), true, "City");
-
-    if (affaire.getIsIndividual()) {
-      validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
-      validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
-      validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
-      affaire.setDenomination(null);
-      if (affaire.getLastname() != null)
-        affaire.setLastname(affaire.getLastname().toUpperCase());
-
-    } else {
-      validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
-      affaire.setFirstname(null);
-      affaire.setLastname(null);
-      if (affaire.getRna() != null
-          && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
-        throw new OsirisValidationException("RNA");
-      if (affaire.getSiren() != null
-          && !validationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
-        throw new OsirisValidationException("SIREN");
-      if (affaire.getSiret() != null
-          && !validationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
-        throw new OsirisValidationException("SIRET");
-    }
+    quotationValidationHelper.validateAffaire(affaire);
     return new ResponseEntity<Affaire>(affaireService.addOrUpdateAffaire(affaire), HttpStatus.OK);
   }
 
