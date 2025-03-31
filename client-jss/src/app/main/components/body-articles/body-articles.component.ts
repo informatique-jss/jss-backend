@@ -11,9 +11,10 @@ import { SerieService } from '../../services/serie.service';
 declare var tns: any;
 
 @Component({
-  selector: 'body-articles',
-  templateUrl: './body-articles.component.html',
-  styleUrls: ['./body-articles.component.css']
+    selector: 'body-articles',
+    templateUrl: './body-articles.component.html',
+    styleUrls: ['./body-articles.component.css'],
+    standalone: false
 })
 export class BodyArticlesComponent implements OnInit, AfterViewInit {
 

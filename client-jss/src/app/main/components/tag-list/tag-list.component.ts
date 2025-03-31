@@ -10,9 +10,10 @@ import { PostService } from '../../services/post.service';
 import { TagService } from '../../services/tag.service';
 
 @Component({
-  selector: 'app-tag-list',
-  templateUrl: './tag-list.component.html',
-  styleUrls: ['./tag-list.component.css']
+    selector: 'app-tag-list',
+    templateUrl: './tag-list.component.html',
+    styleUrls: ['./tag-list.component.css'],
+    standalone: false
 })
 export class TagListComponent implements OnInit {
 

@@ -6,9 +6,10 @@ import { PostService } from '../../services/post.service';
 declare var tns: any;
 
 @Component({
-  selector: 'trend',
-  templateUrl: './trend.component.html',
-  styleUrls: ['./trend.component.css']
+    selector: 'trend',
+    templateUrl: './trend.component.html',
+    styleUrls: ['./trend.component.css'],
+    standalone: false
 })
 export class TrendComponent implements OnInit, AfterViewInit {
 

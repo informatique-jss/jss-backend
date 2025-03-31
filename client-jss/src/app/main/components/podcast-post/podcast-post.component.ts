@@ -4,9 +4,10 @@ import { Post } from '../../model/Post';
 import { PostService } from '../../services/post.service';
 
 @Component({
-  selector: 'app-podcast-post',
-  templateUrl: './podcast-post.component.html',
-  styleUrls: ['./podcast-post.component.css']
+    selector: 'app-podcast-post',
+    templateUrl: './podcast-post.component.html',
+    styleUrls: ['./podcast-post.component.css'],
+    standalone: false
 })
 export class PodcastPostComponent implements OnInit {
 

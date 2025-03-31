@@ -4,9 +4,10 @@ import { Announcement } from '../../model/Announcement';
 import { AnnouncementService } from '../../services/announcement.service';
 
 @Component({
-  selector: 'app-announcement',
-  templateUrl: './announcement.component.html',
-  styleUrls: ['./announcement.component.css']
+    selector: 'app-announcement',
+    templateUrl: './announcement.component.html',
+    styleUrls: ['./announcement.component.css'],
+    standalone: false
 })
 export class AnnouncementComponent implements OnInit {
 
