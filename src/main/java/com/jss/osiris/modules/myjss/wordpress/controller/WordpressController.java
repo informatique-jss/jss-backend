@@ -329,14 +329,12 @@ public class WordpressController {
 			@RequestParam Integer postId,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
-			@RequestParam(defaultValue = "creationDate") String sortBy,
-			@RequestParam(defaultValue = "desc") String sortDir,
 			HttpServletRequest request) {
 
 		detectFlood(request);
 
 		Pageable pageable = PageRequest.of(page, size,
-				Sort.by(sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy));
+				Sort.by(Sort.Direction.DESC, "creationDate"));
 
 		return ResponseEntity.ok(commentService.getParentCommentsForPost(pageable, postId));
 	}
@@ -359,6 +357,8 @@ public class WordpressController {
 			if (postService.getPost(postId) != null) {
 				return new ResponseEntity<Comment>(commentService.addOrUpdateComment(comment, parentCommentId, postId),
 						HttpStatus.OK);
+			} else {
+				throw new OsirisValidationException("Trying to add a comment on a non-existing post");
 			}
 		}
 		return new ResponseEntity<Comment>(new Comment(), HttpStatus.OK);

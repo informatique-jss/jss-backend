@@ -74,7 +74,11 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
 
         dialogRef.afterClosed().subscribe(newContent => {
           if (newContent) {
-            this.commentService.updateContent(newContent, element.id).subscribe(response => { this.searchComments(this.myjssCommentsPagination.pageNumber) });
+            this.commentService.updateContent(newContent, element.id).subscribe({
+              error: (err) => {
+                this.updateComment(element.id);
+              }
+            });
           }
         });
       }, display: true,
@@ -82,7 +86,7 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
 
     this.tableActionComment.push({
       actionIcon: "open_in_new", actionName: "Voir le commentaire dans l'article", actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
-        this.appService.openMyJssRoute("post/" + element.post.slug + "#" + element.post.id);
+        this.appService.openMyJssRoute("post/" + element.post.slug + "#" + element.id);
       }, display: true,
     } as SortTableAction<Comment>);
 
@@ -120,6 +124,17 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
   }
+
+  updateComment(commentId: number) {
+    this.myjssComments.forEach(comment => {
+      if (comment.id = commentId) {
+        this.commentService.getComment(commentId).subscribe((response) => {
+          comment = response;
+        });
+      };
+    });
+  }
 }
+
 
 

@@ -7,5 +7,6 @@ export interface Comment {
     content: string;
     authorFirstName: string;
     authorLastName: string;
+    authorLastNameInitials: string;
     creationDate: Date;
 }

@@ -1,9 +1,10 @@
-import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { AppService } from '../../../../libs/app.service';
 import { getTimeReading } from '../../../../libs/FormatHelper';
+import { PagedContent } from '../../../miscellaneous/model/PagedContent';
 import { Pagination } from '../../../miscellaneous/model/Pagination';
 import { Mail } from '../../../profile/model/Mail';
 import { Responsable } from '../../../profile/model/Responsable';
@@ -18,7 +19,7 @@ import { PostService } from '../../services/post.service';
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
 })
-export class PostComponent implements OnInit {
+export class PostComponent implements OnInit, AfterViewInit {
 
   slug: string | undefined;
   post: Post | undefined;
@@ -38,7 +39,10 @@ export class PostComponent implements OnInit {
   commentsPagination: Pagination = {} as Pagination;
   shownElements: number = 10; // computed
 
+  targetCommentId: string | null = null;
+
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
+  @ViewChild('step2') step2: ElementRef | undefined;
 
   constructor(private activatedRoute: ActivatedRoute,
     private postService: PostService,
@@ -50,8 +54,22 @@ export class PostComponent implements OnInit {
   getTimeReading = getTimeReading;
 
   ngOnInit() {
+    this.activatedRoute.fragment.subscribe(fragment => {
+      if (fragment) {
+        this.targetCommentId = fragment;
+        setTimeout(this.scrollToComment, 10);
+      }
+    });
 
-    this.fetchComments(0);
+    this.slug = this.activatedRoute.snapshot.params['slug'];
+
+    if (this.slug) {
+      this.postService.getPostBySlug(this.slug).subscribe(post => {
+        this.post = post;
+        this.fetchComments(0);
+      })
+      this.cancelReply()
+    }
 
     this.postService.getPostsTendency().subscribe(posts => {
       this.hotPosts = posts;
@@ -60,6 +78,7 @@ export class PostComponent implements OnInit {
     this.postService.getTopPosts(0).subscribe(posts => {
       this.recentPosts = posts;
     });
+
   }
 
   ngOnDestroy() {
@@ -68,6 +87,7 @@ export class PostComponent implements OnInit {
   }
 
   ngAfterViewInit() {
+
   }
 
   openPost(post: Post, event: any) {
@@ -167,8 +187,8 @@ export class PostComponent implements OnInit {
     }
   }
 
-  getResponsable(comment: Comment): Responsable {
-    return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastName || '' } as Responsable;
+  getResponsableNames(comment: Comment): Responsable {
+    return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastNameInitials || '' } as Responsable;
   }
 
   postComment() {
@@ -177,6 +197,7 @@ export class PostComponent implements OnInit {
         this.fetchComments(0);
       });
     }
+    this.cancelReply();
   }
 
   replyComment(comment: Comment) {
@@ -195,25 +216,25 @@ export class PostComponent implements OnInit {
   }
 
   fetchComments(page: number) {
-    this.slug = this.activatedRoute.snapshot.params['slug'];
-
-    if (this.slug) {
-      this.postService.getPostBySlug(this.slug).subscribe(post => {
-        this.post = post;
-        if (this.post) {
-          this.relatedPosts = this.post.relatedPosts;
-          this.commentService.getParentCommentsForPost(this.post.id, page, 10).subscribe(data => {
-            if (page == 0) {
-              this.comments = data.content;
-            } else {
-              this.comments = this.comments.concat(data.content);
-            }
-            this.commentsPagination = data.page;
-            this.shownElements = this.computeShownElements(page);
-          })
+    if (this.post) {
+      this.relatedPosts = this.post.relatedPosts;
+      // TODO : this code is to do the scrolling to the comment in the page when comming from osiris
+      //  if (this.targetCommentId) {
+      //   this.commentService.getParentCommentsForPost(this.post.id, page, 1000000).subscribe(data => {
+      //     this.comments = data.content;
+      //     this.updatePagination(data, page);
+      //   });
+      // } else {
+      this.commentService.getParentCommentsForPost(this.post.id, page, 10).subscribe(data => {
+        if (page == 0) {
+          this.comments = data.content;
+        } else {
+          this.comments = this.comments.concat(data.content);
         }
-      })
-      this.cancelReply()
+        this.commentsPagination = data.page;
+        this.shownElements = this.computeShownElements(page);
+      });
+      // }
     }
   }
 
@@ -223,6 +244,22 @@ export class PostComponent implements OnInit {
 
   showLessComments() {
     this.fetchComments(0);
+  }
+
+  // Scrolls to the selected
+  scrollToComment() {
+    if (this.targetCommentId) {
+      const targetElement = document.getElementById(this.targetCommentId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+
+
+  private updatePagination(data: PagedContent<Comment>, page: number) {
+    this.commentsPagination = data.page;
+    this.shownElements = this.computeShownElements(page);
   }
 
   computeShownElements(page: number) {

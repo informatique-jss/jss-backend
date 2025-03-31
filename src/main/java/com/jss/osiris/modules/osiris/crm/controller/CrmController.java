@@ -153,17 +153,27 @@ public class CrmController {
         public ResponseEntity<Page<Comment>> getComments(
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
-                        @RequestParam(defaultValue = "creationDate") String sortBy,
-                        @RequestParam(defaultValue = "desc") String sortDir,
                         @RequestBody CommentSearch commentSearch)
                         throws OsirisException {
 
-                Pageable pageable = PageRequest.of(page, size,
-                                Sort.by(sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
-                                                sortBy));
+                Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "creationDate"));
 
                 return ResponseEntity
                                 .ok(commentService.getComments(commentSearch, pageable));
+        }
+
+        /**
+         * Fetch all comments in DB filtered by parameters
+         * 
+         * @param request
+         * @return
+         */
+        @GetMapping(inputEntryPoint + "/comment/get")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<Comment> getComment(@RequestParam Integer commentId) {
+
+                return ResponseEntity
+                                .ok(commentService.getComment(commentId));
         }
 
         /**

@@ -15,13 +15,11 @@ export class CommentService extends AppRestService<Comment> {
     super(http, "wordpress");
   }
 
-  getParentCommentsForPost(postId: number, page: number, size: number, sortBy: string = 'creationDate', sortDir: string = 'desc'): Observable<PagedContent<Comment>> {
+  getParentCommentsForPost(postId: number, page: number, size: number): Observable<PagedContent<Comment>> {
     let params = new HttpParams()
       .set('postId', postId.toString())
       .set('page', page.toString())
-      .set('size', size.toString())
-      .set('sortBy', sortBy)
-      .set('sortDir', sortDir);
+      .set('size', size.toString());
 
     return this.getPagedList(params, "post/comments", "", "");
   }
@@ -34,5 +32,4 @@ export class CommentService extends AppRestService<Comment> {
 
     return this.addOrUpdate(params.set("postId", postId), "post/comment/add", comment, "Votre commentaire a bien été posté !", "Une erreur s'est produite lors de l'enregistrement du commentaire, merci de réessayer");
   }
-
 }

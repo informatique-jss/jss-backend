@@ -16,14 +16,16 @@ export class CommentService extends AppRestService<Comment> {
     super(http, "crm");
   }
 
-  getComments(page: number, size: number, commentSearch: CommentSearch, sortBy: string = 'creationDate', sortDir: string = 'desc'): Observable<PagedContent<Comment>> {
+  getComments(page: number, size: number, commentSearch: CommentSearch): Observable<PagedContent<Comment>> {
     let params = new HttpParams()
       .set('page', page.toString())
-      .set('size', size.toString())
-      .set('sortBy', sortBy)
-      .set('sortDir', sortDir)
+      .set('size', size.toString());
 
     return this.postPagedList(params, "comments/search", commentSearch, "", "");
+  }
+
+  getComment(commentId: number): Observable<Comment> {
+    return this.get(new HttpParams().set("commentId", commentId), "comment/get", "", "");
   }
 
   updateContent(newContent: any, commentId: number) {

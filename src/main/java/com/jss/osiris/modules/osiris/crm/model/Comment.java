@@ -21,14 +21,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Transient;
 
 @Entity
 public class Comment implements Serializable, IId {
 
 	@Id
-	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -58,8 +59,11 @@ public class Comment implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
 	private String authorFirstName;
 
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private String authorLastName;
+
+	@Transient
+	private String authorLastNameInitials;
 
 	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
 	private LocalDateTime creationDate;
@@ -126,8 +130,21 @@ public class Comment implements Serializable, IId {
 		return authorLastName;
 	}
 
+	@JsonView(JacksonViews.MyJssView.class)
 	public void setAuthorLastName(String authorLastName) {
 		this.authorLastName = authorLastName;
+	}
+
+	@JsonView({ JacksonViews.MyJssView.class })
+	public String getAuthorLastNameInitials() {
+		if (this.getAuthorLastName() != null) {
+			this.authorLastNameInitials = this.getAuthorLastName().substring(0, 1);
+		}
+		return this.authorLastNameInitials;
+	}
+
+	public void setAuthorLastNameInitials(String authorLastNameInitials) {
+		this.authorLastNameInitials = authorLastNameInitials;
 	}
 
 	public LocalDateTime getCreationDate() {
@@ -153,5 +170,4 @@ public class Comment implements Serializable, IId {
 	public void setIsDeleted(Boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
-
 }

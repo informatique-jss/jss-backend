@@ -67,15 +67,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Page<Comment> getParentCommentsForPost(Pageable pageableRequest, Integer postId) {
-        Post post = postService.getPost(postId);
 
-        if (post != null) {
-            Page<Comment> comments = commentRepository.findAllByPostIdAndIsDeletedFalseAndParentCommentIsNull(postId,
-                    pageableRequest);
-            return comments;
-        }
-
-        return Page.empty();
+        Page<Comment> comments = commentRepository.findAllByPostIdAndIsDeletedFalseAndParentCommentIsNull(postId,
+                pageableRequest);
+        return comments;
     }
 
     @Override
@@ -87,19 +82,18 @@ public class CommentServiceImpl implements CommentService {
 
         Post post = postService.getPost(postId);
 
-        if (post != null) {
-            comment.setPost(post);
+        comment.setPost(post);
 
-            if (parentCommentId != null)
-                comment.setParentComment(this.getComment(parentCommentId));
+        if (parentCommentId != null)
+            comment.setParentComment(this.getComment(parentCommentId));
 
-            if (comment.getCreationDate() == null)
-                comment.setCreationDate(LocalDateTime.now());
+        if (comment.getCreationDate() == null)
+            comment.setCreationDate(LocalDateTime.now());
 
-            return commentRepository.save(comment);
-        }
+        if (comment.getAuthorLastName() != null)
+            comment.setAuthorLastNameInitials(comment.getAuthorLastNameInitials());
 
-        throw new OsirisException("Trying to add a comment on a non-existing post");
+        return commentRepository.save(comment);
     }
 
     @Override
@@ -107,12 +101,9 @@ public class CommentServiceImpl implements CommentService {
     public Boolean updateContent(String newContent, Integer commentId) {
         Comment comment = getComment(commentId);
 
-        if (comment != null) {
-            comment.setContent(newContent);
-            commentRepository.save(comment);
-            return true;
-        }
-        return false;
+        comment.setContent(newContent);
+        commentRepository.save(comment);
+        return true;
     }
 
     @Override
@@ -120,27 +111,19 @@ public class CommentServiceImpl implements CommentService {
     public Boolean updateIsModerated(Boolean isModerated, Integer commentId) {
         Comment comment = getComment(commentId);
 
-        if (comment != null) {
-            comment.setIsModerated(isModerated);
-            commentRepository.save(comment);
-            return true;
-        }
-        return false;
+        comment.setIsModerated(isModerated);
+        commentRepository.save(comment);
+        return true;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean delete(Integer commentId) {
-
         Comment comment = getComment(commentId);
 
-        if (comment != null) {
-            comment.setIsDeleted(true);
-            commentRepository.save(comment);
-
-            return true;
-        }
-        return false;
+        comment.setIsDeleted(true);
+        commentRepository.save(comment);
+        return true;
     }
 
 }
