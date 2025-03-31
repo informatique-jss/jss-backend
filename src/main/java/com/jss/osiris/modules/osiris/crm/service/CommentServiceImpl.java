@@ -90,9 +90,6 @@ public class CommentServiceImpl implements CommentService {
         if (comment.getCreationDate() == null)
             comment.setCreationDate(LocalDateTime.now());
 
-        if (comment.getAuthorLastName() != null)
-            comment.setAuthorLastNameInitials(comment.getAuthorLastNameInitials());
-
         return commentRepository.save(comment);
     }
 
