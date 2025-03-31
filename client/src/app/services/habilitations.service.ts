@@ -35,6 +35,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewCrmModule() {
+    return true;
+  }
+
   canViewConfrereModule() {
     return true;
   }

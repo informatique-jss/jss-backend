@@ -8,26 +8,22 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
-} 
- 
+}
+
 
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot' 
 
 repositories {
-    maven { 
+    maven {  
             url = uri('https://repo1.maven.org/maven2/')
         } 
-} 
+}  
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-parameters"
 }
-  
-  tasks.withType(JavaCompile) {
-    options.compilerArgs << "-parameters"
-}
-  
+
 dependencies {
     // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web:3.2.4'
@@ -41,7 +37,7 @@ dependencies {
     implementation 'com.hazelcast:hazelcast:5.5.0'
     implementation 'com.hazelcast:hazelcast-hibernate53:5.2.0'
 
-    // Database 
+    // Database  
     implementation 'org.hibernate.orm:hibernate-c3p0:6.4.4.Final'
 	implementation 'org.postgresql:postgresql:42.7.3' 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5-jakarta:2.17.0'
@@ -78,3 +74,4 @@ version = '25-beta1'
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '17'
 targetCompatibility = '17'
+ 

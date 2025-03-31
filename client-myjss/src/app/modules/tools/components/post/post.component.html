@@ -12,7 +12,6 @@
     </ol>
   </nav>
 
-
   <div class="accordion-item border-top mb-0" *ngIf="!post">
     <div class="accordion-header">
       <p class="card-text placeholder-glow">
@@ -138,123 +137,112 @@
         </div>
       </div>
 
-      <!-- TODO : Comments -->
-      <div class="pt-4 pt-xl-5 mt-4" id="comments">
-        <h2 class="h1 py-lg-1 py-xl-3">14 comments</h2>
+      <!-- Comments -->
+      <div class="pt-4 pt-xl-5 my-4" id="comments">
+        <h2 class="h1 py-lg-1 py-xl-3" *ngIf="!commentsPagination.totalElements">0 Commentaire </h2>
+        <h2 class="h1 py-lg-1 py-xl-3" *ngIf="commentsPagination.totalElements">{{commentsPagination.totalElements <= 1
+            ? commentsPagination.totalElements + " Commentaire" : commentsPagination.totalElements + " Commentaires" }}
+            </h2>
+            <div class="pt-2 pb-4" *ngIf="commentsPagination.totalElements!=0">
 
-        <!-- Comment -->
-        <div class="border-bottom py-4 mt-2 mb-4">
-          <div class="d-flex align-items-center pb-1 mb-3">
-            <img class="rounded-circle" src="assets/img/avatar/08.jpg" width="48" alt="Comment author">
-            <div class="ps-3">
-              <h6 class="mb-0">Albert Flores</h6>
-              <span class="fs-sm text-body-secondary">5 hours ago</span>
-            </div>
-          </div>
-          <p class="pb-2 mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tellus lectus, tempus eu
-            urna eu, imperdiet dignissim augue. Aliquam fermentum est a ligula bibendum, ac gravida ipsum dictum. Class
-            aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur suscipit
-            quam ut velit condimentum, nec mollis risus semper. Curabitur quis mauris eget ligula tincidunt venenatis.
-            Sed congue pulvinar hendrerit.</p>
-          <button class="nav-link fs-sm fw-semibold px-0 py-2" type="button">
-            Reply
-            <i class="ai-redo fs-xl ms-2"></i>
-          </button>
-        </div>
+              <!-- Comment -->
+              <div *ngFor="let comment of comments" [attr.id]="comment.id">
+                <div class="py-4 mt-2 mb-4 border-bottom">
+                  <div>
+                    <div class="d-flex align-items-center pb-1 mb-3">
+                      <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(comment)" [size]="50"
+                        [centerAvatar]="true" alt="Comment author"></avatar>
+                      <div class="ps-3">
+                        <h6 class="mb-0">{{comment.authorFirstName}} {{comment.authorLastNameInitials}}.</h6>
+                        <span class="fs-sm text-body-secondary">{{comment.creationDate | date:'dd/MM/yyyy'}}</span>
+                      </div>
+                    </div>
+                    <p class="pb-2 mb-0">{{comment.content}}</p>
+                    <button class="nav-link fs-sm fw-semibold px-0 py-2 " type="button" (click)="replyComment(comment)">
+                      Répondre
+                      <i class="ai-redo fs-xl ms-2"></i>
+                    </button>
+                  </div>
 
-        <!-- Comment -->
-        <div class="border-bottom pt-2 pb-4">
-          <div class="d-flex align-items-center pb-1 mb-3">
-            <img class="rounded-circle" src="assets/img/avatar/11.jpg" width="48" alt="Comment author">
-            <div class="ps-3">
-              <h6 class="mb-0">Jenny Wilson</h6>
-              <span class="fs-sm text-body-secondary">2 days ago at 9:20</span>
-            </div>
-          </div>
-          <p class="pb-2 mb-0">Pellentesque urna pharetra, quis maecenas. Sit dolor amet nulla aenean eu, ac. Nisl mi
-            tempus, iaculis viverra vestibulum scelerisque imperdiet montes mauris massa elit pretium elementum eget
-            tortor quis</p>
-          <button class="nav-link fs-sm fw-semibold px-0 py-2" type="button">
-            Reply
-            <i class="ai-redo fs-xl ms-2"></i>
-          </button>
-
-          <!-- Comment reply -->
-          <div class="card card-body border-0 bg-secondary mt-4">
-            <div class="d-flex align-items-center pb-1 mb-3">
-              <img class="rounded-circle" src="assets/img/avatar/10.jpg" width="48" alt="Comment author">
-              <div class="ps-3">
-                <h6 class="mb-0">Ralph Edwards</h6>
-                <span class="fs-sm text-body-secondary">2 days ago at 11:45</span>
-              </div>
-            </div>
-            <p class="mb-0"><a class="fw-bold text-decoration-none" href="#">Jenny Wilson</a> Massa morbi duis et
-              ornare urna dictum vestibulum pulvinar nunc facilisis ornare id at at ut arcu integer tristique placerat
-              non turpis nibh turpis ullamcorper est porttitor.</p>
-          </div>
-        </div>
-
-        <!-- Comment -->
-        <div class="border-bottom py-4 mt-2 mb-4">
-          <div class="d-flex align-items-center pb-1 mb-3">
-            <img class="rounded-circle" src="assets/img/avatar/07.jpg" width="48" alt="Comment author">
-            <div class="ps-3">
-              <h6 class="mb-0">Esther Howard</h6>
-              <span class="fs-sm text-body-secondary">May 19, 2022</span>
-            </div>
-          </div>
-          <p class="pb-2 mb-0">Donec et sollicitudin tellus. Duis maximus, dui eget egestas mattis, purus ex tempor
-            nulla, quis tempor sapien neque at nisl. Aliquam eu nisi ut nisl ultrices posuere. Praesent dignissim
-            efficitur nisi, a hendrerit ipsum elementum sit amet. Vivamus non ante nisl. Nunc faucibus velit at eros
-            mollis semper.</p>
-          <button class="nav-link fs-sm fw-semibold px-0 py-2" type="button">
-            Reply
-            <i class="ai-redo fs-xl ms-2"></i>
-          </button>
-        </div>
-
-        <!-- All comments button -->
-        <div class="text-end pb-5 mb-lg-1 mb-xl-3">
-          <a class="btn btn-link px-0" href="#">
-            Show all comments
-            <i class="ai-chevron-right fs-lg ms-1"></i>
-          </a>
-        </div>
-
-
-        <!-- Comment form -->
-        <div class="card border-0 bg-secondary pt-2 p-md-2 p-xl-3 p-xxl-4 mt-n3 mt-md-0">
-          <div class="card-body">
-            <h2 class="pb-2 pb-lg-3 pb-xl-4">Leave a comment</h2>
-            <form class="row needs-validation g-4" novalidate>
-              <div class="col-sm-6">
-                <label class="form-label" for="c-name">Name</label>
-                <input class="form-control" type="text" placeholder="Your name" required id="c-name">
-                <div class="invalid-feedback">Please enter your name!</div>
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="c-email">Email</label>
-                <input class="form-control" type="email" placeholder="Your email" required id="c-email">
-                <div class="invalid-feedback">Please provide a valid email address!</div>
-              </div>
-              <div class="col-12">
-                <label class="form-label" for="c-comment">Comment</label>
-                <textarea class="form-control" rows="4" placeholder="Type your comment here..." required
-                  id="c-comment"></textarea>
-                <div class="invalid-feedback">Please enter a comment message!</div>
-              </div>
-              <div class="col-12">
-                <div class="form-check mb-2">
-                  <input class="form-check-input" type="checkbox" id="c-save">
-                  <label class="form-check-label" for="c-save">Save my name and email</label>
+                  <!-- Comment reply -->
+                  <div *ngIf="comment.childrenComments && comment.childrenComments.length > 0">
+                    <div *ngFor="let children of comment.childrenComments" [attr.id]="children.id"
+                      class="card card-body border-0 my-3">
+                      <div class="d-flex align-items-center pb-1 mb-3">
+                        <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(children)" [size]="50"
+                          [centerAvatar]="true" alt="Comment author"></avatar>
+                        <div class="ps-3">
+                          <h6 class="mb-0">{{children.authorFirstName}}
+                            {{children.authorLastNameInitials}}.
+                          </h6>
+                          <span class="fs-sm text-body-secondary">{{children.creationDate|
+                            date:'dd/MM/yyyy'}}</span>
+                        </div>
+                      </div>
+                      <p class="mb-0"><b
+                          class="fw-bold text-decoration-none citing-author">&commat;{{comment.authorFirstName}}
+                          {{children.authorLastNameInitials}}. </b>{{children.content}}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="col-12">
-                <button class="btn btn-primary" type="submit">Post a comment</button>
+              <div class="row d-flex justify-content-center align-items-center">
+                <a *ngIf="commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length > 0"
+                  class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showMoreComments()">
+                  <span class="fw-semibold">Voir
+                    plus</span><span>({{commentsPagination.totalElements-comments.length}})</span>
+                  <i class="ai-circle-arrow-down fs-xl ms-2"></i>
+                </a>
+                <a *ngIf="commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length <= 0"
+                  class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showLessComments()">
+                  <span class="fw-semibold">Voir moins</span>
+                  <i class="ai-circle-arrow-up fs-xl ms-2"></i>
+                </a>
               </div>
-            </form>
-          </div>
-        </div>
+            </div>
+
+            <!-- Comment form -->
+            <div id="commentForm" class="card border-0 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
+              <div class="card-body">
+                <div class="row justify-content-between align-items-center">
+                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire</h2>
+                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
+                    {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
+                  <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
+                    *ngIf="newCommentParent.id">
+                    <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
+                      Annuler la réponse
+                    </a>
+                  </div>
+                </div>
+                <p>Votre adresse e-mail ne sera pas publiée. Les champs obligatoires sont indiqués avec *</p>
+                <form class="row needs-validation g-4" novalidate>
+                  <div class="col-sm-4">
+                    <generic-input [(model)]="newComment.authorFirstName" label="Prénom*" [form]="createCommentForm"
+                      propertyName="firstname" [isMandatory]="true" [isDisabled]="false"
+                      [isDisplayLabel]="true"></generic-input>
+                  </div>
+                  <div class="col-sm-4">
+                    <generic-input [(model)]="newComment.authorLastName" label="Nom" [form]="createCommentForm"
+                      propertyName="lastname" [isMandatory]="false" [isDisabled]="false"
+                      [isDisplayLabel]="true"></generic-input>
+                  </div>
+                  <div class="col-sm-4">
+                    <generic-input [(model)]="newComment.mail.mail" label="Email*" [form]="createCommentForm"
+                      propertyName="mail" [isMandatory]="true" [isDisabled]="false"
+                      [isDisplayLabel]="true"></generic-input>
+                  </div>
+                  <div class="col-12">
+                    <generic-textarea [(model)]="newComment.content" label="Commentaire*" [form]="createCommentForm"
+                      propertyName="comment" [isMandatory]="true" [isDisabled]="false"
+                      [numberOfLines]="5"></generic-textarea>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-primary" type="submit" (click)="postComment()">Publier</button>
+                  </div>
+                </form>
+              </div>
+            </div>
       </div>
     </div>
 
@@ -345,6 +333,8 @@
   </ng-template>
 </generic-swiper>
 
+<newsletter></newsletter>
+<div class="my-4 py-4"></div>
 
 <!-- Sidebar toggle button -->
 <button class="d-lg-none btn btn-sm fs-sm btn-primary w-100 rounded-0 fixed-bottom" type="button"

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +61,16 @@ export class AppService {
       if (sameWindowEndFonction)
         sameWindowEndFonction();
     }
+    return;
+  }
+
+  /**
+   * Open given route to MyJss website on a new tab
+   * @param route  : route to open
+   * @returns
+   */
+  openMyJssRoute(route: string) {
+    window.open(environment.frontendMyJSSUrl + route, "_blank");
     return;
   }
 

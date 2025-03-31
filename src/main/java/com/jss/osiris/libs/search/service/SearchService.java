@@ -18,4 +18,6 @@ public interface SearchService {
     public List<IndexEntity> getIndividualTiersByKeyword(String searchedValue);
 
     public List<IndexEntity> searchEntitiesForCustomer(String searchString);
+
+    public List<IndexEntity> getPostByKeyword(String searchedValue);
 }
