@@ -14,9 +14,10 @@ import { MyJssImageService } from '../../services/my.jss.image.service';
 import { initTooltips } from '../orders/orders.component';
 
 @Component({
-  selector: 'app-pay-order',
-  templateUrl: './pay-order.component.html',
-  styleUrls: ['./pay-order.component.css']
+    selector: 'app-pay-order',
+    templateUrl: './pay-order.component.html',
+    styleUrls: ['./pay-order.component.css'],
+    standalone: false
 })
 export class PayOrderComponent implements OnInit {
   idOrder: number | undefined;

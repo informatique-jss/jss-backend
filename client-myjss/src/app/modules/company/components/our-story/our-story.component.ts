@@ -4,9 +4,10 @@ import { AppService } from '../../../../libs/app.service';
 import { MenuItem } from '../../../general/model/MenuItem';
 
 @Component({
-  selector: 'our-story',
-  templateUrl: './our-story.component.html',
-  styleUrls: ['./our-story.component.css'],
+    selector: 'our-story',
+    templateUrl: './our-story.component.html',
+    styleUrls: ['./our-story.component.css'],
+    standalone: false
 })
 export class OurStoryComponent implements OnInit, AfterViewInit {
 

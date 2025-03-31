@@ -7,9 +7,10 @@ import { LoginService } from '../../../profile/services/login.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 
 @Component({
-  selector: 'account-menu',
-  templateUrl: './account-menu.component.html',
-  styleUrls: ['./account-menu.component.css']
+    selector: 'account-menu',
+    templateUrl: './account-menu.component.html',
+    styleUrls: ['./account-menu.component.css'],
+    standalone: false
 })
 export class AccountMenuComponent implements OnInit {
 

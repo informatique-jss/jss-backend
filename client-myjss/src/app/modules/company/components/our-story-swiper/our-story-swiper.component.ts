@@ -3,12 +3,11 @@ import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, V
 import { SwiperContainer } from 'swiper/element';
 
 @Component({
-  standalone: true,
-  selector: 'our-story-swiper',
-  templateUrl: './our-story-swiper.component.html',
-  styleUrls: ['./our-story-swiper.component.css'],
-  imports: [CommonModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    selector: 'our-story-swiper',
+    templateUrl: './our-story-swiper.component.html',
+    styleUrls: ['./our-story-swiper.component.css'],
+    imports: [CommonModule],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class OurStorySwiperComponent implements OnInit, AfterViewInit {
 

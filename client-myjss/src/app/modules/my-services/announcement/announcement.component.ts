@@ -3,9 +3,10 @@ import { jarallax } from 'jarallax';
 import { AppService } from '../../../libs/app.service';
 
 @Component({
-  selector: 'announcement',
-  templateUrl: './announcement.component.html',
-  styleUrls: ['./announcement.component.css']
+    selector: 'announcement',
+    templateUrl: './announcement.component.html',
+    styleUrls: ['./announcement.component.css'],
+    standalone: false
 })
 export class AnnouncementComponent implements OnInit {
 

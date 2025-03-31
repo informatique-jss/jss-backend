@@ -2,9 +2,10 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { jarallax } from 'jarallax';
 
 @Component({
-  selector: 'join-us',
-  templateUrl: './join-us.component.html',
-  styleUrls: ['./join-us.component.css'],
+    selector: 'join-us',
+    templateUrl: './join-us.component.html',
+    styleUrls: ['./join-us.component.css'],
+    standalone: false
 })
 export class JoinUsComponent implements OnInit {
 

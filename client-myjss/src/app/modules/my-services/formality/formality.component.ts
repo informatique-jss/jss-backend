@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { jarallax } from 'jarallax';
 
 @Component({
-  selector: 'formality',
-  templateUrl: './formality.component.html',
-  styleUrls: ['./formality.component.css'],
+    selector: 'formality',
+    templateUrl: './formality.component.html',
+    styleUrls: ['./formality.component.css'],
+    standalone: false
 })
 export class FormalityComponent implements OnInit {
 

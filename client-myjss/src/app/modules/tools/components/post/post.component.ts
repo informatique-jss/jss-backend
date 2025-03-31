@@ -14,9 +14,10 @@ import { CommentService } from '../../services/comment.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
-  selector: 'post',
-  templateUrl: './post.component.html',
-  styleUrls: ['./post.component.css'],
+    selector: 'post',
+    templateUrl: './post.component.html',
+    styleUrls: ['./post.component.css'],
+    standalone: false
 })
 export class PostComponent implements OnInit, AfterViewInit {
 

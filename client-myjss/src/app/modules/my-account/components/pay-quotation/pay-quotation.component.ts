@@ -14,9 +14,10 @@ import { MyJssImageService } from '../../services/my.jss.image.service';
 import { initTooltips } from '../orders/orders.component';
 
 @Component({
-  selector: 'app-pay-quotation',
-  templateUrl: './pay-quotation.component.html',
-  styleUrls: ['./pay-quotation.component.css']
+    selector: 'app-pay-quotation',
+    templateUrl: './pay-quotation.component.html',
+    styleUrls: ['./pay-quotation.component.css'],
+    standalone: false
 })
 export class PayQuotationComponent implements OnInit {
   idQuotation: number | undefined;

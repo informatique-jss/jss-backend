@@ -8,9 +8,10 @@ import { DashboardUserStatistics } from '../../../quotation/model/DashboardUserS
 import { DashboardUserStatisticsService } from '../../../quotation/services/dashboard.user.statistics.service';
 
 @Component({
-  selector: 'overview',
-  templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.css']
+    selector: 'overview',
+    templateUrl: './overview.component.html',
+    styleUrls: ['./overview.component.css'],
+    standalone: false
 })
 export class OverviewComponent implements OnInit {
 

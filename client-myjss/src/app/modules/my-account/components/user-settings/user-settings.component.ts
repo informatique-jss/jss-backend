@@ -11,9 +11,10 @@ import { Document } from '../../model/Document';
 import { DocumentService } from '../../services/document.service';
 
 @Component({
-  selector: 'app-user-settings',
-  templateUrl: './user-settings.component.html',
-  styleUrls: ['./user-settings.component.css']
+    selector: 'app-user-settings',
+    templateUrl: './user-settings.component.html',
+    styleUrls: ['./user-settings.component.css'],
+    standalone: false
 })
 export class UserSettingsComponent implements OnInit {
 
