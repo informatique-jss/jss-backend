@@ -1,10 +1,9 @@
-import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { AppService } from '../../../../libs/app.service';
 import { getTimeReading } from '../../../../libs/FormatHelper';
-import { PagedContent } from '../../../miscellaneous/model/PagedContent';
 import { Pagination } from '../../../miscellaneous/model/Pagination';
 import { Mail } from '../../../profile/model/Mail';
 import { Responsable } from '../../../profile/model/Responsable';
@@ -37,12 +36,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   newCommentParent: Comment = {} as Comment;
   createCommentForm = this.formBuilder.group({});
   commentsPagination: Pagination = {} as Pagination;
-  shownElements: number = 10; // computed
-
-  targetCommentId: string | null = null;
-
-  @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
-  @ViewChild('step2') step2: ElementRef | undefined;
+  pageSize: number = 10; // computed
 
   constructor(private activatedRoute: ActivatedRoute,
     private postService: PostService,
@@ -54,13 +48,6 @@ export class PostComponent implements OnInit, AfterViewInit {
   getTimeReading = getTimeReading;
 
   ngOnInit() {
-    this.activatedRoute.fragment.subscribe(fragment => {
-      if (fragment) {
-        this.targetCommentId = fragment;
-        setTimeout(this.scrollToComment, 10);
-      }
-    });
-
     this.slug = this.activatedRoute.snapshot.params['slug'];
 
     if (this.slug) {
@@ -87,7 +74,6 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-
   }
 
   openPost(post: Post, event: any) {
@@ -204,7 +190,11 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.newComment = { mail: {} as Mail } as Comment;
     this.newCommentParent = comment;
     // Scroll to new comment form
-    const element = document.getElementById("commentForm");
+    this.scrollToView("commentForm");
+  }
+
+  scrollToView(anchorId: string) {
+    const element = document.getElementById(anchorId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
@@ -218,23 +208,23 @@ export class PostComponent implements OnInit, AfterViewInit {
   fetchComments(page: number) {
     if (this.post) {
       this.relatedPosts = this.post.relatedPosts;
-      // TODO : this code is to do the scrolling to the comment in the page when comming from osiris
-      //  if (this.targetCommentId) {
-      //   this.commentService.getParentCommentsForPost(this.post.id, page, 1000000).subscribe(data => {
-      //     this.comments = data.content;
-      //     this.updatePagination(data, page);
-      //   });
-      // } else {
-      this.commentService.getParentCommentsForPost(this.post.id, page, 10).subscribe(data => {
-        if (page == 0) {
-          this.comments = data.content;
-        } else {
-          this.comments = this.comments.concat(data.content);
-        }
-        this.commentsPagination = data.page;
-        this.shownElements = this.computeShownElements(page);
+      this.activatedRoute.fragment.subscribe(fragment => {
+        if (fragment) this.pageSize = 1000000;
+        this.commentService.getParentCommentsForPost(this.post!.id, page, this.pageSize).subscribe(data => {
+          if (page == 0) {
+            this.comments = data.content;
+          } else {
+            this.comments = this.comments.concat(data.content);
+          }
+
+          if (fragment) {
+            setTimeout(() => {
+              document.getElementById(fragment)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 0);
+          }
+          this.commentsPagination = data.page;
+        });
       });
-      // }
     }
   }
 
@@ -244,30 +234,5 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   showLessComments() {
     this.fetchComments(0);
-  }
-
-  // Scrolls to the selected
-  scrollToComment() {
-    if (this.targetCommentId) {
-      const targetElement = document.getElementById(this.targetCommentId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-  }
-
-
-  private updatePagination(data: PagedContent<Comment>, page: number) {
-    this.commentsPagination = data.page;
-    this.shownElements = this.computeShownElements(page);
-  }
-
-  computeShownElements(page: number) {
-    page++; // the current page is indexed from 0 as an array, whereas the totalPages is the result of the .lenght array
-    if (page == this.commentsPagination.totalPages) {
-      return ((this.commentsPagination.totalPages - 1) * this.commentsPagination.pageSize + this.commentsPagination.numberOfElements);
-    } else {
-      return page * this.commentsPagination.pageSize;
-    }
   }
 }
