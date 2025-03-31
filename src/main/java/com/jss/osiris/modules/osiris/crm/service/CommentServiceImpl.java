@@ -66,6 +66,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public Page<Comment> getParentCommentsForPost(Pageable pageableRequest, Integer postId) {
+        Post post = postService.getPost(postId);
+
+        if (post != null) {
+            Page<Comment> comments = commentRepository.findAllByPostIdAndIsDeletedFalseAndParentCommentIsNull(postId,
+                    pageableRequest);
+            return comments;
+        }
+
+        return Page.empty();
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Comment addOrUpdateComment(Comment comment, Integer parentCommentId, Integer postId) throws OsirisException {
 
@@ -91,6 +104,32 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public Boolean updateContent(String newContent, Integer commentId) {
+        Comment comment = getComment(commentId);
+
+        if (comment != null) {
+            comment.setContent(newContent);
+            commentRepository.save(comment);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateIsModerated(Boolean isModerated, Integer commentId) {
+        Comment comment = getComment(commentId);
+
+        if (comment != null) {
+            comment.setIsModerated(isModerated);
+            commentRepository.save(comment);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean delete(Integer commentId) {
 
         Comment comment = getComment(commentId);
@@ -104,16 +143,4 @@ public class CommentServiceImpl implements CommentService {
         return false;
     }
 
-    @Override
-    public Page<Comment> getParentCommentsForPost(Pageable pageableRequest, Integer postId) {
-        Post post = postService.getPost(postId);
-
-        if (post != null) {
-            Page<Comment> comments = commentRepository.findAllByPostIdAndIsDeletedFalseAndParentCommentIsNull(postId,
-                    pageableRequest);
-            return comments;
-        }
-
-        return Page.empty();
-    }
 }

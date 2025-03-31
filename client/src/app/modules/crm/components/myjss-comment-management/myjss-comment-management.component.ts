@@ -54,18 +54,17 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
     this.tableActionComment.push({
       actionIcon: "visibility", actionName: "Marquer comme modéré", actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
         element.isModerated = true;
-        this.commentService.addOrUpdateComment(element, element.post.id).subscribe();
+        this.commentService.updateIsModerated(element.isModerated, element.id).subscribe();
       }, display: true,
     } as SortTableAction<Comment>);
 
     this.tableActionComment.push({
       actionIcon: "visibility_off", actionName: "Marquer comme non modéré", actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
         element.isModerated = false;
-        this.commentService.addOrUpdateComment(element, element.post.id).subscribe();
+        this.commentService.updateIsModerated(element.isModerated, element.id).subscribe();
       }, display: true,
     } as SortTableAction<Comment>);
 
-    // TODO : accéder au comm sur la page article, changer le toast message
     this.tableActionComment.push({
       actionIcon: 'mode_comment', actionName: 'Modifier le commentaire', actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
         let dialogRef = this.editCommentDialog.open(EditCommentDialogComponent, {
@@ -75,8 +74,7 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
 
         dialogRef.afterClosed().subscribe(newContent => {
           if (newContent) {
-            element.content = newContent
-            this.commentService.addOrUpdateComment(element, element.post.id).subscribe(response => { this.searchComments(this.myjssCommentsPagination.pageNumber) });
+            this.commentService.updateContent(newContent, element.id).subscribe(response => { this.searchComments(this.myjssCommentsPagination.pageNumber) });
           }
         });
       }, display: true,
@@ -84,14 +82,14 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
 
     this.tableActionComment.push({
       actionIcon: "open_in_new", actionName: "Voir le commentaire dans l'article", actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
-        this.appService.openRoute(event, "/post/" + element.post.slug, undefined);
+        this.appService.openMyJssRoute("post/" + element.post.slug + "#" + element.post.id);
       }, display: true,
     } as SortTableAction<Comment>);
 
     this.tableActionComment.push({
       actionIcon: "delete", actionName: "Supprimer le commentaire", actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
         element.isDeleted = true;
-        this.commentService.addOrUpdateComment(element, element.post.id).subscribe();
+        this.commentService.updateIsDeleted(element.isDeleted, element.id).subscribe();
       }, display: true,
     } as SortTableAction<Comment>);
   }
@@ -107,8 +105,6 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
       this.commentService.getComments(page, 1000000, this.commentSearch).subscribe(data => {
         if (page == 0) {
           this.myjssComments = data.content;
-        } else {
-          this.myjssComments = this.myjssComments.concat(data.content);
         }
         this.myjssCommentsPagination = data.page;
       })

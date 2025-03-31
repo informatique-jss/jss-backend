@@ -18,4 +18,8 @@ public interface CommentService {
     public Comment addOrUpdateComment(Comment comment, Integer parentCommentId, Integer postId) throws OsirisException;
 
     public Boolean delete(Integer commentId);
+
+    public Boolean updateIsModerated(Boolean isModerated, Integer commentId);
+
+    public Boolean updateContent(String newContent, Integer commentId);
 }

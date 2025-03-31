@@ -11,6 +11,7 @@ import { CommentSearch } from '../model/CommentSearch';
 })
 export class CommentService extends AppRestService<Comment> {
 
+
   constructor(http: HttpClient) {
     super(http, "crm");
   }
@@ -25,15 +26,15 @@ export class CommentService extends AppRestService<Comment> {
     return this.postPagedList(params, "comments/search", commentSearch, "", "");
   }
 
-  // TODO : une methode par modif
-  addOrUpdateComment(comment: Comment, postId: number, parentCommentId?: number) {
-    let params = new HttpParams()
-
-    if (parentCommentId)
-      params = params.set("parentCommentId", parentCommentId);
-
-    return this.addOrUpdate(params.set("postId", postId), "post/comment/add", comment, "Votre commentaire a bien été posté !", "Une erreur s'est produite lors de l'enregistrement du commentaire, merci de réessayer");
+  updateContent(newContent: any, commentId: number) {
+    return this.get(new HttpParams().set("newContent", newContent).set("commentId", commentId), "post/comment/content", "Modification prise en compte !", "Une erreur est survenue lors de l'enregistrement des modifications");
   }
 
+  updateIsModerated(isModerated: boolean, commentId: number) {
+    return this.get(new HttpParams().set("isModerated", isModerated).set("commentId", commentId), "post/comment/moderate", "Modification prise en compte !", "Une erreur est survenue lors de l'enregistrement des modifications");
+  }
 
+  updateIsDeleted(isDeleted: boolean, commentId: number) {
+    return this.get(new HttpParams().set("isDeleted", isDeleted).set("commentId", commentId), "post/comment/delete", "Commentaire supprimé !", "Une erreur est survenue lors de la suppression du commentaire");
+  }
 }

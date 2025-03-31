@@ -167,41 +167,43 @@ public class CrmController {
         }
 
         /**
-         * Get comment by id
-         * 
-         * @param commentId
-         * @return
-         */
-        @GetMapping(inputEntryPoint + "/comment")
-        @JsonView(JacksonViews.MyJssView.class)
-        public ResponseEntity<Comment> getComment(@RequestParam Integer commentId) {
-
-                return new ResponseEntity<Comment>(commentService.getComment(commentId), HttpStatus.OK);
-        }
-
-        /**
-         * Save or update comment
+         * Update isModerated in a comment
          * 
          * @param comment
          * @return
          * @throws OsirisException
          */
-        @PostMapping(inputEntryPoint + "/post/comment/add")
-        @JsonView(JacksonViews.MyJssView.class)
-        public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
-                        @RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
-                        @RequestParam Integer postId)
-                        throws OsirisException {
+        @GetMapping(inputEntryPoint + "/post/comment/moderate")
+        public ResponseEntity<Boolean> updateIsModerated(@RequestParam Boolean isModerated,
+                        @RequestParam Integer commentId) {
+                Comment comment = commentService.getComment(commentId);
 
-                if (comment != null && postId != null) {
-
-                        if (postService.getPost(postId) != null) {
-                                return new ResponseEntity<Comment>(
-                                                commentService.addOrUpdateComment(comment, parentCommentId, postId),
-                                                HttpStatus.OK);
-                        }
+                if (comment != null) {
+                        return new ResponseEntity<Boolean>(commentService.updateIsModerated(isModerated, commentId),
+                                        HttpStatus.OK);
                 }
-                return new ResponseEntity<Comment>(new Comment(), HttpStatus.OK);
+
+                return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+        }
+
+        /**
+         * Updates the content of a comment
+         * 
+         * @param comment
+         * @return
+         * @throws OsirisException
+         */
+        @GetMapping(inputEntryPoint + "/post/comment/content")
+        public ResponseEntity<Boolean> updateContent(@RequestParam String newContent,
+                        @RequestParam Integer commentId) {
+                Comment comment = commentService.getComment(commentId);
+
+                if (comment != null) {
+                        return new ResponseEntity<Boolean>(commentService.updateContent(newContent, commentId),
+                                        HttpStatus.OK);
+                }
+
+                return new ResponseEntity<Boolean>(false, HttpStatus.OK);
         }
 
         /**
@@ -211,9 +213,9 @@ public class CrmController {
          * @return
          * @throws OsirisException
          */
-        @GetMapping(inputEntryPoint + "/comment/delete")
+        @GetMapping(inputEntryPoint + "/post/comment/delete")
         @JsonView(JacksonViews.MyJssView.class)
-        public ResponseEntity<Boolean> delete(Integer commentId) {
+        public ResponseEntity<Boolean> delete(@RequestParam Integer commentId) {
 
                 Comment comment = commentService.getComment(commentId);
 
@@ -223,5 +225,4 @@ public class CrmController {
 
                 return new ResponseEntity<Boolean>(false, HttpStatus.OK);
         }
-
 }
