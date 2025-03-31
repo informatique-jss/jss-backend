@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 })
 export abstract class AppRestService<T> {
 
-  public static serverUrl: string = environment.backendUrl;
+  public static serverUrl: string = environment.backendUrl + "myjss/";
 
   cache: any;
 
