@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
@@ -40,7 +40,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   pageSize: number = 10; // computed
 
   constructor(
-    @Inject(ActivatedRoute) private activatedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private postService: PostService,
     private commentService: CommentService,
     private formBuilder: FormBuilder,
