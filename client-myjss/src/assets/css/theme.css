@@ -717,16 +717,13 @@ progress {
 
   /* background-image usage to add multiple SVG images */
   background-image:
-    /* First image (on top) */
-    url('../images/background1.svg'),
-    /* Second image (repeted) */
-    url('../images/background2.svg');
+    url('../images/background1.svg');
 
   /* Positionning of both images */
-  background-position: top, 2541px;
-  background-repeat: no-repeat, repeat-y;
-  background-size: 100% auto, 100% auto;
-  background-attachment: scroll, scroll;
+  background-position: top;
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  background-attachment: scroll;
 }
 
 .white-tranlucid-bg {
