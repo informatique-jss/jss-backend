@@ -717,7 +717,7 @@ progress {
 
   /* background-image usage to add multiple SVG images */
   background-image:
-    url('../images/background1.svg');
+    url('../images/background.svg');
 
   /* Positionning of both images */
   background-position: top;
