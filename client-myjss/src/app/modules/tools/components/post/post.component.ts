@@ -14,10 +14,10 @@ import { CommentService } from '../../services/comment.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
-    selector: 'post',
-    templateUrl: './post.component.html',
-    styleUrls: ['./post.component.css'],
-    standalone: false
+  selector: 'post',
+  templateUrl: './post.component.html',
+  styleUrls: ['./post.component.css'],
+  standalone: false
 })
 export class PostComponent implements OnInit, AfterViewInit {
 
@@ -39,7 +39,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   commentsPagination: Pagination = {} as Pagination;
   pageSize: number = 10; // computed
 
-  constructor(private activatedRoute: ActivatedRoute,
+  constructor(
+    private activatedRoute: ActivatedRoute,
     private postService: PostService,
     private commentService: CommentService,
     private formBuilder: FormBuilder,

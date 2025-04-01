@@ -306,8 +306,7 @@
           <!-- Relevant tags -->
           <h4 class="pt-3 pt-lg-1 mb-4" *ngIf="post.postTags && post.postTags[0]">Tags associés :</h4>
           <div class="d-flex flex-wrap mt-n3 ms-n3 mb-lg-5 mb-4 pb-3 pb-lg-0">
-            <a *ngFor="let tag of post.postTags" class="btn btn-outline-secondary rounded-pill mt-3 ms-3"
-              (click)="openTagPosts(tag, $event)">{{tag.name}}</a>
+            <span *ngFor="let tag of post.postTags" class="badge border text-nav fs-sm mt-3 ms-3">{{tag.name}}</span>
           </div>
         </div>
       </div>
