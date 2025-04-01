@@ -424,7 +424,8 @@ public class MailHelper {
         ctx.setVariable("bicJss", bicJss);
         ctx.setVariable("cbLink", mail.getCbLink());
 
-        if (mail.getCustomerOrder() != null || mail.getQuotation() != null)
+        if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
+                && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
             ctx.setVariable("mailComputeResultInvoice",
                     mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
                             mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation()));
