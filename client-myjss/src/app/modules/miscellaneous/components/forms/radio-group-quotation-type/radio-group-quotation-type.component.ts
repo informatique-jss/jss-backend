@@ -6,7 +6,8 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 @Component({
   selector: 'radio-group-quotation-type',
   templateUrl: './radio-group-quotation-type.component.html',
-  styleUrls: ['./radio-group-quotation-type.component.css']
+  styleUrls: ['./radio-group-quotation-type.component.css'],
+  standalone: false
 })
 export class RadioGroupQuotationTypeComponent extends GenericRadioGroupComponent<QuotationType> implements OnInit {
   types: QuotationType[] = [] as Array<QuotationType>;

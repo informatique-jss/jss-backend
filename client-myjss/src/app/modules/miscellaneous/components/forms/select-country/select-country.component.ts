@@ -7,7 +7,8 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 @Component({
   selector: 'select-country',
   templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css']
+  styleUrls: ['../generic-select/generic-select.component.css'],
+  standalone: false
 })
 export class SelectCountryComponent extends GenericSelectComponent<Country> implements OnInit {
 

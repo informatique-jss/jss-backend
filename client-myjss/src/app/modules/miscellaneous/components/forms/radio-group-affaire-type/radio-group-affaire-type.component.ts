@@ -6,7 +6,8 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 @Component({
   selector: 'radio-group-affaire-type',
   templateUrl: './radio-group-affaire-type.component.html',
-  styleUrls: ['./radio-group-affaire-type.component.css']
+  styleUrls: ['./radio-group-affaire-type.component.css'],
+  standalone: false
 })
 export class RadioGroupAffaireTypeComponent extends GenericRadioGroupComponent<AffaireType> implements OnInit {
   types: AffaireType[] = [] as Array<AffaireType>;

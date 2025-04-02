@@ -16,7 +16,8 @@ import { ServiceFamilyGroupService } from '../../services/service.family.group.s
 @Component({
   selector: 'app-identification',
   templateUrl: './identification.component.html',
-  styleUrls: ['./identification.component.css']
+  styleUrls: ['./identification.component.css'],
+  standalone: false,
 })
 export class IdentificationComponent implements OnInit {
 
