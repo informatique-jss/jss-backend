@@ -15,9 +15,6 @@ export class OurClientsComponent implements OnInit, AfterViewInit {
   @ViewChild('ourClientsSwiper1') ourClientsSwiper1!: ElementRef<SwiperContainer>;
   @ViewChild('ourClientsSwiper2') ourClientsSwiper2!: ElementRef<SwiperContainer>;
 
-  evenIndexes: number[] = Array.from({ length: 10 }, (_, i) => i * 2);
-  oddIndexes: number[] = Array.from({ length: 10 }, (_, i) => i * 2 + 1);
-
   constructor() { }
 
   ngOnInit() { }
