@@ -104,7 +104,7 @@
   --ar-gray-900: #121519;
   --ar-blue-step: #4B6380;
   --ar-step-active-custom: #F3E3CA;
-  --ar-primary: rgba(255, 255, 255, 1);
+  --ar-primary: #ffffff;
   --ar-secondary: #1c2d41;
   --ar-tertiary: #f3e3ca;
   --ar-success: #4b6380;
@@ -718,6 +718,23 @@ progress {
   /* background-image usage to add multiple SVG images */
   background-image:
     url('../images/background.svg');
+
+  /* Positionning of both images */
+  background-position: top;
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  background-attachment: scroll;
+}
+
+.background-secondary {
+  /* Background color definition */
+  background-color: var(--ar-gray-100);
+  width: 100%;
+  height: 100%;
+
+  /* background-image usage to add multiple SVG images */
+  background-image:
+    url('../images/Background-quotation.svg');
 
   /* Positionning of both images */
   background-position: top;
@@ -2783,7 +2800,7 @@ textarea.form-control-lg {
 }
 
 .form-check-input:checked {
-  background-color: var(--ar-primary);
+  background-color: var(--ar-secondary);
   border-color: var(--ar-primary);
 }
 
@@ -3741,19 +3758,19 @@ textarea.form-control-lg {
 }
 
 .btn-outline-dark {
-  --ar-btn-color: #121519;
-  --ar-btn-border-color: #121519;
+  --ar-btn-color: var(--ar-secondary);
+  --ar-btn-border-color: var(--ar-secondary);
   --ar-btn-hover-color: #fff;
-  --ar-btn-hover-bg: #121519;
-  --ar-btn-hover-border-color: #121519;
+  --ar-btn-hover-bg: var(--ar-secondary);
+  --ar-btn-hover-border-color: var(--ar-secondary);
   --ar-btn-focus-shadow-rgb: 18, 21, 25;
   --ar-btn-active-color: #fff;
-  --ar-btn-active-bg: #121519;
-  --ar-btn-active-border-color: #121519;
+  --ar-btn-active-bg: var(--ar-secondary);
+  --ar-btn-active-border-color: var(--ar-secondary);
   --ar-btn-active-shadow: unset;
-  --ar-btn-disabled-color: #121519;
+  --ar-btn-disabled-color: var(--ar-secondary);
   --ar-btn-disabled-bg: transparent;
-  --ar-btn-disabled-border-color: #121519;
+  --ar-btn-disabled-border-color: var(--ar-secondary);
   --ar-gradient: none;
 }
 
@@ -9567,6 +9584,7 @@ textarea.form-control-lg {
 .bg-secondary {
   --ar-bg-opacity: 1;
   background-color: var(--ar-gray-100) !important;
+
 }
 
 .bg-success {

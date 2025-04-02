@@ -5,10 +5,10 @@ import { Responsable } from './modules/profile/model/Responsable';
 import { LoginService } from './modules/profile/services/login.service';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    standalone: false
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  standalone: false
 })
 
 export class AppComponent implements AfterViewInit {
@@ -43,25 +43,32 @@ export class AppComponent implements AfterViewInit {
 
   isDisplayGreyBackground() {
     let url: String = this.router.url;
-    if (url)
+    if (url) {
       if (url.indexOf("account") >= 0 && url.indexOf("signin") <= 0)
         return true;
+      if (url.indexOf("quotation") > 0)
+        return true
+    }
     return false;
   }
 
-  isDisplayHeader() {
+  isDisplayLightHeader() {
     let url: String = this.router.url;
-    if (url)
-      if (url.indexOf("signin") >= 0)
-        return false;
-    return true;
+    if (url) {
+      if (url.indexOf("quotation") >= 0 || url.indexOf("signin") >= 0)
+        return true;
+    }
+    return false;
   }
 
   isDisplayFooter() {
     let url: String = this.router.url;
-    if (url)
+    if (url) {
       if (url.indexOf("signin") >= 0)
         return false;
+      if (url.indexOf("quotation") >= 0)
+        return false;
+    }
     return true;
   }
 
