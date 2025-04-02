@@ -7,9 +7,10 @@ import { Post } from '../../model/Post';
 import { PostService } from '../../services/post.service';
 
 @Component({
-  selector: 'app-interview-list',
-  templateUrl: './interview-list.component.html',
-  styleUrls: ['./interview-list.component.css']
+    selector: 'app-interview-list',
+    templateUrl: './interview-list.component.html',
+    styleUrls: ['./interview-list.component.css'],
+    standalone: false
 })
 export class InterviewListComponent implements OnInit {
 

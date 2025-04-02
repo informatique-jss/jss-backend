@@ -6,9 +6,10 @@ import { Announcement } from '../../model/Announcement';
 import { AnnouncementService } from '../../services/announcement.service';
 
 @Component({
-  selector: 'app-search-announcement',
-  templateUrl: './search-announcement.component.html',
-  styleUrls: ['./search-announcement.component.css']
+    selector: 'app-search-announcement',
+    templateUrl: './search-announcement.component.html',
+    styleUrls: ['./search-announcement.component.css'],
+    standalone: false
 })
 export class SearchAnnouncementComponent implements OnInit {
 

@@ -1,9 +1,10 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'explaination-video',
-  templateUrl: './explaination-video.component.html',
-  styleUrls: ['./explaination-video.component.css']
+    selector: 'explaination-video',
+    templateUrl: './explaination-video.component.html',
+    styleUrls: ['./explaination-video.component.css'],
+    standalone: false
 })
 export class ExplainationVideoComponent implements OnInit {
   @Input() title: string = '';

@@ -8,9 +8,10 @@ import { ResponsableService } from '../../../profile/services/responsable.servic
 import { UserScopeService } from '../../../profile/services/user.scope.service';
 
 @Component({
-  selector: 'scope',
-  templateUrl: './scope.component.html',
-  styleUrls: ['./scope.component.css']
+    selector: 'scope',
+    templateUrl: './scope.component.html',
+    styleUrls: ['./scope.component.css'],
+    standalone: false
 })
 export class ScopeComponent implements OnInit {
 

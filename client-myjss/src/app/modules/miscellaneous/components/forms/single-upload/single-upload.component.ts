@@ -11,9 +11,10 @@ import { TypeDocument } from '../../../../my-account/model/TypeDocument';
 import { UploadAttachmentService } from '../../../../my-account/services/upload.attachment.service';
 
 @Component({
-  selector: 'single-upload',
-  templateUrl: './single-upload.component.html',
-  styleUrls: ['./single-upload.component.css']
+    selector: 'single-upload',
+    templateUrl: './single-upload.component.html',
+    styleUrls: ['./single-upload.component.css'],
+    standalone: false
 })
 export class SingleUploadComponent implements OnInit {
 

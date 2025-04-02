@@ -56,4 +56,11 @@ public class SearchController {
 				searchService.getCustomerOrdersByKeyword(searchedValue),
 				HttpStatus.OK);
 	}
+
+	@GetMapping(inputEntryPoint + "/post/search")
+	public ResponseEntity<List<IndexEntity>> getPostByKeyword(@RequestParam String searchedValue) {
+		return new ResponseEntity<List<IndexEntity>>(
+				searchService.getPostByKeyword(searchedValue),
+				HttpStatus.OK);
+	}
 }

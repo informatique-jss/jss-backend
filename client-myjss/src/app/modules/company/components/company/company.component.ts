@@ -4,9 +4,10 @@ import { AppService } from '../../../../libs/app.service';
 import { MenuItem } from '../../../general/model/MenuItem';
 
 @Component({
-  selector: 'company',
-  templateUrl: './company.component.html',
-  styleUrls: ['./company.component.css']
+    selector: 'company',
+    templateUrl: './company.component.html',
+    styleUrls: ['./company.component.css'],
+    standalone: false
 })
 export class CompanyComponent implements OnInit, AfterContentChecked {
 

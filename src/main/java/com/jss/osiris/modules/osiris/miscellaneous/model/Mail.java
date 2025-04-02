@@ -25,7 +25,7 @@ public class Mail implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
 	private String mail;
 
 	public Integer getId() {

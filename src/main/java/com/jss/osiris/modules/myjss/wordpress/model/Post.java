@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
@@ -26,6 +28,7 @@ import jakarta.persistence.Transient;
 @Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true) })
 public class Post implements IId {
     @Id
+    @JsonView({ JacksonViews.OsirisListView.class })
     private Integer id;
 
     @Transient
@@ -41,8 +44,10 @@ public class Post implements IId {
 
     @Transient
     private Content title;
+
     @Column(columnDefinition = "TEXT")
     @IndexedField
+    @JsonView(JacksonViews.OsirisListView.class)
     private String titleText;
 
     @Transient
@@ -67,6 +72,7 @@ public class Post implements IId {
     private Integer featured_media;
 
     @IndexedField
+    @JsonView({ JacksonViews.OsirisListView.class })
     private String slug;
     private boolean sticky;
 

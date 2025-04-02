@@ -4,11 +4,11 @@ import { SwiperContainer } from 'swiper/element';
 
 @Component({
   selector: 'generic-swiper',
-  standalone: true,
   templateUrl: './generic-swiper.component.html',
   styleUrls: ['./generic-swiper.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule]
+  imports: [CommonModule],
+  standalone: true
 })
 export class GenericSwiperComponent implements OnInit {
 

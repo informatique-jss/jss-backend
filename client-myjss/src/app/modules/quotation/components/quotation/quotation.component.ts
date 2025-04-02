@@ -6,9 +6,10 @@ import { CustomerOrderService } from '../../../my-account/services/customer.orde
 import { QuotationService } from '../../../my-account/services/quotation.service';
 
 @Component({
-  selector: 'app-quotation',
-  templateUrl: './quotation.component.html',
-  styleUrls: ['./quotation.component.css']
+    selector: 'app-quotation',
+    templateUrl: './quotation.component.html',
+    styleUrls: ['./quotation.component.css'],
+    standalone: false
 })
 export class QuotationComponent implements OnInit {
   myJssQuotationItems: MenuItem[] = this.appService.getAllQuotationMenuItems();

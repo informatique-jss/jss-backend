@@ -7,9 +7,10 @@ import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
 
 @Component({
-  selector: 'top-bar',
-  templateUrl: './top-bar.component.html',
-  styleUrls: ['./top-bar.component.css']
+    selector: 'top-bar',
+    templateUrl: './top-bar.component.html',
+    styleUrls: ['./top-bar.component.css'],
+    standalone: false
 })
 export class TopBarComponent implements OnInit {
 

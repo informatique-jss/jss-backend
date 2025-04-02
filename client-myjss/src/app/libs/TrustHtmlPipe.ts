@@ -2,8 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Pipe({
-  name: 'trustHtml',
-  pure: true // This allows the pipe to only run once
+    name: 'trustHtml',
+    pure: true // This allows the pipe to only run once
+    ,
+    standalone: false
 })
 export class TrustHtmlPipe implements PipeTransform {
 

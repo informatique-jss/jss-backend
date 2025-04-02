@@ -3,9 +3,10 @@ import { AppService } from '../../../../libs/app.service';
 import { LoginService } from '../../../profile/services/login.service';
 
 @Component({
-  selector: 'app-sign-out',
-  templateUrl: './sign-out.component.html',
-  styleUrls: ['./sign-out.component.css']
+    selector: 'app-sign-out',
+    templateUrl: './sign-out.component.html',
+    styleUrls: ['./sign-out.component.css'],
+    standalone: false
 })
 export class SignOutComponent implements OnInit {
 

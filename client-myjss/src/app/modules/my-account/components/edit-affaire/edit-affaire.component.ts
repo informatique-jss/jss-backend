@@ -10,9 +10,10 @@ import { Affaire } from '../../model/Affaire';
 import { AffaireService } from '../../services/affaire.service';
 
 @Component({
-  selector: 'app-edit-affaire',
-  templateUrl: './edit-affaire.component.html',
-  styleUrls: ['./edit-affaire.component.css']
+    selector: 'app-edit-affaire',
+    templateUrl: './edit-affaire.component.html',
+    styleUrls: ['./edit-affaire.component.css'],
+    standalone: false
 })
 export class EditAffaireComponent implements OnInit {
 

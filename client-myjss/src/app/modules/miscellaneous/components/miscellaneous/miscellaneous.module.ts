@@ -15,6 +15,7 @@ import { RadioGroupQuotationTypeComponent } from '../forms/radio-group-quotation
 import { SelectCountryComponent } from '../forms/select-country/select-country.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
 import { GenericSwiperComponent } from '../generic-swiper/generic-swiper.component';
+import { OurClientsComponent } from '../our-clients/our-clients.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
 const routes: Routes = [{}];
@@ -26,6 +27,7 @@ const routes: Routes = [{}];
     FormsModule,
     ReactiveFormsModule,
     GenericSwiperComponent,
+    OurClientsComponent,
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
@@ -53,6 +55,7 @@ const routes: Routes = [{}];
     RadioGroupAffaireTypeComponent,
     AutocompleteCityComponent,
     SelectCountryComponent,
+    OurClientsComponent,
   ]
 })
 export class MiscellaneousModule { }

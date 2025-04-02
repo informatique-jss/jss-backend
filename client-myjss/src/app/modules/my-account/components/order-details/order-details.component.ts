@@ -33,9 +33,10 @@ import { UploadAttachmentService } from '../../services/upload.attachment.servic
 import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, getLastMissingAttachmentQueryDateLabel, initTooltips } from '../orders/orders.component';
 
 @Component({
-  selector: 'app-order-details',
-  templateUrl: './order-details.component.html',
-  styleUrls: ['./order-details.component.css']
+    selector: 'app-order-details',
+    templateUrl: './order-details.component.html',
+    styleUrls: ['./order-details.component.css'],
+    standalone: false
 })
 export class OrderDetailsComponent implements OnInit {
 

@@ -3,9 +3,10 @@ import { Employee } from '../../../profile/model/Employee';
 import { Responsable } from '../../../profile/model/Responsable';
 
 @Component({
-  selector: 'avatar',
-  templateUrl: './avatar.component.html',
-  styleUrls: ['./avatar.component.css']
+    selector: 'avatar',
+    templateUrl: './avatar.component.html',
+    styleUrls: ['./avatar.component.css'],
+    standalone: false
 })
 export class AvatarComponent implements OnInit {
 

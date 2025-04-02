@@ -4,9 +4,10 @@ import { Serie } from '../../model/Serie';
 import { SerieService } from '../../services/serie.service';
 
 @Component({
-  selector: 'app-serie-list',
-  templateUrl: './serie-list.component.html',
-  styleUrls: ['./serie-list.component.css']
+    selector: 'app-serie-list',
+    templateUrl: './serie-list.component.html',
+    styleUrls: ['./serie-list.component.css'],
+    standalone: false
 })
 export class SerieListComponent implements OnInit {
 

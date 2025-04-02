@@ -12,9 +12,10 @@ import { Document } from '../../model/Document';
 import { DocumentService } from '../../services/document.service';
 
 @Component({
-  selector: 'app-edit-address',
-  templateUrl: './edit-address.component.html',
-  styleUrls: ['./edit-address.component.css']
+    selector: 'app-edit-address',
+    templateUrl: './edit-address.component.html',
+    styleUrls: ['./edit-address.component.css'],
+    standalone: false
 })
 export class EditAddressComponent implements OnInit {
 
