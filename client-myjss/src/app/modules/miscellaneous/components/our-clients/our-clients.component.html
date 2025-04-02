@@ -1,0 +1,24 @@
+<div>
+  <div class="text-center">
+    <h1>
+      Nos clients
+    </h1>
+    <p>Plus de 2 000 professionnels simplifient leurs démarches juridiques en ligne grâce à MYJSS.</p>
+  </div>
+
+
+  <swiper-container #ourClientsSwiper1 init="false">
+    <swiper-slide *ngFor="let i of evenIndexes" class="pb-3">
+      <div>
+        <img class="card p-2 rounded-2" [src]="'assets/img/logos/logo'+ i +'.svg'" />
+      </div>
+    </swiper-slide>
+  </swiper-container>
+  <swiper-container #ourClientsSwiper2 init="false">
+    <swiper-slide *ngFor="let i of oddIndexes" class="pb-5">
+      <div>
+        <img class="card p-2 rounded-2" [src]="'assets/img/logos/logo'+ i +'.svg'" />
+      </div>
+    </swiper-slide>
+  </swiper-container>
+</div>

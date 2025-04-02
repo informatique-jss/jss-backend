@@ -1,7 +1,7 @@
 <main class="page-wrapper background-blue" [ngClass]="{'bg-secondary' : isDisplayGreyBackground()}">
   <top-bar *ngIf="isDisplayHeader()"></top-bar>
   <router-outlet></router-outlet>
-  <div class="container">
+  <div>
     <hr>
     <main-footer *ngIf="isDisplayFooter()"></main-footer>
   </div>

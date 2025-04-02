@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
+import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { HomepageComponent } from '../homepage/homepage.component';
 import { NewsletterComponent } from '../newsletter/newsletter.component';
 import { GeneralComponent } from './general.component';
@@ -21,6 +22,7 @@ const routes: Routes = [
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    MiscellaneousModule
   ],
   declarations: [GeneralComponent,
     HomepageComponent,
