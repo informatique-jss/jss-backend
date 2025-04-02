@@ -4,9 +4,10 @@
       class="form-label">{{label}}</label>
     <i class=" fs-lg position-absolute top-50 start-0 ms-3" *ngIf="icon" [ngClass]="{'icon-with-error':errorMessage && form!.controls[propertyName].hasError('notFilled'),
       'translate-middle-y' : !isDisplayLabel,'translate-quarter-y' : isDisplayLabel}" [class]="'ai-'+icon"></i>
-    <input class="form-control form-control" [id]="'fl-text'+uniqueId" [maxlength]="maxLength+''"
-      [minlength]="minLength+''" [formControlName]="propertyName" [placeholder]="label" (blur)="blurForm()"
-      (keyup.enter)="onEnterTrigger($event)" [type]="type=='number'?'text':type" (change)="parse($event)">
+    <input class="form-control form-control" [ngClass]="{'ps-45': icon}" [id]="'fl-text'+uniqueId"
+      [maxlength]="maxLength+''" [minlength]="minLength+''" [formControlName]="propertyName" [placeholder]="label"
+      (blur)="blurForm()" (keyup.enter)="onEnterTrigger($event)" [type]="type=='number'?'text':type"
+      (change)="parse($event)">
     <div class="error" *ngIf="errorMessage && form!.controls[propertyName].hasError('notFilled')">{{errorMessage}}</div>
   </div>
 </div>
