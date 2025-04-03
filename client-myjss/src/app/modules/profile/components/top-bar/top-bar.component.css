@@ -19,7 +19,17 @@
     background-color: var(--ar-secondary);
 }
 
-
 .jss-navbar-light {
     background-color: var(--ar-primary);
+    --ar-nav-link-color: var(--ar-secondary) !important;
+    --ar-nav-link-hover-color: var(--ar-secondary);
+    color: var(--ar-secondary) !important;
+}
+
+.jss-navbar-light .nav-link,
+.jss-navbar-light .dropdown-item,
+.jss-navbar-light .fs-xs,
+.jss-navbar-light .fs-sm,
+.jss-navbar-light .btn {
+    color: var(--ar-secondary) !important;
 }
