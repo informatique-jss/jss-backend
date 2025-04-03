@@ -29,7 +29,7 @@ export class IdentificationComponent implements OnInit {
   quotation: IQuotation = {} as IQuotation;
   isRegisteredAffaire: Boolean[] = [];
   affaireTypes: AffaireType[] = [];
-  currentOpenedPanel: number = 0;
+  currentOpenedPanel: number | undefined = 0;
 
   siretSearched: string = "";
   debounce: any;
@@ -79,7 +79,11 @@ export class IdentificationComponent implements OnInit {
   }
 
   openPanel(index: number) {
-    this.currentOpenedPanel = index;
+    if (index == this.currentOpenedPanel)
+      this.currentOpenedPanel = undefined;
+    else
+      this.currentOpenedPanel = index;
+
   }
 
   deleteAffaire(indexAsso: number) {

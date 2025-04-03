@@ -1,3 +1,47 @@
 :host {
-    --ar-body-color: var(--ar-secondary);
+    color: #2C4057;
+}
+
+:host ::ng-deep * {
+    color: #2C4057;
+}
+
+h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
+    color: #4B6380;
+}
+
+.quotation-breadcrumb {
+    background-color: var(--ar-primary);
+}
+
+.quotation-nav-link {
+    border-color: transparent;
+    --ar-nav-tabs-link-active-bg: #ECF5FF;
+    --ar-nav-tabs-link-active-border-color: #ECF5FF;
+    --ar-nav-tabs-link-active-color: #2C4057;
+    color: var(--ar-gray-600);
+}
+
+:host ::ng-deep .btn:hover {
+    background-color: #ECF5FF;
+}
+
+:host ::ng-deep .form-control:focus {
+    color: #2C4057;
+}
+
+:host ::ng-deep .btn-secondary {
+    color: #ffffff;
+}
+
+:host ::ng-deep .btn-secondary:hover {
+    color: #2C4057;
+}
+
+:host ::ng-deep .btn-secondary i {
+    color: #ffffff;
+}
+
+:host ::ng-deep .btn-secondary:hover i {
+    color: #2C4057;
 }

@@ -1,9 +1,14 @@
-.selected-family-group-service {
-  background-color: white;
-  color: black;
-}
-
 .quotation-container {
   background-color: white;
-  color: black;
+}
+
+.sub-title {
+  margin-top: 2rem;
+  font-weight: 600;
+  opacity: 80%;
+}
+
+.card {
+  background-color: #F6F9FC;
+  padding: 2rem;
 }
