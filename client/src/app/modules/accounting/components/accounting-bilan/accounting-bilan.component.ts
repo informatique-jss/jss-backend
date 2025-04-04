@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
 import { AccountingBalanceSearch } from '../../model/AccountingBalanceSearch';
 import { AccountingBalanceViewTitle } from '../../model/AccountingBalanceViewTitle';
@@ -18,6 +19,7 @@ export class AccountingBilanComponent implements OnInit {
   constructor(private accountingBalanceViewTitleService: AccountingBalanceViewTitleService,
     private formBuilder: FormBuilder,
     private appService: AppService,
+    private constantService: ConstantService
   ) { }
 
   ngOnInit() {
@@ -53,8 +55,8 @@ export class AccountingBilanComponent implements OnInit {
   }
 
   setCurentFiscalYear() {
-    let d = new Date();
-    this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), 0, 1, 12, 0, 0);
+    let d = new Date(this.constantService.getDateAccountingClosureForAll());
+    this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
     let d2 = new Date();
     this.accountingBalanceSearch.endDate = new Date(d2.getFullYear() + 1, 0, 1, 12, 0, 0);
   }
