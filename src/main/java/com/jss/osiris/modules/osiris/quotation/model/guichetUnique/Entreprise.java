@@ -47,7 +47,7 @@ public class Entreprise implements Serializable, IId {
     @Column(length = 255)
     private String denomination;
 
-    @Column(length = 255)
+    @Column(length = 2000)
     private String objet;
 
     @ManyToOne(fetch = FetchType.LAZY)

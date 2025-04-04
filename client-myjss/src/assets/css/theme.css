@@ -9142,6 +9142,11 @@ textarea.form-control-lg {
   padding-left: 1.5rem !important;
 }
 
+/* Padding generally used when an icon is present on the left */
+.ps-45 {
+  padding-left: 2.5rem !important;
+}
+
 .ps-5 {
   padding-left: 3rem !important;
 }

@@ -171,7 +171,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Define due date
         if (invoice.getDueDate() == null)
-            invoice.setDueDate(getDueDateForInvoice(invoice.getResponsable(), invoice));
+            if (invoice.getResponsable() != null)
+                invoice.setDueDate(getDueDateForInvoice(invoice.getResponsable(), invoice));
+            else if (invoice.getProvider() != null) {
+                if (invoice.getManualAccountingDocumentDate() != null)
+                    invoice.setDueDate(invoice.getManualAccountingDocumentDate().plusDays(30));
+                else
+                    invoice.setDueDate(invoice.getCreatedDate().plusDays(30).toLocalDate());
+            }
 
         invoice.setCreatedDate(LocalDateTime.now());
 
