@@ -1,0 +1,35 @@
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    border-bottom-color: var(--ar-secondary);
+    border-bottom-width: 3px;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    color: var(--ar-secondary);
+}
+
+.nav-tabs .nav-link, .nav-tabs .nav-item.show .nav-link {
+    color: var(--ar-gray-800);
+    border-radius: 0%;
+    border-bottom-width: 0px;
+}
+
+.card {
+    background-color: var(--ar-primary);
+    position: relative;
+    cursor: pointer;
+    border: 3px solid transparent;
+}
+
+.card.selected {
+    border: 3px solid var(--ar-secondary);
+}
+
+.pill {
+    position: relative;
+    z-index: 1;
+}
+
+.col.with-right-border {
+    border-right: 1px solid var(--ar-gray-500);
+
+}

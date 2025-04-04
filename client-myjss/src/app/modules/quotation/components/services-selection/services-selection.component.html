@@ -1,0 +1,115 @@
+<div class="container">
+
+  <section>
+    <p class="sub-title">Sélectionnez une affaire</p>
+
+    <div class="row">
+      <!-- Afficher les cartes avec ngFor -->
+      <div *ngFor="let affaire of affaires" class="col-12 col-sm-6 col-lg-4 my-2">
+        <div class="card rounded-1 d-flex flex-column h-100 p-4 "
+          [ngClass]="{'selected': selectedCardId === affaire.id}" (click)="selectCard(affaire.id, $event)">
+          <div class="row d-flex flex-row align-items-center">
+            <i class="ai-briefcase col-1"></i>
+            <h6 class="col m-0">{{ affaire.title }}</h6>
+          </div>
+          <div class="row align-items-center">
+            <!-- Les boutons pills -->
+            <a *ngFor="let button of affaire.services" class="btn btn-secondary rounded-pill mt-3 ms-3 col-auto pill"
+              (click)="deleteService($event, button.id)">
+              {{ button.label }} <i class="{{ button.icon }} ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section>
+    <p class="sub-title">
+      Sélectionnez vos services
+    </p>
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item ">
+        <a href="#home" class="nav-link active quotation-tabs" data-bs-toggle="tab" role="tab">
+          <i class="ai-edit-alt me-2"></i>
+          Immatriculation
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#profile" class="nav-link" data-bs-toggle="tab" role="tab">
+          <i class="ai-pencil me-2"></i>
+          Modification
+        </a>
+      </li>
+      <li class="nav-item ">
+        <a href="#home" class="nav-link quotation-tabs" data-bs-toggle="tab" role="tab">
+          <i class="ai-dollar me-2"></i>
+          Dépôt
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#profile" class="nav-link" data-bs-toggle="tab" role="tab">
+          <i class="ai-lock-closed me-2"></i>
+          Cessation
+        </a>
+      </li>
+      <li class="nav-item ">
+        <a href="#home" class="nav-link quotation-tabs" data-bs-toggle="tab" role="tab">
+          <i class="ai-award me-2"></i>
+          Apostille légalisation
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#profile" class="nav-link" data-bs-toggle="tab" role="tab">
+          <i class="ai-folder-plus me-2"></i>
+          Fourniture de documents
+        </a>
+      </li>
+    </ul>
+
+    <!-- Tabs content -->
+    <div class="tab-content quotation-container">
+      <div class="tab-pane fade show active" id="home" role="tabpanel">
+        <div class="pb-3">
+          <generic-input [(model)]="servicesSearched" label="Rechercher" [form]="servicesForm"
+            propertyName="servicesSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+            (onFormChange)="searchServices()" [icon]="'search'"></generic-input>
+        </div>
+        <!-- Stacked checkboxes -->
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="ex-check-1">
+          <label class="form-check-label" for="ex-check-1">Check this checkbox</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="ex-check-2" checked>
+          <label class="form-check-label" for="ex-check-2">Uncheck this checkbox</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="ex-check-3" disabled>
+          <label class="form-check-label" for="ex-check-3">Disabled checkbox</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-4">
+    <hr>
+    <div class="row">
+      <div class="col with-right-border">
+        <div class="row align-items-center mx-2">
+          <img class="col-1" src="/assets/img/quotation/services-selection/message-question.svg" />
+          <p class="col-11 mb-0">Une question sur la liste des pièces à transmettre pour votre formalité,consultez le
+            guidedes formalités du JSS à <a href="">télécharger ici</a></p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="row align-items-center mx-2">
+          <img class="col-1" src="/assets/img/quotation/services-selection/file-validation.svg" />
+          <p class="col-11 mb-0">Transmettez-nous vos actes signés et documents justificatifs numérisés en PDF
+            accompagnés d'un pouvoir au JSS à <a href="">télécharger ici</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
