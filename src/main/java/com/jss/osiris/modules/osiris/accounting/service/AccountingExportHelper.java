@@ -460,9 +460,7 @@ public class AccountingExportHelper {
                         BigDecimal currentClassDebit = new BigDecimal(0f);
                         BigDecimal currentClassCredit = new BigDecimal(0f);
                         for (AccountingBalance balanceRecord : balanceRecords) {
-                                if (!balanceRecord.getAccountingAccountClassLabel().equals(currentClass)
-                                                || (balanceRecords.indexOf(balanceRecord) == balanceRecords.size()
-                                                                - 1)) {
+                                if (!balanceRecord.getAccountingAccountClassLabel().equals(currentClass)) {
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentRow = currentSheet.createRow(currentLine++);
                                         currentColumn = 0;
@@ -595,45 +593,82 @@ public class AccountingExportHelper {
                                         currentCell.setCellStyle(styleCurrency);
                                 }
 
-                                if ((balanceRecords.indexOf(balanceRecord) == balanceRecords.size() - 1)) {
-                                        currentRow = currentSheet.createRow(currentLine++);
-                                        currentRow = currentSheet.createRow(currentLine++);
-                                        currentColumn = 0;
-                                        currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue("");
-                                        currentCell.setCellStyle(styleDate);
-                                        currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue("Total de la classe " + currentClass);
-                                        currentCell.setCellStyle(recordCellStyle);
-                                        currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue(currentClassDebit.setScale(2, RoundingMode.HALF_UP)
-                                                        .doubleValue());
+                                // if ((balanceRecords.indexOf(balanceRecord) == balanceRecords.size() - 1)) {
+                                // currentRow = currentSheet.createRow(currentLine++);
+                                // currentRow = currentSheet.createRow(currentLine++);
+                                // currentColumn = 0;
+                                // currentCell = currentRow.createCell(currentColumn++);
+                                // currentCell.setCellValue("");
+                                // currentCell.setCellStyle(styleDate);
+                                // currentCell = currentRow.createCell(currentColumn++);
+                                // currentCell.setCellValue("Total de la classe " + currentClass);
+                                // currentCell.setCellStyle(recordCellStyle);
+                                // currentCell = currentRow.createCell(currentColumn++);
+                                // currentCell.setCellValue(currentClassDebit.setScale(2, RoundingMode.HALF_UP)
+                                // .doubleValue());
 
-                                        currentCell.setCellStyle(styleCurrency);
-                                        currentCell = currentRow.createCell(currentColumn++);
-                                        currentCell.setCellValue(currentClassCredit.setScale(2, RoundingMode.HALF_UP)
-                                                        .doubleValue());
-                                        currentCell.setCellStyle(styleCurrency);
+                                // currentCell.setCellStyle(styleCurrency);
+                                // currentCell = currentRow.createCell(currentColumn++);
+                                // currentCell.setCellValue(currentClassCredit.setScale(2, RoundingMode.HALF_UP)
+                                // .doubleValue());
+                                // currentCell.setCellStyle(styleCurrency);
 
-                                        currentCell = currentRow.createCell(currentColumn++);
-                                        if (currentClassDebit.compareTo(currentClassCredit) > 0) {
-                                                currentCell.setCellValue(currentClassDebit.subtract(currentClassCredit)
-                                                                .setScale(2, RoundingMode.HALF_UP).doubleValue());
-                                        }
-                                        currentCell.setCellStyle(styleCurrency);
-                                        currentCell = currentRow.createCell(currentColumn++);
-                                        if (currentClassDebit.compareTo(currentClassCredit) <= 0) {
-                                                currentCell.setCellValue(currentClassCredit.subtract(currentClassDebit)
-                                                                .setScale(2, RoundingMode.HALF_UP).doubleValue());
-                                        }
-                                        currentCell.setCellStyle(styleCurrency);
+                                // currentCell = currentRow.createCell(currentColumn++);
+                                // if (currentClassDebit.compareTo(currentClassCredit) > 0) {
+                                // currentCell.setCellValue(currentClassDebit.subtract(currentClassCredit)
+                                // .setScale(2, RoundingMode.HALF_UP).doubleValue());
+                                // }
+                                // currentCell.setCellStyle(styleCurrency);
+                                // currentCell = currentRow.createCell(currentColumn++);
+                                // if (currentClassDebit.compareTo(currentClassCredit) <= 0) {
+                                // currentCell.setCellValue(currentClassCredit.subtract(currentClassDebit)
+                                // .setScale(2, RoundingMode.HALF_UP).doubleValue());
+                                // }
+                                // currentCell.setCellStyle(styleCurrency);
 
-                                        currentRow = currentSheet.createRow(currentLine++);
-                                        currentClass = balanceRecord.getAccountingAccountClassLabel();
-                                        currentClassDebit = new BigDecimal(0f);
-                                        currentClassCredit = new BigDecimal(0f);
-                                }
+                                // currentRow = currentSheet.createRow(currentLine++);
+                                // currentClass = balanceRecord.getAccountingAccountClassLabel();
+                                // currentClassDebit = new BigDecimal(0f);
+                                // currentClassCredit = new BigDecimal(0f);
+                                // }
                         }
+
+                        currentRow = currentSheet.createRow(currentLine++);
+                        currentRow = currentSheet.createRow(currentLine++);
+                        currentColumn = 0;
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("");
+                        currentCell.setCellStyle(styleDate);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Total de la classe " + currentClass);
+                        currentCell.setCellStyle(recordCellStyle);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue(currentClassDebit.setScale(2, RoundingMode.HALF_EVEN)
+                                        .doubleValue());
+
+                        currentCell.setCellStyle(styleCurrency);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue(currentClassCredit.setScale(2, RoundingMode.HALF_EVEN)
+                                        .doubleValue());
+                        currentCell.setCellStyle(styleCurrency);
+
+                        currentCell = currentRow.createCell(currentColumn++);
+                        if (currentClassDebit.compareTo(currentClassCredit) > 0) {
+                                currentCell.setCellValue(currentClassDebit.subtract(currentClassCredit)
+                                                .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                        }
+                        currentCell.setCellStyle(styleCurrency);
+                        currentCell = currentRow.createCell(currentColumn++);
+                        if (currentClassDebit.compareTo(currentClassCredit) <= 0) {
+                                currentCell.setCellValue(currentClassCredit.subtract(currentClassDebit)
+                                                .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                        }
+                        currentCell.setCellStyle(styleCurrency);
+
+                        currentRow = currentSheet.createRow(currentLine++);
+                        currentClass = balanceRecords.get(balanceRecords.size() - 1).getAccountingAccountClassLabel();
+                        currentClassDebit = new BigDecimal(0f);
+                        currentClassCredit = new BigDecimal(0f);
                 }
 
                 // Accumulation
