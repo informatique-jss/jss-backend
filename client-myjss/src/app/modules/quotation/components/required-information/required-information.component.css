@@ -1,0 +1,29 @@
+.download-card {
+    cursor: pointer;
+    border: 4px dashed #ccccccb9;
+    text-align: center;
+    padding: 20px;
+    transition: border-color 0.3s ease;
+}
+
+.download-card:hover {
+    border-color: var(--ar-secondary);
+}
+
+.download-card.dragover {
+    border-color: var(--ar-secondary);
+}
+
+.max-size {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.card {
+    background-color: #F6F9FC;
+    padding: 2rem;
+}
+
+.light-grey {
+    color: var(--ar-gray-500);
+}

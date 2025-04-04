@@ -7,6 +7,7 @@ import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
+import { GenericDatetimePickerComponent } from '../forms/generic-datetime-picker/generic-datetime-picker.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
@@ -37,6 +38,7 @@ const routes: Routes = [{}];
     GenericTextareaComponent,
     DoubleButtonsComponent,
     GenericToggleComponent,
+    GenericDatetimePickerComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
     AutocompleteCityComponent,
@@ -50,6 +52,7 @@ const routes: Routes = [{}];
     GenericTextareaComponent,
     DoubleButtonsComponent,
     GenericToggleComponent,
+    GenericDatetimePickerComponent,
     GenericSwiperComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
 @Component({
-  selector: 'app-services-selection',
+  selector: 'services-selection',
   templateUrl: './services-selection.component.html',
   styleUrls: ['./services-selection.component.css'],
   standalone: false

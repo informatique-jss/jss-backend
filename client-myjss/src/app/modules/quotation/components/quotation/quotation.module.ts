@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { IdentificationComponent } from '../identification/identification.component';
+import { RequiredInformationComponent } from '../required-information/required-information.component';
 import { ServicesSelectionComponent } from '../services-selection/services-selection.component';
 import { QuotationComponent } from './quotation.component';
 
@@ -14,6 +15,7 @@ const routes: Routes = [
     children: [
       { path: 'identification', component: IdentificationComponent },
       { path: 'services-selection', component: ServicesSelectionComponent },
+      { path: 'required-information', component: RequiredInformationComponent },
     ]
   },
 ];
@@ -29,7 +31,8 @@ const routes: Routes = [
   ],
   declarations: [QuotationComponent,
     IdentificationComponent,
-    ServicesSelectionComponent
+    ServicesSelectionComponent,
+    RequiredInformationComponent,
   ]
 })
 export class QuotationModule { }
