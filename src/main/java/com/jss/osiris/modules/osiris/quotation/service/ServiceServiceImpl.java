@@ -73,7 +73,6 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire) {
         Service service = new Service();
         if (serviceTypes.size() > 1)

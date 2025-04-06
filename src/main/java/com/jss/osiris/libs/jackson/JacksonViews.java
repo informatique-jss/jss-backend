@@ -1,7 +1,7 @@
 package com.jss.osiris.libs.jackson;
 
 public class JacksonViews {
-    public static class MyJssView {
+    public static class MyJssDetailedView {
     }
 
     public static class OsirisDetailedView {

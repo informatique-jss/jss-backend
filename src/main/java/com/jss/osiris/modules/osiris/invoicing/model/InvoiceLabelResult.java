@@ -7,25 +7,25 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 
 public class InvoiceLabelResult {
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String billingLabel;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String billingLabelAddress;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String cedexComplement;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String billingLabelPostalCode;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String billingLabelComplementCedex;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private City billingLabelCity;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Country billingLabelCountry;
 
     private BillingLabelType billingLabelType;
@@ -33,7 +33,7 @@ public class InvoiceLabelResult {
     private String billingLabelIntercommunityVat;
     private Boolean isCommandNumberMandatory;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String commandNumber;
     private String labelOrigin;
 

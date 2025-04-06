@@ -9,37 +9,37 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public class BillingClosureReceiptValue {
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private LocalDateTime eventDateTime;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String eventDateString;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String eventDescription;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String eventCbLink;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal creditAmount;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal debitAmount;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private boolean displayBottomBorder;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private LocalDate directDebitTransfertDate;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Responsable responsable;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String affaireLists;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String serviceLists;
 
     public BillingClosureReceiptValue() {

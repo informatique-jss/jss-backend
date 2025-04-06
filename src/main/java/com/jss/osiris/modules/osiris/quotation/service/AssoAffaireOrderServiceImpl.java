@@ -53,6 +53,7 @@ import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -142,6 +143,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     ServiceService serviceService;
+
+    @Autowired
+    ServiceTypeService serviceTypeService;
 
     @Autowired
     QuotationService quotationService;
@@ -875,5 +879,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
             }
         return totalPrice;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Service addServiceToAssoAffaireOrder(ServiceType service, AssoAffaireOrder asso) {
+        service = serviceTypeService.getServiceType(service.getId());
+        asso = getAssoAffaireOrder(asso.getId());
+        return serviceService.getServiceForMultiServiceTypesAndAffaire(Arrays.asList(service), asso.getAffaire());
     }
 }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { AppService } from '../../../../libs/app.service';
 import { ConstantService } from '../../../../libs/constant.service';
 import { validateSiret } from '../../../../libs/CustomFormsValidatorsHelper';
 import { Affaire } from '../../../my-account/model/Affaire';
@@ -7,6 +8,8 @@ import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
 import { AffaireService } from '../../../my-account/services/affaire.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
+import { Responsable } from '../../../profile/model/Responsable';
+import { LoginService } from '../../../profile/services/login.service';
 import { AffaireType, individual, notIndividual } from '../../model/AffaireType';
 import { IQuotation } from '../../model/IQuotation';
 import { order, quotation, QuotationType } from '../../model/QuotationType';
@@ -23,7 +26,6 @@ export class IdentificationComponent implements OnInit {
 
   selectedQuotationType: QuotationType = quotation;
   familyGroupService: ServiceFamilyGroup[] = [];
-  @Input() selectedFamilyGroupService: ServiceFamilyGroup | undefined;
   @Input() hideFamilyGroupServiceSelection: boolean = false;
 
   quotation: IQuotation = {} as IQuotation;
@@ -38,36 +40,69 @@ export class IdentificationComponent implements OnInit {
   notIndividual: AffaireType = notIndividual;
   individual: AffaireType = individual;
 
+  currentUser: Responsable | undefined;
+  isSavingQuotation: boolean = false;
+
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyGroupService: ServiceFamilyGroupService,
     private affaireService: AffaireService,
     private constantService: ConstantService,
     private quotationService: QuotationService,
     private orderService: CustomerOrderService,
+    private loginService: LoginService,
+    private appService: AppService
   ) { }
 
   idenficationForm = this.formBuilder.group({});
 
   ngOnInit() {
     this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => this.familyGroupService = response);
-    if (this.selectedFamilyGroupService)
+    this.loginService.getCurrentUser().subscribe(response => {
+      this.currentUser = response;
       this.initIQuotation();
-  }
-
-  selectFamilyGroupService(item: ServiceFamilyGroup) {
-    this.selectedFamilyGroupService = item;
+    })
     this.initIQuotation();
   }
 
+  selectFamilyGroupService(item: ServiceFamilyGroup) {
+    this.initIQuotation();
+    this.quotation.serviceFamilyGroup = item;
+  }
+
   initIQuotation() {
-    if (this.quotationService.getCurrentDraftQuotation()) {
-      this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotation()!)).subscribe(response => this.quotation = response);
-    } else if (this.orderService.getCurrentDraftOrder()) {
-      this.orderService.getCustomerOrder(parseInt(this.quotationService.getCurrentDraftQuotation()!)).subscribe(response => this.quotation = response);
+    if (this.currentUser) {
+      if (this.quotationService.getCurrentDraftQuotationId()) {
+        this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
+          this.quotation = response;
+          this.refreshIsRegisteredAffaire();
+        });
+        return;
+      } else if (this.orderService.getCurrentDraftOrderId()) {
+        this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
+          this.quotation = response
+          this.refreshIsRegisteredAffaire();
+        });
+        return;
+      }
     } else {
-      this.quotation.assoAffaireOrders = [];
-      this.addAffaire();
+      if (this.quotationService.getCurrentDraftQuotation()) {
+        this.quotation = this.quotationService.getCurrentDraftQuotation()!;
+        this.refreshIsRegisteredAffaire();
+        return;
+      } else if (this.orderService.getCurrentDraftOrder()) {
+        this.quotation = this.orderService.getCurrentDraftOrder()!;
+        this.refreshIsRegisteredAffaire();
+        return;
+      }
     }
+    this.quotation.assoAffaireOrders = [];
+    this.addAffaire();
+  }
+
+  refreshIsRegisteredAffaire() {
+    if (this.quotation)
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++)
+        this.isRegisteredAffaire[i] = this.quotation.assoAffaireOrders[i].affaire.siret != null && this.quotation.assoAffaireOrders[i].affaire.siret != undefined && this.quotation.assoAffaireOrders[i].affaire.siret != "";
   }
 
   addAffaire() {
@@ -83,7 +118,6 @@ export class IdentificationComponent implements OnInit {
       this.currentOpenedPanel = undefined;
     else
       this.currentOpenedPanel = index;
-
   }
 
   deleteAffaire(indexAsso: number) {
@@ -142,17 +176,36 @@ export class IdentificationComponent implements OnInit {
   }
 
   startQuotation() {
+    this.isSavingQuotation = true;
     if (this.selectedQuotationType)
-      if (this.selectedQuotationType.id == quotation.id) {
-        this.quotationService.saveQuotation(this.quotation).subscribe(response => {
-          this.quotation = response;
-          this.quotationService.setCurrentDraftQuotationId(this.quotation.id);
-        })
-      } else if (this.selectedQuotationType.id == order.id) {
-        this.orderService.saveOrder(this.quotation).subscribe(response => {
-          this.quotation = response;
-          this.orderService.setCurrentDraftOrderId(this.quotation.id);
-        })
+      if (this.currentUser) {
+        if (this.selectedQuotationType.id == quotation.id) {
+          this.quotation.isQuotation = true;
+          this.quotationService.saveQuotation(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.quotationService.setCurrentDraftQuotationId(this.quotation.id);
+            this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
+            this.appService.openRoute(undefined, "quotation", undefined);
+          })
+        } else if (this.selectedQuotationType.id == order.id) {
+          this.quotation.isQuotation = false;
+          this.orderService.saveOrder(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.orderService.setCurrentDraftOrderId(this.quotation.id);
+            this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
+            this.appService.openRoute(undefined, "quotation", undefined);
+          })
+        }
+      } else {
+        if (this.selectedQuotationType.id == quotation.id) {
+          this.quotation.isQuotation = true;
+          this.quotationService.setCurrentDraftQuotation(this.quotation);
+        } else if (this.selectedQuotationType.id == order.id) {
+          this.quotation.isQuotation = false;
+          this.orderService.setCurrentDraftOrder(this.quotation);
+        }
+        this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
+        this.appService.openRoute(undefined, "quotation", undefined);
       }
   }
 

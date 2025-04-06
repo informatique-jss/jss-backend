@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
@@ -15,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
@@ -23,18 +25,21 @@ public class ServiceFamily implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@Column(nullable = false)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String label;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String customLabel;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String code;
+
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private String myJssIcon;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family_group")
@@ -42,8 +47,12 @@ public class ServiceFamily implements Serializable, IId {
 	private ServiceFamilyGroup serviceFamilyGroup;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String comment;
+
+	@OneToMany(mappedBy = "serviceFamily")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private List<ServiceType> services;
 
 	public Integer getId() {
 		return id;
@@ -91,6 +100,22 @@ public class ServiceFamily implements Serializable, IId {
 
 	public void setCustomLabel(String customLabel) {
 		this.customLabel = customLabel;
+	}
+
+	public String getMyJssIcon() {
+		return myJssIcon;
+	}
+
+	public void setMyJssIcon(String myJssIcon) {
+		this.myJssIcon = myJssIcon;
+	}
+
+	public List<ServiceType> getServices() {
+		return services;
+	}
+
+	public void setServices(List<ServiceType> services) {
+		this.services = services;
 	}
 
 }

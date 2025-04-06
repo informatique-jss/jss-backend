@@ -1,5 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { AppService } from '../../../../libs/app.service';
+import { ConstantService } from '../../../../libs/constant.service';
+import { ServiceType } from '../../../my-account/model/ServiceType';
+import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
+import { QuotationService } from '../../../my-account/services/quotation.service';
+import { ServiceService } from '../../../my-account/services/service.service';
+import { Responsable } from '../../../profile/model/Responsable';
+import { LoginService } from '../../../profile/services/login.service';
+import { IQuotation } from '../../model/IQuotation';
+import { ServiceFamily } from '../../model/ServiceFamily';
+import { ServiceFamilyService } from '../../services/service.family.service';
 
 @Component({
   selector: 'services-selection',
@@ -9,66 +20,160 @@ import { FormBuilder } from '@angular/forms';
 })
 export class ServicesSelectionComponent implements OnInit {
 
-  affaires = [
-    {
-      id: 1,
-      title: '10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ',
-      services: [
-        { id: 1, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
-        { id: 2, label: 'Changement de dirigeant - SC / SCP', icon: 'ai-cross' },
-        { id: 3, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
-        { id: 4, label: 'Transfert', icon: 'ai-cross' }
-      ]
-    },
-    {
-      id: 2,
-      title: '10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ',
-      services: [
-        { id: 1, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
-        { id: 4, label: 'Transfert', icon: 'ai-cross' }
-      ]
-    },
-    {
-      id: 3,
-      title: '10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ',
-      services: [
-        { id: 1, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
-        { id: 4, label: 'Transfert', icon: 'ai-cross' }
-      ]
-    }
-  ];
-
-  selectedCardId: number | null = null;
-
-  servicesSearched: string[] | null = null;
+  serviceFamilies: ServiceFamily[] = [];
+  selectedServiceFamily: ServiceFamily | undefined;
+  selectedAssoIndex: number | null = null;
+  searchtext: string = '';
+  quotation: IQuotation | undefined;
+  currentUser: Responsable | undefined;
+  applyToAllAffaires: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
+    private serviceFamilyService: ServiceFamilyService,
+    private constantService: ConstantService,
+    private quotationService: QuotationService,
+    private orderService: CustomerOrderService,
+    private loginService: LoginService,
+    private appService: AppService,
+    private serviceService: ServiceService
   ) { }
 
   servicesForm = this.formBuilder.group({});
 
 
   ngOnInit() {
+    this.loginService.getCurrentUser().subscribe(response => {
+      this.currentUser = response;
+      this.initIQuotation();
+    })
+    this.initIQuotation();
   }
 
-  searchServices() {
-    throw new Error('Method not implemented.');
-  }
-
-  // Méthode pour sélectionner une carte
-  selectCard(affaireId: number, event: Event): void {
-    // Empêcher la propagation du clic si c'est un clic sur un pill
-    if ((event.target as HTMLElement).closest('.pill')) {
-      return;
+  initIQuotation() {
+    if (this.currentUser) {
+      if (this.quotationService.getCurrentDraftQuotationId()) {
+        this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
+          this.quotation = response;
+          this.refreshServices();
+        });
+      } else if (this.orderService.getCurrentDraftOrderId()) {
+        this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
+          this.quotation = response
+          this.refreshServices();
+        });
+      }
+    } else {
+      if (this.quotationService.getCurrentDraftQuotation()) {
+        this.quotation = this.quotationService.getCurrentDraftQuotation()!;
+        this.refreshServices();
+      } else if (this.orderService.getCurrentDraftOrder()) {
+        this.quotation = this.orderService.getCurrentDraftOrder()!;
+        this.refreshServices();
+      }
     }
-
-    // Toggle de la sélection
-    this.selectedCardId = this.selectedCardId === affaireId ? null : affaireId;
   }
 
-  // Méthode pour gérer le clic sur les pills
-  deleteService(event: Event, serviceIdToDelete: number): void {
-    event.stopPropagation();
+  refreshServices() {
+    this.selectedAssoIndex = 0;
+    if (this.quotation && this.quotation.serviceFamilyGroup)
+      this.serviceFamilyService.getServiceFamiliesForFamilyGroup(this.quotation.serviceFamilyGroup.id).subscribe(response => {
+        this.serviceFamilies = response;
+        this.selectedServiceFamily = this.serviceFamilies[0];
+      });
+  }
+
+  selectCard(affaireId: number) {
+    this.selectedAssoIndex = affaireId;
+  }
+
+  selecteServiceFamily(serviceFamily: ServiceFamily) {
+    this.selectedServiceFamily = serviceFamily;
+  }
+
+  addServiceToCurrentAffaire(service: ServiceType) {
+    if (this.quotation && this.selectedAssoIndex != null)
+      if (this.currentUser) {
+        if (!this.applyToAllAffaires)
+          this.serviceService.addServiceToAssoAffaireOrder(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex]).subscribe(response => {
+            if (!this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services)
+              this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services = [];
+            this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services.push(response);
+          })
+        else
+          for (let asso of this.quotation.assoAffaireOrders) {
+            let index = this.quotation.assoAffaireOrders.indexOf(asso);
+            this.serviceService.addServiceToAssoAffaireOrder(service, this.quotation.assoAffaireOrders[index]).subscribe(response => {
+              if (!this.quotation!.assoAffaireOrders[index].services)
+                this.quotation!.assoAffaireOrders[index].services = [];
+              this.quotation!.assoAffaireOrders[index].services.push(response);
+            })
+          }
+      } else {
+        this.serviceService.getServiceForServiceTypeAndAffaire(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire).subscribe(response => {
+          if (!this.applyToAllAffaires) {
+            if (!this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services)
+              this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services = [];
+            this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services.push(response);
+          } else if (this.quotation) {
+            for (let asso of this.quotation.assoAffaireOrders) {
+              let index = this.quotation.assoAffaireOrders.indexOf(asso);
+              if (!this.quotation!.assoAffaireOrders[index!].services)
+                this.quotation!.assoAffaireOrders[index].services = [];
+              this.quotation!.assoAffaireOrders[index].services.push(response);
+            }
+          }
+        })
+      }
+  }
+
+  removeServiceFromCurrentAffaire(service: ServiceType, assoIndex: number) {
+    if (this.quotation)
+      if (this.currentUser) {
+        this.serviceService.addServiceToAssoAffaireOrder(service, this.quotation.assoAffaireOrders[assoIndex]).subscribe(response => {
+          if (!this.quotation!.assoAffaireOrders[assoIndex].services)
+            this.quotation!.assoAffaireOrders[assoIndex].services = [];
+          this.quotation!.assoAffaireOrders[assoIndex].services.push(response);
+        })
+      } else {
+        this.quotation!.assoAffaireOrders[assoIndex].services.splice(this.getServiceIndexInCurrentAffaire(service), 1);
+      }
+  }
+
+  getServiceIndexInCurrentAffaire(service: ServiceType): number {
+    if (this.quotation && this.selectedAssoIndex != null)
+      for (let asso of this.quotation.assoAffaireOrders)
+        if (this.quotation.assoAffaireOrders.indexOf(asso) == this.selectedAssoIndex && asso.services)
+          for (let serviceAsso of asso.services)
+            if (serviceAsso.serviceType.id == service.id) {
+              return asso.services.indexOf(serviceAsso);
+            }
+    return -1;
+  }
+
+  canSaveQuotation() {
+    if (this.quotation)
+      for (let asso of this.quotation.assoAffaireOrders)
+        if (!asso.services || asso.services.length == 0)
+          return false;
+    return true;
+  }
+
+  saveQuotation() {
+    if (this.quotation) {
+      if (!this.currentUser) {
+        if (this.quotation.isQuotation) {
+          this.quotationService.setCurrentDraftQuotation(this.quotation);
+        } else {
+          this.orderService.setCurrentDraftOrder(this.quotation);
+        }
+      }
+      this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
+      this.appService.openRoute(undefined, "quotation", undefined);
+    }
+  }
+
+  goBackQuotation() {
+
   }
 }
