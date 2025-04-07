@@ -12,6 +12,7 @@ import { PostService } from '../../services/post.service';
   selector: 'practical-sheets',
   templateUrl: './practical-sheets.component.html',
   styleUrls: ['./practical-sheets.component.css'],
+  standalone: false
 })
 
 export class PracticalSheetsComponent implements OnInit {
@@ -48,15 +49,15 @@ export class PracticalSheetsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loading = false;
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
       if (response) {
         this.myJssCategories.push({ id: null, name: 'Toutes les categories', slug: "all-categories", categoryOrder: 1 });
         this.myJssCategories.push(...response);
         this.selectedMyJssCategory = this.myJssCategories[0];
         this.secondSelectedMyJssCategory = this.myJssCategories[0];
-        this.postService.getFirstPostsByMyJssCategory(this.secondSearchText, undefined).subscribe(response => {
-          if (response) {
+        this.postService.getFirstPostsByMyJssCategory(this.secondSearchText, undefined).subscribe({
+          next: response => {
+            this.loading = true;
             for (let post of response) {
               for (let category of post.myJssCategories) {
                 if (category.id) {
@@ -66,17 +67,18 @@ export class PracticalSheetsComponent implements OnInit {
                 }
               }
             }
-          }
+          },
+          complete: () => this.loading = false
         });
       }
     });
     this.getTopPosts();
     this.getTendencyPosts();
     this.getMostSeenPosts();
+    console.log(this.loading);
   }
 
   practicalSheetsForm = this.formBuilder.group({});
-
 
   searchForPosts() {
     clearTimeout(this.debounce);
@@ -87,28 +89,26 @@ export class PracticalSheetsComponent implements OnInit {
     }, 500);
   }
 
-  searchForSecondPosts() {
-    clearTimeout(this.debounce);
-    this.secondSearchResults = [];
-    this.debounce = setTimeout(() => {
-      this.searchSecondPosts();
-    }, 500);
-  }
-
   searchPosts() {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
 
     if (this.searchText && this.searchText.length > 2 && this.selectedMyJssCategory)
       this.searchObservableRef = this.postService.searchPostsByMyJssCategory(this.searchText, this.selectedMyJssCategory).subscribe(response => {
-        this.loading = false;
         if (!this.searchResults)
           this.searchResults = [];
         if (response)
           this.searchResults.push(...response);
       });
-    else
-      this.loading = false;
+    this.loading = false;
+  }
+
+  searchForSecondPosts() {
+    clearTimeout(this.debounce);
+    this.secondSearchResults = [];
+    this.debounce = setTimeout(() => {
+      this.searchSecondPosts();
+    }, 500);
   }
 
   searchSecondPosts() {
@@ -187,7 +187,7 @@ export class PracticalSheetsComponent implements OnInit {
 
     let highlightedText = text;
     if (result.length > 0) {
-      result.forEach(item => {
+      result.forEach((item: { item: any; }) => {
         const wordToHighlight = item.item;
         const regex = new RegExp(`\\b${wordToHighlight}\\b`, 'g');
         highlightedText = highlightedText.replace(regex, `<mark style="background-color: yellow;">${wordToHighlight}</mark>`);

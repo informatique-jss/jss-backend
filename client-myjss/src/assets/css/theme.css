@@ -20283,9 +20283,7 @@ h1.secondary-heading,
   background-color: #1c2d4199;
 }
 
-.custom-input-group {
-  background-color: white;
-}
+
 
 .btn-search {
   color: var(--ar-blue-dark-bg) !important;
@@ -20299,4 +20297,8 @@ h1.secondary-heading,
 
 .dark-blue-dropdown {
   background-color: var(--ar-blue-dark-bg);
+}
+
+.custom-input-group {
+  background-color: white;
 }

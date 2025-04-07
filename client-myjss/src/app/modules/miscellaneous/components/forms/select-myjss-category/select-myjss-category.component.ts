@@ -8,11 +8,14 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 @Component({
   selector: 'select-myjss-category',
   templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css']
+  styleUrls: ['../generic-select/generic-select.component.css'],
+  standalone: false
 })
 export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCategory> implements OnInit {
-  @Input() types: MyJssCategory[] = [] as Array<MyJssCategory>;
+  types: MyJssCategory[] = [] as Array<MyJssCategory>;
   @Input() additionnalType: MyJssCategory = {} as MyJssCategory;
+
+  //   @Output() override modelChange = new EventEmitter<MyJssCategory>();
 
   constructor(private formBuild: UntypedFormBuilder,
     private myJssCategoryService: MyJssCategoryService, private appService3: AppService) {
@@ -23,6 +26,12 @@ export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCa
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
       this.types.push(this.additionnalType);
       this.types.push(...response);
-    })
+      this.selectedType = this.types[0];
+
+      // if (!this.model && this.types.length > 0) {
+      //   this.model = this.types[0];
+      //   this.modelChange.emit(this.model);
+      // }
+    });
   }
 }

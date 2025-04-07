@@ -8,7 +8,8 @@ import { DocumentService } from '../../../my-account/services/document.service';
 @Component({
   selector: 'mandatory-documents',
   templateUrl: './mandatory-documents.component.html',
-  styleUrls: ['./mandatory-documents.component.css']
+  styleUrls: ['./mandatory-documents.component.css'],
+  standalone: false
 })
 export class MandatoryDocumentsComponent implements OnInit {
   debounce: any;

@@ -7,14 +7,15 @@
     </div>
     <div class="w-100 justify-content-between my-3">
       <div class="col-12">
-        <div class="input-group custom-input-group">
+        <div class="input-group custom-input-group align-items-center">
           <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="practicalSheetsForm"
             propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
             (onFormChange)="searchForPosts()" class="btn-search" [icon]="'search'"></generic-input>
 
           <div *ngIf="loading" class="d-flex spinner-border rounded-circle text-dark" role="status">
-            <span class="visually-hidden"></span>
+            <span class="visually-hidden">chargement...</span>
           </div>
+
           <button *ngIf="searchText" class="btn btn-search" (click)="clearSearch()">
             <i class="ai ai-cross-alt"></i>
           </button>
@@ -53,19 +54,26 @@
     <generic-swiper [items]="tendencyPosts" title="Articles à la une">
       <ng-template let-post>
         <div class="card card-carousel">
-          <img [src]="(post.media && post.media.urlThumbnail) ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg'"
-            class="card-img-top" alt="Card image">
+          <!-- <img [src]="(post.media && post.media.urlThumbnail) ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg'"
+            class="card-img-top" alt="Card image"> -->
+          <div
+            [ngStyle]="{'background-image': 'url(' + (post.media && post.media.urlThumbnail ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg') + ')'}"
+            class="card-img-top">
+          </div>
           <div class="card-body">
             <div class="mb-2">
               <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
               <span class="fs-xs opacity-20 mx-3">|</span>
               <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]" href="#">{{post.postTags[0].name}}</a>
             </div>
-            <h4 class="card-title">{{post.titleText}}</h4>
-            <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
+            <a class="text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+              <h4 class="card-title">{{post.titleText}}</h4>
+              <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
+            </a>
+            <hr>
             <a class="d-flex text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
               <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
-              <h6 class="ps-3 pt-2 mb-0 text-color-post-carousel">{{post.fullAuthor.name}}</h6>
+              <h6 class="ps-3 pt-2 mb-0">{{post.fullAuthor.name}}</h6>
             </a>
           </div>
         </div>
@@ -78,8 +86,10 @@
   <generic-swiper [items]="topPosts" title="Nos derniers articles">
     <ng-template let-post>
       <div class="card card-carousel">
-        <img [src]="(post.media && post.media.urlThumbnail) ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg'"
+        <div
+          [ngStyle]="{'background-image': 'url(' + (post.media && post.media.urlThumbnail ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg') + ')'}"
           class="card-img-top" alt="Card image">
+        </div>
         <div class="card-body">
           <div class="mb-2">
             <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
@@ -90,7 +100,7 @@
           <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
           <a class="d-flex text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
             <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
-            <h6 class="ps-3 pt-2 mb-0 text-color-post-carousel">{{post.fullAuthor.name}}</h6>
+            <h6 class="ps-3 pt-2 mb-0">{{post.fullAuthor.name}}</h6>
           </a>
         </div>
       </div>
@@ -103,8 +113,10 @@
     <generic-swiper [items]="mostSeenPosts" title="Articles les plus vus">
       <ng-template let-post>
         <div class="card card-carousel">
-          <img [src]="(post.media && post.media.urlThumbnail) ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg'"
+          <div
+            [ngStyle]="{'background-image': 'url(' + (post.media && post.media.urlThumbnail ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg') + ')'}"
             class="card-img-top" alt="Card image">
+          </div>
           <div class="card-body">
             <div class="mb-2">
               <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
@@ -115,7 +127,7 @@
             <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
             <a class="d-flex text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
               <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
-              <h6 class="ps-3 pt-2 mb-0 text-color-post-carousel">{{post.fullAuthor.name}}</h6>
+              <h6 class="ps-3 pt-2 mb-0">{{post.fullAuthor.name}}</h6>
             </a>
           </div>
         </div>
@@ -142,7 +154,8 @@
           <i class="ai ai-cross-alt"></i>
         </button>
 
-        <select-myjss-category [(model)]="secondSelectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+        <select-myjss-category class="cursor-pointer" [additionnalType]="this.myJssCategories[0]"
+          [(model)]="secondSelectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
           propertyName="secondSelectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
       </div>
     </div>

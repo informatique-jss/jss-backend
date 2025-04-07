@@ -8,6 +8,7 @@ import { GenericFormComponent } from '../generic-form.components';
 export abstract class GenericSelectComponent<T> extends GenericFormComponent implements OnInit {
 
   @Output() selectionChange: EventEmitter<T> = new EventEmitter();
+  selectedType: T | undefined;
 
   abstract types: T[];
   constructor(

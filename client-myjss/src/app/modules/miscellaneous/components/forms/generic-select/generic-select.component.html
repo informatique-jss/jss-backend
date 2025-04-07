@@ -1,5 +1,6 @@
 <div class="full-width" [formGroup]="form!">
-  <select class="form-control" [formControlName]="propertyName" [required]="isMandatory" [compareWith]="compareWithId">
+  <select class="form-control" [formControlName]="propertyName" [required]="isMandatory" [compareWith]="compareWithId"
+    [(ngModel)]="selectedType">
     <option *ngFor="let type of types" [ngValue]="type">
       {{ displayLabel(type) }}
     </option>
