@@ -6,7 +6,7 @@
     <div class="row">
       <!-- Afficher les cartes avec ngFor -->
       <div *ngFor="let affaire of affaires" class="col-12 col-sm-6 col-lg-4 my-2">
-        <div class="card rounded-1 d-flex flex-column h-100 p-4 "
+        <div class="card white-card rounded-1 d-flex flex-column h-100 p-4 "
           [ngClass]="{'selected': selectedCardId === affaire.id}" (click)="selectCard(affaire.id, $event)">
           <div class="row d-flex flex-row align-items-center">
             <i class="ai-briefcase col-1"></i>

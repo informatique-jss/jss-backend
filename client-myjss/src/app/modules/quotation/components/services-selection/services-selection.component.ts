@@ -56,18 +56,15 @@ export class ServicesSelectionComponent implements OnInit {
     throw new Error('Method not implemented.');
   }
 
-  // Méthode pour sélectionner une carte
   selectCard(affaireId: number, event: Event): void {
-    // Empêcher la propagation du clic si c'est un clic sur un pill
+    // Do not propagate clic if it is on pill
     if ((event.target as HTMLElement).closest('.pill')) {
       return;
     }
 
-    // Toggle de la sélection
     this.selectedCardId = this.selectedCardId === affaireId ? null : affaireId;
   }
 
-  // Méthode pour gérer le clic sur les pills
   deleteService(event: Event, serviceIdToDelete: number): void {
     event.stopPropagation();
   }

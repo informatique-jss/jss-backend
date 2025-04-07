@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'required-information',
@@ -12,11 +13,45 @@ export class RequiredInformationComponent implements OnInit {
   downloadingPercentage: number = 100;
   totalFileWeight: number = 120;
   isDownloading: boolean = this.downloadingPercentage != 100 ? true : false;
-  isError: boolean = false;
+  isError: boolean = true;
 
   uploadedDocuments: string[] = ["MBE", "Copie du diplôme, du titre ou de l’autorisation provisoire ou définitive permettant à la société d’exercer l’activité réglementée"];
 
-  constructor() { }
+  affaires = [
+    {
+      id: 1,
+      title: '10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ',
+      services: [
+        { id: 1, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
+        { id: 2, label: 'Changement de dirigeant - SC / SCP', icon: 'ai-cross' },
+        { id: 3, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
+        { id: 4, label: 'Transfert', icon: 'ai-cross' }
+      ]
+    },
+    {
+      id: 2,
+      title: '10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ',
+      services: [
+        { id: 1, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
+        { id: 4, label: 'Transfert', icon: 'ai-cross' }
+      ]
+    },
+    {
+      id: 3,
+      title: '10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ',
+      services: [
+        { id: 1, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
+        { id: 4, label: 'Transfert', icon: 'ai-cross' }
+      ]
+    }
+  ];
+
+  selectedCardId: number | null = null;
+  servicesSearched: string[] | null = null;
+
+  constructor(private formBuilder: FormBuilder) { }
+
+  servicesForm = this.formBuilder.group({});
 
   ngOnInit() {
   }
@@ -62,6 +97,20 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   deleteFile() {
+    //TODO
+    throw new Error('Method not implemented.');
+  }
+
+  selectCard(affaireId: number, event: Event): void {
+    // Do not propagate clic if it is on pill
+    if ((event.target as HTMLElement).closest('.pill')) {
+      return;
+    }
+
+    this.selectedCardId = this.selectedCardId === affaireId ? null : affaireId;
+  }
+
+  searchServices() {
     //TODO
     throw new Error('Method not implemented.');
   }
