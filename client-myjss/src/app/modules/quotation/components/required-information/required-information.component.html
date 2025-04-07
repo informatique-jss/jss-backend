@@ -32,12 +32,12 @@
           <span>10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ</span>
         </ng-container>
       </strong>
-      <a class="btn btn-secondary rounded-pill col-auto pill ms-3 fs-xs">Transfert de Diège Hors Ressort
+      <a class="btn btn-secondary rounded-pill col-auto pill ms-3 fs-xs">Transfert de Siège Hors Ressort
       </a>
     </div>
     <ul class="nav nav-tabs" role="tablist">
       <li class="nav-item ">
-        <a href="#home" class="nav-link active quotation-tabs" data-bs-toggle="tab" role="tab">
+        <a href="#documents" class="nav-link active quotation-tabs" data-bs-toggle="tab" role="tab">
           Documents
         </a>
       </li>
@@ -70,24 +70,87 @@
 
     <!-- Tabs content -->
     <div class="tab-content quotation-container">
-      <div class="tab-pane fade show active" id="home" role="tabpanel">
+      <div class="tab-pane fade show active" id="documents" role="tabpanel">
+        <h6><i class="ai-circle-info me-2"></i>
+          Information</h6>
         <div class="pb-3">
-          <generic-input [(model)]="servicesSearched" label="Rechercher" [form]="servicesForm"
-            propertyName="servicesSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-            (onFormChange)="searchServices()" [icon]="'search'"></generic-input>
-        </div>
-        <!-- Stacked checkboxes -->
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="ex-check-1">
-          <label class="form-check-label" for="ex-check-1">Check this checkbox</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="ex-check-2" checked>
-          <label class="form-check-label" for="ex-check-2">Uncheck this checkbox</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="ex-check-3" disabled>
-          <label class="form-check-label" for="ex-check-3">Disabled checkbox</label>
+
+          <div class="row mb-3">
+            <div class="col-md-2">
+              <generic-input label="Nombre de salariés" [form]="docInformationForm"
+                [propertyName]="'Nombre de salariés'" [isMandatory]="true" [isDisabled]="false" [maxLength]="150">
+              </generic-input>
+            </div>
+
+            <div class="col-md-2">
+              <generic-datetime-picker label="Date de début d'activité" [form]="docInformationForm" [propertyName]="''"
+                [isMandatory]="true" [isDisabled]="false">
+              </generic-datetime-picker>
+            </div>
+            <div class="col-md-2">
+              <generic-datetime-picker label="Date de début d'activité" [form]="docInformationForm" [propertyName]="''"
+                [isMandatory]="true" [isDisabled]="false">
+              </generic-datetime-picker>
+            </div>
+
+            <div class="col-md-6">
+              <generic-input label="Code APE souhaité (code NAF)" [form]="docInformationForm"
+                [propertyName]="'Code APE souhaité'" [isMandatory]="true" [isDisabled]="false" [maxLength]="150">
+              </generic-input>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <!-- <generic-select label="Catégorisation 1 de l'activité" [form]="docInformationForm"
+                [propertyName]="'Catégorisation 1 activite'" [isMandatory]="true" [isDisabled]="false"
+                [maxLength]="150">
+              </generic-select> -->
+            </div>
+
+            <div class="col-md-6">
+              <generic-input label="Précision" [form]="docInformationForm" [propertyName]="'Precision'"
+                [isMandatory]="true" [isDisabled]="false" [maxLength]="150">
+              </generic-input>
+            </div>
+          </div>
+
+          <!-- Adresse -->
+          <!-- <div class="row mb-3">
+            <div class="col-md-6">
+              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.address" label="Adresse"
+                [form]="docInformationForm" [propertyName]="'address'+indexAsso" [isMandatory]="true" [isDisabled]="false"
+                [maxLength]="100">
+              </generic-input>
+            </div>
+            <div class="col-md-6">
+              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.cedexComplement"
+                label="Complément d'adresse" [form]="docInformationForm" [propertyName]="'cedexComplement'+indexAsso"
+                [isMandatory]="true" [isDisabled]="false" [maxLength]="50">
+              </generic-input>
+            </div>
+          </div> -->
+
+          <!-- Code postal, Ville, Pays -->
+          <!-- <div class="row mb-3">
+            <div class="col-md-4">
+              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.postalCode" label="Code postal"
+                [form]="idenficationForm" [propertyName]="'postalCode'+indexAsso" [isMandatory]="true"
+                [isDisabled]="false" [maxLength]="10">
+              </generic-input>
+            </div>
+            <div class="col-md-4">
+              <autocomplete-city [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.city" label="Ville"
+                [form]="idenficationForm" [propertyName]="'city'+indexAsso" [isMandatory]="true" [isDisabled]="false"
+                [modelCountry]="" [preFilterPostalCode]="quotation.assoAffaireOrders[indexAsso].affaire.postalCode">
+              </autocomplete-city>
+            </div>
+            <div class="col-md-4">
+              <select-country [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.country" label="Pays"
+                [form]="idenficationForm" [propertyName]="'city'+indexAsso" [isMandatory]="true" [isDisabled]="false">
+              </select-country>
+            </div>
+          </div> -->
         </div>
       </div>
     </div>

@@ -52,6 +52,7 @@ export class RequiredInformationComponent implements OnInit {
   constructor(private formBuilder: FormBuilder) { }
 
   servicesForm = this.formBuilder.group({});
+  docInformationForm = this.formBuilder.group({});
 
   ngOnInit() {
   }
