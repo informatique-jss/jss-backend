@@ -13,9 +13,10 @@ import { PostService } from '../../services/post.service';
 declare var tns: any;
 
 @Component({
-  selector: 'app-post',
-  templateUrl: './post.component.html',
-  styleUrls: ['./post.component.css']
+    selector: 'app-post',
+    templateUrl: './post.component.html',
+    styleUrls: ['./post.component.css'],
+    standalone: false
 })
 export class PostComponent implements OnInit, AfterViewInit {
 

@@ -7,9 +7,10 @@ import { Post } from '../../model/Post';
 import { PostService } from '../../services/post.service';
 
 @Component({
-  selector: 'new-articles',
-  templateUrl: './new-articles.component.html',
-  styleUrls: ['./new-articles.component.css']
+    selector: 'new-articles',
+    templateUrl: './new-articles.component.html',
+    styleUrls: ['./new-articles.component.css'],
+    standalone: false
 })
 export class NewArticlesComponent implements OnInit {
 

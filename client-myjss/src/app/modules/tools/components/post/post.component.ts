@@ -1,36 +1,49 @@
-import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { AppService } from '../../../../libs/app.service';
 import { getTimeReading } from '../../../../libs/FormatHelper';
+import { Pagination } from '../../../miscellaneous/model/Pagination';
+import { Mail } from '../../../profile/model/Mail';
+import { Responsable } from '../../../profile/model/Responsable';
+import { Comment } from '../../model/Comment';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
+import { CommentService } from '../../services/comment.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
   selector: 'post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
+  standalone: false
 })
-export class PostComponent implements OnInit {
+export class PostComponent implements OnInit, AfterViewInit {
 
   slug: string | undefined;
   post: Post | undefined;
   relatedPosts: Post[] = [];
-  recentPosts: Post[] = [];;
-  hotPosts: Post[] = [];;
+  recentPosts: Post[] = [];
+  hotPosts: Post[] = [];
 
   speechSynthesisUtterance: SpeechSynthesisUtterance | undefined;
   speechRate: number = 1;
   isPlaying: boolean | undefined;
   audioUrl: string | undefined;
 
-  commments: Comment[] = [];
+  comments: Comment[] = [];
+  newComment: Comment = {} as Comment;
+  newCommentParent: Comment = {} as Comment;
+  createCommentForm = this.formBuilder.group({});
+  commentsPagination: Pagination = {} as Pagination;
+  pageSize: number = 10; // computed
 
-  @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
-
-  constructor(private activatedRoute: ActivatedRoute,
+  constructor(
+    private activatedRoute: ActivatedRoute,
     private postService: PostService,
+    private commentService: CommentService,
+    private formBuilder: FormBuilder,
     private appService: AppService,
   ) { }
 
@@ -38,13 +51,14 @@ export class PostComponent implements OnInit {
 
   ngOnInit() {
     this.slug = this.activatedRoute.snapshot.params['slug'];
-    if (this.slug)
+
+    if (this.slug) {
       this.postService.getPostBySlug(this.slug).subscribe(post => {
         this.post = post;
-        if (this.post) {
-          this.relatedPosts = this.post.relatedPosts;
-        }
+        this.fetchComments(0);
       })
+      this.cancelReply()
+    }
 
     this.postService.getMostSeenPosts().subscribe(posts => {
       this.hotPosts = posts;
@@ -53,6 +67,7 @@ export class PostComponent implements OnInit {
     this.postService.getTopPosts(0).subscribe(posts => {
       this.recentPosts = posts;
     });
+
   }
 
   ngOnDestroy() {
@@ -158,5 +173,68 @@ export class PostComponent implements OnInit {
       this.speechSynthesisUtterance.rate = this.speechRate;
       window.speechSynthesis.speak(this.speechSynthesisUtterance);
     }
+  }
+
+  getResponsableNames(comment: Comment): Responsable {
+    return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastNameInitials || '' } as Responsable;
+  }
+
+  postComment() {
+    if (this.post) {
+      this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
+        this.fetchComments(0);
+      });
+    }
+    this.cancelReply();
+  }
+
+  replyComment(comment: Comment) {
+    this.newComment = { mail: {} as Mail } as Comment;
+    this.newCommentParent = comment;
+    // Scroll to new comment form
+    this.scrollToView("commentForm");
+  }
+
+  scrollToView(anchorId: string) {
+    const element = document.getElementById(anchorId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }
+
+  cancelReply() {
+    this.newComment = { mail: {} as Mail } as Comment;
+    this.newCommentParent = {} as Comment;
+  }
+
+  fetchComments(page: number) {
+    if (this.post) {
+      this.relatedPosts = this.post.relatedPosts;
+      this.activatedRoute.fragment.subscribe(fragment => {
+        if (fragment) this.pageSize = 1000000;
+        this.commentService.getParentCommentsForPost(this.post!.id, page, this.pageSize).subscribe(data => {
+          if (page == 0) {
+            this.comments = data.content;
+          } else {
+            this.comments = this.comments.concat(data.content);
+          }
+
+          if (fragment) {
+            setTimeout(() => {
+              document.getElementById(fragment)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 0);
+          }
+          this.commentsPagination = data.page;
+        });
+      });
+    }
+  }
+
+  showMoreComments() {
+    this.fetchComments(this.commentsPagination.pageNumber + 1);
+  }
+
+  showLessComments() {
+    this.fetchComments(0);
   }
 }

@@ -10,9 +10,10 @@ import { DepartmentService } from '../../services/department.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
-  selector: 'app-department-list',
-  templateUrl: './department-list.component.html',
-  styleUrls: ['./department-list.component.css']
+    selector: 'app-department-list',
+    templateUrl: './department-list.component.html',
+    styleUrls: ['./department-list.component.css'],
+    standalone: false
 })
 export class DepartmentListComponent implements OnInit {
 

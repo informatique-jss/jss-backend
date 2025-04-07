@@ -19,6 +19,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResu
 import com.jss.osiris.modules.osiris.accounting.model.AccountingVatValue;
 import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
 import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
+import com.jss.osiris.modules.osiris.accounting.model.SuspiciousInvoiceResult;
 import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
@@ -549,5 +550,97 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         "         'YYYY-MM')  " +
                         " ")
         List<TreasureResult> getTreasure();
+
+        @Query(nativeQuery = true, value = "" +
+                        " with majoration as ( " +
+                        " select i.id, max(coalesce(suspicious_markup,0)) as suspicious_markup,coalesce((select sum(p.payment_amount) from payment p where p.id_invoice  = i.id and p.is_cancelled = false), 0) as paymentAmount, "
+                        +
+                        " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end   ,', ') as affaire "
+                        +
+                        " from invoice i  " +
+                        " join asso_affaire_order aao on aao.id_customer_order = i.customer_order_id " +
+                        " join service s on s.id_asso_affaire_order  = aao.id " +
+                        " left join service_type st on st.id = s.id_service_type and st.suspicious_markup>0 " +
+                        " join affaire af on af.id = aao.id_affaire " +
+                        " where i.id_invoice_status = :idInvoiceSend " +
+                        " group by i.id " +
+                        " ), t as ( " +
+                        " select t.id as idTiers, coalesce(coalesce(t.denomination, concat(t.firstname, ' ', t.lastname))) as tiers,  m.affaire, "
+                        +
+                        " i.id as idInvoice, sum(coalesce(ii.pre_tax_price, 0)-coalesce(ii.discount_amount,0))-max(m.paymentAmount*0.8) as htAmount, "
+                        +
+                        "  i.created_date as createdDate, dueDaysNumber, " +
+                        "  case when dueDaysNumber >=1100 then 0.9 " +
+                        "  when dueDaysNumber >=900 then 0.8 " +
+                        "  when dueDaysNumber >=600 then 0.75 " +
+                        "  when dueDaysNumber >=400 then 0.7 " +
+                        "  when dueDaysNumber >=180 then 0.6 " +
+                        "  end as appliableRate, " +
+                        " m.suspicious_markup as suspiciousMarkup, t.id_commercial " +
+                        " from (select i.*, cast(:accountingDate as date) - cast(created_date as date)  as dueDaysNumber from  invoice i ) i  "
+                        +
+                        " join invoice_item ii on ii.id_invoice  = i.id " +
+                        " join majoration m on m.id = i.id " +
+                        " join responsable r on r.id = i.id_responsable " +
+                        " join tiers t on t.id = r.id_tiers " +
+                        " where i.id_invoice_status  = :idInvoiceSend " +
+                        " and i.created_date <(cast(:accountingDate as date) -INTERVAL '180 day')  " +
+                        " group by t.id, i.id,i.dueDaysNumber,i.created_date,  m.suspicious_markup, m.affaire, " +
+                        " coalesce(coalesce(t.denomination, concat(t.firstname, ' ', t.lastname))) ) " +
+                        " select  idTiers, tiers,id_commercial as idCommercial,sum(htAmount) as htAmount, " +
+                        " round(sum(htAmount*(appliableRate+suspiciousMarkup )),2) as finalAmount, " +
+                        " count(*) as nbrInvoice, " +
+                        "  affaire, idInvoice, appliableRate,suspiciousMarkup ,dueDaysNumber,createdDate" +
+                        " from t " +
+                        " group by idTiers, tiers,id_commercial, affaire, idInvoice,appliableRate,suspiciousMarkup ,dueDaysNumber,createdDate                      "
+                        +
+                        " ")
+        List<SuspiciousInvoiceResult> getSuspiciousInvoice(LocalDate accountingDate, Integer idInvoiceSend);
+
+        @Query(nativeQuery = true, value = "" +
+                        " with majoration as ( " +
+                        " select i.id, max(coalesce(suspicious_markup,0)) as suspicious_markup,coalesce((select sum(p.payment_amount) from payment p where p.id_invoice  = i.id and p.is_cancelled = false), 0) as paymentAmount, "
+                        +
+                        " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end   ,', ') as affaire "
+                        +
+                        " from invoice i  " +
+                        " join asso_affaire_order aao on aao.id_customer_order = i.customer_order_id " +
+                        " join service s on s.id_asso_affaire_order  = aao.id " +
+                        " left join service_type st on st.id = s.id_service_type and st.suspicious_markup>0 " +
+                        " left join payment p on p.id_invoice  = i.id and p.is_cancelled  = false " +
+                        " join affaire af on af.id = aao.id_affaire " +
+                        " where i.id_invoice_status = :idInvoiceSend " +
+                        " group by i.id " +
+                        " ), t as ( " +
+                        " select t.id as idTiers, coalesce(coalesce(t.denomination, concat(t.firstname, ' ', t.lastname))) as tiers,  m.affaire, "
+                        +
+                        " i.id as idInvoice, sum(coalesce(ii.pre_tax_price, 0)-coalesce(ii.discount_amount,0))-max(m.paymentAmount*0.8) as htAmount, "
+                        +
+                        "  dueDaysNumber, " +
+                        "  case when dueDaysNumber >=1100 then 0.9 " +
+                        "  when dueDaysNumber >=900 then 0.8 " +
+                        "  when dueDaysNumber >=600 then 0.75 " +
+                        "  when dueDaysNumber >=400 then 0.7 " +
+                        "  when dueDaysNumber >=180 then 0.6 " +
+                        "  end as appliableRate, " +
+                        " m.suspicious_markup as suspiciousMarkup, t.id_commercial,i.created_date " +
+                        " from (select i.*, cast(:accountingDate as date) - cast(created_date as date)  as dueDaysNumber from  invoice i ) i  "
+                        +
+                        " join invoice_item ii on ii.id_invoice  = i.id " +
+                        " join majoration m on m.id = i.id " +
+                        " join responsable r on r.id = i.id_responsable " +
+                        " join tiers t on t.id = r.id_tiers " +
+                        " where i.id_invoice_status  = :idInvoiceSend " +
+                        " and i.created_date <(cast(:accountingDate as date) -INTERVAL '180 day')  " +
+                        " group by t.id, i.id,i.dueDaysNumber, m.suspicious_markup, m.affaire,i.created_date, " +
+                        " coalesce(coalesce(t.denomination, concat(t.firstname, ' ', t.lastname))) ) " +
+                        " select  idTiers, tiers,id_commercial as idCommercial,sum(htAmount) as htAmount, " +
+                        " round(sum(htAmount*(appliableRate+suspiciousMarkup )),2) as finalAmount, " +
+                        " count(*) as nbrInvoice " +
+                        " from t " +
+                        " group by idTiers, tiers,id_commercial                      "
+                        +
+                        " ")
+        List<SuspiciousInvoiceResult> getSuspiciousInvoiceByTiers(LocalDate accountingDate, Integer idInvoiceSend);
 
 }

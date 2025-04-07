@@ -9,9 +9,10 @@ import { JssCategoryService } from '../../services/jss.category.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
-  selector: 'articles-category',
-  templateUrl: './articles-category.component.html',
-  styleUrls: ['./articles-category.component.css']
+    selector: 'articles-category',
+    templateUrl: './articles-category.component.html',
+    styleUrls: ['./articles-category.component.css'],
+    standalone: false
 })
 export class ArticlesCategoryComponent implements OnInit {
 

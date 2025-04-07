@@ -8,15 +8,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
@@ -39,6 +46,9 @@ import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
 import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
+import com.jss.osiris.modules.osiris.crm.model.Comment;
+import com.jss.osiris.modules.osiris.crm.service.CommentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 
@@ -53,6 +63,9 @@ public class WordpressController {
 	private final long rateLimit = 10;
 	private LocalDateTime lastFloodFlush = LocalDateTime.now();
 	private int floodFlushDelayMinute = 1;
+
+	@Autowired
+	ValidationHelper validationHelper;
 
 	@Autowired
 	PublishingDepartmentService publishingDepartmentService;
@@ -89,6 +102,12 @@ public class WordpressController {
 
 	@Autowired
 	AnnouncementService announcementService;
+
+	@Autowired
+	CommentService commentService;
+
+	@Autowired
+	MailService mailService;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -364,6 +383,47 @@ public class WordpressController {
 
 		return new ResponseEntity<Announcement>(announcementService.getAnnouncementForWebSite(announcement),
 				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/comments")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<org.springframework.data.domain.Page<Comment>> getParentCommentsForPost(
+			@RequestParam Integer postId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			HttpServletRequest request) {
+
+		detectFlood(request);
+
+		Pageable pageable = PageRequest.of(page, size,
+				Sort.by(Sort.Direction.DESC, "creationDate"));
+
+		return ResponseEntity.ok(commentService.getParentCommentsForPost(pageable, postId));
+	}
+
+	@PostMapping(inputEntryPoint + "/post/comment/add")
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
+			@RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
+			@RequestParam Integer postId)
+			throws OsirisException {
+
+		if (comment != null && postId != null && comment.getMail() != null) {
+
+			if (!validationHelper.validateMail(comment.getMail())) {
+				throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
+			}
+
+			mailService.populateMailId(comment.getMail());
+
+			if (postService.getPost(postId) != null) {
+				return new ResponseEntity<Comment>(commentService.addOrUpdateComment(comment, parentCommentId, postId),
+						HttpStatus.OK);
+			} else {
+				throw new OsirisValidationException("Trying to add a comment on a non-existing post");
+			}
+		}
+		return new ResponseEntity<Comment>(new Comment(), HttpStatus.OK);
 	}
 
 	private ResponseEntity<String> detectFlood(HttpServletRequest request) {

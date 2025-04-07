@@ -26,9 +26,10 @@ import { getCustomerOrderBillingMailList, initTooltips } from '../orders/orders.
 import { getClassForQuotationStatus, getQuotationStatusLabel } from '../quotations/quotations.component';
 
 @Component({
-  selector: 'app-quotation-details',
-  templateUrl: './quotation-details.component.html',
-  styleUrls: ['./quotation-details.component.css']
+    selector: 'app-quotation-details',
+    templateUrl: './quotation-details.component.html',
+    styleUrls: ['./quotation-details.component.css'],
+    standalone: false
 })
 export class QuotationDetailsComponent implements OnInit {
 

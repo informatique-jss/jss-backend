@@ -31,5 +31,10 @@
     <mat-tab label="Trésorerie" *ngIf="canDisplayTreasure()">
       <treasure></treasure>
     </mat-tab>
+    <mat-tab label="Créances douteuses" *ngIf="canDisplaySuspiciousInvoice()">
+      <ng-template matTabContent>
+        <suspicious-invoice></suspicious-invoice>
+      </ng-template>
+    </mat-tab>
   </mat-tab-group>
 </div>

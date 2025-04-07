@@ -35,6 +35,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewCrmModule() {
+    return true;
+  }
+
   canViewConfrereModule() {
     return true;
   }
@@ -160,6 +164,10 @@ export class HabilitationsService {
   }
 
   canDisplayTreasure() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
+  canDisplaySuspiciousInvoice() {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 

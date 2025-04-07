@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'email-communication-preference',
-  templateUrl: './email-communication-preference.component.html',
-  styleUrls: ['./email-communication-preference.component.css']
+    selector: 'email-communication-preference',
+    templateUrl: './email-communication-preference.component.html',
+    styleUrls: ['./email-communication-preference.component.css'],
+    standalone: false
 })
 export class EmailCommunicationPreferenceComponent implements OnInit {
 

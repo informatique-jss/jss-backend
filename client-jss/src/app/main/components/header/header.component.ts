@@ -11,9 +11,10 @@ import { IndexEntityService } from '../../services/index.entity.service';
 import { JssCategoryService } from '../../services/jss.category.service';
 
 @Component({
-  selector: 'main-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+    selector: 'main-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.css'],
+    standalone: false
 })
 export class HeaderComponent implements OnInit {
 

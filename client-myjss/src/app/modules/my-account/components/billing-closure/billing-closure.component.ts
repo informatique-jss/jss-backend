@@ -10,9 +10,10 @@ import { BillingClosureReceiptValue } from '../../model/BillingClosureReceiptVal
 import { BillingClosureService } from '../../services/billing.closure.service';
 
 @Component({
-  selector: 'app-billing-closure',
-  templateUrl: './billing-closure.component.html',
-  styleUrls: ['./billing-closure.component.css']
+    selector: 'app-billing-closure',
+    templateUrl: './billing-closure.component.html',
+    styleUrls: ['./billing-closure.component.css'],
+    standalone: false
 })
 export class BillingClosureComponent implements OnInit {
 

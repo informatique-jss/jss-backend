@@ -85,6 +85,8 @@ public class ServiceType implements Serializable, IId {
 	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
 	private BigDecimal defaultDeboursPriceNonTaxable;
 
+	private Integer suspiciousMarkup;
+
 	public Integer getId() {
 		return id;
 	}
@@ -203,6 +205,14 @@ public class ServiceType implements Serializable, IId {
 
 	public void setHasOnlyAnnouncement(Boolean hasOnlyAnnouncement) {
 		this.hasOnlyAnnouncement = hasOnlyAnnouncement;
+	}
+
+	public Integer getSuspiciousMarkup() {
+		return suspiciousMarkup;
+	}
+
+	public void setSuspiciousMarkup(Integer suspiciousMarkup) {
+		this.suspiciousMarkup = suspiciousMarkup;
 	}
 
 }

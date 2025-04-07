@@ -34,10 +34,10 @@
       <div class="col-2">
         <ul class="nav nav-tabs flex-column" role="tablist">
           <li class="nav-item" *ngFor="let department of departments;">
-            <a class="nav-link" [class.active]="department == selectedTab" (click)="onTabClick(department)">
+            <div class="nav-link" [class.active]="department == selectedTab" (click)="onTabClick(department)">
               <i class="fi-home me-2 "></i>
               {{ department }}
-            </a>
+            </div>
           </li>
         </ul>
       </div>
@@ -46,32 +46,32 @@
         <div *ngIf="selectedTab === 'Direction'" class="mb-4 mb-lg-5 pb-4 px-3" data-simplebar>
           <div class="row row-cols-lg-4  flex-lg-wrap gy-lg-5 mx-n3">
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/36.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Marvin McKinney</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Uber</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/37.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jenny Wilson</h3>
                 <p class="text-body-secondary mb-0">Marketer, Glassdoor</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/38.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Albert Flores</h3>
                 <p class="text-body-secondary mb-0">Product Manager, Google</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
           </div>
         </div>
@@ -80,51 +80,53 @@
         <div *ngIf="selectedTab === 'Commercial'" class="mb-4 mb-lg-5 pb-4 px-3" data-simplebar>
           <div class="row row-cols-lg-4  flex-lg-wrap gy-lg-5 mx-n3">
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/40.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Esther Howard</h3>
                 <p class="text-body-secondary mb-0">VP of Strategy, Stretto Inc.</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/41.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jerome Bell</h3>
                 <p class="text-body-secondary mb-0">Strategic Advisor, Shopify</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
           </div>
         </div>
@@ -133,72 +135,74 @@
         <div *ngIf="selectedTab === 'Annonces'" class="mb-4 mb-lg-5 pb-4 px-3" data-simplebar>
           <div class="row row-cols-lg-4  flex-lg-wrap gy-lg-5 mx-n3">
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/36.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Marvin McKinney</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Uber</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/37.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jenny Wilson</h3>
                 <p class="text-body-secondary mb-0">Marketer, Glassdoor</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/38.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Albert Flores</h3>
                 <p class="text-body-secondary mb-0">Product Manager, Google</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/41.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jerome Bell</h3>
                 <p class="text-body-secondary mb-0">Strategic Advisor, Shopify</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
           </div>
         </div>
@@ -206,79 +210,81 @@
         <div *ngIf="selectedTab === 'Formalités'" class="mb-4 mb-lg-5 pb-4 px-3" data-simplebar>
           <div class="row row-cols-lg-4  flex-lg-wrap gy-lg-5 mx-n3">
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Quelqu'un</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/40.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Esther Howard</h3>
                 <p class="text-body-secondary mb-0">VP of Strategy, Stretto Inc.</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/41.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jerome Bell</h3>
                 <p class="text-body-secondary mb-0">Strategic Advisor, Shopify</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/36.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Marvin McKinney</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Uber</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/37.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jenny Wilson</h3>
                 <p class="text-body-secondary mb-0">Marketer, Glassdoor</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/38.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Albert Flores</h3>
                 <p class="text-body-secondary mb-0">Product Manager, Google</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
           </div>
         </div>
@@ -286,79 +292,81 @@
         <div *ngIf="selectedTab === 'Marketing'" class="mb-4 mb-lg-5 pb-4 px-3" data-simplebar>
           <div class="row row-cols-lg-4  flex-lg-wrap gy-lg-5 mx-n3">
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/36.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Marvin McKinney</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Uber</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/37.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jenny Wilson</h3>
                 <p class="text-body-secondary mb-0">Marketer, Glassdoor</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/38.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Albert Flores</h3>
                 <p class="text-body-secondary mb-0">Product Manager, Google</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/40.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Esther Howard</h3>
                 <p class="text-body-secondary mb-0">VP of Strategy, Stretto Inc.</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/41.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jerome Bell</h3>
                 <p class="text-body-secondary mb-0">Strategic Advisor, Shopify</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
           </div>
         </div>
@@ -366,51 +374,53 @@
         <div *ngIf="selectedTab === 'Rédaction'" class="mb-4 mb-lg-5 pb-4 px-3" data-simplebar>
           <div class="row row-cols-lg-4  flex-lg-wrap gy-lg-5 mx-n3">
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/40.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Esther Howard</h3>
                 <p class="text-body-secondary mb-0">VP of Strategy, Stretto Inc.</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/41.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jerome Bell</h3>
                 <p class="text-body-secondary mb-0">Strategic Advisor, Shopify</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
           </div>
         </div>
@@ -418,97 +428,100 @@
         <div *ngIf="selectedTab === 'Comptabilité'" class="mb-4 mb-lg-5 pb-4 px-3" data-simplebar>
           <div class="row row-cols-lg-4  flex-lg-wrap gy-lg-5 mx-n3">
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/37.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jenny Wilson</h3>
                 <p class="text-body-secondary mb-0">Marketer, Glassdoor</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/38.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Albert Flores</h3>
                 <p class="text-body-secondary mb-0">Product Manager, Google</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/39.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Anneta Nikson</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Perfecto</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/40.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Esther Howard</h3>
                 <p class="text-body-secondary mb-0">VP of Strategy, Stretto Inc.</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/41.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Jerome Bell</h3>
                 <p class="text-body-secondary mb-0">Strategic Advisor, Shopify</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/36.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Marvin McKinney</h3>
                 <p class="text-body-secondary mb-0">Founder &amp; CEO, Uber</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
           </div>
         </div>
         <!-- Informatique -->
         <div *ngIf="selectedTab === 'Informatique'" class="mb-4 mb-lg-5 pb-4 px-3" data-simplebar>
           <div class="row row-cols-lg-4  flex-lg-wrap gy-lg-5 mx-n3">
-            <div class="col"><a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+            <div class="col">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/42.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Kathryn Murphy</h3>
                 <p class="text-body-secondary mb-0">Marketing Coordinator</p>
-              </a>
+              </div>
             </div>
             <div class="col">
-              <a class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
                 <img class="rounded-circle" src="assets/img/avatar/43.jpg" width="120" alt="Avatar">
                 <h3 class="h5 pt-4 mb-1">Guy Hawkins</h3>
                 <p class="text-body-secondary mb-0">President of Sales</p>
-              </a>
+              </div>
             </div>
           </div>
         </div>

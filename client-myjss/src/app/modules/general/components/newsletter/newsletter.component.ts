@@ -4,9 +4,10 @@ import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { CommunicationPreferencesService } from '../../../my-account/services/communication.preference.service';
 
 @Component({
-  selector: 'newsletter',
-  templateUrl: './newsletter.component.html',
-  styleUrls: ['./newsletter.component.css']
+    selector: 'newsletter',
+    templateUrl: './newsletter.component.html',
+    styleUrls: ['./newsletter.component.css'],
+    standalone: false
 })
 export class NewsletterComponent implements OnInit {
 

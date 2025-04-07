@@ -23,6 +23,8 @@
       </td>
     </tr>
   </table>
+  <generic-textarea [(model)]="attachmentMailRequest.comment" label="Commentaire" [form]="attachmentsForm"
+    propertyName="comment" [isMandatory]="false"></generic-textarea>
   <generic-toggle [(model)]="attachmentMailRequest.sendToMe" label="Me l'envoyer" [form]="attachmentsForm"
     propertyName="sendToMe"></generic-toggle>
 </div>

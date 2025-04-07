@@ -424,7 +424,8 @@ public class MailHelper {
         ctx.setVariable("bicJss", bicJss);
         ctx.setVariable("cbLink", mail.getCbLink());
 
-        if (mail.getCustomerOrder() != null || mail.getQuotation() != null)
+        if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
+                && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
             ctx.setVariable("mailComputeResultInvoice",
                     mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
                             mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation()));
@@ -810,7 +811,7 @@ public class MailHelper {
     @Transactional
     public void sendCustomerOrderAttachmentsToCustomer(CustomerOrder customerOrder, AssoAffaireOrder asso,
             Provision provision,
-            boolean sendToMe, List<Attachment> attachmentsToSend)
+            boolean sendToMe, List<Attachment> attachmentsToSend, String comment)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
@@ -829,6 +830,7 @@ public class MailHelper {
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_ATTACHMENTS);
         mail.setAttachments(finalAttachments);
         mail.setHeaderPicture("images/mails/send-attanchments.png");
+        mail.setExplaination(comment);
         if (provision != null) {
             mail.setReplyTo(provision.getAssignedTo());
         } else {
@@ -1300,14 +1302,24 @@ public class MailHelper {
                 if (asso.getTypeDocument() != null)
                     if (asso.getTypeDocument().getAttachments() != null
                             && asso.getTypeDocument().getAttachments().size() > 0)
-                        for (Attachment attachment : asso.getTypeDocument().getAttachments())
-                            attachments.add(attachment);
+                        for (Attachment attachment : asso.getTypeDocument().getAttachments()) {
+                            Attachment newAttachment = attachmentService.cloneAttachment(attachment);
+                            newAttachment.setAssoServiceDocument(null);
+                            newAttachment.setMissingAttachmentQuery(null);
+                            attachmentService.addOrUpdateAttachment(newAttachment);
+                            attachments.add(newAttachment);
+                        }
         }
         if (mail.getMissingAttachmentQuery() != null
                 && mail.getMissingAttachmentQuery().getAttachments() != null
                 && mail.getMissingAttachmentQuery().getAttachments().size() > 0) {
-            for (Attachment attachment : mail.getMissingAttachmentQuery().getAttachments())
-                attachments.add(attachment);
+            for (Attachment attachment : mail.getMissingAttachmentQuery().getAttachments()) {
+                Attachment newAttachment = attachmentService.cloneAttachment(attachment);
+                newAttachment.setAssoServiceDocument(null);
+                newAttachment.setMissingAttachmentQuery(null);
+                attachmentService.addOrUpdateAttachment(newAttachment);
+                attachments.add(newAttachment);
+            }
         }
 
         mail.setAttachments(attachments);
@@ -1465,6 +1477,6 @@ public class MailHelper {
         if (attachments.size() > 0 && customerOrder.getAssoAffaireOrders() != null)
             sendCustomerOrderAttachmentsToCustomer(customerOrder, customerOrder.getAssoAffaireOrders().get(0), null,
                     sendToMe,
-                    attachments);
+                    attachments, null);
     }
 }

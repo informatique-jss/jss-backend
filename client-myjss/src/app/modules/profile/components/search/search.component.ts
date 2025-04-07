@@ -12,9 +12,10 @@ export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName:
 
 
 @Component({
-  selector: 'search',
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css']
+    selector: 'search',
+    templateUrl: './search.component.html',
+    styleUrls: ['./search.component.css'],
+    standalone: false
 })
 export class SearchComponent implements OnInit {
 

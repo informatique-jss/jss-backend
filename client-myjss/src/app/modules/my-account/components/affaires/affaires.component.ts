@@ -14,9 +14,10 @@ import { UploadAttachmentService } from '../../services/upload.attachment.servic
 import { getClassForCustomerOrderStatus, getCustomerOrderStatusLabel, initTooltips } from '../orders/orders.component';
 
 @Component({
-  selector: 'app-affaires',
-  templateUrl: './affaires.component.html',
-  styleUrls: ['./affaires.component.css']
+    selector: 'app-affaires',
+    templateUrl: './affaires.component.html',
+    styleUrls: ['./affaires.component.css'],
+    standalone: false
 })
 export class AffairesComponent implements OnInit {
 

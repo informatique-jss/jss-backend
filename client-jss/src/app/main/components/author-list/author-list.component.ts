@@ -9,9 +9,10 @@ import { AuthorService } from '../../services/author.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
-  selector: 'app-author-list',
-  templateUrl: './author-list.component.html',
-  styleUrls: ['./author-list.component.css']
+    selector: 'app-author-list',
+    templateUrl: './author-list.component.html',
+    styleUrls: ['./author-list.component.css'],
+    standalone: false
 })
 export class AuthorListComponent implements OnInit {
 

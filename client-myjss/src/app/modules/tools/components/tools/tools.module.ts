@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { GeneralModule } from '../../../general/components/general/general.module';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MandatoryDocumentsComponent } from '../mandatory-documents/mandatory-documents.component';
 import { PostComponent } from '../post/post.component';
@@ -25,6 +26,7 @@ const routes: Routes = [
     CommonModule,
     MiscellaneousModule,
     FormsModule,
+    GeneralModule,
   ],
   declarations: [
     ToolsComponent,

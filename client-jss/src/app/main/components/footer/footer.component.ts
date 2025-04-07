@@ -7,9 +7,10 @@ import { DepartmentService } from '../../services/department.service';
 import { JssCategoryService } from '../../services/jss.category.service';
 
 @Component({
-  selector: 'footer-page',
-  templateUrl: './footer.component.html',
-  styleUrls: ['./footer.component.css']
+    selector: 'footer-page',
+    templateUrl: './footer.component.html',
+    styleUrls: ['./footer.component.css'],
+    standalone: false
 })
 export class FooterComponent implements OnInit {
 

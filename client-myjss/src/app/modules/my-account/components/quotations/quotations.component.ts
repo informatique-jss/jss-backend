@@ -18,9 +18,10 @@ import { getCustomerOrderBillingMailList } from '../orders/orders.component';
 declare var bootstrap: any;
 
 @Component({
-  selector: 'app-quotations',
-  templateUrl: './quotations.component.html',
-  styleUrls: ['./quotations.component.css']
+    selector: 'app-quotations',
+    templateUrl: './quotations.component.html',
+    styleUrls: ['./quotations.component.css'],
+    standalone: false
 })
 export class QuotationsComponent implements OnInit {
 

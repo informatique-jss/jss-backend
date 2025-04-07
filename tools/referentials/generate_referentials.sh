@@ -28,10 +28,10 @@ moveAndTransform() {
 	sed -i "s/serviceName/$serviceName/g" $targetFile
 }
 
-moveAndTransform backend/model/NewEntity.java ../../src/main/java/com/jss/osiris/modules/$module/model/$entityUpperCased.java
-moveAndTransform backend/repository/NewEntityRepository.java ../../src/main/java/com/jss/osiris/modules/$module/repository/${entityUpperCased}Repository.java
-moveAndTransform backend/service/NewEntityService.java ../../src/main/java/com/jss/osiris/modules/$module/service/${entityUpperCased}Service.java
-moveAndTransform backend/service/NewEntityServiceImpl.java ../../src/main/java/com/jss/osiris/modules/$module/service/${entityUpperCased}ServiceImpl.java
+moveAndTransform backend/model/NewEntity.java ../../src/main/java/com/jss/osiris/modules/osiris/$module/model/$entityUpperCased.java
+moveAndTransform backend/repository/NewEntityRepository.java ../../src/main/java/com/jss/osiris/modules/osiris/$module/repository/${entityUpperCased}Repository.java
+moveAndTransform backend/service/NewEntityService.java ../../src/main/java/com/jss/osiris/modules/osiris/$module/service/${entityUpperCased}Service.java
+moveAndTransform backend/service/NewEntityServiceImpl.java ../../src/main/java/com/jss/osiris/modules/osiris/$module/service/${entityUpperCased}ServiceImpl.java
 moveAndTransform client/model/NewEntity.ts ../../client/src/app/modules/$module/model/${entityUpperCased}.ts
 moveAndTransform client/services/newentity.service.ts ../../client/src/app/modules/$module/services/${serviceName}.service.ts
 
