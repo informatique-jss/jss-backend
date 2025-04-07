@@ -1080,7 +1080,7 @@ public class QuotationController {
 
     mailHelper.sendCustomerOrderAttachmentsToCustomer(attachmentMailRequest.getCustomerOrder(),
         attachmentMailRequest.getAssoAffaireOrder(), provision, attachmentMailRequest.getSendToMe(),
-        outAttachment);
+        outAttachment, attachmentMailRequest.getComment());
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }
 

@@ -7,4 +7,5 @@ export interface AttachmentMailRequest {
   assoAffaireOrder: AssoAffaireOrder;
   attachements: Attachment[];
   sendToMe: boolean;
+  comment: string;
 }

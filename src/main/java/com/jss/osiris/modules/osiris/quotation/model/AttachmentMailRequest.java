@@ -8,6 +8,7 @@ public class AttachmentMailRequest {
     private CustomerOrder customerOrder;
     private AssoAffaireOrder assoAffaireOrder;
     private List<Attachment> attachements;
+    private String comment;
     private Boolean sendToMe;
 
     public CustomerOrder getCustomerOrder() {
@@ -40,6 +41,14 @@ public class AttachmentMailRequest {
 
     public void setSendToMe(Boolean sendToMe) {
         this.sendToMe = sendToMe;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
 }

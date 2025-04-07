@@ -208,16 +208,17 @@ public class MailIndexationDelegate {
             throw new OsirisException(e, "Impossible to write into Trash folder");
         }
 
-        Message[] messages;
+        Integer messageCount;
         try {
-            messages = folderInbox.getMessages();
+            messageCount = folderInbox.getMessageCount();
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to get messages from INBOX folder");
         }
         // matching mail and getting all content, adresses and subject into an
         // InputStream to call method addAttachment
-        for (Message message : messages) {
+        for (int i = 1; i <= messageCount; i++) {
             try {
+                Message message = folderInbox.getMessage(i);
                 if (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "") == id) {
                     Address[] fromAddresses = message.getFrom();
                     Address[] toAddresses = message.getAllRecipients();
