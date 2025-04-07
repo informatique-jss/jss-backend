@@ -19,11 +19,33 @@
     font-size: 0.9rem;
 }
 
-.card {
+.blue-card {
     background-color: #F6F9FC;
     padding: 2rem;
 }
 
 .light-grey {
     color: var(--ar-gray-500);
+}
+
+
+.white-card {
+    background-color: var(--ar-primary);
+    position: relative;
+    cursor: pointer;
+    border: 3px solid transparent;
+}
+
+.card.selected {
+    border: 3px solid var(--ar-secondary);
+}
+
+.pill {
+    position: relative;
+    z-index: 1;
+}
+
+.col.with-right-border {
+    border-right: 1px solid var(--ar-gray-500);
+
 }
