@@ -29,7 +29,7 @@ export class QuotationService extends AppRestService<Quotation> {
     return this.postItem(new HttpParams(), 'quotation/user/save', quotation);
   }
 
-  getCurrentDraftQuotation() {
+  getCurrentDraftQuotationId() {
     return localStorage.getItem('current-draft-order-id');
   }
 
@@ -43,6 +43,16 @@ export class QuotationService extends AppRestService<Quotation> {
 
   setCurrentDraftQuotationStep(item: MenuItem) {
     localStorage.setItem('current-draft-quotation-step-route', item.route);
+  }
+
+  setCurrentDraftQuotation(quotation: IQuotation) {
+    localStorage.setItem('current-draft-quotation', JSON.stringify(quotation));
+  }
+
+  getCurrentDraftQuotation(): Quotation | undefined {
+    if (localStorage.getItem('current-draft-quotation'))
+      return JSON.parse(localStorage.getItem('current-draft-quotation')!) as Quotation;
+    return undefined;
   }
 
 }

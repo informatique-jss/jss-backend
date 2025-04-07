@@ -74,8 +74,8 @@ export class AppService {
   getAllQuotationMenuItems(): MenuItem[] {
     let menuItem = [] as MenuItem[];
     menuItem.push({ label: "1. Identification de l'entreprise", route: "/quotation/identification" } as MenuItem);
-    menuItem.push({ label: "2. Choix des services", route: "/quotation/services" } as MenuItem);
-    menuItem.push({ label: "3. Informations requises", route: "/quotation/informations" } as MenuItem);
+    menuItem.push({ label: "2. Choix des services", route: "/quotation/services-selection" } as MenuItem);
+    menuItem.push({ label: "3. Informations requises", route: "/quotation/required-information" } as MenuItem);
     menuItem.push({ label: "4. Récapitulatif", route: "/quotation/checkout" } as MenuItem);
     return menuItem;
   }

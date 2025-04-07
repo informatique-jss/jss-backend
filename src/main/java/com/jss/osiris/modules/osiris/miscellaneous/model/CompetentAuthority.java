@@ -28,14 +28,14 @@ public class CompetentAuthority implements IAttachment, IId {
 	@Id
 	@SequenceGenerator(name = "competent_authority_sequence", sequenceName = "competent_authority_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "competent_authority_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	private String apiId;
 
 	@Column(nullable = false, length = 200)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String label;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -38,7 +38,7 @@ public class MyJssTiersController {
 	@Autowired
 	BillingClosureReceiptHelper billingClosureReceiptHelper;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/billing-closure")
 	public ResponseEntity<List<BillingClosureReceiptValue>> getBillingClosureReceiptValueForResponsable(
 			@RequestParam Integer responsableId, @RequestParam boolean isOrderingByEventDate)

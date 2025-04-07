@@ -260,7 +260,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/search/post")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
 			throws OsirisException {
 		// TODO : leak premium
@@ -272,7 +272,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/top")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<Announcement>> getTopAnnouncement(@RequestParam Integer page, HttpServletRequest request)
 			throws OsirisException {
 		detectFlood(request);
@@ -281,7 +281,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/search")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<Announcement>> getTopAnnouncementSearch(@RequestParam Integer page,
 			@RequestParam String denomination, @RequestParam String siren, @RequestParam String noticeSearch,
 			HttpServletRequest request)
@@ -308,7 +308,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/unique")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Announcement> getAnnouncement(@RequestParam Integer announcementId,
 			HttpServletRequest request)
 			throws OsirisException {
@@ -324,7 +324,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/post/comments")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<org.springframework.data.domain.Page<Comment>> getParentCommentsForPost(
 			@RequestParam Integer postId,
 			@RequestParam(defaultValue = "0") int page,
@@ -340,7 +340,7 @@ public class WordpressController {
 	}
 
 	@PostMapping(inputEntryPoint + "/post/comment/add")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
 			@RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
 			@RequestParam Integer postId)

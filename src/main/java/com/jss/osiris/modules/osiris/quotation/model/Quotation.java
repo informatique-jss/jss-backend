@@ -46,7 +46,7 @@ public class Quotation implements IQuotation {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	private Integer validationId;
@@ -64,7 +64,7 @@ public class Quotation implements IQuotation {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Responsable responsable;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
@@ -73,19 +73,19 @@ public class Quotation implements IQuotation {
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JsonIgnoreProperties(value = { "assoSpecialOfferBillingTypes" }, allowSetters = true)
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation_status")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@IndexedField
 	private QuotationStatus quotationStatus;
 
@@ -94,7 +94,7 @@ public class Quotation implements IQuotation {
 	private LocalDateTime lastStatusUpdate;
 
 	@Column(columnDefinition = "TEXT") // TODO : delete when new website
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String description;
 
 	@OneToMany(mappedBy = "quotation")
@@ -107,13 +107,14 @@ public class Quotation implements IQuotation {
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
 	@Column(length = 40)
 	private String quotationLabel;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isQuotation;
 
 	@Column(length = 40)
@@ -150,12 +151,17 @@ public class Quotation implements IQuotation {
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public String affairesList;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public String servicesList;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_service_family_group")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceFamilyGroup serviceFamilyGroup;
 
 	public Integer getId() {
 		return id;
@@ -347,6 +353,14 @@ public class Quotation implements IQuotation {
 
 	public void setValidationId(Integer validationId) {
 		this.validationId = validationId;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroup() {
+		return serviceFamilyGroup;
+	}
+
+	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup) {
+		this.serviceFamilyGroup = serviceFamilyGroup;
 	}
 
 }

@@ -16,6 +16,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 
 public interface AssoAffaireOrderService {
         public List<AssoAffaireOrder> getAssoAffaireOrders();
@@ -49,5 +50,7 @@ public interface AssoAffaireOrderService {
         public List<AssoAffaireOrder> getAssoAffaireOrderForQuotation(Quotation quotation) throws OsirisException;
 
         public BigDecimal getServicePrice(Service service, boolean withDiscount, boolean withVat);
+
+        public Service addServiceToAssoAffaireOrder(ServiceType service, AssoAffaireOrder asso);
 
 }

@@ -36,11 +36,21 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.postItem(new HttpParams(), 'order/user/save', order);
   }
 
-  getCurrentDraftOrder() {
+  getCurrentDraftOrderId() {
     return localStorage.getItem('current-draft-quotation-id');
   }
 
   setCurrentDraftOrderId(quotationId: number) {
     localStorage.setItem('current-draft-order-id', quotationId + "");
+  }
+
+  setCurrentDraftOrder(quotation: IQuotation) {
+    localStorage.setItem('current-draft-order', JSON.stringify(quotation));
+  }
+
+  getCurrentDraftOrder(): CustomerOrder | undefined {
+    if (localStorage.getItem('current-draft-order'))
+      return JSON.parse(localStorage.getItem('current-draft-order')!) as CustomerOrder;
+    return undefined;
   }
 }

@@ -77,7 +77,7 @@ public class MyJssProfileController {
 	private int floodFlushDelayMinute = 1;
 
 	@GetMapping(inputEntryPoint + "/user")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Responsable> getMyUsername() throws OsirisClientMessageException {
 		return new ResponseEntity<Responsable>(employeeService.getCurrentMyJssUser(), HttpStatus.OK);
 	}
@@ -161,13 +161,13 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/user/scope")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<UserScope>> getUserScope() {
 		return new ResponseEntity<List<UserScope>>(userScopeService.getUserScope(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/user/scope/possible")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<Responsable>> getPotentialUserScope() {
 		return new ResponseEntity<List<Responsable>>(userScopeService.getPotentialUserScope(), HttpStatus.OK);
 	}
@@ -205,7 +205,7 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/search/global")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
 			throws OsirisException {
 		if (searchText != null && searchText.length() > 2)
@@ -215,7 +215,7 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/responsable")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Responsable> getResponsable(@RequestParam Integer idResponsable)
 			throws OsirisClientMessageException {
 		Responsable responsable = responsableService.getResponsable(idResponsable);

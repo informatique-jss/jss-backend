@@ -32,7 +32,7 @@ public class AssoServiceDocument implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "asso_service_document_sequence", sequenceName = "asso_service_document_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_service_document_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -43,19 +43,19 @@ public class AssoServiceDocument implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_type_document")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private TypeDocument typeDocument;
 
 	@OneToMany(mappedBy = "assoServiceDocument", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoServiceDocument" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<Attachment> attachments;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isMandatory;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String formalisteComment;
 
 	public Integer getId() {
