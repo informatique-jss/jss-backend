@@ -1143,6 +1143,7 @@ public class PaymentServiceImpl implements PaymentService {
         invoice.setIsCreditNote(false);
         invoice.setProvider(constantService.getProviderCentralPay());
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
+        invoice.setCreatedDate(LocalDateTime.now());
 
         InvoiceItem invoiceItem = new InvoiceItem();
         invoiceItem.setBillingItem(
