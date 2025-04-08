@@ -54,8 +54,6 @@
     <generic-swiper [items]="tendencyPosts" title="Articles à la une">
       <ng-template let-post>
         <div class="card card-carousel">
-          <!-- <img [src]="(post.media && post.media.urlThumbnail) ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg'"
-            class="card-img-top" alt="Card image"> -->
           <div
             [ngStyle]="{'background-image': 'url(' + (post.media && post.media.urlThumbnail ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg') + ')'}"
             class="card-img-top">
@@ -68,13 +66,13 @@
             </div>
             <a class="text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
               <h4 class="card-title">{{post.titleText}}</h4>
-              <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
+              <p class="card-text text-gray" [innerHTML]="post.excerptText | trustHtml"></p>
             </a>
             <hr>
-            <a class="d-flex text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+            <div class="d-flex">
               <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
               <h6 class="ps-3 pt-2 mb-0">{{post.fullAuthor.name}}</h6>
-            </a>
+            </div>
           </div>
         </div>
       </ng-template>
@@ -96,12 +94,15 @@
             <span class="fs-xs opacity-20 mx-3">|</span>
             <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]" href="#">{{post.postTags[0].name}}</a>
           </div>
-          <h4 class="card-title">{{post.titleText}}</h4>
-          <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
-          <a class="d-flex text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+          <a class="text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+            <h4 class="card-title">{{post.titleText}}</h4>
+            <p class="card-text text-gray" [innerHTML]="post.excerptText | trustHtml"></p>
+          </a>
+          <hr>
+          <div class="d-flex">
             <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
             <h6 class="ps-3 pt-2 mb-0">{{post.fullAuthor.name}}</h6>
-          </a>
+          </div>
         </div>
       </div>
     </ng-template>
@@ -123,12 +124,15 @@
               <span class="fs-xs opacity-20 mx-3">|</span>
               <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]" href="#">{{post.postTags[0].name}}</a>
             </div>
-            <h4 class="card-title">{{post.titleText}}</h4>
-            <p class="card-text" [innerHTML]="post.excerptText | trustHtml"></p>
-            <a class="d-flex text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+            <a class="text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+              <h4 class="card-title">{{post.titleText}}</h4>
+              <p class="card-text text-gray" [innerHTML]="post.excerptText | trustHtml"></p>
+            </a>
+            <hr>
+            <div class="d-flex">
               <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
               <h6 class="ps-3 pt-2 mb-0">{{post.fullAuthor.name}}</h6>
-            </a>
+            </div>
           </div>
         </div>
       </ng-template>
@@ -223,3 +227,7 @@
     </ng-container>
   </ng-container>
 </section>
+
+<div class="pb-5 mb-md-3 mb-lg-4 mb-xxl-5">
+  <newsletter></newsletter>
+</div>

@@ -3,10 +3,10 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
-    selector: 'generic-input',
-    templateUrl: './generic-input.component.html',
-    styleUrls: ['./generic-input.component.css'],
-    standalone: false
+  selector: 'generic-input',
+  templateUrl: './generic-input.component.html',
+  styleUrls: ['./generic-input.component.css'],
+  standalone: false
 })
 export class GenericInputComponent extends GenericFormComponent implements OnInit {
   /**
