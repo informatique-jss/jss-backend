@@ -317,7 +317,14 @@ public class PostServiceImpl implements PostService {
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 for (IndexEntity entity : tmpEntitiesFound) {
                     Optional<Post> post = postRepository.findById(entity.getEntityId());
-                    if (post.isPresent())
+                    if (post.isPresent() && myJssCategory != null) {
+                        if (post.get().getMyJssCategories() != null && !post.get().getMyJssCategories().isEmpty()) {
+                            for (MyJssCategory currentMyJssCategory : post.get().getMyJssCategories()) {
+                                if (currentMyJssCategory.getId().equals(myJssCategory.getId()))
+                                    matchingPosts.add(post.get());
+                            }
+                        }
+                    } else if (post.isPresent())
                         matchingPosts.add(post.get());
                 }
             }
