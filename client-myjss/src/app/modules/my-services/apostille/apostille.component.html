@@ -226,12 +226,12 @@
       <div class="col-lg-5 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
-            <img class="d-block mt-1 mt-sm-0 mb-4" src="assets/pictos/Annonces.svg" />
-            <h3 class="h4">Annonces légales</h3>
+            <img src="assets/img/icons/Annonces.svg" alt="Icon">
+            <h3 class="h4 text-white" routerLink="/services/announcement" style="cursor: pointer;">Annonces légales</h3>
             <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openAnnouncements($event)"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -242,11 +242,11 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Formalite.svg" alt="Icon">
-            <h3 class="h4 text-white">Formalité légale</h3>
+            <h3 class="h4 text-white" routerLink="/services/formality" style="cursor: pointer;">Formalité légale</h3>
             <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openFormality($event)"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -261,11 +261,11 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Domiciliation.svg" alt="Icon">
-            <h3 class="h4 text-white">Domiciliation</h3>
+            <h3 class="h4 text-white" routerLink="/services/domiciliation" style="cursor: pointer;">Domiciliation</h3>
             <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDomiciliation($event)"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -276,11 +276,12 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Fourniture_documents.svg" alt="Icon">
-            <h3 class="h4 text-white">Fourniture de documents</h3>
+            <h3 class="h4 text-white" routerLink="/services/document" style="cursor: pointer;">Fourniture de documents
+            </h3>
             <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDocument($event)"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
