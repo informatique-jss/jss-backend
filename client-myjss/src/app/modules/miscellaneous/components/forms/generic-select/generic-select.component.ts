@@ -10,10 +10,8 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
   selectedType: T | undefined;
 
   abstract types: T[];
-  constructor(
-    private formBuilder3: UntypedFormBuilder,
-  ) {
-    super(formBuilder3,)
+  constructor(private formBuilder3: UntypedFormBuilder) {
+    super(formBuilder3)
   }
 
   callOnNgInit(): void {

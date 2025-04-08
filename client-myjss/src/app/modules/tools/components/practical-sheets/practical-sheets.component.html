@@ -60,47 +60,7 @@
   <div class="container overflow-hidden">
     <div *ngIf="!tendencyPosts || tendencyPosts.length == 0" class="row">
       <!-- Loading placeholders  -->
-      <div class="card col m-3" aria-hidden="true">
-        <div class="position-relative placeholder-wave">
-          <div class="card-img-top placeholder ratio ratio-16x9"></div>
-          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title placeholder-glow">
-            <span class="placeholder col-6"></span>
-            <span class="visually-hidden">Heading</span>
-          </h5>
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4 me-2"></span>
-            <span class="placeholder placeholder-sm col-6"></span>
-            <span class="placeholder placeholder-sm col-8"></span>
-          </p>
-          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
-        </div>
-      </div>
-      <div class="card col m-3" aria-hidden="true">
-        <div class="position-relative placeholder-wave">
-          <div class="card-img-top placeholder ratio ratio-16x9"></div>
-          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title placeholder-glow">
-            <span class="placeholder col-6"></span>
-            <span class="visually-hidden">Heading</span>
-          </h5>
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4 me-2"></span>
-            <span class="placeholder placeholder-sm col-6"></span>
-            <span class="placeholder placeholder-sm col-8"></span>
-          </p>
-          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
-        </div>
-      </div>
-      <div class="card col m-3" aria-hidden="true">
+      <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
         <div class="position-relative placeholder-wave">
           <div class="card-img-top placeholder ratio ratio-16x9"></div>
           <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
@@ -154,47 +114,7 @@
 <section class="container overflow-hidden">
   <div *ngIf="!topPosts || topPosts.length==0" class="row">
     <!-- Loading placeholders  -->
-    <div class="card col m-3" aria-hidden="true">
-      <div class="position-relative placeholder-wave">
-        <div class="card-img-top placeholder ratio ratio-16x9"></div>
-        <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-      </div>
-      <div class="card-body">
-        <h5 class="card-title placeholder-glow">
-          <span class="placeholder col-6"></span>
-          <span class="visually-hidden">Heading</span>
-        </h5>
-        <p class="card-text placeholder-glow">
-          <span class="placeholder placeholder-sm col-7 me-2"></span>
-          <span class="placeholder placeholder-sm col-4"></span>
-          <span class="placeholder placeholder-sm col-4 me-2"></span>
-          <span class="placeholder placeholder-sm col-6"></span>
-          <span class="placeholder placeholder-sm col-8"></span>
-        </p>
-        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
-      </div>
-    </div>
-    <div class="card col m-3" aria-hidden="true">
-      <div class="position-relative placeholder-wave">
-        <div class="card-img-top placeholder ratio ratio-16x9"></div>
-        <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-      </div>
-      <div class="card-body">
-        <h5 class="card-title placeholder-glow">
-          <span class="placeholder col-6"></span>
-          <span class="visually-hidden">Heading</span>
-        </h5>
-        <p class="card-text placeholder-glow">
-          <span class="placeholder placeholder-sm col-7 me-2"></span>
-          <span class="placeholder placeholder-sm col-4"></span>
-          <span class="placeholder placeholder-sm col-4 me-2"></span>
-          <span class="placeholder placeholder-sm col-6"></span>
-          <span class="placeholder placeholder-sm col-8"></span>
-        </p>
-        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
-      </div>
-    </div>
-    <div class="card col m-3" aria-hidden="true">
+    <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
       <div class="position-relative placeholder-wave">
         <div class="card-img-top placeholder ratio ratio-16x9"></div>
         <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
@@ -248,47 +168,7 @@
   <div class="container overflow-hidden ">
     <div *ngIf="!mostSeenPosts || mostSeenPosts.length==0" class="row">
       <!-- Loading placeholders  -->
-      <div class="card col m-3" aria-hidden="true">
-        <div class="position-relative placeholder-wave">
-          <div class="card-img-top placeholder ratio ratio-16x9"></div>
-          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title placeholder-glow">
-            <span class="placeholder col-6"></span>
-            <span class="visually-hidden">Heading</span>
-          </h5>
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4 me-2"></span>
-            <span class="placeholder placeholder-sm col-6"></span>
-            <span class="placeholder placeholder-sm col-8"></span>
-          </p>
-          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
-        </div>
-      </div>
-      <div class="card col m-3" aria-hidden="true">
-        <div class="position-relative placeholder-wave">
-          <div class="card-img-top placeholder ratio ratio-16x9"></div>
-          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title placeholder-glow">
-            <span class="placeholder col-6"></span>
-            <span class="visually-hidden">Heading</span>
-          </h5>
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4 me-2"></span>
-            <span class="placeholder placeholder-sm col-6"></span>
-            <span class="placeholder placeholder-sm col-8"></span>
-          </p>
-          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
-        </div>
-      </div>
-      <div class="card col m-3" aria-hidden="true">
+      <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
         <div class="position-relative placeholder-wave">
           <div class="card-img-top placeholder ratio ratio-16x9"></div>
           <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>

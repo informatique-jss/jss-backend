@@ -312,8 +312,7 @@ public class PostServiceImpl implements PostService {
         List<Post> postsByMyJssCategory = new ArrayList<Post>();
 
         if (searchText != null) {
-            tmpEntitiesFound = searchService.searchForEntities(searchText + "\"",
-                    Post.class.getSimpleName(), false);
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
 
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 if (myJssCategory != null) {
@@ -335,9 +334,7 @@ public class PostServiceImpl implements PostService {
                     }
                 }
                 return matchingPosts;
-            } else {
-                return postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
-            }
+            }  
         }
         return matchingPosts;
     }

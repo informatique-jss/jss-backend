@@ -16,9 +16,8 @@ export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCa
   types: MyJssCategory[] = [] as Array<MyJssCategory>;
   @Input() additionnalType: MyJssCategory = {} as MyJssCategory;
 
-  constructor(private formBuild: UntypedFormBuilder,
-    private myJssCategoryService: MyJssCategoryService,) {
-    super(formBuild,)
+  constructor(private formBuild: UntypedFormBuilder, private myJssCategoryService: MyJssCategoryService) {
+    super(formBuild)
   }
 
   initTypes(): void {
