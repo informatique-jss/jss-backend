@@ -93,7 +93,7 @@ export class PracticalSheetsComponent implements OnInit {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
 
-    this.searchObservableRef = this.postService.searchPostsByMyJssCategory(this.searchText, this.selectedMyJssCategory!).subscribe(response => {
+    this.searchObservableRef = this.postService.searchPostsByMyJssCategory(this.searchText, this.selectedMyJssCategory!, 0, 100).subscribe(response => {
       if (!this.searchResults)
         this.searchResults = [];
       if (response)
@@ -118,7 +118,7 @@ export class PracticalSheetsComponent implements OnInit {
     if (this.secondSearchObservableRef)
       this.secondSearchObservableRef.unsubscribe();
 
-    this.secondSearchObservableRef = this.postService.searchPostsByMyJssCategory(this.secondSearchText, this.secondSelectedMyJssCategory).subscribe(response => {
+    this.secondSearchObservableRef = this.postService.searchPostsByMyJssCategory(this.secondSearchText, this.secondSelectedMyJssCategory, 0, 100000).subscribe(response => {
       if (response) {
         for (let post of response) {
           for (let category of post.myJssCategories) {
@@ -159,7 +159,7 @@ export class PracticalSheetsComponent implements OnInit {
       this.expandedCardIndex = myJssCategory.id;
 
     if (this.expandedCardIndex >= 0 && myJssCategory.id && this.myJssCategoriesFullLoaded.indexOf(myJssCategory.id) < 0) {
-      this.postService.getPostsByMyJssCategory(myJssCategory).subscribe(response => {
+      this.postService.getPostsByMyJssCategory(myJssCategory, 0, 100000).subscribe(response => {
         if (response && myJssCategory.id) {
           this.postsByMyJssCategory[myJssCategory.id] = response;
           this.myJssCategoriesFullLoaded.push(myJssCategory.id);

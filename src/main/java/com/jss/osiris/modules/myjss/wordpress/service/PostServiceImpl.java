@@ -305,7 +305,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory) {
+    public List<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory,
+            Pageable pageableRequest) {
         List<IndexEntity> tmpEntitiesFound = null;
         List<Post> matchingPosts = new ArrayList<Post>();
 
@@ -330,10 +331,6 @@ public class PostServiceImpl implements PostService {
             }
             return matchingPosts;
         } else {
-
-            Order order = new Order(Direction.ASC, "titleText");
-            Sort sort = Sort.by(Arrays.asList(order));
-            Pageable pageableRequest = PageRequest.of(0, 20000000, sort);
             return postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
         }
     }

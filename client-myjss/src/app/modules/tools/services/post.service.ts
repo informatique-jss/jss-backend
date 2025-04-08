@@ -52,17 +52,19 @@ export class PostService extends AppRestService<Post> {
     return this.getList(httpParams, "posts/first-myjss-category");
   }
 
-  searchPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory) {
+  searchPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory, page: number, size: number) {
     let httpParams = new HttpParams();
     if (searchText)
       httpParams = httpParams.set("searchText", searchText);
     if (myJssCategory && myJssCategory.id)
       httpParams = httpParams.set("myJssCategoryId", myJssCategory.id);
+
+    httpParams.set("page", page).set("size", size);
     return this.getList(httpParams, "search/myjss-category");
   }
 
-  getPostsByMyJssCategory(myJssCategory: MyJssCategory) {
-    return this.getList(new HttpParams().set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null"), "posts/myjss-category");
+  getPostsByMyJssCategory(myJssCategory: MyJssCategory, page: number, size: number) {
+    return this.getList(new HttpParams().set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null").set("page", page).set("size", size), "posts/myjss-category");
   }
 
   getTopPostByTag(page: number, tag: Tag) {

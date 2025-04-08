@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -219,6 +221,8 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/search/myjss-category")
 	public ResponseEntity<List<Post>> searchPostsByMyJssCategory(@RequestParam String searchText,
 			@RequestParam(required = false) Integer myJssCategoryId,
+			@RequestParam(required = false, defaultValue = "0") Integer page,
+			@RequestParam(required = false, defaultValue = "10") Integer size,
 			HttpServletRequest request) {
 		detectFlood(request);
 
@@ -233,13 +237,19 @@ public class WordpressController {
 		if (searchText.equals("") && myJssCategory == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
 
+		Order order = new Order(Direction.DESC, "titleText");
+		Sort sort = Sort.by(Arrays.asList(order));
+		Pageable pageableRequest = PageRequest.of(page, size, sort);
+
 		return new ResponseEntity<List<Post>>(
-				postService.searchPostsByMyJssCategory(searchText, myJssCategory), HttpStatus.OK);
+				postService.searchPostsByMyJssCategory(searchText, myJssCategory, pageableRequest), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss-category")
 	public ResponseEntity<List<Post>> getPostsByMyJssCategory(@RequestParam Integer myJssCategoryId,
 			@RequestParam(required = false) String searchText,
+			@RequestParam(required = false, defaultValue = "0") Integer page,
+			@RequestParam(required = false, defaultValue = "10") Integer size,
 			HttpServletRequest request) {
 		detectFlood(request);
 
@@ -250,8 +260,12 @@ public class WordpressController {
 		if (myJssCategory == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
 
+		Order order = new Order(Direction.DESC, "titleText");
+		Sort sort = Sort.by(Arrays.asList(order));
+		Pageable pageableRequest = PageRequest.of(page, size, sort);
+
 		return new ResponseEntity<List<Post>>(
-				postService.searchPostsByMyJssCategory(searchText, myJssCategory), HttpStatus.OK);
+				postService.searchPostsByMyJssCategory(searchText, myJssCategory, pageableRequest), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/tag")

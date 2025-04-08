@@ -2,6 +2,8 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
@@ -24,7 +26,7 @@ public interface PostService {
 
         public List<Post> getPostsByJssCategory(int page, JssCategory jssCategory);
 
-        public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory);
+        public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 
         public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
 
