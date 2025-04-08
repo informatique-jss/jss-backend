@@ -1,5 +1,4 @@
 .custom-dropdown {
-  /* position: absolute !important; */
   z-index: 1000;
   width: 100%;
 }
@@ -30,7 +29,7 @@
 
 .drop-down-body {
   padding: 1rem;
-  max-height: 100px;
+  max-height: 30vh;
   overflow-y: auto;
   padding-right: 20px;
 }
@@ -62,7 +61,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 
 .background-opacity {
   background: #FFFFFF08;

@@ -163,16 +163,6 @@ export class PracticalSheetsComponent implements OnInit {
     }
   }
 
-  truncateChar(text: string, charlimit: number): string {
-    if (!text || text.length <= charlimit) {
-      return text;
-    }
-
-    let without_html = text.replace(/<(?:.|\n)*?>/gm, '');
-    let shortened = without_html.substring(0, charlimit) + "...";
-    return shortened;
-  }
-
   highlightText(text: string): string {
     if (!this.searchText) return text;
     const words = text.replace(/[^\w\s]/g, '').split(' ');
@@ -196,7 +186,7 @@ export class PracticalSheetsComponent implements OnInit {
   }
 
 
-  geRawText(text: string) {
+  getRawText(text: string) {
     return text.replace(/<[^>]+>/g, '');
   }
 

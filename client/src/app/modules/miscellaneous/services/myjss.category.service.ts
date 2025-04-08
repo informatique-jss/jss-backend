@@ -9,7 +9,7 @@ import { MyJssCategory } from "../model/MyJssCategory";
 export class MyJssCategoryService extends AppRestService<MyJssCategory> {
 
   constructor(http: HttpClient) {
-    super(http, "wordpress");
+    super(http, "myjss/wordpress");
   }
 
   getMyJssCategories() {

@@ -1,12 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../services/appRest.service';
-import { JssCategory } from '../model/JssCategory';
+import { Category } from '../model/Category';
 
 @Injectable({
   providedIn: 'root'
 })
-export class JssCategoryService extends AppRestService<JssCategory> {
+export class CategoryService extends AppRestService<Category> {
 
   constructor(http: HttpClient) {
     super(http, "wordpress");

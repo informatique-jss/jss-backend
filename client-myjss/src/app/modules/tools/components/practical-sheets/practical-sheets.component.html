@@ -43,7 +43,7 @@
                   <h6 class="fw-bold secondary-heading" [innerHTML]="highlightText(post.titleText) | trustHtml"></h6>
                 </a>
                 <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
-                  <p class="text-truncate-custom"><span [innerHTML]="geRawText(highlightText(post.excerptText))"
+                  <p class="text-truncate-custom"><span [innerHTML]="getRawText(highlightText(post.excerptText))"
                       style="white-space: nowrap;"></span></p>
                 </a>
               </div>
@@ -73,7 +73,7 @@
             </div>
             <a class="text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
               <h4 class="card-title">{{post.titleText}}</h4>
-              <p class="card-text text-gray" [innerHTML]="post.excerptText | trustHtml"></p>
+              <p class="card-text text-gray text-truncate-custom" [innerHTML]="post.excerptText | trustHtml"></p>
             </a>
             <hr>
             <div class="d-flex">
@@ -103,7 +103,7 @@
           </div>
           <a class="text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
             <h4 class="card-title">{{post.titleText}}</h4>
-            <p class="card-text text-gray" [innerHTML]="post.excerptText | trustHtml"></p>
+            <p class="card-text text-gray text-truncate-custom" [innerHTML]="post.excerptText | trustHtml"></p>
           </a>
           <hr>
           <div class="d-flex">
@@ -133,7 +133,7 @@
             </div>
             <a class="text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
               <h4 class="card-title">{{post.titleText}}</h4>
-              <p class="card-text text-gray" [innerHTML]="post.excerptText | trustHtml"></p>
+              <p class="card-text text-gray text-truncate-custom" [innerHTML]="post.excerptText | trustHtml"></p>
             </a>
             <hr>
             <div class="d-flex">
@@ -183,8 +183,8 @@
       <ng-container *ngIf="myJssCategory.id && postsByMyJssCategory[myJssCategory.id]">
         <div class="card dark-blue-dropdown rounded-3 mt-3"
           [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
-          <div class="card-header d-flex justify-content-between align-items-center p-0">
-            <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
+          <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
+            <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
             <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
               <span class="circle-icon">
                 <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
@@ -193,13 +193,14 @@
           </div>
 
           <div class="drop-down-body">
-            <div class="row">
+            <div class="row ps-4 pe-5 me-5">
               <div class="col-4 g-2"
                 *ngFor="let post of (isExpanded(myJssCategory.id)  ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-gray" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
-                    data-bs-placement="top" [innerHTML]="post.titleText | trustHtml"></a>
+                  <a class="text-decoration-none text-gray" (click)="openPost(post.slug,$event)"
+                    data-bs-toggle="tooltip" [title]="post.titleText" data-bs-placement="top"
+                    [innerHTML]="post.titleText | trustHtml"></a>
                 </li>
               </div>
             </div>
@@ -214,8 +215,8 @@
       <ng-container
         *ngIf="myJssCategory.id && secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0">
         <div class="card dark-blue-dropdown rounded-3 mt-3">
-          <div class="card-header d-flex justify-content-between align-items-center p-0">
-            <h5 class="card-title text-white">{{ myJssCategory.name }}</h5>
+          <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
+            <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
             <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
               <span class="circle-icon">
                 <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
@@ -229,8 +230,9 @@
                 *ngFor="let post of (isExpanded(myJssCategory.id)  ? secondSearchResults[myJssCategory.id] :  secondSearchResults[myJssCategory.id].slice(0,3))">
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-gray" href="#" data-bs-toggle="tooltip" [title]="post.titleText"
-                    data-bs-placement="top" [innerHTML]="post.titleText | trustHtml"></a>
+                  <a class="text-decoration-none text-gray text-truncate-custom" (click)="openPost(post.slug,$event)"
+                    data-bs-toggle="tooltip" [title]="post.titleText" data-bs-placement="top"
+                    [innerHTML]="post.titleText | trustHtml"></a>
                 </li>
               </div>
             </div>
