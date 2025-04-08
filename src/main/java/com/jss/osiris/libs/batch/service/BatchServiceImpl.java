@@ -26,6 +26,7 @@ import com.jss.osiris.libs.batch.repository.BatchRepository;
 import com.jss.osiris.libs.batch.service.threads.IOsirisThread;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
+import com.jss.osiris.libs.mail.MailIndexationDelegate;
 import com.jss.osiris.libs.node.model.Node;
 import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
@@ -66,6 +67,9 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
 
     @Autowired
     DebourDelService debourDelService;
+
+    @Autowired
+    MailIndexationDelegate mailIndexationDelegate;
 
     private HashMap<Integer, LocalDateTime> lastBatchCheck = new HashMap<Integer, LocalDateTime>();
     private HashMap<Integer, ThreadPoolTaskExecutor> queues = new HashMap<Integer, ThreadPoolTaskExecutor>();
@@ -144,6 +148,13 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
 
     @Override
     public void onApplicationEvent(ContextClosedEvent event) {
+
+        // Close osiris indexation
+        try {
+            mailIndexationDelegate.closeConnection();
+        } catch (OsirisException e) {
+        }
+        // Close Batch
         isShutingDown = true;
         if (queues != null && queues.size() > 0) {
             for (Integer batchId : queues.keySet()) {

@@ -129,7 +129,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         Invoice invoice = new Invoice();
         // invoice.setCompetentAuthority(azureInvoice.getCompetentAuthority());
         // TODO refonte
-        invoice.setProvider(azureInvoice.getCompetentAuthority().getProvider());
+        if (azureInvoice.getCompetentAuthority() != null)
+            invoice.setProvider(azureInvoice.getCompetentAuthority().getProvider());
         invoice.setCustomerOrderForInboundInvoice(
                 currentProvision.getService().getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(azureInvoice.getInvoiceId());
