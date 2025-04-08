@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import com.jss.osiris.libs.search.model.IndexedField;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
@@ -9,6 +11,7 @@ public class MyJssCategory {
 
     @Id
     private Integer id;
+    @IndexedField
     private String name;
     private String slug;
     private Integer categoryOrder;

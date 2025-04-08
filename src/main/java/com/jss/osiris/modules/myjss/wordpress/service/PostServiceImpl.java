@@ -309,30 +309,37 @@ public class PostServiceImpl implements PostService {
             Pageable pageableRequest) {
         List<IndexEntity> tmpEntitiesFound = null;
         List<Post> matchingPosts = new ArrayList<Post>();
+        List<Post> postsByMyJssCategory = new ArrayList<Post>();
 
         if (searchText != null) {
-            tmpEntitiesFound = searchService.searchForEntities("\"titleText\":\"" +
-                    searchText + "\"",
+            tmpEntitiesFound = searchService.searchForEntities(searchText + "\"",
                     Post.class.getSimpleName(), false);
 
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                for (IndexEntity entity : tmpEntitiesFound) {
-                    Optional<Post> post = postRepository.findById(entity.getEntityId());
-                    if (post.isPresent() && myJssCategory != null) {
-                        if (post.get().getMyJssCategories() != null && !post.get().getMyJssCategories().isEmpty()) {
-                            for (MyJssCategory currentMyJssCategory : post.get().getMyJssCategories()) {
-                                if (currentMyJssCategory.getId().equals(myJssCategory.getId()))
-                                    matchingPosts.add(post.get());
+                if (myJssCategory != null) {
+                    postsByMyJssCategory = postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false);
+                    if (postsByMyJssCategory != null && !postsByMyJssCategory.isEmpty()) {
+                        for (Post post : postsByMyJssCategory) {
+                            for (IndexEntity entity : tmpEntitiesFound) {
+                                if (post.getId().equals(entity.getEntityId()))
+                                    matchingPosts.add(post);
                             }
                         }
-                    } else if (post.isPresent())
-                        matchingPosts.add(post.get());
+                    }
+                } else {
+                    for (IndexEntity entity : tmpEntitiesFound) {
+                        Optional<Post> post = postRepository.findById(entity.getEntityId());
+                        if (post.isPresent()) {
+                            matchingPosts.add(post.get());
+                        }
+                    }
                 }
+                return matchingPosts;
+            } else {
+                return postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
             }
-            return matchingPosts;
-        } else {
-            return postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
         }
+        return matchingPosts;
     }
 
     @Override
