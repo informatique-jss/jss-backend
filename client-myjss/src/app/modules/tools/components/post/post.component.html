@@ -6,7 +6,10 @@
     <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
       <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
       <li class="breadcrumb-item"><a routerLink="/tools">Outils</a></li>
-      <li class="breadcrumb-item">
+      <li class="breadcrumb-item"><a routerLink="/tools/practical_sheets">Nos fiches pratiques</a>
+      </li>
+      <li class="breadcrumb-item"><a routerLink="/tools/practical_sheets/slug"><span *ngIf="post">{{ post.slug
+            }}</span></a>
       </li>
     </ol>
   </nav>

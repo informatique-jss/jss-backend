@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { AppService } from '../../../../../libs/app.service';
 import { MyJssCategory } from '../../../../tools/model/MyJssCategory';
 import { MyJssCategoryService } from '../../../../tools/services/myjss.category.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -18,8 +17,8 @@ export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCa
   @Input() additionnalType: MyJssCategory = {} as MyJssCategory;
 
   constructor(private formBuild: UntypedFormBuilder,
-    private myJssCategoryService: MyJssCategoryService, private appService3: AppService) {
-    super(formBuild, appService3)
+    private myJssCategoryService: MyJssCategoryService,) {
+    super(formBuild,)
   }
 
   initTypes(): void {

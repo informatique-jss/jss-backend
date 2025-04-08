@@ -1,6 +1,5 @@
 import { Directive, EventEmitter, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { AppService } from '../../../../../libs/app.service';
 import { compareWithId } from '../../../../../libs/CompareHelper';
 import { GenericFormComponent } from '../generic-form.components';
 
@@ -12,7 +11,7 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
 
   abstract types: T[];
   constructor(
-    private formBuilder3: UntypedFormBuilder, private appService2: AppService
+    private formBuilder3: UntypedFormBuilder,
   ) {
     super(formBuilder3,)
   }
