@@ -49,9 +49,10 @@ export class PracticalSheetsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.myJssCategories.push({ id: -1, name: 'Toutes les categories', slug: "all-categories", categoryOrder: 1 });
+
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
       if (response) {
-        this.myJssCategories.push({ id: null, name: 'Toutes les categories', slug: "all-categories", categoryOrder: 1 });
         this.myJssCategories.push(...response);
         this.selectedMyJssCategory = this.myJssCategories[0];
         this.secondSelectedMyJssCategory = this.myJssCategories[0];
