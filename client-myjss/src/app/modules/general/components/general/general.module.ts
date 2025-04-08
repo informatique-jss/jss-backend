@@ -10,8 +10,8 @@ import { NewsletterComponent } from '../newsletter/newsletter.component';
 import { GeneralComponent } from './general.component';
 
 const routes: Routes = [
+  { path: 'home', component: HomepageComponent },
 ];
-
 
 @NgModule({
   imports: [
