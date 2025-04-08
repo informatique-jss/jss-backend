@@ -3,10 +3,10 @@ import { jarallax } from 'jarallax';
 import { AppService } from '../../../libs/app.service';
 
 @Component({
-    selector: 'announcement',
-    templateUrl: './announcement.component.html',
-    styleUrls: ['./announcement.component.css'],
-    standalone: false
+  selector: 'announcement',
+  templateUrl: './announcement.component.html',
+  styleUrls: ['./announcement.component.css'],
+  standalone: false
 })
 export class AnnouncementComponent implements OnInit {
 
@@ -21,7 +21,20 @@ export class AnnouncementComponent implements OnInit {
       speed: 0.5
     });
   }
-  openServices(event: any) {
-    this.appService.openRoute(event, "my-services/" + "", undefined);
+
+  openFormality(event: any) {
+    this.appService.openRoute(event, "/services/formality", undefined);
+  }
+
+  openApostille(event: any) {
+    this.appService.openRoute(event, "/services/apostille", undefined);
+  }
+
+  openDomiciliation(event: any) {
+    this.appService.openRoute(event, "/services/domiciliation", undefined);
+  }
+
+  openDocument(event: any) {
+    this.appService.openRoute(event, "/services/document", undefined);
   }
 }
