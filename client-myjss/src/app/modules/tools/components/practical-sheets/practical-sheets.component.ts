@@ -186,7 +186,7 @@ export class PracticalSheetsComponent implements OnInit {
   }
 
 
-  geRawText(text: string) {
+  getRawText(text: string) {
     return text.replace(/<[^>]+>/g, '');
   }
 
