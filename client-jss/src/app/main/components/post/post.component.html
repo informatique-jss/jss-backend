@@ -4,8 +4,8 @@ Inner intro START -->
   <div class="container">
     <div class="row">
       <div class="col-12">
-        <ng-container *ngIf="post.myJssCategories!=null && post.myJssCategories.length>0">
-          <a *ngFor="let category of post.myJssCategories" style="cursor: pointer;"
+        <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
+          <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
             (click)="openCategoryPosts(category, $event)"
             class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
             [style.background-color]="category.color+' !important'"><i
@@ -89,8 +89,8 @@ Main START -->
                     (click)="openPost(relatedPost, $event)">
                     <!-- Card overlay bottom -->
                     <div class="w-100 mt-auto">
-                      <ng-container *ngIf="relatedPost.myJssCategories!=null && relatedPost.myJssCategories.length>0">
-                        <a *ngFor="let category of relatedPost.myJssCategories" style="cursor: pointer;"
+                      <ng-container *ngIf="relatedPost.jssCategories!=null && relatedPost.jssCategories.length>0">
+                        <a *ngFor="let category of relatedPost.jssCategories" style="cursor: pointer;"
                           (click)="openCategoryPosts(category, $event)"
                           class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
                           [style.background-color]="category.color+' !important'"><i

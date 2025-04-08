@@ -103,6 +103,7 @@
   --ar-gray-800: #434a57;
   --ar-gray-900: #121519;
   --ar-blue-step: #4B6380;
+  --ar-blue-dark-bg: #2C4057;
   --ar-step-active-custom: #F3E3CA;
   --ar-primary: rgba(255, 255, 255, 1);
   --ar-secondary: #1c2d41;
@@ -3114,6 +3115,8 @@ textarea.form-control-lg {
   flex-wrap: wrap;
   align-items: stretch;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .input-group>.form-control,
@@ -5643,7 +5646,7 @@ textarea.form-control-lg {
 }
 
 .list-group {
-  --ar-list-group-color: var(--ar-body-color);
+  --ar-list-group-color: var(--ar-body-bg);
   --ar-list-group-bg: transparent;
   --ar-list-group-border-color: var(--ar-border-color);
   --ar-list-group-border-width: var(--ar-border-width);
@@ -5699,10 +5702,10 @@ textarea.form-control-lg {
   position: relative;
   display: block;
   padding: var(--ar-list-group-item-padding-y) var(--ar-list-group-item-padding-x);
-  color: var(--ar-list-group-color);
+  color: var(--ar-gray-700);
   text-decoration: none;
   background-color: var(--ar-list-group-bg);
-  border: var(--ar-list-group-border-width) solid var(--ar-list-group-border-color);
+  border: none;
 }
 
 .list-group-item:first-child {
@@ -16177,6 +16180,7 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
 .btn-link {
   --ar-btn-font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .btn-icon {
@@ -20198,16 +20202,8 @@ img-comparison-slider:focus {
   animation: blinking 1s infinite;
 }
 
-.checkbox-custom {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-}
-
-.checkbox-custom {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
+.text-gray {
+  color: #FFFFFFB2;
 }
 
 .bg-yellow-custom img {
@@ -20258,9 +20254,6 @@ img-comparison-slider:focus {
   position: relative;
 }
 
-.jarallax {
-  height: 400px;
-}
 
 h6.secondary-heading,
 .h6.secondary-heading,
@@ -20288,4 +20281,24 @@ h1.secondary-heading,
 .jss-navbar {
   backdrop-filter: blur(40px);
   background-color: #1c2d4199;
+}
+
+
+
+.btn-search {
+  color: var(--ar-blue-dark-bg) !important;
+}
+
+.card-carousel {
+  max-height: 70vh;
+  max-width: 50vw;
+  background-color: var(--ar-blue-dark-bg);
+}
+
+.dark-blue-dropdown {
+  background-color: var(--ar-blue-dark-bg);
+}
+
+.custom-input-group {
+  background-color: white;
 }

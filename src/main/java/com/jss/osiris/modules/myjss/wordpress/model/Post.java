@@ -37,7 +37,7 @@ public class Post implements IId {
     private Integer author;
 
     @Transient
-    private Integer[] myjss_category;
+    private Integer[] jss_category;
 
     @Transient
     private Integer[] categories;
@@ -92,7 +92,12 @@ public class Post implements IId {
     private Author fullAuthor;
 
     @ManyToMany
-    @JoinTable(name = "asso_post_my_jss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_my_jss_category"))
+    @JoinTable(name = "asso_post_jss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_jss_category"))
+    @IndexedField
+    private List<JssCategory> jssCategories;
+
+    @ManyToMany
+    @JoinTable(name = "asso_post_myjss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_myjss_category"))
     @IndexedField
     private List<MyJssCategory> myJssCategories;
 
@@ -162,12 +167,12 @@ public class Post implements IId {
         this.author = author;
     }
 
-    public Integer[] getMyjss_category() {
-        return myjss_category;
+    public Integer[] getJss_category() {
+        return jss_category;
     }
 
-    public void setMyjss_category(Integer[] myjss_category) {
-        this.myjss_category = myjss_category;
+    public void setJss_category(Integer[] jss_category) {
+        this.jss_category = jss_category;
     }
 
     public Content getTitle() {
@@ -282,12 +287,12 @@ public class Post implements IId {
         this.excerptText = excerptText;
     }
 
-    public List<MyJssCategory> getMyJssCategories() {
-        return myJssCategories;
+    public List<JssCategory> getJssCategories() {
+        return jssCategories;
     }
 
-    public void setMyJssCategories(List<MyJssCategory> myJssCategories) {
-        this.myJssCategories = myJssCategories;
+    public void setJssCategories(List<JssCategory> jssCategories) {
+        this.jssCategories = jssCategories;
     }
 
     public List<PublishingDepartment> getDepartments() {
@@ -408,6 +413,14 @@ public class Post implements IId {
 
     public void setIsPremium(Boolean isPremium) {
         this.isPremium = isPremium;
+    }
+
+    public List<MyJssCategory> getMyJssCategories() {
+        return myJssCategories;
+    }
+
+    public void setMyJssCategories(List<MyJssCategory> myJssCategories) {
+        this.myJssCategories = myJssCategories;
     }
 
 }

@@ -60,7 +60,7 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.cancelReply()
     }
 
-    this.postService.getPostsTendency().subscribe(posts => {
+    this.postService.getMostSeenPosts().subscribe(posts => {
       this.hotPosts = posts;
     });
 

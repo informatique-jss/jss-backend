@@ -1,0 +1,117 @@
+.custom-dropdown {
+  z-index: 1000;
+  width: 100%;
+}
+
+.container {
+  position: relative;
+}
+
+.card-img-top {
+  min-height: 20vh;
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+}
+
+.search-result {
+  background-color: white;
+  position: absolute;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.drop-down-body {
+  padding: 1rem;
+  max-height: 30vh;
+  overflow-y: auto;
+  padding-right: 20px;
+}
+
+
+.circle-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+}
+
+
+.checkbox-custom {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  background-color: #CEB793 !important;
+}
+
+.text-truncate-custom {
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.background-opacity {
+  background: #FFFFFF08;
+
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFFFFFB2;
+  border: 2pt solid transparent;
+  border-radius: 3pt;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, .2);
+  border: 3pt solid transparent;
+  background-clip: content-box;
+}
+
+.custom-scroll-vertical-hover::-webkit-scrollbar-thumb:vertical {
+  background: #ffffffb4;
+  border: none;
+  border-radius: 0;
+}
+
+.custom-scroll-vertical-hover::-webkit-scrollbar-track:vertical {
+  background: rgba(255, 255, 255, .2);
+  border: none;
+}
+
+.custom-input-group ::ng-deep .form-control {
+  color: var(--ar-blue-dark-bg) !important;
+}
+
+::ng-deep generic-input input::placeholder {
+  color: var(--ar-gray-600) !important;
+}
+
+.select-box {
+  border-left: solid var(--ar-gray-500) 1px;
+}
+
+.custom-input-group {
+  --ar-input-group-border-color: var(--ar-gray-500);
+}

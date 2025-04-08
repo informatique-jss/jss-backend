@@ -16,7 +16,11 @@ export class GenericSwiperComponent implements OnInit {
   @Input() items: any[] = [];
   @Input() subtitle: string = '';
   @Input() title: string = '';
+  @Input() slidesPerView: number = 3;
+  @ContentChild(TemplateRef) templateRefFirstItem!: TemplateRef<any>; // Take the content of the personalised HTML
   @ContentChild(TemplateRef) templateRef!: TemplateRef<any>; // Take the content of the personalised HTML
+
+  @Input() isFirstItem: any | undefined;
 
   constructor() { }
 
@@ -28,7 +32,7 @@ export class GenericSwiperComponent implements OnInit {
       autoHeight: true,
       spaceBetween: "10",
       speed: "500",
-      slidesPerView: "3",
+      slidesPerView: this.slidesPerView,
       loop: "true",
       injectStyles: [`
           .swiper-pagination-bullet {
@@ -39,7 +43,7 @@ export class GenericSwiperComponent implements OnInit {
             background: rgba(255, 255, 255, 0);
             border: white solid 1px;
           }
-    
+
           .swiper-pagination-bullet-active {
             color: #fff;
             background:rgb(255, 255, 255);

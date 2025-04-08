@@ -1,11 +1,7 @@
-import { Media } from "./Media";
 
 export interface MyJssCategory {
-  id: number;
+  id: number | null;
   name: string;
   slug: string;
-  color: string;
-  picture: Media;
-  count: number;
   categoryOrder: number;
 }

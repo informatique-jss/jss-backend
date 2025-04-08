@@ -9,6 +9,7 @@ import { DoubleButtonsComponent } from '../double-buttons/double-buttons.compone
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
+import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
 import { GenericSwiperComponent } from '../generic-swiper/generic-swiper.component';
 import { OurClientsComponent } from '../our-clients/our-clients.component';
@@ -27,12 +28,13 @@ const routes: Routes = [{}];
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
-    GenericInputComponent,
     SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
     DoubleButtonsComponent,
     GenericToggleComponent,
+    GenericInputComponent,
+    SelectMyJssCategoryComponent
   ],
   exports: [
     AvatarComponent,
@@ -43,6 +45,7 @@ const routes: Routes = [{}];
     DoubleButtonsComponent,
     GenericToggleComponent,
     GenericSwiperComponent,
+    SelectMyJssCategoryComponent,
     OurClientsComponent,
   ]
 })

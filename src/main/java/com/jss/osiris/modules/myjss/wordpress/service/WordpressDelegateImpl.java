@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Media;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Page;
@@ -30,6 +31,7 @@ public class WordpressDelegateImpl implements WordpressDelegate {
     private String wordpressEntryPoint;
 
     private String departmentRequestUrl = "/departement";
+    private String jssCategoryRequestUrl = "/jss_category";
     private String myJssCategoryRequestUrl = "/myjss_category";
     private String categoryRequestUrl = "/categories";
     private String serieRequestUrl = "/serie";
@@ -44,6 +46,9 @@ public class WordpressDelegateImpl implements WordpressDelegate {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    JssCategoryService jssCategoryService;
 
     @Autowired
     MyJssCategoryService myJssCategoryService;
@@ -71,6 +76,20 @@ public class WordpressDelegateImpl implements WordpressDelegate {
                 wordpressEntryPoint + departmentRequestUrl + "?_fields=id,name,code,acf&per_page=100", HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<PublishingDepartment>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        }
+        return null;
+    }
+
+    private List<JssCategory> getAvailableJssCategories() {
+        ResponseEntity<List<JssCategory>> response = new RestTemplate().exchange(
+                wordpressEntryPoint + jssCategoryRequestUrl + "?_fields=id,name,slug,acf,count&per_page=100",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<JssCategory>>() {
                 });
 
         if (response.getBody() != null) {
@@ -295,6 +314,11 @@ public class WordpressDelegateImpl implements WordpressDelegate {
         if (categories != null)
             for (Category category : categories)
                 categoryService.addOrUpdateCategory(category);
+
+        List<JssCategory> jssCategories = getAvailableJssCategories();
+        if (jssCategories != null)
+            for (JssCategory jssCategory : jssCategories)
+                jssCategoryService.addOrUpdateJssCategory(jssCategory);
 
         List<MyJssCategory> myJssCategories = getAvailableMyJssCategories();
         if (myJssCategories != null)

@@ -1632,6 +1632,21 @@
           </tr>
           <tr>
             <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryAnnouncement"
+                label="Catégorie MyJss - Annonces légales" [form]="constantForm"
+                propertyName="myJssCategoryAnnouncement" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryFormality"
+                label="Catégorie MyJss - Formalités légales" [form]="constantForm" propertyName="myJssCategoryFormality"
+                [isMandatory]="false" [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-accounting-account-class [(model)]="constant.accountingAccountClassProduct"
                 label="Classe comptable - Produits" [form]="constantForm" propertyName="accountingAccountClassProduct"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-accounting-account-class>

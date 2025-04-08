@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { getTimeReading } from '../../../libs/FormatHelper';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
-import { MyJssCategory } from '../../model/MyJssCategory';
+import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { DepartmentService } from '../../services/department.service';
@@ -56,7 +56,7 @@ export class DepartmentListComponent implements OnInit {
     this.fetchNextPosts();
   }
 
-  openCategoryPosts(category: MyJssCategory, event: any) {
+  openCategoryPosts(category: JssCategory, event: any) {
     this.appService.openRoute(event, "category/" + category.slug, undefined);
   }
 

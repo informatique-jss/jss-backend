@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
-import { MyJssCategory } from '../../model/MyJssCategory';
+import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { PostService } from '../../services/post.service';
 
@@ -50,7 +50,7 @@ export class PodcastListComponent implements OnInit {
   }
 
 
-  openCategoryPosts(category: MyJssCategory, event: any) {
+  openCategoryPosts(category: JssCategory, event: any) {
     this.appService.openRoute(event, "category/" + category.slug, undefined);
   }
 }

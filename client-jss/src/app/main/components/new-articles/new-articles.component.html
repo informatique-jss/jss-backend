@@ -13,8 +13,8 @@
           <div class="card-img-overlay d-flex align-items-center p-3 p-sm-4">
             <div class="w-100 mt-auto">
               <!-- Card category -->
-              <ng-container *ngIf="post.myJssCategories!=null && post.myJssCategories.length>0">
-                <a *ngFor="let category of post.myJssCategories" style="cursor: pointer;"
+              <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
+                <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
                   (click)="openCategoryPosts(category, $event)"
                   class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
                   [style.background-color]="category.color+' !important'"><i
@@ -61,8 +61,8 @@
               <div class="card-img-overlay d-flex align-items-center p-3 p-sm-4">
                 <div class="w-100 mt-auto">
                   <!-- Card category -->
-                  <ng-container *ngIf="post.myJssCategories!=null && post.myJssCategories.length>0">
-                    <a *ngFor="let category of post.myJssCategories" style="cursor: pointer;"
+                  <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
+                    <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
                       (click)="openCategoryPosts(category, $event)"
                       class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
                       [style.background-color]="category.color+' !important'"><i
@@ -97,8 +97,8 @@
               <div class="card-img-overlay d-flex align-items-center p-3 p-sm-4">
                 <div class="w-100 mt-auto">
                   <!-- Card category -->
-                  <ng-container *ngIf="post.myJssCategories!=null && post.myJssCategories.length>0">
-                    <a *ngFor="let category of post.myJssCategories" style="cursor: pointer;"
+                  <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
+                    <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
                       (click)="openCategoryPosts(category, $event)"
                       class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
                       [style.background-color]="category.color+' !important'"><i
@@ -133,8 +133,8 @@
               <div class="card-img-overlay d-flex align-items-center p-3 p-sm-4">
                 <div class="w-100 mt-auto">
                   <!-- Card category -->
-                  <ng-container *ngIf="post.myJssCategories!=null && post.myJssCategories.length>0">
-                    <a *ngFor="let category of post.myJssCategories" style="cursor: pointer;"
+                  <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
+                    <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
                       (click)="openCategoryPosts(category, $event)"
                       class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
                       [style.background-color]="category.color+' !important'"><i

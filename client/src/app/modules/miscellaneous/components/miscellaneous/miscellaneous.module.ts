@@ -228,6 +228,7 @@ import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/sel
 import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
+import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
 import { SelectNodeComponent } from '../forms/select-node/select-node.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
 import { SelectPaperSetTypeComponent } from '../forms/select-paper-set-type/select-paper-set-type.component';
@@ -553,7 +554,8 @@ const routes: Routes = [
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
     SelectCategoryComponent,
-    SelectPrintLabelRecipientComponent
+    SelectPrintLabelRecipientComponent,
+    SelectMyJssCategoryComponent
   ],
   exports: [
     HistoryComponent,
@@ -797,7 +799,8 @@ const routes: Routes = [
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
     SelectCategoryComponent,
-    SelectPrintLabelRecipientComponent
+    SelectPrintLabelRecipientComponent,
+    SelectMyJssCategoryComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

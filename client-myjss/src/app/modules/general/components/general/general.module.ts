@@ -13,7 +13,6 @@ const routes: Routes = [
   { path: 'home', component: HomepageComponent },
 ];
 
-
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload', scrollPositionRestoration: 'enabled' }),

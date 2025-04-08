@@ -21,8 +21,8 @@
                   (click)="openPost(post, $event)">
                   <!-- Card overlay bottom -->
                   <div class="w-100 mt-auto">
-                    <ng-container *ngIf="post.myJssCategories!=null && post.myJssCategories.length>0">
-                      <a *ngFor="let category of post.myJssCategories" style="cursor: pointer;"
+                    <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
+                      <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
                         (click)="openCategoryPosts(category, $event)"
                         class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
                         [style.background-color]="category.color+' !important'"><i
@@ -205,8 +205,8 @@
                 (click)="openPost(interview, $event)">
                 <!-- Card overlay bottom -->
                 <div class="w-100 mt-auto">
-                  <ng-container *ngIf="interview.myJssCategories!=null && interview.myJssCategories.length>0">
-                    <a *ngFor="let category of interview.myJssCategories" style="cursor: pointer;"
+                  <ng-container *ngIf="interview.jssCategories!=null && interview.jssCategories.length>0">
+                    <a *ngFor="let category of interview.jssCategories" style="cursor: pointer;"
                       (click)="openPost(interview, $event)"
                       class="badge text-bg-danger mb-2 margin-category btn-primary-soft"
                       [style.background-color]="category.color+' !important'"><i

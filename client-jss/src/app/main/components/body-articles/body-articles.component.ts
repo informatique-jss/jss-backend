@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
-import { MyJssCategory } from '../../model/MyJssCategory';
+import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { Serie } from '../../model/Serie';
-import { MyJssCategoryService } from '../../services/myjss.category.service';
+import { JssCategoryService } from '../../services/jss.category.service';
 import { PostService } from '../../services/post.service';
 import { SerieService } from '../../services/serie.service';
 
@@ -23,7 +23,7 @@ export class BodyArticlesComponent implements OnInit, AfterViewInit {
   podcasts: Post[] = [];
   departmentPosts: Post[] = [];
   page: number = 0;
-  categories: MyJssCategory[] = [];
+  categories: JssCategory[] = [];
   series: Serie[] = [];
 
   @ViewChildren('sliderInterviewPage') sliderInterviewPage!: QueryList<any>;
@@ -31,16 +31,16 @@ export class BodyArticlesComponent implements OnInit, AfterViewInit {
 
   constructor(
     private postService: PostService,
-    private myJssCategoryService: MyJssCategoryService,
+    private jssCategoryService: JssCategoryService,
     private serieService: SerieService,
     private appService: AppService,
   ) { }
 
   ngOnInit() {
     this.fetchNextPosts();
-    this.myJssCategoryService.getAvailableMyJssCategories().subscribe(categories => {
+    this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
       if (categories && categories.length > 0)
-        this.categories.push(...categories.sort((a: MyJssCategory, b: MyJssCategory) => a.count - b.count));
+        this.categories.push(...categories.sort((a: JssCategory, b: JssCategory) => a.count - b.count));
     });
     this.serieService.getAvailableSeries().subscribe(series => {
       this.series.push(...series.sort((a: Serie, b: Serie) => b.serieOrder - a.serieOrder));
@@ -88,7 +88,7 @@ export class BodyArticlesComponent implements OnInit, AfterViewInit {
     this.appService.openRoute(event, "author/" + author.slug, undefined);
   }
 
-  openCategoryPosts(category: MyJssCategory, event: any) {
+  openCategoryPosts(category: JssCategory, event: any) {
     this.appService.openRoute(event, "category/" + category.slug, undefined);
   }
 
