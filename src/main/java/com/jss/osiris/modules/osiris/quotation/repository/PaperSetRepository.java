@@ -75,7 +75,8 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " left join employee e on e.username = a.username " +
                         " 	where (:isDisplayCancelled or ps.is_cancelled=:isDisplayCancelled) " +
                         " and  (:isDisplayValidated or ps.is_validated=:isDisplayValidated) " +
-                        " and concat(co.id, '-', ps.location_number, '-', af.id) like '%' || :textSearch || '%' " +
+                        " and concat(co.id, '-', ps.location_number, '-', af.id, '-', st.label, '-',ps.creation_comment ) like '%' || :textSearch || '%' "
+                        +
                         " group by " +
                         " 	ps.id, " +
                         "   ps.is_validated, " +

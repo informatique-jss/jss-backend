@@ -90,7 +90,7 @@ export class AccountingBalanceComponent implements OnInit {
 
   exportBalance() {
     if (this.accountingBalanceSearch.startDate && this.accountingBalanceSearch.endDate)
-      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear()) {
+      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear() && this.accountingBalanceSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
