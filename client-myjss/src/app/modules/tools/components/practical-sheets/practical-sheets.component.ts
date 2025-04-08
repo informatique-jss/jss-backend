@@ -168,7 +168,7 @@ export class PracticalSheetsComponent implements OnInit {
     const words = text.replace(/[^\w\s]/g, '').split(' ');
     const fuseResult = new Fuse(words, {
       includeScore: true,
-      threshold: 0.35,
+      threshold: 0.0,
     });
 
     const result = fuseResult.search(this.searchText);
@@ -176,10 +176,12 @@ export class PracticalSheetsComponent implements OnInit {
 
     let highlightedText = text;
     if (result.length > 0) {
-      result.forEach((item: { item: any; }) => {
+      console.log(result);
+      result.forEach(item => {
+        console.log(item.item);
         const wordToHighlight = item.item;
         const regex = new RegExp(`\\b${wordToHighlight}\\b`, 'g');
-        highlightedText = highlightedText.replace(regex, `<mark style="background-color: yellow;">${wordToHighlight}</mark>`);
+        highlightedText = highlightedText.replace(regex, `<mark style="font-weight: bold;">${wordToHighlight}</mark>`);
       });
     }
     return highlightedText;
