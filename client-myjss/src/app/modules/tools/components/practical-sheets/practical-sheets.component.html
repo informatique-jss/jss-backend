@@ -56,9 +56,73 @@
 </section>
 
 
-<section *ngIf="tendencyPosts && tendencyPosts.length>0" class="background-opacity">
+<section class="background-opacity">
   <div class="container overflow-hidden">
-    <generic-swiper [items]="tendencyPosts" title="Articles à la une">
+    <div *ngIf="!tendencyPosts || tendencyPosts.length == 0" class="row">
+      <!-- Loading placeholders  -->
+      <div class="card col m-3" aria-hidden="true">
+        <div class="position-relative placeholder-wave">
+          <div class="card-img-top placeholder ratio ratio-16x9"></div>
+          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title placeholder-glow">
+            <span class="placeholder col-6"></span>
+            <span class="visually-hidden">Heading</span>
+          </h5>
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
+        </div>
+      </div>
+      <div class="card col m-3" aria-hidden="true">
+        <div class="position-relative placeholder-wave">
+          <div class="card-img-top placeholder ratio ratio-16x9"></div>
+          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title placeholder-glow">
+            <span class="placeholder col-6"></span>
+            <span class="visually-hidden">Heading</span>
+          </h5>
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
+        </div>
+      </div>
+      <div class="card col m-3" aria-hidden="true">
+        <div class="position-relative placeholder-wave">
+          <div class="card-img-top placeholder ratio ratio-16x9"></div>
+          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title placeholder-glow">
+            <span class="placeholder col-6"></span>
+            <span class="visually-hidden">Heading</span>
+          </h5>
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
+        </div>
+      </div>
+    </div>
+
+    <generic-swiper *ngIf="tendencyPosts && tendencyPosts.length>0" [items]="tendencyPosts" title="Articles à la une">
       <ng-template let-post>
         <div class="card card-carousel">
           <div
@@ -87,8 +151,72 @@
   </div>
 </section>
 
-<section *ngIf="topPosts && topPosts.length>0" class="container overflow-hidden">
-  <generic-swiper [items]="topPosts" title="Nos derniers articles">
+<section class="container overflow-hidden">
+  <div *ngIf="!topPosts || topPosts.length==0" class="row">
+    <!-- Loading placeholders  -->
+    <div class="card col m-3" aria-hidden="true">
+      <div class="position-relative placeholder-wave">
+        <div class="card-img-top placeholder ratio ratio-16x9"></div>
+        <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title placeholder-glow">
+          <span class="placeholder col-6"></span>
+          <span class="visually-hidden">Heading</span>
+        </h5>
+        <p class="card-text placeholder-glow">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
+        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
+      </div>
+    </div>
+    <div class="card col m-3" aria-hidden="true">
+      <div class="position-relative placeholder-wave">
+        <div class="card-img-top placeholder ratio ratio-16x9"></div>
+        <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title placeholder-glow">
+          <span class="placeholder col-6"></span>
+          <span class="visually-hidden">Heading</span>
+        </h5>
+        <p class="card-text placeholder-glow">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
+        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
+      </div>
+    </div>
+    <div class="card col m-3" aria-hidden="true">
+      <div class="position-relative placeholder-wave">
+        <div class="card-img-top placeholder ratio ratio-16x9"></div>
+        <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title placeholder-glow">
+          <span class="placeholder col-6"></span>
+          <span class="visually-hidden">Heading</span>
+        </h5>
+        <p class="card-text placeholder-glow">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
+        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
+      </div>
+    </div>
+  </div>
+
+  <generic-swiper *ngIf="topPosts && topPosts.length>0" [items]="topPosts" title="Nos derniers articles">
     <ng-template let-post>
       <div class="card card-carousel">
         <div
@@ -116,9 +244,74 @@
   </generic-swiper>
 </section>
 
-<section *ngIf="mostSeenPosts && mostSeenPosts.length>0" class="background-opacity">
+<section class="background-opacity">
   <div class="container overflow-hidden ">
-    <generic-swiper [items]="mostSeenPosts" title="Articles les plus vus">
+    <div *ngIf="!mostSeenPosts || mostSeenPosts.length==0" class="row">
+      <!-- Loading placeholders  -->
+      <div class="card col m-3" aria-hidden="true">
+        <div class="position-relative placeholder-wave">
+          <div class="card-img-top placeholder ratio ratio-16x9"></div>
+          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title placeholder-glow">
+            <span class="placeholder col-6"></span>
+            <span class="visually-hidden">Heading</span>
+          </h5>
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
+        </div>
+      </div>
+      <div class="card col m-3" aria-hidden="true">
+        <div class="position-relative placeholder-wave">
+          <div class="card-img-top placeholder ratio ratio-16x9"></div>
+          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title placeholder-glow">
+            <span class="placeholder col-6"></span>
+            <span class="visually-hidden">Heading</span>
+          </h5>
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
+        </div>
+      </div>
+      <div class="card col m-3" aria-hidden="true">
+        <div class="position-relative placeholder-wave">
+          <div class="card-img-top placeholder ratio ratio-16x9"></div>
+          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title placeholder-glow">
+            <span class="placeholder col-6"></span>
+            <span class="visually-hidden">Heading</span>
+          </h5>
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+          <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></a>
+        </div>
+      </div>
+    </div>
+
+    <generic-swiper *ngIf="mostSeenPosts && mostSeenPosts.length>0" [items]="mostSeenPosts"
+      title="Articles les plus vus">
       <ng-template let-post>
         <div class="card card-carousel">
           <div
@@ -163,6 +356,10 @@
               [isDisplayLabel]="false" (onFormChange)="searchForSecondPosts()" [icon]="'search'"
               class="btn-search col"></generic-input>
 
+            <div *ngIf="isLoading2" class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
+              <span class="visually-hidden">chargement...</span>
+            </div>
+
             <button *ngIf="secondSearchText" class="col-1 btn btn-link btn-search" (click)="clearSecondSearch()">
               <i class="ai ai-cross-alt"></i>
             </button>
@@ -180,6 +377,17 @@
 
   <ng-container *ngIf="!secondSearchText">
     <ng-container *ngFor="let myJssCategory of myJssCategories;">
+      <div class="accordion-item border-top mb-0" *ngIf="!myJssCategory.id || !postsByMyJssCategory[myJssCategory.id]">
+        <div class="accordion-header">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+        </div>
+      </div>
       <ng-container *ngIf="myJssCategory.id && postsByMyJssCategory[myJssCategory.id]">
         <div class="card dark-blue-dropdown rounded-3 mt-3"
           [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">

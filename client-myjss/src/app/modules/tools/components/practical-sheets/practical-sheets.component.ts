@@ -19,6 +19,7 @@ export class PracticalSheetsComponent implements OnInit {
 
   debounce: any;
   isLoading: boolean = false;
+  isLoading2: boolean = false;
   searchObservableRef: Subscription | undefined;
   searchText: string = "";
   selectedMyJssCategory: MyJssCategory | undefined;
@@ -97,36 +98,40 @@ export class PracticalSheetsComponent implements OnInit {
         this.searchResults = [];
       if (response)
         this.searchResults.push(...response);
-    });
-    this.isLoading = false;
 
+      this.isLoading = false;
+    });
   }
 
   searchForSecondPosts() {
-    clearTimeout(this.debounce);
-    this.secondSearchResults = [];
-    this.debounce = setTimeout(() => {
-      this.searchSecondPosts();
-    }, 500);
+    if (this.secondSearchText && this.secondSearchText.length > 2) {
+      clearTimeout(this.debounce);
+      this.isLoading2 = true;
+      this.secondSearchResults = [];
+      this.debounce = setTimeout(() => {
+        this.searchSecondPosts();
+      }, 500);
+    }
   }
 
   searchSecondPosts() {
     if (this.secondSearchObservableRef)
       this.secondSearchObservableRef.unsubscribe();
 
-    if (this.secondSearchText && this.secondSearchText.length > 2)
-      this.secondSearchObservableRef = this.postService.searchPostsByMyJssCategory(this.secondSearchText, this.secondSelectedMyJssCategory).subscribe(response => {
-        if (response)
-          for (let post of response) {
-            for (let category of post.myJssCategories) {
-              if (category.id) {
-                if (!this.secondSearchResults[category.id])
-                  this.secondSearchResults[category.id] = [];
-                this.secondSearchResults[category.id].push(post);
-              }
+    this.secondSearchObservableRef = this.postService.searchPostsByMyJssCategory(this.secondSearchText, this.secondSelectedMyJssCategory).subscribe(response => {
+      if (response) {
+        for (let post of response) {
+          for (let category of post.myJssCategories) {
+            if (category.id) {
+              if (!this.secondSearchResults[category.id])
+                this.secondSearchResults[category.id] = [];
+              this.secondSearchResults[category.id].push(post);
             }
           }
-      })
+        }
+      }
+      this.isLoading2 = false;
+    })
   }
 
   clearSearch() {
