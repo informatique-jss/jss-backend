@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import Fuse from 'fuse.js';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
 import { MyJssCategory } from '../../model/MyJssCategory';
@@ -169,33 +168,14 @@ export class PracticalSheetsComponent implements OnInit {
   }
 
   highlightText(text: string): string {
-    if (!this.searchText) return text;
-    const words = text.replace(/[^\w\s]/g, '').split(' ');
-    const fuseResult = new Fuse(words, {
-      includeScore: true,
-      threshold: 0.0,
-    });
-
-    const result = fuseResult.search(this.searchText);
-    if (result.length === 0) return text;
-
-    let highlightedText = text;
-    if (result.length > 0) {
-      console.log(result);
-      result.forEach(item => {
-        console.log(item.item);
-        const wordToHighlight = item.item;
-        const regex = new RegExp(`\\b${wordToHighlight}\\b`, 'g');
-        highlightedText = highlightedText.replace(regex, `<mark style="font-weight: bold;">${wordToHighlight}</mark>`);
-      });
+    if (!this.searchText) {
+      return text;
     }
-    return highlightedText;
+
+    const regex = new RegExp(`(${this.searchText})`, 'gi');
+    return text.replace(regex, `<span style="background-color: yellow;">$1</span>`);
   }
 
-
-  getRawText(text: string) {
-    return text.replace(/<[^>]+>/g, '');
-  }
 
   /**************** posts carousel ***********************/
   getTopPosts() {

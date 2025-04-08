@@ -43,7 +43,7 @@
                   <h6 class="fw-bold secondary-heading" [innerHTML]="highlightText(post.titleText) | trustHtml"></h6>
                 </a>
                 <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
-                  <p class="text-truncate-custom"><span [innerHTML]="getRawText(highlightText(post.excerptText))"
+                  <p class="text-truncate-custom"><span [innerHTML]="highlightText(post.excerptText) | trustHtml"
                       style="white-space: nowrap;"></span></p>
                 </a>
               </div>
