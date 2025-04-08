@@ -7,21 +7,28 @@
     </div>
     <div class="w-100 justify-content-between my-3">
       <div class="col-12">
-        <div class="input-group custom-input-group align-items-center">
-          <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="practicalSheetsForm"
-            propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-            (onFormChange)="searchForPosts()" class="btn-search" [icon]="'search'"></generic-input>
+        <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
+          <div class="col">
+            <div class="row align-items-center">
+              <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher"
+                [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false"
+                [isDisplayLabel]="false" (onFormChange)="searchForPosts()" class="btn-search col"
+                [icon]="'search'"></generic-input>
 
-          <div *ngIf="loading" class="d-flex spinner-border rounded-circle text-dark" role="status">
-            <span class="visually-hidden">chargement...</span>
+              <div *ngIf="loading" class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
+                <span class="visually-hidden">chargement...</span>
+              </div>
+
+              <button *ngIf="searchText" class="btn btn-search col-1" (click)="clearSearch()">
+                <i class="ai ai-cross-alt"></i>
+              </button>
+            </div>
           </div>
-
-          <button *ngIf="searchText" class="btn btn-search" (click)="clearSearch()">
-            <i class="ai ai-cross-alt"></i>
-          </button>
-          <select-myjss-category class="cursor-pointer" [additionnalType]="this.myJssCategories[0]"
-            [(model)]="selectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
-            propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
+          <div class="select-box col-3 justify-content-end">
+            <select-myjss-category class="cursor-pointer ps-0" [additionnalType]="this.myJssCategories[0]"
+              [(model)]="selectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+              propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
+          </div>
         </div>
       </div>
     </div>
@@ -148,19 +155,25 @@
     articles mis à jour par des juristes formalistes.</p>
   <div class="w-100 my-3 d-flex justify-content-between">
     <div class="col-12">
-      <div class="input-group custom-input-group">
-        <generic-input style="flex-grow: 1;" [(model)]="secondSearchText" label="Rechercher"
-          [form]="practicalSheetsForm" propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false"
-          [isDisplayLabel]="false" (onFormChange)="searchForSecondPosts()" [icon]="'search'"
-          class="btn-search"></generic-input>
+      <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
+        <div class="col">
+          <div class="row align-items-center">
+            <generic-input style="flex-grow: 1;" [(model)]="secondSearchText" label="Rechercher"
+              [form]="practicalSheetsForm" propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false"
+              [isDisplayLabel]="false" (onFormChange)="searchForSecondPosts()" [icon]="'search'"
+              class="btn-search col"></generic-input>
 
-        <button *ngIf="secondSearchText" class="btn btn-link btn-search" (click)="clearSecondSearch()">
-          <i class="ai ai-cross-alt"></i>
-        </button>
-
-        <select-myjss-category class="cursor-pointer" [additionnalType]="this.myJssCategories[0]"
-          [(model)]="secondSelectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
-          propertyName="secondSelectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
+            <button *ngIf="secondSearchText" class="col-1 btn btn-link btn-search" (click)="clearSecondSearch()">
+              <i class="ai ai-cross-alt"></i>
+            </button>
+          </div>
+        </div>
+        <div class="select-box col-3 justify-content-end">
+          <select-myjss-category class="cursor-pointer" [additionnalType]="this.myJssCategories[0]"
+            [(model)]="secondSelectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+            propertyName="secondSelectedMyJssCategory" [isMandatory]="false"
+            [isDisabled]="false"></select-myjss-category>
+        </div>
       </div>
     </div>
   </div>

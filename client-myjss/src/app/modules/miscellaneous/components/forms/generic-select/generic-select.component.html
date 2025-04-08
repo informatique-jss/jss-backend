@@ -1,9 +1,11 @@
-<div class="full-width" [formGroup]="form!">
-  <select class="form-control" [formControlName]="propertyName" [required]="isMandatory" [compareWith]="compareWithId"
-    [(ngModel)]="selectedType">
-    <option *ngFor="let type of types" [ngValue]="type">
-      {{ displayLabel(type) }}
-    </option>
-    <!-- <i class="ai ai-cross-alt"></i> -->
-  </select>
+<div class="full-width row" [formGroup]="form!">
+  <div class="select-wrapper">
+    <select class="form-control" [formControlName]="propertyName" [required]="isMandatory" [compareWith]="compareWithId"
+      [(ngModel)]="selectedType">
+      <option *ngFor="let type of types" [ngValue]="type">
+        {{ displayLabel(type) }}
+      </option>
+    </select>
+    <i class="ai-chevron-down chevron"></i>
+  </div>
 </div>

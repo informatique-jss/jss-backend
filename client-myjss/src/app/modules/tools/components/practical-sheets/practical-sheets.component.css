@@ -109,3 +109,11 @@
 ::ng-deep generic-input input::placeholder {
   color: var(--ar-gray-600) !important;
 }
+
+.select-box {
+  border-left: solid var(--ar-gray-500) 1px;
+}
+
+.custom-input-group {
+  --ar-input-group-border-color: var(--ar-gray-500);
+}

@@ -12,10 +12,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
   standalone: false
 })
 export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCategory> implements OnInit {
+
+
   types: MyJssCategory[] = [] as Array<MyJssCategory>;
   @Input() additionnalType: MyJssCategory = {} as MyJssCategory;
-
-  //   @Output() override modelChange = new EventEmitter<MyJssCategory>();
 
   constructor(private formBuild: UntypedFormBuilder,
     private myJssCategoryService: MyJssCategoryService, private appService3: AppService) {
@@ -27,11 +27,6 @@ export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCa
       this.types.push(this.additionnalType);
       this.types.push(...response);
       this.selectedType = this.types[0];
-
-      // if (!this.model && this.types.length > 0) {
-      //   this.model = this.types[0];
-      //   this.modelChange.emit(this.model);
-      // }
     });
   }
 }
