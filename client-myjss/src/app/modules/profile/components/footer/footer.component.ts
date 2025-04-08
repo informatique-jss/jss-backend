@@ -3,12 +3,13 @@ import { AppService } from '../../../../libs/app.service';
 import { MenuItem } from '../../../general/model/MenuItem';
 
 @Component({
-    selector: 'main-footer',
-    templateUrl: './footer.component.html',
-    styleUrls: ['./footer.component.css'],
-    standalone: false
+  selector: 'main-footer',
+  templateUrl: './footer.component.html',
+  styleUrls: ['./footer.component.css'],
+  standalone: false
 })
 export class FooterComponent implements OnInit {
+
   logoJss: string = '/assets/images/white-logo-myjss.svg';
   paymentMethods: string = '/assets/images/payment-methods.png';
   map: string = '/assets/images/map.png';
@@ -53,5 +54,17 @@ export class FooterComponent implements OnInit {
 
   openConfidentialityPolitic(event: any) {
     this.appService.openRoute(event, "confidentiality", undefined);
+  }
+
+  openLinkedin() {
+    this.appService.openLinkedinJssPage();
+  }
+
+  openInstagram() {
+    this.appService.openInstagramJssPage();
+  }
+
+  openFacebook() {
+    this.appService.openFacebookJssPage();
   }
 }

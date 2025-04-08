@@ -53,6 +53,18 @@ export class AppService {
     return;
   }
 
+  openLinkedinJssPage() {
+    window.open("https://www.linkedin.com/company/journal-special-des-societes/_blank");
+  }
+
+  openInstagramJssPage() {
+    window.open("https://www.instagram.com/journalspecialdessocietes/_blank");
+  }
+
+  openFacebookJssPage() {
+    window.open("https://www.facebook.com/Journal.Special.des.Societes/_blank");
+  }
+
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
