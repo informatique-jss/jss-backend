@@ -7,12 +7,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 
 @Component({
   selector: 'select-myjss-category',
-  templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css']
+  templateUrl: './../generic-select/generic-select.component.html',
+  styleUrls: ['./../generic-select/generic-select.component.css']
 })
 export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCategory> implements OnInit {
-  override callOnNgInit(): void {
-  }
 
   @Input() types: MyJssCategory[] = [] as Array<MyJssCategory>;
 

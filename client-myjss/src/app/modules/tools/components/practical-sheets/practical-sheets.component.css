@@ -1,5 +1,4 @@
 .custom-dropdown {
-  /* position: absolute !important; */
   z-index: 1000;
   width: 100%;
 }
@@ -62,7 +61,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 
 .background-opacity {
   background: #FFFFFF08;
