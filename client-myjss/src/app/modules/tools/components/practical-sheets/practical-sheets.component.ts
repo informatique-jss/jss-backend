@@ -18,7 +18,7 @@ import { PostService } from '../../services/post.service';
 export class PracticalSheetsComponent implements OnInit {
 
   debounce: any;
-  loading: boolean = false;
+  isLoading: boolean = false;
   searchObservableRef: Subscription | undefined;
   searchText: string = "";
   selectedMyJssCategory: MyJssCategory | undefined;
@@ -55,21 +55,18 @@ export class PracticalSheetsComponent implements OnInit {
         this.myJssCategories.push(...response);
         this.selectedMyJssCategory = this.myJssCategories[0];
         this.secondSelectedMyJssCategory = this.myJssCategories[0];
-        this.postService.getFirstPostsByMyJssCategory(this.secondSearchText, undefined).subscribe({
-          next: response => {
-            this.loading = true;
-            for (let post of response) {
-              for (let category of post.myJssCategories) {
-                if (category.id) {
-                  if (!this.postsByMyJssCategory[category.id])
-                    this.postsByMyJssCategory[category.id] = [];
-                  this.postsByMyJssCategory[category.id].push(post);
-                }
+        this.postService.getFirstPostsByMyJssCategory(this.secondSearchText, undefined).subscribe(response => {
+          for (let post of response) {
+            for (let category of post.myJssCategories) {
+              if (category.id) {
+                if (!this.postsByMyJssCategory[category.id])
+                  this.postsByMyJssCategory[category.id] = [];
+                this.postsByMyJssCategory[category.id].push(post);
               }
             }
-          },
-          complete: () => this.loading = false
-        });
+          }
+        },
+        );
       }
     });
     this.getTopPosts();
@@ -80,26 +77,29 @@ export class PracticalSheetsComponent implements OnInit {
   practicalSheetsForm = this.formBuilder.group({});
 
   searchForPosts() {
-    clearTimeout(this.debounce);
-    this.loading = true;
-    this.searchResults = [];
-    this.debounce = setTimeout(() => {
-      this.searchPosts();
-    }, 500);
+    if (this.searchText && this.searchText.length > 2 && this.selectedMyJssCategory) {
+      clearTimeout(this.debounce);
+      this.isLoading = true;
+      this.searchResults = [];
+
+      this.debounce = setTimeout(() => {
+        this.searchPosts();
+      }, 500);
+    }
   }
 
   searchPosts() {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
 
-    if (this.searchText && this.searchText.length > 2 && this.selectedMyJssCategory)
-      this.searchObservableRef = this.postService.searchPostsByMyJssCategory(this.searchText, this.selectedMyJssCategory).subscribe(response => {
-        if (!this.searchResults)
-          this.searchResults = [];
-        if (response)
-          this.searchResults.push(...response);
-      });
-    this.loading = false;
+    this.searchObservableRef = this.postService.searchPostsByMyJssCategory(this.searchText, this.selectedMyJssCategory!).subscribe(response => {
+      if (!this.searchResults)
+        this.searchResults = [];
+      if (response)
+        this.searchResults.push(...response);
+    });
+    this.isLoading = false;
+
   }
 
   searchForSecondPosts() {

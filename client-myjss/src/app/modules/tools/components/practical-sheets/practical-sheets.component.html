@@ -15,7 +15,7 @@
                 [isDisplayLabel]="false" (onFormChange)="searchForPosts()" class="btn-search col"
                 [icon]="'search'"></generic-input>
 
-              <div *ngIf="loading" class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
+              <div *ngIf="isLoading" class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
                 <span class="visually-hidden">chargement...</span>
               </div>
 
