@@ -38,7 +38,6 @@ export class AnnouncementComponent implements OnInit {
     jarallax(document.querySelectorAll('.jarallax'), {
       speed: 0.5
     });
-    console.log(this.myJssCategoryAnnouncement);
   }
 
   openFormality(event: any) {

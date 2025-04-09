@@ -210,8 +210,7 @@ public class WordpressController {
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 		if (myJssCategory == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(
-				postService.applyPremium(postService.getPostsByMyJssCategory(page, myJssCategory)), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(postService.getPostsByMyJssCategory(page, myJssCategory), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/myjss-categories")
