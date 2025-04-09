@@ -50,19 +50,19 @@
           <div class="dropdown-menu dropdown-menu-end my-1">
             <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte
             </h6>
-            <ng-container *ngFor="let service of services">
-              <a class="dropdown-item" [routerLink]="service.route">
-                <i class=" fs-lg opacity-70 me-2" [ngClass]="service.iconClass"></i>
-                {{service.label}}
+            <ng-container *ngFor="let item of myAccountItems">
+              <a class="dropdown-item" [routerLink]="item.route" *ngIf="item.mainItem==MAIN_ITEM_ACCOUNT">
+                <i class=" fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
+                {{item.label}}
               </a>
             </ng-container>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
               bord</h6>
-            <ng-container *ngFor="let service of services">
-              <a class="dropdown-item" [routerLink]="service.route">
-                <i class="fs-lg opacity-70 me-2" [ngClass]="service.iconClass"></i>
-                {{service.label}}
+            <ng-container *ngFor="let item of myAccountItems">
+              <a class="dropdown-item" [routerLink]="item.route" *ngIf="item.mainItem==MAIN_ITEM_ACCOUNT">
+                <i class="fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
+                {{item.label}}
               </a>
             </ng-container>
             <div class="dropdown-divider"></div>
