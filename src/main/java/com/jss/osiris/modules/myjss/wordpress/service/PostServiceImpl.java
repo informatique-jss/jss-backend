@@ -525,7 +525,7 @@ public class PostServiceImpl implements PostService {
         if (post.getMyjss_category() != null && post.getMyjss_category().length > 0) {
             List<MyJssCategory> categories = new ArrayList<MyJssCategory>();
             List<MyJssCategory> availableCategories = myJssCategoryService.getAvailableMyJssCategories();
-            for (Integer i : post.getJss_category()) {
+            for (Integer i : post.getMyjss_category()) {
                 for (MyJssCategory availableCategory : availableCategories) {
                     if (availableCategory.getId().equals(i)) {
                         categories.add(availableCategory);
