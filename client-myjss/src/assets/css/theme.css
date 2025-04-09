@@ -6090,7 +6090,7 @@ textarea.form-control-lg {
   --ar-toast-max-width: 350px;
   --ar-toast-font-size: 0.875rem;
   --ar-toast-color: ;
-  --ar-toast-bg: var(--ar-body-bg);
+  --ar-toast-bg: var(--ar-secondary-bg);
   --ar-toast-border-width: var(--ar-border-width);
   --ar-toast-border-color: #f0f3f6;
   --ar-toast-border-radius: var(--ar-border-radius-lg);
