@@ -6,7 +6,7 @@
         [ngClass]="{'bg-primary' : !toast.isError, 'bg-danger' :toast.isError}">
       </div>
       <h6 class="mb-0 me-auto">{{toast.title}}</h6>
-      <button type="button" class="btn-close ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+      <i type="button" class="ai-cross ms-2" data-bs-dismiss="toast" aria-label="Close"></i>
     </div>
     <div class="toast-body">{{toast.message}}</div>
   </div>
