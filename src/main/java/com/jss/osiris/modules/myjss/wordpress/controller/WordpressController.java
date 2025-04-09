@@ -50,6 +50,7 @@ import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.service.CommentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
@@ -110,6 +111,9 @@ public class WordpressController {
 
 	@Autowired
 	MailService mailService;
+
+	@Autowired
+	ConstantService constantService;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -191,7 +195,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/jss-category")
-	public ResponseEntity<List<Post>> getTopPostByCategory(@RequestParam Integer page,
+	public ResponseEntity<List<Post>> getTopPostByJssCategory(@RequestParam Integer page,
 			@RequestParam Integer categoryId) {
 		JssCategory category = jssCategoryService.getJssCategory(categoryId);
 		if (category == null)
@@ -200,10 +204,32 @@ public class WordpressController {
 				postService.applyPremium(postService.getPostsByJssCategory(page, category)), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
+	public ResponseEntity<List<Post>> getTopPostByMyJssCategory(@RequestParam Integer page,
+			@RequestParam Integer myJssCategoryId) {
+		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+		if (myJssCategory == null)
+			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(
+				postService.applyPremium(postService.getPostsByMyJssCategory(page, myJssCategory)), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/myjss-categories")
 	public ResponseEntity<List<MyJssCategory>> getAvailableMyJssCategories() {
 		return new ResponseEntity<List<MyJssCategory>>(
 				myJssCategoryService.getAvailableMyJssCategories(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/myjss-category/announcement")
+	public ResponseEntity<MyJssCategory> getAnnouncementMyJssCategory() throws OsirisException {
+		return new ResponseEntity<MyJssCategory>(
+				constantService.getMyJssCategoryAnnouncement(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/myjss-category/formality")
+	public ResponseEntity<MyJssCategory> getFormalityMyJssCategory() throws OsirisException {
+		return new ResponseEntity<MyJssCategory>(
+				constantService.getMyJssCategoryFormality(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/first-myjss-category")

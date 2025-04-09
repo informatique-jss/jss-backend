@@ -33,6 +33,30 @@
 
 <description-my-account></description-my-account>
 
+
+<section *ngIf="carouselAnnouncementPosts && carouselAnnouncementPosts.length>0" class="background-opacity">
+  <div class="container overflow-hidden">
+    <generic-swiper [items]="carouselAnnouncementPosts"
+      [firstItemImage]="'assets/img/announcement/carousel_announcement_init.jpg'"
+      title="Les annonces légales les plus courantes">
+      <ng-template let-post>
+        <div class="card card-carousel">
+          <div class="card-body">
+            <h4 class="card-title card-title-truncate">{{post.titleText}}</h4>
+            <p class="card-text text-gray card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+          </div>
+          <div class="card-footer ">
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openPost(post.slug,$event)"
+              aria-label="Learn more">
+              <i class="ai-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </ng-template>
+    </generic-swiper>
+  </div>
+</section>
+
 <section class="container mt-lg-3 mt-xl-4 mt-xxl-5">
   <div class="bg-yellow-custom rounded-5 overflow-hidden mt-2 mt-sm-4 mt-lg-5">
     <div class="row align-items-center position-relative">

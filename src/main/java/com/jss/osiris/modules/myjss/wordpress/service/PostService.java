@@ -28,6 +28,8 @@ public interface PostService {
 
         public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 
+        public List<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory);
+
         public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
 
         public Post getPostsBySlug(String slung);
