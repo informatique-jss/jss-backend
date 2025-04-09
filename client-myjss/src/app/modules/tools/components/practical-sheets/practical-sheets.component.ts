@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
@@ -14,7 +14,7 @@ import { PostService } from '../../services/post.service';
   standalone: false
 })
 
-export class PracticalSheetsComponent implements OnInit, AfterViewInit {
+export class PracticalSheetsComponent implements OnInit {
 
   debounce: any;
   isLoading: boolean = false;
@@ -72,10 +72,6 @@ export class PracticalSheetsComponent implements OnInit, AfterViewInit {
     this.getTopPosts();
     this.getTendencyPosts();
     this.getMostSeenPosts();
-  }
-
-  ngAfterViewInit(): void {
-    console.log(this.postsByMyJssCategory);
   }
 
   practicalSheetsForm = this.formBuilder.group({});
