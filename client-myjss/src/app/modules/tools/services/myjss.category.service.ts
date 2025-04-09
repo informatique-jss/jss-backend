@@ -15,4 +15,5 @@ export class MyJssCategoryService extends AppRestService<MyJssCategory> {
   getMyJssCategories() {
     return this.getList(new HttpParams(), "myjss-categories");
   }
+
 }

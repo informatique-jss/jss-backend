@@ -20,6 +20,11 @@
     </div>
 
     <swiper-container #genericSwiper class="genericSwiper" init="false">
+      <swiper-slide *ngIf="firstItemImage" class="pb-5">
+        <div class="card">
+          <img [src]="firstItemImage" class="card-img " alt="Card image">
+        </div>
+      </swiper-slide>
       <swiper-slide *ngFor="let item of items" class="pb-5">
         <ng-container *ngTemplateOutlet="templateRef; context: { $implicit: item }"></ng-container>
       </swiper-slide>

@@ -305,6 +305,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) {
+        Order order = new Order(Direction.DESC, "date");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false, pageableRequest);
+    }
+
+    @Override
     public List<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory,
             Pageable pageableRequest) {
         List<IndexEntity> tmpEntitiesFound = null;
@@ -316,7 +324,8 @@ public class PostServiceImpl implements PostService {
 
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 if (myJssCategory != null) {
-                    postsByMyJssCategory = postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false);
+                    postsByMyJssCategory = postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
+                            pageableRequest);
                     if (postsByMyJssCategory != null && !postsByMyJssCategory.isEmpty()) {
                         for (Post post : postsByMyJssCategory) {
                             for (IndexEntity entity : tmpEntitiesFound) {
@@ -334,7 +343,7 @@ public class PostServiceImpl implements PostService {
                     }
                 }
                 return matchingPosts;
-            }  
+            }
         }
         return matchingPosts;
     }

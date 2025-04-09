@@ -26,7 +26,8 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         List<Post> findByJssCategoriesAndIsCancelled(JssCategory jssCategory, Boolean isCancelled,
                         Pageable pageableRequest);
 
-        List<Post> findByMyJssCategoriesAndIsCancelled(MyJssCategory myJssCategory, Boolean isCancelled);
+        List<Post> findByMyJssCategoriesAndIsCancelled(MyJssCategory myJssCategory, Boolean isCancelled,
+                        Pageable pageableRequest);
 
         List<Post> findByPostCategoriesAndIsCancelled(Category category, Boolean isCancelled, Pageable pageableRequest);
 

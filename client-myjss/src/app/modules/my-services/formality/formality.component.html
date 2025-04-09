@@ -32,6 +32,24 @@
 
 <description-my-account></description-my-account>
 
+
+<section *ngIf="carouselFormalityPosts && carouselFormalityPosts.length>0" class="background-opacity">
+  <div class="container overflow-hidden">
+    <generic-swiper [items]="carouselFormalityPosts"
+      [firstItemImage]="'assets/img/myjss-services/carousel_formality_init.jpg'"
+      title="Les formalités légales les plus courantes">
+      <ng-template let-post>
+        <div class="card card-carousel">
+          <div class="d-flex flex-column card-body justify-content-center align-items-center text-align-center">
+            <h4 class="card-title card-title-truncate">{{post.titleText}}</h4>
+            <p class="card-text text-gray card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+          </div>
+        </div>
+      </ng-template>
+    </generic-swiper>
+  </div>
+</section>
+
 <section class="container mt-lg-3 mt-xl-4 mt-xxl-5">
   <div class="bg-yellow-custom rounded-5 overflow-hidden mt-2 mt-sm-4 mt-lg-5">
     <div class="row align-items-center position-relative">

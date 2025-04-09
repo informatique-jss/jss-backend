@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { jarallax } from 'jarallax';
 import { AppService } from '../../../libs/app.service';
+import { ConstantService } from '../../../libs/constant.service';
 import { Post } from '../../tools/model/Post';
 import { PostService } from '../../tools/services/post.service';
 
@@ -11,14 +12,20 @@ import { PostService } from '../../tools/services/post.service';
   standalone: false
 })
 export class FormalityComponent implements OnInit {
-
   tendencyPosts: Post[] = [] as Array<Post>;
+  myJssCategoryFormality = this.constantService.getMyJssCategoryFormality();
+  carouselFormalityPosts: Post[] = [];
 
   constructor(private appService: AppService,
+    private constantService: ConstantService,
     private postService: PostService
   ) { }
 
   ngOnInit() {
+    this.postService.getTopPostByMyJssCategory(0, this.myJssCategoryFormality).subscribe(posts => {
+      if (posts)
+        this.carouselFormalityPosts.push(...posts);
+    });
     this.postService.getTendencyPosts().subscribe(response => {
       if (response && response.length > 0) {
         this.tendencyPosts = response;

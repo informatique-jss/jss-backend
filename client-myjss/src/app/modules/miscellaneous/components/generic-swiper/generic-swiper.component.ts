@@ -20,7 +20,7 @@ export class GenericSwiperComponent implements OnInit {
   @ContentChild(TemplateRef) templateRefFirstItem!: TemplateRef<any>; // Take the content of the personalised HTML
   @ContentChild(TemplateRef) templateRef!: TemplateRef<any>; // Take the content of the personalised HTML
 
-  @Input() isFirstItem: any | undefined;
+  @Input() firstItemImage: any | undefined;
 
   constructor() { }
 
@@ -32,7 +32,7 @@ export class GenericSwiperComponent implements OnInit {
       autoHeight: true,
       spaceBetween: "10",
       speed: "500",
-      slidesPerView: this.slidesPerView,
+      slidesPerView: this.getSlidesPerView(),
       loop: "true",
       injectStyles: [`
           .swiper-pagination-bullet {
@@ -56,6 +56,12 @@ export class GenericSwiperComponent implements OnInit {
 
     Object.assign(this.genericSwiper.nativeElement, params);
     this.genericSwiper.nativeElement.initialize();
+  }
+
+  getSlidesPerView(): number {
+    if (this.firstItemImage && this.firstItemImage.length > 0)
+      this.slidesPerView = 4;
+    return this.slidesPerView;
   }
 
   slideNext(): void {
