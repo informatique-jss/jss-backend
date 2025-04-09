@@ -220,18 +220,6 @@ public class WordpressController {
 				myJssCategoryService.getAvailableMyJssCategories(), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/myjss-category/announcement")
-	public ResponseEntity<MyJssCategory> getAnnouncementMyJssCategory() throws OsirisException {
-		return new ResponseEntity<MyJssCategory>(
-				constantService.getMyJssCategoryAnnouncement(), HttpStatus.OK);
-	}
-
-	@GetMapping(inputEntryPoint + "/myjss-category/formality")
-	public ResponseEntity<MyJssCategory> getFormalityMyJssCategory() throws OsirisException {
-		return new ResponseEntity<MyJssCategory>(
-				constantService.getMyJssCategoryFormality(), HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/posts/first-myjss-category")
 	public ResponseEntity<List<Post>> getFirstPostsByMyJssCategories(@RequestParam(required = false) String searchText,
 			@RequestParam(required = false) Integer myJssCategoryId, HttpServletRequest request) {

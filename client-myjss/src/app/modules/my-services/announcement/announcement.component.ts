@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { jarallax } from 'jarallax';
 import { AppService } from '../../../libs/app.service';
-import { MyJssCategory } from '../../tools/model/MyJssCategory';
+import { ConstantService } from '../../../libs/constant.service';
 import { Post } from '../../tools/model/Post';
-import { MyJssCategoryService } from '../../tools/services/myjss.category.service';
 import { PostService } from '../../tools/services/post.service';
 
 @Component({
@@ -13,29 +12,25 @@ import { PostService } from '../../tools/services/post.service';
   standalone: false
 })
 export class AnnouncementComponent implements OnInit {
-  myJssCategoryAnnouncement: MyJssCategory | undefined;
+  myJssCategoryAnnouncement = this.constantService.getMyJssCategoryAnnouncement();
   carouselAnnouncementPosts: Post[] = [];
   tendencyPosts: Post[] = [];
 
   constructor(private appService: AppService,
-    private myJssCategoryService: MyJssCategoryService,
+    private constantService: ConstantService,
     private postService: PostService
   ) { }
 
   ngOnInit() {
-    this.myJssCategoryService.getAnnouncementMyJssCategory().subscribe(response => {
-      if (response) {
-        this.myJssCategoryAnnouncement = response;
-        this.postService.getTopPostByMyJssCategory(0, this.myJssCategoryAnnouncement).subscribe(posts => {
-          if (posts)
-            this.carouselAnnouncementPosts = posts;
-        });
-        this.postService.getTendencyPosts().subscribe(response => {
-          if (response && response.length > 0) {
-            this.tendencyPosts = response;
-          }
-        });
+    this.postService.getTendencyPosts().subscribe(response => {
+      if (response && response.length > 0) {
+        this.tendencyPosts = response;
       }
+    });
+
+    this.postService.getTopPostByMyJssCategory(0, this.myJssCategoryAnnouncement).subscribe(posts => {
+      if (posts)
+        this.carouselAnnouncementPosts = posts;
     });
   }
 
@@ -43,6 +38,7 @@ export class AnnouncementComponent implements OnInit {
     jarallax(document.querySelectorAll('.jarallax'), {
       speed: 0.5
     });
+    console.log(this.myJssCategoryAnnouncement);
   }
 
   openFormality(event: any) {
