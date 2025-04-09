@@ -18750,6 +18750,7 @@ a.badge {
 .jarallax {
   position: relative;
   z-index: 0;
+  height: 840px;
 }
 
 .jarallax .jarallax-img {
