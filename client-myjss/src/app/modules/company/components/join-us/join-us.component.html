@@ -154,17 +154,19 @@
 <section class="container overflow-hidden py-5 my-5">
   <generic-swiper [items]="images" subtitle="NOS BUREAUX" title="Un espace de travail ouvert et inspirant">
     <ng-template let-image>
-      <div class="d-flex align-items-stretch h-100">
-        <a class="d-block gallery-item card-hover zoom-effect h-100 w-100 position-relative" href="#"
-          (click)="openImageModal(image)" data-bs-toggle="modal" data-bs-target="#imageModal">
-          <div
-            class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0">
-            <i class="ai-zoom-in fs-2 text-white position-relative z-2"></i>
-          </div>
-          <div class="zoom-effect-wrapper rounded-5 h-100 w-100">
-            <img class="zoom-effect-img w-100 h-100 object-fit-cover" [src]="image" alt="Inspiring workplace images">
-          </div>
-        </a>
+      <div class="card-wrapper">
+        <div class="d-flex align-items-stretch h-100">
+          <a class="d-block gallery-item card-hover zoom-effect h-100 w-100 position-relative" href="#"
+            (click)="openImageModal(image)" data-bs-toggle="modal" data-bs-target="#imageModal">
+            <div
+              class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0">
+              <i class="ai-zoom-in fs-2 text-white position-relative z-2"></i>
+            </div>
+            <div class="zoom-effect-wrapper rounded-5 h-100 w-100">
+              <img class="zoom-effect-img w-100 h-100 object-fit-cover" [src]="image" alt="Inspiring workplace images">
+            </div>
+          </a>
+        </div>
       </div>
     </ng-template>
   </generic-swiper>

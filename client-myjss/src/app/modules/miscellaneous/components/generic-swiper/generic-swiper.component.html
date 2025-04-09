@@ -21,8 +21,10 @@
 
     <swiper-container #genericSwiper class="genericSwiper" init="false">
       <swiper-slide *ngIf="firstItemImage" class="pb-5">
-        <div class="card">
-          <img [src]="firstItemImage" class="card-img " alt="Card image">
+        <div class="card-wrapper">
+          <div class="card h-100">
+            <img [src]="firstItemImage" class="card first-img h-100" alt="Card image">
+          </div>
         </div>
       </swiper-slide>
       <swiper-slide *ngFor="let item of items" class="pb-5">
