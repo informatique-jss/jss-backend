@@ -14,6 +14,7 @@ import { PostService } from '../../tools/services/post.service';
 })
 export class FormalityComponent implements OnInit {
   myJssCategoryFormality: MyJssCategory | undefined;
+  tendencyPosts: Post[] = [] as Array<Post>;
   carouselFormalityPosts: Post[] = [];
 
   constructor(private appService: AppService,
@@ -29,13 +30,23 @@ export class FormalityComponent implements OnInit {
           if (posts)
             this.carouselFormalityPosts.push(...posts);
         });
+        this.postService.getTendencyPosts().subscribe(response => {
+          if (response && response.length > 0) {
+            this.tendencyPosts = response;
+          }
+        });
       }
     });
   }
+
   ngAfterViewInit(): void {
     jarallax(document.querySelectorAll('.jarallax'), {
       speed: 0.5
     });
+  }
+
+  openPost(slug: string, event: any) {
+    this.appService.openRoute(event, "post/" + slug, undefined);
   }
 
   openAnnouncements(event: any) {

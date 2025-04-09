@@ -3,14 +3,15 @@ import { AppService } from '../../../../libs/app.service';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { initTooltips } from '../../../my-account/components/orders/orders.component';
+import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
 import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
 
 @Component({
-    selector: 'top-bar',
-    templateUrl: './top-bar.component.html',
-    styleUrls: ['./top-bar.component.css'],
-    standalone: false
+  selector: 'top-bar',
+  templateUrl: './top-bar.component.html',
+  styleUrls: ['./top-bar.component.css'],
+  standalone: false
 })
 export class TopBarComponent implements OnInit {
 
@@ -24,6 +25,10 @@ export class TopBarComponent implements OnInit {
   services: MenuItem[] = this.appService.getAllServicesMenuItems();
   companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
   tools: MenuItem[] = this.appService.getAllToolsMenuItems();
+  myAccountItems: AccountMenuItem[] = this.appService.getAllAccountMenuItems();
+
+  MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
+  MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
 
   isNavbarCollapsed: boolean = false;
 

@@ -323,4 +323,36 @@
   </div>
 </section>
 
+
+<section class="background-opacity">
+  <div class="container overflow-hidden">
+    <generic-swiper *ngIf="tendencyPosts && tendencyPosts.length>0" [items]="tendencyPosts" title="Articles à la une">
+      <ng-template let-post>
+        <div class="card card-carousel">
+          <div
+            [ngStyle]="{'background-image': 'url(' + (post.media && post.media.urlThumbnail ? post.media.urlThumbnail : 'assets/img/blog/grid/01.jpg') + ')'}"
+            class="card-img-top">
+          </div>
+          <div class="card-body">
+            <div class="mb-2">
+              <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+              <span class="fs-xs opacity-20 mx-3">|</span>
+              <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]" href="#">{{post.postTags[0].name}}</a>
+            </div>
+            <a class="text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+              <h4 class="card-title">{{post.titleText}}</h4>
+              <p class="card-text text-gray text-truncate-custom" [innerHTML]="post.excerptText | trustHtml"></p>
+            </a>
+            <hr>
+            <div class="d-flex">
+              <img class="rounded-circle" [src]="post.fullAuthor.avatar_url_size_24" width="48" alt="Post author">
+              <h6 class="ps-3 pt-2 mb-0">{{post.fullAuthor.name}}</h6>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </generic-swiper>
+  </div>
+</section>
+
 <our-clients></our-clients>

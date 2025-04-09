@@ -7,13 +7,6 @@
   position: relative;
 }
 
-.card-img-top {
-  min-height: 20vh;
-  background-size: cover;
-  background-position: center;
-  width: 100%;
-}
-
 .search-result {
   background-color: white;
   position: absolute;

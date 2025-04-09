@@ -1,3 +1,8 @@
 .footer {
-    background-color: var(--ar-secondary-bg);
+    background-color: #14202E;
+}
+
+.footers-footer {
+    cursor: pointer;
+    color: #FFFFFF80;
 }

@@ -6090,7 +6090,7 @@ textarea.form-control-lg {
   --ar-toast-max-width: 350px;
   --ar-toast-font-size: 0.875rem;
   --ar-toast-color: ;
-  --ar-toast-bg: var(--ar-body-bg);
+  --ar-toast-bg: var(--ar-secondary-bg);
   --ar-toast-border-width: var(--ar-border-width);
   --ar-toast-border-color: #f0f3f6;
   --ar-toast-border-radius: var(--ar-border-radius-lg);
@@ -20290,7 +20290,8 @@ h1.secondary-heading,
 }
 
 .card-carousel {
-  max-height: 70vh;
+  max-height: 450px;
+  min-height: 450px;
   max-width: 50vw;
   background-color: var(--ar-blue-dark-bg);
 }
@@ -20301,4 +20302,10 @@ h1.secondary-heading,
 
 .custom-input-group {
   background-color: white;
+}
+
+.card-img-top {
+  min-height: 20vh;
+  background-size: cover;
+  background-position: center;
 }

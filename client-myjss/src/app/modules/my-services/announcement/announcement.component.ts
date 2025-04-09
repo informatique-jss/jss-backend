@@ -15,12 +15,12 @@ import { PostService } from '../../tools/services/post.service';
 export class AnnouncementComponent implements OnInit {
   myJssCategoryAnnouncement: MyJssCategory | undefined;
   carouselAnnouncementPosts: Post[] = [];
+  tendencyPosts: Post[] = [];
 
   constructor(private appService: AppService,
     private myJssCategoryService: MyJssCategoryService,
     private postService: PostService
-  ) {
-  }
+  ) { }
 
   ngOnInit() {
     this.myJssCategoryService.getAnnouncementMyJssCategory().subscribe(response => {
@@ -29,6 +29,11 @@ export class AnnouncementComponent implements OnInit {
         this.postService.getTopPostByMyJssCategory(0, this.myJssCategoryAnnouncement).subscribe(posts => {
           if (posts)
             this.carouselAnnouncementPosts = posts;
+        });
+        this.postService.getTendencyPosts().subscribe(response => {
+          if (response && response.length > 0) {
+            this.tendencyPosts = response;
+          }
         });
       }
     });
