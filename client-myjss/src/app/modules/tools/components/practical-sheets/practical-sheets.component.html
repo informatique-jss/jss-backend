@@ -257,7 +257,8 @@
 
   <ng-container *ngIf="!secondSearchText">
     <ng-container *ngFor="let myJssCategory of myJssCategories;">
-      <div class="accordion-item border-top mb-0" *ngIf="!myJssCategory.id || !postsByMyJssCategory[myJssCategory.id]">
+      <div class="accordion-item border-top mb-0"
+        *ngIf="!myJssCategory.id || (myJssCategory.id>=0 && !postsByMyJssCategory[myJssCategory.id])">
         <div class="accordion-header">
           <p class="card-text placeholder-glow">
             <span class="placeholder placeholder-sm col-7 me-2"></span>
