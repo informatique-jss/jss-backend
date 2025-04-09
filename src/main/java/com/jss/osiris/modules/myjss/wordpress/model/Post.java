@@ -40,6 +40,9 @@ public class Post implements IId {
     private Integer[] jss_category;
 
     @Transient
+    private Integer[] myjss_category;
+
+    @Transient
     private Integer[] categories;
 
     @Transient
@@ -421,6 +424,14 @@ public class Post implements IId {
 
     public void setMyJssCategories(List<MyJssCategory> myJssCategories) {
         this.myJssCategories = myJssCategories;
+    }
+
+    public Integer[] getMyjss_category() {
+        return myjss_category;
+    }
+
+    public void setMyjss_category(Integer[] myjss_category) {
+        this.myjss_category = myjss_category;
     }
 
 }

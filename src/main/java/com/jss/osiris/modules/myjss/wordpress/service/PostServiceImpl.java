@@ -522,6 +522,19 @@ public class PostServiceImpl implements PostService {
             }
             post.setJssCategories(categories);
         }
+        if (post.getMyjss_category() != null && post.getMyjss_category().length > 0) {
+            List<MyJssCategory> categories = new ArrayList<MyJssCategory>();
+            List<MyJssCategory> availableCategories = myJssCategoryService.getAvailableMyJssCategories();
+            for (Integer i : post.getJss_category()) {
+                for (MyJssCategory availableCategory : availableCategories) {
+                    if (availableCategory.getId().equals(i)) {
+                        categories.add(availableCategory);
+                        break;
+                    }
+                }
+            }
+            post.setMyJssCategories(categories);
+        }
         if (post.getCategories() != null && post.getCategories().length > 0) {
             List<Category> categories = new ArrayList<Category>();
             List<Category> availableCategories = categoryService.getAvailableCategories();
