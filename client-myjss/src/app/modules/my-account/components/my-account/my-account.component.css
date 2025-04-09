@@ -4,8 +4,8 @@
 
 :host ::ng-deep * {
     color: #2C4057;
-    --ar-nav-link-active-color: #2c4057c2;
-    --ar-nav-link-hover-color: #3e6592da;
+    --ar-nav-link-active-color: #448C74;
+    --ar-nav-link-hover-color: #2c4057be;
 }
 
 h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
@@ -87,4 +87,12 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 
 :host ::ng-deep .dropdown-item i {
     color: var(--ar-primary);
+}
+
+:host ::ng-deep .nav-link.active i {
+    color: #448C74;
+}
+
+:host ::ng-deep .table> :not(caption)>*>* {
+    color: #2C4057;
 }
