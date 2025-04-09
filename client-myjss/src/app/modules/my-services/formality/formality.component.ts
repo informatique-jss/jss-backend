@@ -21,7 +21,7 @@ export class FormalityComponent implements OnInit {
   ngOnInit() {
     this.postService.getTendencyPosts().subscribe(response => {
       if (response && response.length > 0) {
-        this.tendencyPosts.push(...response);
+        this.tendencyPosts = response;
       }
     });
   }
