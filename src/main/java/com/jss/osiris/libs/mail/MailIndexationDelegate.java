@@ -125,26 +125,42 @@ public class MailIndexationDelegate {
             } catch (MessagingException e) {
                 throw new OsirisException(e, "Impossible to connect to IMAP");
             }
+        }
+
+        if (folderInbox != null && folderInbox.isOpen())
             try {
-                folderInbox = store.getFolder("INBOX");
+                folderInbox.close();
             } catch (MessagingException e) {
-                throw new OsirisException(e, "Impossible to find INBOX folder");
+                throw new OsirisException(e, "Impossible to close INBOX folder");
             }
+
+        try {
+            folderInbox = store.getFolder("INBOX");
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to find INBOX folder");
+        }
+        try {
+            folderInbox.open(Folder.READ_WRITE);
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to write into INBOX folder");
+        }
+
+        if (folderTrash != null && folderTrash.isOpen())
             try {
-                folderInbox.open(Folder.READ_WRITE);
+                folderTrash.close();
             } catch (MessagingException e) {
-                throw new OsirisException(e, "Impossible to write into INBOX folder");
+                throw new OsirisException(e, "Impossible to close TRASH folder");
             }
-            try {
-                folderTrash = store.getFolder("Éléments supprimés");
-            } catch (MessagingException e) {
-                throw new OsirisException(e, "Impossible to find Trash folder");
-            }
-            try {
-                folderTrash.open(Folder.READ_WRITE);
-            } catch (MessagingException e) {
-                throw new OsirisException(e, "Impossible to write into Trash folder");
-            }
+
+        try {
+            folderTrash = store.getFolder("Éléments supprimés");
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to find Trash folder");
+        }
+        try {
+            folderTrash.open(Folder.READ_WRITE);
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to write into Trash folder");
         }
     }
 
