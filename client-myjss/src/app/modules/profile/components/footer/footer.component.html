@@ -9,31 +9,33 @@
 
           <!-- SERVICES -->
           <div class="col-auto me-md-4">
-            <div class="lead-text-menu py-4">
+            <div class="footer-title py-4">
               SERVICES
             </div>
             <p *ngFor="let service of services">
-              <a class="nav-link" style="cursor: pointer;" [routerLink]="service.route">{{service.label}}</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;"
+                [routerLink]="service.route">{{service.label}}</a>
             </p>
           </div>
 
           <!-- LA SOCIÉTÉ -->
           <div *ngIf="!isInNavbar" class="col-auto me-md-4">
-            <div class="lead-text-menu py-4">
+            <div class="footer-title py-4">
               LA SOCIÉTÉ
             </div>
             <p *ngFor="let companyItem of companyItems">
-              <a class="nav-link" style="cursor: pointer;" [routerLink]="companyItem.route">{{companyItem.label}}</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;"
+                [routerLink]="companyItem.route">{{companyItem.label}}</a>
             </p>
           </div>
 
           <!-- OUTILS -->
           <div *ngIf="!isInNavbar" class="col-auto me-md-4">
-            <div class="lead-text-menu py-4">
+            <div class="footer-title py-4">
               OUTILS
             </div>
             <p *ngFor="let tool of tools">
-              <a class="nav-link" style="cursor: pointer;" [routerLink]="tool.route">{{tool.label}}</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" [routerLink]="tool.route">{{tool.label}}</a>
             </p>
           </div>
         </div>
@@ -43,43 +45,45 @@
         <div class="d-flex justify-content-between flex-column flex-md-row">
           <!-- LIENS UTILES -->
           <div class="col-auto me-md-4">
-            <div class="lead-text-menu py-4">
+            <div class="footer-title py-4">
               LIENS UTILES
             </div>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="$event">Commande / Devis</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event">Commande / Devis</a>
             </p>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="$event">Démo</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event">Démo</a>
             </p>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="$event">Tarifs</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event">Tarifs</a>
             </p>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="$event">Newsletter</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event">Newsletter</a>
             </p>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="$event">Contact</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event">Contact</a>
             </p>
             <hr>
             <p>
-              <a class="nav-link" style="cursor: pointer;" (click)="$event">Journal Spécial des
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event">Journal Spécial des
                 Sociétés</a>
             </p>
           </div>
 
           <!-- LOCALISATION -->
           <div class="col-auto me-md-4">
-            <div class="lead-text-menu py-4">
+            <div class="footer-title py-4">
               LOCALISATION
             </div>
-            <p class="mb-0">10 Bd Haussmann,</p>
-            <p>75009 Paris</p>
-            <a class="mb-0" href="mailto:contact@jss.fr">contact&#64;jss.fr</a>
-            <p>01.47.03.10.10</p>
-            <hr>
-            <p class="mb-0">lun-ven : 9h00 - 12h30</p>
-            <p>14h00 - 18h00</p>
+            <div class="footer-body">
+              <p class="mb-0">10 Bd Haussmann,</p>
+              <p>75009 Paris</p>
+              <a class="mb-0" href="mailto:contact@jss.fr">contact&#64;jss.fr</a>
+              <p>01.47.03.10.10</p>
+              <hr>
+              <p class="mb-0">lun-ven : 9h00 - 12h30</p>
+              <p>14h00 - 18h00</p>
+            </div>
           </div>
         </div>
       </div>
