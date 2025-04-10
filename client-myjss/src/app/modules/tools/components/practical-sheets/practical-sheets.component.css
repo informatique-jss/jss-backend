@@ -38,16 +38,6 @@
   border-radius: 50%;
 }
 
-
-.checkbox-custom {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  margin-right: 10px;
-  flex-shrink: 0;
-  background-color: #CEB793 !important;
-}
-
 .text-truncate-custom {
   white-space: nowrap;
   max-width: 100%;
