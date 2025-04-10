@@ -91,7 +91,7 @@
   --ar-warning: #edcb50;
   --ar-danger: #ed5050;
   --ar-light: #fff;
-  --ar-dark: #121519;
+  --ar-dark: #1C2D41;
   --ar-primary-rgb: 68, 140, 116;
   --ar-secondary-rgb: 237, 241, 245;
   --ar-success-rgb: 63, 202, 144;
@@ -148,7 +148,7 @@
   --ar-tertiary-color-rgb: 87, 96, 113;
   --ar-tertiary-bg: #f6f9fc;
   --ar-tertiary-bg-rgb: 246, 249, 252;
-  --ar-heading-color: var(--ar-gray-900);
+  --ar-heading-color: #1C2D41;
   --ar-link-color: #448c74;
   --ar-link-color-rgb: 68, 140, 116;
   --ar-link-decoration: underline;
@@ -12937,7 +12937,7 @@ textarea.form-control-lg {
 :root,
 [data-bs-theme=light] {
   --ar-user-selection-color: rgba(var(--ar-primary-rgb), 0.22);
-  --ar-heading-color: var(--ar-gray-900);
+  --ar-heading-color: #1C2D41;
   --ar-heading-font-weight: 600;
   --ar-heading-link-color: var(--ar-gray-800);
   --ar-heading-link-hover-color: var(--ar-primary);
