@@ -26,5 +26,5 @@ export interface Post {
   departments: PublishingDepartment[];
   postTags: Tag[];
   media: Media;
-  premium: boolean;
+  isPremium: boolean;
 }

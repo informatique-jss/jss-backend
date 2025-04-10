@@ -22,5 +22,5 @@ export interface Post {
   myJssCategories: MyJssCategory[];
   postTags: Tag[];
   media: Media;
-  premium: boolean;
+  isPremium: boolean;
 }
