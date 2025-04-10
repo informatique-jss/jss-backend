@@ -6789,7 +6789,7 @@ textarea.form-control-lg {
   --ar-spinner-width: 2rem;
   --ar-spinner-height: 2rem;
   --ar-spinner-vertical-align: -0.125em;
-  --ar-spinner-border-width: 0.15em;
+  --ar-spinner-border-width: 0.1em;
   --ar-spinner-animation-speed: 0.75s;
   --ar-spinner-animation-name: spinner-border;
   border: var(--ar-spinner-border-width) solid currentcolor;
@@ -6797,9 +6797,10 @@ textarea.form-control-lg {
 }
 
 .spinner-border-sm {
-  --ar-spinner-width: 1rem;
-  --ar-spinner-height: 1rem;
-  --ar-spinner-border-width: 0.1em;
+  --ar-spinner-width: 16px !important;
+  --ar-spinner-height: 16px !important;
+  --ar-spinner-border-width: 0.1em !important;
+  ;
 }
 
 @keyframes spinner-grow {
@@ -20305,4 +20306,13 @@ h1.secondary-heading,
   min-height: 20vh;
   background-size: cover;
   background-position: center;
+}
+
+.checkbox-custom {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  background-color: #CEB793 !important;
 }

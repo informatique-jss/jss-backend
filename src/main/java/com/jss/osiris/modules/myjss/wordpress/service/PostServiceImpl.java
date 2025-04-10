@@ -344,7 +344,9 @@ public class PostServiceImpl implements PostService {
                 }
                 return matchingPosts;
             }
-        }
+        } else
+            matchingPosts = postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
+                    pageableRequest);
         return matchingPosts;
     }
 
