@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
@@ -75,6 +75,14 @@ export class PracticalSheetsComponent implements OnInit {
   }
 
   practicalSheetsForm = this.formBuilder.group({});
+
+  @ViewChild('searchResultsSection') searchResultsSection: ElementRef | undefined;
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    if (this.searchResultsSection && !this.searchResultsSection.nativeElement.contains(event.target)) {
+      this.searchResults = [];
+    }
+  }
 
   searchForPosts() {
     if (this.searchText && this.searchText.length > 2 && this.selectedMyJssCategory) {
