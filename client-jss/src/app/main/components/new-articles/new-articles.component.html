@@ -7,7 +7,7 @@
           style="  background-position: center center; background-size: cover;"
           [style.background-image]="'url('+(post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlMedium)+')'">
           <!-- Card featured -->
-          <span class="card-featured" title="Featured post" *ngIf="post.premium==true"><i
+          <span class="card-featured" title="Featured post" *ngIf="post.isPremium==true"><i
               class="fas fa-star"></i></span>
           <!-- Card Image overlay -->
           <div class="card-img-overlay d-flex align-items-center p-3 p-sm-4">
@@ -55,7 +55,7 @@
               style="  background-position: center center; background-size: cover;"
               [style.background-image]="'url('+(post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlMedium)+')'">
               <!-- Card Image -->
-              <span class="card-featured" title="Featured post" *ngIf="post.premium==true"><i
+              <span class="card-featured" title="Featured post" *ngIf="post.isPremium==true"><i
                   class="fas fa-star"></i></span>
               <!-- Card Image overlay -->
               <div class="card-img-overlay d-flex align-items-center p-3 p-sm-4">
@@ -91,7 +91,7 @@
             <div class="card card-overlay-bottom card-grid-sm card-bg-scale"
               style="  background-position: center center; background-size: cover;"
               [style.background-image]="'url('+(post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlMedium)+')'">
-              <span class="card-featured" title="Featured post" *ngIf="post.premium==true"><i
+              <span class="card-featured" title="Featured post" *ngIf="post.isPremium==true"><i
                   class="fas fa-star"></i></span>
               <!-- Card Image overlay -->
               <div class="card-img-overlay d-flex align-items-center p-3 p-sm-4">
@@ -127,7 +127,7 @@
             <div class="card card-overlay-bottom card-grid-sm card-bg-scale"
               style="  background-position: center center; background-size: cover;"
               [style.background-image]="'url('+(post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlMedium)+')'">
-              <span class="card-featured" title="Featured post" *ngIf="post.premium==true"><i
+              <span class="card-featured" title="Featured post" *ngIf="post.isPremium==true"><i
                   class="fas fa-star"></i></span>
               <!-- Card Image overlay -->
               <div class="card-img-overlay d-flex align-items-center p-3 p-sm-4">
