@@ -152,8 +152,6 @@ export class PracticalSheetsComponent implements OnInit {
   }
 
   toggleCard(myJssCategory: MyJssCategory): void {
-    console.log(this.expandedCardIndex);
-    console.log(myJssCategory.id);
     if (this.expandedCardIndex === myJssCategory.id)
       this.expandedCardIndex = -1;
     else if (myJssCategory.id)
