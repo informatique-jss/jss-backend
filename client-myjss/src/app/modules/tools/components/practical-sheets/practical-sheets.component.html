@@ -27,13 +27,14 @@
           <div class="select-box col-3 justify-content-end">
             <select-myjss-category class="cursor-pointer ps-0" [additionnalType]="this.myJssCategories[0]"
               [(model)]="selectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
-              propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
+              propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"
+              (onFormChange)="searchForPosts()"></select-myjss-category>
           </div>
         </div>
       </div>
     </div>
 
-    <section *ngIf="searchResults && searchResults.length > 0">
+    <section *ngIf="searchResults && searchResults.length > 0" class="container-custom">
       <div class="search-result border-0 rounded-3 custom-dropdown">
         <ul class="list-group mt-2">
           <li class="list-group-item card py-2" *ngFor="let post of searchResults">
