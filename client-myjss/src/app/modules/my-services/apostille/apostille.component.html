@@ -307,9 +307,9 @@
               <div class="mb-2">
                 <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
                 <span class="fs-xs opacity-20 mx-3">|</span>
-                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]" href="#">{{post.postTags[0].name}}</a>
+                <p class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</p>
               </div>
-              <a class="text-decoration-none" href="#" (click)="openPost(post.slug,$event)">
+              <a class="text-decoration-none" (click)="openPost(post.slug,$event)">
                 <h4 class="card-title card-title-truncate">{{post.titleText}}</h4>
                 <p class="card-text text-gray card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
               </a>

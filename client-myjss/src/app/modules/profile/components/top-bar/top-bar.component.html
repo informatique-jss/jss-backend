@@ -38,7 +38,7 @@
         </div>
         <!-- User signed in state. Account dropdown on screens > 576px -->
         <div class="dropdown nav" *ngIf="currentUser && currentUser.id">
-          <a class="d-flex align-items-center p-0" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="d-flex align-items-center p-0" data-bs-toggle="dropdown" aria-expanded="false">
             <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
             <div class="ps-2 d-none d-md-block">
               <div class="fs-xs lh-1 opacity-60">Bonjour,</div>
@@ -82,7 +82,7 @@
         <div class="d-flex flex-column w-100">
           <ul class="navbar-nav navbar-nav-scroll flex-column" style="--ar-scroll-height: 520px; overflow: hidden;">
             <li class="nav-item dropdown d-block col col-md-auto">
-              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                 aria-expanded="false">Services</a>
               <ul class="dropdown-menu">
                 <li *ngFor="let service of services"><a class="dropdown-item" [routerLink]="service.route">
@@ -90,7 +90,7 @@
               </ul>
             </li>
             <li class="nav-item dropdown col col-md-auto">
-              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">La
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">La
                 société</a>
               <ul class="dropdown-menu">
                 <li *ngFor="let item of companyItems"><a class="dropdown-item" [routerLink]="item.route">
@@ -98,7 +98,7 @@
               </ul>
             </li>
             <li class="nav-item dropdown col col-md-auto">
-              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Outils</a>
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Outils</a>
               <ul class="dropdown-menu">
                 <li *ngFor="let tool of tools"><a class="dropdown-item" [routerLink]="tool.route">
                     {{tool.label}}</a></li>
@@ -130,7 +130,7 @@
       <nav class="align-items-center navbar-expand" id="navbarNav">
         <ul class="navbar-nav navbar-nav-scroll justify-content-between" style="--ar-scroll-height: 520px;">
           <li class="nav-item dropdown d-block col col-md-auto">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside"
               aria-expanded="false">Services</a>
             <ul class="dropdown-menu">
               <li *ngFor="let service of services"><a class="dropdown-item" [routerLink]="service.route">
@@ -138,14 +138,14 @@
             </ul>
           </li>
           <li class="nav-item dropdown col col-md-auto">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">La société</a>
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">La société</a>
             <ul class="dropdown-menu">
               <li *ngFor="let item of companyItems"><a class="dropdown-item" [routerLink]="item.route">
                   {{item.label}}</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown col col-md-auto">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Outils</a>
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Outils</a>
             <ul class="dropdown-menu">
               <li *ngFor="let tool of tools"><a class="dropdown-item" [routerLink]="tool.route">
                   {{tool.label}}</a></li>
