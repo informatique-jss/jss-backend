@@ -9,5 +9,5 @@
   </button>
 </div>
 <div class="mt-4" *ngIf="linkLabel && linkLabel.length>0">
-  <a href="#" (click)="openRoute($event)" [ngClass]="isLightButtons ? 'text-white': 'text-blue'">{{linkLabel}}</a>
+  <a (click)="openRoute($event)" [ngClass]="isLightButtons ? 'text-white': 'text-blue'">{{linkLabel}}</a>
 </div>
