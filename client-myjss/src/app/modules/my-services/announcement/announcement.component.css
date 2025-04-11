@@ -35,3 +35,7 @@
 .card-wrapper {
   height: 500px;
 }
+
+.card-wrapper-announcement {
+  height: 350px;
+}
