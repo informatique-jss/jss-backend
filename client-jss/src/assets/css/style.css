@@ -50,6 +50,11 @@ Primary use:  blog, news, magazine
   --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+  --ar-primary: #1C2D41;
+  --ar-primary-bg: #FFFFFF;
+  --ar-secondary: #FFFFFF;
+  --ar-secondary-bg: #1C2D41;
+  --ar-tertiary-bg: #F8EB83;
 }
 
 *,
@@ -233,12 +238,13 @@ sup {
 }
 
 a {
-  color: #414141;
+  color: var(--ar-primary);
   text-decoration: underline;
 }
 
 a:hover {
-  color: #ff3e30;
+  color: var(--ar-primary);
+  opacity: 70%;
 }
 
 a:not([href]):not([class]), a:not([href]):not([class]):hover {
@@ -3353,20 +3359,20 @@ fieldset:disabled .btn {
 
 .btn-dark {
   color: #fff;
-  background-color: #000000;
-  border-color: #000000;
+  background-color: var(--ar-secondary-bg);
+  border-color: var(--ar-secondary-bg);
 }
 
 .btn-dark:hover {
   color: #fff;
-  background-color: black;
-  border-color: black;
+  opacity: 80%;
+  border-color: var(--ar-secondary-bg);
 }
 
 .btn-check:focus+.btn-dark, .btn-dark:focus {
   color: #fff;
-  background-color: black;
-  border-color: black;
+  background-color: var(--ar-secondary-bg);
+  border-color: var(--ar-secondary-bg);
   box-shadow: 0 0 0 0.25rem rgba(38, 38, 38, 0.5);
 }
 
@@ -3374,8 +3380,8 @@ fieldset:disabled .btn {
 .btn-check:active+.btn-dark, .btn-dark:active, .btn-dark.active,
 .show>.btn-dark.dropdown-toggle {
   color: #fff;
-  background-color: black;
-  border-color: black;
+  background-color: var(--ar-secondary-bg);
+  border-color: var(--ar-secondary-bg);
 }
 
 .btn-check:checked+.btn-dark:focus,
@@ -3388,6 +3394,45 @@ fieldset:disabled .btn {
   color: #fff;
   background-color: #000000;
   border-color: #000000;
+}
+
+.btn-yellow {
+  color: var(--ar-primary);
+  background-color: var(--ar-tertiary-bg);
+  border-color: var(--ar-tertiary-bg);
+}
+
+.btn-yellow:hover {
+  color: var(--ar-primary);
+  opacity: 80%;
+  border-color: var(--ar-tertiary-bg);
+}
+
+.btn-check:focus+.btn-yellow, .btn-yellow:focus {
+  color: var(--ar-primary);
+  background-color: var(--ar-tertiary-bg);
+  border-color: var(--ar-tertiary-bg);
+  box-shadow: 0 0 0 0.25rem rgba(38, 38, 38, 0.5);
+}
+
+.btn-check:checked+.btn-yellow,
+.btn-check:active+.btn-yellow, .btn-yellow:active, .btn-yellow.active,
+.show>.btn-yellow.dropdown-toggle {
+  color: var(--ar-primary);
+  background-color: var(--ar-tertiary-bg);
+  border-color: var(--ar-tertiary-bg);
+}
+
+.btn-check:checked+.btn-yellow:focus,
+.btn-check:active+.btn-yellow:focus, .btn-yellow:active:focus, .btn-yellow.active:focus,
+.show>.btn-yellow.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.25rem var(--ar-tertiary-bg);
+}
+
+.btn-yellow:disabled, .btn-yellow.disabled {
+  color: var(--ar-primary);
+  background-color: #c4c4c4;
+  border-color: #caca;
 }
 
 .btn-outline-primary {
@@ -4025,17 +4070,17 @@ fieldset:disabled .btn {
   padding: 0.23438rem 0.9375rem;
   clear: both;
   font-weight: 400;
-  color: #212529;
+  color: var(--ar-secondary);
   text-align: inherit;
   text-decoration: none;
   white-space: nowrap;
-  background-color: transparent;
+  background-color: var(--ar-secondary-bg);
   border: 0;
 }
 
 .dropdown-item:hover, .dropdown-item:focus {
-  color: #ff3e30;
-  background-color: #00b6ff;
+  color: var(--ar-secondary);
+  background-color: #1c2d41d2;
 }
 
 .dropdown-item.active, .dropdown-item:active {
@@ -11883,7 +11928,7 @@ blockquote p {
   }
 
   .navbar-nav .dropdown .dropdown-menu .dropdown-item:hover {
-    background-color: #ff3e30;
+    background-color: #1c2d41d2;
     color: #fff;
   }
 
@@ -12108,7 +12153,7 @@ blockquote p {
 
 .header-navbar-bottom .navbar-nav>li>a {
   padding: 0.8rem 1.4rem !important;
-  color: #414141;
+  color: #ffffffb9;
   font-weight: 700;
   font-size: 15px;
   position: relative;
@@ -12123,11 +12168,11 @@ blockquote p {
 }
 
 .header-navbar-bottom .navbar-nav>li>a:hover {
-  color: #ff3e30;
+  color: #FFFFFF;
 }
 
 .header-navbar-bottom .navbar-nav>li.active a {
-  color: #ff3e30;
+  color: #FFFFFF;
 }
 
 .header-navbar-bottom .navbar-nav>li:first-child>a {
@@ -12135,7 +12180,7 @@ blockquote p {
 }
 
 .header-navbar-bottom .search-modal a {
-  color: #414141;
+  color: var(--ar-secondary);
 }
 
 .mean-container .mean-bar {
