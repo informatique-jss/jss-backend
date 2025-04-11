@@ -1,0 +1,24 @@
+.podcast-nav-link {
+    border-left: 1px solid #858C97;
+}
+
+.social-icon {
+    width: 32px;
+    height: 32px;
+    background-color: #CCE1FA;
+    color: #1C2D41;
+    /* border-radius: 6px; */
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+
+    &:hover {
+        background-color: #B5D1F3;
+        color: #0F1E2E;
+    }
+}
+
+.middle-link {
+    border-left: 1px solid var(--ar-primary);
+    border-right: 1px solid var(--ar-primary);
+}
