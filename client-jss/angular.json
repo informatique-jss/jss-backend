@@ -84,14 +84,14 @@
                 "bundleName": "plyr.js"
               },
               {
-                "input": "src/assets/js/functions.js",
+                "input": "src/assets/js/app.js",
                 "inject": true,
-                "bundleName": "functions.js"
+                "bundleName": "app.js"
               },
               {
-                "input": "src/assets/js/functions.js",
+                "input": "src/assets/js/build.min.js",
                 "inject": true,
-                "bundleName": "functions.js"
+                "bundleName": "build.min.js"
               }
             ]
           },
