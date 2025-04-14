@@ -1,6 +1,5 @@
 import { Employee } from "../../profile/model/Employee";
 import { Responsable } from "../../profile/model/Responsable";
-import { CustomerOrder } from "./CustomerOrder";
 
 export interface CustomerOrderComment {
   id: number;
@@ -8,6 +7,4 @@ export interface CustomerOrderComment {
   employee: Employee;
   currentCustomer: Responsable;
   comment: string;
-  isRead: boolean;
-  customerOrder: CustomerOrder;
 }

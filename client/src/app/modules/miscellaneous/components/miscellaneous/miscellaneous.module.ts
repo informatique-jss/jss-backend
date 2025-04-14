@@ -218,6 +218,7 @@ import { SelectDeliveryServiceComponent } from '../forms/select-delivery-service
 import { SelectDepartmentComponent } from '../forms/select-department/select-department.component';
 import { SelectDepartmentsComponent } from '../forms/select-departments/select-departments.component';
 import { SelectDocumentTypeComponent } from '../forms/select-document-type/select-document-type.component';
+import { SelectEmployeeComponent } from '../forms/select-employee/select-employee.component';
 import { SelectFollowupComponent } from '../forms/select-followup/select-followup.component';
 import { SelectFormaliteInfogreffeStatusComponent } from '../forms/select-formalite-infogreffe-status/select-formalite-infogreffe-status.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
@@ -551,7 +552,8 @@ const routes: Routes = [
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
     SelectCategoryComponent,
-    SelectPrintLabelRecipientComponent
+    SelectPrintLabelRecipientComponent,
+    SelectEmployeeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -794,7 +796,8 @@ const routes: Routes = [
     ChipsServiceTypeComponent,
     SingleChipsMailComponent,
     SelectCategoryComponent,
-    SelectPrintLabelRecipientComponent
+    SelectPrintLabelRecipientComponent,
+    SelectEmployeeComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

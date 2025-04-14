@@ -86,4 +86,10 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
         Integer generateValidationIdForQuotation();
 
         List<Quotation> findByResponsable(Responsable responsable);
+
+        @Query("select c from Quotation c join c.responsable r " +
+                        "  where (0 in :commercials or r.salesEmployee.id in :commercials) " +
+                        "    and (0 in :status or  c.quotationStatus.id in :status) order by c.createdDate desc ")
+        List<Quotation> searchQuotation(List<Integer> commercials,
+                        List<Integer> status);
 }

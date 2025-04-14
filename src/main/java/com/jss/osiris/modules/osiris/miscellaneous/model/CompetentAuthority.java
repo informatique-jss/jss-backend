@@ -35,7 +35,7 @@ public class CompetentAuthority implements IAttachment, IId {
 
 	@Column(nullable = false, length = 200)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@ManyToOne(fetch = FetchType.LAZY)

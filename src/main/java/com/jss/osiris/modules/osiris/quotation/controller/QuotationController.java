@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
@@ -31,6 +32,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
@@ -497,6 +499,48 @@ public class QuotationController {
         customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order-comment/order")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrderComment>> getCustomerOrderCommentForOrder(
+      @RequestParam Integer customerOrderId) throws OsirisValidationException, OsirisException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrderId");
+
+    return new ResponseEntity<List<CustomerOrderComment>>(
+        customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-comment/quotation")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrderComment>> getCustomerOrderCommentForQuotation(
+      @RequestParam Integer quotationId) throws OsirisValidationException, OsirisException {
+
+    Quotation quotation = quotationService.getQuotation(quotationId);
+
+    if (quotation == null)
+      throw new OsirisValidationException("quotationId");
+
+    return new ResponseEntity<List<CustomerOrderComment>>(
+        customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-comment/provision")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrderComment>> getCustomerOrderCommentForProvision(
+      @RequestParam Integer provisionId) throws OsirisValidationException, OsirisException {
+
+    Provision provision = provisionService.getProvision(provisionId);
+
+    if (provision == null)
+      throw new OsirisValidationException("provisionId");
+
+    return new ResponseEntity<List<CustomerOrderComment>>(
+        customerOrderCommentService.getCustomerOrderCommentForProvision(provision), HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/customer-order-comment")
   public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderComment(
       @RequestBody CustomerOrderComment customerOrderComment) throws OsirisValidationException, OsirisException {
@@ -518,8 +562,12 @@ public class QuotationController {
 
     validationHelper.validateReferential(customerOrderComment.getEmployee(), true, "employee");
 
-    if (customerOrderComment.getProvision() != null)
-      validationHelper.validateReferential(customerOrderComment.getProvision(), false, "provision");
+    if (customerOrderComment.getProvision() != null) {
+      Provision provision = (Provision) validationHelper.validateReferential(customerOrderComment.getProvision(), false,
+          "provision");
+      customerOrderComment.setCustomerOrder(provision.getService().getAssoAffaireOrder().getCustomerOrder());
+      customerOrderComment.setQuotation(provision.getService().getAssoAffaireOrder().getQuotation());
+    }
 
     if (customerOrderComment.getCustomerOrder() != null)
       validationHelper.validateReferential(customerOrderComment.getCustomerOrder(), false, "customerOrder");
@@ -2599,5 +2647,128 @@ public class QuotationController {
       trackingSheetFile.delete();
     }
     return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/search")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrder>> searchCustomerOrders(
+      @RequestParam(required = false) List<Integer> commercialIds,
+      @RequestParam(required = false) List<Integer> statusIds)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    List<Employee> commercials = new ArrayList<Employee>();
+    if (commercialIds != null)
+      for (Integer id : commercialIds) {
+        Employee commercial = employeeService.getEmployee(id);
+        if (commercial == null)
+          throw new OsirisValidationException("commercialids");
+        else
+          commercials.add(commercial);
+      }
+
+    List<CustomerOrderStatus> status = new ArrayList<CustomerOrderStatus>();
+    if (statusIds != null)
+      for (Integer id : statusIds) {
+        CustomerOrderStatus statu = customerOrderStatusService.getCustomerOrderStatus(id);
+        if (statu == null)
+          throw new OsirisValidationException("statusIds");
+        else
+          status.add(statu);
+      }
+
+    return new ResponseEntity<List<CustomerOrder>>(customerOrderService.searchCustomerOrders(commercials, status),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/single")
+  @JsonView(JacksonViews.OsirisDetailedView.class)
+  public ResponseEntity<CustomerOrder> getSingleCustomerOrder(Integer id)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    return new ResponseEntity<CustomerOrder>(
+        customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService.getCustomerOrder(id)),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/missing-attachment/service")
+  @JsonView(JacksonViews.OsirisDetailedView.class)
+  public ResponseEntity<List<MissingAttachmentQuery>> getMissingAttachmentQueriesForService(Integer serviceId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    Service service = serviceService.getService(serviceId);
+    if (service == null)
+      throw new OsirisValidationException("serviceId");
+
+    return new ResponseEntity<List<MissingAttachmentQuery>>(
+        missingAttachmentQueryService.getMissingAttachmentQueriesByIdService(serviceId), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/order/asso")
+  @JsonView(JacksonViews.OsirisDetailedView.class)
+  public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForCustomerOrder(
+      @RequestParam Integer idCustomerOrder)
+      throws OsirisException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+    if (customerOrder == null)
+      return new ResponseEntity<List<AssoAffaireOrder>>(new ArrayList<AssoAffaireOrder>(), HttpStatus.OK);
+
+    return new ResponseEntity<List<AssoAffaireOrder>>(
+        assoAffaireOrderService.getAssoAffaireOrderForCustomerOrder(customerOrder), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/asso")
+  @JsonView(JacksonViews.OsirisDetailedView.class)
+  public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForQuotation(
+      @RequestParam Integer idQuotation)
+      throws OsirisException {
+
+    Quotation quotation = quotationService.getQuotation(idQuotation);
+    if (quotation == null)
+      return new ResponseEntity<List<AssoAffaireOrder>>(new ArrayList<AssoAffaireOrder>(), HttpStatus.OK);
+
+    return new ResponseEntity<List<AssoAffaireOrder>>(
+        assoAffaireOrderService.getAssoAffaireOrderForQuotation(quotation), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/search")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Quotation>> searchQuotations(
+      @RequestParam(required = false) List<Integer> commercialIds,
+      @RequestParam(required = false) List<Integer> statusIds)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    List<Employee> commercials = new ArrayList<Employee>();
+    if (commercialIds != null)
+      for (Integer id : commercialIds) {
+        Employee commercial = employeeService.getEmployee(id);
+        if (commercial == null)
+          throw new OsirisValidationException("commercialids");
+        else
+          commercials.add(commercial);
+      }
+
+    List<QuotationStatus> status = new ArrayList<QuotationStatus>();
+    if (statusIds != null)
+      for (Integer id : statusIds) {
+        QuotationStatus statu = quotationStatusService.getQuotationStatus(id);
+        if (statu == null)
+          throw new OsirisValidationException("statusIds");
+        else
+          status.add(statu);
+      }
+
+    return new ResponseEntity<List<Quotation>>(quotationService.searchQuotation(commercials, status),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/single")
+  @JsonView(JacksonViews.OsirisDetailedView.class)
+  public ResponseEntity<Quotation> getSingleQuotation(Integer id)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    return new ResponseEntity<Quotation>(
+        quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id)),
+        HttpStatus.OK);
   }
 }

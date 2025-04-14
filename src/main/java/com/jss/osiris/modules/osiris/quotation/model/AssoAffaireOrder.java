@@ -43,7 +43,8 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_affaire")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Affaire affaire;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -65,7 +66,8 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@OneToMany(targetEntity = Service.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private List<Service> services;
 
 	public Affaire getAffaire() {

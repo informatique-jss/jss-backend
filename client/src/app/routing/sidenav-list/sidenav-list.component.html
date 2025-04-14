@@ -27,11 +27,11 @@
     <mat-icon>factory</mat-icon> <span>Fournisseurs</span>
   </a>
   <a mat-list-item routerLink="/quotation" *ngIf="canViewQuotationModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0}">
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
     <mat-icon>request_quote</mat-icon> <span>Devis</span>
   </a>
   <a mat-list-item routerLink="/order" *ngIf="canViewCustomerOrderModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0}">
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
     <mat-icon>shopping_cart</mat-icon> <span>Commandes</span>
   </a>
   <a mat-list-item routerLink="/recurring-order" *ngIf="canViewCustomerOrderModule()"

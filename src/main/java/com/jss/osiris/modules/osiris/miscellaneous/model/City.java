@@ -27,12 +27,13 @@ public class City implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "city_sequence", sequenceName = "city_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "city_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)

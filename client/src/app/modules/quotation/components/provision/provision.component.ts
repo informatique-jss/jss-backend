@@ -363,7 +363,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     dialogRef.componentInstance.title = "Workflow de la prestation";
   }
 
-  getWorkflowElementsForProvision(provision: Provision): IWorkflowElement[] {
+  getWorkflowElementsForProvision(provision: Provision): IWorkflowElement<any>[] {
     if (provision.announcement)
       return this.announcementStatus;
     if (provision.formalite)
@@ -372,14 +372,14 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       return this.simpleProvisionStatus;
     if (provision.domiciliation)
       return this.domiciliationStatus;
-    return [] as Array<IWorkflowElement>;
+    return [] as Array<IWorkflowElement<any>>;
   }
 
   getActiveWorkflowElementsForProvisionFn(provision: Provision) {
     return ProvisionComponent.getActiveWorkflowElementsForProvision(provision);
   }
 
-  public static getActiveWorkflowElementsForProvision(provision: Provision): IWorkflowElement {
+  public static getActiveWorkflowElementsForProvision(provision: Provision): IWorkflowElement<any> {
     if (provision.announcement)
       return provision.announcement.announcementStatus;
     if (provision.formalite)
@@ -388,7 +388,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       return provision.simpleProvision.simpleProvisionStatus;
     if (provision.domiciliation)
       return provision.domiciliation.domiciliationStatus;
-    return {} as IWorkflowElement;
+    return {} as IWorkflowElement<any>;
   }
 
   publicationReceiptFound(provision: Provision): boolean {
@@ -399,7 +399,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     return false;
   }
 
-  changeStatus(status: IWorkflowElement, provision: Provision) {
+  changeStatus(status: IWorkflowElement<any>, provision: Provision) {
     if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
       if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();

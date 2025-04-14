@@ -67,7 +67,7 @@ public class Attachment implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "attachment_sequence", sequenceName = "attachment_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attachment_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -85,6 +85,7 @@ public class Attachment implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_missing_attachment_query")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	@JsonIgnore
 	private MissingAttachmentQuery missingAttachmentQuery;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -147,12 +148,12 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_attachment_type")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private AttachmentType attachmentType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_type_document")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private TypeDocument typeDocument;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -162,18 +163,20 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_uploaded_file")
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private UploadedFile uploadedFile;
 
 	@Column(nullable = false)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isDisabled;
 
 	@Column(length = 2000)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private String description;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime creatDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)

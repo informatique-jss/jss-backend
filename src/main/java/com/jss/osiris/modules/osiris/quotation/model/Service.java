@@ -34,11 +34,12 @@ public class Service implements Serializable, IId {
 	@SequenceGenerator(name = "service_sequence", sequenceName = "service_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_sequence")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@OneToMany(targetEntity = Provision.class, mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private List<Provision> provisions;
 
@@ -50,7 +51,8 @@ public class Service implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_type")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments", "assoServiceTypeFieldTypes",
 			"assoServiceProvisionTypes" }, allowSetters = true)
 	private ServiceType serviceType;
@@ -69,7 +71,8 @@ public class Service implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssView.class)
 	private List<AssoServiceFieldType> assoServiceFieldTypes;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String customLabel;
 
 	@Column(columnDefinition = "TEXT")
@@ -77,15 +80,15 @@ public class Service implements Serializable, IId {
 	private String customerComment;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private boolean hasMissingInformations;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private String serviceStatus;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private BigDecimal servicePrice;
 
 	@Transient
@@ -93,7 +96,7 @@ public class Service implements Serializable, IId {
 	private String confrereLabel;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime lastMissingAttachmentQueryDateTime;
 
 	public Integer getId() {

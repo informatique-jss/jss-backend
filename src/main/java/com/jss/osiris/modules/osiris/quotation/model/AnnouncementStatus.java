@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -39,6 +41,7 @@ public class AnnouncementStatus implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 100)

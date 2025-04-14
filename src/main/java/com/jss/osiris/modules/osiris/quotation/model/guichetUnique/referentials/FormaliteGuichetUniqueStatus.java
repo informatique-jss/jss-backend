@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
@@ -48,6 +50,7 @@ public class FormaliteGuichetUniqueStatus implements Serializable, ICode {
     private String code;
 
     @Column(columnDefinition = "TEXT")
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private String label;
 
     @Column(nullable = false)

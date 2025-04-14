@@ -35,7 +35,8 @@ public class ServiceType implements Serializable, IId {
 
 	@Column(nullable = false)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@IndexedField
