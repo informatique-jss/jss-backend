@@ -17,8 +17,24 @@
   right: 0;
   width: 100%;
   box-sizing: border-box;
-  padding-right: 20px;
   margin: 0;
+  padding-right: 0;
+}
+
+
+.search-result .list-group-item {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+  border: none;
+  background-color: white;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 16px;
+}
+
+.search-result .list-group-item:hover {
+  transform: translateY(-2px);
+  background-color: #f0f4ff;
 }
 
 .search-result::-webkit-scrollbar {
@@ -40,18 +56,6 @@
 
 .search-result:hover::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.4);
-}
-
-.search-result .list-group-item {
-  transition: transform 0.2s ease, background-color 0.2s ease;
-  cursor: pointer;
-  border: none;
-  background-color: white;
-}
-
-.search-result .list-group-item:hover {
-  transform: translateY(-2px);
-  background-color: #f0f4ff;
 }
 
 .drop-down-body {
