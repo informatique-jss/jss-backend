@@ -32,23 +32,39 @@
 
 <description-my-account></description-my-account>
 
-
-<section *ngIf="carouselFormalityPosts && carouselFormalityPosts.length>0" class="background-opacity">
-  <div class="container overflow-hidden">
-    <generic-swiper [items]="carouselFormalityPosts"
-      [firstItemImage]="'assets/img/myjss-services/carousel_formality_init.jpg'"
-      title="Les formalités légales les plus courantes">
-      <ng-template let-post>
-        <div class="card-wrapper">
-          <div class="card card-carousel">
-            <div class="d-flex flex-column card-body justify-content-center align-items-center text-align-center">
-              <h4 class="card-title card-title-truncate">{{post.titleText}}</h4>
-              <p class="card-text text-gray card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+<section *ngIf="carouselFormalityPosts && carouselFormalityPosts.length>0" class="background-opacity container">
+  <div class="row">
+    <div class="col-3 pt-5 mt-3 custom-margin-top px-0 me-n3">
+      <h2 class="h1 pb-3 pt-5  mb-lg-4 text-white text-nowrap" style="overflow: visible;">
+        Les formalités légales les plus courantes
+      </h2>
+      <div class="card-wrapper-announcement">
+        <div class="card h-100 border-0">
+          <img src="assets/img/myjss-services/carousel_formality_init.jpg" class="card object-fit-cover h-100"
+            alt="Card image">
+        </div>
+      </div>
+    </div>
+    <div class="container overflow-hidden col-9 ps-0 ms-xl-2 ms-0">
+      <generic-swiper [items]="carouselFormalityPosts" title="">
+        <ng-template let-post>
+          <div class="card-wrapper-announcement ps-0">
+            <div class="card card-carousel">
+              <div class="card-body">
+                <h4 class="card-title card-title-truncate">{{post.titleText}}</h4>
+                <p class="card-text text-gray card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+              </div>
+              <div class="card-footer ">
+                <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openPost(post.slug,$event)"
+                  aria-label="Learn more">
+                  <i class="ai-arrow-right"></i>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </ng-template>
-    </generic-swiper>
+        </ng-template>
+      </generic-swiper>
+    </div>
   </div>
 </section>
 
