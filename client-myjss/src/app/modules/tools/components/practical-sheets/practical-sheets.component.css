@@ -20,6 +20,21 @@
   padding: 0;
 }
 
+.search-result .list-group-item {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+  border: none;
+  background-color: white;
+  /* couleur de base */
+}
+
+.search-result .list-group-item:hover {
+  transform: translateY(-2px);
+  /* lift */
+  background-color: #f0f4ff;
+  /* ou un bleu très clair, à adapter à ton thème */
+}
+
 .drop-down-body {
   padding: 1rem;
   max-height: 30vh;

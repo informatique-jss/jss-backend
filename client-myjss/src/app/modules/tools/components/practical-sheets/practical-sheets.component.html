@@ -36,8 +36,8 @@
 
     <section *ngIf="searchResults && searchResults.length > 0" class="container-custom">
       <div class="search-result border-0 rounded-3 custom-dropdown">
-        <ul class="list-group mt-2">
-          <li class="list-group-item card py-2" *ngFor="let post of searchResults">
+        <ul class="list-group">
+          <li class="list-group-item py-2" *ngFor="let post of searchResults">
             <div class="row">
               <div class="col-12">
                 <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
