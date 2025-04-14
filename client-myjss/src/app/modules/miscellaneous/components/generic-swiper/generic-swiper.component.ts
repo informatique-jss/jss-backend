@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, ContentChild, CUSTOM_ELEMENTS_SCHEMA, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  ContentChild,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
+import { fromEvent, Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { SwiperContainer } from 'swiper/element';
 
 @Component({
@@ -21,6 +32,8 @@ export class GenericSwiperComponent implements OnInit {
   @ContentChild(TemplateRef) templateRef!: TemplateRef<any>; // Take the content of the personalised HTML
 
   @Input() firstItemImage: any | undefined;
+
+  private destroy$ = new Subject<void>();
 
   constructor() { }
 
@@ -61,6 +74,18 @@ export class GenericSwiperComponent implements OnInit {
     setTimeout(() => {
       this.setMaxSlideHeight();
     }, 0);
+
+    fromEvent(window, 'resize')
+      .pipe(debounceTime(200), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.setMaxSlideHeight();
+      });
+  }
+
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private setMaxSlideHeight(): void {
@@ -70,8 +95,12 @@ export class GenericSwiperComponent implements OnInit {
     const slides = swiperEl.querySelectorAll('swiper-slide');
     let maxHeight = 0;
 
-    // We fing the slide with the biggest height
-    slides.forEach((slide: any) => {
+    slides.forEach((slide: HTMLElement) => {
+      // Reset the height to properly calculate the new value
+      slide.style.height = 'auto';
+    });
+
+    slides.forEach((slide: HTMLElement) => {
       const slideHeight = slide.scrollHeight;
       if (slideHeight > maxHeight) {
         maxHeight = slideHeight;
@@ -80,10 +109,10 @@ export class GenericSwiperComponent implements OnInit {
 
     swiperEl.style.height = `${maxHeight}px`;
 
-    // We give each slide the maxHeight height
     slides.forEach((slide: HTMLElement) => {
       slide.style.height = `${maxHeight}px`;
     });
+
   }
 
 
