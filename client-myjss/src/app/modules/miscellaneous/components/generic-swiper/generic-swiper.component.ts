@@ -56,7 +56,36 @@ export class GenericSwiperComponent implements OnInit {
 
     Object.assign(this.genericSwiper.nativeElement, params);
     this.genericSwiper.nativeElement.initialize();
+
+    // We set a timeout to be sure that everything is loaded
+    setTimeout(() => {
+      this.setMaxSlideHeight();
+    }, 0);
   }
+
+  private setMaxSlideHeight(): void {
+    const swiperEl = this.genericSwiper?.nativeElement as HTMLElement;
+    if (!swiperEl) return;
+
+    const slides = swiperEl.querySelectorAll('swiper-slide');
+    let maxHeight = 0;
+
+    // We fing the slide with the biggest height
+    slides.forEach((slide: any) => {
+      const slideHeight = slide.scrollHeight;
+      if (slideHeight > maxHeight) {
+        maxHeight = slideHeight;
+      }
+    });
+
+    swiperEl.style.height = `${maxHeight}px`;
+
+    // We give each slide the maxHeight height
+    slides.forEach((slide: HTMLElement) => {
+      slide.style.height = `${maxHeight}px`;
+    });
+  }
+
 
   getSlidesPerView(): number {
     if (this.firstItemImage && this.firstItemImage.length > 0)
