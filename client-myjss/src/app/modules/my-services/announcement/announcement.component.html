@@ -35,18 +35,18 @@
 
 <section *ngIf="carouselAnnouncementPosts && carouselAnnouncementPosts.length>0" class="background-opacity container">
   <div class="row">
-    <div class="col-3 pt-5 mt-3 px-0 me-n3">
+    <div class="col-3 pt-5 mt-3 custom-margin-top px-0 me-n3">
       <h2 class="h1 pb-3 pt-5  mb-lg-4 text-white text-nowrap" style="overflow: visible;">
         Les annonces légales les plus courantes
       </h2>
       <div class="card-wrapper-announcement">
         <div class="card h-100 border-0">
-          <img src="assets/img/announcement/carousel_announcement_init.jpg" class="card first-img h-100"
+          <img src="assets/img/announcement/carousel_announcement_init.jpg" class="card object-fit-cover h-100"
             alt="Card image">
         </div>
       </div>
     </div>
-    <div class="container overflow-hidden col-9 ps-0">
+    <div class="container overflow-hidden col-9 ps-0 ms-xl-2 ms-0">
       <generic-swiper [items]="carouselAnnouncementPosts" title="">
         <ng-template let-post>
           <div class="card-wrapper-announcement ps-0">
