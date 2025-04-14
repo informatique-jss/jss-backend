@@ -40,21 +40,20 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         List<Integer> findJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
                         @Param("category") Category category, Pageable pageable);
 
-        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and size(p.myJssCategories) > 0 and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
+        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and size(p.myJssCategories) > 0 and v.day >= :oneWeekAgo group by p.id order by sum(v.count) desc ")
         List<Integer> findMyJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
-                        @Param("category") Category category, Pageable pageable);
+                        Pageable pageable);
 
-        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and size(p.myJssCategories) > 0 and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
-        List<Integer> findMyJssCategoryPostMostSeen(@Param("category") Category category, Pageable pageable);
+        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and size(p.myJssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        List<Integer> findMyJssCategoryPostMostSeen(Pageable pageable);
 
         @Query("select p from Post p where :categoryArticle MEMBER OF p.postCategories and size(p.jssCategories) > 0 and p.isCancelled = :isCancelled")
         List<Post> findJssCategoryPosts(@Param("categoryArticle") Category categoryArticle,
                         @Param("isCancelled") boolean b,
                         Pageable pageableRequest);
 
-        @Query("select p from Post p where :categoryArticle MEMBER OF p.postCategories and size(p.myJssCategories) > 0 and p.isCancelled = :isCancelled")
-        List<Post> findMyJssCategoryPosts(@Param("categoryArticle") Category categoryArticle,
-                        @Param("isCancelled") boolean b,
+        @Query("select p from Post p where size(p.myJssCategories) > 0 and p.isCancelled = :isCancelled")
+        List<Post> findMyJssCategoryPosts(@Param("isCancelled") boolean b,
                         Pageable pageableRequest);
 
         List<Post> findByPostCategoriesAndIsCancelledAndDepartments(Category categoryArticle, boolean b,

@@ -128,7 +128,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> getMyJssCategoryPostTendency() throws OsirisException {
         List<Integer> idPosts = postRepository.findMyJssCategoryPostTendency(LocalDate.now().minusDays(7),
-                getCategoryArticle(),
                 PageRequest.of(0, 5));
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
@@ -137,8 +136,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException {
-        List<Integer> idPosts = postRepository.findMyJssCategoryPostMostSeen(getCategoryArticle(),
-                PageRequest.of(0, 5));
+        List<Integer> idPosts = postRepository.findMyJssCategoryPostMostSeen(PageRequest.of(0, 5));
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
         return null;
@@ -312,8 +310,7 @@ public class PostServiceImpl implements PostService {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findMyJssCategoryPosts(getCategoryArticle(), false,
-                pageableRequest);
+        return postRepository.findMyJssCategoryPosts(false, pageableRequest);
     }
 
     @Override
