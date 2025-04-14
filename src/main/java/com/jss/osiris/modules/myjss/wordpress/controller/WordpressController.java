@@ -160,19 +160,34 @@ public class WordpressController {
 		return new ResponseEntity<List<Page>>(pageService.getAllPages(), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/top")
-	public ResponseEntity<List<Post>> getTopPosts(@RequestParam Integer page) throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPosts(page)), HttpStatus.OK);
+	@GetMapping(inputEntryPoint + "/posts/jss/top")
+	public ResponseEntity<List<Post>> getTopJssPosts(@RequestParam Integer page) throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getJssCategoryPosts(page)),
+				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/tendency")
-	public ResponseEntity<List<Post>> getPostsTendency() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostTendency()), HttpStatus.OK);
+	@GetMapping(inputEntryPoint + "/posts/myjss/top")
+	public ResponseEntity<List<Post>> getTopMyJssPosts(@RequestParam Integer page) throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getMyJssCategoryPosts(page)),
+				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/most-seen")
-	public ResponseEntity<List<Post>> getPostsMostSeen() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostMostSeen()), HttpStatus.OK);
+	@GetMapping(inputEntryPoint + "/posts/jss/tendency")
+	public ResponseEntity<List<Post>> getJssCategoryPostsTendency() throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getJssCategoryPostTendency()),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/myjss/tendency")
+	public ResponseEntity<List<Post>> getMyJssCategoryPostsTendency() throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getMyJssCategoryPostTendency()),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/myjss/most-seen")
+	public ResponseEntity<List<Post>> getMyJssPostsMostSeen() throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getMyJssCategoryPostMostSeen()),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/slug")

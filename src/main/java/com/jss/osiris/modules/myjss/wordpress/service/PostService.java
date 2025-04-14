@@ -16,7 +16,9 @@ import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 public interface PostService {
         public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException;
 
-        public List<Post> getPosts(int page) throws OsirisException;
+        public List<Post> getJssCategoryPosts(int page) throws OsirisException;
+
+        public List<Post> getMyJssCategoryPosts(int page) throws OsirisException;
 
         public List<Post> getPostInterview(int page) throws OsirisException;
 
@@ -38,9 +40,11 @@ public interface PostService {
 
         public void cancelPost(Post post);
 
-        public List<Post> getPostTendency() throws OsirisException;
+        public List<Post> getJssCategoryPostTendency() throws OsirisException;
 
-        public List<Post> getPostMostSeen() throws OsirisException;
+        public List<Post> getMyJssCategoryPostTendency() throws OsirisException;
+
+        public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException;
 
         public List<Post> getTopPostByDepartment(Integer page, PublishingDepartment department) throws OsirisException;
 
