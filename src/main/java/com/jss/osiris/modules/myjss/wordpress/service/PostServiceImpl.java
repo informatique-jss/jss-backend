@@ -116,8 +116,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostTendency() throws OsirisException {
-        List<Integer> idPosts = postRepository.findPostTendency(LocalDate.now().minusDays(7), getCategoryArticle(),
+    public List<Post> getJssCategoryPostTendency() throws OsirisException {
+        List<Integer> idPosts = postRepository.findJssCategoryPostTendency(LocalDate.now().minusDays(7),
+                getCategoryArticle(),
                 PageRequest.of(0, 5));
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
@@ -125,8 +126,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostMostSeen() throws OsirisException {
-        List<Integer> idPosts = postRepository.findPostMostSeen(getCategoryArticle(),
+    public List<Post> getMyJssCategoryPostTendency() throws OsirisException {
+        List<Integer> idPosts = postRepository.findMyJssCategoryPostTendency(LocalDate.now().minusDays(7),
+                getCategoryArticle(),
+                PageRequest.of(0, 5));
+        if (idPosts != null)
+            return IterableUtils.toList(postRepository.findAllById(idPosts));
+        return null;
+    }
+
+    @Override
+    public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException {
+        List<Integer> idPosts = postRepository.findMyJssCategoryPostMostSeen(getCategoryArticle(),
                 PageRequest.of(0, 5));
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
@@ -288,11 +299,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPosts(int page) throws OsirisException {
+    public List<Post> getJssCategoryPosts(int page) throws OsirisException {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByPostCategoriesAndIsCancelled(getCategoryArticle(), false,
+        return postRepository.findJssCategoryPosts(getCategoryArticle(), false,
+                pageableRequest);
+    }
+
+    @Override
+    public List<Post> getMyJssCategoryPosts(int page) throws OsirisException {
+        Order order = new Order(Direction.DESC, "date");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+        return postRepository.findMyJssCategoryPosts(getCategoryArticle(), false,
                 pageableRequest);
     }
 
@@ -393,21 +413,21 @@ public class PostServiceImpl implements PostService {
                 pageableRequest);
     }
 
-    private List<Post> getPostsByCategory(int page, Category category) {
+    private List<Post> getJssCategoryPostsByCategory(int page, Category category) {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByPostCategoriesAndIsCancelled(category, false, pageableRequest);
+        return postRepository.findJssCategoryPosts(category, false, pageableRequest);
     }
 
     @Override
     public List<Post> getPostInterview(int page) throws OsirisException {
-        return getPostsByCategory(page, getCategoryInterview());
+        return getJssCategoryPostsByCategory(page, getCategoryInterview());
     }
 
     @Override
     public List<Post> getPostPodcast(int page) throws OsirisException {
-        return getPostsByCategory(page, getCategoryPodcast());
+        return getJssCategoryPostsByCategory(page, getCategoryPodcast());
     }
 
     @Override
