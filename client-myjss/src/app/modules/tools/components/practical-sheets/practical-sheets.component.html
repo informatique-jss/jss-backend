@@ -35,8 +35,8 @@
     </div>
 
     <section *ngIf="searchResults && searchResults.length > 0" class="container-custom" #searchResultsSection>
-      <div class="search-result border-0 rounded-3 custom-dropdown">
-        <ul class="list-group mt-2">
+      <div class="border-0 rounded-3 custom-dropdown">
+        <ul class="list-group mt-2 search-result ">
           <li class="list-group-item card py-2" *ngFor="let post of searchResults">
             <div class="row">
               <div class="col-12">
