@@ -35,3 +35,11 @@
 .card-wrapper {
   height: 500px;
 }
+
+.card-wrapper-announcement {
+  height: 350px;
+}
+
+.custom-margin-top {
+  margin-top: 19px !important;
+}
