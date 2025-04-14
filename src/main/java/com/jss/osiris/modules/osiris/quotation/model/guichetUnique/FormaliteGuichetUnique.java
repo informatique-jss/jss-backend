@@ -5,6 +5,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
@@ -35,9 +37,11 @@ import jakarta.persistence.Table;
 public class FormaliteGuichetUnique implements IId {
 
     @Id
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private Integer id;
 
     @IndexedField
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private String liasseNumber;
 
     private Integer formalityDraftId;
@@ -114,6 +118,7 @@ public class FormaliteGuichetUnique implements IId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_status")
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private FormaliteGuichetUniqueStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)

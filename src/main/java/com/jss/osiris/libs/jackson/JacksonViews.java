@@ -12,4 +12,10 @@ public class JacksonViews {
 
     public static class OsirisListView {
     }
+
+    public static class OsirisListView {
+    }
+
+    public static class OsirisDetailedView {
+    }
 }

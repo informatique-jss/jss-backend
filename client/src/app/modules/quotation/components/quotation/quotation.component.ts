@@ -10,6 +10,7 @@ import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { IReferential } from 'src/app/modules/administration/model/IReferential';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -674,7 +675,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return newProvisionDuplicated;
   }
 
-  changeStatus(targetStatus: QuotationStatus) {
+  changeStatus(targetStatus: IWorkflowElement<any>) {
     this.isStatusOpen = true;
     this.editMode = true;
     setTimeout(() => {

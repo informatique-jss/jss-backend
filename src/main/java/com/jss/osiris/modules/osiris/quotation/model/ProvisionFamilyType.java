@@ -2,15 +2,17 @@ package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
-
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 @Entity
 public class ProvisionFamilyType implements Serializable, IId {
@@ -22,6 +24,7 @@ public class ProvisionFamilyType implements Serializable, IId {
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)

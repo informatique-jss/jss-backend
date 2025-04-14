@@ -31,17 +31,20 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(length = 20)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String firstname;
 
 	@Column(length = 20)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String lastname;
 
 	@IndexedField
@@ -58,6 +61,7 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	private String title;
 
 	@Column(length = 1000)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String adPath;
 
 	private Boolean isActive;

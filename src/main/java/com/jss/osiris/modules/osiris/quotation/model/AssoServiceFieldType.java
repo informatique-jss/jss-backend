@@ -27,7 +27,7 @@ public class AssoServiceFieldType implements Serializable, IId {
     @Id
     @SequenceGenerator(name = "asso_service_field_type_sequence", sequenceName = "asso_service_field_type_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_service_field_type_sequence")
-    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,34 +37,34 @@ public class AssoServiceFieldType implements Serializable, IId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_field_type")
-    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
     @IndexedField
     private ServiceFieldType serviceFieldType;
 
-    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
     private String stringValue;
 
-    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
     private Integer integerValue;
 
-    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
     private LocalDate dateValue;
 
     @ManyToOne
     @JoinColumn(name = "id_service_field_type_possible_value")
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
     private ServiceTypeFieldTypePossibleValue selectValue;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
     private String textAreaValue;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
     private Boolean isMandatory;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
     private String formalisteComment;
 
     public Integer getId() {

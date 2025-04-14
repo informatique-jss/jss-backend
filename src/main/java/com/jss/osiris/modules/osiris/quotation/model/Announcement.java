@@ -48,37 +48,39 @@ public class Announcement implements IId, IDocument {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_department")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private Department department;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private Confrere confrere;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement_status")
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private AnnouncementStatus announcementStatus;
 
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDate publicationDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_notice_type_family")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private NoticeTypeFamily noticeTypeFamily;
 
 	@ManyToMany
 	@JoinTable(name = "asso_announcement_notice_type", joinColumns = @JoinColumn(name = "id_announcement"), inverseJoinColumns = @JoinColumn(name = "id_notice_type"))
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private List<NoticeType> noticeTypes;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private String notice;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private String noticeHeader;
 
 	@Column(nullable = false)
@@ -117,6 +119,7 @@ public class Announcement implements IId, IDocument {
 
 	private Boolean isComplexAnnouncement;
 
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private Integer characterNumber;
 
 	private Boolean isBilanPublicationReminderIsSent;

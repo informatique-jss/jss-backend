@@ -199,7 +199,9 @@ const routes: Routes = [
     DirectDebitTransfertListComponent,
     QuotationComponent,
     OrderingListTaggedComponent,
-    InfogreffeStatusComponent
+    InfogreffeStatusComponent,
+    CustomerOrderCommentComponent,
+    MissingAttachmentQueriesComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
