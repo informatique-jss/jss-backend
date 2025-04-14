@@ -107,7 +107,7 @@ public class AccountingController {
                 HttpStatus.OK);
     }
 
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
     @PostMapping(inputEntryPoint + "/accounting-records/manual/add")
     public ResponseEntity<List<AccountingRecord>> addOrUpdateAccountingRecords(
             @RequestBody List<AccountingRecord> accountingRecords) throws OsirisValidationException, OsirisException {
@@ -141,7 +141,7 @@ public class AccountingController {
             validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDeadline(), false,
                     "ManualAccountingDocumentDeadline");
             validationHelper.validateDateMin(accountingRecord.getOperationDateTime().toLocalDate(), false,
-                    constantService.getDateAccountingClosureForAll(), "ManualAccountingDocumentDate");
+                    constantService.getDateAccountingClosureForAccountant(), "ManualAccountingDocumentDate");
             validationHelper.validateDateMax(accountingRecord.getOperationDateTime().toLocalDate(), false,
                     LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
 
