@@ -17,7 +17,41 @@
   right: 0;
   width: 100%;
   box-sizing: border-box;
-  padding: 0;
+  padding-right: 20px;
+  margin: 0;
+}
+
+.search-result::-webkit-scrollbar {
+  width: 12px;
+}
+
+.search-result::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+  border-radius: 4px;
+}
+
+.search-result::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  border-left: 6px solid white;
+  border-right: 2px solid transparent;
+}
+
+.search-result:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.search-result .list-group-item {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+  border: none;
+  background-color: white;
+}
+
+.search-result .list-group-item:hover {
+  transform: translateY(-2px);
+  background-color: #f0f4ff;
 }
 
 .drop-down-body {
