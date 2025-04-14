@@ -4960,7 +4960,7 @@ textarea.form-control-lg {
   --ar-card-title-color: var(--ar-gray-100);
   --ar-card-subtitle-color: ;
   --ar-card-border-width: var(--ar-border-width);
-  --ar-card-border-color: transparent;
+  --ar-card-border-color: #FFFFFF08;
   --ar-card-border-radius: var(--ar-border-radius-xxl);
   --ar-card-box-shadow: ;
   --ar-card-inner-border-radius: calc(var(--ar-border-radius-xxl) - (var(--ar-border-width)));
@@ -4968,7 +4968,7 @@ textarea.form-control-lg {
   --ar-card-cap-padding-x: 2.375rem;
   --ar-card-cap-bg: transparent;
   --ar-card-cap-color: ;
-  --ar-card-height: ;
+  --ar-card-height: 100%;
   --ar-card-color: var(--ar-body-color);
   --ar-card-bg: var(--ar-body-bg);
   --ar-card-img-overlay-padding: 1rem;
@@ -5059,6 +5059,8 @@ textarea.form-control-lg {
   color: var(--ar-card-cap-color);
   background-color: var(--ar-card-cap-bg);
   border-top: var(--ar-card-border-width) solid var(--ar-card-border-color);
+  position: relative;
+  bottom: 0rem;
 }
 
 .card-footer:last-child {
@@ -9576,6 +9578,11 @@ textarea.form-control-lg {
 .bg-secondary {
   --ar-bg-opacity: 1;
   background-color: var(--ar-gray-100) !important;
+}
+
+.bg-tertiary {
+  --ar-bg-opacity: 1;
+  background-color: var(--ar-blue-dark-bg) !important;
 }
 
 .bg-success {
@@ -20306,6 +20313,27 @@ h1.secondary-heading,
   min-height: 20vh;
   background-size: cover;
   background-position: center;
+  width: 100%;
+  object-fit: cover;
+  height: 250px;
+}
+
+.card-title-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.card-text-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }
 
 .checkbox-custom {
@@ -20315,4 +20343,8 @@ h1.secondary-heading,
   margin-right: 10px;
   flex-shrink: 0;
   background-color: #CEB793 !important;
+}
+
+.background-opacity {
+  background: #FFFFFF08;
 }

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../../../../libs/app.service';
+import { Post } from '../../../tools/model/Post';
+import { PostService } from '../../../tools/services/post.service';
 
 @Component({
   selector: 'app-homepage',
@@ -17,9 +19,20 @@ export class HomepageComponent implements OnInit {
   logoJss: string = '/assets/images/white-logo.svg';
   videoParis: string = 'assets/videos/paris-home-video.webm'
 
-  constructor(private appService: AppService) { }
+  tendencyPosts: Post[] = [];
+
+
+  constructor(
+    private appService: AppService,
+    private postService: PostService
+  ) { }
 
   ngOnInit() {
+    this.postService.getTendencyPosts().subscribe(response => {
+      if (response && response.length > 0) {
+        this.tendencyPosts = response;
+      }
+    });
   }
 
   openAnnouncements(event: any) {
@@ -40,5 +53,9 @@ export class HomepageComponent implements OnInit {
 
   openDocument(event: any) {
     this.appService.openRoute(event, "/services/document", undefined);
+  }
+
+  openPost(slug: string, event: any) {
+    this.appService.openRoute(event, "post/" + slug, undefined);
   }
 }

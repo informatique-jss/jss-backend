@@ -55,6 +55,7 @@ export class AnnouncementComponent implements OnInit {
   openDocument(event: any) {
     this.appService.openRoute(event, "/services/document", undefined);
   }
+
   openPost(slug: string, event: any) {
     this.appService.openRoute(event, "post/" + slug, undefined);
   }

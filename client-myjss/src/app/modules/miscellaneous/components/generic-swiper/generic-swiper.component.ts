@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, ContentChild, CUSTOM_ELEMENTS_SCHEMA, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  ContentChild,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
+import { fromEvent, Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { SwiperContainer } from 'swiper/element';
 
 @Component({
@@ -21,6 +32,8 @@ export class GenericSwiperComponent implements OnInit {
   @ContentChild(TemplateRef) templateRef!: TemplateRef<any>; // Take the content of the personalised HTML
 
   @Input() firstItemImage: any | undefined;
+
+  private destroy$ = new Subject<void>();
 
   constructor() { }
 
@@ -56,7 +69,52 @@ export class GenericSwiperComponent implements OnInit {
 
     Object.assign(this.genericSwiper.nativeElement, params);
     this.genericSwiper.nativeElement.initialize();
+
+    // We set a timeout to be sure that everything is loaded
+    setTimeout(() => {
+      this.setMaxSlideHeight();
+    }, 0);
+
+    fromEvent(window, 'resize')
+      .pipe(debounceTime(200), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.setMaxSlideHeight();
+      });
   }
+
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setMaxSlideHeight(): void {
+    const swiperEl = this.genericSwiper?.nativeElement as HTMLElement;
+    if (!swiperEl) return;
+
+    const slides = swiperEl.querySelectorAll('swiper-slide');
+    let maxHeight = 0;
+
+    slides.forEach((slide: HTMLElement) => {
+      // Reset the height to properly calculate the new value
+      slide.style.height = 'auto';
+    });
+
+    slides.forEach((slide: HTMLElement) => {
+      const slideHeight = slide.scrollHeight;
+      if (slideHeight > maxHeight) {
+        maxHeight = slideHeight;
+      }
+    });
+
+    swiperEl.style.height = `${maxHeight}px`;
+
+    slides.forEach((slide: HTMLElement) => {
+      slide.style.height = `${maxHeight}px`;
+    });
+
+  }
+
 
   getSlidesPerView(): number {
     if (this.firstItemImage && this.firstItemImage.length > 0)
