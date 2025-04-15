@@ -5,12 +5,15 @@ import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule, provideRouter } from '@angular/router';
+import { RouterModule, Routes, provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
-import { routes } from './app.routes';
 import { FooterComponent } from './main/components/footer/footer.component';
 import { MainModule } from './main/components/main/main.module';
 registerLocaleData(localeFr, 'fr');
+
+const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+];
 
 @NgModule({
   declarations: [
