@@ -292,7 +292,7 @@ public class WordpressDelegateImpl implements WordpressDelegate {
         ResponseEntity<List<Post>> response = new RestTemplate()
                 .exchange(
                         wordpressEntryPoint + postRequestUrl
-                                + "?_fields=id,acf,author,categories,premium_percentage,myjss_category,title,excerpt,date,modified,serie,departement,featured_media,slug,sticky,tags,content&per_page=10&page="
+                                + "?_fields=id,acf,author,categories,jss_category,premium_percentage,myjss_category,title,excerpt,date,modified,serie,departement,featured_media,slug,sticky,tags,content&per_page=10&page="
                                 + page,
                         HttpMethod.GET,
                         null,
