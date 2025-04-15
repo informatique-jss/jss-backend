@@ -10,6 +10,7 @@ import { AuthorListComponent } from '../author-list/author-list.component';
 import { BodyArticlesComponent } from '../body-articles/body-articles.component';
 import { DepartmentListComponent } from '../department-list/department-list.component';
 import { HeaderComponent } from '../header/header.component';
+import { HomepageComponent } from '../homepage/homepage.component';
 import { InterviewListComponent } from '../interview-list/interview-list.component';
 import { NewArticlesComponent } from '../new-articles/new-articles.component';
 import { PodcastListComponent } from '../podcast-list/podcast-list.component';
@@ -23,6 +24,7 @@ import { TrendComponent } from '../trend/trend.component';
 import { MainComponent } from './main.component';
 
 const routes: Routes = [
+  { path: 'home', component: HomepageComponent },
   { path: 'post/:slug', component: PostComponent },
   { path: 'author/:slug', component: AuthorListComponent },
   { path: 'category/:slug', component: ArticlesCategoryComponent },

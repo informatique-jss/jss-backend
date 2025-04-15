@@ -1,286 +1,51 @@
-<!--main>
-  <main-header></main-header>
-  <router-outlet></router-outlet>
-  <footer-page></footer-page>
-</main-->
+<main-header></main-header>
+<router-outlet></router-outlet>
+<footer-page></footer-page>
 
 
-<header class="header-area">
-  <div class="header-navbar-top py-1 bg-light  d-none d-lg-block">
-    <div class="container">
-      <div class="header-newsticker-menu">
-        <div class="newsticker">
-          <div class="newsticker-btn">Latest News</div>
-          <div class="newsticker-list">
-            <ul class="list-inline">
-              <li>
-                <a href="#">A powerful, flexible and animated vertical news ticker plugin.</a>
-              </li>
-              <li>
-                <a href="#">Provides hight flexibility thanks to numerous callbacks & methods.</a>
-              </li>
-              <li>
-                <a href="#">Fully customizable to every kind of vertical scrolling need.</a>
-              </li>
-              <li>
-                <a href="#">Light-weight and optimized JQuery plugin.</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="newsticker-social">
-          <ul class="list-inline">
-            <li class="list-inline-item"><a class="bg-primary" href="#"><i class="fab fa-facebook-f"></i></a>
-            </li>
-            <li class="list-inline-item"><a class="bg-info" href="#"><i class="fab fa-twitter"></i></a>
-            </li>
-            <li class="list-inline-item"><a class="bg-danger" href="#"><i class="fab fa-instagram"></i></a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="header-navbar-middle d-none d-lg-block">
-    <div class="container">
-      <div class="navbar-brand-wrapper py-3 d-flex justify-content-between align-items-center">
-        <a class="navbar-brand" href="index.html">
-          <img class="lazyload" src="assets/images/header-brand.png" alt="image">
-        </a>
-      </div>
-    </div>
-  </div>
-  <div class="header-navbar-bottom pt-2 pt-lg-0 border-top border-light">
-    <div class="container themeix-menu-selector">
-      <nav class="navbar navbar-expand-lg">
-        <div class="collapse navbar-collapse" id="main_nav">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown"> <a class="nav-link  dropdown-toggle" href="index.html">Home </a>
-
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="index.html"> Home v1 </a></li>
-                <li><a class="dropdown-item" href="index-2.html"> Home v2 </a></li>
-                <li><a class="dropdown-item" href="index-3.html"> Home v3 </a></li>
-                <li><a class="dropdown-item" href="index-4.html"> Home v4 </a></li>
-                <li><a class="dropdown-item" href="index-5.html"> Home v5 </a></li>
-                <li><a class="dropdown-item" href="index-6.html"> Home v6 </a></li>
-                <li>
-                  <a class="dropdown-item dropdown-toggle" href="#"> Post Layouts</a>
-                  <ul class="submenu dropdown-menu">
-                    <li><a class="dropdown-item" href="single.html">Blog Layout 1</a></li>
-                    <li><a class="dropdown-item" href="single-2.html">Blog Layout 2</a></li>
-                    <li><a class="dropdown-item" href="single-3.html">Blog Layout 3</a></li>
-                    <li>
-                      <a class="dropdown-item dropdown-toggle" href="#"> Menu level </a>
-                      <ul class="submenu dropdown-menu">
-                        <li><a class="dropdown-item" href="#"> Menu level 4</a></li>
-                        <li><a class="dropdown-item" href="#"> Menu level 4</a></li>
-                      </ul>
-                    </li>
-
-                  </ul>
-                </li>
-
-              </ul>
-
-            </li>
-            <li class="nav-item dropdown has-megamenu">
-              <a class="nav-link dropdown-toggle" href="#"> Explore </a>
-              <div class="dropdown-menu megamenu">
-                <div class="row">
-                  <div class="col-md-3">
-                    <h6 class="text-danger">Home Variations</h6>
-                    <ul class="list-inline">
-                      <li><a href="index-2.html">Classic Blog</a></li>
-                      <li><a href="index-3.html">Corporate Blog</a></li>
-                      <li><a href="index-4.html">Recipe Blog</a></li>
-                      <li><a href="index-5.html">Sports Blog</a></li>
-                      <li><a href="index-6.html">Full Width Blog</a></li>
-                    </ul>
-                  </div>
-                  <div class="col-md-3">
-                    <h6 class="text-danger">Categories</h6>
-                    <ul class="list-inline">
-                      <li><a href="category.html">Cricket</a></li>
-                      <li><a href="category.html">Football</a></li>
-                      <li><a href="category.html">Leggings</a></li>
-                      <li><a href="category.html">Cycling</a></li>
-                      <li><a href="category.html">Golf</a></li>
-                    </ul>
-                  </div>
-                  <div class="col-md-3">
-                    <h6 class="text-danger">Pages</h6>
-                    <ul class="list-inline">
-                      <li><a href="login.html">Login</a></li>
-                      <li><a href="register.html">Register</a></li>
-                      <li><a href="forgot-password.html">Forgot Password</a></li>
-                      <li><a href="faq.html">FAQ</a></li>
-                      <li><a href="privacy-policy.html">Privacy Policy</a></li>
-                    </ul>
-                  </div>
-                  <div class="col-md-3">
-                    <h6 class="text-danger">Blog Pages</h6>
-                    <ul class="list-inline">
-                      <li><a href="single.html">Post Layout 1</a></li>
-                      <li><a href="single-2.html">Post Layout 2</a></li>
-                      <li><a href="single-3.html">Post Layout 3</a></li>
-                      <li><a href="blog.html">Blog Layout 1</a></li>
-                      <li><a href="blog-2.html">Blog Layout 2</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#"> Pages </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="about.html"> About Us </a></li>
-                <li><a class="dropdown-item" href="author.html">Author</a></li>
-                <li><a class="dropdown-item" href="authors.html">Authors</a></li>
-                <li><a class="dropdown-item" href="category.html"> Category</a></li>
-                <li><a class="dropdown-item" href="categories.html"> Categories</a></li>
-                <li><a class="dropdown-item" href="faq.html"> FAQ </a></li>
-                <li><a class="dropdown-item" href="privacy-policy.html"> Privacy Policy</a></li>
-                <li><a class="dropdown-item" href="blog.html">Blog</a></li>
-                <li><a class="dropdown-item" href="blog-2.html">Blog v2</a></li>
-                <li><a class="dropdown-item" href="404.html"> 404</a></li>
-              </ul>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="blog.html"> Articles </a></li>
-            <li class="nav-item"><a class="nav-link" href="contact.html"> Contact </a></li>
-            <li class="nav-item"><a class="nav-link" href="login.html"> Login </a></li>
-            <li class="nav-item"><a class="nav-link"
-                href="https://themeix.com/product/newsfeed-news-magazine-website-html-site-template/"> Buy Now
-                <span>NEW</span></a></li>
-          </ul>
-        </div>
-        <div class="search-modal" data-bs-toggle="modal" data-bs-target="#search-modal"><a class="nav-link" href="#"> <i
-              class="fas fa-search"></i> </a>
-        </div>
+<div>
+  <div>
+    <div class="col-lg-3 col-md-6 pt-md-0 pt-3">
+      <nav class="themeix-post-list">
+        <ul class="list-group">
+          <li class="list-group-item">
+            <article class="list-blog">
+              <h6 class="mb-1"><a href="single.html">7 things your boss needs to know about
+                  food</a>
+              </h6>
+              <time datetime="2021-02-14 20:00" class="small">1 hour ago</time>
+            </article>
+          </li>
+          <li class="list-group-item">
+            <article class="list-blog">
+              <h6 class="mb-1"><a href="single.html">10 facts that nobody told you about you </a>
+              </h6>
+              <time datetime="2021-02-14 20:00" class="small">2 hours ago</time>
+            </article>
+          </li>
+          <li class="list-group-item">
+            <article class="list-blog">
+              <h6 class="mb-1"><a href="single.html">How to leave sports without being noticed</a>
+              </h6>
+              <time datetime="2021-02-14 20:00" class="small">1 day ago</time>
+            </article>
+          </li>
+          <li class="list-group-item">
+            <article class="list-blog">
+              <h6 class="mb-1"><a href="single.html">New way to introduce business</a></h6>
+              <time datetime="2021-02-14 20:00" class="small">3 days ago</time>
+            </article>
+          </li>
+          <li class="list-group-item">
+            <article class="list-blog">
+              <h6 class="mb-1"><a href="single.html">In for the now propitiously beginning
+                  everything bright it they you</a>
+              </h6>
+              <time datetime="2021-02-14 20:00" class="small">3 days ago</time>
+            </article>
+          </li>
+        </ul>
       </nav>
-      <div class="modal fade" id="search-modal" data-bs-backdrop="static">
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-body">
-              <form class="forms">
-                <div class="input-group">
-                  <span class="input-group-text"><i class="fas fa-search"></i></span>
-                  <input type="text" class="form-control" placeholder="Search Here">
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
-<!--/// Blog Area /// -->
-<div class="blog-area pt-3 pb-3  pt-lg-2 pb-lg-3">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-6 col-md-12">
-        <article class="blog-style3 border-0 card mb-4 position-relative">
-          <div class="feature-image">
-            <div class="image-frame image-hover-style-1">
-              <a href="single.html"> <img class="lazyload" src="assets/images/blog-img.jpg" alt="image"
-                  class="w-100"></a>
-            </div>
-          </div>
-          <div class="card-body">
-            <a href="category.html" class="badge bg-danger">Political</a>
-            <h2><a href="single.html">Were in the if and keep paper was their to that to just
-                attribute</a>
-            </h2>
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="author-block">
-                  <ul class="avatar list-inline mb-0">
-                    <li class="list-inline-item"><a class="small" href="author.html"><img
-                          src="assets/images/author-img.jpg" alt="Jhon Doe" data-bs-toggle="tooltip"
-                          data-bs-placement="top" title="Jhon Doe"> Jhon Doe</a></li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-lg-6"> <span class="date-info small  float-lg-end">
-                  <span>24 August</span>
-                  <span>1 mins to read</span>
-                </span>
-              </div>
-            </div>
-          </div>
-        </article>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <article class="blog-style4 ">
-          <div class="card border-0">
-            <div class="blog-post-image image-hover-style-1">
-              <a href="single.html"> <img class="lazyload" src="assets/images/blog-img.jpg" alt="image"
-                  class="w-100"></a>
-            </div>
-            <div class="card-body  px-0">
-              <h6><a href="single.html"> I will tell you the truth about food in the next 60
-                  seconds</a>
-              </h6>
-            </div>
-          </div>
-        </article>
-        <article class="blog-style4 ">
-          <div class="card border-0">
-            <div class="blog-post-image image-hover-style-1">
-              <a href="single.html"> <img class="lazyload" src="assets/images/blog-img.jpg" alt="image"
-                  class="w-100"></a>
-            </div>
-            <div class="card-body px-0">
-              <h6><a href="single.html"> You will never thought that food could be so good!</a>
-              </h6>
-            </div>
-          </div>
-        </article>
-      </div>
-      <div class="col-lg-3 col-md-6 pt-md-0 pt-3">
-        <nav class="themeix-post-list">
-          <ul class="list-group">
-            <li class="list-group-item">
-              <article class="list-blog">
-                <h6 class="mb-1"><a href="single.html">7 things your boss needs to know about
-                    food</a>
-                </h6>
-                <time datetime="2021-02-14 20:00" class="small">1 hour ago</time>
-              </article>
-            </li>
-            <li class="list-group-item">
-              <article class="list-blog">
-                <h6 class="mb-1"><a href="single.html">10 facts that nobody told you about you </a>
-                </h6>
-                <time datetime="2021-02-14 20:00" class="small">2 hours ago</time>
-              </article>
-            </li>
-            <li class="list-group-item">
-              <article class="list-blog">
-                <h6 class="mb-1"><a href="single.html">How to leave sports without being noticed</a>
-                </h6>
-                <time datetime="2021-02-14 20:00" class="small">1 day ago</time>
-              </article>
-            </li>
-            <li class="list-group-item">
-              <article class="list-blog">
-                <h6 class="mb-1"><a href="single.html">New way to introduce business</a></h6>
-                <time datetime="2021-02-14 20:00" class="small">3 days ago</time>
-              </article>
-            </li>
-            <li class="list-group-item">
-              <article class="list-blog">
-                <h6 class="mb-1"><a href="single.html">In for the now propitiously beginning
-                    everything bright it they you</a>
-                </h6>
-                <time datetime="2021-02-14 20:00" class="small">3 days ago</time>
-              </article>
-            </li>
-          </ul>
-        </nav>
-      </div>
     </div>
   </div>
 </div>
