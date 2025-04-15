@@ -23,6 +23,9 @@ import { SwiperContainer } from 'swiper/element';
 })
 export class GenericSwiperComponent implements OnInit {
 
+  mediumViewport: number = 768;
+  largeViewport: number = 992;
+
   @ViewChild('genericSwiper') genericSwiper!: ElementRef<SwiperContainer>;
   @Input() items: any[] = [];
   @Input() subtitle: string = '';
@@ -30,8 +33,6 @@ export class GenericSwiperComponent implements OnInit {
   @Input() slidesPerView: number = 3;
   @ContentChild(TemplateRef) templateRefFirstItem!: TemplateRef<any>; // Take the content of the personalised HTML
   @ContentChild(TemplateRef) templateRef!: TemplateRef<any>; // Take the content of the personalised HTML
-
-  @Input() firstItemImage: any | undefined;
 
   private destroy$ = new Subject<void>();
 
@@ -79,14 +80,33 @@ export class GenericSwiperComponent implements OnInit {
       .pipe(debounceTime(200), takeUntil(this.destroy$))
       .subscribe(() => {
         this.setMaxSlideHeight();
+        this.updateSwiperSlidesPerView();
       });
   }
-
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  private getSlidesPerView(): number {
+    const width = window.innerWidth;
+
+    if (width < this.mediumViewport) {
+      return 1;
+    } else if (width >= this.mediumViewport && width < this.largeViewport) {
+      return 2;
+    } else {
+      return 3;
+    }
+  }
+
+  private updateSwiperSlidesPerView(): void {
+    const swiperEl = this.genericSwiper.nativeElement;
+
+    swiperEl.slidesPerView = this.getSlidesPerView();
+  }
+
 
   private setMaxSlideHeight(): void {
     const swiperEl = this.genericSwiper?.nativeElement as HTMLElement;
@@ -113,13 +133,6 @@ export class GenericSwiperComponent implements OnInit {
       slide.style.height = `${maxHeight}px`;
     });
 
-  }
-
-
-  getSlidesPerView(): number {
-    if (this.firstItemImage && this.firstItemImage.length > 0)
-      this.slidesPerView = 4;
-    return this.slidesPerView;
   }
 
   slideNext(): void {

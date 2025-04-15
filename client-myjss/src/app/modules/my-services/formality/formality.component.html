@@ -35,18 +35,18 @@
 <section *ngIf="carouselFormalityPosts && carouselFormalityPosts.length>0" class="background-opacity">
   <div class="container">
     <div class="row">
-      <div class="col-3 pt-5 mt-3 custom-margin-top px-0 me-n3">
-        <h2 class="h1 pb-3 pt-5  mb-lg-4 text-white text-nowrap" style="overflow: visible;">
+      <div class="col-lg-3 col-1 pt-5 mt-3 custom-margin-top px-0 me-n3">
+        <h2 class="h1 pb-3 pt-5 text-white text-nowrap" style="overflow: visible;">
           Les formalités légales les plus courantes
         </h2>
-        <div class="image-height">
+        <div class="image-height d-lg-block d-none">
           <div class="card h-100 border-0">
             <img src="assets/img/myjss-services/carousel_formality_init.jpg" class="card object-fit-cover h-100"
               alt="Card image">
           </div>
         </div>
       </div>
-      <div class="container overflow-hidden col-9 ps-0 ms-xl-2 ms-0">
+      <div class="container overflow-hidden col col-lg-9 ps-0 ms-xl-2 ms-0 mt-4 mt-lg-0">
         <generic-swiper [items]="carouselFormalityPosts" title="">
           <ng-template let-post>
             <div class="ps-0">
