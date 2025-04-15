@@ -1146,7 +1146,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public LocalDateTime getPaymentDateForAccounting(Payment payment) throws OsirisException {
-        LocalDateTime closedDate = constantService.getDateAccountingClosureForAccountant().atTime(12, 0);
+        LocalDateTime closedDate = constantService.getDateAccountingClosureForAll().atTime(12, 0);
         if (payment.getPaymentDate().isBefore(closedDate))
             return closedDate;
         return payment.getPaymentDate();
