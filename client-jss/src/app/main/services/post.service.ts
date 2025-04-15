@@ -1,9 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from '../../services/appRest.service';
 import { Author } from '../model/Author';
 import { JssCategory } from '../model/JssCategory';
 import { Media } from '../model/Media';
+import { PagedContent } from '../model/PagedContent';
 import { Post } from '../model/Post';
 import { PublishingDepartment } from '../model/PublishingDepartment';
 import { Tag } from '../model/Tag';
@@ -54,6 +56,15 @@ export class PostService extends AppRestService<Post> {
 
   getTopPostByJssCategory(page: number, jssCategory: JssCategory) {
     return this.getList(new HttpParams().set("page", page).set("categoryId", jssCategory.id), "posts/top/jss-category");
+  }
+
+  getAllPostsByJssCategory(jssCategory: JssCategory, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('categoryId', jssCategory.id.toString())
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.getPagedList(params, "posts/all/jss-category", "", "");
   }
 
   getTopPostByTag(page: number, tag: Tag) {

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.jss.osiris.libs.exception.OsirisException;
@@ -27,6 +28,8 @@ public interface PostService {
         public List<Post> getPostPodcast(int page) throws OsirisException;
 
         public List<Post> getPostsByJssCategory(int page, JssCategory jssCategory);
+
+        public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory);
 
         public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 

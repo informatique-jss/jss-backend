@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -318,7 +319,16 @@ public class PostServiceImpl implements PostService {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
+        return null;
+        // postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false,
+        // pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory) {
+        Page<Post> posts = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
+
+        return posts;
     }
 
     @Override
