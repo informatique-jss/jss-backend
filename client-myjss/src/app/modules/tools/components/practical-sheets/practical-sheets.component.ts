@@ -31,6 +31,7 @@ export class PracticalSheetsComponent implements OnInit {
   secondSearchResults: { [key: number]: Array<Post> } = {};
 
   myJssCategories: MyJssCategory[] = [];
+  allMyJssCategories: MyJssCategory = { id: -1, name: 'Toutes les categories', slug: "all-categories", categoryOrder: 1 };
   myJssCategoriesFullLoaded: number[] = [];
 
   expandedCardIndex: number = -1;
@@ -49,7 +50,7 @@ export class PracticalSheetsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.myJssCategories.push({ id: -1, name: 'Toutes les categories', slug: "all-categories", categoryOrder: 1 });
+    this.myJssCategories.push(this.allMyJssCategories);
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
       if (response) {
         this.myJssCategories.push(...response);
