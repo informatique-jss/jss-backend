@@ -240,6 +240,7 @@ sup {
 a {
   color: var(--ar-primary);
   text-decoration: underline;
+  cursor: pointer;
 }
 
 a:hover {
@@ -8016,7 +8017,7 @@ fieldset:disabled .btn {
 }
 
 .bg-info {
-  background-color: #00b6ff !important;
+  background-color: #CCE1FA !important;
 }
 
 .bg-warning {
@@ -11520,7 +11521,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 .badge {
-  color: #fff !important;
+  color: var(--ar-primary) !important;
 }
 
 .z-index-10 {
@@ -13360,4 +13361,28 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
     float: none !important;
     margin-top: 1rem;
   }
+}
+
+
+/* ==============================================
+  Custom styles
+============================================== */
+
+
+.card-title-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.card-text-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }

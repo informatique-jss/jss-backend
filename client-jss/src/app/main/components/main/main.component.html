@@ -1,5 +1,51 @@
-<trend></trend>
-<new-articles></new-articles>
-<body-articles></body-articles>
-<!-- Back to top -->
-<div class="back-top"><i class="bi bi-arrow-up-short"></i></div>
+<div class="container my-5 position-relative text-center d-none d-md-block">
+    <img src="/assets/images/homepage/bandeauJss.svg" class="img-fluid w-100" alt="Top image" />
+    <a class="btn btn-yellow position-absolute start-55 top-50 translate-middle" href="#">
+        Essayer dès maintenant
+    </a>
+</div>
+
+<!--/// Blog Area /// -->
+<div class="blog-area pt-3 pb-3 pt-lg-2 pb-lg-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <article class="border-0 card mb-4">
+                    <div class="card-img">
+                        <div class="image-frame image-hover-style-1">
+                            <a (click)="openPost(posts[0], $event)"> <img *ngIf="posts[0].media" class="lazyload"
+                                    [src]="posts[0].media.urlMediumLarge!=null ? posts[0].media.urlMediumLarge : posts[0].media.urlMedium"
+                                    alt="image" class="w-100"></a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row pb-1 align-items-center">
+                            <a (click)="openCategoryPosts(posts[0].jssCategories[0], $event)"
+                                class="badge bg-info col-auto">{{posts[0].jssCategories[0].name}}</a>
+                            <a class="btn btn-outline-secondary col-auto"><i class="icon-mkpage"></i> mp</a>
+                        </div>
+                        <h2><a class="card-title-truncate" (click)="openPost(posts[0], $event)"
+                                [innerHTML]="posts[0].titleText | trustHtml"></a>
+                        </h2>
+                        <p class="card-text-truncate" [innerHTML]="posts[0].excerptText | trustHtml">
+                        </p>
+                    </div>
+                </article>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <article *ngFor="let post of posts | slice:1:3" class="blog-style4">
+                    <div class="card border-0">
+                        <div class="blog-post-image image-hover-style-1">
+                            <a (click)="openPost(post, $event)"> <img class="lazyload"
+                                    [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlMedium"
+                                    alt="image" class="w-100"></a>
+                        </div>
+                        <div class="card-body px-0">
+                            <h6><a class="card-title-truncate" (click)="openPost(post, $event)">{{post.titleText}}</a>
+                            </h6>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>

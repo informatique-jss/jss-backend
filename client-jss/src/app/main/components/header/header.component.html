@@ -64,11 +64,12 @@
             <li class="nav-item" *ngFor="let category of categories"> <a class="nav-link"
                 [ngClass]="{'active':getCurrentRoute().indexOf('/category')>=0 && getCurrentRoute().indexOf('/'+category.slug)>=0}"
                 style="cursor: pointer;" (click)="openCategoryPosts(category,$event)">{{category.name}}</a></li>
+
             <li class="nav-item  py-0"><a class="nav-link podcast-nav-link py-0" href="#">Podcast<span><i
                     class="fas fa-bolt"></i></span></a></li>
+
             <li class="nav-item"><a class="nav-link" href="#"><img src="assets/images/premium-icon.svg"
-                  class="me-1" />Premium
-              </a></li>
+                  class="me-1" />Premium</a></li>
           </ul>
         </div>
         <div class="search-modal" data-bs-toggle="modal" data-bs-target="#search-modal"><a class="nav-link" href="#"> <i
