@@ -19,12 +19,12 @@ public class PaymentType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "payment_type_sequence", sequenceName = "payment_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_type_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)
