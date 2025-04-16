@@ -229,7 +229,7 @@ export class AccountingRecordComponent implements OnInit {
 
   exportGrandLivre() {
     if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -243,7 +243,7 @@ export class AccountingRecordComponent implements OnInit {
 
   exportAllGrandLivre() {
     if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -257,7 +257,7 @@ export class AccountingRecordComponent implements OnInit {
 
   exportJournal() {
     if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -271,7 +271,7 @@ export class AccountingRecordComponent implements OnInit {
 
   exportAccountingAccount() {
     if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -296,7 +296,7 @@ export class AccountingRecordComponent implements OnInit {
       }
 
       if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-        if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+        if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
           this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
           return;
         }
