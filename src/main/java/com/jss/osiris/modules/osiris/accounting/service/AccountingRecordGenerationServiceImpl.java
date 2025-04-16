@@ -796,7 +796,20 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             // Grab former bank accounting record to generate counter part
 
             // Customer or provider part
-            AccountingRecord accountingRecord = payment.getAccountingRecords().get(0);
+            AccountingRecord accountingRecord = null;
+
+            for (AccountingRecord record : payment.getAccountingRecords()) {
+                if (!record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                        .equals(constantService.getPrincipalAccountingAccountBank().getId())
+                        && !record.getAccountingAccount().getId()
+                                .equals(constantService.getAccountingAccountCaisse().getId())) {
+                    accountingRecord = record;
+                }
+            }
+
+            if (accountingRecord == null)
+                throw new OsirisClientMessageException("accounting records not found");
+
             if (accountingRecord.getCreditAmount() != null)
                 balance = balance.subtract(accountingRecord.getCreditAmount());
             else
