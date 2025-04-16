@@ -1,5 +1,6 @@
 package com.jss.osiris.libs.audit.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,18 @@ public class AuditServiceImpl implements AuditService {
             if (!e.getMessage().contains("could not extract ResultSet") || !e.getMessage().contains("ultat retourn"))
                 throw e;
         }
+    }
+
+    @Override
+    public LocalDateTime getCreationDateTimeForEntity(String entityType, Integer entityId) {
+        List<Audit> audit = getAuditForEntity(entityType, entityId);
+        if (audit != null && audit.size() > 0) {
+            for (Audit auditItem : audit) {
+                if (auditItem.getFieldName().equals("id"))
+                    return auditItem.getDatetime();
+            }
+        }
+        return null;
     }
 
 }
