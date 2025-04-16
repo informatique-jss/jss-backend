@@ -251,7 +251,8 @@ public class AccountingController {
         }
 
         if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear())
-                && accountingRecordSearch.getStartDate().getYear() != constantService.getDateAccountingClosureForAll()
+                && accountingRecordSearch.getStartDate().getYear() != constantService
+                        .getDateAccountingClosureForAccountant()
                         .getYear())
             throw new OsirisValidationException("Not in fiscal year");
 
@@ -437,7 +438,8 @@ public class AccountingController {
         }
 
         if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear())
-                && accountingRecordSearch.getStartDate().getYear() != constantService.getDateAccountingClosureForAll()
+                && accountingRecordSearch.getStartDate().getYear() != constantService
+                        .getDateAccountingClosureForAccountant()
                         .getYear())
             throw new OsirisValidationException("Not in fiscal year");
 
@@ -483,7 +485,8 @@ public class AccountingController {
         }
 
         if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear())
-                && accountingRecordSearch.getStartDate().getYear() != constantService.getDateAccountingClosureForAll()
+                && accountingRecordSearch.getStartDate().getYear() != constantService
+                        .getDateAccountingClosureForAccountant()
                         .getYear())
             throw new OsirisValidationException("Not in fiscal year");
 
@@ -530,7 +533,8 @@ public class AccountingController {
         }
 
         if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear())
-                && accountingRecordSearch.getStartDate().getYear() != constantService.getDateAccountingClosureForAll()
+                && accountingRecordSearch.getStartDate().getYear() != constantService
+                        .getDateAccountingClosureForAccountant()
                         .getYear())
             throw new OsirisValidationException("Not in fiscal year");
 
@@ -619,7 +623,8 @@ public class AccountingController {
             throw new OsirisValidationException("StartDate or EndDate");
 
         if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear())
-                && accountingRecordSearch.getStartDate().getYear() != constantService.getDateAccountingClosureForAll()
+                && accountingRecordSearch.getStartDate().getYear() != constantService
+                        .getDateAccountingClosureForAccountant()
                         .getYear())
             throw new OsirisValidationException("Not in fiscal year");
 
@@ -646,7 +651,8 @@ public class AccountingController {
             throw new OsirisValidationException("StartDate or EndDate");
 
         if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear())
-                && accountingRecordSearch.getStartDate().getYear() != constantService.getDateAccountingClosureForAll()
+                && accountingRecordSearch.getStartDate().getYear() != constantService
+                        .getDateAccountingClosureForAccountant()
                         .getYear())
             throw new OsirisValidationException("Not in fiscal year");
 
@@ -685,7 +691,8 @@ public class AccountingController {
             throw new OsirisValidationException("StartDate or EndDate");
 
         if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear())
-                && accountingRecordSearch.getStartDate().getYear() != constantService.getDateAccountingClosureForAll()
+                && accountingRecordSearch.getStartDate().getYear() != constantService
+                        .getDateAccountingClosureForAccountant()
                         .getYear())
             throw new OsirisValidationException("Not in fiscal year");
 
@@ -713,7 +720,8 @@ public class AccountingController {
             throw new OsirisValidationException("StartDate or EndDate");
 
         if (accountingRecordSearch.getStartDate().getYear() != (accountingRecordSearch.getEndDate().getYear())
-                && accountingRecordSearch.getStartDate().getYear() != constantService.getDateAccountingClosureForAll()
+                && accountingRecordSearch.getStartDate().getYear() != constantService
+                        .getDateAccountingClosureForAccountant()
                         .getYear())
             throw new OsirisValidationException("Not in fiscal year");
 
