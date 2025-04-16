@@ -135,6 +135,11 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/jss-category/slug")
+	public ResponseEntity<JssCategory> getJssCategoryBySlug(@RequestParam("slug") String slug) {
+		return new ResponseEntity<JssCategory>(jssCategoryService.getJssCategoryBySlug(slug), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/categories")
 	public ResponseEntity<List<Category>> getAvailableCategories() {
 		return new ResponseEntity<List<Category>>(categoryService.getAvailableCategories(), HttpStatus.OK);
@@ -219,11 +224,20 @@ public class WordpressController {
 				postService.applyPremium(postService.getPostsByJssCategory(page, category)), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/jss-category/most-seen")
+	public ResponseEntity<List<Post>> getMostSeenPostByJssCatgory(@RequestParam Integer jssCategoryId) {
+		JssCategory category = jssCategoryService.getJssCategory(jssCategoryId);
+		if (category == null)
+			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
+		return new ResponseEntity<List<Post>>(
+				postService.applyPremium(postService.getMostSeenPostByJssCatgory(category)), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/all/jss-category")
 	public ResponseEntity<org.springframework.data.domain.Page<Post>> getAllPostsByJssCategory(
 			@RequestParam Integer categoryId,
 			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size,
+			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
 			HttpServletRequest request) {
 
 		detectFlood(request);
@@ -235,7 +249,7 @@ public class WordpressController {
 
 		JssCategory category = jssCategoryService.getJssCategory(categoryId);
 
-		return ResponseEntity.ok(postService.getAllPostsByJssCategory(pageable, category));
+		return ResponseEntity.ok(postService.getAllPostsByJssCategory(pageable, category, searchText));
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
@@ -382,9 +396,15 @@ public class WordpressController {
 		return new ResponseEntity<Tag>(tagService.getTagBySlug(slug), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "tags/jss-category")
-	public ResponseEntity<List<Tag>> getTagsByJssCategory(@RequestParam Integer jssCategoryId) {
-		return new ResponseEntity<List<Tag>>(tagService.getTagsByJssCategory(jssCategoryId), HttpStatus.OK);
+	@GetMapping(inputEntryPoint + "/tags/all/jss-category")
+	public ResponseEntity<List<Tag>> getAllTagsByJssCategory(@RequestParam Integer jssCategoryId) {
+
+		if (jssCategoryId == null)
+			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
+
+		JssCategory category = jssCategoryService.getJssCategory(jssCategoryId);
+
+		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByJssCategory(category), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/search/post")

@@ -12,6 +12,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -138,6 +139,14 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException {
         List<Integer> idPosts = postRepository.findMyJssCategoryPostMostSeen(PageRequest.of(0, 5));
+        if (idPosts != null)
+            return IterableUtils.toList(postRepository.findAllById(idPosts));
+        return null;
+    }
+
+    @Override
+    public List<Post> getMostSeenPostByJssCatgory(JssCategory jssCategory) {
+        List<Integer> idPosts = postRepository.findMostSeenPostJssCategory(PageRequest.of(0, 5), jssCategory);
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
         return null;
@@ -325,9 +334,35 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory) {
-        Page<Post> posts = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
+    public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory, String searchText) {
 
+        List<IndexEntity> tmpEntitiesFound = null;
+        List<Post> matchingPosts = new ArrayList<Post>();
+        Page<Post> postsByJssCategory = null;
+        Page<Post> posts = null;
+
+        if (searchText != null) {
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                if (jssCategory != null) {
+                    postsByJssCategory = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false,
+                            pageableRequest);
+                    if (postsByJssCategory != null && !postsByJssCategory.isEmpty()) {
+                        for (Post post : postsByJssCategory) {
+                            for (IndexEntity entity : tmpEntitiesFound) {
+                                if (post.getId().equals(entity.getEntityId()))
+                                    matchingPosts.add(post);
+                            }
+                        }
+                        PageRequest newPageRequest = PageRequest.of(0, postsByJssCategory.getSize());
+                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
+                        return pageResult;
+                    }
+                }
+                return null;
+            }
+        } else
+            posts = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
         return posts;
     }
 

@@ -10,4 +10,6 @@ public interface JssCategoryService {
         public List<JssCategory> getAvailableJssCategories();
 
         public JssCategory addOrUpdateJssCategory(JssCategory jssCategory);
+
+        public JssCategory getJssCategoryBySlug(String slug);
 }

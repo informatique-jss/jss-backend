@@ -20,14 +20,10 @@ export class PostCategoryHeaderComponent implements OnInit {
   ngOnInit() {
     let slug = this.activeRoute.snapshot.params['slug'];
     if (slug)
-      this.jssCategoryService.getAvailableJssCategories().subscribe(response => { // TODO : change by a getBySlug
+      this.jssCategoryService.getJssCategoryBySlug(slug).subscribe(response => {
         if (response)
-          for (let category of response)
-            if (category.slug == slug) {
-              this.selectedJssCategory = category;
-              break;
-            }
-      })
+          this.selectedJssCategory = response;
+      });
   }
 
 }

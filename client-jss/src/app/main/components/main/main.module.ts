@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { TimeFormatPipe } from '../../../libs/TimeFormatPipe';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
@@ -9,6 +9,7 @@ import { ArticlesCategoryComponent } from '../articles-category/articles-categor
 import { AuthorListComponent } from '../author-list/author-list.component';
 import { BodyArticlesComponent } from '../body-articles/body-articles.component';
 import { DepartmentListComponent } from '../department-list/department-list.component';
+import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { HeaderComponent } from '../header/header.component';
 import { HomepageComponent } from '../homepage/homepage.component';
 import { HubCategoryComponent } from '../hub-category/hub-category.component';
@@ -45,6 +46,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     FormsModule,
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload', scrollPositionRestoration: 'enabled' }),
   ],
@@ -69,7 +71,8 @@ const routes: Routes = [
     TimeFormatPipe,
     AnnouncementComponent,
     HubCategoryComponent,
-    PostCategoryHeaderComponent
+    PostCategoryHeaderComponent,
+    GenericInputComponent
   ],
   exports: [
     HeaderComponent,

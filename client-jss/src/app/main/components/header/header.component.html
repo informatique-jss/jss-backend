@@ -62,7 +62,7 @@
               </ul>
             </li>
             <li class="nav-item" *ngFor="let category of categories"> <a class="nav-link"
-                [ngClass]="{'active':getCurrentRoute().indexOf('/category')>=0 && getCurrentRoute().indexOf('/'+category.slug)>=0}"
+                [ngClass]="{'active':getCurrentRoute().indexOf('/post/category')>=0 && getCurrentRoute().indexOf('/'+category.slug)>=0}"
                 style="cursor: pointer;" (click)="openCategoryPosts(category,$event)">{{category.name}}</a></li>
             <li class="nav-item  py-0"><a class="nav-link podcast-nav-link py-0" href="#">Podcast<span><i
                     class="fas fa-bolt"></i></span></a></li>

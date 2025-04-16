@@ -43,4 +43,9 @@ public class JssCategoryServiceImpl implements JssCategoryService {
     public List<JssCategory> getAvailableJssCategories() {
         return jssCategoryRepository.findAllByOrderByName();
     }
+
+    @Override
+    public JssCategory getJssCategoryBySlug(String slug) {
+        return jssCategoryRepository.findBySlug(slug);
+    }
 }

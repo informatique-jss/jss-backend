@@ -1,21 +1,174 @@
 <ng-container *ngIf="selectedEntityType">
-  <div *ngFor="let post of postsByEntityType">
-    <h5>{{ post.titleText }}</h5>
+  <div class="w-100 justify-content-between my-3">
+
+
+    <div class="container pt-5">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="input-group custom-input-group align-items-center py-0 rounded-1 row mb-3">
+            <div class="col">
+              <div class="row align-items-center">
+                <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="hubForm"
+                  propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+                  (onFormChange)="searchForPosts()" class="btn-search col" [icon]="'search'"></generic-input>
+
+                <button *ngIf="searchText" class="btn btn-search col-1" (click)="clearSearch()">
+                  <i class="ai ai-cross-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row p-0">
+            <div *ngIf="!postsByEntityType || postsByEntityType.length == 0" class="pb-3">
+              <div class="panel-loader">
+                <div class="skeleton skeleton-header"></div>
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line short"></div>
+                <div class="skeleton skeleton-block"></div>
+              </div>
+            </div>
+            <div *ngIf="postsByEntityType && postsByEntityType.length>0 && !searchText" class="row p-0">
+              <div *ngFor="let post of postsByEntityType | slice:0:2" class="col-12 col-md-4 mb-2">
+                <article class="border-0 card h-100">
+                  <div class="card-img px-2">
+                    <div class="image-frame image-hover-style-1">
+                      <a (click)="openPost(post, $event)"> <img *ngIf="post.media" class="lazyload"
+                          [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlFull"
+                          [alt]="post.media.alt_text" class="w-100"></a>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="row pb-1 px-2 align-items-center">
+                      <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
+                        class="badge bg-info rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
+                      <a class="btn btn-outline-secondary fs-9 rounded-circle col-auto"><i class="icon-mkpage"></i>
+                        mp</a>
+                    </div>
+                    <h4>
+                      <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium"
+                          class="pe-0" src="/assets/images/premium-icon.svg">
+                        {{post.titleText}}</a>
+                    </h4>
+                    <p class="card-text-truncate mb-0" [innerHTML]="post.excerptText | trustHtml">
+                    </p>
+                  </div>
+                  <div class="row align-items-center px-2">
+                    <div class="col-lg-6">
+                      <div class="author-block">
+                        <ul class="avatar list-inline mb-0">
+                          <li class="list-inline-item"><a class="fs-9"
+                              (click)="openAuthorPosts(post.fullAuthor, $event)"><img
+                                [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
+                                data-bs-toggle="tooltip" data-bs-placement="top" [title]="post.fullAuthor.name">
+                              {{post.fullAuthor.name}}</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
+                        <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+            <div *ngIf="searchResults && searchResults.length>0 && searchText && searchText.length>2" class="row p-0">
+              <div *ngFor="let post of searchResults | slice:0:2" class="col-12 col-md-4 mb-2">
+                <article class="border-0 card h-100">
+                  <div class="card-img px-2">
+                    <div class="image-frame image-hover-style-1">
+                      <a (click)="openPost(post, $event)"> <img *ngIf="post.media" class="lazyload"
+                          [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlFull"
+                          [alt]="post.media.alt_text" class="w-100"></a>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="row pb-1 px-2 align-items-center">
+                      <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
+                        class="badge bg-info rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
+                      <a class="btn btn-outline-secondary fs-9 rounded-circle col-auto"><i class="icon-mkpage"></i>
+                        mp</a>
+                    </div>
+                    <h4>
+                      <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium"
+                          class="pe-0" src="/assets/images/premium-icon.svg">
+                        {{post.titleText}}</a>
+                    </h4>
+                    <p class="card-text-truncate mb-0" [innerHTML]="post.excerptText | trustHtml">
+                    </p>
+                  </div>
+                  <div class="row align-items-center px-2">
+                    <div class="col-lg-6">
+                      <div class="author-block">
+                        <ul class="avatar list-inline mb-0">
+                          <li class="list-inline-item"><a class="fs-9"
+                              (click)="openAuthorPosts(post.fullAuthor, $event)"><img
+                                [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
+                                data-bs-toggle="tooltip" data-bs-placement="top" [title]="post.fullAuthor.name">
+                              {{post.fullAuthor.name}}</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
+                        <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="sidebar-widget mb-3 border border-light rounded">
+            <div class="wrapper">
+              <div class="row">
+                <div class="col-12">
+                  <div class="section-title-block d-flex pb-3">
+                    <h3 class="section-widget-title">Tag liés</h3>
+
+                  </div>
+                </div>
+              </div>
+              <ul class="tag-cloud list-inline" *ngFor="let tag of tagsByEntityType">
+                <li class="list-inline-item"><a class="btn btn-primary btn-sm rounded"
+                    href="category.html">{{tag.slug}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="row" *ngFor="let post of postsByEntityType.slice(6)">
+            <div class="col-md-12"></div>
+          </div>
+
+          <div class="sidebar-widget mb-3 border border-light rounded">
+            <div class="wrapper">
+              <h3 class="section-widget-title">Les plus vus</h3>
+              <div class="tab-content" id="tab-content">
+                <div class="tab-pane fade show active" id="tab1">
+                  <ul class="counter-post list-inline"
+                    *ngFor="let mostSeenPost of mostSeenPostsByEntityType.slice(0,5)">
+                    <li class="counter-post-item">
+                      <a href="single.html"> {{mostSeenPost.titleText}}</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <nav *ngIf="totalPage >= 1" class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
+            <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
   </div>
-
-  <nav *ngIf="totalPage >= 1" class="mt-4">
-    <ul class="pagination justify-content-center">
-      <li class="page-item" [class.disabled]="page === 0">
-        <button class="page-link" (click)="goToPage(page - 1)">«</button>
-      </li>
-
-      <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
-        <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
-      </li>
-
-      <li class="page-item" [class.disabled]="page === totalPage - 1">
-        <button class="page-link" (click)="goToPage(page + 1)">»</button>
-      </li>
-    </ul>
-  </nav>
 </ng-container>

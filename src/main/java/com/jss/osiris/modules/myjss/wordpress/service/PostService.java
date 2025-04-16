@@ -29,7 +29,10 @@ public interface PostService {
 
         public List<Post> getPostsByJssCategory(int page, JssCategory jssCategory);
 
-        public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory);
+        public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory,
+                        String searchText);
+
+        public List<Post> getMostSeenPostByJssCatgory(JssCategory jssCategory);
 
         public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 
