@@ -8,11 +8,13 @@ import java.util.List;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
@@ -66,6 +68,7 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@IndexedField
 	@GenericGenerator(name = "invoice_id", strategy = "com.jss.osiris.modules.osiris.invoicing.model.InvoiceKeyGenerator")
 	@GeneratedValue(generator = "invoice_id")
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	@Column(nullable = false)

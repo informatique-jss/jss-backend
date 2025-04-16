@@ -9,6 +9,7 @@ import { Invoice } from '../../quotation/model/Invoice';
 import { Provision } from '../../quotation/model/Provision';
 import { Payment } from '../model/Payment';
 import { PaymentAssociate } from '../model/PaymentAssociate';
+import { PaymentSearch } from '../model/PaymentSearch';
 import { PaymentSearchResult } from '../model/PaymentSearchResult';
 
 @Injectable({
@@ -76,6 +77,10 @@ export class PaymentService extends AppRestService<Payment> {
 
   cutPayment(payment: PaymentSearchResult, amount: number) {
     return this.get(new HttpParams().set("paymentId", payment.id).set("amount", amount + ""), "payment/cut");
+  }
+
+  getMatchingOfxPayments(paymentSearch: PaymentSearch) {
+    return this.postList(new HttpParams(), "payment/ofx/match", paymentSearch);
   }
 
 }

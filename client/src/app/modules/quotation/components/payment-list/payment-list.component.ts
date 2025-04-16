@@ -65,7 +65,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     private editCommentDialog: MatDialog,
     private paymentDetailsDialogService: PaymentDetailsDialogService,
     private activatedRoute: ActivatedRoute,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
   ) { }
 
   ngAfterContentChecked(): void {

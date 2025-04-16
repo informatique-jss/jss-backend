@@ -41,6 +41,8 @@ public interface PaymentService {
 
         public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
 
+        public List<Payment> getMatchingOfxPayments(PaymentSearch paymentSearch);
+
         public void paymentGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
@@ -134,4 +136,5 @@ public interface PaymentService {
 
         public MyJssImage downloadQrCodeForOrderPayment(CustomerOrder customerOrder, String mail)
                         throws OsirisException;
+
 }

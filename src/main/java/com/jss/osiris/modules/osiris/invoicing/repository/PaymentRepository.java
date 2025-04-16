@@ -54,6 +54,8 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
 
         Payment findByCheckNumber(String checkNumber);
 
+        List<Payment> findByLabelStartsWith(String label);
+
         @Query(nativeQuery = true, value = " select p.check_number as outboundCheckNumber,"
                         + " p.id as paymentNumber, "
                         + " p.payment_date as outboundCheckDate,"
@@ -79,5 +81,19 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
         @Modifying
         @Query(nativeQuery = true, value = " delete from payment p where id_invoice in (select id from reprise_inpi_del) ")
         void deleteDuplicatePayments();
+
+        @Query("select p from Payment p left join fetch p.childrenPayments c where p.paymentDate>=:minSearchDate" +
+                        " and p.bankId like 'H%' and (p.label not like 'REMISE CHEQUES BORDEREAU%' or p.paymentDate>=:minSearchCheckDate) "
+                        +
+                        " and p.paymentDate>=:startDate and p.paymentDate<=:endDate " +
+                        "  and p.paymentAmount>=:minAmount " +
+                        "  and p.paymentAmount<=:maxAmount  " +
+                        " and (:label is null or CAST(p.id as text) = upper(CAST(:label as text)) or  upper(p.label)  like '%' || trim(upper(CAST(:label as text)))  || '%' )")
+        List<Payment> findPaymentsForOfxMatching(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate,
+                        @Param("minSearchDate") LocalDateTime minSearchDate,
+                        @Param("minSearchCheckDate") LocalDateTime minSearchCheckDate,
+                        @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
+                        @Param("label") String label);
 
 }
