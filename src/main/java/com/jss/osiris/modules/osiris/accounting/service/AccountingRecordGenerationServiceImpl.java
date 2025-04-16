@@ -813,6 +813,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             // Bank part
             List<AccountingRecord> accountingRecords = accountingRecordService
                     .getClosedAccountingRecordsForPayment(payment);
+            accountingRecord = null;
             for (AccountingRecord record : accountingRecords) {
                 if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                         .equals(constantService.getPrincipalAccountingAccountBank().getId())
@@ -822,10 +823,23 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 }
             }
 
-            if (accountingRecord.getCreditAmount() != null)
-                balance = balance.subtract(accountingRecord.getCreditAmount());
-            else
-                balance = balance.add(accountingRecord.getDebitAmount());
+            // Account closure not done
+            if (accountingRecord == null) {
+                for (AccountingRecord record : payment.getAccountingRecords()) {
+                    if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId())
+                            || record.getAccountingAccount().getId()
+                                    .equals(constantService.getAccountingAccountCaisse().getId())) {
+                        accountingRecord = record;
+                    }
+                }
+            }
+
+            if (accountingRecord != null)
+                if (accountingRecord.getCreditAmount() != null)
+                    balance = balance.subtract(accountingRecord.getCreditAmount());
+                else
+                    balance = balance.add(accountingRecord.getDebitAmount());
 
             counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
                     "Annulation du paiement " + payment.getId(), getPaymentDateForAccounting(payment));
