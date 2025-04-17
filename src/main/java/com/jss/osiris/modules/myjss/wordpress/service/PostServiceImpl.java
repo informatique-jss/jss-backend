@@ -417,7 +417,7 @@ public class PostServiceImpl implements PostService {
     public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory) {
         List<Post> firstPostsByMyJssCategory = new ArrayList<Post>();
 
-        Order order = new Order(Direction.DESC, "titleText");
+        Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(0, 3, sort);
 
