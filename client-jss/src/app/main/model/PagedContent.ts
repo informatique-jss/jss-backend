@@ -4,3 +4,4 @@ export interface PagedContent<T> {
   content: T[];
   page: Pagination;
 }
+

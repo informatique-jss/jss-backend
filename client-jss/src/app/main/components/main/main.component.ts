@@ -21,7 +21,7 @@ declare var tns: any;
 })
 export class MainComponent implements OnInit {
 
-  posts: Post[] = [];
+  lastPosts: Post[] = [];
   pinedPosts: Post[] = [];
   ileDeFrancePosts: Post[] = [];
   mostViewedPosts: Post[] = [];
@@ -81,20 +81,20 @@ export class MainComponent implements OnInit {
     // this.postService.getPosts().subscribe(posts => {
     this.postService.getTopPost(0).subscribe(posts => {
       if (posts && posts.length > 0) {
-        this.posts.push(...posts);
+        this.lastPosts.push(...posts);
         // TODO : to delete and fill as expected :
         this.pinedPosts = posts;
         // TODO : to delete and fill as expected :
         this.ileDeFrancePosts = posts;
         // TODO : to delete and fill as expected :
         this.mostViewedPosts = posts;
-
         // Load department posts until 5 posts
         if (this.departmentPosts.length < 5)
-          for (let departmentPost of this.posts) {
+          for (let departmentPost of this.lastPosts) {
             if (departmentPost.departments != null && this.departmentPosts.length < 5
               && departmentPost.departments[0] && !isNaN(departmentPost.departments[0].code as any) && parseInt(departmentPost.departments[0].code) > 0) {
               this.departmentPosts.push(departmentPost);
+              console.log(this.departmentPosts)
             }
           }
       }
@@ -176,5 +176,22 @@ export class MainComponent implements OnInit {
       })
     }
   }
+
+  followPost(postToFollow: Post, event: MouseEvent) {
+    //TODO
+  }
+
+  unfollowPost(postToFollow: Post, event: MouseEvent) {
+    //TODO
+  }
+
+  followSerie(serieToFollow: Serie, event: MouseEvent) {
+    //TODO
+  }
+
+  unfollowSerie(serieToFollow: Serie, event: MouseEvent) {
+    //TODO
+  }
+
 
 }

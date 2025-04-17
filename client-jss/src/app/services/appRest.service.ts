@@ -62,6 +62,12 @@ export abstract class AppRestService<T> {
     return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<T[]>;
   }
 
+  getPagedList(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<PagedContent<T>> {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<PagedContent<T>>;
+  }
+
   postList(params: HttpParams, api: string, item?: any, successfulMessage: string = "", errorMessage: string = ""): Observable<T[]> {
     let context: HttpContext = new HttpContext();
     context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
