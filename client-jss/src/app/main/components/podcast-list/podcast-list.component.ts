@@ -6,10 +6,10 @@ import { Post } from '../../model/Post';
 import { PostService } from '../../services/post.service';
 
 @Component({
-    selector: 'app-podcast-list',
-    templateUrl: './podcast-list.component.html',
-    styleUrls: ['./podcast-list.component.css'],
-    standalone: false
+  selector: 'app-podcast-list',
+  templateUrl: './podcast-list.component.html',
+  styleUrls: ['./podcast-list.component.css'],
+  standalone: false
 })
 export class PodcastListComponent implements OnInit {
 
@@ -32,9 +32,9 @@ export class PodcastListComponent implements OnInit {
   }
 
   fetchNextPosts() {
-    this.postService.getTopPostPodcast(this.page).subscribe(posts => {
-      if (posts && posts.length > 0) {
-        this.podcasts.push(...posts);
+    this.postService.getTopPostPodcast(this.page, 10).subscribe(pagedPosts => {
+      if (pagedPosts.content && pagedPosts.content.length > 0) {
+        this.podcasts.push(...pagedPosts.content);
       } else {
         this.displayLoadMoreButton = false;
       }

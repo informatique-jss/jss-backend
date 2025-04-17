@@ -153,6 +153,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getJssCategoryPostMostSeen(Pageable pageableRequest) throws OsirisException {
+        return postRepository.findJssCategoryPostMostSeen(pageableRequest);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException {
         post.setIsCancelled(false);
@@ -307,10 +312,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getJssCategoryPosts(int page) throws OsirisException {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+    public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException {
+
         return postRepository.findJssCategoryPosts(getCategoryArticle(), false,
                 pageableRequest);
     }
@@ -365,6 +368,11 @@ public class PostServiceImpl implements PostService {
         } else
             posts = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
         return posts;
+    }
+
+    @Override
+    public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory) {
+        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
     }
 
     @Override
@@ -448,29 +456,31 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getTopPostByDepartment(Integer page, PublishingDepartment department) throws OsirisException {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+    public Page<Post> getTopPostByDepartment(Pageable pageableRequest, PublishingDepartment department)
+            throws OsirisException {
         return postRepository.findByPostCategoriesAndIsCancelledAndDepartments(getCategoryArticle(), false, department,
                 pageableRequest);
     }
 
-    private List<Post> getJssCategoryPostsByCategory(int page, Category category) {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+    @Override
+    public Page<Post> getTopPostWithDepartment(Pageable pageableRequest)
+            throws OsirisException {
+        return postRepository.findByPostCategoriesWithDepartments(getCategoryArticle(), false,
+                pageableRequest);
+    }
+
+    private Page<Post> getJssCategoryPostsByCategory(Pageable pageableRequest, Category category) {
         return postRepository.findJssCategoryPosts(category, false, pageableRequest);
     }
 
     @Override
-    public List<Post> getPostInterview(int page) throws OsirisException {
-        return getJssCategoryPostsByCategory(page, getCategoryInterview());
+    public Page<Post> getPostInterview(Pageable pageableRequest) throws OsirisException {
+        return getJssCategoryPostsByCategory(pageableRequest, getCategoryInterview());
     }
 
     @Override
-    public List<Post> getPostPodcast(int page) throws OsirisException {
-        return getJssCategoryPostsByCategory(page, getCategoryPodcast());
+    public Page<Post> getPostsPodcast(Pageable pageableRequest) throws OsirisException {
+        return postRepository.findByPostCategoriesAndIsCancelled(getCategoryPodcast(), false, pageableRequest);
     }
 
     @Override
@@ -513,6 +523,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> applyPremium(List<Post> posts) {
+        if (posts != null)
+            for (Post post : posts) {
+                applyPremium(post);
+            }
+        return posts;
+    }
+
+    @Override
+    public Page<Post> applyPremium(Page<Post> posts) {
         if (posts != null)
             for (Post post : posts) {
                 applyPremium(post);

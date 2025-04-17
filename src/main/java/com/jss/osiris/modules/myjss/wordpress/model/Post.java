@@ -50,18 +50,21 @@ public class Post implements IId {
 
     @Column(columnDefinition = "TEXT")
     @IndexedField
-    @JsonView(JacksonViews.OsirisListView.class)
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssView.class })
     private String titleText;
 
     @Transient
     private Content excerpt;
     @Column(columnDefinition = "TEXT")
     @IndexedField
+    @JsonView(JacksonViews.MyJssView.class)
     private String excerptText;
 
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     @IndexedField
+    @JsonView(JacksonViews.MyJssView.class)
     private LocalDateTime date;
+
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     private LocalDateTime modified;
 
@@ -75,7 +78,7 @@ public class Post implements IId {
     private Integer featured_media;
 
     @IndexedField
-    @JsonView({ JacksonViews.OsirisListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssView.class })
     private String slug;
     private boolean sticky;
 
@@ -84,19 +87,23 @@ public class Post implements IId {
 
     @Transient
     private Content content;
+
     @Column(columnDefinition = "TEXT")
     @IndexedField
+    @JsonView(JacksonViews.MyJssView.class)
     private String contentText;
 
     // Computed field
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author")
     @IndexedField
+    @JsonView(JacksonViews.MyJssView.class)
     private Author fullAuthor;
 
     @ManyToMany
     @JoinTable(name = "asso_post_jss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_jss_category"))
     @IndexedField
+    @JsonView(JacksonViews.MyJssView.class)
     private List<JssCategory> jssCategories;
 
     @ManyToMany
@@ -106,30 +113,36 @@ public class Post implements IId {
 
     @ManyToMany
     @JoinTable(name = "asso_post_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_category"))
+    @JsonView(JacksonViews.MyJssView.class)
     private List<Category> postCategories;
 
     @ManyToMany
     @JoinTable(name = "asso_post_publishing_department", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_publishing_department"))
+    @JsonView(JacksonViews.MyJssView.class)
     private List<PublishingDepartment> departments;
 
     @ManyToMany
     @JoinTable(name = "asso_post_tag", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
     @IndexedField
+    @JsonView(JacksonViews.MyJssView.class)
     private List<Tag> postTags;
 
     @ManyToMany
     @JoinTable(name = "asso_post_serie", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_serie"))
+    @JsonView(JacksonViews.MyJssView.class)
     private List<Serie> postSerie;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_media")
     @IndexedField
+    @JsonView(JacksonViews.MyJssView.class)
     private Media media;
 
     @ManyToMany
     @JoinTable(name = "asso_post_related", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_post_related"))
     private List<Post> relatedPosts;
 
+    @JsonView(JacksonViews.MyJssView.class)
     private Boolean isPremium;
 
     private Integer premiumPercentage;

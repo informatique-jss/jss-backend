@@ -10,10 +10,10 @@ import { DepartmentService } from '../../services/department.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
-    selector: 'app-department-list',
-    templateUrl: './department-list.component.html',
-    styleUrls: ['./department-list.component.css'],
-    standalone: false
+  selector: 'app-department-list',
+  templateUrl: './department-list.component.html',
+  styleUrls: ['./department-list.component.css'],
+  standalone: false
 })
 export class DepartmentListComponent implements OnInit {
 
@@ -70,9 +70,9 @@ export class DepartmentListComponent implements OnInit {
 
   fetchNextPosts() {
     if (this.currentDepartment)
-      this.postService.getTopPostByDepartment(this.page, this.currentDepartment).subscribe(posts => {
-        if (posts && posts.length > 0) {
-          this.posts.push(...posts);
+      this.postService.getTopPostByDepartment(this.page, 10, this.currentDepartment).subscribe(pagedPosts => {
+        if (pagedPosts.content && pagedPosts.content.length > 0) {
+          this.posts.push(...pagedPosts.content);
         } else {
           this.displayLoadMoreButton = false;
         }

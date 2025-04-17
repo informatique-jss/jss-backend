@@ -1,4 +1,4 @@
-import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommunicationPreferenceService } from '../../../../../../client/src/app/modules/crm/services/communication.preference.service';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { AppService } from '../../../services/app.service';
@@ -22,23 +22,18 @@ declare var tns: any;
 export class MainComponent implements OnInit {
 
   lastPosts: Post[] = [];
-  pinedPosts: Post[] = [];
+  pinedPosts: Post[] = []; // TODO later
   ileDeFrancePosts: Post[] = [];
   mostViewedPosts: Post[] = [];
   justiceTopPosts: Post[] = [];
   lawTopPosts: Post[] = [];
   economyTopPosts: Post[] = [];
-  interviews: Post[] = [];
-  podcasts: Post[] = [];
-  departmentPosts: Post[] = [];
+  podcasts: Post[] = []; // TODO
   categories: JssCategory[] = [];
   series: Serie[] = [];
   tagTendencies: Tag[] = [];
 
   mail: string = '';
-
-  @ViewChildren('sliderInterviewPage') sliderInterviewPage!: QueryList<any>;
-  @ViewChildren('sliderSeriesPage') sliderSeriesPage!: QueryList<any>;
 
   constructor(
     private postService: PostService,
@@ -49,55 +44,47 @@ export class MainComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.fetchNextPosts();
+    // Fetch top posts
+    this.postService.getTopPost(0, 10).subscribe(pagedPosts => {
+      if (pagedPosts.content && pagedPosts.content.length > 0) {
+        this.lastPosts.push(...pagedPosts.content);
+      }
+    })
+
+    //Fetch Ile de France posts
+    this.postService.getIleDeFranceTopPost(0, 8).subscribe(pagedPosts => {
+      if (pagedPosts.content && pagedPosts.content.length > 0) {
+        this.ileDeFrancePosts.push(...pagedPosts.content);
+      }
+    })
+
+    //Fetch most viewed posts
+    this.postService.getMostViewedPosts(0, 5).subscribe(pagedPosts => {
+      if (pagedPosts.content && pagedPosts.content.length > 0) {
+        this.mostViewedPosts.push(...pagedPosts.content);
+      }
+    })
+
+    // Fetch series
+    this.serieService.getAvailableSeries().subscribe(series => {
+      this.series.push(...series.sort((a: Serie, b: Serie) => b.serieOrder - a.serieOrder));
+    })
+
+    // Fetch categories
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
       if (categories && categories.length > 0) {
         this.categories.push(...categories.sort((a: JssCategory, b: JssCategory) => a.count - b.count));
         this.fillPostsForCategories();
       }
     });
-    this.serieService.getAvailableSeries().subscribe(series => {
-      this.series.push(...series.sort((a: Serie, b: Serie) => b.serieOrder - a.serieOrder));
-    })
-    this.postService.getTopPostInterview(0).subscribe(interviews => {
-      if (interviews && interviews.length > 0)
-        this.interviews = interviews;
-    })
-    //TODO : change service call to have the pined posts
-    // this.postService.getPostsTendency().subscribe(pinedPosts => {
-    //   if (pinedPosts && pinedPosts.length > 0)
-    //     this.pinedPosts = pinedPosts;
-    // })
-    this.postService.getTopPostPodcast(0).subscribe(podcasts => {
-      if (podcasts && podcasts.length > 0)
-        this.podcasts = podcasts;
-      const event = new Event("RefreshThemeFunctions");
-      //if (document)
-      // document.dispatchEvent(event);
-    })
-  }
 
-  fetchNextPosts() {
-    // this.postService.getPosts().subscribe(posts => {
-    this.postService.getTopPost(0).subscribe(posts => {
-      if (posts && posts.length > 0) {
-        this.lastPosts.push(...posts);
-        // TODO : to delete and fill as expected :
-        this.pinedPosts = posts;
-        // TODO : to delete and fill as expected :
-        this.ileDeFrancePosts = posts;
-        // TODO : to delete and fill as expected :
-        this.mostViewedPosts = posts;
-        // Load department posts until 5 posts
-        if (this.departmentPosts.length < 5)
-          for (let departmentPost of this.lastPosts) {
-            if (departmentPost.departments != null && this.departmentPosts.length < 5
-              && departmentPost.departments[0] && !isNaN(departmentPost.departments[0].code as any) && parseInt(departmentPost.departments[0].code) > 0) {
-              this.departmentPosts.push(departmentPost);
-              console.log(this.departmentPosts)
-            }
-          }
-      }
+    // TODO : to delete and fill as expected :
+    this.pinedPosts = this.lastPosts;
+
+    // TODO
+    this.postService.getTopPostPodcast(0, 3).subscribe(pagedPodcasts => {
+      if (pagedPodcasts.content && pagedPodcasts.content.length > 0)
+        this.podcasts = pagedPodcasts.content;
     })
   }
 
@@ -158,21 +145,21 @@ export class MainComponent implements OnInit {
 
   fillPostsForCategories() {
     if (this.getCategoryByName("justice")) {
-      this.postService.getTopPostByJssCategory(0, this.getCategoryByName("justice")!).subscribe(posts => {
-        if (posts && posts.length > 0)
-          this.justiceTopPosts = posts;
+      this.postService.getTopPostByJssCategory(0, 3, this.getCategoryByName("justice")!).subscribe(pagedPosts => {
+        if (pagedPosts.content && pagedPosts.content.length > 0)
+          this.justiceTopPosts = pagedPosts.content;
       })
     }
     if (this.getCategoryByName("droit")) {
-      this.postService.getTopPostByJssCategory(0, this.getCategoryByName("droit")!).subscribe(posts => {
-        if (posts && posts.length > 0)
-          this.lawTopPosts = posts;
+      this.postService.getTopPostByJssCategory(0, 3, this.getCategoryByName("droit")!).subscribe(pagedPosts => {
+        if (pagedPosts.content && pagedPosts.content.length > 0)
+          this.lawTopPosts = pagedPosts.content;
       })
     }
     if (this.getCategoryByName("économie")) {
-      this.postService.getTopPostByJssCategory(0, this.getCategoryByName("économie")!).subscribe(posts => {
-        if (posts && posts.length > 0)
-          this.economyTopPosts = posts;
+      this.postService.getTopPostByJssCategory(0, 3, this.getCategoryByName("économie")!).subscribe(pagedPosts => {
+        if (pagedPosts.content && pagedPosts.content.length > 0)
+          this.economyTopPosts = pagedPosts.content;
       })
     }
   }
@@ -192,6 +179,4 @@ export class MainComponent implements OnInit {
   unfollowSerie(serieToFollow: Serie, event: MouseEvent) {
     //TODO
   }
-
-
 }

@@ -1,12 +1,17 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
 public class Category {
     @Id
+    @JsonView(JacksonViews.MyJssView.class)
     private Integer id;
+    @JsonView(JacksonViews.MyJssView.class)
     private String name;
     private String slug;
     private Integer count;
