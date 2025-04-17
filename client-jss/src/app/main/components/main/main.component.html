@@ -114,7 +114,7 @@
                                 </div>
                             </div>
                             <div *ngFor="let post of lastPosts | slice:3:10">
-                                <article data-aos="fade-up" class="blog-style2 card my-3 ">
+                                <article data-aos="fade-up" class="blog-style2 card my-3 d-flex">
                                     <div class="feature-image">
                                         <div class="image-frame image-hover-style-1">
                                             <a (click)="openPost(post, $event)"> <img class="lazyload"
@@ -308,13 +308,14 @@
                                 </div>
                             </div>
                             <div class="tab-content" id="tab-content">
-                                <div *ngFor="let post of mostViewedPosts | slice:0:6; let index = index"
+                                <div *ngFor="let post of mostViewedPosts; let index = index"
                                     class="row align-items-center my-3">
                                     <div class="col-auto digits pe-2">
                                         {{index+1}}.
                                     </div>
                                     <div class="col counter-post-item card-title-truncate ps-2">
-                                        <a (click)="openPost(post, $event)" class="titleMostSeen">{{post.titleText}}</a>
+                                        <a (click)="openPost(post, $event)"
+                                            class="title-most-seen">{{post.titleText}}</a>
                                     </div>
                                 </div>
                             </div>
@@ -409,7 +410,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <article *ngFor="let post of justiceTopPosts | slice:0:3"
+                            <article *ngFor="let post of justiceTopPosts"
                                 class="blog-style5 d-flex align-items-center mb-3">
                                 <a (click)="openPost(post, $event)">
                                     <div class="post-img-wrap position-relative overflow-hidden">
@@ -463,7 +464,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <article *ngFor="let post of lawTopPosts | slice:0:3"
+                            <article *ngFor="let post of lawTopPosts"
                                 class="blog-style5 d-flex align-items-center mb-3">
                                 <a (click)="openPost(post, $event)">
                                     <div class="post-img-wrap position-relative overflow-hidden">
@@ -517,7 +518,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <article *ngFor="let post of economyTopPosts | slice:0:3"
+                            <article *ngFor="let post of economyTopPosts"
                                 class="blog-style5 d-flex align-items-center mb-3">
                                 <a (click)="openPost(post, $event)">
                                     <div class="post-img-wrap position-relative overflow-hidden">

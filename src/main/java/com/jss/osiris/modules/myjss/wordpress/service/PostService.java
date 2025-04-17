@@ -25,9 +25,9 @@ public interface PostService {
 
         public Post getPost(Integer id);
 
-        public Page<Post> getPostPodcast(Pageable pageableRequest) throws OsirisException;
+        public Page<Post> getPostsPodcast(Pageable pageableRequest) throws OsirisException;
 
-        public List<Post> getPostsByJssCategory(int page, JssCategory jssCategory);
+        public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory);
 
         public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 
@@ -46,6 +46,8 @@ public interface PostService {
         public List<Post> getMyJssCategoryPostTendency() throws OsirisException;
 
         public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException;
+
+        public Page<Post> getJssCategoryPostMostSeen(Pageable pageableRequest) throws OsirisException;
 
         public Page<Post> getTopPostByDepartment(Pageable pageableRequest, PublishingDepartment department)
                         throws OsirisException;

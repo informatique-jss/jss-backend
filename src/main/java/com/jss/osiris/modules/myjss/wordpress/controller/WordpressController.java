@@ -163,6 +163,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss/top")
+	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopJssPosts(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -202,6 +203,22 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/most-seen")
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenJssPosts(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+				postService.applyPremium(postService.getJssCategoryPostMostSeen(pageableRequest)),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/slug")
 	public ResponseEntity<Post> getPostBySlung(@RequestParam String slug, HttpServletRequest request)
 			throws OsirisException {
@@ -222,13 +239,21 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/jss-category")
-	public ResponseEntity<List<Post>> getTopPostByJssCategory(@RequestParam Integer page,
-			@RequestParam Integer categoryId) {
+	@JsonView(JacksonViews.MyJssView.class)
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostByJssCategory(
+			@RequestParam(required = false) Integer categoryId,
+			@RequestParam(required = false, defaultValue = "0") Integer page,
+			@RequestParam(required = false, defaultValue = "10") Integer size) {
+
 		JssCategory category = jssCategoryService.getJssCategory(categoryId);
 		if (category == null)
-			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(
-				postService.applyPremium(postService.getPostsByJssCategory(page, category)), HttpStatus.OK);
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+				postService.applyPremium(postService.getPostsByJssCategory(pageable, category)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
@@ -344,6 +369,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department")
+	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostByDepartment(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -363,6 +389,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department/all")
+	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostWithDepartment(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -376,11 +403,13 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/interview")
+	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostInterview(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request)
 			throws OsirisException {
+		detectFlood(request);
 
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
@@ -391,16 +420,19 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/podcast")
+	@JsonView(JacksonViews.MyJssView.class)
 	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostPodcast(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request) throws OsirisException {
 
+		detectFlood(request);
+
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
-				postService.applyPremium(postService.getPostPodcast(pageable)),
+				postService.applyPremium(postService.getPostsPodcast(pageable)),
 				HttpStatus.OK);
 	}
 

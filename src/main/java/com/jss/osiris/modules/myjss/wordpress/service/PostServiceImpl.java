@@ -144,6 +144,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getJssCategoryPostMostSeen(Pageable pageableRequest) throws OsirisException {
+        return postRepository.findJssCategoryPostMostSeen(pageableRequest);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException {
         post.setIsCancelled(false);
@@ -313,10 +318,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsByJssCategory(int page, JssCategory jssCategory) {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+    public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory) {
         return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
     }
 
@@ -424,8 +426,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getPostPodcast(Pageable pageableRequest) throws OsirisException {
-        return getJssCategoryPostsByCategory(pageableRequest, getCategoryPodcast());
+    public Page<Post> getPostsPodcast(Pageable pageableRequest) throws OsirisException {
+        return postRepository.findByPostCategoriesAndIsCancelled(getCategoryPodcast(), false, pageableRequest);
     }
 
     @Override

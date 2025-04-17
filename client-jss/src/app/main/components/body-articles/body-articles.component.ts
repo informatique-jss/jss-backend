@@ -49,9 +49,9 @@ export class BodyArticlesComponent implements OnInit, AfterViewInit {
       if (interviews && interviews.length > 0)
         this.interviews = interviews;
     })
-    this.postService.getTopPostPodcast(0).subscribe(podcasts => {
-      if (podcasts && podcasts.length > 0)
-        this.podcasts = podcasts;
+    this.postService.getTopPostPodcast(0, 10).subscribe(pagedPodcasts => {
+      if (pagedPodcasts.content && pagedPodcasts.content.length > 0)
+        this.podcasts = pagedPodcasts.content;
       const event = new Event("RefreshThemeFunctions");
       //if (document)
       // document.dispatchEvent(event);

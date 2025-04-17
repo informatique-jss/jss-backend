@@ -24,13 +24,13 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p where isCancelled=false")
         List<Post> searchAll(Pageable pageableRequest);
 
-        List<Post> findByJssCategoriesAndIsCancelled(JssCategory jssCategory, Boolean isCancelled,
+        Page<Post> findByJssCategoriesAndIsCancelled(JssCategory jssCategory, Boolean isCancelled,
                         Pageable pageableRequest);
 
         List<Post> findByMyJssCategoriesAndIsCancelled(MyJssCategory myJssCategory, Boolean isCancelled,
                         Pageable pageableRequest);
 
-        List<Post> findByPostCategoriesAndIsCancelled(Category category, Boolean isCancelled, Pageable pageableRequest);
+        Page<Post> findByPostCategoriesAndIsCancelled(Category category, Boolean isCancelled, Pageable pageableRequest);
 
         Post findBySlugAndIsCancelled(String slug, Boolean isCancelled);
 
@@ -47,6 +47,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and size(p.myJssCategories) > 0 group by p.id order by sum(v.count) desc ")
         List<Integer> findMyJssCategoryPostMostSeen(Pageable pageable);
+
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        Page<Post> findJssCategoryPostMostSeen(Pageable pageable);
 
         @Query("select p from Post p where :categoryArticle MEMBER OF p.postCategories and size(p.jssCategories) > 0 and p.isCancelled = :isCancelled")
         Page<Post> findJssCategoryPosts(@Param("categoryArticle") Category categoryArticle,
