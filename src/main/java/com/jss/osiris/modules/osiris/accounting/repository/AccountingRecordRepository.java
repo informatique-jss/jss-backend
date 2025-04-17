@@ -485,8 +485,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         " group by vat.label, vat.code,vat.id ")
         List<AccountingVatValue> getAccountingVatValueForJournal(
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate,
+                        @Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate,
                         @Param("idAccountingJournal") Integer idAccountingJournal,
                         @Param("idAccountingClass") Integer idAccountingClass);
 
