@@ -74,7 +74,7 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(params, "posts/all/jss-category", "", "");
   }
 
-  getMostSeenPostByJssCatgory(jssCategory: JssCategory) {
+  getMostSeenPostByJssCategory(jssCategory: JssCategory) {
     return this.getList(new HttpParams().set("jssCategoryId", jssCategory.id), "posts/jss-category/most-seen");
   }
 

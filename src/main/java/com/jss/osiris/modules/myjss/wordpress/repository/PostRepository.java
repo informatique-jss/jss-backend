@@ -78,7 +78,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         @Param("date") LocalDateTime date, Pageable pageableRequest);
 
         @Query("select p from Post p "
-                        + "where (:myJssCategory is null or :myJssCategory member of p.myJssCategories) and p.isCancelled = false"
+                        + "where (:myJssCategory member of p.myJssCategories) and p.isCancelled = false"
                         + " ")
         List<Post> searchPostsByMyJssCategory(@Param("myJssCategory") MyJssCategory myJssCategory,
                         Pageable pageable);

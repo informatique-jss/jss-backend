@@ -33,6 +33,6 @@ export class HubCategoryComponent extends GenericHubComponent<JssCategory> imple
   }
 
   override getMostSeenPostByEntityType(selectedEntityType: JssCategory): Observable<Array<Post>> {
-    return this.postService.getMostSeenPostByJssCatgory(selectedEntityType);
+    return this.postService.getMostSeenPostByJssCategory(selectedEntityType);
   }
 }
