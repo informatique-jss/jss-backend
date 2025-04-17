@@ -4,16 +4,14 @@
       <div class="row">
         <div class="col-8">
           <div class="input-group custom-input-group align-items-center py-0 rounded-1 row mb-3">
-            <div class="col">
-              <div class="row align-items-center">
-                <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="hubForm"
-                  propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-                  (onFormChange)="searchForPosts()" class="btn-search col" [icon]="'search'"></generic-input>
+            <div class="row align-items-center">
+              <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="hubForm"
+                propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+                (onFormChange)="searchForPosts()" class="col" [icon]="'search'"></generic-input>
 
-                <button *ngIf="searchText" class="btn btn-search col-1" (click)="clearSearch()">
-                  <i class="ai ai-cross-alt"></i>
-                </button>
-              </div>
+              <button *ngIf="searchText" class="btn btn-clear-search" (click)="clearSearch()">
+                <i class="bi bi-x-lg"></i>
+              </button>
             </div>
           </div>
 

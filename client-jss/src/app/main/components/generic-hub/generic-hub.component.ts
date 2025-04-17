@@ -18,7 +18,7 @@ export abstract class GenericHubComponent<T> implements OnInit {
   mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
   postsByEntityType: Post[] = [] as Array<Post>;
   tagsByEntityType: Tag[] = [] as Array<Tag>;
-  pageSize: number = 4;
+  pageSize: number = 15;
   page: number = 0;
   totalPage: number = 0;
   searchText: string = "";
@@ -93,7 +93,6 @@ export abstract class GenericHubComponent<T> implements OnInit {
     let start = Math.max(0, this.page - Math.floor(pagesToShow / 2));
     let end = start + pagesToShow;
 
-    // Si on dépasse le total, on recalcule
     if (end > this.totalPage) {
       end = this.totalPage;
       start = Math.max(0, end - pagesToShow);
