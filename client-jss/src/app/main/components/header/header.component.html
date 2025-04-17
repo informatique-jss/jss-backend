@@ -35,7 +35,7 @@
   <div class="header-navbar-middle d-none d-lg-block">
     <div class="container">
       <div class="navbar-brand-wrapper py-1 d-flex justify-content-between align-items-center">
-        <a class="btn btn-dark" href="#">MyJSS<i class="fa fa-external-link-alt ms-1"></i></a>
+        <a class="btn btn-secondary" href="#">MyJSS<i class="fa fa-external-link-alt ms-1"></i></a>
         <a class="navbar-brand ms-5 ps-3" href="index.html">
           <img class="lazyload" src="assets/images/homepage/logo.svg" alt="image">
         </a>
@@ -65,15 +65,15 @@
                 [ngClass]="{'active':getCurrentRoute().indexOf('/category')>=0 && getCurrentRoute().indexOf('/'+category.slug)>=0}"
                 style="cursor: pointer;" (click)="openCategoryPosts(category,$event)">{{category.name}}</a></li>
 
-            <li class="nav-item  py-0"><a class="nav-link podcast-nav-link py-0" href="#">Podcast<span><i
-                    class="fas fa-bolt"></i></span></a></li>
+            <li class="nav-item nav-item-podcast"><span><a class="nav-link podcast-nav-link mt-auto py-0 ps-2"
+                  href="#">Podcast<span><i class="fas fa-bolt"></i></span></a></span></li>
 
             <li class="nav-item"><a class="nav-link" href="#"><img src="assets/images/premium-icon.svg"
                   class="me-1" />Premium</a></li>
           </ul>
         </div>
         <div class="search-modal" data-bs-toggle="modal" data-bs-target="#search-modal"><a class="nav-link" href="#"> <i
-              class="fas fa-search"></i>loupe</a>
+              class="fas fa-search"></i></a>
         </div>
       </nav>
       <div class="modal fade" id="search-modal" data-bs-backdrop="static">

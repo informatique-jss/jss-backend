@@ -1,9 +1,12 @@
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { CommunicationPreferenceService } from '../../../../../../client/src/app/modules/crm/services/communication.preference.service';
+import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { Serie } from '../../model/Serie';
+import { Tag } from '../../model/Tag';
 import { JssCategoryService } from '../../services/jss.category.service';
 import { PostService } from '../../services/post.service';
 import { SerieService } from '../../services/serie.service';
@@ -18,14 +21,21 @@ declare var tns: any;
 })
 export class MainComponent implements OnInit {
 
-
   posts: Post[] = [];
+  pinedPosts: Post[] = [];
+  ileDeFrancePosts: Post[] = [];
+  mostViewedPosts: Post[] = [];
+  justiceTopPosts: Post[] = [];
+  lawTopPosts: Post[] = [];
+  economyTopPosts: Post[] = [];
   interviews: Post[] = [];
   podcasts: Post[] = [];
   departmentPosts: Post[] = [];
-  page: number = 0;
   categories: JssCategory[] = [];
   series: Serie[] = [];
+  tagTendencies: Tag[] = [];
+
+  mail: string = '';
 
   @ViewChildren('sliderInterviewPage') sliderInterviewPage!: QueryList<any>;
   @ViewChildren('sliderSeriesPage') sliderSeriesPage!: QueryList<any>;
@@ -35,13 +45,16 @@ export class MainComponent implements OnInit {
     private jssCategoryService: JssCategoryService,
     private serieService: SerieService,
     private appService: AppService,
+    private communicationPreferenceService: CommunicationPreferenceService
   ) { }
 
   ngOnInit() {
     this.fetchNextPosts();
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
-      if (categories && categories.length > 0)
+      if (categories && categories.length > 0) {
         this.categories.push(...categories.sort((a: JssCategory, b: JssCategory) => a.count - b.count));
+        this.fillPostsForCategories();
+      }
     });
     this.serieService.getAvailableSeries().subscribe(series => {
       this.series.push(...series.sort((a: Serie, b: Serie) => b.serieOrder - a.serieOrder));
@@ -50,6 +63,11 @@ export class MainComponent implements OnInit {
       if (interviews && interviews.length > 0)
         this.interviews = interviews;
     })
+    //TODO : change service call to have the pined posts
+    // this.postService.getPostsTendency().subscribe(pinedPosts => {
+    //   if (pinedPosts && pinedPosts.length > 0)
+    //     this.pinedPosts = pinedPosts;
+    // })
     this.postService.getTopPostPodcast(0).subscribe(podcasts => {
       if (podcasts && podcasts.length > 0)
         this.podcasts = podcasts;
@@ -59,16 +77,17 @@ export class MainComponent implements OnInit {
     })
   }
 
-  getNextPosts() {
-    this.page++;
-    this.fetchNextPosts();
-  }
-
   fetchNextPosts() {
     // this.postService.getPosts().subscribe(posts => {
-    this.postService.getPosts().subscribe(posts => {
+    this.postService.getTopPost(0).subscribe(posts => {
       if (posts && posts.length > 0) {
         this.posts.push(...posts);
+        // TODO : to delete and fill as expected :
+        this.pinedPosts = posts;
+        // TODO : to delete and fill as expected :
+        this.ileDeFrancePosts = posts;
+        // TODO : to delete and fill as expected :
+        this.mostViewedPosts = posts;
 
         // Load department posts until 5 posts
         if (this.departmentPosts.length < 5)
@@ -114,60 +133,48 @@ export class MainComponent implements OnInit {
     this.appService.openRoute(event, "podcast/" + podcast.slug, undefined);
   }
 
-  ngAfterViewInit() {
-    this.sliderInterviewPage.changes.subscribe(t => {
-      tns({
-        container: '.slider-interview',
-        controlsText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-        items: 3,
-        nav: false,
-        autoplayHoverPause: true,
-        autoplayButtonOutput: false,
-        autoplay: true,
-        gutter: 24,
-        controls: true,
-        responsive: {
-          1: {
-            items: 1
-          },
-          767: {
-            items: 2
-          },
-          991: {
-            items: 3
-          },
-          1200: {
-            items: 4
-          }
-        }
-      });
-    })
-    this.sliderSeriesPage.changes.subscribe(t => {
-      tns({
-        container: '.slider-series',
-        controlsText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-        items: 3,
-        nav: false,
-        autoplayHoverPause: true,
-        autoplayButtonOutput: false,
-        autoplay: true,
-        gutter: 24,
-        controls: true,
-        responsive: {
-          1: {
-            items: 1
-          },
-          767: {
-            items: 2
-          },
-          991: {
-            items: 3
-          },
-          1200: {
-            items: 4
-          }
-        }
-      });
-    })
+  openPinedPosts(event: any) {
+    this.appService.openRoute(event, "pined/", undefined);
   }
+
+  registerEmail(mailToRegister: string) {
+    // Email verifications
+    if (!mailToRegister) {
+      // this.appService.displayToast("Merci de renseigner une adresse e-mail.", true, "Une erreur s’est produite...", 3000);
+      return;
+    }
+
+    if (!validateEmail(mailToRegister)) {
+      // this.appService.displayToast("Impossible de finaliser votre inscription. Vérifiez votre adresse e-mail et réessayez.", true, "Une erreur s’est produite...", 3000);
+      return;
+    }
+
+    this.communicationPreferenceService.subscribeToCorporateNewsletter(mailToRegister).subscribe();
+  }
+
+  getCategoryByName(name: string): JssCategory | undefined {
+    return this.categories.find(c => c.name.toLowerCase() === name.toLowerCase());
+  }
+
+  fillPostsForCategories() {
+    if (this.getCategoryByName("justice")) {
+      this.postService.getTopPostByJssCategory(0, this.getCategoryByName("justice")!).subscribe(posts => {
+        if (posts && posts.length > 0)
+          this.justiceTopPosts = posts;
+      })
+    }
+    if (this.getCategoryByName("droit")) {
+      this.postService.getTopPostByJssCategory(0, this.getCategoryByName("droit")!).subscribe(posts => {
+        if (posts && posts.length > 0)
+          this.lawTopPosts = posts;
+      })
+    }
+    if (this.getCategoryByName("économie")) {
+      this.postService.getTopPostByJssCategory(0, this.getCategoryByName("économie")!).subscribe(posts => {
+        if (posts && posts.length > 0)
+          this.economyTopPosts = posts;
+      })
+    }
+  }
+
 }
