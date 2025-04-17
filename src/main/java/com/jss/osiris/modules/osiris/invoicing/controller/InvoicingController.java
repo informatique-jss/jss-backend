@@ -287,15 +287,6 @@ public class InvoicingController {
         return new ResponseEntity<Payment>(paymentService.getPayment(id), HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/payment/closed")
-    public ResponseEntity<Payment> getPaymentWithClosedAccountingRecords(@RequestParam Integer id)
-            throws OsirisValidationException {
-        if (id == null)
-            throw new OsirisValidationException("Id");
-
-        return new ResponseEntity<Payment>(paymentService.getPaymentWithClosedAccountingRecords(id), HttpStatus.OK);
-    }
-
     @GetMapping(inputEntryPoint + "/payment/waiting")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
     public ResponseEntity<Payment> movePaymentToWaitingAccount(@RequestParam Integer paymentId)
