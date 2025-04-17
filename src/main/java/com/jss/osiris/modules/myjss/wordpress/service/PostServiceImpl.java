@@ -401,11 +401,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getTopPostByDepartment(Integer page, PublishingDepartment department) throws OsirisException {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+    public Page<Post> getTopPostByDepartment(Pageable pageableRequest, PublishingDepartment department)
+            throws OsirisException {
         return postRepository.findByPostCategoriesAndIsCancelledAndDepartments(getCategoryArticle(), false, department,
+                pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getTopPostWithDepartment(Pageable pageableRequest)
+            throws OsirisException {
+        return postRepository.findByPostCategoriesWithDepartments(getCategoryArticle(), false,
                 pageableRequest);
     }
 

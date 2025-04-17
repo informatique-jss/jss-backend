@@ -47,7 +47,11 @@ public interface PostService {
 
         public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException;
 
-        public List<Post> getTopPostByDepartment(Integer page, PublishingDepartment department) throws OsirisException;
+        public Page<Post> getTopPostByDepartment(Pageable pageableRequest, PublishingDepartment department)
+                        throws OsirisException;
+
+        public Page<Post> getTopPostWithDepartment(Pageable pageableRequest)
+                        throws OsirisException;
 
         public List<Post> getPostBySerie(Serie serie);
 

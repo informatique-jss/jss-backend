@@ -57,8 +57,12 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         List<Post> findMyJssCategoryPosts(@Param("isCancelled") boolean b,
                         Pageable pageableRequest);
 
-        List<Post> findByPostCategoriesAndIsCancelledAndDepartments(Category categoryArticle, boolean b,
+        Page<Post> findByPostCategoriesAndIsCancelledAndDepartments(Category categoryArticle, boolean b,
                         PublishingDepartment department, Pageable pageableRequest);
+
+        @Query("SELECT p FROM Post p WHERE :category MEMBER OF p.postCategories AND p.isCancelled = :isCancelled AND SIZE(p.departments) > 0")
+        Page<Post> findByPostCategoriesWithDepartments(Category category, @Param("isCancelled") boolean isCancelled,
+                        Pageable pageableRequest);
 
         List<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b);
 

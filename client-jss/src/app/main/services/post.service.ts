@@ -67,8 +67,12 @@ export class PostService extends AppRestService<Post> {
     return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
   }
 
-  getTopPostByDepartment(page: number, department: PublishingDepartment) {
-    return this.getList(new HttpParams().set("page", page).set("departmentId", department.id), "posts/top/department");
+  getIleDeFranceTopPost(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/department/all");
+  }
+
+  getTopPostByDepartment(page: number, size: number, department: PublishingDepartment) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("departmentId", department.id), "posts/top/department");
   }
 
   getTopPostByAuthor(page: number, author: Author) {

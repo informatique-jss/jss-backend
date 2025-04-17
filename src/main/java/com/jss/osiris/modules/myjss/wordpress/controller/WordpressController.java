@@ -3,11 +3,13 @@ package com.jss.osiris.modules.myjss.wordpress.controller;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -342,13 +344,35 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department")
-	public ResponseEntity<List<Post>> getTopPostByDepartment(@RequestParam Integer page,
-			@RequestParam Integer departmentId) throws OsirisException {
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostByDepartment(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam Integer departmentId,
+			HttpServletRequest request) throws OsirisException {
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
 		PublishingDepartment department = publishingDepartmentService.getPublishingDepartment(departmentId);
-		if (department == null)
-			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(
-				postService.applyPremium(postService.getTopPostByDepartment(page, department)), HttpStatus.OK);
+		if (department == null) {
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+				postService.applyPremium(postService.getTopPostByDepartment(pageable, department)), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/top/department/all")
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostWithDepartment(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			HttpServletRequest request) throws OsirisException {
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+				postService.applyPremium(postService.getTopPostWithDepartment(pageable)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/interview")

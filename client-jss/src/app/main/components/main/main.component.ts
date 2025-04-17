@@ -49,6 +49,7 @@ export class MainComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // Fetch top posts
     this.postService.getTopPost(0, 10).subscribe(pagedPosts => {
       if (pagedPosts.content && pagedPosts.content.length > 0) {
         this.lastPosts.push(...pagedPosts.content);
@@ -56,10 +57,16 @@ export class MainComponent implements OnInit {
     })
 
 
+    //Fetch Ile de France posts
+    this.postService.getIleDeFranceTopPost(0, 8).subscribe(pagedPosts => {
+      if (pagedPosts.content && pagedPosts.content.length > 0) {
+        this.ileDeFrancePosts.push(...pagedPosts.content);
+      }
+    })
+
     // TODO : to delete and fill as expected :
     this.pinedPosts = this.lastPosts;
     // TODO : to delete and fill as expected :
-    this.ileDeFrancePosts = this.lastPosts;
     // TODO : to delete and fill as expected :
     this.mostViewedPosts = this.lastPosts;
 
