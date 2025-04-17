@@ -329,6 +329,7 @@ public class PostServiceImpl implements PostService {
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
         return null;
+        // TODO change return values into Page<Post> in code above
         // postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false,
         // pageableRequest);
     }

@@ -18,7 +18,7 @@ export abstract class GenericHubComponent<T> implements OnInit {
   mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
   postsByEntityType: Post[] = [] as Array<Post>;
   tagsByEntityType: Tag[] = [] as Array<Tag>;
-  pageSize: number = 15;
+  pageSize: number = 4;
   page: number = 0;
   totalPage: number = 0;
   searchText: string = "";
@@ -90,11 +90,17 @@ export abstract class GenericHubComponent<T> implements OnInit {
 
   get pages(): number[] {
     const pagesToShow = 5;
-    const start = Math.max(0, this.page - Math.floor(pagesToShow / 2));
-    const end = Math.min(this.totalPage, start + pagesToShow);
+    let start = Math.max(0, this.page - Math.floor(pagesToShow / 2));
+    let end = start + pagesToShow;
+
+    // Si on dépasse le total, on recalcule
+    if (end > this.totalPage) {
+      end = this.totalPage;
+      start = Math.max(0, end - pagesToShow);
+    }
+
     return Array.from({ length: end - start }, (_, i) => start + i);
   }
-
 
   openCategoryPosts(category: JssCategory, event: any) {
     this.appService.openRoute(event, "category/" + category.slug, undefined);

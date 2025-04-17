@@ -1,0 +1,28 @@
+.page-link {
+  border: none !important;
+  background-color: transparent !important;
+  color: var(--bs-secondary);
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.page-link:hover {
+  color: #ff3e30;
+  background-color: transparent;
+}
+
+.page-item.active .page-link {
+  color: var(--ar-primary);
+  font-weight: bold;
+  background-color: transparent !important;
+  border: none;
+}
+
+.page-item:not(:first-child) .page-link {
+  margin-left: 0;
+}
+
+.page-item.disabled .page-link {
+  color: var(--bs-gray);
+  cursor: not-allowed;
+}
