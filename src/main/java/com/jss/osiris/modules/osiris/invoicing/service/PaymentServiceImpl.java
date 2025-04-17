@@ -36,6 +36,7 @@ import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
@@ -182,6 +183,18 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.isPresent())
             return payment.get();
         return null;
+    }
+
+    @Override
+    public Payment getPaymentWithClosedAccountingRecords(Integer id) {
+        Payment payment = getPayment(id);
+        if (payment != null) {
+            if (payment.getAccountingRecords() == null)
+                payment.setAccountingRecords(new ArrayList<AccountingRecord>());
+            payment.getAccountingRecords()
+                    .addAll(accountingRecordService.getClosedAccountingRecordsForPayment(payment));
+        }
+        return payment;
     }
 
     @Override

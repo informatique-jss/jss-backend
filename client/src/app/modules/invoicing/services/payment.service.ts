@@ -32,6 +32,10 @@ export class PaymentService extends AppRestService<Payment> {
     return this.getById("payment", paymentId);
   }
 
+  getPaymentWithClosedAccountingRecords(paymentId: number) {
+    return this.getById("payment/closed", paymentId);
+  }
+
   associatePaymentAndInvoiceAndCustomerOrder(paymentAssociate: PaymentAssociate) {
     return this.postList(new HttpParams(), "payments/associate", paymentAssociate, "Association réalisée avec succès", "Erreur lors de l'association");
   }
