@@ -15,8 +15,6 @@ public interface InvoiceSearchResult {
 
     public Integer getCustomerOrderId();
 
-    public String getCustomerOrderLabel();
-
     public String getProviderLabel();
 
     public Integer getIdPaymentType();

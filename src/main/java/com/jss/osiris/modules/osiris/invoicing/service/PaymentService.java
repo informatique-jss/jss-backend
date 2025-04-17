@@ -31,8 +31,6 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 public interface PaymentService {
         public Payment getPayment(Integer id);
 
-        public Payment getPaymentWithClosedAccountingRecords(Integer id);
-
         public List<OutboundCheckSearchResult> searchOutboundChecks(OutboundCheckSearch outboundCheckSearch);
 
         public Payment addOrUpdatePayment(Payment payment) throws OsirisException;
