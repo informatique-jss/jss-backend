@@ -30,7 +30,9 @@
               "src/assets"
             ],
             "styles": [
-              "src/assets/css/style.css"
+              "src/assets/css/style.css",
+              "src/assets/css/all.min.css",
+              "src/assets/css/bootstrap-icons.css"
             ],
             "scripts": []
           },
@@ -118,19 +120,6 @@
             "assets": [
               "src/favicon.ico",
               "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss",
-                {
-                  "input": "src/assets/css/font-awesome/all.min.css",
-                  "inject": true,
-                  "bundleName": "all.min.css"
-                },
-                {
-                  "input": "src/assets/css/bootstrap-icons.css",
-                  "inject": true,
-                  "bundleName": "bootstrap-icons.css"
-                }
             ],
             "scripts": []
           }

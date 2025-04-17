@@ -11,7 +11,6 @@ import { BodyArticlesComponent } from '../body-articles/body-articles.component'
 import { DepartmentListComponent } from '../department-list/department-list.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { HeaderComponent } from '../header/header.component';
-import { HomepageComponent } from '../homepage/homepage.component';
 import { HubCategoryComponent } from '../hub-category/hub-category.component';
 import { InterviewListComponent } from '../interview-list/interview-list.component';
 import { NewArticlesComponent } from '../new-articles/new-articles.component';
@@ -27,8 +26,8 @@ import { TrendComponent } from '../trend/trend.component';
 import { MainComponent } from './main.component';
 
 const routes: Routes = [
-  { path: 'home', component: HomepageComponent },
   { path: 'post/category/:slug', component: PostCategoryHeaderComponent },
+  { path: 'home', component: MainComponent },
   { path: 'post/:slug', component: PostComponent },
   { path: 'author/:slug', component: AuthorListComponent },
   { path: 'category/:slug', component: ArticlesCategoryComponent },
