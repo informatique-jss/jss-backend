@@ -7,10 +7,10 @@ import { Post } from '../../model/Post';
 import { PostService } from '../../services/post.service';
 
 @Component({
-    selector: 'new-articles',
-    templateUrl: './new-articles.component.html',
-    styleUrls: ['./new-articles.component.css'],
-    standalone: false
+  selector: 'new-articles',
+  templateUrl: './new-articles.component.html',
+  styleUrls: ['./new-articles.component.css'],
+  standalone: false
 })
 export class NewArticlesComponent implements OnInit {
 
@@ -22,8 +22,8 @@ export class NewArticlesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.postService.getTopPost(0).subscribe(posts => {
-      this.posts = posts;
+    this.postService.getTopPost(0, 10).subscribe(pagedPosts => {
+      this.posts = pagedPosts.content;
     })
   }
 

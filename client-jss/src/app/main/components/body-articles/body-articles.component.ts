@@ -11,10 +11,10 @@ import { SerieService } from '../../services/serie.service';
 declare var tns: any;
 
 @Component({
-    selector: 'body-articles',
-    templateUrl: './body-articles.component.html',
-    styleUrls: ['./body-articles.component.css'],
-    standalone: false
+  selector: 'body-articles',
+  templateUrl: './body-articles.component.html',
+  styleUrls: ['./body-articles.component.css'],
+  standalone: false
 })
 export class BodyArticlesComponent implements OnInit, AfterViewInit {
 
@@ -64,9 +64,9 @@ export class BodyArticlesComponent implements OnInit, AfterViewInit {
   }
 
   fetchNextPosts() {
-    this.postService.getTopPost(this.page).subscribe(posts => {
-      if (posts && posts.length > 0) {
-        this.posts.push(...posts);
+    this.postService.getTopPost(this.page, 10).subscribe(pagedPosts => {
+      if (pagedPosts.content && pagedPosts.content.length > 0) {
+        this.posts.push(...pagedPosts.content);
 
         // Load department posts until 5 posts
         if (this.departmentPosts.length < 5)
