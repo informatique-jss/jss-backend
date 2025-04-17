@@ -24,5 +24,8 @@ export class TagService extends AppRestService<Tag> {
   getAllTagsByJssCategory(jssCategory: JssCategory) {
     return this.getList(new HttpParams().set("jssCategoryId", jssCategory.id), "tags/all/jss-category");
   }
+  getAllTagsByTag(tag: Tag) {
+    return this.getList(new HttpParams().set("tagSlug", tag.slug), "tags/all/tag");
+  }
 
 }

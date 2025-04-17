@@ -36,7 +36,7 @@ export abstract class GenericHubComponent<T> implements OnInit {
 
   abstract getAllPostByEntityType(selectedEntityType: T, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>>;
   abstract getAllTagByEntityType(selectedEntityType: T): Observable<Array<Tag>>;
-  abstract getMostSeenPostByEntityType(selectedEntityType: T): Observable<Array<Post>>;
+  abstract getMostSeenPostByEntityType(selectedEntityType: T, page: number, pageSize: number): Observable<PagedContent<Post>>
 
   fetchPosts(page: number) {
     if (this.selectedEntityType)
@@ -59,9 +59,9 @@ export abstract class GenericHubComponent<T> implements OnInit {
 
   fetchMostSeenPosts() {
     if (this.selectedEntityType)
-      this.getMostSeenPostByEntityType(this.selectedEntityType).subscribe(data => {
+      this.getMostSeenPostByEntityType(this.selectedEntityType, this.page, this.pageSize).subscribe(data => {
         if (data)
-          this.mostSeenPostsByEntityType = data;
+          this.mostSeenPostsByEntityType = data.content;
       });
   }
 
@@ -102,7 +102,7 @@ export abstract class GenericHubComponent<T> implements OnInit {
   }
 
   openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "category/" + category.slug, undefined);
+    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
   }
 
   openPost(post: Post, event: any) {
@@ -111,5 +111,9 @@ export abstract class GenericHubComponent<T> implements OnInit {
 
   openAuthorPosts(author: Author, event: any) {
     this.appService.openRoute(event, "author/" + author.slug, undefined);
+  }
+
+  openTagPosts(tag: Tag, event: any) {
+    this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
   }
 }

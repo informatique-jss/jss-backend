@@ -145,11 +145,26 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getMostSeenPostByJssCatgory(JssCategory jssCategory) {
+    public Page<Post> getMostSeenPostByJssCatgory(Pageable pageableRequest, JssCategory jssCategory) {
+        List<Post> posts = new ArrayList<>();
         List<Integer> idPosts = postRepository.findMostSeenPostJssCategory(PageRequest.of(0, 5), jssCategory);
         if (idPosts != null)
-            return IterableUtils.toList(postRepository.findAllById(idPosts));
-        return null;
+            posts = IterableUtils.toList(postRepository.findAllById(idPosts));
+        PageRequest newPageRequest = PageRequest.of(0, posts.size());
+        Page<Post> pageResult = new PageImpl<>(posts, newPageRequest, posts.size());
+        return pageResult;
+    }
+
+    @Override
+    public Page<Post> getMostSeenPostByTag(Pageable pageableRequest, Tag tag) {
+        List<Post> posts = new ArrayList<>();
+        List<Integer> idPosts = postRepository.findMostSeenPostTag(pageableRequest, tag);
+        if (idPosts != null)
+            posts = IterableUtils.toList(postRepository.findAllById(idPosts));
+
+        PageRequest newPageRequest = PageRequest.of(0, posts.size());
+        Page<Post> pageResult = new PageImpl<>(posts, newPageRequest, posts.size());
+        return pageResult;
     }
 
     @Override
@@ -327,17 +342,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsByJssCategory(int page, JssCategory jssCategory) {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return null;
-        // TODO change return values into Page<Post> in code above
-        // postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false,
-        // pageableRequest);
-    }
-
-    @Override
     public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory, String searchText) {
 
         List<IndexEntity> tmpEntitiesFound = null;
@@ -373,6 +377,37 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory) {
         return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
+    }
+
+    public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) {
+        List<IndexEntity> tmpEntitiesFound = null;
+        List<Post> matchingPosts = new ArrayList<Post>();
+        Page<Post> postsByTag = null;
+        Page<Post> posts = null;
+
+        if (searchText != null) {
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                if (tag != null) {
+                    postsByTag = postRepository.findByPostTagsAndIsCancelled(tag, false,
+                            pageableRequest);
+                    if (postsByTag != null && !postsByTag.isEmpty()) {
+                        for (Post post : postsByTag) {
+                            for (IndexEntity entity : tmpEntitiesFound) {
+                                if (post.getId().equals(entity.getEntityId()))
+                                    matchingPosts.add(post);
+                            }
+                        }
+                        PageRequest newPageRequest = PageRequest.of(0, postsByTag.getSize());
+                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
+                        return pageResult;
+                    }
+                }
+                return null;
+            }
+        } else
+            posts = postRepository.findByPostTagsAndIsCancelled(tag, false, pageableRequest);
+        return posts;
     }
 
     @Override
@@ -440,7 +475,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsByTag(Integer page, Tag tag) {
+    public Page<Post> getPostsByTag(Integer page, Tag tag) {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);

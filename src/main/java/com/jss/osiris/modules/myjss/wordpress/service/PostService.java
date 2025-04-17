@@ -32,7 +32,11 @@ public interface PostService {
         public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory,
                         String searchText);
 
-        public List<Post> getMostSeenPostByJssCatgory(JssCategory jssCategory);
+        public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText);
+
+        public Page<Post> getMostSeenPostByJssCatgory(Pageable pageableRequest, JssCategory jssCategory);
+
+        public Page<Post> getMostSeenPostByTag(Pageable pageableRequest, Tag tag);
 
         public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 
@@ -62,7 +66,7 @@ public interface PostService {
 
         public List<Post> getPostBySerie(Serie serie);
 
-        public List<Post> getPostsByTag(Integer page, Tag tag);
+        public Page<Post> getPostsByTag(Integer page, Tag tag);
 
         public List<Post> getPostsByAuthor(Integer page, Author author);
 

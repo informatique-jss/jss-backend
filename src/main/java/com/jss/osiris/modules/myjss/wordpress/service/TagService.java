@@ -15,4 +15,6 @@ public interface TagService {
         public Tag getTagBySlug(String slug);
 
         public List<Tag> getAllTagsByJssCategory(JssCategory jssCategory);
+
+        public List<Tag> getAllTagsByTag(Tag tag);
 }

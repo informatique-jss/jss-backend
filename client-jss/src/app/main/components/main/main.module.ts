@@ -8,10 +8,10 @@ import { AnnouncementComponent } from '../announcement/announcement.component';
 import { ArticlesCategoryComponent } from '../articles-category/articles-category.component';
 import { AuthorListComponent } from '../author-list/author-list.component';
 import { BodyArticlesComponent } from '../body-articles/body-articles.component';
+import { CategoryHubComponent } from '../category-hub/category-hub.component';
 import { DepartmentListComponent } from '../department-list/department-list.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { HeaderComponent } from '../header/header.component';
-import { HubCategoryComponent } from '../hub-category/hub-category.component';
 import { InterviewListComponent } from '../interview-list/interview-list.component';
 import { NewArticlesComponent } from '../new-articles/new-articles.component';
 import { PodcastListComponent } from '../podcast-list/podcast-list.component';
@@ -21,12 +21,14 @@ import { PostComponent } from '../post/post.component';
 import { SearchAnnouncementComponent } from '../search-announcement/search-announcement.component';
 import { SerieListComponent } from '../serie-list/serie-list.component';
 import { SerieComponent } from '../serie/serie.component';
+import { TagHubComponent } from '../tag-hub/tag-hub.component';
 import { TagListComponent } from '../tag-list/tag-list.component';
 import { TrendComponent } from '../trend/trend.component';
 import { MainComponent } from './main.component';
 
 const routes: Routes = [
   { path: 'post/category/:slug', component: PostCategoryHeaderComponent },
+  { path: 'post/tag/:slug', component: TagHubComponent },
   { path: 'home', component: MainComponent },
   { path: 'post/:slug', component: PostComponent },
   { path: 'author/:slug', component: AuthorListComponent },
@@ -69,7 +71,8 @@ const routes: Routes = [
     TagListComponent,
     TimeFormatPipe,
     AnnouncementComponent,
-    HubCategoryComponent,
+    CategoryHubComponent,
+    TagHubComponent,
     PostCategoryHeaderComponent,
     GenericInputComponent
   ],

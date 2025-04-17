@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from '../../services/appRest.service';
 import { Author } from '../model/Author';
 import { JssCategory } from '../model/JssCategory';
@@ -14,6 +15,9 @@ import { Tag } from '../model/Tag';
   providedIn: 'root'
 })
 export class PostService extends AppRestService<Post> {
+
+  private readonly defaultImage = '/assets/images/blog-img.jpg';
+  private readonly authorImage = '/assets/images/author-img.jpg';
 
   constructor(http: HttpClient) {
     super(http, "wordpress");
@@ -68,8 +72,30 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(params, "posts/all/jss-category", "", "");
   }
 
-  getMostSeenPostByJssCategory(jssCategory: JssCategory) {
-    return this.getList(new HttpParams().set("jssCategoryId", jssCategory.id), "posts/jss-category/most-seen");
+  getAllPostsByTag(tag: Tag, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('tagSlug', tag.slug)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/all/tag", "", "");
+  }
+
+  getMostSeenPostByTag(tag: Tag, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('tagSlug', tag.slug)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/tag/most-seen", "", "");
+  }
+
+  getMostSeenPostByJssCategory(jssCategory: JssCategory, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('jssCategoryId', jssCategory.id.toString())
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/jss-category/most-seen", "", "");
   }
 
   getTopPostByTag(page: number, tag: Tag) {

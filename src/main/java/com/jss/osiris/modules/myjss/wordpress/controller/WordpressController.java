@@ -253,12 +253,32 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss-category/most-seen")
-	public ResponseEntity<List<Post>> getMostSeenPostByJssCatgory(@RequestParam Integer jssCategoryId) {
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenPostByJssCatgory(
+			@RequestParam Integer jssCategoryId, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size,
+			HttpServletRequest request) {
+		detectFlood(request);
+		Pageable pageable = PageRequest.of(page, size,
+				Sort.by(Sort.Direction.DESC, "date"));
 		JssCategory category = jssCategoryService.getJssCategory(jssCategoryId);
-		if (category == null)
-			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(
-				postService.applyPremium(postService.getMostSeenPostByJssCatgory(category)), HttpStatus.OK);
+		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+				postService.getMostSeenPostByJssCatgory(pageable, category),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/tag/most-seen")
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenPostByTag(
+			@RequestParam String tagSlug, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size,
+			HttpServletRequest request) {
+		detectFlood(request);
+		Pageable pageable = PageRequest.of(page, size,
+				Sort.by(Sort.Direction.DESC, "date"));
+		Tag tag = tagService.getTagBySlug(tagSlug);
+
+		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+				postService.getMostSeenPostByTag(pageable, tag),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/jss-category")
@@ -278,6 +298,25 @@ public class WordpressController {
 		JssCategory category = jssCategoryService.getJssCategory(categoryId);
 
 		return ResponseEntity.ok(postService.getAllPostsByJssCategory(pageable, category, searchText));
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/all/tag")
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getAllPostsByTag(
+			@RequestParam String tagSlug,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			HttpServletRequest request) {
+
+		detectFlood(request);
+		if (size > 100)
+			return null;
+
+		Pageable pageable = PageRequest.of(page, size,
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		Tag tag = tagService.getTagBySlug(tagSlug);
+
+		return ResponseEntity.ok(postService.getAllPostsByTag(pageable, tag, searchText));
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
@@ -358,13 +397,11 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/tag")
-	public ResponseEntity<List<Post>> getTagBySlug(@RequestParam Integer page,
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTagBySlug(@RequestParam Integer page,
 			@RequestParam Integer tagId) {
 		Tag tag = tagService.getTag(tagId);
-		if (tag == null)
-			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostsByTag(page, tag)),
-				HttpStatus.OK);
+
+		return ResponseEntity.ok(postService.getPostsByTag(page, tag));
 	}
 
 	@GetMapping(inputEntryPoint + "/post/next")
@@ -479,6 +516,17 @@ public class WordpressController {
 		JssCategory category = jssCategoryService.getJssCategory(jssCategoryId);
 
 		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByJssCategory(category), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/all/tag")
+	public ResponseEntity<List<Tag>> getAllTagsByJssCategory(@RequestParam String tagSlug) {
+
+		if (tagSlug == null)
+			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
+
+		Tag tag = tagService.getTagBySlug(tagSlug);
+
+		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByTag(tag), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/search/post")

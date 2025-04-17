@@ -11,12 +11,12 @@ import { TagService } from '../../services/tag.service';
 import { GenericHubComponent } from '../generic-hub/generic-hub.component';
 
 @Component({
-  selector: 'hub-category',
+  selector: 'category-hub',
   templateUrl: './../generic-hub/generic-hub.component.html',
   styleUrls: ['./../generic-hub/generic-hub.component.css'],
   standalone: false
 })
-export class HubCategoryComponent extends GenericHubComponent<JssCategory> implements OnInit {
+export class CategoryHubComponent extends GenericHubComponent<JssCategory> implements OnInit {
 
   @Input() override selectedEntityType: JssCategory | undefined;
 
@@ -32,7 +32,7 @@ export class HubCategoryComponent extends GenericHubComponent<JssCategory> imple
     return this.tagService.getAllTagsByJssCategory(selectedEntityType);
   }
 
-  override getMostSeenPostByEntityType(selectedEntityType: JssCategory): Observable<Array<Post>> {
-    return this.postService.getMostSeenPostByJssCategory(selectedEntityType);
+  override getMostSeenPostByEntityType(selectedEntityType: JssCategory, page: number, pageSize: number): Observable<PagedContent<Post>> {
+    return this.postService.getMostSeenPostByJssCategory(selectedEntityType, page, pageSize);
   }
 }
