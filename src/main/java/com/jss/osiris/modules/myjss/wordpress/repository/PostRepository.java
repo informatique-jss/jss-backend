@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -48,7 +49,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         List<Integer> findMyJssCategoryPostMostSeen(Pageable pageable);
 
         @Query("select p from Post p where :categoryArticle MEMBER OF p.postCategories and size(p.jssCategories) > 0 and p.isCancelled = :isCancelled")
-        List<Post> findJssCategoryPosts(@Param("categoryArticle") Category categoryArticle,
+        Page<Post> findJssCategoryPosts(@Param("categoryArticle") Category categoryArticle,
                         @Param("isCancelled") boolean b,
                         Pageable pageableRequest);
 

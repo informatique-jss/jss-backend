@@ -2,6 +2,7 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.jss.osiris.libs.exception.OsirisException;
@@ -16,15 +17,15 @@ import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 public interface PostService {
         public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException;
 
-        public List<Post> getJssCategoryPosts(int page) throws OsirisException;
+        public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException;
 
         public List<Post> getMyJssCategoryPosts(int page) throws OsirisException;
 
-        public List<Post> getPostInterview(int page) throws OsirisException;
+        public Page<Post> getPostInterview(Pageable pageableRequest) throws OsirisException;
 
         public Post getPost(Integer id);
 
-        public List<Post> getPostPodcast(int page) throws OsirisException;
+        public Page<Post> getPostPodcast(Pageable pageableRequest) throws OsirisException;
 
         public List<Post> getPostsByJssCategory(int page, JssCategory jssCategory);
 
@@ -57,6 +58,8 @@ public interface PostService {
         public void reindexPosts() throws OsirisException;
 
         public List<Post> applyPremium(List<Post> posts);
+
+        public Page<Post> applyPremium(Page<Post> posts);
 
         public Post applyPremium(Post post);
 

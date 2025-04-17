@@ -24,8 +24,8 @@ export class PostService extends AppRestService<Post> {
     super(http, "wordpress");
   }
 
-  getTopPost(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/jss/top");
+  getTopPost(page: number, pageSize: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", pageSize), "posts/jss/top");
   }
 
   getPostsTendency() {

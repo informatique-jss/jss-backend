@@ -49,7 +49,21 @@ export class MainComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.fetchNextPosts();
+    this.postService.getTopPost(0, 10).subscribe(pagedPosts => {
+      if (pagedPosts.content && pagedPosts.content.length > 0) {
+        this.lastPosts.push(...pagedPosts.content);
+      }
+    })
+
+
+    // TODO : to delete and fill as expected :
+    this.pinedPosts = this.lastPosts;
+    // TODO : to delete and fill as expected :
+    this.ileDeFrancePosts = this.lastPosts;
+    // TODO : to delete and fill as expected :
+    this.mostViewedPosts = this.lastPosts;
+
+
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
       if (categories && categories.length > 0) {
         this.categories.push(...categories.sort((a: JssCategory, b: JssCategory) => a.count - b.count));
@@ -77,29 +91,6 @@ export class MainComponent implements OnInit {
     })
   }
 
-  fetchNextPosts() {
-    // this.postService.getPosts().subscribe(posts => {
-    this.postService.getTopPost(0).subscribe(posts => {
-      if (posts && posts.length > 0) {
-        this.lastPosts.push(...posts);
-        // TODO : to delete and fill as expected :
-        this.pinedPosts = posts;
-        // TODO : to delete and fill as expected :
-        this.ileDeFrancePosts = posts;
-        // TODO : to delete and fill as expected :
-        this.mostViewedPosts = posts;
-        // Load department posts until 5 posts
-        if (this.departmentPosts.length < 5)
-          for (let departmentPost of this.lastPosts) {
-            if (departmentPost.departments != null && this.departmentPosts.length < 5
-              && departmentPost.departments[0] && !isNaN(departmentPost.departments[0].code as any) && parseInt(departmentPost.departments[0].code) > 0) {
-              this.departmentPosts.push(departmentPost);
-              console.log(this.departmentPosts)
-            }
-          }
-      }
-    })
-  }
 
   openPost(post: Post, event: any) {
     this.appService.openRoute(event, "post/" + post.slug, undefined);

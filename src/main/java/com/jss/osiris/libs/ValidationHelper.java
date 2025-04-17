@@ -384,4 +384,11 @@ public class ValidationHelper {
             return false;
         return true;
     }
+
+    public static Integer limitPageSize(Integer pageSize) {
+        if (pageSize > 100)
+            return 100;
+
+        return pageSize;
+    }
 }
