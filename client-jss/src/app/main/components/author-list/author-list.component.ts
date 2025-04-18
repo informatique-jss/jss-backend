@@ -9,10 +9,10 @@ import { AuthorService } from '../../services/author.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
-    selector: 'app-author-list',
-    templateUrl: './author-list.component.html',
-    styleUrls: ['./author-list.component.css'],
-    standalone: false
+  selector: 'app-author-list',
+  templateUrl: './author-list.component.html',
+  styleUrls: ['./author-list.component.css'],
+  standalone: false
 })
 export class AuthorListComponent implements OnInit {
 
@@ -48,14 +48,15 @@ export class AuthorListComponent implements OnInit {
   }
 
   fetchNextPosts() {
-    if (this.currentAuthor)
-      this.postService.getTopPostByAuthor(this.page, this.currentAuthor).subscribe(posts => {
-        if (posts && posts.length > 0) {
-          this.posts.push(...posts);
-        } else {
-          this.displayLoadMoreButton = false;
-        }
-      });
+    // TODO To remove if not used anymore
+    // if (this.currentAuthor)
+    //   this.postService.getTopPostByAuthor(this.page, this.currentAuthor).subscribe(posts => {
+    //     if (posts && posts.length > 0) {
+    //       this.posts.push(...posts);
+    //     } else {
+    //       this.displayLoadMoreButton = false;
+    //     }
+    //   });
   }
 
 

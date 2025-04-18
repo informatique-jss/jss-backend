@@ -75,7 +75,7 @@ export class PostService extends AppRestService<Post> {
     return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
   }
 
-
+  //TODO modify in getPagedList
   getTopPostByAuthor(page: number, author: Author) {
     return this.getList(new HttpParams().set("page", page).set("authorId", author.id), "posts/top/author");
   }

@@ -110,7 +110,7 @@ export abstract class GenericHubComponent<T> implements OnInit {
   }
 
   openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "author/" + author.slug, undefined);
+    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
   }
 
   openTagPosts(tag: Tag, event: any) {

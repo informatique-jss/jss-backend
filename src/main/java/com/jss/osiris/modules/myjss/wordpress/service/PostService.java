@@ -34,9 +34,17 @@ public interface PostService {
 
         public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText);
 
+        public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText);
+
+        public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText);
+
         public Page<Post> getMostSeenPostByJssCatgory(Pageable pageableRequest, JssCategory jssCategory);
 
         public Page<Post> getMostSeenPostByTag(Pageable pageableRequest, Tag tag);
+
+        public Page<Post> getMostSeenPostByAuthor(Pageable pageableRequest, Author author);
+
+        public Page<Post> getMostSeenPostBySerie(Pageable pageableRequest, Serie serie);
 
         public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 
@@ -70,7 +78,7 @@ public interface PostService {
 
         public Page<Post> getPostsByTag(Integer page, Tag tag);
 
-        public List<Post> getPostsByAuthor(Integer page, Author author);
+        public Page<Post> getPostsByAuthor(Pageable pageableRequest, Author author);
 
         public void reindexPosts() throws OsirisException;
 

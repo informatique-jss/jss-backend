@@ -48,14 +48,20 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and size(p.myJssCategories) > 0 group by p.id order by sum(v.count) desc ")
         List<Integer> findMyJssCategoryPostMostSeen(Pageable pageable);
 
-        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and :jssCategory MEMBER OF p.jssCategories group by p.id order by sum(v.count) desc ")
-        List<Integer> findMostSeenPostJssCategory(Pageable pageable, @Param("jssCategory") JssCategory jssCategory);
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and :jssCategory MEMBER OF p.jssCategories group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostJssCategory(Pageable pageable, @Param("jssCategory") JssCategory jssCategory);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findJssCategoryPostMostSeen(Pageable pageable);
 
-        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and :tag MEMBER OF p.postTags and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        List<Integer> findMostSeenPostTag(Pageable pageable, @Param("tag") Tag tag);
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and :tag MEMBER OF p.postTags and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostTag(Pageable pageable, @Param("tag") Tag tag);
+
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and p.fullAuthor =:author and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostAuthor(Pageable pageable, @Param("author") Author author);
+
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and :serie MEMBER OF p.postSerie and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostSerie(Pageable pageable, @Param("serie") Serie serie);
 
         @Query("select p from Post p where p.isCancelled = false and size(p.jssCategories) > 0 and p.sticky = true")
         Page<Post> findJssCategoryStickyPost(Pageable pageable);
@@ -80,7 +86,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         Page<Post> findByPostTagsAndIsCancelled(Tag tag, boolean b, Pageable pageableRequest);
 
-        List<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, Pageable pageableRequest);
+        Page<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, Pageable pageableRequest);
+
+        Page<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b, Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled = false and :jssCategories member of p.jssCategories and p.date>:date")
         List<Post> findNextArticle(@Param("jssCategories") JssCategory jssCategories,

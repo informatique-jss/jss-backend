@@ -13,8 +13,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
+import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.repository.TagRepository;
 
@@ -74,6 +76,38 @@ public class TagServiceImpl implements TagService {
             Pageable pageable = PageRequest.of(0, 1000000,
                     Sort.by(Sort.Direction.DESC, "date"));
             Page<Post> posts = postService.getAllPostsByTag(pageable, tag, null);
+
+            for (Post post : posts.getContent()) {
+                if (post.getPostTags() != null && !post.getPostTags().isEmpty())
+                    tags.addAll(post.getPostTags());
+            }
+        }
+        return tags;
+    }
+
+    @Override
+    public List<Tag> getAllTagsByAuthor(Author author) {
+        List<Tag> tags = new ArrayList<>();
+        if (author != null) {
+            Pageable pageable = PageRequest.of(0, 1000000,
+                    Sort.by(Sort.Direction.DESC, "date"));
+            Page<Post> posts = postService.getAllPostsByAuthor(pageable, author, null);
+
+            for (Post post : posts.getContent()) {
+                if (post.getPostTags() != null && !post.getPostTags().isEmpty())
+                    tags.addAll(post.getPostTags());
+            }
+        }
+        return tags;
+    }
+
+    @Override
+    public List<Tag> getAllTagsBySerie(Serie serie) {
+        List<Tag> tags = new ArrayList<>();
+        if (serie != null) {
+            Pageable pageable = PageRequest.of(0, 1000000,
+                    Sort.by(Sort.Direction.DESC, "date"));
+            Page<Post> posts = postService.getAllPostsBySerie(pageable, serie, null);
 
             for (Post post : posts.getContent()) {
                 if (post.getPostTags() != null && !post.getPostTags().isEmpty())

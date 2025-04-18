@@ -1,0 +1,6 @@
+<div *ngIf="selectedTag">
+  <p>
+    {{selectedTag.name}}
+  </p>
+  <tag-hub [selectedEntityType]="selectedTag"></tag-hub>
+</div>

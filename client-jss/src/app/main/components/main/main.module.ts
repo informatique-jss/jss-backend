@@ -6,6 +6,7 @@ import { TimeFormatPipe } from '../../../libs/TimeFormatPipe';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { ArticlesCategoryComponent } from '../articles-category/articles-category.component';
+import { AuthorHubComponent } from '../author-hub/author-hub.component';
 import { AuthorListComponent } from '../author-list/author-list.component';
 import { BodyArticlesComponent } from '../body-articles/body-articles.component';
 import { CategoryHubComponent } from '../category-hub/category-hub.component';
@@ -17,9 +18,13 @@ import { NewArticlesComponent } from '../new-articles/new-articles.component';
 import { NewsletterComponent } from '../newsletter/newsletter.component';
 import { PodcastListComponent } from '../podcast-list/podcast-list.component';
 import { PodcastPostComponent } from '../podcast-post/podcast-post.component';
+import { PostAuthorHeaderComponent } from '../post-author-header/post-author-header.component';
 import { PostCategoryHeaderComponent } from '../post-category-header/post-category-header.component';
+import { PostSerieHeaderComponent } from '../post-serie-header/post-serie-header.component';
+import { PostTagHeaderComponent } from '../post-tag-header/post-tag-hub-header.component';
 import { PostComponent } from '../post/post.component';
 import { SearchAnnouncementComponent } from '../search-announcement/search-announcement.component';
+import { SerieHubComponent } from '../serie-hub/serie-hub.component';
 import { SerieListComponent } from '../serie-list/serie-list.component';
 import { SerieComponent } from '../serie/serie.component';
 import { TagHubComponent } from '../tag-hub/tag-hub.component';
@@ -29,7 +34,9 @@ import { MainComponent } from './main.component';
 
 const routes: Routes = [
   { path: 'post/category/:slug', component: PostCategoryHeaderComponent },
-  { path: 'post/tag/:slug', component: TagHubComponent },
+  { path: 'post/tag/:slug', component: PostTagHeaderComponent },
+  { path: 'post/author/:slug', component: PostAuthorHeaderComponent },
+  { path: 'post/serie/:slug', component: PostSerieHeaderComponent },
   { path: 'home', component: MainComponent },
   { path: 'post/:slug', component: PostComponent },
   { path: 'author/:slug', component: AuthorListComponent },
@@ -75,7 +82,12 @@ const routes: Routes = [
     AnnouncementComponent,
     CategoryHubComponent,
     TagHubComponent,
+    AuthorHubComponent,
+    SerieHubComponent,
     PostCategoryHeaderComponent,
+    PostTagHeaderComponent,
+    PostAuthorHeaderComponent,
+    PostSerieHeaderComponent,
     GenericInputComponent
 
   ],

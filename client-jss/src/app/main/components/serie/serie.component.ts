@@ -10,10 +10,10 @@ import { PostService } from '../../services/post.service';
 import { SerieService } from '../../services/serie.service';
 
 @Component({
-    selector: 'app-serie',
-    templateUrl: './serie.component.html',
-    styleUrls: ['./serie.component.css'],
-    standalone: false
+  selector: 'app-serie',
+  templateUrl: './serie.component.html',
+  styleUrls: ['./serie.component.css'],
+  standalone: false
 })
 export class SerieComponent implements OnInit {
 
@@ -54,11 +54,12 @@ export class SerieComponent implements OnInit {
   }
 
   fetchNextPosts() {
-    this.postService.getPostSerieBySlug(this.slug).subscribe(posts => {
-      if (posts && posts.length > 0) {
-        this.posts = posts;
-        this.postService.completeMediaInPosts(posts);
-      }
-    });
+    //TODO to remove if not used or change it into Page<Post> response
+    // this.postService.getPostSerieBySlug(this.slug).subscribe(posts => {
+    //   if (posts && posts.length > 0) {
+    //     this.posts = posts;
+    //     this.postService.completeMediaInPosts(posts);
+    //   }
+    // });
   }
 }

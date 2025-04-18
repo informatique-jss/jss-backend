@@ -1,0 +1,6 @@
+<div *ngIf="selectedAuthor">
+  <p>
+    {{selectedAuthor.name}}
+  </p>
+  <author-hub [selectedEntityType]="selectedAuthor"></author-hub>
+</div>

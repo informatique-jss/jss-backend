@@ -146,25 +146,22 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getMostSeenPostByJssCatgory(Pageable pageableRequest, JssCategory jssCategory) {
-        List<Post> posts = new ArrayList<>();
-        List<Integer> idPosts = postRepository.findMostSeenPostJssCategory(PageRequest.of(0, 5), jssCategory);
-        if (idPosts != null)
-            posts = IterableUtils.toList(postRepository.findAllById(idPosts));
-        PageRequest newPageRequest = PageRequest.of(0, posts.size());
-        Page<Post> pageResult = new PageImpl<>(posts, newPageRequest, posts.size());
-        return pageResult;
+        return postRepository.findMostSeenPostJssCategory(pageableRequest, jssCategory);
     }
 
     @Override
     public Page<Post> getMostSeenPostByTag(Pageable pageableRequest, Tag tag) {
-        List<Post> posts = new ArrayList<>();
-        List<Integer> idPosts = postRepository.findMostSeenPostTag(pageableRequest, tag);
-        if (idPosts != null)
-            posts = IterableUtils.toList(postRepository.findAllById(idPosts));
+        return postRepository.findMostSeenPostTag(pageableRequest, tag);
+    }
 
-        PageRequest newPageRequest = PageRequest.of(0, posts.size());
-        Page<Post> pageResult = new PageImpl<>(posts, newPageRequest, posts.size());
-        return pageResult;
+    @Override
+    public Page<Post> getMostSeenPostByAuthor(Pageable pageableRequest, Author author) {
+        return postRepository.findMostSeenPostAuthor(pageableRequest, author);
+    }
+
+    @Override
+    public Page<Post> getMostSeenPostBySerie(Pageable pageableRequest, Serie serie) {
+        return postRepository.findMostSeenPostSerie(pageableRequest, serie);
     }
 
     @Override
@@ -384,6 +381,7 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
     }
 
+    @Override
     public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) {
         List<IndexEntity> tmpEntitiesFound = null;
         List<Post> matchingPosts = new ArrayList<Post>();
@@ -412,6 +410,70 @@ public class PostServiceImpl implements PostService {
             }
         } else
             posts = postRepository.findByPostTagsAndIsCancelled(tag, false, pageableRequest);
+        return posts;
+    }
+
+    @Override
+    public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText) {
+        List<IndexEntity> tmpEntitiesFound = null;
+        List<Post> matchingPosts = new ArrayList<Post>();
+        Page<Post> postsByAuthor = null;
+        Page<Post> posts = null;
+
+        if (searchText != null) {
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                if (author != null) {
+                    postsByAuthor = postRepository.findByFullAuthorAndIsCancelled(author, false,
+                            pageableRequest);
+                    if (postsByAuthor != null && !postsByAuthor.isEmpty()) {
+                        for (Post post : postsByAuthor) {
+                            for (IndexEntity entity : tmpEntitiesFound) {
+                                if (post.getId().equals(entity.getEntityId()))
+                                    matchingPosts.add(post);
+                            }
+                        }
+                        PageRequest newPageRequest = PageRequest.of(0, postsByAuthor.getSize());
+                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
+                        return pageResult;
+                    }
+                }
+                return null;
+            }
+        } else
+            posts = postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
+        return posts;
+    }
+
+    @Override
+    public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText) {
+        List<IndexEntity> tmpEntitiesFound = null;
+        List<Post> matchingPosts = new ArrayList<Post>();
+        Page<Post> postsBySerie = null;
+        Page<Post> posts = null;
+
+        if (searchText != null) {
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                if (serie != null) {
+                    postsBySerie = postRepository.findByPostSerieAndIsCancelled(serie, false,
+                            pageableRequest);
+                    if (postsBySerie != null && !postsBySerie.isEmpty()) {
+                        for (Post post : postsBySerie) {
+                            for (IndexEntity entity : tmpEntitiesFound) {
+                                if (post.getId().equals(entity.getEntityId()))
+                                    matchingPosts.add(post);
+                            }
+                        }
+                        PageRequest newPageRequest = PageRequest.of(0, postsBySerie.getSize());
+                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
+                        return pageResult;
+                    }
+                }
+                return null;
+            }
+        } else
+            posts = postRepository.findByPostSerieAndIsCancelled(serie, false, pageableRequest);
         return posts;
     }
 
@@ -488,10 +550,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsByAuthor(Integer page, Author author) {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+    public Page<Post> getPostsByAuthor(Pageable pageableRequest, Author author) {
         return postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
     }
 

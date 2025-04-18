@@ -288,7 +288,7 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 		JssCategory category = jssCategoryService.getJssCategory(jssCategoryId);
 		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
-				postService.getMostSeenPostByJssCatgory(pageable, category),
+				postService.applyPremium(postService.getMostSeenPostByJssCatgory(pageable, category)),
 				HttpStatus.OK);
 	}
 
@@ -303,7 +303,38 @@ public class WordpressController {
 		Tag tag = tagService.getTagBySlug(tagSlug);
 
 		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
-				postService.getMostSeenPostByTag(pageable, tag),
+				postService.applyPremium(postService.getMostSeenPostByTag(pageable, tag)),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/author/most-seen")
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenPostByAuthor(
+			@RequestParam String authorSlug, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size,
+			HttpServletRequest request) {
+		detectFlood(request);
+		Pageable pageable = PageRequest.of(page, size,
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		Author author = authorService.getAuthorBySlug(authorSlug);
+
+		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+				postService.applyPremium(postService.getMostSeenPostByAuthor(pageable, author)),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/serie/most-seen")
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenPostBySerie(
+			@RequestParam String serieSlug, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size,
+			HttpServletRequest request) {
+		detectFlood(request);
+		Pageable pageable = PageRequest.of(page, size,
+				Sort.by(Sort.Direction.DESC, "date"));
+		Serie serie = serieService.getSerieBySlug(serieSlug);
+
+		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+				postService.applyPremium(postService.getMostSeenPostBySerie(pageable, serie)),
 				HttpStatus.OK);
 	}
 
@@ -315,15 +346,14 @@ public class WordpressController {
 			HttpServletRequest request) {
 
 		detectFlood(request);
-		if (size > 100)
-			return null;
-
-		Pageable pageable = PageRequest.of(page, size,
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		JssCategory category = jssCategoryService.getJssCategory(categoryId);
 
-		return ResponseEntity.ok(postService.getAllPostsByJssCategory(pageable, category, searchText));
+		return new ResponseEntity<Page<Post>>(
+				postService.applyPremium(postService.getAllPostsByJssCategory(pageableRequest, category, searchText)),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/tag")
@@ -334,15 +364,54 @@ public class WordpressController {
 			HttpServletRequest request) {
 
 		detectFlood(request);
-		if (size > 100)
-			return null;
 
-		Pageable pageable = PageRequest.of(page, size,
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		Tag tag = tagService.getTagBySlug(tagSlug);
 
-		return ResponseEntity.ok(postService.getAllPostsByTag(pageable, tag, searchText));
+		return new ResponseEntity<Page<Post>>(
+				postService.applyPremium(postService.getAllPostsByTag(pageableRequest, tag, searchText)),
+				HttpStatus.OK);
+
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/all/author")
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getAllPostsByAuthor(
+			@RequestParam String authorSlug,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			HttpServletRequest request) {
+
+		detectFlood(request);
+
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		Author author = authorService.getAuthorBySlug(authorSlug);
+
+		return new ResponseEntity<Page<Post>>(
+				postService.applyPremium(postService.getAllPostsByAuthor(pageableRequest, author, searchText)),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/all/serie")
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getAllPostsBySerie(
+			@RequestParam String serieSlug,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			HttpServletRequest request) {
+
+		detectFlood(request);
+
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		Serie serie = serieService.getSerieBySlug(serieSlug);
+
+		return new ResponseEntity<Page<Post>>(
+				postService.applyPremium(postService.getAllPostsBySerie(pageableRequest, serie, searchText)),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
@@ -447,11 +516,14 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/author")
-	public ResponseEntity<List<Post>> getTopPostByAuthor(@RequestParam Integer page, @RequestParam Integer authorId) {
+	public ResponseEntity<Page<Post>> getTopPostByAuthor(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size, @RequestParam Integer authorId) {
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
 		Author author = authorService.getAuthor(authorId);
-		if (author == null)
-			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostsByAuthor(page, author)),
+
+		return new ResponseEntity<Page<Post>>(postService.applyPremium(postService.getPostsByAuthor(pageable, author)),
 				HttpStatus.OK);
 	}
 
@@ -545,7 +617,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/tag")
-	public ResponseEntity<List<Tag>> getAllTagsByJssCategory(@RequestParam String tagSlug) {
+	public ResponseEntity<List<Tag>> getAllTagsByTag(@RequestParam String tagSlug) {
 
 		if (tagSlug == null)
 			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
@@ -553,6 +625,28 @@ public class WordpressController {
 		Tag tag = tagService.getTagBySlug(tagSlug);
 
 		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByTag(tag), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/all/author")
+	public ResponseEntity<List<Tag>> getAllTagsByAuthor(@RequestParam String authorSlug) {
+
+		if (authorSlug == null)
+			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
+
+		Author author = authorService.getAuthorBySlug(authorSlug);
+
+		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByAuthor(author), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/all/serie")
+	public ResponseEntity<List<Tag>> getAllTagsBySerie(@RequestParam String serieSlug) {
+
+		if (serieSlug == null)
+			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
+
+		Serie serie = serieService.getSerieBySlug(serieSlug);
+
+		return new ResponseEntity<List<Tag>>(tagService.getAllTagsBySerie(serie), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/search/post")
