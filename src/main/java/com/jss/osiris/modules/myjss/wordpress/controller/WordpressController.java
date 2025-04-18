@@ -176,8 +176,7 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return ResponseEntity.ok(
-				postService.applyPremium(postService.getJssCategoryPosts(pageable)));
+		return ResponseEntity.ok(postService.getJssCategoryPosts(pageable));
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/top")
@@ -252,7 +251,7 @@ public class WordpressController {
 		Serie serie = serieService.getSerieBySlug(slug);
 		if (serie == null)
 			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getPostBySerie(serie)),
+		return new ResponseEntity<List<Post>>(postService.getPostBySerie(serie),
 				HttpStatus.OK);
 	}
 
@@ -271,7 +270,7 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getPostsByJssCategory(pageable, category)), HttpStatus.OK);
+				postService.getPostsByJssCategory(pageable, category), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
@@ -402,8 +401,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 		}
 
-		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getTopPostByDepartment(pageable, department)), HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(postService.getTopPostByDepartment(pageable, department), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department/all")
@@ -416,8 +414,7 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getTopPostWithDepartment(pageable)), HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(postService.getTopPostWithDepartment(pageable), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/interview")
@@ -432,9 +429,7 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getPostInterview(pageable)),
-				HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(postService.getPostInterview(pageable), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/podcast")
@@ -449,9 +444,7 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getPostsPodcast(pageable)),
-				HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(postService.getPostsPodcast(pageable), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/tags")
