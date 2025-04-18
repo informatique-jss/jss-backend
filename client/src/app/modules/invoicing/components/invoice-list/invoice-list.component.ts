@@ -1,10 +1,13 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Subject } from 'rxjs';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
+import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
+import { MailComputeResultService } from 'src/app/modules/quotation/services/mail.compute.result.service';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
@@ -38,6 +41,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: InvoiceStatus[] | undefined;
   searchedTiers: IndexEntity | undefined;
+  refreshRecordTable: Subject<void> = new Subject<void>();
 
   bookmark: InvoiceSearch | undefined;
 
@@ -52,7 +56,8 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     private habilitationService: HabilitationsService,
     private userPreferenceService: UserPreferenceService,
     private uploadAttachmentService: UploadAttachmentService,
-    private invoiceService: InvoiceService
+    private invoiceService: InvoiceService,
+    private mailComputeResultService: MailComputeResultService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -89,14 +94,14 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "id", fieldName: "invoiceId", label: "N° de facture" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status", statusFonction: (element: InvoiceSearchResult) => { return element.invoiceStatusCode }, displayAsStatus: true } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn<InvoiceSearchResult>);
-    this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn<InvoiceSearchResult>);
-    this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable", actionLinkFunction: getColumnLink } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "salesEmployeeId", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "affaires", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "invoicePayer", fieldName: "billingLabel", label: "Payeur" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "invoiceRecipient", fieldName: "invoiceRecipient", label: "Destinataire" } as SortTableColumn<InvoiceSearchResult>);
+    this.availableColumns.push({ id: "invoiceMailRecipient", fieldName: "invoiceMailRecipient", label: "Mails destinataires" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "invoiceBillingType", fieldName: "invoiceBillingType", label: "Libellé à" } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn<InvoiceSearchResult>);
     this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn<InvoiceSearchResult>);
@@ -150,6 +155,25 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     }
     else
       this.displayedColumns.push(...this.availableColumns);
+  }
+
+  populateMailValue() {
+    if (this.invoices) {
+      for (let invoice of this.invoices) {
+        if (invoice.customerOrderId) {
+          this.mailComputeResultService.getMailComputeResultForBilling({ id: invoice.customerOrderId } as CustomerOrder).subscribe(response => {
+            let mails = [];
+            if (response.recipientsMailTo)
+              mails.push(...response.recipientsMailTo);
+            if (response.recipientsMailCc)
+              mails.push(...response.recipientsMailCc);
+            if (mails && mails.length > 0)
+              invoice.invoiceMailRecipient = mails.map(mail => mail.mail).join(', ');
+            this.refreshRecordTable.next();
+          })
+        }
+      }
+    }
   }
 
   searchInvoices() {
