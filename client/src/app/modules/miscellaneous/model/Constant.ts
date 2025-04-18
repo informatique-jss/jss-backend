@@ -1,4 +1,5 @@
 import { Provider } from '@angular/core';
+import { JssCategory } from '../../../../../../client-jss/src/app/main/model/JssCategory';
 import { AccountingAccount } from '../../accounting/model/AccountingAccount';
 import { AccountingAccountClass } from '../../accounting/model/AccountingAccountClass';
 import { AccountingJournal } from "../../accounting/model/AccountingJournal";
@@ -264,6 +265,9 @@ export interface Constant {
   categorySerie: Category;
   myJssCategoryAnnouncement: MyJssCategory;
   myJssCategoryFormality: MyJssCategory;
+  jssCategoryHomepageFirstHighlighted: JssCategory;
+  jssCategoryHomepageSecondHighlighted: JssCategory;
+  jssCategoryHomepageThirdHighlighted: JssCategory;
   accountingAccountClassProduct: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
 }

@@ -1,5 +1,8 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
@@ -12,12 +15,21 @@ public class Author {
 
     @Transient
     private Avatar avatar_urls;
+
+    @JsonView(JacksonViews.MyJssListView.class)
     private String name;
+
     private String slug;
+
     private String description;
 
+    @JsonView(JacksonViews.MyJssListView.class)
     private String avatar_url_size_24;
+
+    @JsonView(JacksonViews.MyJssListView.class)
     private String avatar_url_size_48;
+
+    @JsonView(JacksonViews.MyJssListView.class)
     private String avatar_url_size_96;
 
     public Integer getId() {

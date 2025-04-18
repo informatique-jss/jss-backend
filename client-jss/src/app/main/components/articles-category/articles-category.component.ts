@@ -9,10 +9,10 @@ import { JssCategoryService } from '../../services/jss.category.service';
 import { PostService } from '../../services/post.service';
 
 @Component({
-    selector: 'articles-category',
-    templateUrl: './articles-category.component.html',
-    styleUrls: ['./articles-category.component.css'],
-    standalone: false
+  selector: 'articles-category',
+  templateUrl: './articles-category.component.html',
+  styleUrls: ['./articles-category.component.css'],
+  standalone: false
 })
 export class ArticlesCategoryComponent implements OnInit {
 
@@ -69,9 +69,9 @@ export class ArticlesCategoryComponent implements OnInit {
 
   fetchNextPosts() {
     if (this.currentCategory)
-      this.postService.getTopPostByJssCategory(this.page, this.currentCategory).subscribe(posts => {
-        if (posts && posts.length > 0) {
-          this.posts.push(...posts);
+      this.postService.getTopPostByJssCategory(this.page, 10, this.currentCategory).subscribe(pagedPosts => {
+        if (pagedPosts.content && pagedPosts.content.length > 0) {
+          this.posts.push(...pagedPosts.content);
         } else {
           this.displayLoadMoreButton = false;
         }

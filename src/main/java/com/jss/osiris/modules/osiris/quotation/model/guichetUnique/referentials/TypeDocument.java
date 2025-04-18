@@ -34,22 +34,22 @@ public class TypeDocument implements ICode, IAttachment {
     public static String SIGNED_SYNTHESES_DOCUMENT_CODE = "PJ_115";
 
     @Id
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String code;
 
     private Boolean isToDownloadOnProvision;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_attachment_type")
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private AttachmentType attachmentType;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String label;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String customLabel;
 
     @OneToMany(mappedBy = "typeDocumentAttachment", fetch = FetchType.LAZY)

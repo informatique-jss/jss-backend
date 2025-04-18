@@ -8,6 +8,7 @@ import { Post } from '../model/Post';
 import { PublishingDepartment } from '../model/PublishingDepartment';
 import { Tag } from '../model/Tag';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,8 +18,8 @@ export class PostService extends AppRestService<Post> {
     super(http, "wordpress");
   }
 
-  getTopPost(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/jss/top");
+  getTopPost(page: number, pageSize: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", pageSize), "posts/jss/top");
   }
 
   getPostsTendency() {
@@ -52,16 +53,20 @@ export class PostService extends AppRestService<Post> {
     });
   }
 
-  getTopPostByJssCategory(page: number, jssCategory: JssCategory) {
-    return this.getList(new HttpParams().set("page", page).set("categoryId", jssCategory.id), "posts/top/jss-category");
+  getTopPostByJssCategory(page: number, size: number, jssCategory: JssCategory) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("categoryId", jssCategory.id), "posts/top/jss-category");
   }
 
   getTopPostByTag(page: number, tag: Tag) {
     return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
   }
 
-  getTopPostByDepartment(page: number, department: PublishingDepartment) {
-    return this.getList(new HttpParams().set("page", page).set("departmentId", department.id), "posts/top/department");
+  getIleDeFranceTopPost(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/department/all");
+  }
+
+  getTopPostByDepartment(page: number, size: number, department: PublishingDepartment) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("departmentId", department.id), "posts/top/department");
   }
 
   getTopPostByAuthor(page: number, author: Author) {
@@ -72,8 +77,16 @@ export class PostService extends AppRestService<Post> {
     return this.getList(new HttpParams().set("page", page), "posts/top/interview");
   }
 
-  getTopPostPodcast(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/top/podcast");
+  getTopPostPodcast(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/podcast");
+  }
+
+  getMostViewedPosts(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/most-seen");
+  }
+
+  getPinnedPosts(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/pinned");
   }
 
   getNextArticle(post: Post) {
@@ -83,5 +96,4 @@ export class PostService extends AppRestService<Post> {
   getPreviousArticle(post: Post) {
     return this.get(new HttpParams().set("idPost", post.id), "post/previous");
   }
-
 }

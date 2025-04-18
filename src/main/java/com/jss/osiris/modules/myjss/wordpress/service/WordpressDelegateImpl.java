@@ -17,7 +17,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Media;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
-import com.jss.osiris.modules.myjss.wordpress.model.Page;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
@@ -39,7 +38,6 @@ public class WordpressDelegateImpl implements WordpressDelegate {
     private String postRequestUrl = "/posts";
     private String mediaRequestUrl = "/media";
     private String usersRequestUrl = "/users";
-    private String pageRequestUrl = "/pages";
 
     @Autowired
     PublishingDepartmentService publishingDepartmentService;
@@ -55,9 +53,6 @@ public class WordpressDelegateImpl implements WordpressDelegate {
 
     @Autowired
     PostService postService;
-
-    @Autowired
-    PageService pageService;
 
     @Autowired
     TagService tagService;
@@ -204,38 +199,6 @@ public class WordpressDelegateImpl implements WordpressDelegate {
     }
 
     @SuppressWarnings({ "null" })
-    private List<Page> getAllPages() {
-        List<Page> pages = new ArrayList<Page>();
-
-        ResponseEntity<List<Page>> response = getPagePaginated(1);
-        pages.addAll(response.getBody());
-
-        int totalPage = Integer.parseInt(response.getHeaders().get("X-Wp-Totalpages").get(0) + "");
-        if (totalPage > 1) {
-            int page = 1;
-            while (page < totalPage) {
-                page++;
-                response = getPagePaginated(page);
-                pages.addAll(response.getBody());
-            }
-        }
-
-        return pages;
-    }
-
-    private ResponseEntity<List<Page>> getPagePaginated(int page) {
-        ResponseEntity<List<Page>> response = new RestTemplate()
-                .exchange(wordpressEntryPoint + pageRequestUrl + "?per_page=100&status=publish&page=" + page
-                        + "&orderby=menu_order&order=asc&_fields=id,acf,author,date,modified,menu_order,parent,title,featured_media,slug",
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<List<Page>>() {
-                        });
-
-        return response;
-    }
-
-    @SuppressWarnings({ "null" })
     private List<Tag> getAvailableTags() {
         List<Tag> pages = new ArrayList<Tag>();
 
@@ -344,11 +307,6 @@ public class WordpressDelegateImpl implements WordpressDelegate {
         if (medias != null)
             for (Media media : medias)
                 mediaService.addOrUpdateMediaFromWordpress(media);
-
-        List<Page> pages = getAllPages();
-        if (pages != null)
-            for (Page page : pages)
-                pageService.addOrUpdatePageFromWordpress(page);
 
         List<Post> posts = getAvailablePosts();
         List<Integer> postFetchedId = new ArrayList<Integer>();

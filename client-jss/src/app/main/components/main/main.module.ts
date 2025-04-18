@@ -10,9 +10,9 @@ import { AuthorListComponent } from '../author-list/author-list.component';
 import { BodyArticlesComponent } from '../body-articles/body-articles.component';
 import { DepartmentListComponent } from '../department-list/department-list.component';
 import { HeaderComponent } from '../header/header.component';
-import { HomepageComponent } from '../homepage/homepage.component';
 import { InterviewListComponent } from '../interview-list/interview-list.component';
 import { NewArticlesComponent } from '../new-articles/new-articles.component';
+import { NewsletterComponent } from '../newsletter/newsletter.component';
 import { PodcastListComponent } from '../podcast-list/podcast-list.component';
 import { PodcastPostComponent } from '../podcast-post/podcast-post.component';
 import { PostComponent } from '../post/post.component';
@@ -24,7 +24,7 @@ import { TrendComponent } from '../trend/trend.component';
 import { MainComponent } from './main.component';
 
 const routes: Routes = [
-  { path: 'home', component: HomepageComponent },
+  { path: 'home', component: MainComponent },
   { path: 'post/:slug', component: PostComponent },
   { path: 'author/:slug', component: AuthorListComponent },
   { path: 'category/:slug', component: ArticlesCategoryComponent },
@@ -44,6 +44,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload', scrollPositionRestoration: 'enabled' }),
+    NewsletterComponent
   ],
   declarations: [
     MainComponent,
@@ -65,9 +66,11 @@ const routes: Routes = [
     TagListComponent,
     TimeFormatPipe,
     AnnouncementComponent,
+
   ],
   exports: [
     HeaderComponent,
+    NewsletterComponent
   ]
 })
 export class MainModule { }

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
@@ -1177,6 +1178,21 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public JssCategory getJssCategoryHomepageFirstHighlighted() throws OsirisException {
+        return this.getConstants().getJssCategoryHomepageFirstHighlighted();
+    }
+
+    @Override
+    public JssCategory getJssCategoryHomepageSecondHighlighted() throws OsirisException {
+        return this.getConstants().getJssCategoryHomepageSecondHighlighted();
+    }
+
+    @Override
+    public JssCategory getJssCategoryHomepageThirdHighlighted() throws OsirisException {
+        return this.getConstants().getJssCategoryHomepageThirdHighlighted();
+    }
+
+    @Override
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException {
         return this.getConstants().getAccountingAccountClassProduct();
     }
@@ -1185,4 +1201,5 @@ public class ConstantServiceImpl implements ConstantService {
     public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException {
         return this.getConstants().getServiceFamilyImmatriculationAlAndFormality();
     }
+
 }

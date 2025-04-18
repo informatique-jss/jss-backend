@@ -22,3 +22,7 @@
     border-left: 1px solid var(--ar-primary);
     border-right: 1px solid var(--ar-primary);
 }
+
+.nav-item-podcast {
+    padding-top: 0.8rem;
+}

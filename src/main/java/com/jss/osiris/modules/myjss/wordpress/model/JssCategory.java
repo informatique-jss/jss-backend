@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.Entity;
@@ -12,8 +14,11 @@ import jakarta.persistence.Transient;
 @Entity
 public class JssCategory {
     @Id
+    @JsonView(JacksonViews.MyJssListView.class)
     private Integer id;
+
     @IndexedField
+    @JsonView(JacksonViews.MyJssListView.class)
     private String name;
     private String slug;
     private String color;

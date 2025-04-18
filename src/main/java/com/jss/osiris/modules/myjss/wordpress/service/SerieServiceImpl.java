@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,11 @@ public class SerieServiceImpl implements SerieService {
     @Override
     public List<Serie> getAvailableSeries() {
         return IterableUtils.toList(serieRepository.findAll());
+    }
+
+    @Override
+    public Page<Serie> getSeries(Pageable pageableRequest) {
+        return serieRepository.findAll(pageableRequest);
     }
 
     @Override
