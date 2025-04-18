@@ -13356,8 +13356,9 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
   }
 
   .blog-style2 {
-    display: block;
-    max-height: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .blog-style2 .feature-image {
@@ -13367,6 +13368,16 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
 
   .blog-style2 .card-body {
     width: 100%;
+  }
+
+  .blog-style2 {
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .blog-style2 .feature-image {
+    margin-right: 0;
+    margin-bottom: 1rem;
   }
 
   .sidebar-widget .social-share li {
@@ -13399,6 +13410,41 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
   .subscription-from .input-group button {
     width: 100%;
   }
+
+  .feature-image:before {
+    display: none;
+  }
+
+  .feature-image {
+    position: static;
+    aspect-ratio: 1 / 1;
+    /* auto if we want to keep a natural height */
+  }
+
+  .feature-image .image-frame {
+    position: static;
+    height: auto;
+  }
+
+  .feature-image .image-frame img {
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .blog-style2 .feature-image .image-frame img {
+    max-height: 320px;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+  }
+
+  .blog-style2 .feature-image {
+    max-height: 320px;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+  }
+
 }
 
 /* ==============================================
