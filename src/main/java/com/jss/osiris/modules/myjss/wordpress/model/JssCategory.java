@@ -16,7 +16,7 @@ public class JssCategory {
     @Id
     private Integer id;
     @IndexedField
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String name;
     private String slug;
     private String color;

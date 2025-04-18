@@ -9,9 +9,9 @@ import jakarta.persistence.Id;
 @Entity
 public class Category {
     @Id
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Integer id;
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String name;
     private String slug;
     private Integer count;

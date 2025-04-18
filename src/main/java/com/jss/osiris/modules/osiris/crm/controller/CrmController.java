@@ -44,7 +44,7 @@ public class CrmController {
         @Autowired
         private PostService postService;
 
-        @JsonView(JacksonViews.MyJssView.class)
+        @JsonView(JacksonViews.MyJssListView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
         public ResponseEntity<CommunicationPreference> getCommunicationPreferenceByMail(@RequestParam String userMail)
                         throws OsirisValidationException {
@@ -69,7 +69,7 @@ public class CrmController {
          * @return
          * @throws OsirisException
          */
-        @JsonView(JacksonViews.MyJssView.class)
+        @JsonView(JacksonViews.MyJssListView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-newspaper-newsletter")
         public ResponseEntity<Boolean> subscribeToNewspaperNewsletter(@RequestParam String userMail)
                         throws OsirisException {
@@ -90,7 +90,7 @@ public class CrmController {
          * @return
          * @throws OsirisException
          */
-        @JsonView(JacksonViews.MyJssView.class)
+        @JsonView(JacksonViews.MyJssListView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/unsubscribe-to-newspaper-newsletter")
         public ResponseEntity<Boolean> unsubscribeToNewspaperNewsletter(@RequestParam String userMail)
                         throws OsirisException {
@@ -110,7 +110,7 @@ public class CrmController {
          * @return
          * @throws OsirisException
          */
-        @JsonView(JacksonViews.MyJssView.class)
+        @JsonView(JacksonViews.MyJssListView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-corporate-newsletter")
         public ResponseEntity<Boolean> subscribeToCorporateNewsletter(@RequestParam String userMail)
                         throws OsirisException {
@@ -130,7 +130,7 @@ public class CrmController {
          * @return
          * @throws OsirisException
          */
-        @JsonView(JacksonViews.MyJssView.class)
+        @JsonView(JacksonViews.MyJssListView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/unsubscribe-to-corporate-newsletter")
         public ResponseEntity<Boolean> unsubscribeToCorporateNewsletter(@RequestParam String userMail)
                         throws OsirisException {
@@ -224,7 +224,7 @@ public class CrmController {
          * @throws OsirisException
          */
         @GetMapping(inputEntryPoint + "/post/comment/delete")
-        @JsonView(JacksonViews.MyJssView.class)
+        @JsonView(JacksonViews.MyJssListView.class)
         public ResponseEntity<Boolean> delete(@RequestParam Integer commentId) {
 
                 Comment comment = commentService.getComment(commentId);

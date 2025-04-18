@@ -265,9 +265,9 @@ export interface Constant {
   categorySerie: Category;
   myJssCategoryAnnouncement: MyJssCategory;
   myJssCategoryFormality: MyJssCategory;
-  jssCategoryJustice: JssCategory;
-  jssCategoryLaw: JssCategory;
-  jssCategoryEconomics: JssCategory;
+  jssCategoryHomepageFirstHighlighted: JssCategory;
+  jssCategoryHomepageSecondHighlighted: JssCategory;
+  jssCategoryHomepageThirdHighlighted: JssCategory;
   accountingAccountClassProduct: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
 }

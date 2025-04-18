@@ -22,11 +22,11 @@ public class FormeExerciceActivitePrincipal implements Serializable, ICode {
     }
 
     @Id
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String code;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String label;
 
     public String getCode() {

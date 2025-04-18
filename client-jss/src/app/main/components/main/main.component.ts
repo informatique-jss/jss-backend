@@ -30,15 +30,14 @@ export class MainComponent implements OnInit {
   lawTopPosts: Post[] = [];
   economyTopPosts: Post[] = [];
   podcasts: Post[] = [];
-  categories: JssCategory[] = [];
   series: Serie[] = [];
   tagTendencies: Tag[] = [];
 
   mail: string = '';
 
-  constantJustice: JssCategory | undefined;
-  constantLaw: JssCategory | undefined;
-  constantEconomics: JssCategory | undefined;
+  firstCategory: JssCategory = this.constantService.getJssCategoryHomepageFirstHighlighted();
+  secondCategory: JssCategory = this.constantService.getJssCategoryHomepageSecondHighlighted();
+  thirdCategory: JssCategory = this.constantService.getJssCategoryHomepageThirdHighlighted();
 
   constructor(
     private postService: PostService,
@@ -51,10 +50,6 @@ export class MainComponent implements OnInit {
 
 
   ngOnInit() {
-    this.constantJustice = this.constantService.getJssCategoryEconomics();
-    this.constantLaw = this.constantService.getJssCategoryEconomics();
-    this.constantEconomics = this.constantService.getJssCategoryEconomics();
-
     // Fetch top posts
     this.postService.getTopPost(0, 10).subscribe(pagedPosts => {
       if (pagedPosts.content) {
@@ -82,14 +77,6 @@ export class MainComponent implements OnInit {
         this.series = pagedSeries.content;
       }
     })
-
-    // Fetch categories and posts by category
-    this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
-      if (categories) {
-        this.categories = categories.sort((a: JssCategory, b: JssCategory) => a.count - b.count);
-        this.fillPostsForCategories();
-      }
-    });
 
     // Fetch pinned (or sticky) posts
     this.postService.getPinnedPosts(0, 3).subscribe(pagedPosts => {
@@ -155,22 +142,22 @@ export class MainComponent implements OnInit {
   }
 
   fillPostsForCategories() {
-    if (this.constantJustice) {
-      this.postService.getTopPostByJssCategory(0, 3, this.constantJustice).subscribe(pagedPosts => {
+    if (this.firstCategory) {
+      this.postService.getTopPostByJssCategory(0, 3, this.firstCategory).subscribe(pagedPosts => {
         if (pagedPosts.content)
           this.justiceTopPosts = pagedPosts.content;
       })
     }
 
-    if (this.constantLaw) {
-      this.postService.getTopPostByJssCategory(0, 3, this.constantLaw).subscribe(pagedPosts => {
+    if (this.secondCategory) {
+      this.postService.getTopPostByJssCategory(0, 3, this.secondCategory).subscribe(pagedPosts => {
         if (pagedPosts.content)
           this.lawTopPosts = pagedPosts.content;
       })
     }
 
-    if (this.constantEconomics) {
-      this.postService.getTopPostByJssCategory(0, 3, this.constantEconomics).subscribe(pagedPosts => {
+    if (this.thirdCategory) {
+      this.postService.getTopPostByJssCategory(0, 3, this.thirdCategory).subscribe(pagedPosts => {
         if (pagedPosts.content)
           this.economyTopPosts = pagedPosts.content;
       })

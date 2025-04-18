@@ -164,7 +164,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss/top")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getTopJssPosts(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -246,6 +246,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/serie/slug")
+	@JsonView({ JacksonViews.MyJssListView.class })
 	public ResponseEntity<List<Post>> getPostSerieBySlug(@RequestParam String slug, HttpServletRequest request)
 			throws OsirisException {
 		Serie serie = serieService.getSerieBySlug(slug);
@@ -256,7 +257,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/jss-category")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getTopPostByJssCategory(
 			@RequestParam(required = false) Integer categoryId,
 			@RequestParam(required = false, defaultValue = "0") Integer page,
@@ -386,7 +387,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getTopPostByDepartment(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -406,7 +407,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department/all")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getTopPostWithDepartment(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -420,7 +421,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/interview")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getTopPostInterview(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -437,7 +438,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/podcast")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getTopPostPodcast(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -464,7 +465,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/search/post")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
 			throws OsirisException {
 		// TODO : leak premium
@@ -476,7 +477,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/top")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Announcement>> getTopAnnouncement(@RequestParam Integer page, HttpServletRequest request)
 			throws OsirisException {
 		detectFlood(request);
@@ -485,7 +486,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/search")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Announcement>> getTopAnnouncementSearch(@RequestParam Integer page,
 			@RequestParam String denomination, @RequestParam String siren, @RequestParam String noticeSearch,
 			HttpServletRequest request)
@@ -512,7 +513,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/unique")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Announcement> getAnnouncement(@RequestParam Integer announcementId,
 			HttpServletRequest request)
 			throws OsirisException {
@@ -528,7 +529,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/post/comments")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Comment>> getParentCommentsForPost(
 			@RequestParam Integer postId,
 			@RequestParam(defaultValue = "0") int page,
@@ -544,7 +545,7 @@ public class WordpressController {
 	}
 
 	@PostMapping(inputEntryPoint + "/post/comment/add")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
 			@RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
 			@RequestParam Integer postId)
