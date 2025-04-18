@@ -64,6 +64,9 @@ export class MainComponent implements OnInit {
       }
     })
 
+    // Fetch posts by category
+    this.fillPostsForCategories();
+
     //Fetch most viewed posts
     this.postService.getMostViewedPosts(0, 5).subscribe(pagedPosts => {
       if (pagedPosts.content) {
@@ -85,6 +88,7 @@ export class MainComponent implements OnInit {
       }
     })
 
+    // Fetch podcasts
     this.postService.getTopPostPodcast(0, 3).subscribe(pagedPodcasts => {
       if (pagedPodcasts.content)
         this.podcasts = pagedPodcasts.content;
