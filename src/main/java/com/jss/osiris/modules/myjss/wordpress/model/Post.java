@@ -104,7 +104,6 @@ public class Post implements IId {
     @ManyToMany
     @JoinTable(name = "asso_post_jss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_jss_category"))
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
     private List<JssCategory> jssCategories;
 
     @ManyToMany
@@ -114,7 +113,6 @@ public class Post implements IId {
 
     @ManyToMany
     @JoinTable(name = "asso_post_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_category"))
-    @JsonView(JacksonViews.MyJssListView.class)
     private List<Category> postCategories;
 
     @ManyToMany
@@ -130,7 +128,6 @@ public class Post implements IId {
 
     @ManyToMany
     @JoinTable(name = "asso_post_serie", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_serie"))
-    @JsonView(JacksonViews.MyJssListView.class)
     private List<Serie> postSerie;
 
     @ManyToOne(fetch = FetchType.LAZY)
