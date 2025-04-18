@@ -144,7 +144,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/series")
-	public ResponseEntity<org.springframework.data.domain.Page<Serie>> getSeries(
+	public ResponseEntity<Page<Serie>> getSeries(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request) {
@@ -154,7 +154,7 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "serieOrder"));
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Serie>>(
+		return new ResponseEntity<Page<Serie>>(
 				serieService.getSeries(pageable), HttpStatus.OK);
 	}
 
@@ -225,7 +225,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/pinned")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getPinnedPosts(
+	public ResponseEntity<Page<Post>> getPinnedPosts(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request) throws OsirisException {
@@ -235,7 +235,7 @@ public class WordpressController {
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getJssCategoryStickyPost(pageableRequest)),
 				HttpStatus.OK);
 	}
@@ -279,7 +279,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss-category/most-seen")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenPostByJssCatgory(
+	public ResponseEntity<Page<Post>> getMostSeenPostByJssCatgory(
 			@RequestParam Integer jssCategoryId, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
@@ -287,13 +287,13 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, size,
 				Sort.by(Sort.Direction.DESC, "date"));
 		JssCategory category = jssCategoryService.getJssCategory(jssCategoryId);
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getMostSeenPostByJssCatgory(pageable, category)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/tag/most-seen")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenPostByTag(
+	public ResponseEntity<Page<Post>> getMostSeenPostByTag(
 			@RequestParam String tagSlug, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
@@ -302,13 +302,13 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 		Tag tag = tagService.getTagBySlug(tagSlug);
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getMostSeenPostByTag(pageable, tag)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/author/most-seen")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenPostByAuthor(
+	public ResponseEntity<Page<Post>> getMostSeenPostByAuthor(
 			@RequestParam String authorSlug, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
@@ -318,13 +318,13 @@ public class WordpressController {
 
 		Author author = authorService.getAuthorBySlug(authorSlug);
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getMostSeenPostByAuthor(pageable, author)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/serie/most-seen")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenPostBySerie(
+	public ResponseEntity<Page<Post>> getMostSeenPostBySerie(
 			@RequestParam String serieSlug, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
@@ -333,13 +333,13 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 		Serie serie = serieService.getSerieBySlug(serieSlug);
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getMostSeenPostBySerie(pageable, serie)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/jss-category")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getAllPostsByJssCategory(
+	public ResponseEntity<Page<Post>> getAllPostsByJssCategory(
 			@RequestParam Integer categoryId,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
@@ -357,7 +357,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/tag")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getAllPostsByTag(
+	public ResponseEntity<Page<Post>> getAllPostsByTag(
 			@RequestParam String tagSlug,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
@@ -377,7 +377,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/author")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getAllPostsByAuthor(
+	public ResponseEntity<Page<Post>> getAllPostsByAuthor(
 			@RequestParam String authorSlug,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
@@ -396,7 +396,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/serie")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getAllPostsBySerie(
+	public ResponseEntity<Page<Post>> getAllPostsBySerie(
 			@RequestParam String serieSlug,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
@@ -492,7 +492,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/tag")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTagBySlug(@RequestParam Integer page,
+	public ResponseEntity<Page<Post>> getTagBySlug(@RequestParam Integer page,
 			@RequestParam Integer tagId) {
 		Tag tag = tagService.getTag(tagId);
 
