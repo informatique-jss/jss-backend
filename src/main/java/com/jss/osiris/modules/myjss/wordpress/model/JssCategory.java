@@ -14,7 +14,9 @@ import jakarta.persistence.Transient;
 @Entity
 public class JssCategory {
     @Id
+    @JsonView(JacksonViews.MyJssListView.class)
     private Integer id;
+
     @IndexedField
     @JsonView(JacksonViews.MyJssListView.class)
     private String name;
