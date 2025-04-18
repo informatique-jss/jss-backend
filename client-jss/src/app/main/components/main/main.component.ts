@@ -22,7 +22,7 @@ declare var tns: any;
 export class MainComponent implements OnInit {
 
   lastPosts: Post[] = [];
-  pinedPosts: Post[] = []; // TODO later
+  pinnedPosts: Post[] = []; // TODO later
   ileDeFrancePosts: Post[] = [];
   mostViewedPosts: Post[] = [];
   justiceTopPosts: Post[] = [];
@@ -46,44 +46,49 @@ export class MainComponent implements OnInit {
   ngOnInit() {
     // Fetch top posts
     this.postService.getTopPost(0, 10).subscribe(pagedPosts => {
-      if (pagedPosts.content && pagedPosts.content.length > 0) {
-        this.lastPosts.push(...pagedPosts.content);
+      if (pagedPosts.content) {
+        this.lastPosts = pagedPosts.content;
       }
     })
 
     //Fetch Ile de France posts
     this.postService.getIleDeFranceTopPost(0, 8).subscribe(pagedPosts => {
-      if (pagedPosts.content && pagedPosts.content.length > 0) {
-        this.ileDeFrancePosts.push(...pagedPosts.content);
+      if (pagedPosts.content) {
+        this.ileDeFrancePosts = pagedPosts.content;
       }
     })
 
     //Fetch most viewed posts
     this.postService.getMostViewedPosts(0, 5).subscribe(pagedPosts => {
-      if (pagedPosts.content && pagedPosts.content.length > 0) {
-        this.mostViewedPosts.push(...pagedPosts.content);
+      if (pagedPosts.content) {
+        this.mostViewedPosts = pagedPosts.content;
       }
     })
 
     // Fetch series
-    this.serieService.getAvailableSeries().subscribe(series => {
-      this.series.push(...series.sort((a: Serie, b: Serie) => b.serieOrder - a.serieOrder));
+    this.serieService.getSeries(0, 6).subscribe(pagedSeries => {
+      if (pagedSeries.content) {
+        this.series = pagedSeries.content;
+      }
     })
 
     // Fetch categories
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
-      if (categories && categories.length > 0) {
-        this.categories.push(...categories.sort((a: JssCategory, b: JssCategory) => a.count - b.count));
+      if (categories) {
+        this.categories = categories.sort((a: JssCategory, b: JssCategory) => a.count - b.count);
         this.fillPostsForCategories();
       }
     });
 
-    // TODO : to delete and fill as expected :
-    this.pinedPosts = this.lastPosts;
+    // Fetch pinned (or sticky) posts
+    this.postService.getPinnedPosts(0, 3).subscribe(pagedPosts => {
+      if (pagedPosts.content) {
+        this.pinnedPosts = pagedPosts.content;
+      }
+    })
 
-    // TODO
     this.postService.getTopPostPodcast(0, 3).subscribe(pagedPodcasts => {
-      if (pagedPodcasts.content && pagedPodcasts.content.length > 0)
+      if (pagedPodcasts.content)
         this.podcasts = pagedPodcasts.content;
     })
   }
@@ -120,7 +125,7 @@ export class MainComponent implements OnInit {
     this.appService.openRoute(event, "podcast/" + podcast.slug, undefined);
   }
 
-  openPinedPosts(event: any) {
+  openPinnedPosts(event: any) {
     this.appService.openRoute(event, "pined/", undefined);
   }
 
@@ -135,7 +140,6 @@ export class MainComponent implements OnInit {
       // this.appService.displayToast("Impossible de finaliser votre inscription. Vérifiez votre adresse e-mail et réessayez.", true, "Une erreur s’est produite...", 3000);
       return;
     }
-
     this.communicationPreferenceService.subscribeToCorporateNewsletter(mailToRegister).subscribe();
   }
 
@@ -146,19 +150,19 @@ export class MainComponent implements OnInit {
   fillPostsForCategories() {
     if (this.getCategoryByName("justice")) {
       this.postService.getTopPostByJssCategory(0, 3, this.getCategoryByName("justice")!).subscribe(pagedPosts => {
-        if (pagedPosts.content && pagedPosts.content.length > 0)
+        if (pagedPosts.content)
           this.justiceTopPosts = pagedPosts.content;
       })
     }
     if (this.getCategoryByName("droit")) {
       this.postService.getTopPostByJssCategory(0, 3, this.getCategoryByName("droit")!).subscribe(pagedPosts => {
-        if (pagedPosts.content && pagedPosts.content.length > 0)
+        if (pagedPosts.content)
           this.lawTopPosts = pagedPosts.content;
       })
     }
     if (this.getCategoryByName("économie")) {
       this.postService.getTopPostByJssCategory(0, 3, this.getCategoryByName("économie")!).subscribe(pagedPosts => {
-        if (pagedPosts.content && pagedPosts.content.length > 0)
+        if (pagedPosts.content)
           this.economyTopPosts = pagedPosts.content;
       })
     }

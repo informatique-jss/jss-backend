@@ -703,7 +703,7 @@
             <div class="col-md-12">
                 <div class="section-title-block d-flex pb-3">
                     <h3 class="section-widget-title">La selection de la rédaction</h3>
-                    <a (click)="openPinedPosts($event)" class="text-uppercase section-title-link">
+                    <a (click)="openPinnedPosts($event)" class="text-uppercase section-title-link">
                         Voir tous
                         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -713,7 +713,7 @@
                     </a>
                 </div>
             </div>
-            <div *ngIf="!pinedPosts || pinedPosts.length == 0" class="pb-3">
+            <div *ngIf="!pinnedPosts || pinnedPosts.length == 0" class="pb-3">
                 <div class="panel-loader">
                     <div class="skeleton skeleton-header"></div>
                     <div class="skeleton skeleton-line"></div>
@@ -722,8 +722,8 @@
                     <div class="skeleton skeleton-block"></div>
                 </div>
             </div>
-            <div *ngIf="pinedPosts && pinedPosts.length>0" class="row p-0 fixed-size-img-posts">
-                <div *ngFor="let post of pinedPosts | slice:0:3" class="col-12 col-md-4 mb-2">
+            <div *ngIf="pinnedPosts && pinnedPosts.length>0" class="row p-0 fixed-size-img-posts">
+                <div *ngFor="let post of pinnedPosts | slice:0:3" class="col-12 col-md-4 mb-2">
                     <article class="border-0 card h-100">
                         <div class="card-img px-2 d-flex">
                             <div class="image-hover-style-1 w-100">
