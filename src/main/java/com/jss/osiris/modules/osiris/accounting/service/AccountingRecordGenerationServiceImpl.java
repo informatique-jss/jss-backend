@@ -458,7 +458,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                         balance = balance.subtract(counterPart.getDebitAmount());
                 }
             }
-
+        else {
+            throw new OsirisException("no records found");
+        }
         checkBalance(balance);
     }
 
@@ -1095,7 +1097,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     public void generateAccountingRecordsForRefundExport(Refund refund)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
-        if (refund.getPayments() == null || refund.getPayments().size() != 1)
+        if (refund.getPayments() == null || refund.getPayments().size() > 2)
             throw new OsirisException(null, "Impossible to find refund payment");
         Payment payment = refund.getPayments().get(0);
         AccountingJournal bankJournal = constantService.getAccountingJournalBank();

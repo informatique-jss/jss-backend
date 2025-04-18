@@ -74,7 +74,8 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire) {
+    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire)
+            throws OsirisException {
         Service service = new Service();
         if (serviceTypes.size() > 1)
             service.setServiceType(serviceTypeService.getServiceTypeByCode(ServiceType.SERVICE_TYPE_OTHER));
@@ -122,6 +123,14 @@ public class ServiceServiceImpl implements ServiceService {
                     }
                 }
         }
+
+        // Always add firther information field
+        AssoServiceFieldType newAssoServiceFieldType = new AssoServiceFieldType();
+        newAssoServiceFieldType.setIsMandatory(false);
+        newAssoServiceFieldType.setService(service);
+        newAssoServiceFieldType.setServiceFieldType(constantService.getFurtherInformationServiceFieldType());
+        assoServiceFieldTypes.add(newAssoServiceFieldType);
+
         service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         service.setAssoServiceDocuments(assoServiceDocuments);
         service.setCustomLabel(Strings.join(" / ", serviceLabels));
