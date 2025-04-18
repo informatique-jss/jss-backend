@@ -585,18 +585,6 @@ public class WordpressController {
 		return new ResponseEntity<Post>(postService.getPreviousPost(post), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/top/author")
-	public ResponseEntity<Page<Post>> getTopPostByAuthor(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size, @RequestParam Integer authorId) {
-		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.DESC, "date"));
-
-		Author author = authorService.getAuthor(authorId);
-
-		return new ResponseEntity<Page<Post>>(postService.applyPremium(postService.getPostsByAuthor(pageable, author)),
-				HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/posts/top/department")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getTopPostByDepartment(
@@ -627,21 +615,6 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(postService.getTopPostWithDepartment(pageable), HttpStatus.OK);
-	}
-
-	@GetMapping(inputEntryPoint + "/posts/top/interview")
-	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<Page<Post>> getTopPostInterview(
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size,
-			HttpServletRequest request)
-			throws OsirisException {
-		detectFlood(request);
-
-		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.DESC, "date"));
-
-		return new ResponseEntity<Page<Post>>(postService.getPostInterview(pageable), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/podcast")

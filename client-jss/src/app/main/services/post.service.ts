@@ -180,14 +180,6 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("departmentId", department.id), "posts/top/department");
   }
 
-  getTopPostByAuthor(page: number, size: number, author: Author) {
-    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("authorSlug", author.slug), "posts/top/author");
-  }
-
-  getTopPostInterview(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/top/interview");
-  }
-
   getTopPostPodcast(page: number, size: number) {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/podcast");
   }

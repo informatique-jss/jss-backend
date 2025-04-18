@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../../libs/appRest.service';
-import { Author } from '../model/Author';
 import { Media } from '../model/Media';
 import { MyJssCategory } from '../model/MyJssCategory';
 import { Post } from '../model/Post';
@@ -75,10 +74,6 @@ export class PostService extends AppRestService<Post> {
     return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
   }
 
-  //TODO modify in getPagedList
-  getTopPostByAuthor(page: number, author: Author) {
-    return this.getList(new HttpParams().set("page", page).set("authorId", author.id), "posts/top/author");
-  }
   getNextArticle(post: Post) {
     return this.get(new HttpParams().set("idPost", post.id), "post/next");
   }
