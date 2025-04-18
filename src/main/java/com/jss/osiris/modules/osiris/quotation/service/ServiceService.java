@@ -19,7 +19,8 @@ public interface ServiceService {
 
     public String getServiceLabel(Service service) throws OsirisException;
 
-    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire);
+    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire)
+            throws OsirisException;
 
     public List<Attachment> getAttachmentsForProvisionOfService(Service service);
 }
