@@ -99,8 +99,27 @@ export class PostService extends AppRestService<Post> {
       params = params.set('searchText', searchText);
     return this.getPagedList(params, "posts/all/serie", "", "");
   }
-  // return this.getList(new HttpParams().set("slug", slug), "posts/serie/slug");
 
+  getAllPostsByPublishingDepartment(department: PublishingDepartment, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('departmentId', department.id)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/all/publishing-department", "", "");
+  }
+
+
+  getAllPostsByIleDeFrance(page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (searchText)
+      params = params.set('searchText', searchText);
+
+    return this.getPagedList(params, "posts/all/publishing-department/all", "", "");
+  }
 
   getMostSeenPostByJssCategory(jssCategory: JssCategory, page: number, size: number): Observable<PagedContent<Post>> {
     let params = new HttpParams()
@@ -132,6 +151,21 @@ export class PostService extends AppRestService<Post> {
       .set('page', page.toString())
       .set('size', size.toString());
     return this.getPagedList(params, "posts/serie/most-seen", "", "");
+  }
+
+  getMostSeenPostByPublishingDepartment(department: PublishingDepartment, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('departmentId', department.id)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/publishing-department/most-seen", "", "");
+  }
+
+  getMostSeenPostByIleDeFrance(page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/publishing-department/all/most-seen", "", "");
   }
 
   getTopPostByTag(page: number, tag: Tag) {

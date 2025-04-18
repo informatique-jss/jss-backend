@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from '../../services/appRest.service';
 import { Author } from '../model/Author';
 import { JssCategory } from '../model/JssCategory';
+import { PublishingDepartment } from '../model/PublishingDepartment';
 import { Serie } from '../model/Serie';
 import { Tag } from '../model/Tag';
 
@@ -39,4 +40,11 @@ export class TagService extends AppRestService<Tag> {
     return this.getList(new HttpParams().set("serieSlug", serie.slug), "tags/all/serie");
   }
 
+  getAllTagsByPublishingDepartment(department: PublishingDepartment) {
+    return this.getList(new HttpParams().set("departmentId", department.id), "tags/all/publishing-department");
+  }
+
+  getAllTagsByIleDeFrance() {
+    return this.getList(new HttpParams(), "tags/all/publishing-department/all");
+  }
 }

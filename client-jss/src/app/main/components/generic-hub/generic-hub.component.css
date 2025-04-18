@@ -50,6 +50,27 @@
   cursor: pointer;
 }
 
+.gray-400 {
+  color: var(--bs-gray-400);
+}
+
+.bg-newsletter {
+  background-color: #ECF5FF;
+}
+
+.counter-post-item {
+  border-left: 1px solid var(--bs-gray-700);
+}
+
+.digits {
+  color: var(--ar-primary);
+  font-weight: 600;
+}
+
+.title-most-seen {
+  color: var(--ar-primary);
+}
+
 .fixed-size-img-posts .card-img img {
   height: 320px;
   width: 100%;

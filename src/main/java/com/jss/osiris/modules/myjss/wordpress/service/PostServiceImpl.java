@@ -165,6 +165,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
+            PublishingDepartment publishingDepartment) {
+        return postRepository.findMostSeenPostPublishingDepartment(pageableRequest, publishingDepartment);
+    }
+
+    @Override
+    public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest) {
+        return postRepository.findPostsIdf(pageableRequest);
+    }
+
+    @Override
     public Page<Post> getJssCategoryPostMostSeen(Pageable pageableRequest) throws OsirisException {
         return postRepository.findJssCategoryPostMostSeen(pageableRequest);
     }
@@ -478,6 +489,40 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
+            PublishingDepartment publishingDepartment, String searchText) {
+        List<IndexEntity> tmpEntitiesFound = null;
+        List<Post> matchingPosts = new ArrayList<Post>();
+        Page<Post> postsByPublishingDepartment = null;
+        Page<Post> posts = null;
+
+        if (searchText != null) {
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                if (publishingDepartment != null) {
+                    postsByPublishingDepartment = postRepository.findByDepartmentsAndIsCancelled(publishingDepartment,
+                            false,
+                            pageableRequest);
+                    if (postsByPublishingDepartment != null && !postsByPublishingDepartment.isEmpty()) {
+                        for (Post post : postsByPublishingDepartment) {
+                            for (IndexEntity entity : tmpEntitiesFound) {
+                                if (post.getId().equals(entity.getEntityId()))
+                                    matchingPosts.add(post);
+                            }
+                        }
+                        PageRequest newPageRequest = PageRequest.of(0, postsByPublishingDepartment.getSize());
+                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
+                        return pageResult;
+                    }
+                }
+                return null;
+            }
+        } else
+            posts = postRepository.findByDepartmentsAndIsCancelled(publishingDepartment, false, pageableRequest);
+        return posts;
+    }
+
+    @Override
     public List<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
@@ -772,5 +817,11 @@ public class PostServiceImpl implements PostService {
             post.setPostSerie(series);
         }
         return post;
+    }
+
+    @Override
+    public Page<Post> getAllPostsByIdf(Pageable pageableRequest) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAllPostsByIdf'");
     }
 }

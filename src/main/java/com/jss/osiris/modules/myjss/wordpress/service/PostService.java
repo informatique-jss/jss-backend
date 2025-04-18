@@ -38,6 +38,11 @@ public interface PostService {
 
         public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText);
 
+        public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
+                        PublishingDepartment publishingDepartment, String searchText);
+
+        public Page<Post> getAllPostsByIdf(Pageable pageableRequest);
+
         public Page<Post> getMostSeenPostByJssCatgory(Pageable pageableRequest, JssCategory jssCategory);
 
         public Page<Post> getMostSeenPostByTag(Pageable pageableRequest, Tag tag);
@@ -45,6 +50,11 @@ public interface PostService {
         public Page<Post> getMostSeenPostByAuthor(Pageable pageableRequest, Author author);
 
         public Page<Post> getMostSeenPostBySerie(Pageable pageableRequest, Serie serie);
+
+        public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
+                        PublishingDepartment publishingDepartment);
+
+        public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest);
 
         public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 

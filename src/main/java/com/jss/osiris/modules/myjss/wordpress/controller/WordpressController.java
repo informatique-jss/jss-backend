@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -124,6 +125,14 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/publishing-departments")
 	public ResponseEntity<List<PublishingDepartment>> getAvailableDepartments() {
 		return new ResponseEntity<List<PublishingDepartment>>(publishingDepartmentService.getAvailableDepartments(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/publishing-department")
+	public ResponseEntity<PublishingDepartment> getPublishingDepartmentById(
+			@Param("departmentId") Integer departmentId) {
+		return new ResponseEntity<PublishingDepartment>(
+				publishingDepartmentService.getPublishingDepartment(departmentId),
 				HttpStatus.OK);
 	}
 
@@ -338,6 +347,38 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/publishing-department/most-seen")
+	public ResponseEntity<Page<Post>> getMostSeenPostByPublishingDepartment(
+			@RequestParam Integer departmentId, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size,
+			HttpServletRequest request) {
+		detectFlood(request);
+		Pageable pageable = PageRequest.of(page, size,
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
+
+		return new ResponseEntity<Page<Post>>(
+				postService.applyPremium(
+						postService.getMostSeenPostByPublishingDepartment(pageable, publishingDepartment)),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/publishing-department/all/most-seen")
+	public ResponseEntity<Page<Post>> getMostSeenPostByIdf(
+			@RequestParam Integer departmentId, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size,
+			HttpServletRequest request) {
+		detectFlood(request);
+		Pageable pageable = PageRequest.of(page, size,
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<Page<Post>>(
+				postService.applyPremium(
+						postService.getMostSeenPostByIdf(pageable)),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/all/jss-category")
 	public ResponseEntity<Page<Post>> getAllPostsByJssCategory(
 			@RequestParam Integer categoryId,
@@ -411,6 +452,27 @@ public class WordpressController {
 
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getAllPostsBySerie(pageableRequest, serie, searchText)),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/all/publishing-department")
+	public ResponseEntity<Page<Post>> getAllPostsByPublishingDepartment(
+			@RequestParam Integer departmentId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			HttpServletRequest request) {
+
+		detectFlood(request);
+
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
+
+		return new ResponseEntity<Page<Post>>(
+				postService.applyPremium(
+						postService.getAllPostsByPublishingDepartment(pageableRequest, publishingDepartment,
+								searchText)),
 				HttpStatus.OK);
 	}
 
@@ -641,6 +703,24 @@ public class WordpressController {
 		Serie serie = serieService.getSerieBySlug(serieSlug);
 
 		return new ResponseEntity<List<Tag>>(tagService.getAllTagsBySerie(serie), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/all/publishing-department")
+	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam Integer departmentId) {
+
+		if (departmentId == null)
+			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
+
+		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
+
+		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByPublishingDepartment(publishingDepartment),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/all/publishing-department/all")
+	public ResponseEntity<List<Tag>> getAllTagsByIleDeFrance() {
+
+		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByIdf(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/search/post")

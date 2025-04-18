@@ -64,7 +64,7 @@ export class HeaderComponent implements OnInit {
   }
 
   openDepartment(department: PublishingDepartment, event: any) {
-    this.appService.openRoute(event, "department/" + department.code, undefined);
+    this.appService.openRoute(event, "post/department/" + department.id, undefined);
   }
 
   openSearchAnnouncement(event: any) {

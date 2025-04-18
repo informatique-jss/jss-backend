@@ -63,6 +63,13 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and :serie MEMBER OF p.postSerie and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostSerie(Pageable pageable, @Param("serie") Serie serie);
 
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and :publishingDepartment MEMBER OF p.departments and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostPublishingDepartment(Pageable pageable,
+                        @Param("publishingDepartment") PublishingDepartment publishingDepartment);
+
+        @Query("select p from Post where p.isCancelled = false and size(p.departments) > 0 and size(p.jssCategories) > 0 ")
+        Page<Post> findPostsIdf(Pageable pageable);
+
         @Query("select p from Post p where p.isCancelled = false and size(p.jssCategories) > 0 and p.sticky = true")
         Page<Post> findJssCategoryStickyPost(Pageable pageable);
 
@@ -89,6 +96,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, Pageable pageableRequest);
 
         Page<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b, Pageable pageableRequest);
+
+        Page<Post> findByDepartmentsAndIsCancelled(PublishingDepartment publishingDepartment, boolean b,
+                        Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled = false and :jssCategories member of p.jssCategories and p.date>:date")
         List<Post> findNextArticle(@Param("jssCategories") JssCategory jssCategories,

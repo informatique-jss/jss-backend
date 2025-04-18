@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 
@@ -23,4 +24,9 @@ public interface TagService {
         public List<Tag> getAllTagsByAuthor(Author author);
 
         public List<Tag> getAllTagsBySerie(Serie serie);
+
+        public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment);
+
+        public List<Tag> getAllTagsByIdf();
+
 }
