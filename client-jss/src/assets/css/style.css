@@ -8105,6 +8105,10 @@ fieldset:disabled .btn {
   background-color: #FAFCFF !important;
 }
 
+.bg-blue-400 {
+  background-color: var(--bs-blue-400) !important;
+}
+
 .bg-transparent {
   background-color: transparent !important;
 }
@@ -8118,7 +8122,6 @@ fieldset:disabled .btn {
   padding: 2rem;
   margin-left: -2rem;
   margin-right: -2rem;
-
 }
 
 .text-wrap {

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
@@ -908,6 +909,21 @@ public class Constant implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssView.class)
 	@JoinColumn(name = "id_myjss_category_formality")
 	private MyJssCategory myJssCategoryFormality;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssView.class)
+	@JoinColumn(name = "id_jss_category_justice")
+	private JssCategory jssCategoryJustice;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssView.class)
+	@JoinColumn(name = "id_jss_category_law")
+	private JssCategory jssCategoryLaw;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssView.class)
+	@JoinColumn(name = "id_jss_category_economics")
+	private JssCategory jssCategoryEconomics;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class_product")
@@ -2649,6 +2665,30 @@ public class Constant implements Serializable, IId {
 
 	public void setMyJssCategoryFormality(MyJssCategory formalityMyJssCategory) {
 		this.myJssCategoryFormality = formalityMyJssCategory;
+	}
+
+	public JssCategory getJssCategoryJustice() {
+		return jssCategoryJustice;
+	}
+
+	public void setJssCategoryJustice(JssCategory jssCategoryJustice) {
+		this.jssCategoryJustice = jssCategoryJustice;
+	}
+
+	public JssCategory getJssCategoryLaw() {
+		return jssCategoryLaw;
+	}
+
+	public void setJssCategoryLaw(JssCategory jssCategoryLaw) {
+		this.jssCategoryLaw = jssCategoryLaw;
+	}
+
+	public JssCategory getJssCategoryEconomics() {
+		return jssCategoryEconomics;
+	}
+
+	public void setJssCategoryEconomics(JssCategory jssCategoryEconomics) {
+		this.jssCategoryEconomics = jssCategoryEconomics;
 	}
 
 	public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() {

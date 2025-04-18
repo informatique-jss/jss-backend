@@ -144,8 +144,18 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/series")
-	public ResponseEntity<List<Serie>> getAvailableSeries() {
-		return new ResponseEntity<List<Serie>>(serieService.getAvailableSeries(), HttpStatus.OK);
+	public ResponseEntity<org.springframework.data.domain.Page<Serie>> getSeries(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			HttpServletRequest request) {
+
+		detectFlood(request);
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "serieOrder"));
+
+		return new ResponseEntity<org.springframework.data.domain.Page<Serie>>(
+				serieService.getSeries(pageable), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/serie/slug")
@@ -212,6 +222,22 @@ public class WordpressController {
 
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getJssCategoryPostMostSeen(pageableRequest)),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/pinned")
+	public ResponseEntity<org.springframework.data.domain.Page<Post>> getPinnedPosts(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+				postService.applyPremium(postService.getJssCategoryStickyPost(pageableRequest)),
 				HttpStatus.OK);
 	}
 

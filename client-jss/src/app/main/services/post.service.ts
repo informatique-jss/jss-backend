@@ -126,6 +126,10 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/most-seen");
   }
 
+  getPinnedPosts(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/pinned");
+  }
+
   getNextArticle(post: Post) {
     return this.get(new HttpParams().set("idPost", post.id), "post/next");
   }

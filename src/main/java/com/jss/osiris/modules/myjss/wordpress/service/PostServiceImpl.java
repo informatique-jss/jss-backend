@@ -173,6 +173,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getJssCategoryStickyPost(Pageable pageableRequest) throws OsirisException {
+        return postRepository.findJssCategoryPostMostSeen(pageableRequest);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException {
         post.setIsCancelled(false);

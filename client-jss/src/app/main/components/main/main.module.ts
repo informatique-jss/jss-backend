@@ -14,6 +14,7 @@ import { GenericInputComponent } from '../generic-input/generic-input.component'
 import { HeaderComponent } from '../header/header.component';
 import { InterviewListComponent } from '../interview-list/interview-list.component';
 import { NewArticlesComponent } from '../new-articles/new-articles.component';
+import { NewsletterComponent } from '../newsletter/newsletter.component';
 import { PodcastListComponent } from '../podcast-list/podcast-list.component';
 import { PodcastPostComponent } from '../podcast-post/podcast-post.component';
 import { PostCategoryHeaderComponent } from '../post-category-header/post-category-header.component';
@@ -50,6 +51,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     FormsModule,
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload', scrollPositionRestoration: 'enabled' }),
+    NewsletterComponent
   ],
   declarations: [
     MainComponent,
@@ -75,9 +77,11 @@ const routes: Routes = [
     TagHubComponent,
     PostCategoryHeaderComponent,
     GenericInputComponent
+
   ],
   exports: [
     HeaderComponent,
+    NewsletterComponent
   ]
 })
 export class MainModule { }

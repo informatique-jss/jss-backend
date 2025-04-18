@@ -860,12 +860,27 @@ export class ConstantService extends AppRestService<Constant> {
   getCategorySerie() {
     return this.constant.categorySerie;
   }
+
   getMyJssCategoryAnnouncement() {
     return this.constant.myJssCategoryAnnouncement;
   }
+
   getMyJssCategoryFormality() {
     return this.constant.myJssCategoryFormality;
   }
+
+  getJssCategoryJustice() {
+    return this.constant.jssCategoryJustice;
+  }
+
+  getJssCategoryLaw() {
+    return this.constant.jssCategoryLaw;
+  }
+
+  getJssCategoryEconomics() {
+    return this.constant.jssCategoryEconomics;
+  }
+
   getAccountingAccountClassProduct() {
     return this.constant.accountingAccountClassProduct;
   }

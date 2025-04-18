@@ -18,7 +18,14 @@ export interface AccountingRecordSearchResult {
   letteringDate: Date;
   invoiceId: number;
   customerId: number;
+  affaireLabel: string;
+  responsable: string;
+  isTemporary: boolean;
+  temporaryOperationId: number;
+  isFromAs400: boolean;
+  isManual: boolean;
   paymentId: number;
+
   /**
  * only used in fronted
  */
@@ -31,10 +38,4 @@ export interface AccountingRecordSearchResult {
   * only used in fronted
   */
   balance: number;
-  affaireLabel: string;
-  responsable: string;
-  isTemporary: boolean;
-  temporaryOperationId: number;
-  isFromAs400: boolean;
-  isManual: boolean;
 }

@@ -78,6 +78,7 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "customerOrder", fieldName: "customerId", label: "Commande", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "responsable", fieldName: "responsable", label: "Responsable" } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "accountingDateTime", fieldName: "accountingDateTime", label: "Date d'écriture", valueFonction: this.formatDateForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date d'opération", valueFonction: this.formatDateTimeForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn<AccountingRecordSearchResult>);

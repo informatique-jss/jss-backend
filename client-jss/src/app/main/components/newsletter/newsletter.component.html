@@ -1,0 +1,31 @@
+<!-- Newsletter subscription -->
+<section class="cta-area py-5 my-5 bg-blue-400">
+
+  <ul class="circles">
+    <li><i class="fa fa-envelope-open fa-5x"></i></li>
+    <li><i class="fa fa-envelope fa-4x"></i></li>
+    <li><i class="fa fa-envelope fa-3x"></i></li>
+    <li><i class="fa fa-envelope-open fa-2x"></i></li>
+    <li><i class="fa fa-envelope fa-1x"></i></li>
+    <li><i class="fa fa-envelope fa-2x"></i></li>
+    <li><i class="fa fa-envelope fa-1x"></i></li>
+    <li><i class="fa fa-envelope fa-3x"></i></li>
+    <li><i class="fa fa-envelope fa-2x"></i></li>
+    <li><i class="fa fa-envelope fa-5x"></i></li>
+  </ul>
+  <div class="container text-center z-index-10 position-relative  ">
+    <div class="row">
+      <div class="col-md-8 m-auto">
+        <h2 class="text-secondary">Abonnez-vous à la Newsletter !</h2>
+        <p>Recevez gratuitement un concentré d’actualité chaque semaine.</p>
+        <div class="input-group">
+          <label class="form-label fs-base" for="email"></label>
+          <input class="form-control " type="email" placeholder="E-mail" [(ngModel)]="mail" required id="email">
+          <button class="btn btn-secondary" type="button" (click)="registerEmail(mail)">S'inscrire<i
+              class="fas fa-envelope-open-text ms-1"></i></button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

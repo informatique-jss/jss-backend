@@ -58,6 +58,8 @@ public interface PostService {
 
         public Page<Post> getJssCategoryPostMostSeen(Pageable pageableRequest) throws OsirisException;
 
+        public Page<Post> getJssCategoryStickyPost(Pageable pageableRequest) throws OsirisException;
+
         public Page<Post> getTopPostByDepartment(Pageable pageableRequest, PublishingDepartment department)
                         throws OsirisException;
 

@@ -5,7 +5,6 @@ export interface InvoiceSearchResult {
   invoiceStatusCode: string;
   invoiceStatusId: number;
   customerOrderId: number;
-  customerOrderLabel: string;
   providerLabel: string;
   tiersLabel: string;
   responsableId: number;
@@ -31,6 +30,11 @@ export interface InvoiceSearchResult {
   isInvoiceFromProvider: boolean;
   isProviderCreditNote: boolean;
   invoiceBillingType: string;
+
+  /**
+   * For frontend purpose only
+   */
+  invoiceMailRecipient: string;
 }
 
 

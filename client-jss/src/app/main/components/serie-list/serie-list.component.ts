@@ -4,10 +4,10 @@ import { Serie } from '../../model/Serie';
 import { SerieService } from '../../services/serie.service';
 
 @Component({
-    selector: 'app-serie-list',
-    templateUrl: './serie-list.component.html',
-    styleUrls: ['./serie-list.component.css'],
-    standalone: false
+  selector: 'app-serie-list',
+  templateUrl: './serie-list.component.html',
+  styleUrls: ['./serie-list.component.css'],
+  standalone: false
 })
 export class SerieListComponent implements OnInit {
 
@@ -19,8 +19,8 @@ export class SerieListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.serieService.getAvailableSeries().subscribe(series => {
-      this.series = series.sort((a: Serie, b: Serie) => b.serieOrder - a.serieOrder);
+    this.serieService.getSeries(0, 10).subscribe(pagedSeries => {
+      this.series = pagedSeries.content;
     })
   }
 

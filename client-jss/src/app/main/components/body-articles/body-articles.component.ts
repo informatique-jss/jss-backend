@@ -42,8 +42,8 @@ export class BodyArticlesComponent implements OnInit, AfterViewInit {
       if (categories && categories.length > 0)
         this.categories.push(...categories.sort((a: JssCategory, b: JssCategory) => a.count - b.count));
     });
-    this.serieService.getAvailableSeries().subscribe(series => {
-      this.series.push(...series.sort((a: Serie, b: Serie) => b.serieOrder - a.serieOrder));
+    this.serieService.getSeries(0, 10).subscribe(pagedSeries => {
+      this.series = pagedSeries.content;
     })
     this.postService.getTopPostInterview(0).subscribe(interviews => {
       if (interviews && interviews.length > 0)

@@ -80,6 +80,7 @@ public class Post implements IId {
     @IndexedField
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssView.class })
     private String slug;
+
     private boolean sticky;
 
     @Transient

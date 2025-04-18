@@ -9,9 +9,11 @@ import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
+import { MailComputeResult } from 'src/app/modules/quotation/model/MailComputeResult';
 import { Service } from 'src/app/modules/quotation/model/Service';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
+import { MailComputeResultService } from 'src/app/modules/quotation/services/mail.compute.result.service';
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
 import { ServiceService } from 'src/app/modules/quotation/services/service.service';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
@@ -50,6 +52,7 @@ export class InvoiceDetailsComponent implements OnInit {
     private serviceService: ServiceService,
     private invoiceItemService: InvoiceItemService,
     public editAmountInvoiceItemDialogComponent: MatDialog,
+    private mailComputeResultService: MailComputeResultService
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
@@ -64,6 +67,7 @@ export class InvoiceDetailsComponent implements OnInit {
 
   @Input() idInvoice: number | undefined;
   @Input() isForIntegration: boolean = false;
+  billingMailComputeResult: MailComputeResult | undefined;
 
   ngOnInit() {
     this.refreshData();
@@ -86,6 +90,11 @@ export class InvoiceDetailsComponent implements OnInit {
         this.restoreTab();
         if (!this.isForIntegration)
           this.appService.changeHeaderTitle((this.invoice.isCreditNote ? "Avoir" : "Facture") + " n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
+
+        if (this.invoice && this.invoice.customerOrder)
+          this.mailComputeResultService.getMailComputeResultForBilling(this.invoice.customerOrder).subscribe(response => {
+            this.billingMailComputeResult = response;
+          })
       })
     }
   }
