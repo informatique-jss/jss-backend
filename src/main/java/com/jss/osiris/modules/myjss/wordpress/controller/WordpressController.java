@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
-import com.jss.osiris.modules.myjss.wordpress.model.Page;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
@@ -44,7 +44,6 @@ import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.JssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.MyJssCategoryService;
-import com.jss.osiris.modules.myjss.wordpress.service.PageService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
@@ -86,9 +85,6 @@ public class WordpressController {
 
 	@Autowired
 	SerieService serieService;
-
-	@Autowired
-	PageService pageService;
 
 	@Autowired
 	TagService tagService;
@@ -167,14 +163,9 @@ public class WordpressController {
 		return new ResponseEntity<Author>(authorService.getAuthorBySlug(slug), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/pages")
-	public ResponseEntity<List<Page>> getAllPages() {
-		return new ResponseEntity<List<Page>>(pageService.getAllPages(), HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/posts/jss/top")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopJssPosts(
+	public ResponseEntity<Page<Post>> getTopJssPosts(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request)
@@ -214,7 +205,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/most-seen")
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getMostSeenJssPosts(
+	public ResponseEntity<Page<Post>> getMostSeenJssPosts(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request) throws OsirisException {
@@ -224,7 +215,7 @@ public class WordpressController {
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getJssCategoryPostMostSeen(pageableRequest)),
 				HttpStatus.OK);
 	}
@@ -266,7 +257,7 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/top/jss-category")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostByJssCategory(
+	public ResponseEntity<Page<Post>> getTopPostByJssCategory(
 			@RequestParam(required = false) Integer categoryId,
 			@RequestParam(required = false, defaultValue = "0") Integer page,
 			@RequestParam(required = false, defaultValue = "10") Integer size) {
@@ -278,7 +269,7 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getPostsByJssCategory(pageable, category)), HttpStatus.OK);
 	}
 
@@ -396,7 +387,7 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/top/department")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostByDepartment(
+	public ResponseEntity<Page<Post>> getTopPostByDepartment(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			@RequestParam Integer departmentId,
@@ -410,13 +401,13 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 		}
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getTopPostByDepartment(pageable, department)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department/all")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostWithDepartment(
+	public ResponseEntity<Page<Post>> getTopPostWithDepartment(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request) throws OsirisException {
@@ -424,13 +415,13 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getTopPostWithDepartment(pageable)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/interview")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostInterview(
+	public ResponseEntity<Page<Post>> getTopPostInterview(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request)
@@ -440,14 +431,14 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getPostInterview(pageable)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/podcast")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<org.springframework.data.domain.Page<Post>> getTopPostPodcast(
+	public ResponseEntity<Page<Post>> getTopPostPodcast(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request) throws OsirisException {
@@ -457,7 +448,7 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<org.springframework.data.domain.Page<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getPostsPodcast(pageable)),
 				HttpStatus.OK);
 	}
@@ -538,7 +529,7 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/post/comments")
 	@JsonView(JacksonViews.MyJssView.class)
-	public ResponseEntity<org.springframework.data.domain.Page<Comment>> getParentCommentsForPost(
+	public ResponseEntity<Page<Comment>> getParentCommentsForPost(
 			@RequestParam Integer postId,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
