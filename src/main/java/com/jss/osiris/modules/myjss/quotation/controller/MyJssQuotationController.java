@@ -200,14 +200,14 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/constants")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Constant> getConstants(HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 		return new ResponseEntity<Constant>(constantService.getConstants(), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/search/current")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUser(
 			@RequestBody List<String> customerOrderStatus, @RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisClientMessageException {
@@ -226,7 +226,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/order/search/affaire")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUserAndAffaire(@RequestParam Integer idAffaire,
 			HttpServletRequest request)
 			throws OsirisClientMessageException {
@@ -243,7 +243,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/dashboard/user/statistics")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<DashboardUserStatistics> getDashboardUserStatistics()
 			throws OsirisException {
 		return new ResponseEntity<DashboardUserStatistics>(dashboardUserStatisticsService.getDashboardUserStatistics(),
@@ -251,7 +251,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/search/current")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Quotation>> searchQuotationsForCurrentUser(
 			@RequestBody List<String> quotationStatus, @RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisClientMessageException {
@@ -270,7 +270,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/order/asso")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForCustomerOrder(
 			@RequestParam Integer idCustomerOrder)
 			throws OsirisException {
@@ -284,7 +284,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation/asso")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForQuotation(
 			@RequestParam Integer idQuotation)
 			throws OsirisException {
@@ -298,7 +298,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/order")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<CustomerOrder> getCustomerOrder(@RequestParam Integer customerOrderId)
 			throws OsirisClientMessageException {
 
@@ -310,7 +310,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Quotation> getQuotation(@RequestParam Integer quotationId)
 			throws OsirisClientMessageException {
 
@@ -322,7 +322,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service/provision/attachments")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForProvisionOfService(@RequestParam Integer serviceId)
 			throws OsirisClientMessageException {
 
@@ -338,7 +338,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/attachments")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForAffaire(@RequestParam Integer idAffaire)
 			throws OsirisClientMessageException {
 
@@ -576,7 +576,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Affaire> getAffaire(@RequestParam Integer id, HttpServletRequest request)
 			throws OsirisValidationException {
 		detectFlood(request);
@@ -587,7 +587,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/siret")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Affaire>> getAffaireBySiret(@RequestParam String siret, HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
@@ -600,7 +600,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/affaire")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Boolean> addOrUpdateAffaire(@RequestBody Affaire affaire)
 			throws OsirisValidationException, OsirisException, OsirisDuplicateException {
 
@@ -625,7 +625,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/order/documents")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Document>> getDocumentForCustomerOrder(@RequestParam Integer idCustomerOrder)
 			throws OsirisValidationException {
 		if (idCustomerOrder == null)
@@ -639,7 +639,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/order/documents")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Boolean> addOrUpdateDocumentsForCustomerOrder(@RequestBody List<Document> documents)
 			throws OsirisException {
 		if (documents == null)
@@ -686,7 +686,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation/documents")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Document>> getDocumentForQuotation(@RequestParam Integer idQuotation)
 			throws OsirisValidationException {
 		if (idQuotation == null)
@@ -700,7 +700,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/documents")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Boolean> addOrUpdateDocumentsForQuotation(@RequestBody List<Document> documents)
 			throws OsirisException {
 		if (documents == null)
@@ -753,7 +753,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/responsable/documents")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Document>> getDocumentForResonsable(@RequestParam Integer idResponsable)
 			throws OsirisValidationException {
 		if (idResponsable == null)
@@ -767,7 +767,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/responsable/documents")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Boolean> addOrUpdateDocumentsForResponsable(@RequestBody List<Document> documents)
 			throws OsirisException {
 		if (documents == null)
@@ -814,7 +814,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/customer-order-comments/customer")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrderComment>> getCustomerOrderCommentsForCustomer(
 			@RequestParam Integer idCustomerOrder)
 			throws OsirisValidationException {
@@ -870,7 +870,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/search/current")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Affaire>> getAffairesForCurrentUser(@RequestParam Integer page,
 			@RequestParam String sortBy, @RequestParam String searchText) {
 		if (page == null || page < 0)
@@ -884,7 +884,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation/order")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<CustomerOrder> getCustomerOrderForQuotation(@RequestParam Integer idQuotation)
 			throws OsirisValidationException {
 		if (idQuotation == null)
@@ -899,7 +899,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/order/quotation")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Quotation> getQuotationForCustomerOrder(@RequestParam Integer idCustomerOrder)
 			throws OsirisValidationException {
 		if (idCustomerOrder == null)
@@ -989,7 +989,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service-family-groups")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<ServiceFamilyGroup>> getServiceFamilyGroups(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<ServiceFamilyGroup>>(serviceFamilyGroupService.getServiceFamilyGroups(),
@@ -997,7 +997,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service-families/service-group")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<ServiceFamily>> getServiceFamiliesForFamilyGroup(Integer idServiceFamilyGroup,
 			HttpServletRequest request) {
 		detectFlood(request);
@@ -1011,7 +1011,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service-type/service-family")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<ServiceType>> getServiceTypesForFamily(Integer idServiceFamily,
 			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
@@ -1024,14 +1024,14 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/countries")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Country>> getCountries(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<Country>>(countryService.getCountries(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/cities/search/country/postal-code")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<City>> getCitiesByCountryAndPostalCode(@RequestParam Integer countryId,
 			@RequestParam String postalCode, HttpServletRequest request) {
 		detectFlood(request);
@@ -1044,7 +1044,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/cities/search/country")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<City>> getCitiesByCountry(@RequestParam Integer countryId, HttpServletRequest request) {
 		detectFlood(request);
 		Country country = countryService.getCountry(countryId);
@@ -1056,28 +1056,28 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/departments")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Department>> getDepartments(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<Department>>(departmentService.getDepartments(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/civilities")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Civility>> getCivilities(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<Civility>>(civilityService.getCivilities(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/notice-types")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<NoticeType>> getNoticeTypes(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<NoticeType>>(noticeTypeService.getNoticeTypes(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/notice-type-families")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<NoticeTypeFamily>> getNoticeTypeFamilies(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<NoticeTypeFamily>>(noticeTypeFamilyService.getNoticeTypeFamilies(),
@@ -1085,7 +1085,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/order/user/pricing")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<UserCustomerOrder> completePricingOfUserCustomerOrder(@RequestBody UserCustomerOrder order,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
@@ -1117,7 +1117,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/order/user/save")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<UserCustomerOrder> saveOrder(@RequestBody UserCustomerOrder order, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);

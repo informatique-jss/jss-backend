@@ -38,7 +38,7 @@ public class Refund implements Serializable, IId {
 	@IndexedField
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	@Column(nullable = false)
@@ -47,11 +47,11 @@ public class Refund implements Serializable, IId {
 
 	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private BigDecimal refundAmount;
 
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private LocalDateTime refundDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -77,11 +77,11 @@ public class Refund implements Serializable, IId {
 	private CustomerOrder customerOrder;
 
 	@Column(length = 40)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String refundIBAN;
 
 	@Column(length = 40)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String refundBic;
 
 	private Boolean isMatched;

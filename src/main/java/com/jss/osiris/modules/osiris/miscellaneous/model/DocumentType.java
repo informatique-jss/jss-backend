@@ -18,15 +18,15 @@ public class DocumentType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "document_type_sequence", sequenceName = "document_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "document_type_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String label;
 
 	@Column(nullable = false, length = 20)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String code;
 
 	public Integer getId() {

@@ -27,22 +27,22 @@ public class ServiceFieldType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "service_field_type_sequence", sequenceName = "service_field_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_field_type_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private Integer id;
 
 	@Column(nullable = false)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String label;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String code;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String dataType;
 
 	@OneToMany(mappedBy = "serviceFieldType", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties(value = { "serviceFieldType" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private List<ServiceTypeFieldTypePossibleValue> serviceFieldTypePossibleValues;
 
 	public List<ServiceTypeFieldTypePossibleValue> getServiceFieldTypePossibleValues() {

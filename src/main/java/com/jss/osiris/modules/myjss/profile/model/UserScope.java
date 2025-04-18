@@ -24,17 +24,17 @@ public class UserScope implements Serializable, IId {
     @Id
     @SequenceGenerator(name = "user_scope_sequence", sequenceName = "user_scope_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_scope_sequence")
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_responsable")
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Responsable responsable;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_responsable_viewed")
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Responsable responsableViewed;
 
     public Integer getId() {

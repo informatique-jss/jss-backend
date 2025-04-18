@@ -30,15 +30,15 @@ export class ConstantService extends AppRestService<Constant> {
     });
   }
 
-  getJssCategoryJustice() {
-    return this.constant.jssCategoryJustice;
+  getJssCategoryHomepageFirstHighlighted() {
+    return this.constant.jssCategoryHomepageFirstHighlighted;
   }
 
-  getJssCategoryLaw() {
-    return this.constant.jssCategoryLaw;
+  getJssCategoryHomepageSecondHighlighted() {
+    return this.constant.jssCategoryHomepageSecondHighlighted;
   }
 
-  getJssCategoryEconomics() {
-    return this.constant.jssCategoryEconomics;
+  getJssCategoryHomepageThirdHighlighted() {
+    return this.constant.jssCategoryHomepageThirdHighlighted;
   }
 }

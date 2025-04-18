@@ -58,22 +58,22 @@ public class Constant implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private Integer id;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_code_affaire")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private BillingLabelType billingLabelTypeCodeAffaire;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_other")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private BillingLabelType billingLabelTypeOther;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_customer")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private BillingLabelType billingLabelTypeCustomer;
 
 	@ManyToOne
@@ -118,17 +118,17 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_digital")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private DocumentType documentTypeDigital;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_paper")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private DocumentType documentTypePaper;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_billing")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private DocumentType documentTypeBilling;
 
 	@ManyToOne
@@ -259,7 +259,7 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeClientCommunication;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -440,37 +440,37 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_prelevement")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private PaymentType paymentTypePrelevement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_virement")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private PaymentType paymentTypeVirement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_cb")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private PaymentType paymentTypeCB;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_especes")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private PaymentType paymentTypeEspeces;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_cheques")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private PaymentType paymentTypeCheques;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_account")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private PaymentType paymentTypeAccount;
 
 	@ManyToOne
 	@JoinColumn(name = "id_refund_type_virement")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private RefundType refundTypeVirement;
 
 	@ManyToOne
@@ -901,29 +901,29 @@ public class Constant implements Serializable, IId {
 	private Category categorySerie;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	@JoinColumn(name = "id_myjss_category_announcement")
 	private MyJssCategory myJssCategoryAnnouncement;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	@JoinColumn(name = "id_myjss_category_formality")
 	private MyJssCategory myJssCategoryFormality;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssView.class)
-	@JoinColumn(name = "id_jss_category_justice")
-	private JssCategory jssCategoryJustice;
+	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_jss_category_homepage_first_highlighted")
+	private JssCategory jssCategoryHomepageFirstHighlighted;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssView.class)
-	@JoinColumn(name = "id_jss_category_law")
-	private JssCategory jssCategoryLaw;
+	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_jss_category_homepage_second_highlighted")
+	private JssCategory jssCategoryHomepageSecondHighlighted;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssView.class)
-	@JoinColumn(name = "id_jss_category_economics")
-	private JssCategory jssCategoryEconomics;
+	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_jss_category_homepage_third_highlighted")
+	private JssCategory jssCategoryHomepageThirdHighlighted;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class_product")
@@ -2667,28 +2667,28 @@ public class Constant implements Serializable, IId {
 		this.myJssCategoryFormality = formalityMyJssCategory;
 	}
 
-	public JssCategory getJssCategoryJustice() {
-		return jssCategoryJustice;
+	public JssCategory getJssCategoryHomepageFirstHighlighted() {
+		return jssCategoryHomepageFirstHighlighted;
 	}
 
-	public void setJssCategoryJustice(JssCategory jssCategoryJustice) {
-		this.jssCategoryJustice = jssCategoryJustice;
+	public void setJssCategoryHomepageFirstHighlighted(JssCategory jssCategoryHomepageFirstHighlighted) {
+		this.jssCategoryHomepageFirstHighlighted = jssCategoryHomepageFirstHighlighted;
 	}
 
-	public JssCategory getJssCategoryLaw() {
-		return jssCategoryLaw;
+	public JssCategory getJssCategoryHomepageSecondHighlighted() {
+		return jssCategoryHomepageSecondHighlighted;
 	}
 
-	public void setJssCategoryLaw(JssCategory jssCategoryLaw) {
-		this.jssCategoryLaw = jssCategoryLaw;
+	public void setJssCategoryHomepageSecondHighlighted(JssCategory jssCategoryHomepageSecondHighlighted) {
+		this.jssCategoryHomepageSecondHighlighted = jssCategoryHomepageSecondHighlighted;
 	}
 
-	public JssCategory getJssCategoryEconomics() {
-		return jssCategoryEconomics;
+	public JssCategory getJssCategoryHomepageThirdHighlighted() {
+		return jssCategoryHomepageThirdHighlighted;
 	}
 
-	public void setJssCategoryEconomics(JssCategory jssCategoryEconomics) {
-		this.jssCategoryEconomics = jssCategoryEconomics;
+	public void setJssCategoryHomepageThirdHighlighted(JssCategory jssCategoryHomepageThirdHighlighted) {
+		this.jssCategoryHomepageThirdHighlighted = jssCategoryHomepageThirdHighlighted;
 	}
 
 	public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() {

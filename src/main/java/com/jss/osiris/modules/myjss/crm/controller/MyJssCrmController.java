@@ -56,7 +56,7 @@ public class MyJssCrmController {
         return null;
     }
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
     public ResponseEntity<CommunicationPreference> getCommunicationPreferenceByMail(@RequestParam String userMail,
             @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
@@ -85,7 +85,7 @@ public class MyJssCrmController {
      * @return
      * @throws OsirisValidationException
      */
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-newspaper-newsletter")
     public ResponseEntity<Boolean> subscribeToNewspaperNewsletter(@RequestParam String userMail,
             HttpServletRequest request) throws OsirisValidationException {
@@ -106,7 +106,7 @@ public class MyJssCrmController {
      * @return
      * @throws OsirisValidationException
      */
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/unsubscribe-to-newspaper-newsletter")
     public ResponseEntity<Boolean> unsubscribeToNewspaperNewsletter(@RequestParam String userMail,
             @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {
@@ -139,7 +139,7 @@ public class MyJssCrmController {
      * @return
      * @throws OsirisValidationException
      */
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/subscribe-to-corporate-newsletter")
     public ResponseEntity<Boolean> subscribeToCorporateNewsletter(@RequestParam String userMail,
             HttpServletRequest request) throws OsirisValidationException {
@@ -160,7 +160,7 @@ public class MyJssCrmController {
      * @return
      * @throws OsirisValidationException
      */
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     @GetMapping(inputEntryPoint + "/communication-preferences/unsubscribe-to-corporate-newsletter")
     public ResponseEntity<Boolean> unsubscribeToCorporateNewsletter(@RequestParam String userMail,
             @RequestParam String validationToken, HttpServletRequest request) throws OsirisValidationException {

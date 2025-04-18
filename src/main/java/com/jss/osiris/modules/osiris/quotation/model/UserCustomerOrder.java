@@ -12,79 +12,79 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public class UserCustomerOrder {
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Document billingDocument;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Document paperDocument;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Document digitalDocument;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private List<ServiceTypeChosen> serviceTypes;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Boolean isCustomerOrder;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Boolean isDraft;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private BigDecimal preTaxPrice;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private BigDecimal vatPrice;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private BigDecimal totalPrice;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Responsable dummyResponsable;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Boolean isEmergency;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Integer orderId;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Boolean customerIsIndividual;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String customerDenomination;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String customerAddress;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String customerPostalCode;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private City customerCity;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Country customerCountry;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String customerSiret;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Civility responsableCivility;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String responsableFirstname;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String responsableLastname;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String responsableMail;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String responsablePhone;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String siret;
 
     public Document getBillingDocument() {

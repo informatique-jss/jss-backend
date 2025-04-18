@@ -19,7 +19,7 @@ import jakarta.persistence.Transient;
 public class Media {
     @Id
     private Integer id;
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Integer author;
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     private LocalDateTime date;
@@ -33,15 +33,15 @@ public class Media {
     private String source_url;
 
     private String media_type;
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String alt_text;
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String urlFull;
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String urlLarge;
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String urlMedium;
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String urlMediumLarge;
 
     @IndexedField

@@ -84,7 +84,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	private Integer validationId;
@@ -98,7 +98,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private Responsable responsable;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
@@ -107,19 +107,19 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	@JsonIgnoreProperties(value = { "assoSpecialOfferBillingTypes" }, allowSetters = true)
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_status")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	@IndexedField
 	private CustomerOrderStatus customerOrderStatus;
 
@@ -130,7 +130,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private QuotationAbandonReason abandonReason;
 
 	@Column(columnDefinition = "TEXT") // TODO : delete when new website
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String description;
 
 	@OneToMany(mappedBy = "customerOrder")
@@ -200,20 +200,20 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private LocalDate recurringPeriodStartDate;
 	private LocalDate recurringPeriodEndDate;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private LocalDate recurringStartDate;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private LocalDate recurringEndDate;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private Boolean isRecurring;
 	private Boolean isRecurringAutomaticallyBilled;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private Boolean isGifted;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	@Column(name = "is_payed")
 	private Boolean isPayed;
 
@@ -222,15 +222,15 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public String affairesList;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public String servicesList;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public Boolean hasMissingInformations;
 
 	public Integer getId() {

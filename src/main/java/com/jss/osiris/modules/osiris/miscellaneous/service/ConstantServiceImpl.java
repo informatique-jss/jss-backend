@@ -1178,18 +1178,18 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public JssCategory getJssCategoryJustice() throws OsirisException {
-        return this.getConstants().getJssCategoryJustice();
+    public JssCategory getJssCategoryHomepageFirstHighlighted() throws OsirisException {
+        return this.getConstants().getJssCategoryHomepageFirstHighlighted();
     }
 
     @Override
-    public JssCategory getJssCategoryLaw() throws OsirisException {
-        return this.getConstants().getJssCategoryLaw();
+    public JssCategory getJssCategoryHomepageSecondHighlighted() throws OsirisException {
+        return this.getConstants().getJssCategoryHomepageSecondHighlighted();
     }
 
     @Override
-    public JssCategory getJssCategoryEconomics() throws OsirisException {
-        return this.getConstants().getJssCategoryEconomics();
+    public JssCategory getJssCategoryHomepageThirdHighlighted() throws OsirisException {
+        return this.getConstants().getJssCategoryHomepageThirdHighlighted();
     }
 
     @Override

@@ -489,11 +489,11 @@ public interface ConstantService {
 
     public MyJssCategory getMyJssCategoryFormality() throws OsirisException;
 
-    public JssCategory getJssCategoryJustice() throws OsirisException;
+    public JssCategory getJssCategoryHomepageFirstHighlighted() throws OsirisException;
 
-    public JssCategory getJssCategoryLaw() throws OsirisException;
+    public JssCategory getJssCategoryHomepageSecondHighlighted() throws OsirisException;
 
-    public JssCategory getJssCategoryEconomics() throws OsirisException;
+    public JssCategory getJssCategoryHomepageThirdHighlighted() throws OsirisException;
 
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException;
 
