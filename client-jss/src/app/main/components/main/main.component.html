@@ -405,7 +405,7 @@
                                 <div class="col-md-12">
                                     <div class="section-title-block d-flex pb-3">
                                         <h3 class="section-widget-title text-uppercase"> {{
-                                            getCategoryByName(('Justice'))?.name }}
+                                            constantJustice?.name }}
                                         </h3>
                                     </div>
                                 </div>
@@ -432,7 +432,7 @@
                             </article>
                             <div class="row">
                                 <div class="col mt-3">
-                                    <a (click)="openCategoryPosts(getCategoryByName(('Justice'))!, $event)"
+                                    <a *ngIf="constantJustice" (click)="openCategoryPosts(constantJustice, $event)"
                                         class="text-uppercase section-title-link">
                                         Voir tous
                                         <svg width="24" height="24" viewBox="0 0 24 24"
@@ -459,7 +459,7 @@
                                 <div class="col-md-12">
                                     <div class="section-title-block d-flex pb-3">
                                         <h3 class="section-widget-title text-uppercase"> {{
-                                            getCategoryByName(('Droit'))?.name }}
+                                            constantLaw?.name }}
                                         </h3>
                                     </div>
                                 </div>
@@ -486,7 +486,7 @@
                             </article>
                             <div class="row">
                                 <div class="col mt-3">
-                                    <a (click)="openCategoryPosts(getCategoryByName(('Droit'))!, $event)"
+                                    <a *ngIf="constantLaw" (click)="openCategoryPosts(constantLaw, $event)"
                                         class="text-uppercase section-title-link">
                                         Voir tous
                                         <svg width="24" height="24" viewBox="0 0 24 24"
@@ -513,7 +513,7 @@
                                 <div class="col-md-12">
                                     <div class="section-title-block d-flex pb-3">
                                         <h3 class="section-widget-title text-uppercase"> {{
-                                            getCategoryByName(('Économie'))?.name }}
+                                            constantEconomics?.name }}
                                         </h3>
                                     </div>
                                 </div>
@@ -542,7 +542,7 @@
                             </article>
                             <div class="row">
                                 <div class="col mt-3">
-                                    <a (click)="openCategoryPosts(getCategoryByName(('Économie'))!, $event)"
+                                    <a *ngIf="constantEconomics" (click)="openCategoryPosts(constantEconomics, $event)"
                                         class="text-uppercase section-title-link">
                                         Voir tous
                                         <svg width="24" height="24" viewBox="0 0 24 24"
@@ -770,5 +770,6 @@
                 </div>
             </div>
         </div>
+        <newsletter></newsletter>
     </div>
 </div>

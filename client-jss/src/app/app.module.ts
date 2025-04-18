@@ -9,6 +9,7 @@ import { RouterModule, Routes, provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 import { FooterComponent } from './main/components/footer/footer.component';
 import { MainModule } from './main/components/main/main.module';
+import { NewsletterComponent } from './main/components/newsletter/newsletter.component';
 registerLocaleData(localeFr, 'fr');
 
 const routes: Routes = [
@@ -25,7 +26,8 @@ const routes: Routes = [
     BrowserAnimationsModule,
     FormsModule,
     RouterModule,
-    MainModule
+    MainModule,
+    NewsletterComponent
   ],
   exports: [
   ],

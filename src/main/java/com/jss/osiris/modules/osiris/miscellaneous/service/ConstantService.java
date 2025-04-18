@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
@@ -487,6 +488,12 @@ public interface ConstantService {
     public MyJssCategory getMyJssCategoryAnnouncement() throws OsirisException;
 
     public MyJssCategory getMyJssCategoryFormality() throws OsirisException;
+
+    public JssCategory getJssCategoryJustice() throws OsirisException;
+
+    public JssCategory getJssCategoryLaw() throws OsirisException;
+
+    public JssCategory getJssCategoryEconomics() throws OsirisException;
 
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException;
 

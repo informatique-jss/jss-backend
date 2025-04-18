@@ -12,6 +12,7 @@ import { DepartmentListComponent } from '../department-list/department-list.comp
 import { HeaderComponent } from '../header/header.component';
 import { InterviewListComponent } from '../interview-list/interview-list.component';
 import { NewArticlesComponent } from '../new-articles/new-articles.component';
+import { NewsletterComponent } from '../newsletter/newsletter.component';
 import { PodcastListComponent } from '../podcast-list/podcast-list.component';
 import { PodcastPostComponent } from '../podcast-post/podcast-post.component';
 import { PostComponent } from '../post/post.component';
@@ -43,6 +44,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload', scrollPositionRestoration: 'enabled' }),
+    NewsletterComponent
   ],
   declarations: [
     MainComponent,
@@ -64,9 +66,11 @@ const routes: Routes = [
     TagListComponent,
     TimeFormatPipe,
     AnnouncementComponent,
+
   ],
   exports: [
     HeaderComponent,
+    NewsletterComponent
   ]
 })
 export class MainModule { }
