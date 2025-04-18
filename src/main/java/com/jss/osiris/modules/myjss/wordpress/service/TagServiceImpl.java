@@ -139,7 +139,7 @@ public class TagServiceImpl implements TagService {
         List<Tag> tags = new ArrayList<>();
         Pageable pageable = PageRequest.of(0, 1000000,
                 Sort.by(Sort.Direction.DESC, "date"));
-        Page<Post> posts = postService.getAllPostsByIdf(pageable);
+        Page<Post> posts = postService.getAllPostsByIdf(pageable, null);
 
         for (Post post : posts.getContent()) {
             if (post.getPostTags() != null && !post.getPostTags().isEmpty())

@@ -365,8 +365,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/publishing-department/all/most-seen")
-	public ResponseEntity<Page<Post>> getMostSeenPostByIdf(
-			@RequestParam Integer departmentId, @RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<Page<Post>> getMostSeenPostByIdf(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
 		detectFlood(request);
@@ -476,13 +475,28 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/all/publishing-department/all")
+	public ResponseEntity<Page<Post>> getAllPostsForIdf(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			HttpServletRequest request) {
+
+		detectFlood(request);
+
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<Page<Post>>(
+				postService.applyPremium(
+						postService.getAllPostsByIdf(pageableRequest, searchText)),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
-	public ResponseEntity<List<Post>> getTopPostByMyJssCategory(@RequestParam Integer page,
+	public ResponseEntity<Page<Post>> getTopPostByMyJssCategory(@RequestParam Integer page,
 			@RequestParam Integer myJssCategoryId) {
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
-		if (myJssCategory == null)
-			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-		return new ResponseEntity<List<Post>>(postService.getPostsByMyJssCategory(page, myJssCategory), HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(postService.getPostsByMyJssCategory(page, myJssCategory), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/myjss-categories")
@@ -504,7 +518,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/search/myjss-category")
-	public ResponseEntity<List<Post>> searchPostsByMyJssCategory(@RequestParam String searchText,
+	public ResponseEntity<Page<Post>> searchPostsByMyJssCategory(@RequestParam String searchText,
 			@RequestParam(required = false) Integer myJssCategoryId,
 			@RequestParam(required = false, defaultValue = "0") Integer page,
 			@RequestParam(required = false, defaultValue = "10") Integer size,
@@ -519,19 +533,16 @@ public class WordpressController {
 		if (myJssCategoryId != null)
 			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 
-		if (searchText.equals("") && myJssCategory == null)
-			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-
 		Order order = new Order(Direction.DESC, "titleText");
 		Sort sort = Sort.by(Arrays.asList(order));
 		Pageable pageableRequest = PageRequest.of(page, size, sort);
 
-		return new ResponseEntity<List<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.searchPostsByMyJssCategory(searchText, myJssCategory, pageableRequest), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss-category")
-	public ResponseEntity<List<Post>> getPostsByMyJssCategory(@RequestParam Integer myJssCategoryId,
+	public ResponseEntity<Page<Post>> getPostsByMyJssCategory(@RequestParam Integer myJssCategoryId,
 			@RequestParam(required = false) String searchText,
 			@RequestParam(required = false, defaultValue = "0") Integer page,
 			@RequestParam(required = false, defaultValue = "10") Integer size,
@@ -542,14 +553,11 @@ public class WordpressController {
 		if (myJssCategoryId != null)
 			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 
-		if (myJssCategory == null)
-			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
-
 		Order order = new Order(Direction.DESC, "titleText");
 		Sort sort = Sort.by(Arrays.asList(order));
 		Pageable pageableRequest = PageRequest.of(page, size, sort);
 
-		return new ResponseEntity<List<Post>>(
+		return new ResponseEntity<Page<Post>>(
 				postService.searchPostsByMyJssCategory(searchText, myJssCategory, pageableRequest), HttpStatus.OK);
 	}
 

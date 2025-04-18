@@ -27,7 +27,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findByJssCategoriesAndIsCancelled(JssCategory jssCategory, Boolean isCancelled,
                         Pageable pageableRequest);
 
-        List<Post> findByMyJssCategoriesAndIsCancelled(MyJssCategory myJssCategory, Boolean isCancelled,
+        Page<Post> findByMyJssCategoriesAndIsCancelled(MyJssCategory myJssCategory, Boolean isCancelled,
                         Pageable pageableRequest);
 
         Page<Post> findByPostCategoriesAndIsCancelled(Category category, Boolean isCancelled, Pageable pageableRequest);
@@ -67,7 +67,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findMostSeenPostPublishingDepartment(Pageable pageable,
                         @Param("publishingDepartment") PublishingDepartment publishingDepartment);
 
-        @Query("select p from Post where p.isCancelled = false and size(p.departments) > 0 and size(p.jssCategories) > 0 ")
+        @Query("select p from Post p where p.isCancelled = false and size(p.departments) > 0 and size(p.jssCategories) > 0 ")
         Page<Post> findPostsIdf(Pageable pageable);
 
         @Query("select p from Post p where p.isCancelled = false and size(p.jssCategories) > 0 and p.sticky = true")
@@ -97,7 +97,8 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         Page<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b, Pageable pageableRequest);
 
-        Page<Post> findByDepartmentsAndIsCancelled(PublishingDepartment publishingDepartment, boolean b,
+        @Query("select p from Post p where p.isCancelled = :isCancelled and size(p.jssCategories) > 0 and :publishingDepartment MEMBER OF p.departments ")
+        Page<Post> findByDepartmentsAndIsCancelled(PublishingDepartment publishingDepartment, boolean isCancelled,
                         Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled = false and :jssCategories member of p.jssCategories and p.date>:date")

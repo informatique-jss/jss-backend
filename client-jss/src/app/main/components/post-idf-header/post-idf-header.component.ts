@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { PublishingDepartment } from '../../model/PublishingDepartment';
-import { DepartmentService } from '../../services/department.service';
 
 @Component({
   selector: 'post-idf-header',
@@ -10,16 +8,9 @@ import { DepartmentService } from '../../services/department.service';
 })
 export class PostIdfHeaderComponent implements OnInit {
 
-  constructor(private departmentService: DepartmentService,
-  ) { }
-
-  selectedDepartment: PublishingDepartment | undefined;
+  constructor() { }
 
   ngOnInit() {
-    this.departmentService.getAvailablePublishingDepartments().subscribe(response => {
-      if (response)
-        this.selectedDepartment = response[0];
-    });
   }
 
 }

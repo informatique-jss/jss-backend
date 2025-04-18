@@ -18,7 +18,7 @@ import { GenericHubComponent } from '../generic-hub/generic-hub.component';
 })
 export class IdfHubComponent extends GenericHubComponent<PublishingDepartment> implements OnInit {
 
-  @Input() override selectedEntityType: PublishingDepartment | undefined;
+  @Input() override selectedEntityType: PublishingDepartment = {} as PublishingDepartment;
 
   constructor(private postService: PostService, private tagService: TagService, appService: AppService, formBuilder: FormBuilder
   ) {

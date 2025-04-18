@@ -42,7 +42,7 @@ const routes: Routes = [
   { path: 'post/author/:slug', component: PostAuthorHeaderComponent },
   { path: 'post/serie/:slug', component: PostSerieHeaderComponent },
   { path: 'post/department/:id', component: PostDepartmentHeaderComponent },
-  { path: 'post/department/all', component: PostIdfHeaderComponent },
+  { path: 'post/department/idf/all', component: PostIdfHeaderComponent },
   { path: 'home', component: MainComponent },
   { path: 'post/:slug', component: PostComponent },
   { path: 'author/:slug', component: AuthorListComponent },

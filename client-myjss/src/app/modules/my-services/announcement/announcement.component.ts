@@ -29,8 +29,8 @@ export class AnnouncementComponent implements OnInit {
     });
 
     this.postService.getTopPostByMyJssCategory(0, this.myJssCategoryAnnouncement).subscribe(posts => {
-      if (posts)
-        this.carouselAnnouncementPosts = posts;
+      if (posts && posts.content)
+        this.carouselAnnouncementPosts = posts.content;
     });
   }
 

@@ -356,35 +356,49 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory, String searchText) {
-
-        List<IndexEntity> tmpEntitiesFound = null;
-        List<Post> matchingPosts = new ArrayList<Post>();
-        Page<Post> postsByJssCategory = null;
-        Page<Post> posts = null;
-
         if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                if (jssCategory != null) {
-                    postsByJssCategory = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false,
-                            pageableRequest);
-                    if (postsByJssCategory != null && !postsByJssCategory.isEmpty()) {
-                        for (Post post : postsByJssCategory) {
-                            for (IndexEntity entity : tmpEntitiesFound) {
-                                if (post.getId().equals(entity.getEntityId()))
-                                    matchingPosts.add(post);
-                            }
-                        }
-                        PageRequest newPageRequest = PageRequest.of(0, postsByJssCategory.getSize());
-                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
-                        return pageResult;
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false,
+                                pageableRequest));
+            }
+        }
+        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
+    }
+
+    private Page<Post> searchPostAgainstEntitiesToMatch(String searchText, Page<Post> entityToMatchWithResearch) {
+        List<IndexEntity> tmpEntitiesFound = null;
+        List<Post> matchingPosts = new ArrayList<Post>();
+
+        tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+        if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+            if (entityToMatchWithResearch != null) {
+                for (Post post : entityToMatchWithResearch) {
+                    for (IndexEntity entity : tmpEntitiesFound) {
+                        if (post.getId().equals(entity.getEntityId()))
+                            matchingPosts.add(post);
                     }
                 }
-                return null;
+                PageRequest newPageRequest = PageRequest.of(0, entityToMatchWithResearch.getSize());
+                Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
+                return pageResult;
             }
-        } else
-            posts = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
-        return posts;
+        }
+        return null;
+    }
+
+    @Override
+    public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText) {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findPostsIdf(pageableRequest));
+            }
+        }
+        return postRepository.findPostsIdf(pageableRequest);
     }
 
     @Override
@@ -394,136 +408,65 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) {
-        List<IndexEntity> tmpEntitiesFound = null;
-        List<Post> matchingPosts = new ArrayList<Post>();
-        Page<Post> postsByTag = null;
-        Page<Post> posts = null;
-
         if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                if (tag != null) {
-                    postsByTag = postRepository.findByPostTagsAndIsCancelled(tag, false,
-                            pageableRequest);
-                    if (postsByTag != null && !postsByTag.isEmpty()) {
-                        for (Post post : postsByTag) {
-                            for (IndexEntity entity : tmpEntitiesFound) {
-                                if (post.getId().equals(entity.getEntityId()))
-                                    matchingPosts.add(post);
-                            }
-                        }
-                        PageRequest newPageRequest = PageRequest.of(0, postsByTag.getSize());
-                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
-                        return pageResult;
-                    }
-                }
-                return null;
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByPostTagsAndIsCancelled(tag, false,
+                                pageableRequest));
             }
-        } else
-            posts = postRepository.findByPostTagsAndIsCancelled(tag, false, pageableRequest);
-        return posts;
+        }
+        return postRepository.findByPostTagsAndIsCancelled(tag, false, pageableRequest);
     }
 
     @Override
     public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText) {
-        List<IndexEntity> tmpEntitiesFound = null;
-        List<Post> matchingPosts = new ArrayList<Post>();
-        Page<Post> postsByAuthor = null;
-        Page<Post> posts = null;
-
         if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                if (author != null) {
-                    postsByAuthor = postRepository.findByFullAuthorAndIsCancelled(author, false,
-                            pageableRequest);
-                    if (postsByAuthor != null && !postsByAuthor.isEmpty()) {
-                        for (Post post : postsByAuthor) {
-                            for (IndexEntity entity : tmpEntitiesFound) {
-                                if (post.getId().equals(entity.getEntityId()))
-                                    matchingPosts.add(post);
-                            }
-                        }
-                        PageRequest newPageRequest = PageRequest.of(0, postsByAuthor.getSize());
-                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
-                        return pageResult;
-                    }
-                }
-                return null;
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByFullAuthorAndIsCancelled(author, false,
+                                pageableRequest));
             }
-        } else
-            posts = postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
-        return posts;
+        }
+        return postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
     }
 
     @Override
     public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText) {
-        List<IndexEntity> tmpEntitiesFound = null;
-        List<Post> matchingPosts = new ArrayList<Post>();
-        Page<Post> postsBySerie = null;
-        Page<Post> posts = null;
-
         if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                if (serie != null) {
-                    postsBySerie = postRepository.findByPostSerieAndIsCancelled(serie, false,
-                            pageableRequest);
-                    if (postsBySerie != null && !postsBySerie.isEmpty()) {
-                        for (Post post : postsBySerie) {
-                            for (IndexEntity entity : tmpEntitiesFound) {
-                                if (post.getId().equals(entity.getEntityId()))
-                                    matchingPosts.add(post);
-                            }
-                        }
-                        PageRequest newPageRequest = PageRequest.of(0, postsBySerie.getSize());
-                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
-                        return pageResult;
-                    }
-                }
-                return null;
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByPostSerieAndIsCancelled(serie, false,
+                                pageableRequest));
             }
-        } else
-            posts = postRepository.findByPostSerieAndIsCancelled(serie, false, pageableRequest);
-        return posts;
+        }
+        return postRepository.findByPostSerieAndIsCancelled(serie, false, pageableRequest);
     }
 
     @Override
     public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
             PublishingDepartment publishingDepartment, String searchText) {
-        List<IndexEntity> tmpEntitiesFound = null;
-        List<Post> matchingPosts = new ArrayList<Post>();
-        Page<Post> postsByPublishingDepartment = null;
-        Page<Post> posts = null;
 
         if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                if (publishingDepartment != null) {
-                    postsByPublishingDepartment = postRepository.findByDepartmentsAndIsCancelled(publishingDepartment,
-                            false,
-                            pageableRequest);
-                    if (postsByPublishingDepartment != null && !postsByPublishingDepartment.isEmpty()) {
-                        for (Post post : postsByPublishingDepartment) {
-                            for (IndexEntity entity : tmpEntitiesFound) {
-                                if (post.getId().equals(entity.getEntityId()))
-                                    matchingPosts.add(post);
-                            }
-                        }
-                        PageRequest newPageRequest = PageRequest.of(0, postsByPublishingDepartment.getSize());
-                        Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
-                        return pageResult;
-                    }
-                }
-                return null;
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByDepartmentsAndIsCancelled(publishingDepartment,
+                                false,
+                                pageableRequest));
             }
-        } else
-            posts = postRepository.findByDepartmentsAndIsCancelled(publishingDepartment, false, pageableRequest);
-        return posts;
+        }
+        return postRepository.findByDepartmentsAndIsCancelled(publishingDepartment, false, pageableRequest);
     }
 
     @Override
-    public List<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) {
+    public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
@@ -531,41 +474,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory,
+    public Page<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory,
             Pageable pageableRequest) {
-        List<IndexEntity> tmpEntitiesFound = null;
-        List<Post> matchingPosts = new ArrayList<Post>();
-        List<Post> postsByMyJssCategory = new ArrayList<Post>();
-
         if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                if (myJssCategory != null) {
-                    postsByMyJssCategory = postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
-                            pageableRequest);
-                    if (postsByMyJssCategory != null && !postsByMyJssCategory.isEmpty()) {
-                        for (Post post : postsByMyJssCategory) {
-                            for (IndexEntity entity : tmpEntitiesFound) {
-                                if (post.getId().equals(entity.getEntityId()))
-                                    matchingPosts.add(post);
-                            }
-                        }
-                    }
-                } else {
-                    for (IndexEntity entity : tmpEntitiesFound) {
-                        Optional<Post> post = postRepository.findById(entity.getEntityId());
-                        if (post.isPresent()) {
-                            matchingPosts.add(post.get());
-                        }
-                    }
-                }
-                return matchingPosts;
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
+                                pageableRequest));
             }
-        } else
-            matchingPosts = postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
-                    pageableRequest);
-        return matchingPosts;
+        }
+        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
+                pageableRequest);
     }
 
     @Override
@@ -819,9 +740,4 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
-    @Override
-    public Page<Post> getAllPostsByIdf(Pageable pageableRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllPostsByIdf'");
-    }
 }

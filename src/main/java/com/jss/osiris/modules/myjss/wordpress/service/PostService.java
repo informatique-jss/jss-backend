@@ -41,7 +41,7 @@ public interface PostService {
         public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
                         PublishingDepartment publishingDepartment, String searchText);
 
-        public Page<Post> getAllPostsByIdf(Pageable pageableRequest);
+        public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText);
 
         public Page<Post> getMostSeenPostByJssCatgory(Pageable pageableRequest, JssCategory jssCategory);
 
@@ -56,9 +56,9 @@ public interface PostService {
 
         public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest);
 
-        public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
+        public Page<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 
-        public List<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory);
+        public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory);
 
         public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
 
