@@ -222,7 +222,7 @@
                   <ul class="tag-cloud list-inline">
                     <li *ngFor="let tag of tagsByEntityType" class="list-inline-item pb-1"><a
                         class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary text-hover-white"
-                        href="category.html">{{tag.name}}</a>
+                        [routerLink]="'post/tag/'+tag.slug" href="category.html">{{tag.name}}</a>
                     </li>
                   </ul>
                 </div>
