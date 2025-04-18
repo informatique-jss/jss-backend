@@ -16,4 +16,7 @@ export class JssCategoryService extends AppRestService<JssCategory> {
     return this.getListCached(new HttpParams(), "jss-categories");
   }
 
+  getJssCategoryBySlug(slug: number) {
+    return this.get(new HttpParams().set("slug", slug), "jss-category/slug");
+  }
 }

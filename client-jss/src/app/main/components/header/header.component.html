@@ -52,7 +52,8 @@
       <nav class="navbar text-uppercase text-white-100 navbar-expand-lg">
         <div class="collapse navbar-collapse" id="main_nav">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown"> <a class="nav-link  dropdown-toggle" href="index.html">île de France </a>
+            <li class="nav-item dropdown"> <a class="nav-link  dropdown-toggle" routerLink="post/department/idf/all">île
+                de France </a>
 
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item" style="cursor: pointer;"
@@ -62,7 +63,7 @@
               </ul>
             </li>
             <li class="nav-item" *ngFor="let category of categories"> <a class="nav-link"
-                [ngClass]="{'active':getCurrentRoute().indexOf('/category')>=0 && getCurrentRoute().indexOf('/'+category.slug)>=0}"
+                [ngClass]="{'active':getCurrentRoute().indexOf('/post/category')>=0 && getCurrentRoute().indexOf('/'+category.slug)>=0}"
                 style="cursor: pointer;" (click)="openCategoryPosts(category,$event)">{{category.name}}</a></li>
 
             <li class="nav-item nav-item-podcast"><span><a class="nav-link podcast-nav-link mt-auto py-0 ps-2"

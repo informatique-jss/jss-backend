@@ -120,7 +120,7 @@ export class MainComponent implements OnInit {
   }
 
   openSeriePosts(serie: Serie, event: any) {
-    this.appService.openRoute(event, "serie/" + serie.slug, undefined);
+    this.appService.openRoute(event, "post/serie/" + serie.slug, undefined);
   }
 
   openPodcastPost(podcast: Post, event: any) {

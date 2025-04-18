@@ -9,4 +9,5 @@ public interface JssCategoryRepository extends QueryCacheCrudRepository<JssCateg
 
     List<JssCategory> findAllByOrderByName();
 
+    JssCategory findBySlug(String slug);
 }

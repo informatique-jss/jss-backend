@@ -29,9 +29,36 @@ public interface PostService {
 
         public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory);
 
-        public List<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
+        public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory,
+                        String searchText);
 
-        public List<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory);
+        public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText);
+
+        public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText);
+
+        public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText);
+
+        public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
+                        PublishingDepartment publishingDepartment, String searchText);
+
+        public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText);
+
+        public Page<Post> getMostSeenPostByJssCatgory(Pageable pageableRequest, JssCategory jssCategory);
+
+        public Page<Post> getMostSeenPostByTag(Pageable pageableRequest, Tag tag);
+
+        public Page<Post> getMostSeenPostByAuthor(Pageable pageableRequest, Author author);
+
+        public Page<Post> getMostSeenPostBySerie(Pageable pageableRequest, Serie serie);
+
+        public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
+                        PublishingDepartment publishingDepartment);
+
+        public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest);
+
+        public Page<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
+
+        public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory);
 
         public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
 
@@ -59,9 +86,9 @@ public interface PostService {
 
         public List<Post> getPostBySerie(Serie serie);
 
-        public List<Post> getPostsByTag(Integer page, Tag tag);
+        public Page<Post> getPostsByTag(Integer page, Tag tag);
 
-        public List<Post> getPostsByAuthor(Integer page, Author author);
+        public Page<Post> getPostsByAuthor(Pageable pageableRequest, Author author);
 
         public void reindexPosts() throws OsirisException;
 

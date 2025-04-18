@@ -11,10 +11,10 @@ import { IndexEntityService } from '../../services/index.entity.service';
 import { JssCategoryService } from '../../services/jss.category.service';
 
 @Component({
-    selector: 'main-header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.css'],
-    standalone: false
+  selector: 'main-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css'],
+  standalone: false
 })
 export class HeaderComponent implements OnInit {
 
@@ -60,11 +60,11 @@ export class HeaderComponent implements OnInit {
   }
 
   openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "category/" + category.slug, undefined);
+    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
   }
 
   openDepartment(department: PublishingDepartment, event: any) {
-    this.appService.openRoute(event, "department/" + department.code, undefined);
+    this.appService.openRoute(event, "post/department/" + department.id, undefined);
   }
 
   openSearchAnnouncement(event: any) {

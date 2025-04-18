@@ -13584,3 +13584,8 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
   align-items: center;
   justify-content: center;
 }
+
+.header-hub-bg {
+  background: #F6F9FC;
+  min-height: 100px;
+}

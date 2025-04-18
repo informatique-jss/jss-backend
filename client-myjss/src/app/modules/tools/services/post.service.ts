@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../../libs/appRest.service';
-import { Author } from '../model/Author';
 import { Media } from '../model/Media';
 import { MyJssCategory } from '../model/MyJssCategory';
 import { Post } from '../model/Post';
@@ -60,25 +59,21 @@ export class PostService extends AppRestService<Post> {
       httpParams = httpParams.set("myJssCategoryId", myJssCategory.id);
 
     httpParams.set("page", page).set("size", size);
-    return this.getList(httpParams, "search/myjss-category");
+    return this.getPagedList(httpParams, "search/myjss-category");
   }
 
   getPostsByMyJssCategory(myJssCategory: MyJssCategory, page: number, size: number) {
-    return this.getList(new HttpParams().set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null").set("page", page).set("size", size), "posts/myjss-category");
+    return this.getPagedList(new HttpParams().set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null").set("page", page).set("size", size), "posts/myjss-category");
   }
 
   getTopPostByMyJssCategory(page: number, myJssCategory: MyJssCategory) {
-    return this.getList(new HttpParams().set("page", page).set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null"), "posts/top/myjss-category");
+    return this.getPagedList(new HttpParams().set("page", page).set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null"), "posts/top/myjss-category");
   }
 
   getTopPostByTag(page: number, tag: Tag) {
     return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
   }
 
-
-  getTopPostByAuthor(page: number, author: Author) {
-    return this.getList(new HttpParams().set("page", page).set("authorId", author.id), "posts/top/author");
-  }
   getNextArticle(post: Post) {
     return this.get(new HttpParams().set("idPost", post.id), "post/next");
   }

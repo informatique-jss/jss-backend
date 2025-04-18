@@ -23,8 +23,8 @@ export class FormalityComponent implements OnInit {
 
   ngOnInit() {
     this.postService.getTopPostByMyJssCategory(0, this.myJssCategoryFormality).subscribe(posts => {
-      if (posts)
-        this.carouselFormalityPosts.push(...posts);
+      if (posts && posts.content)
+        this.carouselFormalityPosts.push(...posts.content);
     });
     this.postService.getTendencyPosts().subscribe(response => {
       if (response && response.length > 0) {
