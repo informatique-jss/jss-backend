@@ -19,6 +19,7 @@ public class Author {
     @JsonView(JacksonViews.MyJssListView.class)
     private String name;
 
+    @JsonView(JacksonViews.MyJssListView.class)
     private String slug;
 
     private String description;

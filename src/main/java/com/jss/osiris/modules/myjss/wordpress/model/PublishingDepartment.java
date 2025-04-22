@@ -1,5 +1,8 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
@@ -8,8 +11,11 @@ import jakarta.persistence.Transient;
 public class PublishingDepartment {
 
     @Id
+    @JsonView(JacksonViews.MyJssListView.class)
     private Integer id;
+    @JsonView(JacksonViews.MyJssListView.class)
     private String name;
+    @JsonView(JacksonViews.MyJssListView.class)
     private String code;
 
     @Transient
