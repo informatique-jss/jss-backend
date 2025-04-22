@@ -1,0 +1,19 @@
+.newsletter {
+    background-color: var(--ar-tertiary-bg);
+}
+
+h2 {
+    color: var(--ar-heading-secondary-color);
+}
+
+.form-control {
+    color: var(--ar-info-text-emphasis);
+}
+
+.form-control:focus {
+    color: var(--ar-info-text-emphasis);
+}
+
+.form-control::placeholder {
+    color: var(--ar-info-text-emphasis);
+}

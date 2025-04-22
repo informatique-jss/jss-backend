@@ -2,6 +2,10 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.List;
 
+import com.jss.osiris.modules.myjss.wordpress.model.Author;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
+import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 
 public interface TagService {
@@ -12,4 +16,17 @@ public interface TagService {
         public List<Tag> getAvailableTags();
 
         public Tag getTagBySlug(String slug);
+
+        public List<Tag> getAllTagsByJssCategory(JssCategory jssCategory);
+
+        public List<Tag> getAllTagsByTag(Tag tag);
+
+        public List<Tag> getAllTagsByAuthor(Author author);
+
+        public List<Tag> getAllTagsBySerie(Serie serie);
+
+        public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment);
+
+        public List<Tag> getAllTagsByIdf();
+
 }

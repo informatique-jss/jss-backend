@@ -84,7 +84,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Integer id;
 
 	private Integer validationId;
@@ -98,7 +98,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Responsable responsable;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
@@ -114,12 +114,12 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_status")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	@IndexedField
 	private CustomerOrderStatus customerOrderStatus;
 
@@ -223,15 +223,15 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	public String affairesList;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	public String servicesList;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	public Boolean hasMissingInformations;
 
 	@ManyToOne(fetch = FetchType.LAZY)

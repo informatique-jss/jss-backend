@@ -32,6 +32,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_bank_id", columnList = "bankId", unique = true),
@@ -78,14 +79,17 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Invoice invoice;
 
 	@Column(columnDefinition = "TEXT")
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private String comment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -97,14 +101,17 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bank_transfert")
 	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder", "payments" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private BankTransfert bankTransfert;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_direct_debit_transfert")
 	@JsonIgnoreProperties(value = { "accountingRecords", "payments" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private DirectDebitTransfert directDebitTransfert;
 
 	@Column(nullable = false)
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Boolean isExternallyAssociated;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -133,16 +140,20 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private CompetentAuthority competentAuthority;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_accounting_account")
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private AccountingAccount accountingAccount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provider")
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Provider provider;
 
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Boolean isCancelled;
 
 	private Boolean isAppoint;
@@ -150,14 +161,24 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	private Boolean isDeposit;
 
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private String checkNumber;
 
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private String checkDepositNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
 	private Provision provision;
+
+	@Transient
+	@JsonView({ JacksonViews.OsirisListView.class })
+	private String matchType;
+
+	@Transient
+	@JsonView({ JacksonViews.OsirisListView.class })
+	private String matchAutomation;
 
 	public Integer getId() {
 		return id;
@@ -381,6 +402,22 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setCheckDepositNumber(String checkDepositNumber) {
 		this.checkDepositNumber = checkDepositNumber;
+	}
+
+	public String getMatchType() {
+		return matchType;
+	}
+
+	public void setMatchType(String matchType) {
+		this.matchType = matchType;
+	}
+
+	public String getMatchAutomation() {
+		return matchAutomation;
+	}
+
+	public void setMatchAutomation(String matchAutomation) {
+		this.matchAutomation = matchAutomation;
 	}
 
 }

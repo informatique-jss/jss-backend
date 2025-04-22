@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,8 +25,11 @@ import com.jss.osiris.libs.HtmlTruncateHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Media;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
@@ -42,6 +47,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     AuthorService authorService;
+
+    @Autowired
+    JssCategoryService jssCategoryService;
 
     @Autowired
     MyJssCategoryService myJssCategoryService;
@@ -66,6 +74,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    SearchService searchService;
 
     @Autowired
     HtmlTruncateHelper htmlTruncateHelper;
@@ -107,12 +118,71 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostTendency() throws OsirisException {
-        List<Integer> idPosts = postRepository.findPostTendency(LocalDate.now().minusDays(7), getCategoryArticle(),
+    public List<Post> getJssCategoryPostTendency() throws OsirisException {
+        List<Integer> idPosts = postRepository.findJssCategoryPostTendency(LocalDate.now().minusDays(7),
+                getCategoryArticle(),
                 PageRequest.of(0, 5));
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
         return null;
+    }
+
+    @Override
+    public List<Post> getMyJssCategoryPostTendency() throws OsirisException {
+        List<Integer> idPosts = postRepository.findMyJssCategoryPostTendency(LocalDate.now().minusDays(7),
+                PageRequest.of(0, 5));
+        if (idPosts != null)
+            return IterableUtils.toList(postRepository.findAllById(idPosts));
+        return null;
+    }
+
+    @Override
+    public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException {
+        List<Integer> idPosts = postRepository.findMyJssCategoryPostMostSeen(PageRequest.of(0, 5));
+        if (idPosts != null)
+            return IterableUtils.toList(postRepository.findAllById(idPosts));
+        return null;
+    }
+
+    @Override
+    public Page<Post> getMostSeenPostByJssCatgory(Pageable pageableRequest, JssCategory jssCategory) {
+        return postRepository.findMostSeenPostJssCategory(pageableRequest, jssCategory);
+    }
+
+    @Override
+    public Page<Post> getMostSeenPostByTag(Pageable pageableRequest, Tag tag) {
+        return postRepository.findMostSeenPostTag(pageableRequest, tag);
+    }
+
+    @Override
+    public Page<Post> getMostSeenPostByAuthor(Pageable pageableRequest, Author author) {
+        return postRepository.findMostSeenPostAuthor(pageableRequest, author);
+    }
+
+    @Override
+    public Page<Post> getMostSeenPostBySerie(Pageable pageableRequest, Serie serie) {
+        return postRepository.findMostSeenPostSerie(pageableRequest, serie);
+    }
+
+    @Override
+    public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
+            PublishingDepartment publishingDepartment) {
+        return postRepository.findMostSeenPostPublishingDepartment(pageableRequest, publishingDepartment);
+    }
+
+    @Override
+    public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest) {
+        return postRepository.findPostsIdf(pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getJssCategoryPostMostSeen(Pageable pageableRequest) throws OsirisException {
+        return postRepository.findJssCategoryPostMostSeen(pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getJssCategoryStickyPost(Pageable pageableRequest) throws OsirisException {
+        return postRepository.findJssCategoryPostMostSeen(pageableRequest);
     }
 
     @Override
@@ -270,12 +340,133 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPosts(int page) throws OsirisException {
-        return getPostsByCategory(page, getCategoryArticle());
+    public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException {
+
+        return postRepository.findJssCategoryPosts(getCategoryArticle(), false,
+                pageableRequest);
     }
 
     @Override
-    public List<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) {
+    public List<Post> getMyJssCategoryPosts(int page) throws OsirisException {
+        Order order = new Order(Direction.DESC, "date");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+        return postRepository.findMyJssCategoryPosts(false, pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory, String searchText) {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false,
+                                pageableRequest));
+            }
+        }
+        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
+    }
+
+    private Page<Post> searchPostAgainstEntitiesToMatch(String searchText, Page<Post> entityToMatchWithResearch) {
+        List<IndexEntity> tmpEntitiesFound = null;
+        List<Post> matchingPosts = new ArrayList<Post>();
+
+        tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+        if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+            if (entityToMatchWithResearch != null) {
+                for (Post post : entityToMatchWithResearch) {
+                    for (IndexEntity entity : tmpEntitiesFound) {
+                        if (post.getId().equals(entity.getEntityId()))
+                            matchingPosts.add(post);
+                    }
+                }
+                PageRequest newPageRequest = PageRequest.of(0, entityToMatchWithResearch.getSize());
+                Page<Post> pageResult = new PageImpl<>(matchingPosts, newPageRequest, matchingPosts.size());
+                return pageResult;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText) {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findPostsIdf(pageableRequest));
+            }
+        }
+        return postRepository.findPostsIdf(pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory) {
+        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByPostTagsAndIsCancelled(tag, false,
+                                pageableRequest));
+            }
+        }
+        return postRepository.findByPostTagsAndIsCancelled(tag, false, pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText) {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByFullAuthorAndIsCancelled(author, false,
+                                pageableRequest));
+            }
+        }
+        return postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText) {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByPostSerieAndIsCancelled(serie, false,
+                                pageableRequest));
+            }
+        }
+        return postRepository.findByPostSerieAndIsCancelled(serie, false, pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
+            PublishingDepartment publishingDepartment, String searchText) {
+
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByDepartmentsAndIsCancelled(publishingDepartment,
+                                false,
+                                pageableRequest));
+            }
+        }
+        return postRepository.findByDepartmentsAndIsCancelled(publishingDepartment, false, pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
@@ -283,7 +474,41 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsByTag(Integer page, Tag tag) {
+    public Page<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory,
+            Pageable pageableRequest) {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
+                                pageableRequest));
+            }
+        }
+        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
+                pageableRequest);
+    }
+
+    @Override
+    public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory) {
+        List<Post> firstPostsByMyJssCategory = new ArrayList<Post>();
+
+        Order order = new Order(Direction.DESC, "date");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(0, 3, sort);
+
+        if (selectedMyJssCategory != null)
+            return postRepository.searchPostsByMyJssCategory(selectedMyJssCategory, pageableRequest);
+
+        for (MyJssCategory myJssCategory : myJssCategoryService.getAvailableMyJssCategories()) {
+            firstPostsByMyJssCategory
+                    .addAll(postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest));
+        }
+        return firstPostsByMyJssCategory;
+    }
+
+    @Override
+    public Page<Post> getPostsByTag(Integer page, Tag tag) {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
@@ -291,37 +516,36 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsByAuthor(Integer page, Author author) {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+    public Page<Post> getPostsByAuthor(Pageable pageableRequest, Author author) {
         return postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
     }
 
     @Override
-    public List<Post> getTopPostByDepartment(Integer page, PublishingDepartment department) throws OsirisException {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
+    public Page<Post> getTopPostByDepartment(Pageable pageableRequest, PublishingDepartment department)
+            throws OsirisException {
         return postRepository.findByPostCategoriesAndIsCancelledAndDepartments(getCategoryArticle(), false, department,
                 pageableRequest);
     }
 
-    private List<Post> getPostsByCategory(int page, Category category) {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByPostCategoriesAndIsCancelled(category, false, pageableRequest);
+    @Override
+    public Page<Post> getTopPostWithDepartment(Pageable pageableRequest)
+            throws OsirisException {
+        return postRepository.findByPostCategoriesWithDepartments(getCategoryArticle(), false,
+                pageableRequest);
+    }
+
+    private Page<Post> getJssCategoryPostsByCategory(Pageable pageableRequest, Category category) {
+        return postRepository.findJssCategoryPosts(category, false, pageableRequest);
     }
 
     @Override
-    public List<Post> getPostInterview(int page) throws OsirisException {
-        return getPostsByCategory(page, getCategoryInterview());
+    public Page<Post> getPostInterview(Pageable pageableRequest) throws OsirisException {
+        return getJssCategoryPostsByCategory(pageableRequest, getCategoryInterview());
     }
 
     @Override
-    public List<Post> getPostPodcast(int page) throws OsirisException {
-        return getPostsByCategory(page, getCategoryPodcast());
+    public Page<Post> getPostsPodcast(Pageable pageableRequest) throws OsirisException {
+        return postRepository.findByPostCategoriesAndIsCancelled(getCategoryPodcast(), false, pageableRequest);
     }
 
     @Override
@@ -336,11 +560,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post getNextPost(Post post) {
-        if (post != null && post.getMyJssCategories() != null && post.getMyJssCategories().size() > 0) {
+        if (post != null && post.getJssCategories() != null && post.getJssCategories().size() > 0) {
             Order order = new Order(Direction.ASC, "date");
             Sort sort = Sort.by(Arrays.asList(order));
             Pageable pageableRequest = PageRequest.of(0, 1, sort);
-            List<Post> posts = postRepository.findNextArticle(post.getMyJssCategories().get(0), post.getDate(),
+            List<Post> posts = postRepository.findNextArticle(post.getJssCategories().get(0), post.getDate(),
                     pageableRequest);
             if (posts != null && posts.size() > 0)
                 return posts.get(0);
@@ -350,11 +574,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post getPreviousPost(Post post) {
-        if (post != null && post.getMyJssCategories() != null && post.getMyJssCategories().size() > 0) {
+        if (post != null && post.getJssCategories() != null && post.getJssCategories().size() > 0) {
             Order order = new Order(Direction.DESC, "date");
             Sort sort = Sort.by(Arrays.asList(order));
             Pageable pageableRequest = PageRequest.of(0, 1, sort);
-            List<Post> posts = postRepository.findPreviousArticle(post.getMyJssCategories().get(0), post.getDate(),
+            List<Post> posts = postRepository.findPreviousArticle(post.getJssCategories().get(0), post.getDate(),
                     pageableRequest);
             if (posts != null && posts.size() > 0)
                 return posts.get(0);
@@ -364,6 +588,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> applyPremium(List<Post> posts) {
+        if (posts != null)
+            for (Post post : posts) {
+                applyPremium(post);
+            }
+        return posts;
+    }
+
+    @Override
+    public Page<Post> applyPremium(Page<Post> posts) {
         if (posts != null)
             for (Post post : posts) {
                 applyPremium(post);
@@ -425,6 +658,19 @@ public class PostServiceImpl implements PostService {
         }
         if (post.getAuthor() != null && post.getAuthor() > 0)
             post.setFullAuthor(authorService.getAuthor(post.getAuthor()));
+        if (post.getJss_category() != null && post.getJss_category().length > 0) {
+            List<JssCategory> categories = new ArrayList<JssCategory>();
+            List<JssCategory> availableCategories = jssCategoryService.getAvailableJssCategories();
+            for (Integer i : post.getJss_category()) {
+                for (JssCategory availableCategory : availableCategories) {
+                    if (availableCategory.getId().equals(i)) {
+                        categories.add(availableCategory);
+                        break;
+                    }
+                }
+            }
+            post.setJssCategories(categories);
+        }
         if (post.getMyjss_category() != null && post.getMyjss_category().length > 0) {
             List<MyJssCategory> categories = new ArrayList<MyJssCategory>();
             List<MyJssCategory> availableCategories = myJssCategoryService.getAvailableMyJssCategories();
@@ -493,4 +739,5 @@ public class PostServiceImpl implements PostService {
         }
         return post;
     }
+
 }

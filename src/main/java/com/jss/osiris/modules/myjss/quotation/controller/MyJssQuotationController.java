@@ -204,7 +204,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/order/search/current")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUser(
 			@RequestBody List<String> customerOrderStatus, @RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisClientMessageException {
@@ -223,7 +223,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/order/search/affaire")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUserAndAffaire(@RequestParam Integer idAffaire,
 			HttpServletRequest request)
 			throws OsirisClientMessageException {
@@ -248,7 +248,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/search/current")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Quotation>> searchQuotationsForCurrentUser(
 			@RequestBody List<String> quotationStatus, @RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisClientMessageException {
@@ -267,7 +267,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/order/asso")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForCustomerOrder(
 			@RequestParam Integer idCustomerOrder)
 			throws OsirisException {
@@ -281,7 +281,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation/asso")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForQuotation(
 			@RequestParam Integer idQuotation)
 			throws OsirisException {
@@ -319,7 +319,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service/provision/attachments")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForProvisionOfService(@RequestParam Integer serviceId)
 			throws OsirisClientMessageException {
 
@@ -335,7 +335,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/attachments")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForAffaire(@RequestParam Integer idAffaire)
 			throws OsirisClientMessageException {
 
@@ -867,7 +867,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/search/current")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Affaire>> getAffairesForCurrentUser(@RequestParam Integer page,
 			@RequestParam String sortBy, @RequestParam String searchText) {
 		if (page == null || page < 0)
@@ -881,7 +881,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation/order")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<CustomerOrder> getCustomerOrderForQuotation(@RequestParam Integer idQuotation)
 			throws OsirisValidationException {
 		if (idQuotation == null)
@@ -896,7 +896,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/order/quotation")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Quotation> getQuotationForCustomerOrder(@RequestParam Integer idCustomerOrder)
 			throws OsirisValidationException {
 		if (idCustomerOrder == null)
@@ -986,7 +986,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service-family-groups")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<ServiceFamilyGroup>> getServiceFamilyGroups(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<ServiceFamilyGroup>>(serviceFamilyGroupService.getServiceFamilyGroups(),
@@ -994,7 +994,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service-families/service-group")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<ServiceFamily>> getServiceFamiliesForFamilyGroup(Integer idServiceFamilyGroup,
 			HttpServletRequest request) {
 		detectFlood(request);
@@ -1008,7 +1008,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service-type/service-family")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<ServiceType>> getServiceTypesForFamily(Integer idServiceFamily,
 			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
@@ -1021,14 +1021,14 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/countries")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Country>> getCountries(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<Country>>(countryService.getCountries(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/cities/search/country/postal-code")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<City>> getCitiesByCountryAndPostalCode(@RequestParam Integer countryId,
 			@RequestParam String postalCode, HttpServletRequest request) {
 		detectFlood(request);
@@ -1041,7 +1041,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/cities/search/country")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<City>> getCitiesByCountry(@RequestParam Integer countryId, HttpServletRequest request) {
 		detectFlood(request);
 		Country country = countryService.getCountry(countryId);
@@ -1053,28 +1053,28 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/departments")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Department>> getDepartments(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<Department>>(departmentService.getDepartments(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/civilities")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Civility>> getCivilities(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<Civility>>(civilityService.getCivilities(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/notice-types")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<NoticeType>> getNoticeTypes(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<NoticeType>>(noticeTypeService.getNoticeTypes(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/notice-type-families")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<NoticeTypeFamily>> getNoticeTypeFamilies(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<NoticeTypeFamily>>(noticeTypeFamilyService.getNoticeTypeFamilies(),

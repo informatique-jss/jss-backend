@@ -34,7 +34,7 @@ public class Service implements Serializable, IId {
 	@SequenceGenerator(name = "service_sequence", sequenceName = "service_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_sequence")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private Integer id;
 
 	@OneToMany(targetEntity = Provision.class, mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -50,7 +50,7 @@ public class Service implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_type")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments", "assoServiceTypeFieldTypes",
 			"assoServiceProvisionTypes" }, allowSetters = true)
 	private ServiceType serviceType;
@@ -69,19 +69,19 @@ public class Service implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<AssoServiceFieldType> assoServiceFieldTypes;
 
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private String customLabel;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private String customerComment;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private boolean hasMissingInformations;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private String serviceStatus;
 
 	@Transient

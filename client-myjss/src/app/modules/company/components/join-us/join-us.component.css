@@ -16,3 +16,7 @@ swiper-container {
     height: 37vh;
   }
 }
+
+.card-wrapper {
+  height: 350px;
+}

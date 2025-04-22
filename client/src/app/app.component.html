@@ -20,19 +20,6 @@
     <main>
       <router-outlet></router-outlet>
     </main>
-    <table *ngIf="userNotes && userNotes.length>0"
-      class="mat-table mat-mdc-table mdc-data-table__table notes-table min-widht-table" cdkDrag
-      [cdkDragFreeDragPosition]="currentUserNotePosition" (cdkDragEnded)="dropNoteTable($event)">
-      <thead>
-        <tr class="mat-mdc-header-row mdc-data-table__header-row    drag-cursor" cdkDragHandle>
-          <th colspan="3" class="mat-mdc-header-cell mdc-data-table__header-cell icon-row-th ">
-            <mat-icon color="accent" (click)="restoreDefaultNoteTablePosition()"
-              class="pointer first-mat-icon small-icon" matTooltip="Restaurer la position initiale"
-              matTooltipShowDelay="1000">location_on</mat-icon>
-          </th>
-        </tr>
-      </thead>
-    </table>
   </mat-drawer-container>
 </body>
 

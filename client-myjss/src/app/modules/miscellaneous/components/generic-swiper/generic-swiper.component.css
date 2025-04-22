@@ -1,0 +1,12 @@
+.card-img {
+  background-size: cover;
+  width: 100%;
+}
+
+.card-wrapper {
+  height: 500px;
+}
+
+.first-img {
+  object-fit: cover;
+}

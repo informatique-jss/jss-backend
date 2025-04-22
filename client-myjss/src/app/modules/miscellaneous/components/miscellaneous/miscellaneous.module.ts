@@ -14,6 +14,7 @@ import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.c
 import { RadioGroupAffaireTypeComponent } from '../forms/radio-group-affaire-type/radio-group-affaire-type.component';
 import { RadioGroupQuotationTypeComponent } from '../forms/radio-group-quotation-type/radio-group-quotation-type.component';
 import { SelectCountryComponent } from '../forms/select-country/select-country.component';
+import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
 import { GenericSwiperComponent } from '../generic-swiper/generic-swiper.component';
 import { OurClientsComponent } from '../our-clients/our-clients.component';
@@ -32,7 +33,6 @@ const routes: Routes = [{}];
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
-    GenericInputComponent,
     SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
@@ -43,6 +43,8 @@ const routes: Routes = [{}];
     RadioGroupAffaireTypeComponent,
     AutocompleteCityComponent,
     SelectCountryComponent,
+    GenericInputComponent,
+    SelectMyJssCategoryComponent
   ],
   exports: [
     AvatarComponent,
@@ -58,6 +60,7 @@ const routes: Routes = [{}];
     RadioGroupAffaireTypeComponent,
     AutocompleteCityComponent,
     SelectCountryComponent,
+    SelectMyJssCategoryComponent,
     OurClientsComponent,
   ]
 })

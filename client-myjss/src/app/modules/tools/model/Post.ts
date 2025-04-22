@@ -3,6 +3,7 @@ import { Media } from "./Media";
 import { MyJssCategory } from "./MyJssCategory";
 import { Tag } from "./Tag";
 
+
 export interface Post {
   id: number;
   titleText: string;
@@ -16,11 +17,10 @@ export interface Post {
   sticky: boolean;
   relatedPosts: Post[];
   mediaTimeLength: number;
-
   // Computed field
   fullAuthor: Author;
   myJssCategories: MyJssCategory[];
   postTags: Tag[];
   media: Media;
-  premium: boolean;
+  isPremium: boolean;
 }

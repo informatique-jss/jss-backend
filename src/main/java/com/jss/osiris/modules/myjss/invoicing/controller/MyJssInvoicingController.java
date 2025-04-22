@@ -169,7 +169,7 @@ public class MyJssInvoicingController {
 				HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	@GetMapping(inputEntryPoint + "/order/list")
 	public ResponseEntity<List<Payment>> getApplicablePaymentsForCustomerOrder(
 			@RequestParam Integer customerOrderId) throws OsirisException {

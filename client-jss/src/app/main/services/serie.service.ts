@@ -12,8 +12,8 @@ export class SerieService extends AppRestService<Serie> {
     super(http, "wordpress");
   }
 
-  getAvailableSeries() {
-    return this.getListCached(new HttpParams(), "series");
+  getSeries(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "series");
   }
 
 

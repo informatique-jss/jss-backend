@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/services/appRest.service';
+import { AppRestService } from '../../../services/appRest.service';
 import { CommunicationPreference } from '../model/CommunicationPreference';
 
 @Injectable({

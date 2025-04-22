@@ -86,4 +86,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.responsableDummyCustomerFrance;
   }
 
+  getMyJssCategoryAnnouncement() {
+    return this.constant.myJssCategoryAnnouncement;
+  }
+  getMyJssCategoryFormality() {
+    return this.constant.myJssCategoryFormality;
+  }
 }

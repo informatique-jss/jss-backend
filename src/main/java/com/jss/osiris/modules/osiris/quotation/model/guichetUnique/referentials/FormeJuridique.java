@@ -22,7 +22,7 @@ public class FormeJuridique implements Serializable, ICode {
     }
 
     @Id
-    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private String code;
 
     @Column(columnDefinition = "TEXT")

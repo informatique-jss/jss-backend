@@ -130,12 +130,12 @@ public class Comment implements Serializable, IId {
 		return authorLastName;
 	}
 
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public void setAuthorLastName(String authorLastName) {
 		this.authorLastName = authorLastName;
 	}
 
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class })
 	public String getAuthorLastNameInitials() {
 		if (this.getAuthorLastName() != null) {
 			this.authorLastNameInitials = this.getAuthorLastName().substring(0, 1);

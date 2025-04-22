@@ -19,7 +19,6 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.model.CommentSearch;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
@@ -40,9 +39,6 @@ public class CrmController {
 
         @Autowired
         private CommentService commentService;
-
-        @Autowired
-        private PostService postService;
 
         @JsonView(JacksonViews.MyJssDetailedView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
@@ -224,7 +220,6 @@ public class CrmController {
          * @throws OsirisException
          */
         @GetMapping(inputEntryPoint + "/post/comment/delete")
-        @JsonView(JacksonViews.MyJssDetailedView.class)
         public ResponseEntity<Boolean> delete(@RequestParam Integer commentId) {
 
                 Comment comment = commentService.getComment(commentId);

@@ -26,11 +26,11 @@ public class Civility implements Serializable, IId {
 
     @Column(nullable = false)
     @IndexedField
-    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String label;
 
     @Column(nullable = false, length = 20)
-    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String code;
 
     public Integer getId() {

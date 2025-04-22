@@ -1,6 +1,8 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { ConstantService } from './libs/constant.service';
+import { ThemeService } from './libs/theme.service';
 import { Responsable } from './modules/profile/model/Responsable';
 import { LoginService } from './modules/profile/services/login.service';
 
@@ -18,6 +20,7 @@ export class AppComponent implements AfterViewInit {
   constructor(private router: Router,
     private constantService: ConstantService,
     private loginService: LoginService,
+    private themeService: ThemeService,
   ) {
   }
 
@@ -28,6 +31,12 @@ export class AppComponent implements AfterViewInit {
         this.currentUser = undefined;
       else
         this.refreshCurrentUser()
+    });
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      const url = event.urlAfterRedirects;
+      this.themeService.updateThemeFromUrl(url);
     });
   }
 

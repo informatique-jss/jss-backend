@@ -458,7 +458,9 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                         balance = balance.subtract(counterPart.getDebitAmount());
                 }
             }
-
+        else {
+            throw new OsirisException("no records found");
+        }
         checkBalance(balance);
     }
 
@@ -796,7 +798,20 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             // Grab former bank accounting record to generate counter part
 
             // Customer or provider part
-            AccountingRecord accountingRecord = payment.getAccountingRecords().get(0);
+            AccountingRecord accountingRecord = null;
+
+            for (AccountingRecord record : payment.getAccountingRecords()) {
+                if (!record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                        .equals(constantService.getPrincipalAccountingAccountBank().getId())
+                        && !record.getAccountingAccount().getId()
+                                .equals(constantService.getAccountingAccountCaisse().getId())) {
+                    accountingRecord = record;
+                }
+            }
+
+            if (accountingRecord == null)
+                throw new OsirisClientMessageException("accounting records not found");
+
             if (accountingRecord.getCreditAmount() != null)
                 balance = balance.subtract(accountingRecord.getCreditAmount());
             else
@@ -813,6 +828,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             // Bank part
             List<AccountingRecord> accountingRecords = accountingRecordService
                     .getClosedAccountingRecordsForPayment(payment);
+            accountingRecord = null;
             for (AccountingRecord record : accountingRecords) {
                 if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                         .equals(constantService.getPrincipalAccountingAccountBank().getId())
@@ -822,10 +838,23 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 }
             }
 
-            if (accountingRecord.getCreditAmount() != null)
-                balance = balance.subtract(accountingRecord.getCreditAmount());
-            else
-                balance = balance.add(accountingRecord.getDebitAmount());
+            // Account closure not done
+            if (accountingRecord == null) {
+                for (AccountingRecord record : payment.getAccountingRecords()) {
+                    if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId())
+                            || record.getAccountingAccount().getId()
+                                    .equals(constantService.getAccountingAccountCaisse().getId())) {
+                        accountingRecord = record;
+                    }
+                }
+            }
+
+            if (accountingRecord != null)
+                if (accountingRecord.getCreditAmount() != null)
+                    balance = balance.subtract(accountingRecord.getCreditAmount());
+                else
+                    balance = balance.add(accountingRecord.getDebitAmount());
 
             counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
                     "Annulation du paiement " + payment.getId(), getPaymentDateForAccounting(payment));
@@ -1068,7 +1097,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     public void generateAccountingRecordsForRefundExport(Refund refund)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
 
-        if (refund.getPayments() == null || refund.getPayments().size() != 1)
+        if (refund.getPayments() == null || refund.getPayments().size() > 2)
             throw new OsirisException(null, "Impossible to find refund payment");
         Payment payment = refund.getPayments().get(0);
         AccountingJournal bankJournal = constantService.getAccountingJournalBank();
@@ -1146,7 +1175,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
 
     @Override
     public LocalDateTime getPaymentDateForAccounting(Payment payment) throws OsirisException {
-        LocalDateTime closedDate = constantService.getDateAccountingClosureForAccountant().atTime(12, 0);
+        LocalDateTime closedDate = constantService.getDateAccountingClosureForAll().atTime(12, 0);
         if (payment.getPaymentDate().isBefore(closedDate))
             return closedDate;
         return payment.getPaymentDate();

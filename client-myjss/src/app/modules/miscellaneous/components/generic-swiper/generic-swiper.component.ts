@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, ContentChild, CUSTOM_ELEMENTS_SCHEMA, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  ContentChild,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
+import { fromEvent, Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { SwiperContainer } from 'swiper/element';
 
 @Component({
@@ -12,11 +23,18 @@ import { SwiperContainer } from 'swiper/element';
 })
 export class GenericSwiperComponent implements OnInit {
 
+  mediumViewport: number = 768;
+  largeViewport: number = 992;
+
   @ViewChild('genericSwiper') genericSwiper!: ElementRef<SwiperContainer>;
   @Input() items: any[] = [];
   @Input() subtitle: string = '';
   @Input() title: string = '';
+  @Input() slidesPerView: number = 3;
+  @ContentChild(TemplateRef) templateRefFirstItem!: TemplateRef<any>; // Take the content of the personalised HTML
   @ContentChild(TemplateRef) templateRef!: TemplateRef<any>; // Take the content of the personalised HTML
+
+  private destroy$ = new Subject<void>();
 
   constructor() { }
 
@@ -28,7 +46,7 @@ export class GenericSwiperComponent implements OnInit {
       autoHeight: true,
       spaceBetween: "10",
       speed: "500",
-      slidesPerView: "3",
+      slidesPerView: this.getSlidesPerView(),
       loop: "true",
       injectStyles: [`
           .swiper-pagination-bullet {
@@ -39,7 +57,7 @@ export class GenericSwiperComponent implements OnInit {
             background: rgba(255, 255, 255, 0);
             border: white solid 1px;
           }
-    
+
           .swiper-pagination-bullet-active {
             color: #fff;
             background:rgb(255, 255, 255);
@@ -52,6 +70,69 @@ export class GenericSwiperComponent implements OnInit {
 
     Object.assign(this.genericSwiper.nativeElement, params);
     this.genericSwiper.nativeElement.initialize();
+
+    // We set a timeout to be sure that everything is loaded
+    setTimeout(() => {
+      this.setMaxSlideHeight();
+    }, 0);
+
+    fromEvent(window, 'resize')
+      .pipe(debounceTime(200), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.setMaxSlideHeight();
+        this.updateSwiperSlidesPerView();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private getSlidesPerView(): number {
+    const width = window.innerWidth;
+
+    if (width < this.mediumViewport) {
+      return 1;
+    } else if (width >= this.mediumViewport && width < this.largeViewport) {
+      return 2;
+    } else {
+      return 3;
+    }
+  }
+
+  private updateSwiperSlidesPerView(): void {
+    const swiperEl = this.genericSwiper.nativeElement;
+
+    swiperEl.slidesPerView = this.getSlidesPerView();
+  }
+
+
+  private setMaxSlideHeight(): void {
+    const swiperEl = this.genericSwiper?.nativeElement as HTMLElement;
+    if (!swiperEl) return;
+
+    const slides = swiperEl.querySelectorAll('swiper-slide');
+    let maxHeight = 0;
+
+    slides.forEach((slide: HTMLElement) => {
+      // Reset the height to properly calculate the new value
+      slide.style.height = 'auto';
+    });
+
+    slides.forEach((slide: HTMLElement) => {
+      const slideHeight = slide.scrollHeight;
+      if (slideHeight > maxHeight) {
+        maxHeight = slideHeight;
+      }
+    });
+
+    swiperEl.style.height = `${maxHeight}px`;
+
+    slides.forEach((slide: HTMLElement) => {
+      slide.style.height = `${maxHeight}px`;
+    });
+
   }
 
   slideNext(): void {

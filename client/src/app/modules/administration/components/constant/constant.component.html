@@ -1632,6 +1632,48 @@
           </tr>
           <tr>
             <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryAnnouncement"
+                label="Catégorie MyJss - Annonces légales" [form]="constantForm"
+                propertyName="myJssCategoryAnnouncement" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryFormality"
+                label="Catégorie MyJss - Formalités légales" [form]="constantForm" propertyName="myJssCategoryFormality"
+                [isMandatory]="false" [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+          <tr>
+            <td>
+              <select-jss-category [(model)]="constant.jssCategoryHomepageFirstHighlighted"
+                label="Catégorie Jss - 1ère catégorie mise en avant" [form]="constantForm"
+                propertyName="jssCategoryHomepageFirstHighlighted" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-jss-category>
+            </td>
+          </tr>
+          <tr>
+          <tr>
+            <td>
+              <select-jss-category [(model)]="constant.jssCategoryHomepageSecondHighlighted"
+                label="Catégorie Jss - 2ème catégorie mise en avant" [form]="constantForm"
+                propertyName="jssCategoryHomepageSecondHighlighted" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-jss-category>
+            </td>
+          </tr>
+          <tr>
+          <tr>
+            <td>
+              <select-jss-category [(model)]="constant.jssCategoryHomepageThirdHighlighted"
+                label="Catégorie Jss - 3ème catégorie mise en avant" [form]="constantForm"
+                propertyName="jssCategoryHomepageThirdHighlighted" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-jss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-accounting-account-class [(model)]="constant.accountingAccountClassProduct"
                 label="Classe comptable - Produits" [form]="constantForm" propertyName="accountingAccountClassProduct"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-accounting-account-class>

@@ -2,6 +2,7 @@ import { HttpClient, HttpContext, HttpContextToken, HttpEvent, HttpParams } from
 import { Inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { PagedContent } from '../main/model/PagedContent';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,12 @@ export abstract class AppRestService<T> {
 
   clearListCache(params: HttpParams, api: string) {
     this.setCache(params, api, undefined);
+  }
+
+  getPagedList(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<PagedContent<T>> {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<PagedContent<T>>;
   }
 
   getList(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<T[]> {

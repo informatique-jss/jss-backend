@@ -6,8 +6,9 @@
     <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
       <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
       <li class="breadcrumb-item"><a routerLink="/tools">Outils</a></li>
-      <li class="breadcrumb-item">
-        <!-- <span *ngIf="selectedTab">{{ selectedTab.label }}</span> -->
+      <li class="breadcrumb-item"><a routerLink="/tools/practical-sheets">Nos fiches pratiques</a>
+      </li>
+      <li class="breadcrumb-item"><a><span *ngIf="post">{{ post.titleText }}</span></a>
       </li>
     </ol>
   </nav>
@@ -42,20 +43,16 @@
         <div class="d-flex align-items-center mb-4">
           <span class="fs-sm me-2">Partager le post:</span>
           <div class="d-flex">
-            <a class="nav-link p-2 me-2" (click)="shareOnLinkedin()" data-bs-toggle="tooltip" data-bs-placement="top"
-              title="LinkedIn" aria-label="LinkedIn">
-              <i class="ai-linkedIn fs-sm"></i>
+            <a class="nav-link p-2 me-2" (click)="shareOnLinkedin()" title="LinkedIn" aria-label="LinkedIn">
+              <i class="ai-linkedin fs-sm"></i>
             </a>
-            <a class="nav-link p-2 me-2" (click)="shareOnInstagram()" data-bs-toggle="tooltip" data-bs-placement="top"
-              title="Instagram" aria-label="Instagram">
+            <a class="nav-link p-2 me-2" (click)="shareOnInstagram()" title="Instagram" aria-label="Instagram">
               <i class="ai-instagram"></i>
             </a>
-            <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" data-bs-toggle="tooltip" data-bs-placement="top"
-              title="Facebook" aria-label="Facebook">
+            <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" title="Facebook" aria-label="Facebook">
               <i class="ai-facebook"></i>
             </a>
-            <a class="nav-link p-2" (click)="shareByMail()" data-bs-toggle="tooltip" data-bs-placement="top"
-              title="mail" aria-label="mail">
+            <a class="nav-link p-2" (click)="shareByMail()" title="mail" aria-label="mail">
               <i class="ai-mail"></i>
             </a>
           </div>
@@ -115,20 +112,16 @@
             <div class="pt-4 pt-md-0 ps-md-4 ms-md-auto">
               <h3 class="h5">Partager le post:</h3>
               <div class="d-flex">
-                <a class="nav-link p-2 me-2" (click)="shareOnLinkedin()" data-bs-toggle="tooltip"
-                  data-bs-placement="bottom" title="Linkedin" aria-label="Linkedin">
-                  <i class="ai-linkedIn fs-sm"></i>
+                <a class="nav-link p-2 me-2" (click)="shareOnLinkedin()" title="Linkedin" aria-label="Linkedin">
+                  <i class="ai-linkedin fs-sm"></i>
                 </a>
-                <a class="nav-link p-2 me-2" (click)="shareOnInstagram()" data-bs-toggle="tooltip"
-                  data-bs-placement="bottom" title="Instagram" aria-label="Instagram">
+                <a class="nav-link p-2 me-2" (click)="shareOnInstagram()" title="Instagram" aria-label="Instagram">
                   <i class="ai-instagram"></i>
                 </a>
-                <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" data-bs-toggle="tooltip"
-                  data-bs-placement="bottom" title="Facebook" aria-label="Facebook">
+                <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" title="Facebook" aria-label="Facebook">
                   <i class="ai-facebook"></i>
                 </a>
-                <a class="nav-link p-2" (click)="shareByMail()" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                  title="Mail" aria-label="Mail">
+                <a class="nav-link p-2" (click)="shareByMail()" title="Mail" aria-label="Mail">
                   <i class="ai-mail"></i>
                 </a>
               </div>

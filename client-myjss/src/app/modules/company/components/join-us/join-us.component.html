@@ -4,7 +4,7 @@
       <h1 class="h1 pe-xxl-5 me-xl-4 mb-md-0 text-white">Participez à notre aventure !</h1>
     </div>
     <div class="col-md-6 col-xl-5 offset-xl-1">
-      <p class="text-body fs-sm mb-5 text-white">Journal d’annonces légales parisien historique et prestataire en
+      <p class="text-body fs-lg mb-5 text-white">Journal d’annonces légales parisien historique et prestataire en
         formalités légales, le JSS est un des leaders dans son domaine.<br />
         Vous cherchez un environnement dynamique où votre talent fera la différence ? <br />
         Découvrez nos opportunités et participez à notre aventure !
@@ -154,17 +154,19 @@
 <section class="container overflow-hidden py-5 my-5">
   <generic-swiper [items]="images" subtitle="NOS BUREAUX" title="Un espace de travail ouvert et inspirant">
     <ng-template let-image>
-      <div class="d-flex align-items-stretch h-100">
-        <a class="d-block gallery-item card-hover zoom-effect h-100 w-100 position-relative" href="#"
-          (click)="openImageModal(image)" data-bs-toggle="modal" data-bs-target="#imageModal">
-          <div
-            class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0">
-            <i class="ai-zoom-in fs-2 text-white position-relative z-2"></i>
-          </div>
-          <div class="zoom-effect-wrapper rounded-5 h-100 w-100">
-            <img class="zoom-effect-img w-100 h-100 object-fit-cover" [src]="image" alt="Inspiring workplace images">
-          </div>
-        </a>
+      <div class="card-wrapper">
+        <div class="d-flex align-items-stretch h-100">
+          <a class="d-block gallery-item card-hover zoom-effect h-100 w-100 position-relative"
+            (click)="openImageModal(image)" data-bs-toggle="modal" data-bs-target="#imageModal">
+            <div
+              class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0">
+              <i class="ai-zoom-in fs-2 text-white position-relative z-2"></i>
+            </div>
+            <div class="zoom-effect-wrapper rounded-5 h-100 w-100">
+              <img class="zoom-effect-img w-100 h-100 object-fit-cover" [src]="image" alt="Inspiring workplace images">
+            </div>
+          </a>
+        </div>
       </div>
     </ng-template>
   </generic-swiper>
@@ -247,7 +249,7 @@
     <div class="row">
       <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
-          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <img src="assets/img/societe/fullfilling-workplace/image_01.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Événements toute l’année</h4>
             <p class="card-text">La Com’ remue ciel et terre pour animer le quotidien des salariés : déjeuner,
@@ -257,7 +259,7 @@
       </div>
       <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
-          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <img src="assets/img/societe/fullfilling-workplace/image_02.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Une équipe bienveillante</h4>
             <p class="card-text">Rejoignez une équipe accueillante et engagée où la bienveillance et la passion sont au
@@ -267,7 +269,7 @@
       </div>
       <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
-          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <img src="assets/img/societe/fullfilling-workplace/image_03.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Fruits frais chaque semaine</h4>
             <p class="card-text">Chaque semaine, des corbeilles de fruits frais sont mises à disposition pour une touche
@@ -279,7 +281,7 @@
     <div class="row mb-4">
       <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
-          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <img src="assets/img/societe/fullfilling-workplace/image_04.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Participation à tous les transports</h4>
             <p class="card-text">Nous prenons en charge une partie des transports en commun et versons également une
@@ -289,7 +291,7 @@
       </div>
       <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
-          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <img src="assets/img/societe/fullfilling-workplace/image_05.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Bureaux au cœur de Paris</h4>
             <p class="card-text">Nos bureaux haussmanniens situés en plein cœur de Paris dans le quartier d’Opéra
@@ -299,7 +301,7 @@
       </div>
       <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
-          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <img src="assets/img/societe/fullfilling-workplace/image_06.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Charte de télétravail</h4>
             <p class="card-text">Profitez d’un rythme de travail souple avec 1 jour de télétravail par semaine et 1 jour
@@ -311,7 +313,7 @@
     <div class="row mb-4">
       <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
-          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <img src="assets/img/societe/fullfilling-workplace/image_07.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Carte ticket restaurant </h4>
             <p class="card-text">Nous prenons soin de votre pause déjeuner avec une carte tickets restaurant Edenred à
@@ -321,7 +323,7 @@
       </div>
       <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
-          <img src="assets/img/blog/grid/01.jpg" class="card-img-top" alt="Card image">
+          <img src="assets/img/societe/fullfilling-workplace/image_08.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Mutuelle de qualité</h4>
             <p class="card-text">Bénéficiez d’une mutuelle avantageuse, prise en charge en partie par le JSS pour un

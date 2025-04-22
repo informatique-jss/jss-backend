@@ -1,10 +1,13 @@
-<div class="position-relative ">
-  <div [formGroup]="form!">
+<div class="full-width row" [formGroup]="form!">
+  <div class="select-wrapper">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
       class="form-label">{{label}}</label>
-    <select class="form-control form-control ps-5" [id]="'fl-text'+uniqueId" [formControlName]="propertyName"
-      (blur)="blurForm()" [disabled]="isDisabled">
-      <option *ngFor="let type of types" [value]="type">{{displayLabel(type)}}</option>
+    <select class="form-control" [formControlName]="propertyName" [id]="'fl-text'+uniqueId" [required]="isMandatory"
+      [compareWith]="compareWithId" (blur)="blurForm()" [disabled]="isDisabled" [(ngModel)]="model">
+      <option *ngFor="let type of types" [ngValue]="type">
+        {{ displayLabel(type) }}
+      </option>
     </select>
+    <i class="ai-chevron-down chevron"></i>
   </div>
 </div>

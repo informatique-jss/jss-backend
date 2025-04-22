@@ -1,4 +1,5 @@
 import { Provider } from '@angular/core';
+import { JssCategory } from '../../../../../../client-jss/src/app/main/model/JssCategory';
 import { AccountingAccount } from '../../accounting/model/AccountingAccount';
 import { AccountingAccountClass } from '../../accounting/model/AccountingAccountClass';
 import { AccountingJournal } from "../../accounting/model/AccountingJournal";
@@ -44,6 +45,7 @@ import { Department } from "./Department";
 import { DocumentType } from "./DocumentType";
 import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
+import { MyJssCategory } from './MyJssCategory';
 import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
@@ -261,6 +263,11 @@ export interface Constant {
   categoryPodcast: Category;
   categoryArticle: Category;
   categorySerie: Category;
+  myJssCategoryAnnouncement: MyJssCategory;
+  myJssCategoryFormality: MyJssCategory;
+  jssCategoryHomepageFirstHighlighted: JssCategory;
+  jssCategoryHomepageSecondHighlighted: JssCategory;
+  jssCategoryHomepageThirdHighlighted: JssCategory;
   accountingAccountClassProduct: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
 }

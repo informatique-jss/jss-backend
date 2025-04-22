@@ -4,23 +4,23 @@ import { Subscription } from 'rxjs';
 import { MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_OFFERS_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { AppService } from '../../../services/app.service';
 import { IndexEntity } from '../../model/IndexEntity';
-import { MyJssCategory } from '../../model/MyJssCategory';
+import { JssCategory } from '../../model/JssCategory';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { DepartmentService } from '../../services/department.service';
 import { IndexEntityService } from '../../services/index.entity.service';
-import { MyJssCategoryService } from '../../services/myjss.category.service';
+import { JssCategoryService } from '../../services/jss.category.service';
 
 @Component({
-    selector: 'main-header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.css'],
-    standalone: false
+  selector: 'main-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css'],
+  standalone: false
 })
 export class HeaderComponent implements OnInit {
 
   departments: PublishingDepartment[] = [];
-  categories: MyJssCategory[] = [];
-  categoriesByOrder: MyJssCategory[] = [];
+  categories: JssCategory[] = [];
+  categoriesByOrder: JssCategory[] = [];
 
   debounce: any;
   searchInProgress: boolean = false;
@@ -32,7 +32,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private departmentService: DepartmentService,
-    private myJssCategoryService: MyJssCategoryService,
+    private jssCategoryService: JssCategoryService,
     private appService: AppService,
     private indexEntityService: IndexEntityService
   ) { }
@@ -41,9 +41,9 @@ export class HeaderComponent implements OnInit {
     this.departmentService.getAvailablePublishingDepartments().subscribe(departments => {
       this.departments = departments
     });
-    this.myJssCategoryService.getAvailableMyJssCategories().subscribe(categories => {
+    this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
       this.categories = categories
-      this.categoriesByOrder = this.categories.sort((a: MyJssCategory, b: MyJssCategory) => b.categoryOrder - a.categoryOrder);
+      this.categoriesByOrder = this.categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
     });
   }
 
@@ -59,12 +59,12 @@ export class HeaderComponent implements OnInit {
     this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE);
   }
 
-  openCategoryPosts(category: MyJssCategory, event: any) {
-    this.appService.openRoute(event, "category/" + category.slug, undefined);
+  openCategoryPosts(category: JssCategory, event: any) {
+    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
   }
 
   openDepartment(department: PublishingDepartment, event: any) {
-    this.appService.openRoute(event, "department/" + department.code, undefined);
+    this.appService.openRoute(event, "post/department/" + department.id, undefined);
   }
 
   openSearchAnnouncement(event: any) {

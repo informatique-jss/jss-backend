@@ -53,6 +53,18 @@ export class AppService {
     return;
   }
 
+  openLinkedinJssPage() {
+    window.open("https://www.linkedin.com/company/journal-special-des-societes/_blank");
+  }
+
+  openInstagramJssPage() {
+    window.open("https://www.instagram.com/journalspecialdessocietes/_blank");
+  }
+
+  openFacebookJssPage() {
+    window.open("https://www.facebook.com/Journal.Special.des.Societes/_blank");
+  }
+
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
@@ -102,10 +114,10 @@ export class AppService {
 
   getAllToolsMenuItems(): MenuItem[] {
     let menuItem = [] as MenuItem[];
-    menuItem.push({ label: "Pièces obligatoires", iconClass: "ai-user-check", route: "" } as MenuItem);
-    menuItem.push({ label: "Nos fiches pratiques", iconClass: "ai-wallet", route: "" } as MenuItem);
-    menuItem.push({ label: "Webinaires", iconClass: "ai-chart", route: "" } as MenuItem);
-    menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "" } as MenuItem);
+    menuItem.push({ label: "Nos fiches pratiques", iconClass: "ai-wallet", route: "/tools/practical-sheets" } as MenuItem);
+    // menuItem.push({ label: "Pièces obligatoires", iconClass: "ai-user-check", route: "/tools/mandatory-documents" } as MenuItem);
+    // menuItem.push({ label: "Webinaires", iconClass: "ai-chart", route: "/tools/webinars" } as MenuItem);
+    // menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "/tools/our-exclusives" } as MenuItem);
 
     return menuItem;
   }

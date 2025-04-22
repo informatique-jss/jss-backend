@@ -74,6 +74,13 @@
               <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity?invoice.billingLabelCity.label:""}}
                 {{invoice.billingLabelCountry?invoice.billingLabelCountry.label:""}}</p>
               <p *ngIf="invoice.billingLabelIntercommunityVat">N° de TVA : {{invoice.billingLabelIntercommunityVat}}</p>
+              <div *ngIf="billingMailComputeResult">
+                <p>Mails d'envoi :</p>
+                <ul>
+                  <li *ngFor="let mail of billingMailComputeResult.recipientsMailTo">{{mail.mail}}</li>
+                  <li *ngFor="let mail of billingMailComputeResult.recipientsMailCc">{{mail.mail}}</li>
+                </ul>
+              </div>
             </td>
             <td class="mat-mdc-cell mdc-data-table__cell  td-info" *ngIf="invoice.responsable">
               <p>{{getCustomerOrderName(invoice)}} <mat-icon color="accent" matTooltip="Voir le donneur d'ordre"

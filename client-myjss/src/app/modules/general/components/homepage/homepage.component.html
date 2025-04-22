@@ -43,11 +43,11 @@
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body pb-3">
             <img class="d-block mt-1 mt-sm-0 mb-4" [src]="annoncesLegalesPicto" />
-            <h3 class="h4">Annonces légales</h3>
+            <h3 class="h4" routerLink="/services/announcement" style="cursor: pointer;">Annonces légales</h3>
             <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openAnnouncements($event)"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -60,11 +60,11 @@
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body pb-3">
             <img class="d-block mt-1 mt-sm-0 mb-4" [src]="formalitesPicto" />
-            <h3 class="h4">Formalité légales</h3>
+            <h3 class="h4" routerLink="/services/formality" style="cursor: pointer;">Formalité légales</h3>
             <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openFormality($event)"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -79,11 +79,11 @@
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body pb-3">
             <img class="d-block mt-1 mt-sm-0 mb-4" [src]="apostilleLegaPicto" />
-            <h3 class="h4">Apostille & Légalisation</h3>
+            <h3 class="h4" routerLink="/services/apostille" style="cursor: pointer;">Apostille & Légalisation</h3>
             <p class="mb-0">Authentification rapide et conforme de vos documents valable à internationale.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openApostille($event)"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -96,11 +96,11 @@
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body pb-3">
             <img class="d-block mt-1 mt-sm-0 mb-4" [src]="domiciliationPicto" />
-            <h3 class="h4">Domiciliation</h3>
+            <h3 class="h4" routerLink="/services/domiciliation" style="cursor: pointer;">Domiciliation</h3>
             <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDomiciliation($event)"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -113,11 +113,11 @@
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body pb-3">
             <img class="d-block mt-1 mt-sm-0 mb-4" [src]="fournitureDocumentsPicto" />
-            <h3 class="h4">Fourniture de documents</h3>
+            <h3 class="h4" routerLink="/services/document" style="cursor: pointer;">Fourniture de documents</h3>
             <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link" href="#"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDocument($event)"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -178,8 +178,47 @@
   </div>
 </section>
 
-<div class="pb-5 mb-md-3 mb-lg-4 mb-xxl-5">
+<section class="background-opacity mb-5">
+  <div class="container overflow-hidden">
+    <generic-swiper *ngIf="tendencyPosts && tendencyPosts.length>0" [items]="tendencyPosts" title="Articles à la une">
+      <ng-template let-post>
+        <div class="h-100">
+          <div class="card border-0 bg-tertiary">
+            <a (click)="openPost(post.slug,$event)">
+              <img class="card-img-top"
+                [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
+                alt="Post image">
+            </a>
+            <div class="card-body pb-4">
+              <div class="d-flex align-items-center mb-4 mt-n1">
+                <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+                <span class="fs-xs opacity-20 mx-3">|</span>
+                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
+              </div>
+              <h3 class="h4 card-title card-title-truncate">
+                <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+              </h3>
+              <p class="card-text card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+            </div>
+            <div class="card-footer pt-3">
+              <div class="d-flex align-items-center text-decoration-none pb-2">
+                <img class="rounded-circle"
+                  [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                  width="48" alt="Post author">
+                <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </generic-swiper>
+  </div>
+</section>
+
+<div class="py-5 my-md-3 my-lg-4 my-xxl-5">
   <newsletter></newsletter>
 </div>
 
-<our-clients></our-clients>
+<div class="py-5 my-5">
+  <our-clients></our-clients>
+</div>

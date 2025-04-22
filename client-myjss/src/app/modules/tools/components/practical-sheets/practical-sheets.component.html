@@ -1,0 +1,354 @@
+<!--Top search -->
+<section class="bg-yellow-custom">
+  <div class="container py-5">
+    <div class="text-center">
+      <h1 class="secondary-heading mt-2 mb-5">Les fiches pratiques de MyJSS</h1>
+      <h3 class="secondary-heading my-5">Quelles informations recherchez-vous ?</h3>
+    </div>
+    <div class="w-100 justify-content-between my-3">
+      <div class="col-12">
+        <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
+          <div class="col">
+            <div class="row align-items-center">
+              <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher"
+                [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false"
+                [isDisplayLabel]="false" (onFormChange)="searchForPosts()" class="btn-search col"
+                [icon]="'search'"></generic-input>
+
+              <div *ngIf="isLoading" class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
+                <span class="visually-hidden">chargement...</span>
+              </div>
+
+              <button *ngIf="searchText" class="btn btn-search col-1" (click)="clearSearch()">
+                <i class="ai ai-cross-alt"></i>
+              </button>
+            </div>
+          </div>
+          <div class="select-box col-3 justify-content-end">
+            <select-myjss-category class="cursor-pointer ps-0" [additionnalType]="this.myJssCategories[0]"
+              [(model)]="selectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+              propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"
+              (onFormChange)="searchForPosts()"></select-myjss-category>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section *ngIf="searchResults && searchResults.length > 0" class="container-custom" #searchResultsSection>
+      <div class="border-0 rounded-3 custom-dropdown">
+        <ul class="list-group mt-2 search-result ">
+          <li class="list-group-item card py-2" *ngFor="let post of searchResults">
+            <div class="row">
+              <div class="col-12">
+                <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
+                  <h6 class="fw-bold secondary-heading" [innerHTML]="highlightText(post.titleText) | trustHtml"></h6>
+                </a>
+                <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
+                  <p class="text-truncate-custom"><span [innerHTML]="highlightText(post.excerptText) | trustHtml"
+                      style="white-space: nowrap;"></span></p>
+                </a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</section>
+
+
+<section class="background-opacity">
+  <div class="container overflow-hidden">
+    <div *ngIf="!tendencyPosts || tendencyPosts.length == 0" class="row">
+      <!-- Loading placeholders  -->
+      <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
+        <div class="position-relative placeholder-wave">
+          <div class="card-img-top placeholder ratio ratio-16x9"></div>
+          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title placeholder-glow">
+            <span class="placeholder col-6"></span>
+            <span class="visually-hidden">Heading</span>
+          </h5>
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+          <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
+        </div>
+      </div>
+    </div>
+
+    <generic-swiper *ngIf="tendencyPosts && tendencyPosts.length>0" [items]="tendencyPosts" title="Articles à la une">
+      <ng-template let-post>
+        <div class="h-100">
+          <div class="card border-0 bg-tertiary">
+            <a (click)="openPost(post.slug,$event)">
+              <img class="card-img-top"
+                [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
+                alt="Post image">
+            </a>
+            <div class="card-body pb-4">
+              <div class="d-flex align-items-center mb-4 mt-n1">
+                <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+                <span class="fs-xs opacity-20 mx-3">|</span>
+                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
+              </div>
+              <h3 class="h4 card-title card-title-truncate">
+                <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+              </h3>
+              <p class="card-text card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+            </div>
+            <div class="card-footer pt-3">
+              <div class="d-flex align-items-center text-decoration-none pb-2">
+                <img class="rounded-circle"
+                  [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                  width="48" alt="Post author">
+                <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </generic-swiper>
+  </div>
+</section>
+
+<section class="container overflow-hidden">
+  <div *ngIf="!topPosts || topPosts.length==0" class="row">
+    <!-- Loading placeholders  -->
+    <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
+      <div class="position-relative placeholder-wave">
+        <div class="card-img-top placeholder ratio ratio-16x9"></div>
+        <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title placeholder-glow">
+          <span class="placeholder col-6"></span>
+          <span class="visually-hidden">Heading</span>
+        </h5>
+        <p class="card-text placeholder-glow">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
+        <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
+      </div>
+    </div>
+  </div>
+
+  <generic-swiper *ngIf="topPosts && topPosts.length>0" [items]="topPosts" title="Nos derniers articles">
+    <ng-template let-post>
+      <div class="h-100">
+        <div class="card border-0 bg-tertiary">
+          <a (click)="openPost(post.slug,$event)">
+            <img class="card-img-top"
+              [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
+          </a>
+          <div class="card-body pb-4">
+            <div class="d-flex align-items-center mb-4 mt-n1">
+              <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+              <span class="fs-xs opacity-20 mx-3">|</span>
+              <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
+            </div>
+            <h3 class="h4 card-title card-title-truncate">
+              <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+            </h3>
+            <p class="card-text card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+          </div>
+          <div class="card-footer pt-3">
+            <div class="d-flex align-items-center text-decoration-none pb-2">
+              <img class="rounded-circle"
+                [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                width="48" alt="Post author">
+              <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </generic-swiper>
+</section>
+
+<section class="background-opacity">
+  <div class="container overflow-hidden ">
+    <div *ngIf="!mostSeenPosts || mostSeenPosts.length==0" class="row">
+      <!-- Loading placeholders  -->
+      <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
+        <div class="position-relative placeholder-wave">
+          <div class="card-img-top placeholder ratio ratio-16x9"></div>
+          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title placeholder-glow">
+            <span class="placeholder col-6"></span>
+            <span class="visually-hidden">Heading</span>
+          </h5>
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+          <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
+        </div>
+      </div>
+    </div>
+
+    <generic-swiper *ngIf="mostSeenPosts && mostSeenPosts.length>0" [items]="mostSeenPosts"
+      title="Articles les plus vus">
+      <ng-template let-post>
+        <div class="h-100">
+          <div class="card border-0 bg-tertiary">
+            <a (click)="openPost(post.slug,$event)">
+              <img class="card-img-top"
+                [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
+            </a>
+            <div class="card-body pb-4">
+              <div class="d-flex align-items-center mb-4 mt-n1">
+                <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+                <span class="fs-xs opacity-20 mx-3">|</span>
+                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
+              </div>
+              <h3 class="h4 card-title card-title-truncate">
+                <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+              </h3>
+              <p class="card-text card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+            </div>
+            <div class="card-footer pt-3">
+              <div class="d-flex align-items-center text-decoration-none pb-2">
+                <img class="rounded-circle"
+                  [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                  width="48" alt="Post author">
+                <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </generic-swiper>
+  </div>
+</section>
+
+<!-- Second search -->
+<section class="container py-5">
+  <h1 class="m-4 text-center">Guides juridiques</h1>
+  <p class="text-center">Dirigeant, professionnel du droit ou du chiffre, vous avez des questions juridiques ? <br>MyJSS
+    vous propose 1300+
+    articles mis à jour par des juristes formalistes.</p>
+  <div class="w-100 my-3 d-flex justify-content-between">
+    <div class="col-12">
+      <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
+        <div class="col">
+          <div class="row align-items-center">
+            <generic-input style="flex-grow: 1;" [(model)]="secondSearchText" label="Rechercher"
+              [form]="practicalSheetsForm" propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false"
+              [isDisplayLabel]="false" (onFormChange)="searchForSecondPosts()" [icon]="'search'"
+              class="btn-search col"></generic-input>
+
+            <div *ngIf="isLoading2" class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
+              <span class="visually-hidden">chargement...</span>
+            </div>
+
+            <button *ngIf="secondSearchText" class="col-1 btn btn-link btn-search" (click)="clearSecondSearch()">
+              <i class="ai ai-cross-alt"></i>
+            </button>
+          </div>
+        </div>
+        <div class="select-box col-3 justify-content-end">
+          <select-myjss-category class="cursor-pointer" [additionnalType]="this.myJssCategories[0]"
+            [(model)]="secondSelectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+            propertyName="secondSelectedMyJssCategory" [isMandatory]="false" (onFormChange)="searchForSecondPosts()"
+            [isDisabled]="false"></select-myjss-category>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!secondSearchText">
+    <ng-container *ngFor="let myJssCategory of myJssCategories;">
+      <div class="accordion-item border-top mb-0"
+        *ngIf="!myJssCategory.id || (myJssCategory.id>=0 && !postsByMyJssCategory[myJssCategory.id])">
+        <div class="accordion-header">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+        </div>
+      </div>
+      <ng-container *ngIf="myJssCategory.id && postsByMyJssCategory[myJssCategory.id] && !secondSearchText">
+        <div class="card dark-blue-dropdown rounded-3 mt-3"
+          [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
+          <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
+            <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
+            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
+              <span class="circle-icon">
+                <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+              </span>
+            </button>
+          </div>
+
+          <div class="drop-down-body">
+            <div class="row ps-4 pe-5 me-5">
+              <div class="col-4 g-2"
+                *ngFor="let post of (isExpanded(myJssCategory.id)  ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
+                <li class="d-flex pb-2 mb-1">
+                  <span class="bg-primary mt-2 checkbox-custom"></span>
+                  <a class="text-decoration-none text-gray" (click)="openPost(post.slug,$event)"
+                    data-bs-toggle="tooltip" [title]="post.titleText" data-bs-placement="top"
+                    [innerHTML]="post.titleText | trustHtml"></a>
+                </li>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="secondSearchText">
+    <ng-container *ngFor="let myJssCategory of myJssCategories;">
+      <ng-container
+        *ngIf="myJssCategory.id && (secondSelectedMyJssCategory.id == allMyJssCategories.id || secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0)">
+        <div class="card dark-blue-dropdown rounded-3 mt-3">
+          <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
+            <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
+            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
+              <span class="circle-icon">
+                <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+              </span>
+            </button>
+          </div>
+
+          <div class="card-body">
+            <div class=" row">
+              <div class="col-4"
+                *ngFor="let post of (isExpanded(myJssCategory.id)  ? secondSearchResults[myJssCategory.id] :  secondSearchResults[myJssCategory.id].slice(0,3))">
+                <li class="d-flex pb-2 mb-1">
+                  <span class="bg-primary mt-2 checkbox-custom"></span>
+                  <a class="text-decoration-none text-gray text-truncate-custom" (click)="openPost(post.slug,$event)"
+                    data-bs-toggle="tooltip" [title]="post.titleText" data-bs-placement="top"
+                    [innerHTML]="post.titleText | trustHtml"></a>
+                </li>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</section>
+
+<div class="pb-5 mb-md-3 mb-lg-4 mb-xxl-5">
+  <newsletter></newsletter>
+</div>

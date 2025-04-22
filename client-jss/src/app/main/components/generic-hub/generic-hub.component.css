@@ -1,0 +1,81 @@
+.page-link {
+  border: none !important;
+  background-color: transparent !important;
+  color: var(--bs-secondary);
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.page-link:hover {
+  color: #ff3e30;
+  background-color: transparent;
+}
+
+.page-item.active .page-link {
+  color: var(--ar-primary);
+  font-weight: bold;
+  background-color: transparent !important;
+  border: none;
+}
+
+.page-item:not(:first-child) .page-link {
+  margin-left: 0;
+}
+
+.page-item.disabled .page-link {
+  color: var(--bs-gray);
+  cursor: not-allowed;
+}
+
+.btn-clear-search {
+  position: absolute;
+  top: 50%;
+  right: 3rem;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #999;
+  padding: 0;
+  margin: 0;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gray-400 {
+  color: var(--bs-gray-400);
+}
+
+.bg-newsletter {
+  background-color: #ECF5FF;
+}
+
+.counter-post-item {
+  border-left: 1px solid var(--bs-gray-700);
+}
+
+.digits {
+  color: var(--ar-primary);
+  font-weight: 600;
+}
+
+.title-most-seen {
+  color: var(--ar-primary);
+}
+
+.fixed-size-img-posts .card-img img {
+  height: 320px;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: inherit;
+}

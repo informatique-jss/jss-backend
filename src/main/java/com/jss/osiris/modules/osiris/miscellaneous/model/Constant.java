@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
@@ -897,6 +899,31 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_category_serie")
 	private Category categorySerie;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_myjss_category_announcement")
+	private MyJssCategory myJssCategoryAnnouncement;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_myjss_category_formality")
+	private MyJssCategory myJssCategoryFormality;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_jss_category_homepage_first_highlighted")
+	private JssCategory jssCategoryHomepageFirstHighlighted;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_jss_category_homepage_second_highlighted")
+	private JssCategory jssCategoryHomepageSecondHighlighted;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_jss_category_homepage_third_highlighted")
+	private JssCategory jssCategoryHomepageThirdHighlighted;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class_product")
@@ -2622,6 +2649,46 @@ public class Constant implements Serializable, IId {
 	public void setServiceFamilyImmatriculationAlAndFormality(
 			ServiceFamily serviceFamilyImmatriculationAlAndFormality) {
 		this.serviceFamilyImmatriculationAlAndFormality = serviceFamilyImmatriculationAlAndFormality;
+	}
+
+	public MyJssCategory getMyJssCategoryAnnouncement() {
+		return myJssCategoryAnnouncement;
+	}
+
+	public void setMyJssCategoryAnnouncement(MyJssCategory announcementMyJssCategory) {
+		this.myJssCategoryAnnouncement = announcementMyJssCategory;
+	}
+
+	public MyJssCategory getMyJssCategoryFormality() {
+		return myJssCategoryFormality;
+	}
+
+	public void setMyJssCategoryFormality(MyJssCategory formalityMyJssCategory) {
+		this.myJssCategoryFormality = formalityMyJssCategory;
+	}
+
+	public JssCategory getJssCategoryHomepageFirstHighlighted() {
+		return jssCategoryHomepageFirstHighlighted;
+	}
+
+	public void setJssCategoryHomepageFirstHighlighted(JssCategory jssCategoryHomepageFirstHighlighted) {
+		this.jssCategoryHomepageFirstHighlighted = jssCategoryHomepageFirstHighlighted;
+	}
+
+	public JssCategory getJssCategoryHomepageSecondHighlighted() {
+		return jssCategoryHomepageSecondHighlighted;
+	}
+
+	public void setJssCategoryHomepageSecondHighlighted(JssCategory jssCategoryHomepageSecondHighlighted) {
+		this.jssCategoryHomepageSecondHighlighted = jssCategoryHomepageSecondHighlighted;
+	}
+
+	public JssCategory getJssCategoryHomepageThirdHighlighted() {
+		return jssCategoryHomepageThirdHighlighted;
+	}
+
+	public void setJssCategoryHomepageThirdHighlighted(JssCategory jssCategoryHomepageThirdHighlighted) {
+		this.jssCategoryHomepageThirdHighlighted = jssCategoryHomepageThirdHighlighted;
 	}
 
 	public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() {

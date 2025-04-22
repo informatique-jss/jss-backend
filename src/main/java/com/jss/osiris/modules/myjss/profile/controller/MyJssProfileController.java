@@ -205,7 +205,7 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/search/global")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
 			throws OsirisException {
 		if (searchText != null && searchText.length() > 2)

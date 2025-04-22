@@ -70,6 +70,10 @@ public class MailIndexationDelegate {
 
     private Integer numberDaysToKeepInTrash = 10;
 
+    private Store store = null;
+    private Folder folderInbox = null;
+    private Folder folderTrash = null;
+
     @Autowired
     IndexationMailService osirisMailService;
 
@@ -105,38 +109,66 @@ public class MailIndexationDelegate {
         return session;
     }
 
-    public void checkMailsToIndex() throws OsirisException {
-        Store store = null;
-        Folder folder = null;
+    private void connectMailbox() throws OsirisException {
+        if (store == null || !store.isConnected()) {
+            String accessToken = getAccessToken();
+            try {
+                store = getSessionToAccessMail().getStore("imap");
+            } catch (NoSuchProviderException e) {
+                throw new OsirisException(e, "IMAP store not found");
+            }
 
-        String accessToken = getAccessToken();
-        try {
-            store = getSessionToAccessMail().getStore("imap");
-        } catch (NoSuchProviderException e) {
-            throw new OsirisException(e, "IMAP store not found");
+            try {
+                store.connect(mailImapHost, Integer.parseInt(mailImapPort), mailImapUsername, accessToken);
+            } catch (NumberFormatException e) {
+                throw new OsirisException(e, "Malformated connection to IMAP");
+            } catch (MessagingException e) {
+                throw new OsirisException(e, "Impossible to connect to IMAP");
+            }
         }
 
+        if (folderInbox != null && folderInbox.isOpen())
+            try {
+                folderInbox.close();
+            } catch (MessagingException e) {
+                throw new OsirisException(e, "Impossible to close INBOX folder");
+            }
+
         try {
-            store.connect(mailImapHost, Integer.parseInt(mailImapPort), mailImapUsername, accessToken);
-        } catch (NumberFormatException e) {
-            throw new OsirisException(e, "Malformated connection to IMAP");
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to connect to IMAP");
-        }
-        try {
-            folder = store.getFolder("INBOX");
+            folderInbox = store.getFolder("INBOX");
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to find INBOX folder");
         }
         try {
-            folder.open(Folder.READ_WRITE);
+            folderInbox.open(Folder.READ_WRITE);
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to write into INBOX folder");
         }
 
+        if (folderTrash != null && folderTrash.isOpen())
+            try {
+                folderTrash.close();
+            } catch (MessagingException e) {
+                throw new OsirisException(e, "Impossible to close TRASH folder");
+            }
+
+        try {
+            folderTrash = store.getFolder("Éléments supprimés");
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to find Trash folder");
+        }
+        try {
+            folderTrash.open(Folder.READ_WRITE);
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to write into Trash folder");
+        }
+    }
+
+    public void checkMailsToIndex() throws OsirisException {
+        connectMailbox();
         Message[] messages;
         try {
-            messages = folder.getMessages();
+            messages = folderInbox.getMessages();
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to get messages from INBOX folder");
         }
@@ -151,63 +183,26 @@ public class MailIndexationDelegate {
             }
         }
 
-        closeConnection(store, folder, null);
     }
 
-    public void closeConnection(Store store, Folder folder, Folder folderSecondary) throws OsirisException {
+    public void closeConnection() throws OsirisException {
         try {
-            folder.close(true);
-            if (folderSecondary != null)
-                folderSecondary.close(true);
-            store.close();
+            if (store.isConnected()) {
+                if (folderInbox != null)
+                    folderInbox.close(true);
+                if (folderTrash != null)
+                    folderTrash.close(true);
+                if (store != null)
+                    store.close();
+            }
         } catch (MessagingException e) {
             throw new OsirisException(e, "Error when closing connection folder/store");
         }
     }
 
     public void exportMailToFile(Integer id) throws OsirisException {
+        connectMailbox();
         IndexationMail mail = new IndexationMail();
-
-        Store store = null;
-        Folder folderInbox = null;
-        Folder folderTrash = null;
-
-        String accessToken = getAccessToken();
-        try {
-            store = getSessionToAccessMail().getStore("imap");
-        } catch (NoSuchProviderException e) {
-            throw new OsirisException(e, "IMAP store not found");
-        }
-
-        try {
-            store.connect(mailImapHost, Integer.parseInt(mailImapPort), mailImapUsername, accessToken);
-        } catch (NumberFormatException e) {
-            throw new OsirisException(e, "Malformated connection to IMAP");
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to connect to IMAP");
-        }
-        try {
-            folderInbox = store.getFolder("INBOX");
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to find INBOX folder");
-        }
-        try {
-            folderInbox.open(Folder.READ_WRITE);
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to write into INBOX folder");
-        }
-
-        try {
-            folderTrash = store.getFolder("Éléments supprimés");
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to find Trash folder");
-        }
-        try {
-            folderTrash.open(Folder.READ_WRITE);
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to write into Trash folder");
-        }
-
         Integer messageCount;
         try {
             messageCount = folderInbox.getMessageCount();
@@ -258,29 +253,11 @@ public class MailIndexationDelegate {
                 throw new OsirisException(e, "Impossible to process message received");
             }
         }
-
-        closeConnection(store, folderInbox, folderTrash);
     }
 
     public void purgeDeletedElements() throws OsirisException {
-        Store store = null;
-        Folder folderTrash = null;
-        String accessToken = getAccessToken();
+        connectMailbox();
         try {
-            store = getSessionToAccessMail().getStore("imap");
-        } catch (NoSuchProviderException e) {
-            throw new OsirisException(e, "IMAP store not found");
-        }
-        try {
-            store.connect(mailImapHost, Integer.parseInt(mailImapPort), mailImapUsername, accessToken);
-        } catch (NumberFormatException e) {
-            throw new OsirisException(e, "Malformated connection to IMAP");
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to connect to IMAP");
-        }
-        try {
-            folderTrash = store.getFolder("Éléments supprimés");
-            folderTrash.open(Folder.READ_WRITE);
             Message[] messages;
             try {
                 messages = folderTrash.getMessages();
@@ -301,7 +278,6 @@ public class MailIndexationDelegate {
             }
 
             folderTrash.expunge();
-            closeConnection(store, folderTrash, null);
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to write into Trash folder");
         }
