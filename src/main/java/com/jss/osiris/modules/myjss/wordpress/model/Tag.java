@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.Entity;
@@ -8,11 +10,14 @@ import jakarta.persistence.Id;
 @Entity
 public class Tag {
     @Id
+    @JsonView(JacksonViews.MyJssListView.class)
     private Integer id;
     private Integer count;
+    @JsonView(JacksonViews.MyJssListView.class)
     private String slug;
 
     @IndexedField
+    @JsonView(JacksonViews.MyJssListView.class)
     private String name;
 
     public Integer getId() {

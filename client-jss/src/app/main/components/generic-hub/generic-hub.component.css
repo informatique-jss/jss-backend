@@ -79,3 +79,10 @@
   display: block;
   border-radius: inherit;
 }
+
+.badge {
+  display: flex;
+  align-items: center;
+  height: 24px;
+
+}
