@@ -289,6 +289,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (customerOrder == null)
                 return new ArrayList<Attachment>();
             attachment.setCustomerOrder(customerOrder);
+            // Notify user
+            notificationService.notifyAttachmentAddToCustomerorder(customerOrder, attachment);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             Invoice invoice = invoiceService.getInvoice(idEntity);
             if (invoice == null)

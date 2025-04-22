@@ -713,8 +713,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                     if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
                         toSend = true;
                         invoice.setFirstReminderDateTime(LocalDateTime.now());
-
-                        notificationService.notifyTiersDepositMandatory(invoice.getResponsable(), invoice);
                     }
                 } else if (invoice.getSecondReminderDateTime() == null) {
                     if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))
@@ -729,7 +727,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                                     .isAfter(invoice.getSecondReminderDateTime().toLocalDate())) {
                         toSend = true;
                         invoice.setThirdReminderDateTime(LocalDateTime.now());
-                        notificationService.notifyInvoiceToReminder(invoice);
                     }
                 }
 
