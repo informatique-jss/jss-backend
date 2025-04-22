@@ -464,16 +464,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 if (customerOrder.getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
-                    notificationService.notifyCustomerOrderToBeingProcessedFromDeposit(customerOrder, isFromUser);
-                } else
-                    notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
+                }
             }
         }
 
         // Target : TO BILLED => notify
         if (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)) {
-            notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
-
             // Auto billed for JSS Announcement only customer order
             if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     && isOnlyJssAnnouncement(customerOrder)
@@ -647,7 +643,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
-            notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, false);
         }
 
         return customerOrder;

@@ -14,6 +14,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -70,6 +71,9 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	@JoinTable(name = "asso_employee_backup", joinColumns = @JoinColumn(name = "id_employee"), inverseJoinColumns = @JoinColumn(name = "id_employee_backup"))
 	@JsonIgnoreProperties(value = { "backups" }, allowSetters = true)
 	private List<Employee> backups;
+
+	@CollectionTable(name = "EMPLOYEE_NOTIFICATION_EXCLUSION")
+	private List<String> notificationTypeToHide;
 
 	public Employee mapFromAttributes(Attributes attrs) throws NamingException {
 		if (attrs.get("givenName") == null || attrs.get("sn") == null || attrs.get("sAMAccountName") == null
