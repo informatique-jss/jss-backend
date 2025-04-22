@@ -255,7 +255,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/slug")
-	public ResponseEntity<Post> getPostBySlung(@RequestParam String slug, HttpServletRequest request)
+	public ResponseEntity<Post> getPostBySlug(@RequestParam String slug, HttpServletRequest request)
 			throws OsirisException {
 		Post post = postService.getPostsBySlug(slug);
 		if (post != null && !isCrawler(request))
@@ -560,10 +560,9 @@ public class WordpressController {
 	public ResponseEntity<List<Post>> getFirstPostsByMyJssCategories(@RequestParam(required = false) String searchText,
 			@RequestParam(required = false) Integer myJssCategoryId, HttpServletRequest request) {
 		detectFlood(request);
-		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
-
-		if (myJssCategory == null)
-			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
+		MyJssCategory myJssCategory = null;
+		if (myJssCategoryId != null)
+			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 
 		return new ResponseEntity<List<Post>>(postService.getFirstPostsByMyJssCategories(myJssCategory),
 				HttpStatus.OK);
