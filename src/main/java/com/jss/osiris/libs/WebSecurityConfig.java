@@ -66,6 +66,7 @@ public class WebSecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/service-family-groups").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/service-families/service-group").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/service-type/service-family").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/quotation/service-type").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/cities/search/country/postal-code").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/cities/search/country").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/order/search/affaire").permitAll()

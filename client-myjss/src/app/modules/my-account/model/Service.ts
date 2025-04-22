@@ -1,6 +1,7 @@
 import { AssoServiceDocument } from "./AssoServiceDocument";
 import { AssoServiceFieldType } from "./AssoServiceFieldType";
 import { IAttachment } from "./IAttachment";
+import { Provision } from "./Provision";
 import { ServiceType } from "./ServiceType";
 
 export interface Service extends IAttachment {
@@ -15,4 +16,5 @@ export interface Service extends IAttachment {
   servicePrice: number;
   confrereLabel: string;
   lastMissingAttachmentQueryDateTime: Date;
+  provisions: Provision[];
 }

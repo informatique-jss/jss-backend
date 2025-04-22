@@ -15,4 +15,8 @@ export class ServiceTypeService extends AppRestService<ServiceType> {
   getServiceTypesForFamily(idServiceFamily: number) {
     return this.getList(new HttpParams().set("idServiceFamily", idServiceFamily), "service-type/service-family");
   }
+
+  getServiceType(idServiceType: number) {
+    return this.get(new HttpParams().set("idServiceType", idServiceType), "service-type");
+  }
 }

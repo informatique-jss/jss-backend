@@ -883,7 +883,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Service addServiceToAssoAffaireOrder(ServiceType service, AssoAffaireOrder asso) {
+    public Service addServiceToAssoAffaireOrder(ServiceType service, AssoAffaireOrder asso) throws OsirisException {
         service = serviceTypeService.getServiceType(service.getId());
         asso = getAssoAffaireOrder(asso.getId());
         return serviceService.getServiceForMultiServiceTypesAndAffaire(Arrays.asList(service), asso.getAffaire());

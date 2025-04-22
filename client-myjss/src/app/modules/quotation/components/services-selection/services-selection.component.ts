@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -31,7 +30,6 @@ export class ServicesSelectionComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private serviceFamilyService: ServiceFamilyService,
-    private constantService: ConstantService,
     private quotationService: QuotationService,
     private orderService: CustomerOrderService,
     private loginService: LoginService,
@@ -111,6 +109,7 @@ export class ServicesSelectionComponent implements OnInit {
           }
       } else {
         this.serviceService.getServiceForServiceTypeAndAffaire(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire).subscribe(response => {
+          console.log(response);
           if (!this.applyToAllAffaires) {
             if (!this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services)
               this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services = [];

@@ -22,7 +22,7 @@ export class ThemeService {
   }
 
   updateThemeFromUrl(url: string): void {
-    if (url.includes('/account') && !url.includes("/signin")) {
+    if ((url.includes('/account')) && !url.includes("/signin")) {
       this.setCssTheme('theme-account.css');
 
     } else {

@@ -1,22 +1,25 @@
-<div class="container">
+<div class="container" *ngIf="quotation">
 
   <section>
     <p class="sub-title">Sélectionnez une affaire</p>
 
     <div class="row mb-5">
       <!-- Afficher les cartes avec ngFor -->
-      <div *ngFor="let affaire of affaires" class="col-12 col-sm-6 col-lg-4 my-2">
+      <div *ngFor="let asso of quotation.assoAffaireOrders;let index = index" class="col-12 col-sm-6 col-lg-4 my-2">
         <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 "
-          [ngClass]="{'selected': selectedCardId === affaire.id}" (click)="selectCard(affaire.id, $event)">
+          [ngClass]="{'selected': selectedAssoIndex == index}" (click)="selectCard(index, $event)">
           <div class="row d-flex flex-row align-items-center">
             <i class="ai-briefcase col-1"></i>
-            <h6 class="col m-0">{{ affaire.title }}</h6>
+            <h6 class="col m-0"> {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
+              asso.affaire.denomination
+              ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
+              asso.affaire.lastname) }} -{{asso.affaire.address}}</h6>
           </div>
-          <div class="row align-items-center">
+          <div class="row align-items-center" *ngIf="asso.services">
             <!-- Les boutons pills -->
-            <a *ngFor="let button of affaire.services"
+            <a *ngFor="let service of asso.services"
               class="btn btn-secondary rounded-pill mt-2 ms-1 mt-md-3 ms-md-3 col-auto pill">
-              {{ button.label }} <i class="{{ button.icon }} ms-2"></i>
+              {{service.customLabel?service.customLabel : service.serviceType.label }}
             </a>
           </div>
         </div>
@@ -26,137 +29,96 @@
 
 
   <section>
-    <div class="pb-3 row align-items-center">
+    <div class="pb-3 row align-items-center" *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
       <strong class="col-auto">
         <ng-container *ngIf="true">
-          <span>10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ</span>
+          <span>
+            {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret?(quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret
+            + ' - '):''}}{{
+            quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination
+            ?quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination :
+            (quotation.assoAffaireOrders[selectedAssoIndex].affaire.firstname+ ' ' +
+            quotation.assoAffaireOrders[selectedAssoIndex].affaire.lastname) }}
+            -{{quotation.assoAffaireOrders[selectedAssoIndex].affaire.address}}</span>
         </ng-container>
       </strong>
-      <a class="btn btn-secondary rounded-pill col-auto pill ms-3 fs-xs">Transfert de Siège Hors Ressort
+      <a class="btn btn-secondary rounded-pill col-auto pill ms-3 fs-xs">
+        {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].customLabel?quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].customLabel
+        : quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceType.label }}
       </a>
     </div>
-    <ul class="nav nav-tabs" role="tablist">
-      <li class="nav-item ">
+    <ul class="nav nav-tabs" role="tablist"
+      *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex] && quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
+      <li class="nav-item "
+        *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes || quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
         <a href="#documents" class="nav-link active quotation-tabs" data-bs-toggle="tab" role="tab">
           Documents
         </a>
       </li>
-      <li class="nav-item">
-        <a href="#profile" class="nav-link" data-bs-toggle="tab" role="tab">
-          Annonces légales
-        </a>
-      </li>
-      <li class="nav-item ">
-        <a href="#home" class="nav-link quotation-tabs" data-bs-toggle="tab" role="tab">
-          Domiciliation
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#profile" class="nav-link" data-bs-toggle="tab" role="tab">
-          Apostille et Légalisation
-        </a>
-      </li>
-      <li class="nav-item ">
-        <a href="#home" class="nav-link quotation-tabs" data-bs-toggle="tab" role="tab">
-          Traduction
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#profile" class="nav-link" data-bs-toggle="tab" role="tab">
-          Certification
-        </a>
-      </li>
+      <ng-container
+        *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions">
+        <li class="nav-item" *ngIf="provision.announcement && provision.announcement.id!=null">
+          <a href="#profile" class="nav-link" data-bs-toggle="tab" role="tab">
+            Annonce légale
+          </a>
+        </li>
+        <li class="nav-item " *ngIf="provision.domiciliation && provision.domiciliation.id!=null">
+          <a href="#home" class="nav-link quotation-tabs" data-bs-toggle="tab" role="tab">
+            Domiciliation
+          </a>
+        </li>
+      </ng-container>
     </ul>
 
     <!-- Tabs content -->
-    <div class="tab-content quotation-container">
+    <div class="tab-content quotation-container" *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
       <div class="tab-pane fade show active" id="documents" role="tabpanel">
         <h6><i class="ai-circle-info me-2"></i>
           Information</h6>
         <div class="pb-3">
-
-          <div class="row mb-3">
-            <div class="col-md-2">
-              <generic-input label="Nombre de salariés" [form]="docInformationForm"
-                [propertyName]="'Nombre de salariés'" [isMandatory]="true" [isDisabled]="false" [maxLength]="150">
-              </generic-input>
-            </div>
-
-            <div class="col-md-2">
-              <generic-datetime-picker label="Date de début d'activité" [form]="docInformationForm" [propertyName]="''"
-                [isMandatory]="true" [isDisabled]="false">
-              </generic-datetime-picker>
-            </div>
-            <div class="col-md-2">
-              <generic-datetime-picker label="Date de début d'activité" [form]="docInformationForm" [propertyName]="''"
-                [isMandatory]="true" [isDisabled]="false">
-              </generic-datetime-picker>
-            </div>
-
-            <div class="col-md-6">
-              <generic-input label="Code APE souhaité (code NAF)" [form]="docInformationForm"
-                [propertyName]="'Code APE souhaité'" [isMandatory]="true" [isDisabled]="false" [maxLength]="150">
-              </generic-input>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <!-- <generic-select label="Catégorisation 1 de l'activité" [form]="docInformationForm"
-                [propertyName]="'Catégorisation 1 activite'" [isMandatory]="true" [isDisabled]="false"
-                [maxLength]="150">
-              </generic-select> -->
-            </div>
-
-            <div class="col-md-6">
-              <generic-input label="Précision" [form]="docInformationForm" [propertyName]="'Precision'"
-                [isMandatory]="true" [isDisabled]="false" [maxLength]="150">
-              </generic-input>
-            </div>
-          </div>
-
-          <!-- Adresse -->
-          <!-- <div class="row mb-3">
-            <div class="col-md-6">
-              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.address" label="Adresse"
-                [form]="docInformationForm" [propertyName]="'address'+indexAsso" [isMandatory]="true" [isDisabled]="false"
-                [maxLength]="100">
-              </generic-input>
-            </div>
-            <div class="col-md-6">
-              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.cedexComplement"
-                label="Complément d'adresse" [form]="docInformationForm" [propertyName]="'cedexComplement'+indexAsso"
-                [isMandatory]="true" [isDisabled]="false" [maxLength]="50">
-              </generic-input>
-            </div>
-          </div> -->
-
-          <!-- Code postal, Ville, Pays -->
-          <!-- <div class="row mb-3">
-            <div class="col-md-4">
-              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.postalCode" label="Code postal"
-                [form]="idenficationForm" [propertyName]="'postalCode'+indexAsso" [isMandatory]="true"
-                [isDisabled]="false" [maxLength]="10">
-              </generic-input>
-            </div>
-            <div class="col-md-4">
-              <autocomplete-city [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.city" label="Ville"
-                [form]="idenficationForm" [propertyName]="'city'+indexAsso" [isMandatory]="true" [isDisabled]="false"
-                [modelCountry]="" [preFilterPostalCode]="quotation.assoAffaireOrders[indexAsso].affaire.postalCode">
-              </autocomplete-city>
-            </div>
-            <div class="col-md-4">
-              <select-country [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.country" label="Pays"
-                [form]="idenficationForm" [propertyName]="'city'+indexAsso" [isMandatory]="true" [isDisabled]="false">
-              </select-country>
-            </div>
-          </div> -->
+          <table class="full-width">
+            <ng-container
+              *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
+              <tr>
+                <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
+                  <generic-input [(model)]="assoServiceFieldType.stringValue"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [propertyName]='"stringFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+                    [maxLength]="255"></generic-input>
+                </td>
+                <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
+                  <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [propertyName]='"textAreaFieldType"+i'
+                    [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
+                </td>
+                <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
+                  <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [propertyName]='"dateFieldType"+i'
+                    [isMandatory]="assoServiceFieldType.isMandatory"></generic-date-picker>
+                </td>
+                <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
+                  <generic-input [(model)]="assoServiceFieldType.integerValue"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+                    type="number"></generic-input>
+                </td>
+                <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
+                  <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [propertyName]='"selectFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+                    [isMandatory]="assoServiceFieldType.isMandatory"></select-value-service-field-type>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
         </div>
       </div>
     </div>
   </section>
 
-
+  <!--
   <section class="quotation-container">
     <h6><i class="ai-paperclip pe-2"></i>Pièces justificatives</h6>
     <div class="row">
@@ -167,14 +129,12 @@
           </li>
         </ul>
         <div class="blue-card card rounded-1">
-          <!-- Ligne 1 : Nom du fichier et icône trash -->
           <div class="row d-flex justify-content-between align-items-center p-1">
             <p class="col-auto mb-0">Nom-du-fichier.pdf</p>
             <a class="col-auto"><i class="ai-trash" (click)="deleteFile()"></i></a>
           </div>
 
           <div class="row p-1">
-            <!-- Error -->
             <div *ngIf="isError">
               <div class="row d-flex justify-content-start align-items-center p-1">
                 <i class="col-auto ai-circle-x me-2 text-danger-emphasis"></i>
@@ -188,7 +148,6 @@
               </div>
             </div>
 
-            <!-- In progress -->
             <div *ngIf="downloadingPercentage!==100 && !isError">
               <div class="row d-flex justify-content-start align-items-center p-1">
                 <div class="col-auto mb-0">
@@ -208,8 +167,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Success -->
             <div *ngIf="downloadingPercentage===100 && !isError">
               <div class="row d-flex justify-content-start align-items-center p-1">
                 <i class="col-auto ai-circle-check-filled me-2 text-success-emphasis"></i>
@@ -249,4 +206,5 @@
       </div>
     </div>
   </section>
+-->
 </div>

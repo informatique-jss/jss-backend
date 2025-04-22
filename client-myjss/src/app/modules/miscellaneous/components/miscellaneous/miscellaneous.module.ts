@@ -7,6 +7,7 @@ import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
+import { GenericDatePickerComponent } from '../forms/generic-date-picker/generic-datetime-picker.component';
 import { GenericDatetimePickerComponent } from '../forms/generic-datetime-picker/generic-datetime-picker.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
@@ -15,6 +16,7 @@ import { RadioGroupAffaireTypeComponent } from '../forms/radio-group-affaire-typ
 import { RadioGroupQuotationTypeComponent } from '../forms/radio-group-quotation-type/radio-group-quotation-type.component';
 import { SelectCountryComponent } from '../forms/select-country/select-country.component';
 import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
+import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
 import { GenericSwiperComponent } from '../generic-swiper/generic-swiper.component';
 import { OurClientsComponent } from '../our-clients/our-clients.component';
@@ -39,10 +41,12 @@ const routes: Routes = [{}];
     DoubleButtonsComponent,
     GenericToggleComponent,
     GenericDatetimePickerComponent,
+    GenericDatePickerComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
     AutocompleteCityComponent,
     SelectCountryComponent,
+    SelectValueServiceFieldTypeComponent,
     GenericInputComponent,
     SelectMyJssCategoryComponent
   ],
@@ -55,12 +59,14 @@ const routes: Routes = [{}];
     DoubleButtonsComponent,
     GenericToggleComponent,
     GenericDatetimePickerComponent,
+    GenericDatePickerComponent,
     GenericSwiperComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
     AutocompleteCityComponent,
     SelectCountryComponent,
     SelectMyJssCategoryComponent,
+    SelectValueServiceFieldTypeComponent,
     OurClientsComponent,
   ]
 })

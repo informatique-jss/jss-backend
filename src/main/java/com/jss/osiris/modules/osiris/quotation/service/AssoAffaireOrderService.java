@@ -51,6 +51,6 @@ public interface AssoAffaireOrderService {
 
         public BigDecimal getServicePrice(Service service, boolean withDiscount, boolean withVat);
 
-        public Service addServiceToAssoAffaireOrder(ServiceType service, AssoAffaireOrder asso);
+        public Service addServiceToAssoAffaireOrder(ServiceType service, AssoAffaireOrder asso) throws OsirisException;
 
 }

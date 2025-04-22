@@ -13,14 +13,19 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
+import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
+import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.osiris.quotation.repository.ServiceRepository;
 
@@ -238,7 +243,29 @@ public class ServiceServiceImpl implements ServiceService {
                     provision.setIsFormalityAdditionalDeclaration(false);
                     provision.setIsCorrespondenceFees(false);
                     provision.setIsSupplyFullBeCopy(false);
+                    if (provision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.ANNOUNCEMENT)) {
+                        Announcement announcement = new Announcement();
+                        announcement.setId(0);
+                        provision.setAnnouncement(announcement);
+                    } else if (provision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.FORMALITE)) {
+                        Formalite formalite = new Formalite();
+                        formalite.setId(0);
+                        provision.setFormalite(formalite);
+                    } else if (provision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.DOMICILIATION)) {
+                        Domiciliation domiciliation = new Domiciliation();
+                        domiciliation.setId(0);
+                        provision.setDomiciliation(domiciliation);
+                    } else if (provision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.STANDARD)) {
+                        SimpleProvision simpleProvision = new SimpleProvision();
+                        simpleProvision.setId(0);
+                        provision.setSimpleProvision(simpleProvision);
+                    }
                     provisions.add(provision);
+
                 }
             }
         return provisions;

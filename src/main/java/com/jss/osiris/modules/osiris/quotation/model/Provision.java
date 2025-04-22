@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
@@ -62,11 +64,13 @@ public class Provision implements IId, IAttachment {
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domiciliation")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Domiciliation domiciliation;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement")
 	@IndexedField
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Announcement announcement;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

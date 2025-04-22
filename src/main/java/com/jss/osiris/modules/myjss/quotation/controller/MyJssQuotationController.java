@@ -1193,6 +1193,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service-types/provisions")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Service> getServiceForServiceTypeAndAffaire(@RequestParam Integer idAffaire,
 			@RequestParam Integer serviceTypeId) throws OsirisException {
 

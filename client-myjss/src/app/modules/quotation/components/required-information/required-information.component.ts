@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
+import { QuotationService } from '../../../my-account/services/quotation.service';
+import { Responsable } from '../../../profile/model/Responsable';
+import { LoginService } from '../../../profile/services/login.service';
+import { IQuotation } from '../../model/IQuotation';
+import { ServiceTypeService } from '../../services/service.type.service';
 
 @Component({
   selector: 'required-information',
@@ -9,53 +16,81 @@ import { FormBuilder } from '@angular/forms';
 })
 export class RequiredInformationComponent implements OnInit {
 
+  selectedAssoIndex: number | null = null;
+  selectedServiceIndex: number | null = null;
+  currentUser: Responsable | undefined;
+  quotation: IQuotation | undefined;
 
-  downloadingPercentage: number = 100;
-  totalFileWeight: number = 120;
-  isDownloading: boolean = this.downloadingPercentage != 100 ? true : false;
-  isError: boolean = true;
+  SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
+  SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
+  SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
+  SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
+  SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
-  uploadedDocuments: string[] = ["MBE", "Copie du diplôme, du titre ou de l’autorisation provisoire ou définitive permettant à la société d’exercer l’activité réglementée"];
+  constructor(
+    private formBuilder: FormBuilder,
+    private loginService: LoginService,
+    private quotationService: QuotationService,
+    private orderService: CustomerOrderService,
+    private serviceTypeService: ServiceTypeService,
+  ) { }
 
-  affaires = [
-    {
-      id: 1,
-      title: '10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ',
-      services: [
-        { id: 1, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
-        { id: 2, label: 'Changement de dirigeant - SC / SCP', icon: 'ai-cross' },
-        { id: 3, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
-        { id: 4, label: 'Transfert', icon: 'ai-cross' }
-      ]
-    },
-    {
-      id: 2,
-      title: '10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ',
-      services: [
-        { id: 1, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
-        { id: 4, label: 'Transfert', icon: 'ai-cross' }
-      ]
-    },
-    {
-      id: 3,
-      title: '10000000000000 - EXEMPLE BIS - 18 BOULEVARD DE LA TRINITÉ',
-      services: [
-        { id: 1, label: 'Transfert de Diège Hors Ressort', icon: 'ai-cross' },
-        { id: 4, label: 'Transfert', icon: 'ai-cross' }
-      ]
-    }
-  ];
-
-  selectedCardId: number | null = null;
-  servicesSearched: string[] | null = null;
-
-  constructor(private formBuilder: FormBuilder) { }
-
-  servicesForm = this.formBuilder.group({});
-  docInformationForm = this.formBuilder.group({});
+  informationForm = this.formBuilder.group({});
 
   ngOnInit() {
+    this.loginService.getCurrentUser().subscribe(response => {
+      this.currentUser = response;
+      this.initIQuotation();
+    })
+    this.initIQuotation();
   }
+
+  initIQuotation() {
+    if (this.currentUser) {
+      if (this.quotationService.getCurrentDraftQuotationId()) {
+        this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
+          this.quotation = response;
+          this.initIndexesAndServiceType();
+        });
+      } else if (this.orderService.getCurrentDraftOrderId()) {
+        this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
+          this.quotation = response;
+          this.initIndexesAndServiceType();
+        });
+      }
+    } else {
+      if (this.quotationService.getCurrentDraftQuotation()) {
+        this.quotation = this.quotationService.getCurrentDraftQuotation()!;
+        this.initIndexesAndServiceType();
+      } else if (this.orderService.getCurrentDraftOrder()) {
+        this.quotation = this.orderService.getCurrentDraftOrder()!;
+        this.initIndexesAndServiceType();
+      }
+    }
+  }
+
+  initIndexesAndServiceType() {
+    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
+      this.selectedAssoIndex = 0;
+      if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services.length > 0) {
+        this.selectedServiceIndex = 0;
+      }
+    }
+  }
+
+  selectCard(assoIndex: number, event: Event): void {
+    // Do not propagate clic if it is on pill
+    if ((event.target as HTMLElement).closest('.pill')) {
+      return;
+    }
+
+    this.selectedAssoIndex = assoIndex;
+  }
+
+  /**
+   * Upload file management
+   *
+   */
 
   onCardClick(): void {
     const fileInput = document.getElementById('fileDropRef') as HTMLInputElement;
@@ -98,20 +133,6 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   deleteFile() {
-    //TODO
-    throw new Error('Method not implemented.');
-  }
-
-  selectCard(affaireId: number, event: Event): void {
-    // Do not propagate clic if it is on pill
-    if ((event.target as HTMLElement).closest('.pill')) {
-      return;
-    }
-
-    this.selectedCardId = this.selectedCardId === affaireId ? null : affaireId;
-  }
-
-  searchServices() {
     //TODO
     throw new Error('Method not implemented.');
   }
