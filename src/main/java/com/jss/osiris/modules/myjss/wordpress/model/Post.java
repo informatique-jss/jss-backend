@@ -135,7 +135,7 @@ public class Post implements IId {
     @JsonView(JacksonViews.MyJssListView.class)
     private List<Serie> postSerie;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_media")
     @IndexedField
     @JsonView(JacksonViews.MyJssListView.class)
