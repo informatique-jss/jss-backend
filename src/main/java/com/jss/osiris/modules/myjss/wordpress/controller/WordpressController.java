@@ -190,7 +190,9 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return ResponseEntity.ok(postService.getJssCategoryPosts(pageable));
+		return new ResponseEntity<Page<Post>>(
+				postService.applyPremium(postService.getJssCategoryPosts(pageable)),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/top")
@@ -200,6 +202,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss/tendency")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getJssCategoryPostsTendency() throws OsirisException {
 		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getJssCategoryPostTendency()),
 				HttpStatus.OK);
@@ -218,6 +221,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenJssPosts(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -234,6 +238,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/pinned")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getPinnedPosts(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -288,6 +293,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss-category/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostByJssCatgory(
 			@RequestParam Integer jssCategoryId, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
@@ -296,12 +302,17 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, size,
 				Sort.by(Sort.Direction.DESC, "date"));
 		JssCategory category = jssCategoryService.getJssCategory(jssCategoryId);
+
+		if (category == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getMostSeenPostByJssCatgory(pageable, category)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/tag/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostByTag(
 			@RequestParam String tagSlug, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
@@ -311,12 +322,16 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 		Tag tag = tagService.getTagBySlug(tagSlug);
 
+		if (tag == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getMostSeenPostByTag(pageable, tag)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/author/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostByAuthor(
 			@RequestParam String authorSlug, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
@@ -327,12 +342,16 @@ public class WordpressController {
 
 		Author author = authorService.getAuthorBySlug(authorSlug);
 
+		if (author == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getMostSeenPostByAuthor(pageable, author)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/serie/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostBySerie(
 			@RequestParam String serieSlug, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
@@ -342,12 +361,16 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 		Serie serie = serieService.getSerieBySlug(serieSlug);
 
+		if (serie == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getMostSeenPostBySerie(pageable, serie)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/publishing-department/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostByPublishingDepartment(
 			@RequestParam Integer departmentId, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
@@ -358,6 +381,9 @@ public class WordpressController {
 
 		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
 
+		if (publishingDepartment == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(
 						postService.getMostSeenPostByPublishingDepartment(pageable, publishingDepartment)),
@@ -365,6 +391,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/publishing-department/all/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostByIdf(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
@@ -379,6 +406,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/jss-category")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getAllPostsByJssCategory(
 			@RequestParam Integer categoryId,
 			@RequestParam(defaultValue = "0") int page,
@@ -391,12 +419,16 @@ public class WordpressController {
 
 		JssCategory category = jssCategoryService.getJssCategory(categoryId);
 
+		if (category == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getAllPostsByJssCategory(pageableRequest, category, searchText)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/tag")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getAllPostsByTag(
 			@RequestParam String tagSlug,
 			@RequestParam(defaultValue = "0") int page,
@@ -410,6 +442,9 @@ public class WordpressController {
 
 		Tag tag = tagService.getTagBySlug(tagSlug);
 
+		if (tag == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getAllPostsByTag(pageableRequest, tag, searchText)),
 				HttpStatus.OK);
@@ -417,6 +452,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/author")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getAllPostsByAuthor(
 			@RequestParam String authorSlug,
 			@RequestParam(defaultValue = "0") int page,
@@ -430,12 +466,16 @@ public class WordpressController {
 
 		Author author = authorService.getAuthorBySlug(authorSlug);
 
+		if (author == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getAllPostsByAuthor(pageableRequest, author, searchText)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/serie")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getAllPostsBySerie(
 			@RequestParam String serieSlug,
 			@RequestParam(defaultValue = "0") int page,
@@ -449,12 +489,16 @@ public class WordpressController {
 
 		Serie serie = serieService.getSerieBySlug(serieSlug);
 
+		if (serie == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(postService.getAllPostsBySerie(pageableRequest, serie, searchText)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/publishing-department")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getAllPostsByPublishingDepartment(
 			@RequestParam Integer departmentId,
 			@RequestParam(defaultValue = "0") int page,
@@ -468,6 +512,9 @@ public class WordpressController {
 
 		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
 
+		if (publishingDepartment == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.applyPremium(
 						postService.getAllPostsByPublishingDepartment(pageableRequest, publishingDepartment,
@@ -476,6 +523,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/all/publishing-department/all")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getAllPostsForIdf(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
@@ -496,6 +544,9 @@ public class WordpressController {
 	public ResponseEntity<Page<Post>> getTopPostByMyJssCategory(@RequestParam Integer page,
 			@RequestParam Integer myJssCategoryId) {
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+		if (myJssCategory == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(postService.getPostsByMyJssCategory(page, myJssCategory), HttpStatus.OK);
 	}
 
@@ -509,9 +560,10 @@ public class WordpressController {
 	public ResponseEntity<List<Post>> getFirstPostsByMyJssCategories(@RequestParam(required = false) String searchText,
 			@RequestParam(required = false) Integer myJssCategoryId, HttpServletRequest request) {
 		detectFlood(request);
-		MyJssCategory myJssCategory = null;
-		if (myJssCategoryId != null)
-			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+
+		if (myJssCategory == null)
+			return new ResponseEntity<List<Post>>(new ArrayList<Post>(), HttpStatus.OK);
 
 		return new ResponseEntity<List<Post>>(postService.getFirstPostsByMyJssCategories(myJssCategory),
 				HttpStatus.OK);
@@ -529,9 +581,10 @@ public class WordpressController {
 			searchText = "";
 		searchText = searchText.trim().toLowerCase();
 
-		MyJssCategory myJssCategory = null;
-		if (myJssCategoryId != null)
-			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+
+		if (myJssCategory == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		Order order = new Order(Direction.DESC, "titleText");
 		Sort sort = Sort.by(Arrays.asList(order));
@@ -549,9 +602,10 @@ public class WordpressController {
 			HttpServletRequest request) {
 		detectFlood(request);
 
-		MyJssCategory myJssCategory = null;
-		if (myJssCategoryId != null)
-			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+
+		if (myJssCategory == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		Order order = new Order(Direction.DESC, "titleText");
 		Sort sort = Sort.by(Arrays.asList(order));
@@ -565,8 +619,9 @@ public class WordpressController {
 	public ResponseEntity<Page<Post>> getTagBySlug(@RequestParam Integer page,
 			@RequestParam Integer tagId) {
 		Tag tag = tagService.getTag(tagId);
-
-		return ResponseEntity.ok(postService.getPostsByTag(page, tag));
+		if (tag == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(postService.getPostsByTag(page, tag), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/next")
@@ -597,9 +652,8 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		PublishingDepartment department = publishingDepartmentService.getPublishingDepartment(departmentId);
-		if (department == null) {
+		if (department == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
-		}
 
 		return new ResponseEntity<Page<Post>>(postService.getTopPostByDepartment(pageable, department), HttpStatus.OK);
 	}

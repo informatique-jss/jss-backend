@@ -17,7 +17,7 @@ import { PostCategoryHeaderComponent } from '../post-category-header/post-catego
 import { PostDepartmentHeaderComponent } from '../post-department-header/post-department-header.component';
 import { PostIdfHeaderComponent } from '../post-idf-header/post-idf-header.component';
 import { PostSerieHeaderComponent } from '../post-serie-header/post-serie-header.component';
-import { PostTagHeaderComponent } from '../post-tag-header/post-tag-hub-header.component';
+import { PostTagHeaderComponent } from '../post-tag-header/post-tag-header.component';
 import { PostComponent } from '../post/post.component';
 import { SearchAnnouncementComponent } from '../search-announcement/search-announcement.component';
 import { SerieHubComponent } from '../serie-hub/serie-hub.component';
