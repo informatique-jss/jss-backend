@@ -582,9 +582,6 @@ public class WordpressController {
 
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 
-		if (myJssCategory == null)
-			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
-
 		Order order = new Order(Direction.DESC, "titleText");
 		Sort sort = Sort.by(Arrays.asList(order));
 		Pageable pageableRequest = PageRequest.of(page, size, sort);

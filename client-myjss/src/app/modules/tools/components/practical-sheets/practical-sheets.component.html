@@ -316,10 +316,10 @@
     </ng-container>
   </ng-container>
 
-  <ng-container *ngIf="secondSearchText">
+  <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory.id == allMyJssCategories.id">
     <ng-container *ngFor="let myJssCategory of myJssCategories;">
       <ng-container
-        *ngIf="myJssCategory.id && (secondSelectedMyJssCategory.id == allMyJssCategories.id || secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0)">
+        *ngIf="myJssCategory.id && secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0">
         <div class="card dark-blue-dropdown rounded-3 mt-3">
           <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
             <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
@@ -345,6 +345,38 @@
           </div>
         </div>
       </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory">
+    <ng-container
+      *ngIf="secondSelectedMyJssCategory.id && secondSearchResults[secondSelectedMyJssCategory.id] && secondSearchResults[secondSelectedMyJssCategory.id].length>0">
+      <div class="card dark-blue-dropdown rounded-3 mt-3">
+        <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
+          <h5 class="card-title mb-0">{{ secondSelectedMyJssCategory.name }}</h5>
+          <button type="button" class="btn btn-link rounded-circle custom-btn"
+            (click)="toggleCard(secondSelectedMyJssCategory)">
+            <span class="circle-icon">
+              <i [ngClass]=" isExpanded(secondSelectedMyJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'"
+                class="fs-4"></i>
+            </span>
+          </button>
+        </div>
+
+        <div class="card-body">
+          <div class=" row">
+            <div class="col-4"
+              *ngFor="let post of (isExpanded(secondSelectedMyJssCategory.id)  ? secondSearchResults[secondSelectedMyJssCategory.id] :  secondSearchResults[secondSelectedMyJssCategory.id].slice(0,3))">
+              <li class="d-flex pb-2 mb-1">
+                <span class="bg-primary mt-2 checkbox-custom"></span>
+                <a class="text-decoration-none text-gray text-truncate-custom" (click)="openPost(post.slug,$event)"
+                  data-bs-toggle="tooltip" [title]="post.titleText" data-bs-placement="top"
+                  [innerHTML]="post.titleText | trustHtml"></a>
+              </li>
+            </div>
+          </div>
+        </div>
+      </div>
     </ng-container>
   </ng-container>
 </section>
