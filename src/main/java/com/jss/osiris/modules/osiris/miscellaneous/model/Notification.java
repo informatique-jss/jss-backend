@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Service;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,26 +26,11 @@ public class Notification implements Serializable, IId {
 
   public static String PERSONNAL = "PERSONNAL";
 
-  public static String QUOTATION_CREATE = "QUOTATION_CREATE";
-  public static String QUOTATION_SENT = "QUOTATION_SENT";
-  public static String QUOTATION_VALIDATED_BY_CUSOMER = "QUOTATION_VALIDATED_BY_CUSOMER";
-  public static String QUOTATION_REFUSED_BY_CUSOMER = "QUOTATION_REFUSED_BY_CUSOMER";
-  public static String QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY = "QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY";
-
-  public static String CUSTOMER_ORDER_CREATE = "CUSTOMER_ORDER_CREATE";
-  public static String CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY = "CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY";
-  public static String CUSTOMER_ORDER_BEING_PROCESSED = "CUSTOMER_ORDER_BEING_PROCESSED";
-  public static String CUSTOMER_ORDER_BEING_PROCESSED_FROM_DEPOSIT = "CUSTOMER_ORDER_BEING_PROCESSED_FROM_DEPOSIT";
-  public static String CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN = "CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN";
-  public static String CUSTOMER_ORDER_TO_BE_BILLED = "CUSTOMER_ORDER_TO_BE_BILLED";
-
-  public static String INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
-
   public static String PROVISION_ADD_ATTACHMENT = "PROVISION_ADD_ATTACHMENT";
   public static String SERVICE_ADD_ATTACHMENT = "SERVICE_ADD_ATTACHMENT";
+  public static String ORDER_ADD_ATTACHMENT = "ORDER_ADD_ATTACHMENT";
   public static String PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED";
-
-  public static String TIERS_DEPOSIT_MANDATORY = "TIERS_DEPOSIT_MANDATORY";
+  public static String PROVISION_GUICHET_UNIQUE_STATUS_SIGNED = "PROVISION_GUICHET_UNIQUE_STATUS_SIGNED";
 
   @Id
   @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)
@@ -55,16 +43,19 @@ public class Notification implements Serializable, IId {
 
   private Boolean isRead;
 
-  private String entityType;
-
-  private Integer entityId;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_employee_created_by")
   private Employee createdBy;
 
   @Column(nullable = false)
   private LocalDateTime createdDateTime;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_employee_updated_by")
+  private Employee updatedBy;
+
+  @Column(nullable = false)
+  private LocalDateTime updatedDateTime;
 
   @Column(nullable = false)
   private String notificationType;
@@ -76,6 +67,18 @@ public class Notification implements Serializable, IId {
 
   @Column(nullable = false)
   private Boolean showPopup;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_service")
+  private Service service;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_provision")
+  private Provision provision;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_customer_order")
+  private CustomerOrder customerOrder;
 
   public Integer getId() {
     return id;
@@ -101,22 +104,6 @@ public class Notification implements Serializable, IId {
     this.isRead = isRead;
   }
 
-  public String getEntityType() {
-    return entityType;
-  }
-
-  public void setEntityType(String entityType) {
-    this.entityType = entityType;
-  }
-
-  public Integer getEntityId() {
-    return entityId;
-  }
-
-  public void setEntityId(Integer entityId) {
-    this.entityId = entityId;
-  }
-
   public Employee getCreatedBy() {
     return createdBy;
   }
@@ -133,20 +120,52 @@ public class Notification implements Serializable, IId {
     this.createdDateTime = createdDateTime;
   }
 
-  public static String getQUOTATION_CREATE() {
-    return QUOTATION_CREATE;
+  public static String getPERSONNAL() {
+    return PERSONNAL;
   }
 
-  public static void setQUOTATION_CREATE(String qUOTATION_CREATE) {
-    QUOTATION_CREATE = qUOTATION_CREATE;
+  public static void setPERSONNAL(String pERSONNAL) {
+    PERSONNAL = pERSONNAL;
   }
 
-  public String getDetail1() {
-    return detail1;
+  public static String getPROVISION_ADD_ATTACHMENT() {
+    return PROVISION_ADD_ATTACHMENT;
   }
 
-  public void setDetail1(String detail1) {
-    this.detail1 = detail1;
+  public static void setPROVISION_ADD_ATTACHMENT(String pROVISION_ADD_ATTACHMENT) {
+    PROVISION_ADD_ATTACHMENT = pROVISION_ADD_ATTACHMENT;
+  }
+
+  public static String getSERVICE_ADD_ATTACHMENT() {
+    return SERVICE_ADD_ATTACHMENT;
+  }
+
+  public static void setSERVICE_ADD_ATTACHMENT(String sERVICE_ADD_ATTACHMENT) {
+    SERVICE_ADD_ATTACHMENT = sERVICE_ADD_ATTACHMENT;
+  }
+
+  public static String getORDER_ADD_ATTACHMENT() {
+    return ORDER_ADD_ATTACHMENT;
+  }
+
+  public static void setORDER_ADD_ATTACHMENT(String oRDER_ADD_ATTACHMENT) {
+    ORDER_ADD_ATTACHMENT = oRDER_ADD_ATTACHMENT;
+  }
+
+  public static String getPROVISION_GUICHET_UNIQUE_STATUS_MODIFIED() {
+    return PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED;
+  }
+
+  public static void setPROVISION_GUICHET_UNIQUE_STATUS_MODIFIED(String pROVISION_GUICHET_UNIQUE_STATUS_MODIFIED) {
+    PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = pROVISION_GUICHET_UNIQUE_STATUS_MODIFIED;
+  }
+
+  public static String getPROVISION_GUICHET_UNIQUE_STATUS_SIGNED() {
+    return PROVISION_GUICHET_UNIQUE_STATUS_SIGNED;
+  }
+
+  public static void setPROVISION_GUICHET_UNIQUE_STATUS_SIGNED(String pROVISION_GUICHET_UNIQUE_STATUS_SIGNED) {
+    PROVISION_GUICHET_UNIQUE_STATUS_SIGNED = pROVISION_GUICHET_UNIQUE_STATUS_SIGNED;
   }
 
   public String getNotificationType() {
@@ -157,85 +176,20 @@ public class Notification implements Serializable, IId {
     this.notificationType = notificationType;
   }
 
-  public static String getPERSONNAL() {
-    return PERSONNAL;
+  public String getDetail1() {
+    return detail1;
   }
 
-  public static void setPERSONNAL(String pERSONNAL) {
-    PERSONNAL = pERSONNAL;
+  public void setDetail1(String detail1) {
+    this.detail1 = detail1;
   }
 
-  public static String getQUOTATION_SENT() {
-    return QUOTATION_SENT;
+  public String getSummary() {
+    return summary;
   }
 
-  public static void setQUOTATION_SENT(String qUOTATION_SENT) {
-    QUOTATION_SENT = qUOTATION_SENT;
-  }
-
-  public static String getQUOTATION_VALIDATED_BY_CUSOMER() {
-    return QUOTATION_VALIDATED_BY_CUSOMER;
-  }
-
-  public static void setQUOTATION_VALIDATED_BY_CUSOMER(String qUOTATION_VALIDATED_BY_CUSOMER) {
-    QUOTATION_VALIDATED_BY_CUSOMER = qUOTATION_VALIDATED_BY_CUSOMER;
-  }
-
-  public static String getQUOTATION_REFUSED_BY_CUSOMER() {
-    return QUOTATION_REFUSED_BY_CUSOMER;
-  }
-
-  public static void setQUOTATION_REFUSED_BY_CUSOMER(String qUOTATION_REFUSED_BY_CUSOMER) {
-    QUOTATION_REFUSED_BY_CUSOMER = qUOTATION_REFUSED_BY_CUSOMER;
-  }
-
-  public static String getQUOTATION_ASSO_AFFAIRE_ORDER_VERIFY() {
-    return QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY;
-  }
-
-  public static void setQUOTATION_ASSO_AFFAIRE_ORDER_VERIFY(String qUOTATION_ASSO_AFFAIRE_ORDER_VERIFY) {
-    QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY = qUOTATION_ASSO_AFFAIRE_ORDER_VERIFY;
-  }
-
-  public static String getCUSTOMER_ORDER_CREATE() {
-    return CUSTOMER_ORDER_CREATE;
-  }
-
-  public static void setCUSTOMER_ORDER_CREATE(String cUSTOMER_ORDER_CREATE) {
-    CUSTOMER_ORDER_CREATE = cUSTOMER_ORDER_CREATE;
-  }
-
-  public static String getCUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY() {
-    return CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY;
-  }
-
-  public static void setCUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY(String cUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY) {
-    CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY = cUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY;
-  }
-
-  public static String getCUSTOMER_ORDER_BEING_PROCESSED() {
-    return CUSTOMER_ORDER_BEING_PROCESSED;
-  }
-
-  public static void setCUSTOMER_ORDER_BEING_PROCESSED(String cUSTOMER_ORDER_BEING_PROCESSED) {
-    CUSTOMER_ORDER_BEING_PROCESSED = cUSTOMER_ORDER_BEING_PROCESSED;
-  }
-
-  public static String getCUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN() {
-    return CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN;
-  }
-
-  public static void setCUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN(
-      String cUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN) {
-    CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN = cUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN;
-  }
-
-  public static String getCUSTOMER_ORDER_TO_BE_BILLED() {
-    return CUSTOMER_ORDER_TO_BE_BILLED;
-  }
-
-  public static void setCUSTOMER_ORDER_TO_BE_BILLED(String cUSTOMER_ORDER_TO_BE_BILLED) {
-    CUSTOMER_ORDER_TO_BE_BILLED = cUSTOMER_ORDER_TO_BE_BILLED;
+  public void setSummary(String summary) {
+    this.summary = summary;
   }
 
   public Boolean getShowPopup() {
@@ -246,12 +200,44 @@ public class Notification implements Serializable, IId {
     this.showPopup = showPopup;
   }
 
-  public String getSummary() {
-    return summary;
+  public Employee getUpdatedBy() {
+    return updatedBy;
   }
 
-  public void setSummary(String summary) {
-    this.summary = summary;
+  public void setUpdatedBy(Employee updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public LocalDateTime getUpdatedDateTime() {
+    return updatedDateTime;
+  }
+
+  public void setUpdatedDateTime(LocalDateTime updatedDateTime) {
+    this.updatedDateTime = updatedDateTime;
+  }
+
+  public Service getService() {
+    return service;
+  }
+
+  public void setService(Service service) {
+    this.service = service;
+  }
+
+  public Provision getProvision() {
+    return provision;
+  }
+
+  public void setProvision(Provision provision) {
+    this.provision = provision;
+  }
+
+  public CustomerOrder getCustomerOrder() {
+    return customerOrder;
+  }
+
+  public void setCustomerOrder(CustomerOrder customerOrder) {
+    this.customerOrder = customerOrder;
   }
 
 }

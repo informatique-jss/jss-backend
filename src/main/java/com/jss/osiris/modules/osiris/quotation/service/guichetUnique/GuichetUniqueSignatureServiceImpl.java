@@ -26,6 +26,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
@@ -53,6 +54,9 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
 
     @Autowired
     FormaliteGuichetUniqueStatusService formaliteGuichetUniqueStatusService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Autowired
     ConstantService constantService;
@@ -212,6 +216,7 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
 
                 }
                 changeFormalityStatusToSigned(formalite, signedSynthesisPieceJointe, signedSynthesisBePieceJointe);
+                notificationService.notifyGuichetUniqueFormaliteSigned(formalite.getFormalite().getProvision().get(0));
                 batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE, formalite.getId());
 
             }

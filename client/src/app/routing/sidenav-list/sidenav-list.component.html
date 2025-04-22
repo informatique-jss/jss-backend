@@ -83,8 +83,8 @@
 <button mat-mini-fab color="accent" class="search" (click)="openSearch()">
   <mat-icon>search</mat-icon>
 </button>
-<button mat-mini-fab color="accent" class="notif" (click)="openNotificationDialog()"
-  [matBadge]="getNotificationNumber()" matBadgePosition="below after" [matBadgeHidden]="getNotificationNumber()==0"
-  matBadgeColor="warn" matBadgeSize="small">
+<button mat-mini-fab color="accent" class="notif" routerLink="notifications" [matBadge]="getNotificationNumber()"
+  matBadgePosition="below after" [matBadgeHidden]="getNotificationNumber()==0" matBadgeColor="warn"
+  matBadgeSize="small">
   <mat-icon>notifications</mat-icon>
 </button>

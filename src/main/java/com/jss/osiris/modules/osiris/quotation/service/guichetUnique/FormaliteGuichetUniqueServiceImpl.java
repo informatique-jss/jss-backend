@@ -407,6 +407,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                                         .getLabel()
                                                 + ")");
 
+                        notificationService.notifyGuichetUniqueFormaliteStatus(formalite.getProvision().get(0));
                         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                                 constantService.getActiveDirectoryGroupFormalites());
 
@@ -425,6 +426,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                                 .getCustomerOrder(),
                                         "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " validée");
 
+                        notificationService.notifyGuichetUniqueFormaliteStatus(formalite.getProvision().get(0));
                         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                                 constantService.getActiveDirectoryGroupFormalites());
                     }

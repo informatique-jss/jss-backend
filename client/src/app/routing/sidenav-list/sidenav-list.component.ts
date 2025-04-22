@@ -21,7 +21,6 @@ export class SidenavListComponent implements OnInit {
     protected searchService: SearchService) { }
 
   ngOnInit() {
-    this.notidicationService.getNotificationsObservable().subscribe();
     this.isDarkTheme = this.userPreferenceService.getDarkMode();
     this.refreshBodyTheme();
   }
@@ -129,16 +128,8 @@ export class SidenavListComponent implements OnInit {
     this.searchService.openSearch();
   }
 
-  openNotificationDialog() {
-    this.notidicationService.openNotificationDialog();
-  }
-
   getNotificationNumber() {
-    let notificationNumber = 0;
-    for (let notification of this.notidicationService.getNotificationsResult())
-      if (notification.isRead == false)
-        notificationNumber++;
-    return notificationNumber;
+    return this.notidicationService.getNotificationsResult();
   }
 
 }

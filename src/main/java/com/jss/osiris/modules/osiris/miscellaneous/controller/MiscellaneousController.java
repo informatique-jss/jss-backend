@@ -387,6 +387,12 @@ public class MiscellaneousController {
                 notificationService.getNotificationsForCurrentEmployee(displayFuture), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/notifications/nbr")
+    public ResponseEntity<Integer> getNotificationsNumber(@RequestParam Boolean displayFuture) {
+        List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(displayFuture);
+        return new ResponseEntity<Integer>(notifications != null ? notifications.size() : 0, HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/notification/personnal")
     public ResponseEntity<Notification> addPOrUpdatePersonnalNotification(
             @RequestBody Notification notifications) {
