@@ -109,7 +109,6 @@ export class ServicesSelectionComponent implements OnInit {
           }
       } else {
         this.serviceService.getServiceForServiceTypeAndAffaire(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire).subscribe(response => {
-          console.log(response);
           if (!this.applyToAllAffaires) {
             if (!this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services)
               this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services = [];

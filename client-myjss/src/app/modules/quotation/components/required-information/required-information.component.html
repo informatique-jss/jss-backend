@@ -57,12 +57,15 @@
       </li>
       <ng-container
         *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions">
-        <li class="nav-item" *ngIf="provision.announcement && provision.announcement.id!=null">
+        <li class="nav-item"
+          *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
+          <!-- hrefvar en fonction de l'annonce legale -->
           <a href="#profile" class="nav-link" data-bs-toggle="tab" role="tab">
             Annonce légale
           </a>
         </li>
-        <li class="nav-item " *ngIf="provision.domiciliation && provision.domiciliation.id!=null">
+        <li class="nav-item "
+          *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION ">
           <a href="#home" class="nav-link quotation-tabs" data-bs-toggle="tab" role="tab">
             Domiciliation
           </a>

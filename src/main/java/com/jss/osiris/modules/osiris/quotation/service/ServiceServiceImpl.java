@@ -246,22 +246,18 @@ public class ServiceServiceImpl implements ServiceService {
                     if (provision.getProvisionType().getProvisionScreenType().getCode()
                             .equals(ProvisionScreenType.ANNOUNCEMENT)) {
                         Announcement announcement = new Announcement();
-                        announcement.setId(0);
                         provision.setAnnouncement(announcement);
                     } else if (provision.getProvisionType().getProvisionScreenType().getCode()
                             .equals(ProvisionScreenType.FORMALITE)) {
                         Formalite formalite = new Formalite();
-                        formalite.setId(0);
                         provision.setFormalite(formalite);
                     } else if (provision.getProvisionType().getProvisionScreenType().getCode()
                             .equals(ProvisionScreenType.DOMICILIATION)) {
                         Domiciliation domiciliation = new Domiciliation();
-                        domiciliation.setId(0);
                         provision.setDomiciliation(domiciliation);
                     } else if (provision.getProvisionType().getProvisionScreenType().getCode()
                             .equals(ProvisionScreenType.STANDARD)) {
                         SimpleProvision simpleProvision = new SimpleProvision();
-                        simpleProvision.setId(0);
                         provision.setSimpleProvision(simpleProvision);
                     }
                     provisions.add(provision);
