@@ -13,3 +13,7 @@
 .service-item {
   width: 330px !important;
 }
+
+.btn.btn-outline-primary:hover {
+  color: var(--ar-secondary) !important;
+}

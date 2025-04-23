@@ -55,6 +55,7 @@ public class Provision implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private ProvisionType provisionType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -197,6 +198,7 @@ public class Provision implements IId, IAttachment {
 
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Invoice.class, mappedBy = "provision")

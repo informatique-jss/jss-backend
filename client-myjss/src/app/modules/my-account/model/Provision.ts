@@ -6,5 +6,5 @@ export interface Provision {
   id: number;
   domiciliation: Domiciliation | undefined;
   announcement: Announcement | undefined;
-  provisionType: ProvisionType; //TODO import
+  provisionType: ProvisionType;
 }

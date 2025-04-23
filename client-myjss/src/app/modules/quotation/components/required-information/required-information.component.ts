@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { Attachment } from '../../../my-account/model/Attachment';
+import { Service } from '../../../my-account/model/Service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { IQuotation } from '../../model/IQuotation';
+import { ServiceFamily } from '../../model/ServiceFamily';
 import { ServiceTypeService } from '../../services/service.type.service';
 
 @Component({
@@ -18,6 +21,7 @@ export class RequiredInformationComponent implements OnInit {
 
   selectedAssoIndex: number | null = null;
   selectedServiceIndex: number | null = null;
+  selectedService: Service | null = null;
   currentUser: Responsable | undefined;
   quotation: IQuotation | undefined;
 
@@ -28,6 +32,15 @@ export class RequiredInformationComponent implements OnInit {
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
+  ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
+  serviceFamilies: ServiceFamily[] = [];
+
+
+  uploadedFiles: Attachment[] = [];
+  downloadingPercentage: number = 100;
+  totalFileWeight: number = 120;
+  isDownloading: boolean = this.downloadingPercentage != 100 ? true : false;
+  isError: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -85,53 +98,25 @@ export class RequiredInformationComponent implements OnInit {
     if ((event.target as HTMLElement).closest('.pill')) {
       return;
     }
-
     this.selectedAssoIndex = assoIndex;
   }
 
-  /**
-   * Upload file management
-   *
-   */
-
-  onCardClick(): void {
-    const fileInput = document.getElementById('fileDropRef') as HTMLInputElement;
-    fileInput?.click();
+  selectServiceIndex(selectedService: number, selectedAssoIndex: number) {
+    this.selectedServiceIndex = selectedService;
+    this.selectedAssoIndex = selectedAssoIndex;
   }
 
-  onFileSelected(event: any): void {
-    const files = event.target.files;
-    if (files.length > 0) {
-      // TODO
-      console.log('Fichiers sélectionnés :', files);
-    }
-  }
-
-  onDragOver(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    const card = event.target as HTMLElement;
-    card.classList.add('dragover');
-  }
-
-  onDragLeave(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    const card = event.target as HTMLElement;
-    card.classList.remove('dragover');
-  }
-
-  onDrop(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    const card = event.target as HTMLElement;
-    card.classList.remove('dragover');
-
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      // TODO
-      console.log('Fichiers déposés :', files);
-    }
+  refreshCurrentAssoAffaireOrder() {
+    // TODO voir avec Alex qu'est-ce que ça fait et comment l'uiliser
+    // if (this.quotation)
+    //   this.quotationService.getAsso(this.quotation).subscribe(response => {
+    //     this.ordersAssoAffaireOrders = response;
+    //     if (response && this.selectedAssoAffaireOrder)
+    //       for (let asso of this.ordersAssoAffaireOrders)
+    //         if (asso.id == this.selectedAssoAffaireOrder.id)
+    //           this.changeAffaire(asso);
+    //     initTooltips();
+    //   })
   }
 
   deleteFile() {

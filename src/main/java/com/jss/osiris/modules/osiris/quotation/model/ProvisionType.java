@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
@@ -49,6 +51,7 @@ public class ProvisionType implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_screen_type")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ProvisionScreenType provisionScreenType;
 
 	private Boolean isDisplayActeDepositScreen;

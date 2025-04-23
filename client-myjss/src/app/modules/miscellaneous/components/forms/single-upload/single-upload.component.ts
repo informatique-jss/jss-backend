@@ -11,10 +11,10 @@ import { TypeDocument } from '../../../../my-account/model/TypeDocument';
 import { UploadAttachmentService } from '../../../../my-account/services/upload.attachment.service';
 
 @Component({
-    selector: 'single-upload',
-    templateUrl: './single-upload.component.html',
-    styleUrls: ['./single-upload.component.css'],
-    standalone: false
+  selector: 'single-upload',
+  templateUrl: './single-upload.component.html',
+  styleUrls: ['./single-upload.component.css'],
+  standalone: false
 })
 export class SingleUploadComponent implements OnInit {
 
@@ -107,6 +107,36 @@ export class SingleUploadComponent implements OnInit {
           this.resetForm();
         })
       }
+    }
+  }
+
+  onCardClick(): void {
+    const fileInput = document.getElementById('fileDropRef') as HTMLInputElement;
+    fileInput?.click();
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const card = event.target as HTMLElement;
+    card.classList.add('dragover');
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const card = event.target as HTMLElement;
+    card.classList.remove('dragover');
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const card = event.target as HTMLElement;
+    card.classList.remove('dragover');
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.fileBrowseHandler(files);
     }
   }
 

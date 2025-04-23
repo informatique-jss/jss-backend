@@ -1,7 +1,7 @@
 <div class="container">
 
   <section>
-    <p class="sub-title" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>1  ">
+    <p class="sub-title" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>0  ">
       Sélectionnez une affaire</p>
 
     <div class="w-100" *ngIf="!quotation ">
@@ -31,8 +31,8 @@
           </div>
           <div class="row align-items-center">
             <!-- Les boutons pills -->
-            <a *ngFor="let service of asso.services" class="btn  rounded-pill mt-3 ms-3 col-auto pill"
-              [ngClass]="{'btn-primary': selectedAssoIndex == indexAsso,'btn-secondary':selectedAssoIndex != indexAsso}"
+            <a *ngFor="let service of asso.services" class="btn rounded-pill mt-3 ms-3 col-auto pill"
+              [ngClass]="{'btn-secondary': selectedAssoIndex == indexAsso,'btn-outline-primary':selectedAssoIndex != indexAsso}"
               (click)="removeServiceFromCurrentAffaire(service.serviceType, indexAsso);$event.stopPropagation()">
               {{service.customLabel?service.customLabel : service.serviceType.label }} <i class="ai-cross ms-2"></i>
             </a>
@@ -47,7 +47,16 @@
     <p class="sub-title">
       Sélectionnez vos services
     </p>
-    <ul class="nav nav-tabs" role="tablist">
+    <div class="w-100" *ngIf="!serviceFamilies || serviceFamilies.length<=0 ">
+      <p class="card-text placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4 me-2"></span>
+        <span class="placeholder placeholder-sm col-6"></span>
+        <span class="placeholder placeholder-sm col-8"></span>
+      </p>
+    </div>
+    <ul *ngIf="serviceFamilies" class="nav nav-tabs" role="tablist">
       <li class="nav-item " *ngFor="let serviceFamily of serviceFamilies">
         <a href="#home" class="nav-link quotation-tabs"
           [ngClass]="{'active' : selectedServiceFamily && selectedServiceFamily.id == serviceFamily.id}"

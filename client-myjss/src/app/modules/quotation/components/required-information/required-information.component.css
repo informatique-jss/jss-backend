@@ -22,6 +22,7 @@
 .blue-card {
     background-color: #F6F9FC;
     padding: 2rem;
+    height: auto;
 }
 
 .light-grey {
@@ -47,5 +48,4 @@
 
 .col.with-right-border {
     border-right: 1px solid var(--ar-gray-500);
-
 }

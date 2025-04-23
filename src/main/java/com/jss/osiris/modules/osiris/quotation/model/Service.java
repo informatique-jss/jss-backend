@@ -40,7 +40,7 @@ public class Service implements Serializable, IId {
 	@OneToMany(targetEntity = Provision.class, mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private List<Provision> provisions;
 
 	@ManyToOne(fetch = FetchType.LAZY)

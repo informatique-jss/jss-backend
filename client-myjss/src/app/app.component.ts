@@ -64,7 +64,7 @@ export class AppComponent implements AfterViewInit {
   isDisplayLightHeader() {
     let url: String = this.router.url;
     if (url) {
-      if (url.indexOf("quotation") >= 0 || url.indexOf("signin") >= 0)
+      if (url.indexOf("quotation") >= 0)
         return true;
     }
     return false;
