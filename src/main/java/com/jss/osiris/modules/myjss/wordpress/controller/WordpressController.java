@@ -191,32 +191,33 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getJssCategoryPosts(pageable)),
+				postService.getJssCategoryPosts(pageable),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/top")
 	public ResponseEntity<List<Post>> getTopMyJssPosts(@RequestParam Integer page) throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getMyJssCategoryPosts(page)),
+		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPosts(page),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss/tendency")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getJssCategoryPostsTendency() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getJssCategoryPostTendency()),
+		return new ResponseEntity<List<Post>>(postService.getJssCategoryPostTendency(),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/tendency")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getMyJssCategoryPostsTendency() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getMyJssCategoryPostTendency()),
+		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPostTendency(),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/most-seen")
 	public ResponseEntity<List<Post>> getMyJssPostsMostSeen() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.applyPremium(postService.getMyJssCategoryPostMostSeen()),
+		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPostMostSeen(),
 				HttpStatus.OK);
 	}
 
@@ -233,7 +234,7 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getJssCategoryPostMostSeen(pageableRequest)),
+				postService.getJssCategoryPostMostSeen(pageableRequest),
 				HttpStatus.OK);
 	}
 
@@ -250,11 +251,12 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getJssCategoryStickyPost(pageableRequest)),
+				postService.getJssCategoryStickyPost(pageableRequest),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/slug")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Post> getPostBySlug(@RequestParam String slug, HttpServletRequest request)
 			throws OsirisException {
 		Post post = postService.getPostsBySlug(slug);
@@ -299,7 +301,7 @@ public class WordpressController {
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
 		detectFlood(request);
-		Pageable pageable = PageRequest.of(page, size,
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 		JssCategory category = jssCategoryService.getJssCategory(jssCategoryId);
 
@@ -307,7 +309,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getMostSeenPostByJssCatgory(pageable, category)),
+				postService.getMostSeenPostByJssCatgory(pageable, category),
 				HttpStatus.OK);
 	}
 
@@ -318,7 +320,7 @@ public class WordpressController {
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
 		detectFlood(request);
-		Pageable pageable = PageRequest.of(page, size,
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 		Tag tag = tagService.getTagBySlug(tagSlug);
 
@@ -326,7 +328,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getMostSeenPostByTag(pageable, tag)),
+				postService.getMostSeenPostByTag(pageable, tag),
 				HttpStatus.OK);
 	}
 
@@ -337,7 +339,7 @@ public class WordpressController {
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
 		detectFlood(request);
-		Pageable pageable = PageRequest.of(page, size,
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		Author author = authorService.getAuthorBySlug(authorSlug);
@@ -346,7 +348,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getMostSeenPostByAuthor(pageable, author)),
+				postService.getMostSeenPostByAuthor(pageable, author),
 				HttpStatus.OK);
 	}
 
@@ -357,7 +359,7 @@ public class WordpressController {
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
 		detectFlood(request);
-		Pageable pageable = PageRequest.of(page, size,
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 		Serie serie = serieService.getSerieBySlug(serieSlug);
 
@@ -365,7 +367,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getMostSeenPostBySerie(pageable, serie)),
+				postService.getMostSeenPostBySerie(pageable, serie),
 				HttpStatus.OK);
 	}
 
@@ -376,7 +378,7 @@ public class WordpressController {
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
 		detectFlood(request);
-		Pageable pageable = PageRequest.of(page, size,
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
@@ -385,8 +387,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(
-						postService.getMostSeenPostByPublishingDepartment(pageable, publishingDepartment)),
+				postService.getMostSeenPostByPublishingDepartment(pageable, publishingDepartment),
 				HttpStatus.OK);
 	}
 
@@ -396,12 +397,11 @@ public class WordpressController {
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) {
 		detectFlood(request);
-		Pageable pageable = PageRequest.of(page, size,
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(
-						postService.getMostSeenPostByIdf(pageable)),
+				postService.getMostSeenPostByIdf(pageable),
 				HttpStatus.OK);
 	}
 
@@ -423,7 +423,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getAllPostsByJssCategory(pageableRequest, category, searchText)),
+				postService.getAllPostsByJssCategory(pageableRequest, category, searchText),
 				HttpStatus.OK);
 	}
 
@@ -446,7 +446,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getAllPostsByTag(pageableRequest, tag, searchText)),
+				postService.getAllPostsByTag(pageableRequest, tag, searchText),
 				HttpStatus.OK);
 
 	}
@@ -470,7 +470,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getAllPostsByAuthor(pageableRequest, author, searchText)),
+				postService.getAllPostsByAuthor(pageableRequest, author, searchText),
 				HttpStatus.OK);
 	}
 
@@ -493,7 +493,7 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(postService.getAllPostsBySerie(pageableRequest, serie, searchText)),
+				postService.getAllPostsBySerie(pageableRequest, serie, searchText),
 				HttpStatus.OK);
 	}
 
@@ -516,9 +516,8 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(
-						postService.getAllPostsByPublishingDepartment(pageableRequest, publishingDepartment,
-								searchText)),
+				postService.getAllPostsByPublishingDepartment(pageableRequest, publishingDepartment,
+						searchText),
 				HttpStatus.OK);
 	}
 
@@ -535,8 +534,7 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.applyPremium(
-						postService.getAllPostsByIdf(pageableRequest, searchText)),
+				postService.getAllPostsByIdf(pageableRequest, searchText),
 				HttpStatus.OK);
 	}
 
@@ -584,7 +582,7 @@ public class WordpressController {
 
 		Order order = new Order(Direction.DESC, "titleText");
 		Sort sort = Sort.by(Arrays.asList(order));
-		Pageable pageableRequest = PageRequest.of(page, size, sort);
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size), sort);
 
 		return new ResponseEntity<Page<Post>>(
 				postService.searchPostsByMyJssCategory(searchText, myJssCategory, pageableRequest), HttpStatus.OK);
@@ -605,7 +603,7 @@ public class WordpressController {
 
 		Order order = new Order(Direction.DESC, "titleText");
 		Sort sort = Sort.by(Arrays.asList(order));
-		Pageable pageableRequest = PageRequest.of(page, size, sort);
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size), sort);
 
 		return new ResponseEntity<Page<Post>>(
 				postService.searchPostsByMyJssCategory(searchText, myJssCategory, pageableRequest), HttpStatus.OK);
@@ -621,19 +619,21 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/post/next")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Post> getNextPost(@RequestParam Integer idPost) {
 		Post post = postService.getPost(idPost);
 		if (post == null)
 			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
-		return new ResponseEntity<Post>(postService.getNextPost(post), HttpStatus.OK);
+		return new ResponseEntity<Post>(postService.applyPremium(postService.getNextPost(post)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/previous")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Post> getPreviousPost(@RequestParam Integer idPost) {
 		Post post = postService.getPost(idPost);
 		if (post == null)
 			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
-		return new ResponseEntity<Post>(postService.getPreviousPost(post), HttpStatus.OK);
+		return new ResponseEntity<Post>(postService.applyPremium(postService.getPreviousPost(post)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department")
@@ -651,7 +651,8 @@ public class WordpressController {
 		if (department == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
-		return new ResponseEntity<Page<Post>>(postService.getTopPostByDepartment(pageable, department), HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(
+				postService.getTopPostByDepartment(pageable, department), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department/all")
@@ -664,7 +665,8 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<Page<Post>>(postService.getTopPostWithDepartment(pageable), HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(postService.getTopPostWithDepartment(pageable),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/podcast")
@@ -828,7 +830,7 @@ public class WordpressController {
 
 		detectFlood(request);
 
-		Pageable pageable = PageRequest.of(page, size,
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "creationDate"));
 
 		return ResponseEntity.ok(commentService.getParentCommentsForPost(pageable, postId));

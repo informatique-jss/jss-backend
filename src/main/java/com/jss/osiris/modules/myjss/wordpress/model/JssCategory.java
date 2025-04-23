@@ -14,14 +14,19 @@ import jakarta.persistence.Transient;
 @Entity
 public class JssCategory {
     @Id
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer id;
 
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String name;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String slug;
+
     private String color;
+
+    @JsonView(JacksonViews.MyJssListView.class)
     private Integer categoryOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)

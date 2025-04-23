@@ -315,7 +315,8 @@
     <article>
       <div class="position-relative">
         <img class="rounded-5"
-          [src]="relatedPost.media.urlLarge ? relatedPost.media.urlLarge : relatedPost.media.urlFull" alt="Post image">
+          [src]="relatedPost.media && relatedPost.media.urlLarge ? relatedPost.media.urlLarge : relatedPost.media.urlFull"
+          alt="Post image">
         <h3 class="h4 mt-4 mb-0">
           <a class="stretched-link" style="cursor: pointer;"
             (click)="openPost(relatedPost, $event)">{{relatedPost.titleText}}</a>
