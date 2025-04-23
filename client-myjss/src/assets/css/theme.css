@@ -20350,3 +20350,9 @@ h1.secondary-heading,
 .background-opacity {
   background: #FFFFFF08;
 }
+
+input::selection,
+textarea::selection {
+  background: #9bb6fc;
+  color: white;
+}
