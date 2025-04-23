@@ -20353,6 +20353,6 @@ h1.secondary-heading,
 
 input::selection,
 textarea::selection {
-  background: #9bb6fc;
+  background: var(--ar-blue-step);
   color: white;
 }
