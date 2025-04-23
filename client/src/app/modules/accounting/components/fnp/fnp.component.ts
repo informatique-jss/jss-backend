@@ -24,6 +24,7 @@ export class FnpComponent implements OnInit {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder", label: "Tiers" } as SortTableColumn<FnpResult>);
     this.displayedColumns.push({ id: "amount", fieldName: "amount", label: "Montant HT (en €)", valueFonction: formatEurosForSortTable } as SortTableColumn<FnpResult>);
+    this.displayedColumns.push({ id: "isPayed", fieldName: "isPayed", label: "Payé ?", valueFonction: (element: FnpResult, column: SortTableColumn<FnpResult>) => { return element.isPayed ? "Oui" : "Non" } } as SortTableColumn<FnpResult>);
 
     this.refresh();
   }
