@@ -6,4 +6,5 @@ public interface FnpResult {
 
     public Float getAmount();
 
+    public Boolean getIsPayed();
 }
