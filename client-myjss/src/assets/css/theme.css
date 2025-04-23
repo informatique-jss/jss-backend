@@ -20354,5 +20354,5 @@ h1.secondary-heading,
 input::selection,
 textarea::selection {
   background: var(--ar-blue-step);
-  color: white;
+  color: var(--ar-light);
 }
