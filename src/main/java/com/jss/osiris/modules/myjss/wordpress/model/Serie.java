@@ -14,12 +14,15 @@ import jakarta.persistence.Transient;
 @Entity
 public class Serie {
     @Id
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer id;
-    @JsonView(JacksonViews.MyJssListView.class)
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String name;
-    @JsonView(JacksonViews.MyJssListView.class)
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String slug;
+
     private Integer count;
     private Integer serieOrder;
 
