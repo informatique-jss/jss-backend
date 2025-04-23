@@ -492,6 +492,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory) {
         List<Post> firstPostsByMyJssCategory = new ArrayList<Post>();
+        List<Integer> idPostsByMyJssCategory = new ArrayList<Integer>();
         List<Post> tmpPostsByMyJssCategory = new ArrayList<Post>();
 
         Order order = new Order(Direction.DESC, "date");
@@ -505,8 +506,10 @@ public class PostServiceImpl implements PostService {
             tmpPostsByMyJssCategory = postRepository.searchPostsByMyJssCategory(myJssCategory, pageableRequest);
             if (!tmpPostsByMyJssCategory.isEmpty()) {
                 for (Post post : tmpPostsByMyJssCategory) {
-                    if (!firstPostsByMyJssCategory.contains(post))
+                    if (!idPostsByMyJssCategory.contains(post.getId())) {
+                        idPostsByMyJssCategory.add(post.getId());
                         firstPostsByMyJssCategory.add(post);
+                    }
                 }
             }
         }
