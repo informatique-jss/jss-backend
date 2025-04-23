@@ -850,8 +850,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public List<FnpResult> getFnp(LocalDate accountingDate) throws OsirisException {
     return accountingRecordRepository.getFnp(accountingDate.atTime(23, 59, 59),
-        Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
-            constantService.getInvoiceStatusReceived().getId(), constantService.getInvoiceStatusSend().getId()),
+        Arrays.asList(constantService.getInvoiceStatusPayed().getId(), constantService.getInvoiceStatusSend().getId()),
         accountingDate.getYear() + "");
   }
 
