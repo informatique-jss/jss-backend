@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.IterableUtils;
@@ -16,37 +15,29 @@ import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.TypeDocu
 public class TypeDocumentServiceImpl implements TypeDocumentService {
 
     @Autowired
-    TypeDocumentRepository TypeDocumentRepository;
+    TypeDocumentRepository typeDocumentRepository;
+
+    @Autowired
+    AssoServiceTypeDocumentService assoServiceTypeDocumentService;
 
     @Override
     public List<TypeDocument> getTypeDocument() {
-        return IterableUtils.toList(TypeDocumentRepository.findAll());
+        return IterableUtils.toList(typeDocumentRepository.findAll());
     }
 
     @Override
     public TypeDocument addOrUpdateTypeDocument(TypeDocument typeDocument) {
-        return TypeDocumentRepository.save(typeDocument);
+        return typeDocumentRepository.save(typeDocument);
     }
 
     @Override
     public TypeDocument getTypeDocumentByCode(String code) {
-        return TypeDocumentRepository.findByCode(code);
+        return typeDocumentRepository.findByCode(code);
     }
 
     @Override
     public List<TypeDocument> getTypeDocumentMandatoryByServiceType(ServiceType serviceType) {
-        List<TypeDocument> mandatoryTypeDocuments = new ArrayList<>();
-        List<String> mandatoryTypeDocumentCodes = new ArrayList<>();
-
-        if (serviceType != null && !serviceType.getAssoServiceTypeDocuments().isEmpty()) {
-            for (AssoServiceTypeDocument asso : serviceType.getAssoServiceTypeDocuments()) {
-                if (asso.getTypeDocument() != null && asso.getIsMandatory()
-                        && !mandatoryTypeDocumentCodes.contains(asso.getTypeDocument().getCode())) {
-                    mandatoryTypeDocumentCodes.add(asso.getTypeDocument().getCode());
-                    mandatoryTypeDocuments.add(asso.getTypeDocument());
-                }
-            }
-        }
-        return mandatoryTypeDocuments;
+        return assoServiceTypeDocumentService.getAssoServiceTypeDocumentMandatoryByServiceType(serviceType).stream()
+                .map(AssoServiceTypeDocument::getTypeDocument).toList();
     }
 }
