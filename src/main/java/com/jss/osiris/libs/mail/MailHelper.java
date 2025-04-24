@@ -1415,7 +1415,7 @@ public class MailHelper {
             label += " / "
                     + provision.getProvisionType().getLabel();
             label += " / "
-                    + provision.getService().getServiceType().getServiceFamily().getServiceFamilyGroup().getLabel();
+                    + provision.getService().getServiceTypes().getServiceFamily().getServiceFamilyGroup().getLabel();
 
             if (provision.getFormalite() != null && provision.getFormalite().getFormalitesGuichetUnique() != null) {
                 ArrayList<String> liasseList = new ArrayList<String>();

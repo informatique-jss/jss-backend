@@ -393,7 +393,7 @@ public class NotificationServiceImpl implements NotificationService {
                         : (affaire.getFirstname() + " " + affaire.getLastname());
             details += " - ";
             details += service.getCustomLabel() != null ? service.getCustomLabel()
-                    : service.getServiceType().getLabel();
+                    : service.getServiceTypes().getLabel();
             details += " - ";
             details += attachment.getAttachmentType().getLabel() + " (" + attachment.getDescription() + ")";
             generateNewNotification((Employee) employeeService.getCurrentEmployee(),

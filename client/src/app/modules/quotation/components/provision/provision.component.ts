@@ -37,7 +37,6 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 
 @Component({
   selector: 'provision',
@@ -224,7 +223,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && service) {
-        const dialogRef2 = this.selectServiceTypeDialog.open(SelectServiceTypeDialogComponent, {
+        const dialogRef2 = this.selectServiceTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
           width: "50%",
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;

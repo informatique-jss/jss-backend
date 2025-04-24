@@ -615,7 +615,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/service-types/provisions")
   public ResponseEntity<Service> getServiceForMultiServiceTypesAndAffaire(@RequestParam Integer idAffaire,
-      @RequestBody List<ServiceType> serviceTypes) throws OsirisException {
+      @RequestBody List<ServiceType> serviceTypes, String customLabel) throws OsirisException {
 
     Affaire affaire = affaireService.getAffaire(idAffaire);
     if (affaire == null)
@@ -627,7 +627,12 @@ public class QuotationController {
     for (ServiceType serviceType : serviceTypes)
       validationHelper.validateReferential(serviceType, true, "serviceType");
 
-    return new ResponseEntity<Service>(serviceService.getServiceForMultiServiceTypesAndAffaire(serviceTypes, affaire),
+    validationHelper.validateString(customLabel, false, 2000, "customLabel");
+    if (customLabel != null && customLabel.length() == 0)
+      customLabel = null;
+
+    return new ResponseEntity<Service>(
+        serviceService.getServiceForMultiServiceTypesAndAffaire(serviceTypes, affaire, customLabel),
         HttpStatus.OK);
   }
 

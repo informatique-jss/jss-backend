@@ -20,6 +20,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
@@ -47,13 +49,14 @@ public class Service implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "services" }, allowSetters = true)
 	private AssoAffaireOrder assoAffaireOrder;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToMany
 	@JoinColumn(name = "id_service_type")
 	@IndexedField
 	@JsonView(JacksonViews.MyJssListView.class)
 	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments", "assoServiceTypeFieldTypes",
 			"assoServiceProvisionTypes" }, allowSetters = true)
-	private ServiceType serviceType;
+	@JoinTable(name = "asso_service_service_type", joinColumns = @JoinColumn(name = "id_service"), inverseJoinColumns = @JoinColumn(name = "id_service_type"))
+	private List<ServiceType> serviceTypes;
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
@@ -96,6 +99,10 @@ public class Service implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssListView.class)
 	private LocalDateTime lastMissingAttachmentQueryDateTime;
 
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@Column(length = 2000)
+	private String serviceLabelToDisplay;
+
 	public Integer getId() {
 		return id;
 	}
@@ -118,22 +125,6 @@ public class Service implements Serializable, IId {
 
 	public void setAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder) {
 		this.assoAffaireOrder = assoAffaireOrder;
-	}
-
-	public String getCustomLabel() {
-		return customLabel;
-	}
-
-	public void setCustomLabel(String customLabel) {
-		this.customLabel = customLabel;
-	}
-
-	public ServiceType getServiceType() {
-		return serviceType;
-	}
-
-	public void setServiceType(ServiceType serviceType) {
-		this.serviceType = serviceType;
 	}
 
 	public String getCustomerComment() {
@@ -206,6 +197,30 @@ public class Service implements Serializable, IId {
 
 	public void setLastMissingAttachmentQueryDateTime(LocalDateTime lastMissingAttachmentQueryDateTime) {
 		this.lastMissingAttachmentQueryDateTime = lastMissingAttachmentQueryDateTime;
+	}
+
+	public List<ServiceType> getServiceTypes() {
+		return serviceTypes;
+	}
+
+	public void setServiceTypes(List<ServiceType> serviceType) {
+		this.serviceTypes = serviceType;
+	}
+
+	public String getCustomLabel() {
+		return customLabel;
+	}
+
+	public void setCustomLabel(String customLabel) {
+		this.customLabel = customLabel;
+	}
+
+	public String getServiceLabelToDisplay() {
+		return serviceLabelToDisplay;
+	}
+
+	public void setServiceLabelToDisplay(String serviceLabelToDisplay) {
+		this.serviceLabelToDisplay = serviceLabelToDisplay;
 	}
 
 }

@@ -324,11 +324,18 @@ public class PricingHelper {
                                 .divide(oneHundredValue));
         } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()) {
             if (billingItem.getBillingType().getIsNonTaxable() == false
-                    && provision.getService().getServiceType().getDefaultDeboursPrice() != null) {
-                invoiceItem.setPreTaxPrice(provision.getService().getServiceType().getDefaultDeboursPrice());
+                    && provision.getService().getServiceTypes().getDefaultDeboursPrice() != null) {
+                invoiceItem.setPreTaxPrice(provision.getService().getServiceTypes().getDefaultDeboursPrice()); // TODO
+                                                                                                               // boucler
+                                                                                                               // et
+                                                                                                               // sommer
             } else if (billingItem.getBillingType().getIsNonTaxable() == true
-                    && provision.getService().getServiceType().getDefaultDeboursPriceNonTaxable() != null) {
-                invoiceItem.setPreTaxPrice(provision.getService().getServiceType().getDefaultDeboursPriceNonTaxable());
+                    && provision.getService().getServiceTypes().getDefaultDeboursPriceNonTaxable() != null) {
+                invoiceItem.setPreTaxPrice(provision.getService().getServiceTypes().getDefaultDeboursPrice()); // TODO
+                                                                                                               // boucler
+                                                                                                               // et
+                                                                                                               // sommer
+                invoiceItem.setPreTaxPrice(provision.getService().getServiceTypes().getDefaultDeboursPriceNonTaxable());
             }
         } else {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());

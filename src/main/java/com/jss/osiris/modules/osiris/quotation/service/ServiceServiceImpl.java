@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.beust.jcommander.Strings;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
@@ -51,6 +50,7 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional(rollbackFor = Exception.class)
     public Service addOrUpdateService(
             Service service) {
+        computeServiceLabel(service);
         if (service.getCustomLabel() != null && service.getCustomLabel().trim().length() == 0)
             service.setCustomLabel(null);
         return serviceRepository.save(service);
@@ -74,13 +74,11 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire)
+    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire,
+            String customLabel)
             throws OsirisException {
         Service service = new Service();
-        if (serviceTypes.size() > 1)
-            service.setServiceType(serviceTypeService.getServiceTypeByCode(ServiceType.SERVICE_TYPE_OTHER));
-        else
-            service.setServiceType(serviceTypes.get(0));
+        service.setServiceTypes(serviceTypes);
 
         ArrayList<AssoServiceDocument> assoServiceDocuments = new ArrayList<AssoServiceDocument>();
         ArrayList<String> typeDocumentCodes = new ArrayList<String>();
@@ -124,7 +122,7 @@ public class ServiceServiceImpl implements ServiceService {
                 }
         }
 
-        // Always add firther information field
+        // Always add further information field
         AssoServiceFieldType newAssoServiceFieldType = new AssoServiceFieldType();
         newAssoServiceFieldType.setIsMandatory(false);
         newAssoServiceFieldType.setService(service);
@@ -133,7 +131,6 @@ public class ServiceServiceImpl implements ServiceService {
 
         service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         service.setAssoServiceDocuments(assoServiceDocuments);
-        service.setCustomLabel(Strings.join(" / ", serviceLabels));
         return service;
     }
 
@@ -245,89 +242,92 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Service modifyServiceType(ServiceType serviceType, Service service) {
-        serviceType = serviceTypeService.getServiceType(serviceType.getId());
+    public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) {
         service = getService(service.getId());
-
-        service.setServiceType(serviceType);
-
-        for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
-            boolean found = false;
-            for (AssoServiceFieldType serviceFieldType : service.getAssoServiceFieldTypes()) {
-                if (serviceFieldType.getServiceFieldType().getId().equals(serviceTypeFieldType.getId())) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                service.getAssoServiceFieldTypes()
-                        .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(serviceTypeFieldType, service));
-            }
-        }
-
+        service.setServiceTypes(serviceTypes);
         ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
-        for (AssoServiceFieldType serviceFieldType : service.getAssoServiceFieldTypes()) {
-            boolean found = false;
-            for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
-                if (serviceFieldType.getServiceFieldType().getId().equals(serviceTypeFieldType.getId())) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                assoToDelete.add(serviceFieldType);
-        }
-        if (assoToDelete.size() > 0)
-            service.getAssoServiceFieldTypes().removeAll(assoToDelete);
 
-        // remove empty service association
-        ArrayList<AssoServiceDocument> finalAssos = new ArrayList<AssoServiceDocument>();
-        if (service.getAssoServiceDocuments() != null && service.getAssoServiceDocuments().size() > 0) {
-            for (AssoServiceDocument asso : service.getAssoServiceDocuments()) {
-                if (asso.getAttachments() != null && asso.getAttachments().size() > 0)
-                    finalAssos.add(asso);
-            }
-        }
-        // Add new ones
-        ArrayList<AssoServiceDocument> newAssos = new ArrayList<AssoServiceDocument>();
-        if (serviceType.getAssoServiceTypeDocuments() != null && serviceType.getAssoServiceTypeDocuments().size() > 0) {
-            for (AssoServiceTypeDocument assoType : serviceType.getAssoServiceTypeDocuments()) {
-                Boolean found = false;
-                for (AssoServiceDocument assoService : finalAssos) {
-                    if (assoService.getTypeDocument().getCode().equals(assoType.getTypeDocument().getCode())) {
+        for (ServiceType serviceType : serviceTypes) {
+            serviceType = serviceTypeService.getServiceType(serviceType.getId());
+            for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
+                boolean found = false;
+                for (AssoServiceFieldType serviceFieldType : service.getAssoServiceFieldTypes()) {
+                    if (serviceFieldType.getServiceFieldType().getId().equals(serviceTypeFieldType.getId())) {
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    newAssos.add(getAssoServiceDocumentFromAssoServiceTypeDocument(assoType, service));
+                    service.getAssoServiceFieldTypes()
+                            .add(getAssoServiceFieldTypeFromAssoServiceTypeFieldType(serviceTypeFieldType, service));
                 }
             }
+
+            for (AssoServiceFieldType serviceFieldType : service.getAssoServiceFieldTypes()) {
+                boolean found = false;
+                for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
+                    if (serviceFieldType.getServiceFieldType().getId().equals(serviceTypeFieldType.getId())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    assoToDelete.add(serviceFieldType);
+            }
+
+            if (assoToDelete.size() > 0)
+                service.getAssoServiceFieldTypes().removeAll(assoToDelete);
+
+            // remove empty service association
+            ArrayList<AssoServiceDocument> finalAssos = new ArrayList<AssoServiceDocument>();
+            if (service.getAssoServiceDocuments() != null && service.getAssoServiceDocuments().size() > 0) {
+                for (AssoServiceDocument asso : service.getAssoServiceDocuments()) {
+                    if (asso.getAttachments() != null && asso.getAttachments().size() > 0)
+                        finalAssos.add(asso);
+                }
+            }
+            // Add new ones
+            ArrayList<AssoServiceDocument> newAssos = new ArrayList<AssoServiceDocument>();
+            if (serviceType.getAssoServiceTypeDocuments() != null
+                    && serviceType.getAssoServiceTypeDocuments().size() > 0) {
+                for (AssoServiceTypeDocument assoType : serviceType.getAssoServiceTypeDocuments()) {
+                    Boolean found = false;
+                    for (AssoServiceDocument assoService : finalAssos) {
+                        if (assoService.getTypeDocument().getCode().equals(assoType.getTypeDocument().getCode())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        newAssos.add(getAssoServiceDocumentFromAssoServiceTypeDocument(assoType, service));
+                    }
+                }
+            }
+            if (newAssos.size() > 0)
+                finalAssos.addAll(newAssos);
+
+            service.getAssoServiceDocuments().clear();
+            if (finalAssos.size() > 0)
+                for (AssoServiceDocument asso : finalAssos)
+                    service.getAssoServiceDocuments().add(asso);
+
+            service.getProvisions()
+                    .addAll(getProvisionsFromServiceType(serviceType, service.getAssoAffaireOrder().getAffaire(),
+                            service));
         }
-        if (newAssos.size() > 0)
-            finalAssos.addAll(newAssos);
-
-        service.getAssoServiceDocuments().clear();
-        if (finalAssos.size() > 0)
-            for (AssoServiceDocument asso : finalAssos)
-                service.getAssoServiceDocuments().add(asso);
-
-        service.getProvisions()
-                .addAll(getProvisionsFromServiceType(serviceType, service.getAssoAffaireOrder().getAffaire(), service));
 
         return addOrUpdateService(service);
     }
 
-    @Override
-    public String getServiceLabel(Service service) throws OsirisException {
+    private Service computeServiceLabel(Service service) {
         if (service != null) {
             if (service.getCustomLabel() == null || service.getCustomLabel().length() == 0)
-                return service.getServiceType().getLabel();
-            if (service.getServiceType().getId().equals(constantService.getServiceTypeOther().getId()))
-                return service.getCustomLabel();
-            return service.getServiceType().getLabel();
+                service.setServiceLabelToDisplay(String.join(" / ",
+                        service.getServiceTypes().stream().map(ServiceType::getCustomLabel).toList()));
+            else
+                service.setServiceLabelToDisplay(service.getCustomLabel());
         }
-        return "";
+        return service;
     }
 
     @Override

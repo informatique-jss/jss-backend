@@ -759,11 +759,11 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         .equals(constantService.getDocumentTypeSynthesisRbeUnsigned().getCode())) {
             Boolean isProvisionRbe = false;
 
-            if (currentService.getServiceType().getServiceFamily().getId()
+            if (currentService.getServiceTypes().getServiceFamily().getId()
                     .equals(constantService.getServiceFamilyImmatriculationAlAndFormality().getId()))
                 return false;
 
-            if (currentService.getServiceType().getId()
+            if (currentService.getServiceTypes().getId()
                     .equals(constantService.getServiceTypeSecondaryCenterOpeningAlAndFormality().getId()))
                 return false;
 

@@ -15,11 +15,10 @@ public interface ServiceService {
 
     public Boolean deleteService(Service service);
 
-    public Service modifyServiceType(ServiceType serviceType, Service service);
+    public Service modifyServiceType(List<ServiceType> services, Service service);
 
-    public String getServiceLabel(Service service) throws OsirisException;
-
-    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire)
+    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire,
+            String customLabel)
             throws OsirisException;
 
     public List<Attachment> getAttachmentsForProvisionOfService(Service service);
