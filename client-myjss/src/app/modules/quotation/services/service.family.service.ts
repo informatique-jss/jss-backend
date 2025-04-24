@@ -15,4 +15,8 @@ export class ServiceFamilyService extends AppRestService<ServiceFamily> {
   getServiceFamiliesForFamilyGroup(idServiceFamilyGroup: number) {
     return this.getList(new HttpParams().set("idServiceFamilyGroup", idServiceFamilyGroup), "service-families/service-group");
   }
+
+  getServiceFamiliesExcludingFamilyGroupAnnouncementAnnouncement() {
+    return this.getList(new HttpParams(), "service-families/all");
+  }
 }

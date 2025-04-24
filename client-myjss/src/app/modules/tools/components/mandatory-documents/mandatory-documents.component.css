@@ -1,0 +1,12 @@
+.custom-input-group ::ng-deep .form-control {
+  color: var(--ar-blue-dark-bg) !important;
+}
+
+::ng-deep generic-input input::placeholder {
+  color: var(--ar-gray-600) !important;
+}
+
+
+.custom-input-group {
+  --ar-input-group-border-color: var(--ar-gray-500);
+}

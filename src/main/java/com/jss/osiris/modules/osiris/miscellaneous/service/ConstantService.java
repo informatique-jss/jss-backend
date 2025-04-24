@@ -38,6 +38,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
@@ -498,4 +499,6 @@ public interface ConstantService {
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException;
 
     public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException;
+
+    public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() throws OsirisException;
 }

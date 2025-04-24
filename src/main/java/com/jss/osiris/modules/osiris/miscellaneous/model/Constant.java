@@ -24,6 +24,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
@@ -932,6 +933,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_service_family_immatriculation_al_and_formality")
 	private ServiceFamily serviceFamilyImmatriculationAlAndFormality;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_family_group_announcement")
+	private ServiceFamilyGroup serviceFamilyGroupAnnouncement;
 
 	public Integer getId() {
 		return id;
@@ -2698,6 +2703,14 @@ public class Constant implements Serializable, IId {
 	public void setServiceTypeSecondaryCenterOpeningAlAndFormality(
 			ServiceType serviceTypeSecondaryCenterOpeningAlAndFormality) {
 		this.serviceTypeSecondaryCenterOpeningAlAndFormality = serviceTypeSecondaryCenterOpeningAlAndFormality;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() {
+		return serviceFamilyGroupAnnouncement;
+	}
+
+	public void setServiceFamilyGroupAnnouncement(ServiceFamilyGroup serviceFamilyGroupAnnouncement) {
+		this.serviceFamilyGroupAnnouncement = serviceFamilyGroupAnnouncement;
 	}
 
 }

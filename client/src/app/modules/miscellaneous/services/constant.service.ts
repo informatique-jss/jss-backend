@@ -892,4 +892,7 @@ export class ConstantService extends AppRestService<Constant> {
   getServiceTypeSecondaryCenterOpeningAlAndFormality() {
     return this.constant.serviceTypeSecondaryCenterOpeningAlAndFormality;
   }
+  getServiceFamilyGroupAnnouncement() {
+    return this.constant.serviceFamilyGroupAnnouncement;
+  }
 }

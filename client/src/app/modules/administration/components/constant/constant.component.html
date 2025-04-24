@@ -1695,6 +1695,14 @@
                 [isDisabled]="!editMode"></select-service-type>
             </td>
           </tr>
+          <tr>
+            <td>
+              <select-service-family-group [(model)]="constant.serviceFamilyGroupAnnouncement
+              " label="Groupe de famille de service - Annonces légales" [form]="constantForm"
+                propertyName="serviceFamilyGroupAnnouncement" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-family-group>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

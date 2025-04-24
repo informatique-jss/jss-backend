@@ -1,0 +1,139 @@
+<section class="container my-5">
+  <div class="row pt-md-2 pt-lg-3 pt-xl-4 pb-lg-2 pb-xl-3">
+    <div class="col-md-6">
+      <h1 class="h1 pe-xxl-5 me-xl-4 mb-md-0 text-white">Les pièces indispensables à vos démarches</h1>
+    </div>
+    <div class="col-md-6 col-xl-5 offset-xl-1">
+      <p class="text-body fs-lg mb-5 text-white">Pour mener à bien vos démarches légales, certaines pièces
+        justificatives sont obligatoires.
+        Retrouvez ici la liste usuelle des documents essentiels pour constituer vos dossiers en toute conformité et
+        faciliter vos formalités légales.
+      </p>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="jarallax overflow-hidden z-2" data-speed="0.5">
+    <div class="jarallax-img"
+      style="background-image: url('assets/img/my-jss-tools/mandatory-documents-jarallax.jpg');"></div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <h2 class="m-4 text-center">Trouvez rapidement les pièces requises</h2>
+  <p class="text-center">Consultez la liste de nos services et découvrez les documents à fournir. Utilisez la barre de
+    recherche pour accéder rapidement aux pièces nécessaires.</p>
+
+  <div class="w-100 my-3 d-flex justify-content-between">
+    <div class="col-12">
+      <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
+        <div class="col">
+          <div class="row align-items-center">
+            <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="practicalSheetsForm"
+              propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+              (onFormChange)="getFilteredServiceTypes()" [icon]="'search'" class="btn-search col"></generic-input>
+
+            <button *ngIf="searchText" class="col-1 btn btn-link btn-search" (click)="clearSearch()">
+              <i class="ai ai-cross-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" *ngFor="let item of serviceFamilies;">
+      <a class="nav-link" [class.active]="item == selectedFamilyTab" (click)="selectFamilyTab(item)">
+        {{item.label}}
+      </a>
+    </li>
+  </ul>
+  <ng-container *ngIf="!searchText">
+    <ng-container *ngFor="let serviceType of serviceTypesByFamily[selectedFamilyTab.id];">
+      <div class="accordion-item border-top mb-0" *ngIf="!serviceType.id">
+        <div class="accordion-header">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+        </div>
+      </div>
+      <ng-container *ngIf="serviceType.id && !searchText">
+        <div class="card dark-blue-dropdown rounded-3 mt-3"
+          [ngClass]="{ 'expanded-card':  isExpanded(serviceType.id) }">
+          <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
+            <h5 class="card-title mb-0">{{ serviceType.label }}</h5>
+            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(serviceType)">
+              <span class="circle-icon">
+                <i [ngClass]=" isExpanded(serviceType.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+              </span>
+            </button>
+          </div>
+
+          <div class="drop-down-body">
+            <div class="row ps-4 pe-5 me-5">
+              <div class="col-4 g-2"
+                *ngFor="let item of (isExpanded(serviceType.id)  ? mandatoryDocumentsByServiceTypes[serviceType.id] : [])">
+                <li class="d-flex pb-2 mb-1">
+                  <span class="bg-primary mt-2 checkbox-custom"></span>
+                  <a class="text-decoration-none text-gray" data-bs-toggle="tooltip" [title]="item.code"
+                    data-bs-placement="top" [innerHTML]="item.code.concat(' ',item.label) | trustHtml"></a>
+                </li>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="searchText &&searchText.length>2">
+    <ng-container *ngFor="let serviceType of filteredServiceTypesByFamily[selectedFamilyTab.id];">
+      <div class="accordion-item border-top mb-0" *ngIf="!serviceType.id">
+        <div class="accordion-header">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+        </div>
+      </div>
+      <ng-container *ngIf="serviceType.id">
+        <div class="card dark-blue-dropdown rounded-3 mt-3"
+          [ngClass]="{ 'expanded-card':  isExpanded(serviceType.id) }">
+          <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
+            <h5 class="card-title mb-0">{{ serviceType.label }}</h5>
+            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(serviceType)">
+              <span class="circle-icon">
+                <i [ngClass]=" isExpanded(serviceType.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+              </span>
+            </button>
+          </div>
+
+          <div class="drop-down-body">
+            <div class="row ps-4 pe-5 me-5">
+              <div class="col-4 g-2"
+                *ngFor="let item of (isExpanded(serviceType.id)  ? mandatoryDocumentsByServiceTypes[serviceType.id] : [])">
+                <li class="d-flex pb-2 mb-1">
+                  <span class="bg-primary mt-2 checkbox-custom"></span>
+                  <a class="text-decoration-none text-gray" data-bs-toggle="tooltip" [title]="item.code"
+                    data-bs-placement="top" [innerHTML]="item.code.concat(' ',item.label) | trustHtml"></a>
+                </li>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</section>
+
+<div class="pb-5 mb-md-3 mb-lg-4 mb-xxl-5">
+  <newsletter></newsletter>
+</div>

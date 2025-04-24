@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.repository.ServiceFamilyRepository;
@@ -17,6 +19,9 @@ public class ServiceFamilyServiceImpl implements ServiceFamilyService {
 
     @Autowired
     ServiceFamilyRepository serviceFamilyRepository;
+
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public List<ServiceFamily> getServiceFamilies() {
@@ -41,5 +46,12 @@ public class ServiceFamilyServiceImpl implements ServiceFamilyService {
     @Override
     public List<ServiceFamily> getServiceFamiliesForFamilyGroup(ServiceFamilyGroup serviceFamilyGroup) {
         return serviceFamilyRepository.findByServiceFamilyGroup(serviceFamilyGroup);
+    }
+
+    @Override
+    public List<ServiceFamily> getServiceFamiliesExcludingServiceFamilyGroupAnnouncement() throws OsirisException {
+        ServiceFamilyGroup serviceFamilyGroupAnnouncement = constantService.getServiceFamilyGroupAnnouncement();
+        return serviceFamilyRepository.findServiceFamiliesExcludingServiceFamilyGroupAnnouncement(
+                serviceFamilyGroupAnnouncement);
     }
 }
