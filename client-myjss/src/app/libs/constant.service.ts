@@ -92,4 +92,7 @@ export class ConstantService extends AppRestService<Constant> {
   getMyJssCategoryFormality() {
     return this.constant.myJssCategoryFormality;
   }
+  getServiceFamilyGroupAnnouncement() {
+    return this.constant.serviceFamilyGroupAnnouncement;
+  }
 }
