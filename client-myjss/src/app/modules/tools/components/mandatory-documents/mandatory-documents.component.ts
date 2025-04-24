@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { jarallax } from 'jarallax';
 import { SERVICE_FIELD_TYPE_SELECT } from '../../../../libs/Constants';
-import { instanceOfTypeDocument } from '../../../../libs/TypeHelper';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { TypeDocument } from '../../../my-account/model/TypeDocument';
@@ -30,6 +29,8 @@ export class MandatoryDocumentsComponent implements OnInit {
   filteredServiceTypesByFamily: { [key: number]: Array<ServiceType> } = {};
   mandatoryDocumentsByServiceTypes: { [key: number]: Array<TypeDocument | ServiceFieldType> } = {};
 
+  SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
+
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyService: ServiceFamilyService,
     private serviceTypeService: ServiceTypeService,
@@ -38,7 +39,7 @@ export class MandatoryDocumentsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.serviceFamilyService.getServiceFamiliesExcludingFamilyGroupAnnouncementAnnouncement().subscribe(response => {
+    this.serviceFamilyService.getServiceFamiliesExcludingFamilyGroupAnnouncement().subscribe(response => {
       if (response) {
         this.serviceFamilies = response;
         this.selectedFamilyTab = this.serviceFamilies[0];
@@ -47,7 +48,8 @@ export class MandatoryDocumentsComponent implements OnInit {
             if (response) {
               if (!this.serviceTypesByFamily[serviceFamily.id])
                 this.serviceTypesByFamily[serviceFamily.id] = [];
-              this.serviceTypesByFamily[serviceFamily.id].push(...response);
+              this.serviceTypesByFamily[serviceFamily.id] = response;
+              this.applyFilterOnServiceTypes();
             }
           });
         }
@@ -89,7 +91,6 @@ export class MandatoryDocumentsComponent implements OnInit {
           if (response) {
             if (!this.mandatoryDocumentsByServiceTypes[serviceType.id])
               this.mandatoryDocumentsByServiceTypes[serviceType.id] = [];
-            this.mandatoryDocumentsByServiceTypes[serviceType.id].push(...this.overwriteLabelWithValuesOfSelectFieldType(response));
             if (this.serviceTypesFullLoaded.indexOf(serviceType.id) < 0)
               this.serviceTypesFullLoaded.push(serviceType.id);
           }
@@ -98,49 +99,22 @@ export class MandatoryDocumentsComponent implements OnInit {
     }
   }
 
-  overwriteLabelWithValuesOfSelectFieldType(fields: ServiceFieldType[]): ServiceFieldType[] {
-    for (let field of fields) {
-      if (field.dataType == SERVICE_FIELD_TYPE_SELECT) {
-        field.label = field.label.concat(' (', field.serviceFieldTypePossibleValues.map(item => item.value).join('/'), ')');
-      }
+  getPossibleFieldsValuesForSelect(field: ServiceFieldType): string {
+    if (field.dataType == SERVICE_FIELD_TYPE_SELECT) {
+      return field.label.concat(' (', field.serviceFieldTypePossibleValues.map(item => item.value).join('/'), ')');
     }
-    return fields;
+    return "";
   }
-
-  getFilteredServiceTypes() {
-    if (this.searchText && this.searchText.length > 2) {
-      clearTimeout(this.debounce);
-      this.debounce = setTimeout(() => {
-        this.applyFilterOnServiceTypes();
-      }, 1000);
-    }
-  }
-
 
   applyFilterOnServiceTypes() {
-    if (this.searchText && this.searchText.length > 2 && this.serviceTypesByFamily[this.selectedFamilyTab.id]) {
-      for (let serviceType of this.serviceTypesByFamily[this.selectedFamilyTab.id]) {
-        if (serviceType.label.toLowerCase().includes(this.searchText.toLowerCase())) {
-          if (!this.filteredServiceTypesByFamily[this.selectedFamilyTab.id])
-            this.filteredServiceTypesByFamily[this.selectedFamilyTab.id] = [];
-          this.filteredServiceTypesByFamily[this.selectedFamilyTab.id].push(serviceType);
-          console.log(serviceType.id);
-          console.log(this.mandatoryDocumentsByServiceTypes[serviceType.id]);
-        }
-      }
-      console.log(this.selectedFamilyTab.id);
-      console.log(this.filteredServiceTypesByFamily[this.selectedFamilyTab.id]);
-    }
-  }
-  getConcatenatedLabel(item: any): string {
-    if (instanceOfTypeDocument(item)) {
-      return item.customLabel
-    }
-    return item.code;
+    if (this.serviceFamilies)
+      for (let serviceFamily of this.serviceFamilies)
+        this.filteredServiceTypesByFamily[serviceFamily.id] = this.serviceTypesByFamily[serviceFamily.id].
+          filter(serviceType => serviceType.customLabel.toLowerCase().includes(this.searchText.toLowerCase()));
   }
 
   clearSearch() {
     this.searchText = '';
-    this.filteredServiceTypesByFamily = {};
+    this.applyFilterOnServiceTypes();
   }
 }

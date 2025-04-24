@@ -20356,3 +20356,7 @@ textarea::selection {
   background: var(--ar-blue-step);
   color: var(--ar-light);
 }
+
+.pointer {
+  cursor: pointer;
+}

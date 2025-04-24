@@ -31,8 +31,7 @@
           <div class="row align-items-center">
             <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="practicalSheetsForm"
               propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-              (onFormChange)="getFilteredServiceTypes()" [icon]="'search'" class="btn-search col"></generic-input>
-
+              (onFormChange)="applyFilterOnServiceTypes()" [icon]="'search'" class="btn-search col"></generic-input>
             <button *ngIf="searchText" class="col-1 btn btn-link btn-search" (click)="clearSearch()">
               <i class="ai ai-cross-alt"></i>
             </button>
@@ -43,93 +42,72 @@
   </div>
 
   <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item" *ngFor="let item of serviceFamilies;">
-      <a class="nav-link" [class.active]="item == selectedFamilyTab" (click)="selectFamilyTab(item)">
-        {{item.customLabel}}
-      </a>
-    </li>
-  </ul>
-  <ng-container *ngIf="!searchText">
-    <ng-container *ngFor="let serviceType of serviceTypesByFamily[selectedFamilyTab.id];">
-      <div class="accordion-item border-top mb-0" *ngIf="!serviceType.id">
-        <div class="accordion-header">
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4 me-2"></span>
-            <span class="placeholder placeholder-sm col-6"></span>
-            <span class="placeholder placeholder-sm col-8"></span>
-          </p>
-        </div>
-      </div>
-      <ng-container *ngIf="serviceType.id && !searchText">
-        <div class="card dark-blue-dropdown rounded-3 mt-3"
-          [ngClass]="{ 'expanded-card':  isExpanded(serviceType.id) }">
-          <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
-            <h5 class="card-title mb-0">{{ serviceType.customLabel }}</h5>
-            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(serviceType)">
-              <span class="circle-icon">
-                <i [ngClass]=" isExpanded(serviceType.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
-              </span>
-            </button>
-          </div>
-
-          <div class="drop-down-body">
-            <div class="row ps-4 pe-5 me-5">
-              <div class="col-4 g-2"
-                *ngFor="let item of (isExpanded(serviceType.id)  ? mandatoryDocumentsByServiceTypes[serviceType.id] : [])">
-                <li class="d-flex pb-2 mb-1">
-                  <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-gray" data-bs-toggle="tooltip" [title]="item.code"
-                    data-bs-placement="top" [innerHTML]="getConcatenatedLabel(item) | trustHtml"></a>
-                </li>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-container>
+    <ng-container *ngFor="let item of serviceFamilies;">
+      <li class="nav-item"
+        *ngIf="filteredServiceTypesByFamily[item.id] && filteredServiceTypesByFamily[item.id].length>0">
+        <a class="nav-link" [class.active]="item == selectedFamilyTab" (click)="selectFamilyTab(item)">
+          {{item.customLabel}}
+        </a>
+      </li>
     </ng-container>
-  </ng-container>
-
-  <ng-container *ngIf="searchText &&searchText.length>2">
-    <ng-container *ngFor="let serviceType of filteredServiceTypesByFamily[selectedFamilyTab.id];">
-      <div class="accordion-item border-top mb-0" *ngIf="!serviceType.id">
-        <div class="accordion-header">
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4 me-2"></span>
-            <span class="placeholder placeholder-sm col-6"></span>
-            <span class="placeholder placeholder-sm col-8"></span>
-          </p>
-        </div>
+  </ul>
+  <ng-container *ngFor="let serviceType of filteredServiceTypesByFamily[selectedFamilyTab.id];">
+    <div class="accordion-item border-top mb-0" *ngIf="!serviceType.id">
+      <div class="accordion-header">
+        <p class="card-text placeholder-glow">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
       </div>
-      <ng-container *ngIf="serviceType.id">
-        <div class="card dark-blue-dropdown rounded-3 mt-3"
-          [ngClass]="{ 'expanded-card':  isExpanded(serviceType.id) }">
-          <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
-            <h5 class="card-title mb-0">{{ serviceType.label }}</h5>
-            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(serviceType)">
-              <span class="circle-icon">
-                <i [ngClass]=" isExpanded(serviceType.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
-              </span>
-            </button>
-          </div>
+    </div>
+    <ng-container *ngIf="serviceType.id">
+      <div class="card dark-blue-dropdown rounded-3 mt-3 pointer"
+        [ngClass]="{ 'expanded-card':  isExpanded(serviceType.id) }" (click)="toggleCard(serviceType)">
+        <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
+          <h5 class="card-title mb-1">{{ serviceType.customLabel }}</h5>
+          <button type="button" class="btn btn-link rounded-circle custom-btn">
+            <span class="circle-icon">
+              <i [ngClass]=" isExpanded(serviceType.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+            </span>
+          </button>
+        </div>
 
-          <div class="drop-down-body">
-            <div class="row ps-4 pe-5 me-5">
-              <div class="col-4 g-2"
-                *ngFor="let item of (isExpanded(serviceType.id)  ? mandatoryDocumentsByServiceTypes[serviceType.id] : [])">
+        <div class="drop-down-body">
+          <div class="row ps-4 pe-5 me-5 ms-2">
+            <ng-container
+              *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeDocuments && serviceType.assoServiceTypeDocuments.length>0">
+              <div class="col-4 g-2" *ngFor="let item of  serviceType.assoServiceTypeDocuments">
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-gray" data-bs-toggle="tooltip" [title]="item.code"
-                    data-bs-placement="top" [innerHTML]="item.code.concat(' ',item.label) | trustHtml"></a>
+                  <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
                 </li>
               </div>
+            </ng-container>
+            <hr
+              *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeDocuments && serviceType.assoServiceTypeDocuments.length>0 &&  serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0" />
+            <ng-container
+              *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0">
+              <div class="col-4 g-2" *ngFor="let item of  serviceType.assoServiceTypeFieldTypes">
+                <li class="d-flex pb-2 mb-1">
+                  <span class="bg-primary mt-2 checkbox-custom"></span>
+                  <span class="text-decoration-none text-gray">{{item.serviceFieldType.label}} <span
+                      *ngIf="item.serviceFieldType.dataType ==SERVICE_FIELD_TYPE_SELECT ">{{getPossibleFieldsValuesForSelect(item.serviceFieldType)}}</span></span>
+                </li>
+              </div>
+            </ng-container>
+            <div class="g-2 ms-4"
+              *ngIf="isExpanded(serviceType.id) && (!serviceType.assoServiceTypeDocuments || serviceType.assoServiceTypeDocuments.length==0) &&  (!serviceType.assoServiceTypeFieldTypes || serviceType.assoServiceTypeFieldTypes.length==0)">
+              <li class="d-flex pb-2 mb-1">
+                <span class="text-decoration-none text-gray">Aucun document nécessaire, contactez notre service pour
+                  plus d'information</span>
+              </li>
             </div>
           </div>
         </div>
-      </ng-container>
+      </div>
     </ng-container>
   </ng-container>
 </section>
