@@ -23,7 +23,6 @@ public class ServiceFamilyGroup implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
-	@JsonView(JacksonViews.MyJssListView.class)
 	private String label;
 
 	@JsonView(JacksonViews.MyJssListView.class)

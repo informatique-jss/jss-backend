@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { jarallax } from 'jarallax';
 import { SERVICE_FIELD_TYPE_SELECT } from '../../../../libs/Constants';
+import { instanceOfTypeDocument } from '../../../../libs/TypeHelper';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { TypeDocument } from '../../../my-account/model/TypeDocument';
@@ -130,6 +131,12 @@ export class MandatoryDocumentsComponent implements OnInit {
       console.log(this.selectedFamilyTab.id);
       console.log(this.filteredServiceTypesByFamily[this.selectedFamilyTab.id]);
     }
+  }
+  getConcatenatedLabel(item: any): string {
+    if (instanceOfTypeDocument(item)) {
+      return item.customLabel
+    }
+    return item.code;
   }
 
   clearSearch() {
