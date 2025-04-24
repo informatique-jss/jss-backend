@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
-import com.jss.osiris.modules.osiris.quotation.repository.AssoServiceTypeDocumentRepository;
+import com.jss.osiris.modules.osiris.quotation.repository.AssoServiceDocumentRepository;
 
 @Service
 public class AssoServiceDocumentServiceImpl implements AssoServiceDocumentService {
 
     @Autowired
-    AssoServiceTypeDocumentRepository assoServiceDocumentRepository;
+    AssoServiceDocumentRepository assoServiceDocumentRepository;
 
     @Override
     public AssoServiceDocument getAssoServiceDocument(Integer id) {
