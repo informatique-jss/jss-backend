@@ -58,7 +58,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
         return uploadedFile;
     }
 
-    private void deleteUploadedFile(UploadedFile uploadedFile) {
+    @Override
+    public void deleteUploadedFile(UploadedFile uploadedFile) {
         if (uploadedFile != null) {
             uploadedFileRepository.delete(uploadedFile);
         }
