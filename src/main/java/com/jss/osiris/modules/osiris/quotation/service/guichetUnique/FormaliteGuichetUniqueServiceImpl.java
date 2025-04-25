@@ -540,6 +540,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 LocalDate.parse(cart.getPaymentDate(),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
+        if (invoice.getManualAccountingDocumentDate().isBefore(constantService.getDateAccountingClosureForAll()))
+            invoice.setManualAccountingDocumentDate(constantService.getDateAccountingClosureForAll());
+
         if (invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
                 for (Service service : asso.getServices())
