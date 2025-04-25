@@ -26,7 +26,7 @@ public class AssoServiceTypeDocument implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "asso_service_type_document_sequence", sequenceName = "asso_service_type_document_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_service_type_document_sequence")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +37,7 @@ public class AssoServiceTypeDocument implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_type_document")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private TypeDocument typeDocument;
 
 	private Boolean isMandatory;
