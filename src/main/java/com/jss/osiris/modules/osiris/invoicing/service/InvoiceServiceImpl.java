@@ -232,11 +232,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceHelper.setPriceTotal(invoice);
 
         // Generate accounting records
-        if (invoice.getProvider() != null || invoice.getRff() != null)
-            accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReception(invoice);
-        else if (invoice.getProvider() != null && invoice.getIsCreditNote())
+        if (invoice.getProvider() != null && invoice.getIsCreditNote())
             accountingRecordGenerationService.generateAccountingRecordsOnCreditNoteReception(invoice,
                     invoice.getReverseCreditNote());
+        else if (invoice.getProvider() != null || invoice.getRff() != null)
+            accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReception(invoice);
         else if (invoice.getIsCreditNote())
             accountingRecordGenerationService
                     .generateAccountingRecordsOnInvoiceEmissionCancellation(invoice.getReverseCreditNote(), invoice);
