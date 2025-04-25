@@ -17,5 +17,5 @@ public interface ServiceTypeService {
 
     public List<ServiceType> getServiceTypesForFamily(ServiceFamily serviceFamily) throws OsirisException;
 
-    public ServiceType getServiceType(Integer id, Boolean isMandatory);
+    public ServiceType getServiceType(Integer id, Boolean isFetchOnlyMandatoryDocuments);
 }

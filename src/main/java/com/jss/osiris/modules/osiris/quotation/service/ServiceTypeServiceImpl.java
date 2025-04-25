@@ -37,7 +37,7 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
     }
 
     @Override
-    public ServiceType getServiceType(Integer id, Boolean isMandatory) {
+    public ServiceType getServiceType(Integer id, Boolean isFetchOnlyMandatoryDocuments) {
         Optional<ServiceType> serviceType = serviceTypeRepository.findById(id);
         ServiceType serviceFinal = null;
 
@@ -45,10 +45,10 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
             serviceFinal = serviceType.get();
             if (!serviceFinal.getAssoServiceTypeDocuments().isEmpty())
                 serviceFinal.getAssoServiceTypeDocuments()
-                        .removeIf(asso -> !asso.getIsMandatory().equals(isMandatory));
+                        .removeIf(asso -> !asso.getIsMandatory().equals(isFetchOnlyMandatoryDocuments));
             if (!serviceFinal.getAssoServiceTypeFieldTypes().isEmpty())
                 serviceFinal.getAssoServiceTypeFieldTypes()
-                        .removeIf(asso -> !asso.getIsMandatory().equals(isMandatory));
+                        .removeIf(asso -> !asso.getIsMandatory().equals(isFetchOnlyMandatoryDocuments));
         }
         return serviceFinal;
     }

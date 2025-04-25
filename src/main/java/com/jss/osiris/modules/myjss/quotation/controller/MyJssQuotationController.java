@@ -1038,10 +1038,11 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/service-type/mandatory-documents")
+	@GetMapping(inputEntryPoint + "/service-type")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<ServiceType> getServiceTypeWithIsMandatory(
-			@RequestParam("serviceTypeId") Integer serviceTypeId, @RequestParam("isMandatory") Boolean isMandatory,
+	public ResponseEntity<ServiceType> getServiceType(
+			@RequestParam("serviceTypeId") Integer serviceTypeId,
+			@RequestParam("isFetchOnlyMandatoryDocuments") Boolean isFetchOnlyMandatoryDocuments,
 			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
@@ -1049,7 +1050,7 @@ public class MyJssQuotationController {
 			return new ResponseEntity<ServiceType>(new ServiceType(), HttpStatus.OK);
 
 		return new ResponseEntity<ServiceType>(
-				serviceTypeService.getServiceType(serviceTypeId, isMandatory),
+				serviceTypeService.getServiceType(serviceTypeId, isFetchOnlyMandatoryDocuments),
 				HttpStatus.OK);
 	}
 
