@@ -26,7 +26,7 @@ public class NoticeType implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false, length = 200)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)
@@ -35,7 +35,7 @@ public class NoticeType implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_notice_type_family")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private NoticeTypeFamily noticeTypeFamily;
 
 	public Integer getId() {

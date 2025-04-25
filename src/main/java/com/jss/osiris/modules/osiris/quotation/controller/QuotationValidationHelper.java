@@ -152,16 +152,16 @@ public class QuotationValidationHelper {
                         CustomerOrder customerOrder = (CustomerOrder) quotation;
                         isOpen = customerOrder.getCustomerOrderStatus() == null ||
                                         customerOrder.getCustomerOrderStatus().getCode()
-                                                        .equals(CustomerOrderStatus.OPEN);
+                                                        .equals(CustomerOrderStatus.DRAFT);
 
                         if (targetStatusCode != null)
-                                isOpen = targetStatusCode.equals(CustomerOrderStatus.OPEN);
+                                isOpen = targetStatusCode.equals(CustomerOrderStatus.DRAFT);
                 }
 
                 if (quotation instanceof Quotation) {
                         Quotation quotationQuotation = (Quotation) quotation;
                         isOpen = quotationQuotation.getQuotationStatus() == null ||
-                                        quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+                                        quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.DRAFT);
                 }
 
                 validationHelper.validateReferential(quotation.getAssignedTo(), false, "AssignedTo");
@@ -537,7 +537,7 @@ public class QuotationValidationHelper {
                         // Do not verify date when quotation has started
                         if (isCustomerOrder) {
                                 CustomerOrderStatus status = ((CustomerOrder) quotation).getCustomerOrderStatus();
-                                if (status != null && (status.getCode().equals(CustomerOrderStatus.OPEN)
+                                if (status != null && (status.getCode().equals(CustomerOrderStatus.DRAFT)
                                                 || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)
                                                 || status.getCode().equals(CustomerOrderStatus.ABANDONED)))
                                         publicationDateVerification = null;

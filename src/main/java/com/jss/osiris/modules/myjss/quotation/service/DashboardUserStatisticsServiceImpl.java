@@ -101,7 +101,7 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
             // compute customerOrderDraft
             statistics.setCustomerOrderDraft(0);
             List<CustomerOrder> customerOrderDraft = customerOrderService.searchOrders(
-                    Arrays.asList(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN)),
+                    Arrays.asList(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT)),
                     listResponsables);
             if (customerOrderDraft != null)
                 statistics.setCustomerOrderDraft(customerOrderDraft.size());
@@ -109,7 +109,7 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
             // compute quotationToValidate
             statistics.setQuotationDraft(0);
             List<Quotation> quotationDraft = quotationService.searchQuotations(
-                    Arrays.asList(quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN)),
+                    Arrays.asList(quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT)),
                     listResponsables);
             if (quotationDraft != null)
                 statistics.setQuotationDraft(quotationDraft.size());

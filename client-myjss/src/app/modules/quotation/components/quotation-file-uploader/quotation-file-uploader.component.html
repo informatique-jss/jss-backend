@@ -1,0 +1,93 @@
+<div *ngIf="entity">
+
+  <h6 class="mb-3 d-flex align-items-center">
+    <i class="ai-paperclip pe-2"></i> Pièces justificatives
+  </h6>
+  <div class="row g-3">
+    <div class="col-12 col-md-6">
+      <div class="card h-100 d-flex flex-column justify-content-between p-3">
+        <div>
+          <ul>
+            <li>
+              {{ entity.typeDocument.customLabel ? entity.typeDocument.customLabel:
+              entity.typeDocument.label }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Blue-card + date -->
+        <div>
+          <div class="row justify-content-between align-items-center">
+            <ul>
+              <li class="row justify-content-between" *ngFor="let attachment of entity.attachments">
+                <div class="blue-card card rounded-1 mb-3 p-2">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="col-auto mb-0 text-truncate-1 px-2">
+                      {{attachment.description}}
+                    </div>
+                    <a class="col-auto"><i class="ai-trash" (click)="deleteFile(attachment)"></i></a>
+                  </div>
+                  <div class="p-2">
+                    <!-- States management -->
+                    <div *ngIf="uploadStateMap.get(attachment.id)?.isError">
+                      <div class="d-flex align-items-center mb-2 text-danger-emphasis">
+                        <i class="ai-circle-x me-2"></i>
+                        <p class="mb-0">Erreur</p>
+                      </div>
+                      <div class="progress mb-3" style="height: 4px;">
+                        <div class="progress-bar bg-danger"></div>
+                      </div>
+                    </div>
+
+                    <div *ngIf="uploadStateMap.get(0)?.isUploading">
+                      <div class="d-flex align-items-center mb-2 text-secondary">
+                        <p class="mb-0 me-3">{{uploadProgress}} % •</p>
+                        <div class="spinner-border spinner-border-sm me-2" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                        Chargement
+                      </div>
+                      <div class="progress mb-3" style="height: 4px;">
+                        <div class="progress-bar" role="progressbar" [style.width.%]="uploadProgress"
+                          [attr.aria-valuenow]="uploadProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                    <div *ngIf="uploadStateMap.get(attachment.id)?.isComplete">
+                      <div class="d-flex align-items-center mb-2 text-success-emphasis">
+                        <i class="ai-circle-check-filled me-2" style="color: var(--ar-success-rgb);"></i>
+                        <p class="fs-sm fw-semibold m-0">Terminé</p>
+                      </div>
+                      <div class="progress mb-3" style="height: 4px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100"
+                          aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Date of document -->
+                <div class="row align-items-center mb-3">
+                  <div class="col-4">Date du document*</div>
+                  <div class="col-8">
+                    <generic-date-picker></generic-date-picker>
+                  </div>
+                </div>
+                <hr *ngIf="attachment != entity.attachments[entity.attachments.length-1]" class="mb-4">
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Right column : files drop -->
+    <div class="col-12 col-md-6">
+      <single-upload [entity]="entity" [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType"
+        [isDirectUpload]="true" [attachmentType]="entity.typeDocument.attachmentType"
+        [typeDocument]="entity.typeDocument" (endOfUpload)="onUploadComplete($event)"
+        (progressChange)="updateUploadProgress($event)" (isErrorChange)="handleErrorChange($event)">>
+      </single-upload>
+    </div>
+  </div>
+</div>

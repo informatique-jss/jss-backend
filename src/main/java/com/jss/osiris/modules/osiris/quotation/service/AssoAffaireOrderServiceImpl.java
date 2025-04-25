@@ -189,12 +189,18 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             }
         }
 
-        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder(), true);
+        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder,
+                assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
+                        : assoAffaireOrder.getQuotation(),
+                true);
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
+        assoAffaireOrder.setQuotation(assoAffaireOrder.getQuotation());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
             batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, affaireSaved.getId());
-        customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
+
+        if (assoAffaireOrder.getCustomerOrder() != null)
+            customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }
 
@@ -676,7 +682,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             formaliteInfogreffeStatusCode = affaireSearch.getFormaliteInfogreffeStatusCode();
 
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
-        excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
+        excludedCustomerOrderStatusCode.add(CustomerOrderStatus.DRAFT);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.ABANDONED);
 
@@ -886,6 +892,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public Service addServiceToAssoAffaireOrder(ServiceType service, AssoAffaireOrder asso) throws OsirisException {
         service = serviceTypeService.getServiceType(service.getId());
         asso = getAssoAffaireOrder(asso.getId());
-        return serviceService.getServiceForMultiServiceTypesAndAffaire(Arrays.asList(service), asso.getAffaire());
+        Service serviceInstance = serviceService.getServiceForMultiServiceTypesAndAffaire(Arrays.asList(service),
+                asso.getAffaire());
+        serviceService.addOrUpdateService(serviceInstance);
+        if (asso.getServices() == null)
+            asso.setServices(new ArrayList<Service>());
+        asso.getServices().add(serviceInstance);
+        addOrUpdateAssoAffaireOrder(asso);
+        return serviceInstance;
     }
 }

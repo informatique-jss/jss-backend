@@ -19,11 +19,11 @@ public class NoticeTypeFamily implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "notice_type_family_sequence", sequenceName = "notice_type_family_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notice_type_family_sequence")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)

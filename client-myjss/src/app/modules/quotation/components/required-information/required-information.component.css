@@ -1,35 +1,3 @@
-.download-card {
-    cursor: pointer;
-    border: 4px dashed #ccccccb9;
-    text-align: center;
-    padding: 20px;
-    transition: border-color 0.3s ease;
-}
-
-.download-card:hover {
-    border-color: var(--ar-secondary);
-}
-
-.download-card.dragover {
-    border-color: var(--ar-secondary);
-}
-
-.max-size {
-    color: #999;
-    font-size: 0.9rem;
-}
-
-.blue-card {
-    background-color: #F6F9FC;
-    padding: 2rem;
-    height: auto;
-}
-
-.light-grey {
-    color: var(--ar-gray-500);
-}
-
-
 .white-card {
     background-color: var(--ar-primary);
     position: relative;
@@ -46,6 +14,14 @@
     z-index: 1;
 }
 
-.col.with-right-border {
+.right-border {
     border-right: 1px solid var(--ar-gray-500);
+}
+
+:host ::ng-deep .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+    min-height: 200px;
+}
+
+:host ::ng-deep .ck-rounded-corners .ck.ck-editor__main>.ck-editor__editable, .ck.ck-editor__main>.ck-editor__editable.ck-rounded-corners {
+    min-height: 200px;
 }

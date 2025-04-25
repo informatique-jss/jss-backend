@@ -22,8 +22,7 @@ public class QuotationStatus extends IWorkflowElement implements Serializable {
 	/**
 	 * WARNINNG : add update in QuotationStatutsService when adding a new status
 	 */
-	public static String DRAFT = "DRAFT";
-	public static String OPEN = "OPEN";
+	public static String DRAFT = "OPEN";
 	public static String TO_VERIFY = "TO_VERIFY";
 	public static String QUOTATION_WAITING_CONFRERE = "QUOTATION_WAITING_CONFRERE";
 	public static String SENT_TO_CUSTOMER = "SENT_TO_CUSTOMER";
@@ -77,12 +76,12 @@ public class QuotationStatus extends IWorkflowElement implements Serializable {
 		return code;
 	}
 
-	public static String getOPEN() {
-		return OPEN;
+	public static String getDRAFT() {
+		return DRAFT;
 	}
 
-	public static void setOPEN(String oPEN) {
-		OPEN = oPEN;
+	public static void setDRAFT(String oPEN) {
+		DRAFT = oPEN;
 	}
 
 	public static String getTO_VERIFY() {

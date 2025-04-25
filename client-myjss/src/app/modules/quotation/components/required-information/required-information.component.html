@@ -60,12 +60,11 @@
         </a>
       </li>
       <ng-container
-        *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions">
+        *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index">
         <li class="nav-item"
           *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
-          <!-- TODO : hrefvar en fonction de l'annonce legale -->
-          <a href="#profile" class="nav-link" data-bs-toggle="tab" role="tab">
-            Annonce légale
+          <a [attr.href]="'#announcement' + index" class="nav-link quotation-tabs" data-bs-toggle="tab" role="tab">
+            Annonce légale {{ provision.order }}
           </a>
         </li>
         <li class="nav-item "
@@ -77,144 +76,232 @@
       </ng-container>
     </ul>
 
-    <!-- Tabs content -->
+    <!-- Tabs content Documents -->
     <div class="tab-content " *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
       <div class="tab-pane fade show active" id="documents" role="tabpanel">
         <div class="quotation-container">
-          <h6><i class="ai-circle-info me-2"></i>
-            Information</h6>
+          <h6><i class="ai-circle-info me-2"></i>Information</h6>
+
           <div class="pb-3">
-            <table class="full-width">
+            <div class="row g-3 align-items-start">
               <ng-container
                 *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
-                <tr>
-                  <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
-                    <generic-input [(model)]="assoServiceFieldType.stringValue"
-                      [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                      [propertyName]='"stringFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
-                      [maxLength]="255"></generic-input>
-                  </td>
-                  <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
-                    <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
-                      [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                      [propertyName]='"textAreaFieldType"+i'
-                      [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
-                  </td>
-                  <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
-                    <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
-                      [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                      [propertyName]='"dateFieldType"+i'
-                      [isMandatory]="assoServiceFieldType.isMandatory"></generic-date-picker>
-                  </td>
-                  <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
-                    <generic-input [(model)]="assoServiceFieldType.integerValue"
-                      [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                      [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
-                      type="number"></generic-input>
-                  </td>
-                  <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
-                    <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
-                      [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                      [propertyName]='"selectFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
-                      [isMandatory]="assoServiceFieldType.isMandatory"></select-value-service-field-type>
-                  </td>
-                </tr>
-              </ng-container>
-            </table>
-          </div>
-        </div>
 
-        <div
-          *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index"
-          class="quotation-container mb-4">
-
-          <h6 class="mb-3 d-flex align-items-center">
-            <i class="ai-paperclip pe-2"></i> Pièces justificatives
-          </h6>
-          <div class="row g-3">
-            <div class="col-12 col-md-6">
-              <div class="card h-100 d-flex flex-column justify-content-between p-3">
-                <!-- Liste des fichiers déjà uploadés -->
-                <div>
-                  <ul>
-                    <li>
-                      {{ assoServiceDocument.typeDocument.customLabel ? assoServiceDocument.typeDocument.customLabel:
-                      assoServiceDocument.typeDocument.label }}
-                    </li>
-                  </ul>
+                <!-- TEXT -->
+                <div class="col-12 col-md-6 col-lg-4"
+                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
+                  <generic-input [(model)]="assoServiceFieldType.stringValue"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [propertyName]="'stringFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory"
+                    [maxLength]="255">
+                  </generic-input>
                 </div>
 
-                <!-- Contenu du bas : blue-card + date -->
-                <div>
-                  <!-- Carte de statut (blue-card) -->
-                  <div class="blue-card card rounded-1 mb-3">
-                    <div class="row justify-content-between align-items-center p-2">
-                      <p class="col-auto mb-0">Nom-du-fichier.pdf</p>
-                      <a class="col-auto"><i class="ai-trash" (click)="deleteFile()"></i></a>
-                    </div>
+                <!-- TEXTAREA -->
+                <div class="col-12 col-lg-4"
+                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
+                  <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [propertyName]="'textAreaFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory">
+                  </generic-textarea>
+                </div>
 
-                    <div class="p-2">
-                      <!-- Gestion des états -->
-                      <ng-container *ngIf="isError; else loadingOrDone">
-                        <div class="d-flex align-items-center mb-2 text-danger-emphasis">
-                          <i class="ai-circle-x me-2"></i>
-                          <p class="mb-0">Erreur</p>
-                        </div>
-                        <div class="progress mb-3" style="height: 4px;">
-                          <div class="progress-bar bg-danger" [ngStyle]="{'width': downloadingPercentage + '%' }"></div>
-                        </div>
-                      </ng-container>
-
-                      <ng-template #loadingOrDone>
-                        <div *ngIf="downloadingPercentage !== 100; else finished">
-                          <div class="d-flex align-items-center mb-2 text-secondary">
-                            <p class="mb-0 me-3">{{downloadingPercentage}} KB sur {{totalFileWeight}} KB •</p>
-                            <div class="spinner-border spinner-border-sm me-2" role="status">
-                              <span class="visually-hidden">Loading...</span>
-                            </div>
-                            Chargement
-                          </div>
-                          <div class="progress mb-3" style="height: 4px;">
-                            <div class="progress-bar bg-body-secondary"
-                              [ngStyle]="{'width': downloadingPercentage + '%' }"></div>
-                          </div>
-                        </div>
-                        <ng-template #finished>
-                          <div class="d-flex align-items-center mb-2 text-success-emphasis">
-                            <i class="ai-circle-check-filled me-2"></i>
-                            <p class="mb-0">Terminé</p>
-                          </div>
-                          <div class="progress mb-3" style="height: 4px;">
-                            <div class="progress-bar bg-success" [ngStyle]="{'width': downloadingPercentage + '%' }">
-                            </div>
-                          </div>
-                        </ng-template>
-                      </ng-template>
-                    </div>
+                <!-- DATE -->
+                <div class="col-12 col-md-6 col-lg-2"
+                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE">
+                  <div class="form-group w-auto">
+                    <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
+                      [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                      [propertyName]="'dateFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory">
+                    </generic-date-picker>
                   </div>
+                </div>
 
-                  <!-- Date du document -->
-                  <div class="row align-items-center">
-                    <div class="col-4">Date du document*</div>
-                    <div class="col-8">
-                      <generic-datetime-picker></generic-datetime-picker>
-                    </div>
-                  </div>
+                <!-- INTEGER -->
+                <div class="col-12 col-md-6 col-lg-3"
+                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
+                  <generic-input [(model)]="assoServiceFieldType.integerValue"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [propertyName]="'integerFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory"
+                    type="number">
+                  </generic-input>
+                </div>
+
+                <!-- SELECT -->
+                <div class="col-12 col-md-6 col-lg-2"
+                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT">
+                  <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [propertyName]="'selectFieldType'+i" [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+                    [isMandatory]="assoServiceFieldType.isMandatory">
+                  </select-value-service-field-type>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="currentUser">
+          <div
+            *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index"
+            class="quotation-container mb-4">
+            <quotation-file-uploader [entity]="assoServiceDocument"
+              (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
+              (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs content Annonce légale-->
+    <div *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
+      <div class="tab-content">
+        <div
+          *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index"
+          [id]="'announcement' + index" class="tab-pane fade" role="tabpanel">
+
+          <!-- announcement form : Information -->
+          <div class="quotation-container">
+            <h6><i class="ai-circle-info me-2"></i>Information</h6>
+            <div class="row form-switch justify-content-start p-0">
+              <!-- TODO -->
+              <div class="col-md-5">
+                <label class="col-form-label" for="announcementPublicationDate">Publication
+                  souhaitée</label>
+                <div class="col">
+                  <input class="form-control" type="text" placeholder="Publier l'annonce au JSS"
+                    [ngModel]="announcementNoticeFamily?.label" (ngModelChange)="announcementNoticeFamily = $event"
+                    id="announcementNoticeFamily" type="select">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="col col-form-label" for="announcementPublicationDate">Date de publication
+                  souhaitée*</label>
+                <div class="col">
+                  <input class="form-control" type="text" placeholder="Date de publication souhaitée"
+                    [ngModel]="announcementPublicationDate | date:'yyyy-MM-dd'"
+                    (ngModelChange)="announcementPublicationDate = $event" id="announcementPublicationDate" type="date"
+                    [min]="minDatePublication">
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- announcement form : Option -->
+          <div class="quotation-container mb-2">
+            <h6><i class="ai-grid me-2"></i>Option</h6>
+            <div class="d-flex flex-wrap gap-4 align-items-center">
+
+              <div class="form-check form-switch d-flex m-0 pe-md-5 pe-2 right-border">
+                <input type="checkbox" class="form-check-input" id="announcementRedactedByJss"
+                  [(ngModel)]="announcementRedactedByJss">
+                <label class="form-check-label ms-2 mb-0" for="announcementRedactedByJss">
+                  Confier la rédaction au JSS
+                </label>
+              </div>
+
+              <div class="form-check form-switch d-flex ms-md-4 m-0" *ngIf="announcementRedactedByJss">
+                <input type="checkbox" class="form-check-input" id="announcementProofReading"
+                  [(ngModel)]="announcementProofReading">
+                <label class="form-check-label ms-2 mb-0" for="announcementProofReading">
+                  Recevoir une épreuve de relecture avant publication
+                </label>
+              </div>
+            </div>
+          </div>
 
 
-            <!-- Colonne droite : drop de fichiers -->
-            <div class="col-12 col-md-6">
-              <single-upload [entity]="assoServiceDocument" [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType"
-                [isDirectUpload]="true" [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                [typeDocument]="assoServiceDocument.typeDocument" (endOfUpload)="refreshCurrentAssoAffaireOrder()">
-              </single-upload>
+          <!-- announcement form : text area -->
+          <div *ngIf="!announcementRedactedByJss" class="quotation-container mb-5">
+
+            <div class="row">
+              <div class="col-md-3">
+
+                <!-- Toggle relecture -->
+                <div class="form-check form-switch d-flex align-items-center mb-4">
+                  <input type="checkbox" class="form-check-input" id="announcementProofReading"
+                    [(ngModel)]="announcementProofReading">
+                  <label class="form-check-label ms-2 mb-0" for="announcementProofReading">
+                    Relecture par JSS
+                  </label>
+                </div>
+
+                <!-- Département -->
+                <div class="mb-3" *ngIf="departments">
+                  <label for="announcementDepartment" class="form-label">Département de publication</label>
+                  <select class="form-control" id="announcementDepartment" required
+                    [(ngModel)]="announcementDepartment">
+                    <option [ngValue]="department" *ngFor="let department of departments">
+                      {{ department.code }} - {{ department.label }}
+                    </option>
+                  </select>
+
+                  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce && !announcementRedactedByJss && !announcementDepartment">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">Le département est obligatoire</div>
+                  </div>
+                </div>
+
+                <!-- Rubrique -->
+                <div class="mb-3" *ngIf="noticeTypeFamilies">
+                  <label for="announcementNoticeFamily" class="form-label">Rubrique de publication</label>
+                  <select class="form-control" id="announcementNoticeFamily" required
+                    [(ngModel)]="announcementNoticeFamily">
+                    <option [ngValue]="noticeTypeFamily" *ngFor="let noticeTypeFamily of noticeTypeFamilies">
+                      {{ noticeTypeFamily.label }}
+                    </option>
+                  </select>
+
+                  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce && !announcementRedactedByJss && !announcementNoticeFamily">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">La rubrique est obligatoire</div>
+                  </div>
+                </div>
+
+                <!-- Sous-rubrique -->
+                <div class="mb-3" *ngIf="announcementNoticeFamily && noticeTypes">
+                  <label for="announcementNoticeType" class="form-label">Sous-rubrique de publication</label>
+                  <select class="form-control" id="announcementNoticeType" required
+                    [(ngModel)]="announcementNoticeType">
+                    <ng-container *ngFor="let noticeType of noticeTypes">
+                      <option [ngValue]="noticeType"
+                        *ngIf="noticeType.noticeTypeFamily.id == announcementNoticeFamily.id">
+                        {{ noticeType.label }}
+                      </option>
+                    </ng-container>
+                  </select>
+
+                  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce && !announcementRedactedByJss && !announcementNoticeType">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">La sous-rubrique est obligatoire</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-9">
+                <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
+                <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
+                  [data]="announcementNoticeInit" (change)="onNoticeChange($event)">
+                </ckeditor>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </section>
+</div>
+
+<div class="row position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 ">
+  <div>
+    <button type="button" class="btn btn-secondary rounded-1 col-auto mx-5">
+      <i class="ai-arrow-left ms-2"></i>Etape précédente</button>
+  </div>
+  <div class="justify-content-end">
+    <button type="button" class="btn btn-secondary rounded-1 col-auto mx-5" *ngIf="canSaveQuotation()"
+      (click)="saveQuotation()">
+      Etape suivante<i class="ai-arrow-right ms-2"></i></button>
+  </div>
 </div>

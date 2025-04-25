@@ -1,5 +1,5 @@
 import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { forkJoin, tap } from 'rxjs';
 import { AppService } from '../../../../../libs/app.service';
@@ -21,8 +21,19 @@ export class SingleUploadComponent implements OnInit {
   @Input() entity: IAttachment = {} as IAttachment;
   @Input() entityType: string = "";
   @Output() endOfUpload: EventEmitter<any> = new EventEmitter<any>();
+  @Output() progressChange = new EventEmitter<any>();
+  @Output() isErrorChange = new EventEmitter<boolean>();
+
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
+
+  MAX_SIZE_UPLOAD_FILES = MAX_SIZE_UPLOAD_FILES;
+  MAX_SIZE_UPLOAD_FILES_IN_MO = formatBytes(MAX_SIZE_UPLOAD_FILES, 10);
+
   files: any[] = [];
   progress: number = 0;
+  uploadedSize = 0;
+  totalSize = 0;
   isSending = false;
   @Input() isDirectUpload: boolean = false;
 
@@ -44,8 +55,8 @@ export class SingleUploadComponent implements OnInit {
     filename: ['', Validators.required],
   });
 
-  fileBrowseHandler(files: any) {
-    this.files = files.files;
+  fileBrowseHandler(files: any | null) {
+    this.files = files;
     if (this.files.length == 1)
       this.filename = this.files[0].name;
     this.attachmentForm.markAllAsTouched();
@@ -55,64 +66,92 @@ export class SingleUploadComponent implements OnInit {
   }
 
   checkFiles() {
-    if (this.files)
-      for (let file of this.files) {
+    if (this.files) {
+      const filesArray = Array.from(this.files);
+
+      for (let file of filesArray) {
         if (file.size > MAX_SIZE_UPLOAD_FILES) {
           this.files = [];
           this.appService.displayToast("Taille maximale d'import limitée à 10 Mo", true, "Erreur", 15);
+          break;
         }
-      }
-  }
-
-  uploadFiles() {
-    if (this.attachmentType != null && this.files != null && this.files.length > 0 && this.entityType != "") {
-      // Check if filename exists
-      let found = false;
-      if (this.entity.attachments != null && this.entity.attachments != undefined && this.entity.attachments.length > 0) {
-        this.entity.attachments.forEach(attachement => {
-          if (!found && attachement.description == this.filename) {
-            found = true;
-            this.appService.displayToast("Nom de fichier déjà existant", true, "Erreur", 15);
-            this.resetForm();
-          }
-        })
-      }
-
-      if (this.attachmentType != null && !found) {
-        this.isSending = true;
-        let promises = [];
-        for (let file of this.files) {
-          promises.push(this.uploadAttachmentService.uploadAttachment(file, this.entity, this.entityType, this.attachmentType, this.files.length == 1 ? this.filename : file.name, this.typeDocument));
-        }
-
-        forkJoin(
-          promises.map(req => {
-            return req.pipe(
-              tap(e => {
-                if (e.type === HttpEventType.UploadProgress) {
-                  if (e.loaded == e.total)
-                    this.progress++;
-                }
-              })
-            );
-          })
-        ).subscribe(response => {
-          let last = [];
-          if (response) {
-            for (let res of response)
-              if (res instanceof HttpResponse && res.body.length > last.length)
-                last = res.body;
-          }
-          this.endOfUpload.next(last);
-          this.resetForm();
-        })
       }
     }
   }
 
+  uploadFiles() {
+    if (this.attachmentType != null && this.files?.length > 0 && this.entityType !== "") {
+      let found = false;
+
+      if (this.entity.attachments?.length > 0) {
+        this.entity.attachments.forEach(attachement => {
+          if (!found && attachement.description === this.filename) {
+            found = true;
+            this.appService.displayToast("Nom de fichier déjà existant", true, "Erreur", 15);
+            this.isErrorChange.emit(true);
+            this.resetForm();
+          }
+        });
+      }
+
+      if (!found) {
+        this.isSending = true;
+        this.progress = 0;
+        this.uploadedSize = 0;
+        this.totalSize = Array.from(this.files).reduce((sum, f) => sum + f.size, 0);
+        this.progressChange.emit({ id: 0, progress: 0 });
+        this.isErrorChange.emit(false);
+
+        let uploadRequests = Array.from(this.files).map(file => {
+          return this.uploadAttachmentService.uploadAttachment(
+            file,
+            this.entity,
+            this.entityType,
+            this.attachmentType!,
+            this.files.length === 1 ? this.filename : file.name,
+            this.typeDocument
+          ).pipe(
+            tap(event => {
+              if (event.type === HttpEventType.DownloadProgress) {
+                this.uploadedSize += event.loaded;
+                let percent = Math.round((this.uploadedSize / this.totalSize) * 100);
+                this.progressChange.emit({ id: 0, progress: percent });
+                this.progress = percent;
+              }
+            })
+          );
+        });
+
+        forkJoin(uploadRequests).subscribe({
+          next: responses => {
+            let last = [];
+            for (let res of responses) {
+              if (res instanceof HttpResponse && res.body?.length > last.length) {
+                last = res.body;
+              }
+            }
+            this.endOfUpload.emit(last);
+            this.resetForm();
+          },
+          error: () => {
+            this.isErrorChange.emit(true);
+          }
+        });
+      }
+    }
+  }
+
+  resetForm() {
+    this.isSending = false;
+    this.files = [];
+    this.progress = 0;
+    this.uploadedSize = 0;
+    this.totalSize = 0;
+    this.progressChange.emit(0);
+  }
+
   onCardClick(): void {
-    const fileInput = document.getElementById('fileDropRef') as HTMLInputElement;
-    fileInput?.click();
+    this.fileInput?.nativeElement.click();
   }
 
   onDragOver(event: DragEvent): void {
@@ -140,11 +179,13 @@ export class SingleUploadComponent implements OnInit {
     }
   }
 
-  resetForm() {
-    this.isSending = false;
-    this.files = [];
-    this.progress = 0;
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      const files: File[] = Array.from(input.files);
+      this.fileBrowseHandler(files);
+    }
   }
 
-  formatBytes = formatBytes;
 }

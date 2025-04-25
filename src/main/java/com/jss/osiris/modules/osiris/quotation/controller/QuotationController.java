@@ -1752,7 +1752,7 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validateQuotationAndCustomerOrder(quotation);
 
-    QuotationStatus openQuotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
+    QuotationStatus openQuotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT);
     if (openQuotationStatus == null)
       if (quotation.getQuotationStatus() == null)
         throw new OsirisException(null, "OPEN Quotation status not found");
@@ -1839,7 +1839,7 @@ public class QuotationController {
       throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
     validateQuotationAndCustomerOrder(customerOrder);
     CustomerOrderStatus customerOrderStatus = customerOrderStatusService
-        .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
+        .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT);
     if (customerOrderStatus == null)
       if (customerOrder.getCustomerOrderStatus() == null)
         throw new OsirisException(null, "OPEN Customer Order status not found");

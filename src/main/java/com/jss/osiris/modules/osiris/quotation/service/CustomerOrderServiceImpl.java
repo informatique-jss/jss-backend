@@ -419,7 +419,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         boolean checkAllProvisionEnded = false;
 
         // Determine if deposit is mandatory or not
-        if ((customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+        if ((customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT)
                 || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
                 && (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
                         || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))) {
@@ -818,7 +818,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
-                .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT);
         CustomerOrder customerOrder = new CustomerOrder(quotation.getAssignedTo(),
                 quotation.getResponsable().getTiers(),
                 quotation.getResponsable(),
@@ -1312,7 +1312,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<CustomerOrder> allActiveRecuringCustomerOrders = customerOrderRepository
                 .findAllActiveRecurringCustomerOrders(
-                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN),
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT),
                         customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT),
                         customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
 
@@ -1391,7 +1391,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private CustomerOrder createNewCustomerOrderFromRecurringCustomerOrder(CustomerOrder customerOrderRecurring)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
-                .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT);
         CustomerOrder customerOrder = new CustomerOrder(customerOrderRecurring.getAssignedTo(),
                 customerOrderRecurring.getResponsable().getTiers(),
                 customerOrderRecurring.getResponsable(),

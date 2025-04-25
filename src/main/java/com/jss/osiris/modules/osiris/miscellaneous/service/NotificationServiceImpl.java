@@ -466,7 +466,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (!isProvisionClosed(provision) && provision.getService().getAssoAffaireOrder() != null
                 && provision.getService().getAssoAffaireOrder().getCustomerOrder() != null
                 && !provision.getService().getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus().getCode()
-                        .equals(CustomerOrderStatus.OPEN)) {
+                        .equals(CustomerOrderStatus.DRAFT)) {
 
             if (provision.getAssignedTo() != null) {
                 String details = "";

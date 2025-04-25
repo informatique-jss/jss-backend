@@ -338,6 +338,18 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/attachments/delete")
+	public ResponseEntity<Boolean> deleteAttachment(@RequestParam Integer idAttachment)
+			throws OsirisValidationException {
+
+		Attachment attachment = attachmentService.getAttachment(idAttachment);
+		if (attachment == null)
+			throw new OsirisValidationException("service");
+
+		return new ResponseEntity<Boolean>(attachmentService.definitivelyDeleteAttachment(attachment),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/affaire/attachments")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForAffaire(@RequestParam Integer idAffaire)
@@ -454,6 +466,20 @@ public class MyJssQuotationController {
 		return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/attachment/asso-service-document")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<AssoServiceDocument> getAssoServiceDocument(
+			@RequestParam("idAssoServiceDocument") Integer idAssoServiceDocument)
+			throws OsirisValidationException, OsirisException {
+
+		AssoServiceDocument assoServiceDocument = assoServiceDocumentService
+				.getAssoServiceDocument(idAssoServiceDocument);
+		if (assoServiceDocument == null)
+			return new ResponseEntity<AssoServiceDocument>(null, new HttpHeaders(), HttpStatus.OK);
+
+		return new ResponseEntity<AssoServiceDocument>(assoServiceDocument, new HttpHeaders(), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/order/payment/cb/qrcode")
 	@Transactional
 	public ResponseEntity<MyJssImage> downloadQrCodeForOrderPayment(
@@ -506,7 +532,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/attachment/upload")
-	public ResponseEntity<Boolean> uploadAttachment(@RequestParam MultipartFile file,
+	public ResponseEntity<List<Integer>> uploadAttachment(@RequestParam MultipartFile file,
 			@RequestParam(required = false) Integer idEntity,
 			@RequestParam String entityType,
 			@RequestParam Integer idAttachmentType,
@@ -565,15 +591,17 @@ public class MyJssQuotationController {
 		}
 
 		if (!canUpload)
-			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+			return new ResponseEntity<List<Integer>>(new ArrayList<>(), HttpStatus.OK);
 
 		if (!entityType.equals(AssoServiceDocument.class.getSimpleName()))
 			throw new OsirisValidationException("entityType");
 
-		attachmentService.addAttachment(file, idEntity, null, entityType, attachmentType, filename,
+		List<Attachment> createdAttachments = attachmentService.addAttachment(file, idEntity, null, entityType,
+				attachmentType, filename,
 				false, null, typeDocument);
 
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		return new ResponseEntity<List<Integer>>(createdAttachments.stream().map(Attachment::getId).toList(),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire")

@@ -237,7 +237,7 @@ public class QuotationServiceImpl implements QuotationService {
             throw new OsirisException(null, "Quotation status not found for code " + targetStatusCode);
 
         // Target TO VERIFY from OPEN : notify users
-        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN)
+        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.DRAFT)
                 && targetQuotationStatus.getCode().equals(QuotationStatus.TO_VERIFY))
             notificationService.notifyQuotationToVerify(quotation);
 
@@ -589,13 +589,13 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation instanceof CustomerOrder) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
             return customerOrder.getCustomerOrderStatus() != null
-                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
+                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT);
         }
 
         if (quotation instanceof Quotation) {
             Quotation quotationQuotation = getQuotation(quotation.getId());
             return quotationQuotation.getQuotationStatus() != null
-                    && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+                    && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.DRAFT);
         }
         return false;
     }

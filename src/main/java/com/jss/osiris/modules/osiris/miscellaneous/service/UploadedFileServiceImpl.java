@@ -68,7 +68,6 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     @Override
     public Boolean definitivelyDeleteUploadedFile(UploadedFile uploadedFile) {
         if (storageFileService.deleteFile(uploadedFile.getPath())) {
-            deleteUploadedFile(uploadedFile);
             return true;
         }
         return false;

@@ -24,8 +24,7 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 	/**
 	 * WARNINNG : add update in Service when adding a new status
 	 */
-	public static String DRAFT = "DRAFT";
-	public static String OPEN = "OPEN";
+	public static String DRAFT = "OPEN";
 	public static String ABANDONED = "ABANDONED";
 	public static String BILLED = "BILLED";
 	public static String WAITING_DEPOSIT = "WAITING_DEPOSIT";
@@ -92,12 +91,12 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 		this.icon = icon;
 	}
 
-	public static String getOPEN() {
-		return OPEN;
+	public static String getDRAFT() {
+		return DRAFT;
 	}
 
-	public static void setOPEN(String oPEN) {
-		OPEN = oPEN;
+	public static void setDRAFT(String oPEN) {
+		DRAFT = oPEN;
 	}
 
 	public static String getABANDONED() {

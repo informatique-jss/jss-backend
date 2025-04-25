@@ -37,7 +37,7 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
   }
 
   getCurrentDraftOrderId() {
-    return localStorage.getItem('current-draft-quotation-id');
+    return localStorage.getItem('current-draft-order-id');
   }
 
   setCurrentDraftOrderId(quotationId: number) {

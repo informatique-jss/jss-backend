@@ -7,4 +7,6 @@ export interface Provision {
   domiciliation: Domiciliation | undefined;
   announcement: Announcement | undefined;
   provisionType: ProvisionType;
+  // Only for front to display the announcements in the good order
+  order: number
 }

@@ -30,7 +30,7 @@ export class QuotationService extends AppRestService<Quotation> {
   }
 
   getCurrentDraftQuotationId() {
-    return localStorage.getItem('current-draft-order-id');
+    return localStorage.getItem('current-draft-quotation-id');
   }
 
   setCurrentDraftQuotationId(quotationId: number) {

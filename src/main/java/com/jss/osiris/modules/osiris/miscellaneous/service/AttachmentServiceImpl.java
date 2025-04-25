@@ -345,8 +345,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     public Boolean definitivelyDeleteAttachment(Attachment attachment) {
         Boolean isDelete = uploadedFileService.definitivelyDeleteUploadedFile(attachment.getUploadedFile());
         if (isDelete) {
-            uploadedFileService.deleteUploadedFile(attachment.getUploadedFile());
             deleteAttachment(attachment);
+            uploadedFileService.deleteUploadedFile(attachment.getUploadedFile());
             return true;
         }
         return false;

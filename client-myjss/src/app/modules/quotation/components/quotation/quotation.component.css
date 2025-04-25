@@ -53,6 +53,14 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
     color: #2C4057;
 }
 
+:host ::ng-deep .form-label {
+    color: var(--ar-secondary);
+}
+
+:host ::ng-deep .form-control {
+    color: var(--ar-gray-600);
+}
+
 .btn.btn-outline-primary:hover {
     color: var(--ar-secondary);
 }
