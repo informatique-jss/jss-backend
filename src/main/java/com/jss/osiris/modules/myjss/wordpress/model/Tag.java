@@ -10,14 +10,16 @@ import jakarta.persistence.Id;
 @Entity
 public class Tag {
     @Id
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer id;
+
     private Integer count;
-    @JsonView(JacksonViews.MyJssListView.class)
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String slug;
 
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String name;
 
     public Integer getId() {

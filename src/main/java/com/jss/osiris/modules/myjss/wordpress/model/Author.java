@@ -16,21 +16,21 @@ public class Author {
     @Transient
     private Avatar avatar_urls;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String name;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String slug;
 
     private String description;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String avatar_url_size_24;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String avatar_url_size_48;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String avatar_url_size_96;
 
     public Integer getId() {

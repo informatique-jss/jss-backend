@@ -50,22 +50,24 @@ public class Post implements IId {
 
     @Column(columnDefinition = "TEXT")
     @IndexedField
-    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class,
+            JacksonViews.MyJssDetailedView.class })
     private String titleText;
 
     @Transient
     private Content excerpt;
     @Column(columnDefinition = "TEXT")
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String excerptText;
 
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private LocalDateTime date;
 
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private LocalDateTime modified;
 
     @Transient
@@ -98,54 +100,55 @@ public class Post implements IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author")
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Author fullAuthor;
 
     @ManyToMany
     @JoinTable(name = "asso_post_jss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_jss_category"))
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<JssCategory> jssCategories;
 
     @ManyToMany
     @JoinTable(name = "asso_post_myjss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_myjss_category"))
     @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<MyJssCategory> myJssCategories;
 
     @ManyToMany
     @JoinTable(name = "asso_post_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_category"))
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<Category> postCategories;
 
     @ManyToMany
     @JoinTable(name = "asso_post_publishing_department", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_publishing_department"))
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<PublishingDepartment> departments;
 
     @ManyToMany
     @JoinTable(name = "asso_post_tag", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<Tag> postTags;
 
     @ManyToMany
     @JoinTable(name = "asso_post_serie", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_serie"))
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
     private List<Serie> postSerie;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_media")
     @IndexedField
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Media media;
 
     @ManyToMany
     @JoinTable(name = "asso_post_related", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_post_related"))
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private List<Post> relatedPosts;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Boolean isPremium;
 
     private Integer premiumPercentage;

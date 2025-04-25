@@ -44,11 +44,13 @@ public class StorageFileServiceImpl implements StorageFileService {
     }
 
     @Override
-    public void deleteFile(String path) {
+    public Boolean deleteFile(String path) {
         if (path != null && Files.exists(Paths.get(path), LinkOption.NOFOLLOW_LINKS)) {
             File file = new File(path);
             file.delete();
+            return true;
         }
+        return false;
     }
 
     @Override

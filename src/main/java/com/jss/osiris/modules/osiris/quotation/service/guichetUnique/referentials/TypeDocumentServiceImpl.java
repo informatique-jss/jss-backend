@@ -6,6 +6,8 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeDocument;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.TypeDocumentRepository;
 
@@ -13,20 +15,29 @@ import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.TypeDocu
 public class TypeDocumentServiceImpl implements TypeDocumentService {
 
     @Autowired
-    TypeDocumentRepository TypeDocumentRepository;
+    TypeDocumentRepository typeDocumentRepository;
+
+    @Autowired
+    AssoServiceTypeDocumentService assoServiceTypeDocumentService;
 
     @Override
     public List<TypeDocument> getTypeDocument() {
-        return IterableUtils.toList(TypeDocumentRepository.findAll());
+        return IterableUtils.toList(typeDocumentRepository.findAll());
     }
 
     @Override
     public TypeDocument addOrUpdateTypeDocument(TypeDocument typeDocument) {
-        return TypeDocumentRepository.save(typeDocument);
+        return typeDocumentRepository.save(typeDocument);
     }
 
     @Override
     public TypeDocument getTypeDocumentByCode(String code) {
-        return TypeDocumentRepository.findByCode(code);
+        return typeDocumentRepository.findByCode(code);
+    }
+
+    @Override
+    public List<TypeDocument> getTypeDocumentMandatoryByServiceType(ServiceType serviceType) {
+        return assoServiceTypeDocumentService.getAssoServiceTypeDocumentMandatoryByServiceType(serviceType).stream()
+                .map(AssoServiceTypeDocument::getTypeDocument).toList();
     }
 }

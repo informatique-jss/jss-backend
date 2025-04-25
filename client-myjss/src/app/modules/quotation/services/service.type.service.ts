@@ -13,7 +13,7 @@ export class ServiceTypeService extends AppRestService<ServiceType> {
   }
 
   getServiceTypesForFamily(idServiceFamily: number) {
-    return this.getList(new HttpParams().set("idServiceFamily", idServiceFamily), "service-type/service-family");
+    return this.getListCached(new HttpParams().set("idServiceFamily", idServiceFamily), "service-type/service-family");
   }
 
   getServiceType(idServiceType: number) {

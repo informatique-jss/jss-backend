@@ -210,7 +210,7 @@ export class AccountingBalanceComponent implements OnInit {
   }
 
   setCurentFiscalYear() {
-    let d = new Date(this.constantService.getDateAccountingClosureForAll());
+    let d = new Date(this.constantService.getDateAccountingClosureForAccountant());
     this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
     let d2 = new Date();
     this.accountingBalanceSearch.endDate = new Date(d2.getFullYear(), 11, 31, 12, 0, 0);

@@ -196,9 +196,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (attachments != null && attachments.size() > 0) {
                 for (Attachment attachment : attachments) {
                     if (attachment.getAttachmentType().getCode().equals(attachmentType.getCode())) {
-                        storageFileService.deleteFile(attachment.getUploadedFile().getPath());
-                        uploadedFileService.deleteUploadedFile(attachment.getUploadedFile());
-                        deleteAttachment(attachment);
+                        definitivelyDeleteAttachment(attachment);
                     }
                 }
             }
@@ -338,11 +336,19 @@ public class AttachmentServiceImpl implements AttachmentService {
         return getAttachmentForEntityType(entityType, idEntity, codeEntity);
     }
 
-    @Override
-    public void deleteAttachment(Attachment attachment) {
+    private void deleteAttachment(Attachment attachment) {
         if (attachment != null) {
             attachmentRepository.delete(attachment);
         }
+    }
+
+    public Boolean definitivelyDeleteAttachment(Attachment attachment) {
+        Boolean isDelete = uploadedFileService.definitivelyDeleteUploadedFile(attachment.getUploadedFile());
+        if (isDelete) {
+            deleteAttachment(attachment);
+            return true;
+        }
+        return false;
     }
 
     @Override

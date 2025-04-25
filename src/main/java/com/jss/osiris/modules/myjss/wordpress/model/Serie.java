@@ -1,8 +1,5 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.jss.osiris.libs.jackson.JacksonViews;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,11 +11,8 @@ import jakarta.persistence.Transient;
 @Entity
 public class Serie {
     @Id
-    @JsonView(JacksonViews.MyJssListView.class)
     private Integer id;
-    @JsonView(JacksonViews.MyJssListView.class)
     private String name;
-    @JsonView(JacksonViews.MyJssListView.class)
     private String slug;
     private Integer count;
     private Integer serieOrder;

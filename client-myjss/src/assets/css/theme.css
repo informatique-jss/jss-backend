@@ -20375,3 +20375,13 @@ h1.secondary-heading,
 .background-opacity {
   background: #FFFFFF08;
 }
+
+input::selection,
+textarea::selection {
+  background: var(--ar-blue-step);
+  color: var(--ar-light);
+}
+
+.pointer {
+  cursor: pointer;
+}

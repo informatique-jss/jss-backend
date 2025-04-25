@@ -3,6 +3,7 @@ import { DocumentType } from "../modules/my-account/model/DocumentType";
 import { PaymentType } from "../modules/my-account/model/PaymentType";
 import { Country } from "../modules/profile/model/Country";
 import { Responsable } from "../modules/profile/model/Responsable";
+import { ServiceFamilyGroup } from "../modules/quotation/model/ServiceFamilyGroup";
 import { MyJssCategory } from "../modules/tools/model/MyJssCategory";
 
 export interface Constant {
@@ -23,4 +24,5 @@ export interface Constant {
   responsableDummyCustomerFrance: Responsable;
   myJssCategoryAnnouncement: MyJssCategory;
   myJssCategoryFormality: MyJssCategory;
+  serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
 }

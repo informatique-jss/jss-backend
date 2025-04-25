@@ -81,6 +81,7 @@ import com.jss.osiris.modules.osiris.quotation.service.PricingHelper;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyGroupService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceFieldTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
@@ -177,6 +178,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	DashboardUserStatisticsService dashboardUserStatisticsService;
+
+	@Autowired
+	ServiceFieldTypeService serviceFieldTypeService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1007,6 +1011,17 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/service-families/all")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<ServiceFamily>> getServiceFamiliesExcludingServiceFamilyGroupAnnouncement(
+			HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+
+		return new ResponseEntity<List<ServiceFamily>>(
+				serviceFamilyService.getServiceFamiliesExcludingServiceFamilyGroupAnnouncement(),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/service-type/service-family")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<ServiceType>> getServiceTypesForFamily(Integer idServiceFamily,
@@ -1017,6 +1032,40 @@ public class MyJssQuotationController {
 		if (serviceFamily == null)
 			return new ResponseEntity<List<ServiceType>>(new ArrayList<ServiceType>(), HttpStatus.OK);
 		return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypesForFamily(serviceFamily),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/type-documents/service-type")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<TypeDocument>> getTypeDocumentMandatoryByServiceType(
+			@RequestParam("serviceTypeId") Integer serviceTypeId,
+			HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+
+		ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
+
+		if (serviceType == null)
+			return new ResponseEntity<List<TypeDocument>>(new ArrayList<TypeDocument>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<TypeDocument>>(
+				typeDocumentService.getTypeDocumentMandatoryByServiceType(serviceType),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/service-field-types/service-type")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypeByServiceType(
+			@RequestParam("serviceTypeId") Integer serviceTypeId,
+			HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+
+		ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
+
+		if (serviceType == null)
+			return new ResponseEntity<List<ServiceFieldType>>(new ArrayList<ServiceFieldType>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<ServiceFieldType>>(
+				serviceFieldTypeService.getServiceFieldTypeByServiceType(serviceType),
 				HttpStatus.OK);
 	}
 
