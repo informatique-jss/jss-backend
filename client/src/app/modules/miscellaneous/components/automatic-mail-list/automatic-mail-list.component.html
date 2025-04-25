@@ -1,6 +1,6 @@
 <div class="mat-elevation-z2 form-div" *ngIf="customerMails ">
   <div class="full-width">
-    <div class="row-field-container">
+    <div class="row-field-container" *ngIf="!isHideSearchField">
       <mat-form-field class="full-width">
         <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
       </mat-form-field>

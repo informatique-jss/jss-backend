@@ -136,7 +136,7 @@ export class HabilitationsService {
   }
 
   canAddNewAccountingRecord() {
-    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
   canAddNewCashPayment() {

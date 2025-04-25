@@ -223,10 +223,12 @@ public class AccountingExportHelper {
                                         currentCell.setCellStyle(recordCellStyle);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         currentCell.setCellValue(
-                                                        accountingRecord.getInvoiceId() != null
-                                                                        ? accountingRecord.getInvoiceId() + ""
+                                                        accountingRecord.getManualAccountingDocumentNumber() != null
+                                                                        ? accountingRecord
+                                                                                        .getManualAccountingDocumentNumber()
+                                                                                        + ""
                                                                         : accountingRecord
-                                                                                        .getManualAccountingDocumentNumber());
+                                                                                        .getInvoiceId() + "");
                                         currentCell.setCellStyle(recordCellStyle);
                                         currentCell = currentRow.createCell(currentColumn++);
                                         if (accountingRecord.getLetteringNumber() != null) {
@@ -924,7 +926,8 @@ public class AccountingExportHelper {
                 // If journal, export VAT balance
                 if (accountingJournal != null) {
                         List<AccountingVatValue> vatValues = accountingRecordRepository.getAccountingVatValueForJournal(
-                                        startDate.toLocalDate(), endDate.toLocalDate(), accountingJournal.getId(),
+                                        startDate.withHour(0).withMinute(0), endDate.withHour(23).withMinute(59),
+                                        accountingJournal.getId(),
                                         constantService.getAccountingAccountClassProduct().getId());
 
                         if (vatValues != null && vatValues.size() > 0) {

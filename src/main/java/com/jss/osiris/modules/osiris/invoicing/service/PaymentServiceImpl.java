@@ -4,8 +4,10 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.QrCodeHelper;
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -164,6 +167,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     QrCodeHelper qrCodeHelper;
 
+    @Autowired
+    AuditService auditService;
+
     @Value("${payment.cb.entry.point}")
     private String paymentCbEntryPoint;
 
@@ -239,6 +245,143 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments(),
                 paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint(), paymentSearch.isHideNoOfx(),
                 paymentSearch.getIdPayment());
+    }
+
+    @Override
+    public List<Payment> getMatchingOfxPayments(PaymentSearch paymentSearch) {
+        if (paymentSearch.getStartDate() == null)
+            paymentSearch.setStartDate(LocalDateTime.now().minusYears(100));
+
+        if (paymentSearch.getEndDate() == null)
+            paymentSearch.setEndDate(LocalDateTime.now().plusYears(100));
+
+        if (paymentSearch.getIdPayment() == null)
+            paymentSearch.setIdPayment(0);
+
+        if (paymentSearch.getMinAmount() == null)
+            paymentSearch.setMinAmount(Integer.MIN_VALUE + 0f);
+
+        if (paymentSearch.getMaxAmount() == null)
+            paymentSearch.setMaxAmount(Integer.MAX_VALUE + 0f);
+
+        if (paymentSearch.getLabel() != null && paymentSearch.getLabel().trim().length() == 0)
+            paymentSearch.setLabel(null);
+
+        List<Payment> finalPayments = new ArrayList<Payment>();
+        List<Payment> payments = paymentRepository.findPaymentsForOfxMatching(
+                paymentSearch.getStartDate().withHour(0).withMinute(0),
+                paymentSearch.getEndDate().withHour(23).withMinute(59), LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+                LocalDateTime.of(2025, 1, 1, 0, 0, 0), paymentSearch.getMinAmount(),
+                paymentSearch.getMaxAmount(),
+                paymentSearch.getLabel());
+
+        if (payments != null && payments.size() > 0) {
+            for (Payment payment : payments) {
+
+                if (payment.getIsCancelled() != null && payment.getIsCancelled() == false) {
+                    payment.setMatchType("En compte d'attente");
+                    payment.setMatchAutomation("Automatique");
+                }
+
+                else if (payment.getRefund() != null) {
+                    payment.setMatchType("Remboursement");
+                    payment.setMatchAutomation("Automatique");
+                }
+
+                else if (payment.getBankTransfert() != null) {
+                    payment.setMatchType("Virement fournisseur");
+                    payment.setMatchAutomation("Automatique");
+                }
+
+                else if (payment.getDirectDebitTransfert() != null) {
+                    payment.setMatchType("Prélèvement client");
+                    payment.setMatchAutomation("Automatique");
+                }
+
+                else if (payment.getCheckDepositNumber() != null) {
+                    payment.setMatchType("Remise de chèque");
+                    payment.setMatchAutomation("Automatique");
+                }
+
+                else if (payment.getChildrenPayments() == null || payment.getChildrenPayments().size() == 0) {
+                    List<Payment> paymentWithLabel = paymentRepository
+                            .findByLabelStartsWith("Remboursement du paiement N " + payment.getId());
+                    if (paymentWithLabel != null && paymentWithLabel.size() > 0) {
+                        payment.setRefund(paymentWithLabel.get(0).getRefund());
+                        payment.setMatchType("Remboursement d'un paiement");
+                        payment.setMatchAutomation("Automatique");
+                    }
+                }
+
+                if (payment.getChildrenPayments() == null || payment.getChildrenPayments().size() == 0) {
+                    if (payment.getMatchType() == null)
+                        payment.setMatchType("Indéterminé");
+                    finalPayments.add(payment);
+                } else if (payment.getMatchType() == null) {
+                    for (Payment childPayment : payment.getChildrenPayments()) {
+                        if (childPayment.getAccountingAccount() != null) {
+                            payment.setMatchType("Mis en compte");
+                            payment.setMatchAutomation("Manuel");
+                            payment.setAccountingAccount(childPayment.getAccountingAccount());
+                        } else if (childPayment.getInvoice() != null
+                                && childPayment.getInvoice().getResponsable() != null) {
+                            payment.setMatchType("Associé à une facture client");
+                            payment.setInvoice(childPayment.getInvoice());
+                        } else if (childPayment.getCheckNumber() != null
+                                && childPayment.getPaymentAmount().compareTo(new BigDecimal(0)) < 0) {
+                            payment.setMatchType("Chèque fournisseur");
+                            payment.setMatchAutomation("Automatique");
+                            payment.setCheckNumber(childPayment.getCheckNumber());
+                        } else if (childPayment.getInvoice() != null
+                                && childPayment.getInvoice().getProvider() != null) {
+                            payment.setMatchType("Associé à une facture fournisseur");
+                            payment.setInvoice(childPayment.getInvoice());
+                        } else if (childPayment.getCustomerOrder() != null) {
+                            payment.setMatchType("Associé à une commande");
+                            payment.setCustomerOrder(childPayment.getCustomerOrder());
+                        } else if (childPayment.getRefund() != null
+                                && childPayment.getPaymentAmount().compareTo(new BigDecimal(0)) < 0) {
+                            payment.setRefund(childPayment.getRefund());
+                            payment.setMatchType("Remboursement d'un trop perçu");
+                        }
+
+                        LocalDateTime parentPaymentCreationDate = auditService
+                                .getCreationDateTimeForEntity(Payment.class.getSimpleName(), payment.getId());
+                        LocalDateTime childPaymentCreationDate = auditService
+                                .getCreationDateTimeForEntity(Payment.class.getSimpleName(), childPayment.getId());
+
+                        if (payment.getMatchType() != null && parentPaymentCreationDate != null
+                                && childPaymentCreationDate != null && payment.getMatchAutomation() == null) {
+                            if (Math.abs(ChronoUnit.MINUTES.between(parentPaymentCreationDate,
+                                    childPaymentCreationDate)) > 5)
+                                payment.setMatchAutomation("Manuel");
+                            else
+                                payment.setMatchAutomation("Automatique");
+                            break;
+                        }
+                    }
+
+                    if (payment.getMatchType() == null)
+                        payment.setMatchType("Indéterminé");
+
+                    finalPayments.add(payment);
+                }
+            }
+        }
+
+        if (finalPayments != null && finalPayments.size() > 0)
+            finalPayments.sort(new Comparator<Payment>() {
+                @Override
+                public int compare(Payment o1, Payment o2) {
+                    if (o1 == null && o2 != null)
+                        return -1;
+                    else if (o1 != null && o2 == null)
+                        return 1;
+                    return o1.getPaymentDate().compareTo(o2.getPaymentDate());
+                }
+            });
+
+        return payments;
     }
 
     @Override

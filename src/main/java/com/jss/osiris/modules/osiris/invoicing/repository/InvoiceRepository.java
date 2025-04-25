@@ -28,7 +28,6 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " ist.code as invoiceStatusCode,"
                         + " ist.id as invoiceStatusId,"
                         + " c.id as customerOrderId,"
-                        + "  r1.firstname || ' '||r1.lastname as customerOrderLabel,"
                         + " pro.label as providerLabel, "
                         + " r1.id as responsableId, "
                         + " coalesce(r1.id_commercial, t.id_commercial) as salesEmployeeId, "

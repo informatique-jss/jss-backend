@@ -425,14 +425,18 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getIdRefund() == null)
       accountingRecordSearch.setIdRefund(0);
 
+    if (accountingRecordSearch.getTiersId() != 0 || accountingRecordSearch.getIdPayment() != 0) {
+      // See all if for a Tiers or a payment
+      accountingRecordSearch.setStartDate(accountingRecordSearch.getStartDate().minusYears(2));
+      accountingRecordSearch.setEndDate(accountingRecordSearch.getEndDate().plusYears(2));
+    }
+
+    List<AccountingRecordSearchResult> finalRecords = new ArrayList<AccountingRecordSearchResult>();
     if (getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME)) {
-      if (accountingRecordSearch.getTiersId() != 0 || accountingRecordSearch.getIdPayment() != 0) {
-        // See all if for a Tiers or a payment
-        accountingRecordSearch.setStartDate(accountingRecordSearch.getStartDate().minusYears(2));
-        accountingRecordSearch.setEndDate(accountingRecordSearch.getEndDate().plusYears(2));
-      }
-      return accountingRecordRepository.searchAccountingRecordsCurrent(accountingAccountId, accountingClass, journalId,
+
+      finalRecords = accountingRecordRepository.searchAccountingRecordsCurrent(accountingAccountId, accountingClass,
+          journalId,
           accountingRecordSearch.getTiersId(),
           accountingRecordSearch.getHideLettered(),
           accountingRecordSearch.getIsFromAs400(),
@@ -444,19 +448,25 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingRecordSearch.getIdInvoice(),
           accountingRecordSearch.getIdRefund(),
           accountingRecordSearch.getIdBankTransfert(), fetchAll ? Integer.MAX_VALUE : 1000);
+    } else if (!getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
+        .equals(this.ACCOUNTING_RECORD_TABLE_NAME) || accountingRecordSearch.getIdPayment() != 0) {
+
+      finalRecords.addAll(accountingRecordRepository.searchAccountingRecordsClosed(accountingAccountId, accountingClass,
+          journalId,
+          accountingRecordSearch.getTiersId(),
+          accountingRecordSearch.getHideLettered(),
+          accountingRecordSearch.getIsFromAs400(),
+          accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
+          accountingRecordSearch.getEndDate().withHour(23).withMinute(59),
+          activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+          accountingRecordSearch.getIdPayment(),
+          accountingRecordSearch.getIdCustomerOrder(),
+          accountingRecordSearch.getIdInvoice(),
+          accountingRecordSearch.getIdRefund(),
+          accountingRecordSearch.getIdBankTransfert(), fetchAll ? Integer.MAX_VALUE : 1000));
     }
-    return accountingRecordRepository.searchAccountingRecordsClosed(accountingAccountId, accountingClass, journalId,
-        accountingRecordSearch.getTiersId(),
-        accountingRecordSearch.getHideLettered(),
-        accountingRecordSearch.getIsFromAs400(),
-        accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
-        accountingRecordSearch.getEndDate().withHour(23).withMinute(59),
-        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
-        accountingRecordSearch.getIdPayment(),
-        accountingRecordSearch.getIdCustomerOrder(),
-        accountingRecordSearch.getIdInvoice(),
-        accountingRecordSearch.getIdRefund(),
-        accountingRecordSearch.getIdBankTransfert(), fetchAll ? Integer.MAX_VALUE : 1000);
+
+    return finalRecords;
   }
 
   @Override
@@ -840,8 +850,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public List<FnpResult> getFnp(LocalDate accountingDate) throws OsirisException {
     return accountingRecordRepository.getFnp(accountingDate.atTime(23, 59, 59),
-        Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
-            constantService.getInvoiceStatusReceived().getId(), constantService.getInvoiceStatusSend().getId()),
+        Arrays.asList(constantService.getInvoiceStatusPayed().getId(), constantService.getInvoiceStatusSend().getId()),
         accountingDate.getYear() + "");
   }
 

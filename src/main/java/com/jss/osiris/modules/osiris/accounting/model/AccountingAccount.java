@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.accounting.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -25,6 +27,7 @@ public class AccountingAccount implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "accounting_account_sequence", sequenceName = "accounting_account_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounting_account_sequence")
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 200)
@@ -32,8 +35,10 @@ public class AccountingAccount implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_principal_accounting_account")
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private PrincipalAccountingAccount principalAccountingAccount;
 
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Integer accountingAccountSubNumber;
 
 	@Column(nullable = false)

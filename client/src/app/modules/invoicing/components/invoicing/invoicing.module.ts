@@ -33,6 +33,7 @@ import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.comp
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
+import { OfxMatchingComponent } from "../ofx-matching/ofx-matching.component";
 import { OutboundCheckListComponent } from "../outbound-check-list/outbound-check-list.component";
 import { ReceiptReconciliationEditDialogComponent } from "../receipt-reconciliation-edit-dialog/receipt-reconciliation-edit-dialog.component";
 import { ReceiptReconciliationComponent } from "../receipt-reconciliation/receipt-reconciliation.component";
@@ -93,7 +94,8 @@ const routes: Routes = [
     EditRefundLabelDialogComponent,
     OutboundCheckListComponent,
     BankBalanceComponent,
-    EditAmountInvoiceItemDialogComponent
+    EditAmountInvoiceItemDialogComponent,
+    OfxMatchingComponent
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

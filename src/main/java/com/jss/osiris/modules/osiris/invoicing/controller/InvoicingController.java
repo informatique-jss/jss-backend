@@ -23,12 +23,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
@@ -984,8 +986,7 @@ public class InvoicingController {
         validationHelper.validateReferential(invoice.getInvoiceStatus(), false, "InvoiceStatus");
         validationHelper.validateDate(invoice.getDueDate(), false, "DueDate");
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "AccountingDocumentDate");
-        validationHelper.validateDateMin(invoice.getManualAccountingDocumentDate(), false,
-                constantService.getDateAccountingClosureForAll(), "ManualAccountingDocumentDate");
+        validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "ManualAccountingDocumentDate");
         validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(1),
                 "ManualAccountingDocumentDate");
         validationHelper.validateString(invoice.getManualAccountingDocumentNumber(), false, 150,
@@ -1108,6 +1109,17 @@ public class InvoicingController {
 
         return new ResponseEntity<InvoiceItem>(
                 invoiceItemService.updateInvoiceItemFromInvoice(invoiceItem, newPreTaxPrice),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/payment/ofx/match")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Payment>> getMatchingOfxPayments(@RequestBody PaymentSearch paymentSearch)
+            throws OsirisException {
+        if (paymentSearch == null)
+            throw new OsirisValidationException("paymentSearch");
+
+        return new ResponseEntity<List<Payment>>(paymentService.getMatchingOfxPayments(paymentSearch),
                 HttpStatus.OK);
     }
 }

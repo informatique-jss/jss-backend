@@ -485,8 +485,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         " group by vat.label, vat.code,vat.id ")
         List<AccountingVatValue> getAccountingVatValueForJournal(
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate,
+                        @Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate,
                         @Param("idAccountingJournal") Integer idAccountingJournal,
                         @Param("idAccountingClass") Integer idAccountingClass);
 
@@ -513,14 +513,14 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
         List<FaeResult> getFae(LocalDateTime accountingDateTime, List<Integer> openInvoicedStatusId);
 
         @Query(nativeQuery = true, value = "" +
-                        " select t.denomination as customerOrder, sum(rff_total) as amount  " +
+                        " select t.denomination as customerOrder,case when i.id is null then false else true end as isPayed, sum(rff_total) as amount  "
+                        +
                         " from rff r " +
                         " join tiers t on t.id = r.id_tiers  " +
                         " left join invoice i on i.id_rff  = r.id and i.id_invoice_status in (:openInvoicedStatusId) and coalesce(i.manual_accounting_document_date, i.created_date) <:accountingDateTime "
                         +
-                        " where is_sent  and i.id is null " +
-                        " and to_char(end_date,'YYYY') =:accountingDateTimeYear " +
-                        " group by t.denomination         ")
+                        " where   to_char(end_date,'YYYY') =:accountingDateTimeYear  " +
+                        " group by t.denomination ,case when i.id is null then false else true end        ")
         List<FnpResult> getFnp(LocalDateTime accountingDateTime, List<Integer> openInvoicedStatusId,
                         String accountingDateTimeYear);
 

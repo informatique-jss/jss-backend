@@ -7,6 +7,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { AccountingAccountClass } from '../../model/AccountingAccountClass';
 import { AccountingBalance } from '../../model/AccountingBalance';
 import { AccountingBalanceSearch } from '../../model/AccountingBalanceSearch';
@@ -28,7 +29,8 @@ export class AccountingBalanceComponent implements OnInit {
     private userPreferenceService: UserPreferenceService,
     private appService: AppService,
     private accountingAccountClassService: AccountingAccountClassService,
-    private constantService: ConstantService
+    private constantService: ConstantService,
+    private habilitationsService: HabilitationsService
   ) { }
 
   accumulatedDataSource = new MatTableDataSource<AccountingBalance>();
@@ -90,7 +92,7 @@ export class AccountingBalanceComponent implements OnInit {
 
   exportBalance() {
     if (this.accountingBalanceSearch.startDate && this.accountingBalanceSearch.endDate)
-      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear() && this.accountingBalanceSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear() && this.accountingBalanceSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -106,7 +108,7 @@ export class AccountingBalanceComponent implements OnInit {
     }
 
     if (this.accountingBalanceSearch.startDate && this.accountingBalanceSearch.endDate)
-      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear() && this.accountingBalanceSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingBalanceSearch.startDate.getFullYear() != this.accountingBalanceSearch.endDate.getFullYear() && this.accountingBalanceSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -208,7 +210,7 @@ export class AccountingBalanceComponent implements OnInit {
   }
 
   setCurentFiscalYear() {
-    let d = new Date(this.constantService.getDateAccountingClosureForAll());
+    let d = new Date(this.constantService.getDateAccountingClosureForAccountant());
     this.accountingBalanceSearch.startDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
     let d2 = new Date();
     this.accountingBalanceSearch.endDate = new Date(d2.getFullYear(), 11, 31, 12, 0, 0);

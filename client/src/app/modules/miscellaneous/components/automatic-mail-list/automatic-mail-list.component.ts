@@ -32,7 +32,8 @@ export class AutomaticMailListComponent implements OnInit {
 
   displayedColumns: SortTableColumn<CustomerMail>[] = [];
   tableActions: SortTableAction<CustomerMail>[] = [] as Array<SortTableAction<CustomerMail>>;
-  searchText: string | undefined;
+  @Input() searchText: string | undefined;
+  @Input() isHideSearchField: boolean = false;
 
   filterValue: string = "";
   refreshTable: Subject<void> = new Subject<void>();

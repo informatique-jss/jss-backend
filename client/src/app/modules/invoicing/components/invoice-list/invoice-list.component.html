@@ -47,6 +47,12 @@
             propertyName="invoiceId" [isMandatory]="false"></generic-input>
         </td>
         <td class="fab-td-button download-button">
+          <button (click)="populateMailValue()" mat-mini-fab color="accent" class="add-button"
+            matTooltip="Afficher les mails destinataires">
+            <mat-icon>mail</mat-icon>
+          </button>
+        </td>
+        <td class="fab-td-button download-button">
           <button (click)="downloadAllFiles()" mat-mini-fab color="accent" class="add-button"
             matTooltip="Télécharger toutes les factures">
             <mat-icon>download</mat-icon>
@@ -60,7 +66,8 @@
       </tr>
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="invoices" tableName="Factures"
-      [isSmallerHeight]="true" *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
+      [isSmallerHeight]="true" *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true"
+      [refreshTable]="refreshRecordTable.asObservable()">
     </sort-table>
   </div>
 </div>

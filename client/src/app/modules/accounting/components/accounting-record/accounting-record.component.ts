@@ -78,6 +78,7 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "customerOrder", fieldName: "customerId", label: "Commande", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn<AccountingRecordSearchResult>);
+    this.displayedColumns.push({ id: "responsable", fieldName: "responsable", label: "Responsable" } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "accountingDateTime", fieldName: "accountingDateTime", label: "Date d'écriture", valueFonction: this.formatDateForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date d'opération", valueFonction: this.formatDateTimeForSortTable } as SortTableColumn<AccountingRecordSearchResult>);
     this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn<AccountingRecordSearchResult>);
@@ -229,7 +230,7 @@ export class AccountingRecordComponent implements OnInit {
 
   exportGrandLivre() {
     if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -243,7 +244,7 @@ export class AccountingRecordComponent implements OnInit {
 
   exportAllGrandLivre() {
     if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -257,7 +258,7 @@ export class AccountingRecordComponent implements OnInit {
 
   exportJournal() {
     if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -271,7 +272,7 @@ export class AccountingRecordComponent implements OnInit {
 
   exportAccountingAccount() {
     if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+      if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
         this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
         return;
       }
@@ -296,7 +297,7 @@ export class AccountingRecordComponent implements OnInit {
       }
 
       if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate)
-        if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAll()).getFullYear()) {
+        if (this.accountingRecordSearch.startDate.getFullYear() != this.accountingRecordSearch.endDate.getFullYear() && this.accountingRecordSearch.startDate.getFullYear() != new Date(this.constantService.getDateAccountingClosureForAccountant()).getFullYear()) {
           this.appService.displaySnackBar("Merci de saisir une plage de recherche sur un seul exercice fiscal", false, 10);
           return;
         }
@@ -326,7 +327,7 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   setCurentFiscalYear() {
-    let d = new Date(this.constantService.getDateAccountingClosureForAll());
+    let d = new Date(this.constantService.getDateAccountingClosureForAccountant());
     this.accountingRecordSearch.startDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
     let d2 = new Date();
     this.accountingRecordSearch.endDate = new Date(d2.getFullYear(), 11, 31, 12, 0, 0);

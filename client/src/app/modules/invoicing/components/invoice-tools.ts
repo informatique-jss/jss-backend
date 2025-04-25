@@ -14,7 +14,7 @@ export function getRemainingToPay(invoice: Invoice) {
 }
 
 export function getColumnLink(column: SortTableColumn<InvoiceSearchResult>, element: InvoiceSearchResult) {
-  if (element && column.id == "customerOrderName") {
+  if (element && column.id == "responsable") {
     if (element.responsableId)
       return ['/tiers/responsable', element.responsableId];
     if (element.tiersId)
