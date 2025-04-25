@@ -34,7 +34,7 @@ public class TypeDocument implements ICode, IAttachment {
     public static String SIGNED_SYNTHESES_DOCUMENT_CODE = "PJ_115";
 
     @Id
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String code;
 
     private Boolean isToDownloadOnProvision;
@@ -45,11 +45,11 @@ public class TypeDocument implements ICode, IAttachment {
     private AttachmentType attachmentType;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String label;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String customLabel;
 
     @OneToMany(mappedBy = "typeDocumentAttachment", fetch = FetchType.LAZY)

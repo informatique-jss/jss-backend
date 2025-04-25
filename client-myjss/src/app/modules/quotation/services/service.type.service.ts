@@ -15,6 +15,7 @@ export class ServiceTypeService extends AppRestService<ServiceType> {
   getServiceTypesForFamily(idServiceFamily: number) {
     return this.getListCached(new HttpParams().set("idServiceFamily", idServiceFamily), "service-type/service-family");
   }
-
-
+  getServiceTypeWithIsMandatoryDocuments(serviceType: ServiceType, isMandatory: boolean) {
+    return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("isMandatory", isMandatory), "service-type/mandatory-documents");
+  }
 }
