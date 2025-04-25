@@ -33,7 +33,7 @@ public interface AttachmentService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public void deleteAttachment(Attachment attachment);
+        public Boolean definitivelyDeleteAttachment(Attachment attachment);
 
         public void disableAttachment(Attachment attachment);
 

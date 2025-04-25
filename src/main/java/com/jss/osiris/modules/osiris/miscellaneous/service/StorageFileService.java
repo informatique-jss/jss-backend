@@ -11,5 +11,5 @@ public interface StorageFileService {
 
     public Resource loadFile(String filename) throws OsirisException;
 
-    public void deleteFile(String path);
+    public Boolean deleteFile(String path);
 }
