@@ -14,10 +14,16 @@ import com.jss.osiris.modules.osiris.quotation.model.Service;
 
 public interface NotificationRepository extends QueryCacheCrudRepository<Notification, Integer> {
 
-        @Query("select n from Notification n where n.employee in (:employees) and n.notificationType!='PERSONNAL' or n.employee=:currentEmployee and n.notificationType='PERSONNAL' and (n.createdDateTime<current_date() or :displayFuture=true) ")
+        @Query("select n from Notification n where n.employee in (:employees) " +
+                        " and (coalesce(n.updatedDateTime,n.createdDateTime)<CURRENT_TIMESTAMP() or :displayFuture=true) "
+                        +
+                        " and (coalesce(n.isRead,false) = false or :displayRead=true)" +
+                        " and n.notificationType not in (:notificationTypeToHide) and n.notificationType in (:notificationToDisplay) ")
         List<Notification> findByEmployees(@Param("employees") List<Employee> employees,
-                        @Param("currentEmployee") Employee currentEmployee,
-                        @Param("displayFuture") Boolean displayFuture);
+                        @Param("displayFuture") Boolean displayFuture,
+                        @Param("displayRead") Boolean displayRead,
+                        @Param("notificationTypeToHide") List<String> notificationTypeToHide,
+                        @Param("notificationToDisplay") List<String> notificationToDisplay);
 
         @Query(value = "select * from Notification n where n.created_date_time<(now() - make_interval(months => :monthNbr))  ", nativeQuery = true)
         List<Notification> findNotificationOlderThanMonths(@Param("monthNbr") Integer monthNbr);

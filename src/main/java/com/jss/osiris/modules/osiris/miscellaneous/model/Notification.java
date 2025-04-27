@@ -2,11 +2,20 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,53 +41,91 @@ public class Notification implements Serializable, IId {
   public static String PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED = "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED";
   public static String PROVISION_GUICHET_UNIQUE_STATUS_SIGNED = "PROVISION_GUICHET_UNIQUE_STATUS_SIGNED";
 
+  public static List<String> notificationTypes = Arrays.asList(PROVISION_ADD_ATTACHMENT, SERVICE_ADD_ATTACHMENT,
+      ORDER_ADD_ATTACHMENT, PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, PROVISION_GUICHET_UNIQUE_STATUS_SIGNED,
+      PERSONNAL);
+
   @Id
   @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_sequence")
+  @JsonView(JacksonViews.OsirisListView.class)
   private Integer id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_employee")
   private Employee employee;
 
+  @JsonView(JacksonViews.OsirisListView.class)
   private Boolean isRead;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_employee_created_by")
+  @JsonView(JacksonViews.OsirisListView.class)
   private Employee createdBy;
 
   @Column(nullable = false)
+  @JsonView(JacksonViews.OsirisListView.class)
   private LocalDateTime createdDateTime;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_employee_updated_by")
+  @JsonView(JacksonViews.OsirisListView.class)
   private Employee updatedBy;
 
-  @Column(nullable = false)
+  @JsonView(JacksonViews.OsirisListView.class)
   private LocalDateTime updatedDateTime;
 
   @Column(nullable = false)
+  @JsonView(JacksonViews.OsirisListView.class)
   private String notificationType;
 
   @Column(length = 2000)
+  @JsonView(JacksonViews.OsirisListView.class)
   private String detail1;
 
   private String summary;
 
-  @Column(nullable = false)
   private Boolean showPopup;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_service")
+  @JsonView(JacksonViews.OsirisListView.class)
   private Service service;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_provision")
+  @JsonView(JacksonViews.OsirisListView.class)
   private Provision provision;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_customer_order")
+  @JsonView(JacksonViews.OsirisListView.class)
   private CustomerOrder customerOrder;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_invoice")
+  @JsonView(JacksonViews.OsirisListView.class)
+  private Invoice invoice;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_quotation")
+  @JsonView(JacksonViews.OsirisListView.class)
+  private Quotation quotation;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_tiers")
+  @JsonView(JacksonViews.OsirisListView.class)
+  private Tiers tiers;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_responsable")
+  @JsonView(JacksonViews.OsirisListView.class)
+  private Responsable responsable;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_affaire")
+  @JsonView(JacksonViews.OsirisListView.class)
+  private Affaire affaire;
 
   public Integer getId() {
     return id;
@@ -238,6 +285,54 @@ public class Notification implements Serializable, IId {
 
   public void setCustomerOrder(CustomerOrder customerOrder) {
     this.customerOrder = customerOrder;
+  }
+
+  public static List<String> getNotificationTypes() {
+    return notificationTypes;
+  }
+
+  public static void setNotificationTypes(List<String> notificationTypes) {
+    Notification.notificationTypes = notificationTypes;
+  }
+
+  public Invoice getInvoice() {
+    return invoice;
+  }
+
+  public void setInvoice(Invoice invoice) {
+    this.invoice = invoice;
+  }
+
+  public Quotation getQuotation() {
+    return quotation;
+  }
+
+  public void setQuotation(Quotation quotation) {
+    this.quotation = quotation;
+  }
+
+  public Tiers getTiers() {
+    return tiers;
+  }
+
+  public void setTiers(Tiers tiers) {
+    this.tiers = tiers;
+  }
+
+  public Responsable getResponsable() {
+    return responsable;
+  }
+
+  public void setResponsable(Responsable responsable) {
+    this.responsable = responsable;
+  }
+
+  public Affaire getAffaire() {
+    return affaire;
+  }
+
+  public void setAffaire(Affaire affaire) {
+    this.affaire = affaire;
   }
 
 }

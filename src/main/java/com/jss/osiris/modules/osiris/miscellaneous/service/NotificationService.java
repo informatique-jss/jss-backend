@@ -10,7 +10,8 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 
 public interface NotificationService {
-        public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture);
+        public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
+                        List<String> notificationTypes, Boolean onlyForNumber);
 
         public Notification getNotification(Integer id);
 
@@ -35,4 +36,22 @@ public interface NotificationService {
         public Notification addOrUpdatePersonnalNotification(Notification notification);
 
         public void purgeNotification();
+
+        public List<String> getAllNotificationTypes();
+
+        public List<Notification> getNotificationsForCustomerOrder(Integer customerOrderId);
+
+        public List<Notification> getNotificationsForQuotation(Integer quotationId);
+
+        public List<Notification> getNotificationsForProvision(Integer provisionId);
+
+        public List<Notification> getNotificationsForInvoice(Integer invoiceId);
+
+        public List<Notification> getNotificationsForService(Integer serviceId);
+
+        public List<Notification> getNotificationsForAffaire(Integer affaireId);
+
+        public List<Notification> getNotificationsForTiers(Integer tiersId);
+
+        public List<Notification> getNotificationsForResponsable(Integer responsableId);
 }

@@ -128,5 +128,14 @@ export const Dictionnary = {
   "ENVOYE_AU_GRF": "Envoyée au greffe",
   "ENVOI_EN_COURS": "Envoi en cours",
   "VALIDE": "Validée",
-  "thirdReminderDateTime": "Troisième date de relance"
+  "thirdReminderDateTime": "Troisième date de relance",
+  "PERSONNAL": "Notification personnelle",
+  "PROVISION_ADD_ATTACHMENT": "Nouveau document sur une prestation",
+  "SERVICE_ADD_ATTACHMENT": "Nouveau document sur un service",
+  "ORDER_ADD_ATTACHMENT": "Nouveau document sur une commande",
+  "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED": "Statut GU modifié",
+  "PROVISION_GUICHET_UNIQUE_STATUS_SIGNED": "Liasse GU signée"
 };
+
+
+

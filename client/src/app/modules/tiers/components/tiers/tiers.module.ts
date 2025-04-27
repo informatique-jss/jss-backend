@@ -2,6 +2,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -68,6 +69,7 @@ const routes: Routes = [
     DragDropModule,
     QuotationModule,
     InvoicingModule,
+    MatBadgeModule,
     ReportingModule,
   ],
   declarations: [TiersComponent,

@@ -2,7 +2,6 @@ import { COMMA, ENTER } from "@angular/cdk/keycodes";
 
 export const SEPARATOR_KEY_CODES: number[] = [ENTER, COMMA];
 export const SEARCH_KEY_CODE: string = "F8";
-export const NOTIFICATION_KEY_CODE: string = "F9";
 export const SAVE_KEY_CODE: string = "F2";
 export const NOTIFICATION_REFRESH_INTERVAL: number = 30 * 1000;
 export const SUPERVISION_REFRESH_INTERVAL: number = 5 * 1000;

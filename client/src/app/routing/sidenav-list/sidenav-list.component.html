@@ -80,7 +80,8 @@
   <mat-icon>search</mat-icon>
 </button>
 <button mat-mini-fab color="accent" class="notif" routerLink="notifications" [matBadge]="getNotificationNumber()"
-  matBadgePosition="below after" [matBadgeHidden]="getNotificationNumber()==0" matBadgeColor="warn"
-  matBadgeSize="small">
+  matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small" [matBadgeHidden]="getNotificationNumber()<=0"
+  [matTooltip]="getNotificationNumber() + ' notification'+(getNotificationNumber()>1?'s':'')"
+  *ngIf="canDisplayNotifications()">
   <mat-icon>notifications</mat-icon>
 </button>
