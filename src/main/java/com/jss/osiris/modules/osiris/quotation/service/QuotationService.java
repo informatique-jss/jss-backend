@@ -85,4 +85,10 @@ public interface QuotationService {
 
         public List<Quotation> findQuotationByResponsable(Responsable responsable);
 
+        public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders);
+
+        public List<Quotation> searchQuotation(List<Employee> commercials, List<QuotationStatus> status);
+
+        public Quotation completeAdditionnalInformationForQuotation(Quotation customerOrder);
+
 }

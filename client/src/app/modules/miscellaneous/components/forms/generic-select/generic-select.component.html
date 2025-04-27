@@ -10,7 +10,7 @@
     *ngIf="isDisplayPreviewShortcut" class="pointer ">
     visibility
   </mat-icon>
-  <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
+  <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation() "
     *ngIf="!isDisabled && model!=undefined" class="pointer">
     close
   </mat-icon>

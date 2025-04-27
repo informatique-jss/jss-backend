@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
@@ -45,6 +47,7 @@ public class Confrere implements IId {
 
 	@Column(length = 100)
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@ManyToMany

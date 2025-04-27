@@ -2,9 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
+import { Notification } from '../../../miscellaneous/model/Notification';
 import { Affaire } from '../../model/Affaire';
 import { AffaireSearch } from '../../model/AffaireSearch';
 import { OrderingSearch } from '../../model/OrderingSearch';
@@ -33,7 +36,9 @@ export class AffaireComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
     private affaireService: AffaireService,
-    private userPreferenceService: UserPreferenceService
+    protected habilitationService: HabilitationsService,
+    private userPreferenceService: UserPreferenceService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -108,6 +113,27 @@ export class AffaireComponent implements OnInit {
 
   restoreTab() {
     this.index = this.userPreferenceService.getUserTabsSelectionIndex('affaire');
+  }
+
+
+  addNewNotification() {
+    this.appService.addPersonnalNotification(() => this.affaireNotification = undefined, this.affaireNotification, undefined, undefined, undefined, undefined, undefined, undefined, undefined, this.affaire);
+  }
+
+  affaireNotification: Notification[] | undefined;
+
+  getNotificationForAffaire() {
+    if (this.affaireNotification == undefined) {
+      if (this.affaire) {
+        this.affaireNotification = [];
+        this.notificationService.getNotificationsForAffaire(this.affaire.id).subscribe(response => this.affaireNotification = response);
+      }
+    }
+    return this.affaireNotification;
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
   }
 
 }

@@ -12,4 +12,5 @@ public class JacksonViews {
 
     public static class OsirisListView {
     }
+
 }

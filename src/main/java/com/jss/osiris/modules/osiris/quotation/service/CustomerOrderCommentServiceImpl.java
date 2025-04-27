@@ -15,6 +15,8 @@ import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderCommentRepository;
 
 @Service
@@ -29,6 +31,21 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     @Override
     public List<CustomerOrderComment> getCustomerOrderComments() {
         return IterableUtils.toList(customerOrderCommentRepository.findAll());
+    }
+
+    @Override
+    public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder) {
+        return customerOrderCommentRepository.findByCustomerOrder(customerOrder);
+    }
+
+    @Override
+    public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation) {
+        return customerOrderCommentRepository.findByQuotation(quotation);
+    }
+
+    @Override
+    public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision) {
+        return customerOrderCommentRepository.findByProvision(provision);
     }
 
     @Override

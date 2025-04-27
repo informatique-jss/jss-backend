@@ -48,7 +48,7 @@ export class DashboardComponent implements OnInit {
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
-  statusTypes: IWorkflowElement[] = [] as Array<IWorkflowElement>;
+  statusTypes: IWorkflowElement<any>[] = [] as Array<IWorkflowElement<any>>;
 
   customerOrderStatus: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   quotationStatus: QuotationStatus[] = [] as Array<QuotationStatus>;

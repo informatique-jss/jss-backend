@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,8 +200,6 @@ public class QuotationServiceImpl implements QuotationService {
         batchService.declareNewBatch(Batch.REINDEX_QUOTATION, quotation.getId());
 
         if (isNewQuotation) {
-            notificationService.notifyNewQuotation(quotation);
-
             List<CustomerOrderOrigin> origins = customerOrderOriginService
                     .getByUsername(activeDirectoryHelper.getCurrentUsername());
             if (origins != null && origins.size() == 1)
@@ -226,11 +225,6 @@ public class QuotationServiceImpl implements QuotationService {
         if (targetQuotationStatus == null)
             throw new OsirisException(null, "Quotation status not found for code " + targetStatusCode);
 
-        // Target TO VERIFY from OPEN : notify users
-        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN)
-                && targetQuotationStatus.getCode().equals(QuotationStatus.TO_VERIFY))
-            notificationService.notifyQuotationToVerify(quotation);
-
         // Target SENT TO CUSTOMER : notify users and customer
         if (targetQuotationStatus.getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // save to recompute invoice item before sent it to customer
@@ -239,7 +233,6 @@ public class QuotationServiceImpl implements QuotationService {
             generateQuotationPdf(quotation);
 
             mailHelper.sendQuotationToCustomer(quotation, false);
-            notificationService.notifyQuotationSent(quotation);
         }
 
         // Target VALIDATED from SENT : generate Customer Order and Publication receipt
@@ -256,11 +249,6 @@ public class QuotationServiceImpl implements QuotationService {
             customerOrder.getQuotations().add(quotation);
             mailHelper.sendCustomerOrderCreationConfirmationOnQuotationValidation(quotation, customerOrder);
         }
-
-        // Target REFUSED from SENT TO CUSTOMER : notify user
-        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)
-                && targetQuotationStatus.getCode().equals(QuotationStatus.REFUSED_BY_CUSTOMER))
-            notificationService.notifyQuotationRefusedByCustomer(quotation);
 
         quotation.setLastStatusUpdate(LocalDateTime.now());
         quotation.setQuotationStatus(targetQuotationStatus);
@@ -451,7 +439,6 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // Generate customer order
             quotation = addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
-            notificationService.notifyQuotationValidatedByCustomer(quotation, false);
         }
         return quotation;
     }
@@ -728,5 +715,68 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public List<Quotation> findQuotationByResponsable(Responsable responsable) {
         return quotationRepository.findByResponsable(responsable);
+    }
+
+    @Override
+    public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations) {
+        if (quotations != null && quotations.size() > 0)
+            for (Quotation quotation : quotations) {
+                completeAdditionnalInformationForQuotation(quotation);
+            }
+
+        return quotations;
+    }
+
+    @Override
+    public Quotation completeAdditionnalInformationForQuotation(Quotation quotation) {
+        List<String> affaireLabels = new ArrayList<String>();
+        List<String> serviceLabels = new ArrayList<String>();
+        quotation.setHasMissingInformations(false);
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+                String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
+                if (affaireDenomination == null || affaireDenomination.length() == 0)
+                    affaireDenomination = assoAffaireOrder.getAffaire().getFirstname() + " "
+                            + assoAffaireOrder.getAffaire().getLastname();
+                if (affaireLabels.indexOf(affaireDenomination) < 0)
+                    affaireLabels.add(affaireDenomination);
+
+                if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0)
+                    for (Service service : assoAffaireOrder.getServices()) {
+                        String serviceLabel = service.getCustomLabel();
+                        if (serviceLabel == null || serviceLabel.length() == 0)
+                            serviceLabel = service.getServiceType().getLabel();
+                        if (serviceLabels.indexOf(serviceLabel) < 0)
+                            serviceLabels.add(serviceLabel);
+                    }
+
+                if (assoAffaireOrder.getServices() != null)
+                    for (Service service : assoAffaireOrder.getServices()) {
+                        if (assoAffaireOrderService.isServiceHasMissingInformations(service)) {
+                            quotation.setHasMissingInformations(true);
+                        }
+                    }
+            }
+
+        if (affaireLabels.size() > 0)
+            quotation.setAffairesList(String.join(" / ", affaireLabels));
+        quotation.setServicesList(String.join(" / ", serviceLabels));
+        return quotation;
+    }
+
+    @Override
+    public List<Quotation> searchQuotation(List<Employee> commercials,
+            List<QuotationStatus> status) {
+
+        List<Integer> commercialIds = (commercials != null && commercials.size() > 0)
+                ? commercials.stream().map(Employee::getId).collect(Collectors.toList())
+                : Arrays.asList(0);
+
+        List<Integer> statusIds = (status != null && status.size() > 0)
+                ? status.stream().map(QuotationStatus::getId).collect(Collectors.toList())
+                : Arrays.asList(0);
+
+        return completeAdditionnalInformationForQuotations(
+                quotationRepository.searchQuotation(commercialIds, statusIds));
     }
 }

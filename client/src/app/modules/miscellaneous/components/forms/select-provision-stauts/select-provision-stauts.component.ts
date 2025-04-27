@@ -6,20 +6,20 @@ import { FormaliteStatus } from 'src/app/modules/quotation/model/FormaliteStatus
 import { AnnouncementStatusService } from 'src/app/modules/quotation/services/announcement.status.service';
 import { DomiciliationStatusService } from 'src/app/modules/quotation/services/domiciliation-status.service';
 import { FormaliteStatusService } from 'src/app/modules/quotation/services/formalite.status.service';
+import { AppService } from 'src/app/services/app.service';
 import { SimpleProvisionStatus } from '../../../../quotation/model/SimpleProvisonStatus';
 import { SimpleProvisionStatusService } from '../../../../quotation/services/simple.provision.status.service';
 import { IWorkflowElement } from '../../../model/IWorkflowElement';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'select-provision-stauts',
   templateUrl: './select-provision-stauts.component.html',
   styleUrls: ['./select-provision-stauts.component.css']
 })
-export class SelectProvisionStautsComponent extends GenericMultipleSelectComponent<IWorkflowElement> implements OnInit {
+export class SelectProvisionStautsComponent extends GenericMultipleSelectComponent<IWorkflowElement<any>> implements OnInit {
 
-  types: IWorkflowElement[] = [] as Array<IWorkflowElement>;
+  types: IWorkflowElement<any>[] = [] as Array<IWorkflowElement<any>>;
 
   /**
  * List of code to autoselect at loading

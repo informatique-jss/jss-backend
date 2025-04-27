@@ -107,3 +107,9 @@
   *ngIf="editMode==false &&  tiers.id" (click)="printLabel()">
   <mat-icon>print</mat-icon>
 </button>
+<button matTooltip="Ajouter une notification sur ce tiers" mat-fab color="accent" class="sixth-fab-button"
+  (click)="addNewNotification()" *ngIf="editMode==false &&  tiers.id && canDisplayNotifications()"
+  [matBadge]="getNotificationForTiers().length" [matBadgeHidden]="getNotificationForTiers().length<=0"
+  matBadgePosition="below after" matBadgeColor="warn">
+  <mat-icon>notifications</mat-icon>
+</button>
