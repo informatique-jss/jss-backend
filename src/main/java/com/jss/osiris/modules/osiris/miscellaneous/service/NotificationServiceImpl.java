@@ -20,6 +20,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
@@ -52,13 +53,59 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     FormaliteGuichetUniqueStatusService statusService;
 
+    @Autowired
+    CustomerOrderService customerOrderService;
+
     @Override
-    public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture) {
+    public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
+            List<String> notificationTypes, Boolean onlyForNumber) {
         Employee currentEmployee = (Employee) employeeService.getCurrentEmployee();
         if (currentEmployee == null)
             return null;
-        return notificationRepository.findByEmployees(employeeService.getMyHolidaymaker(currentEmployee),
-                currentEmployee, displayFuture);
+        if (notificationTypes == null || notificationTypes.size() == 0)
+            notificationTypes = getAllNotificationTypes();
+
+        List<Notification> notifications = notificationRepository.findByEmployees(
+                employeeService.getMyHolidaymaker(currentEmployee), displayFuture, displayRead,
+                currentEmployee.getNotificationTypeToHide(), notificationTypes);
+
+        if (onlyForNumber)
+            return notifications.stream().filter(n -> n.getIsRead() != null && n.getIsRead() == false).toList();
+
+        return completeNotifications(notifications);
+    }
+
+    private List<Notification> completeNotifications(List<Notification> notifications) {
+        if (notifications != null) {
+            List<Notification> ouNotifications = new ArrayList<Notification>();
+            for (Notification notificationIn : notifications) {
+                Notification notification = cloneNotification(notificationIn);
+                if (notification.getProvision() != null) {
+                    notification.setService(notification.getProvision().getService());
+                }
+                if (notification.getService() != null) {
+                    notification.setCustomerOrder(notification.getService().getAssoAffaireOrder().getCustomerOrder());
+                }
+                if (notification.getInvoice() != null) {
+                    if (notification.getInvoice().getCustomerOrder() != null) {
+                        notification.setCustomerOrder(notification.getInvoice().getCustomerOrder());
+                    } else if (notification.getInvoice().getCustomerOrderForInboundInvoice() != null) {
+                        notification.setCustomerOrder(notification.getInvoice().getCustomerOrderForInboundInvoice());
+                    }
+                }
+                if (notification.getCustomerOrder() != null) {
+                    notification.getCustomerOrder().setServicesList(customerOrderService
+                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder())
+                            .getServicesList());
+                    notification.getCustomerOrder().setAffairesList(customerOrderService
+                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder())
+                            .getAffairesList());
+                }
+                ouNotifications.add(notification);
+            }
+            return ouNotifications;
+        }
+        return notifications;
     }
 
     @Override
@@ -67,6 +114,11 @@ public class NotificationServiceImpl implements NotificationService {
         if (notification.isPresent())
             return notification.get();
         return null;
+    }
+
+    @Override
+    public List<String> getAllNotificationTypes() {
+        return Notification.getNotificationTypes();
     }
 
     @Override
@@ -140,9 +192,6 @@ public class NotificationServiceImpl implements NotificationService {
                 notification.setCreatedBy((Employee) employeeService.getCurrentEmployee());
                 notification.setNotificationType(Notification.PERSONNAL);
                 notification.setCreatedDateTime(LocalDateTime.now());
-            } else {
-                notification.setUpdatedBy(employeeService.getCurrentEmployee());
-                notification.setUpdatedDateTime(LocalDateTime.now());
             }
             if (notification.getIsRead() == null)
                 notification.setIsRead(false);
@@ -155,6 +204,78 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional(rollbackFor = Exception.class)
     public void purgeNotification() {
         notificationRepository.deleteAll(notificationRepository.findNotificationOlderThanMonths(3));
+    }
+
+    @Override
+    public List<Notification> getNotificationsForCustomerOrder(Integer customerOrderId) {
+        return completeNotifications(notificationRepository.findByEmployees(
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getCurrentEmployee().getNotificationTypeToHide(), getAllNotificationTypes()).stream()
+                .filter(n -> n.getCustomerOrder() != null && n.getCustomerOrder().getId().equals(customerOrderId))
+                .toList());
+    }
+
+    @Override
+    public List<Notification> getNotificationsForQuotation(Integer quotationId) {
+        return completeNotifications(notificationRepository.findByEmployees(
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getCurrentEmployee().getNotificationTypeToHide(), getAllNotificationTypes()).stream()
+                .filter(n -> n.getQuotation() != null && n.getQuotation().getId().equals(quotationId))
+                .toList());
+    }
+
+    @Override
+    public List<Notification> getNotificationsForService(Integer serviceId) {
+        return completeNotifications(notificationRepository.findByEmployees(
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getCurrentEmployee().getNotificationTypeToHide(), getAllNotificationTypes()).stream()
+                .filter(n -> n.getService() != null && n.getService().getId().equals(serviceId))
+                .toList());
+    }
+
+    @Override
+    public List<Notification> getNotificationsForProvision(Integer provisionId) {
+        return completeNotifications(notificationRepository.findByEmployees(
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getCurrentEmployee().getNotificationTypeToHide(), getAllNotificationTypes()).stream()
+                .filter(n -> n.getProvision() != null && n.getProvision().getId().equals(provisionId))
+                .toList());
+    }
+
+    @Override
+    public List<Notification> getNotificationsForInvoice(Integer invoiceId) {
+        return completeNotifications(notificationRepository.findByEmployees(
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getCurrentEmployee().getNotificationTypeToHide(), getAllNotificationTypes()).stream()
+                .filter(n -> n.getInvoice() != null && n.getInvoice().getId().equals(invoiceId))
+                .toList());
+    }
+
+    @Override
+    public List<Notification> getNotificationsForAffaire(Integer affaireId) {
+        return completeNotifications(notificationRepository.findByEmployees(
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getCurrentEmployee().getNotificationTypeToHide(), getAllNotificationTypes()).stream()
+                .filter(n -> n.getAffaire() != null && n.getAffaire().getId().equals(affaireId))
+                .toList());
+    }
+
+    @Override
+    public List<Notification> getNotificationsForTiers(Integer tiersId) {
+        return completeNotifications(notificationRepository.findByEmployees(
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getCurrentEmployee().getNotificationTypeToHide(), getAllNotificationTypes()).stream()
+                .filter(n -> n.getTiers() != null && n.getTiers().getId().equals(tiersId))
+                .toList());
+    }
+
+    @Override
+    public List<Notification> getNotificationsForResponsable(Integer responsableId) {
+        return completeNotifications(notificationRepository.findByEmployees(
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getCurrentEmployee().getNotificationTypeToHide(), getAllNotificationTypes()).stream()
+                .filter(n -> n.getResponsable() != null && n.getResponsable().getId().equals(responsableId))
+                .toList());
     }
 
     @Override
@@ -285,5 +406,35 @@ public class NotificationServiceImpl implements NotificationService {
                 }
             }
         }
+    }
+
+    public Notification cloneNotification(Notification original) {
+        if (original == null) {
+            return null;
+        }
+
+        Notification clone = new Notification();
+
+        clone.setId(original.getId());
+        clone.setIsRead(original.getIsRead());
+        clone.setCreatedDateTime(original.getCreatedDateTime());
+        clone.setUpdatedDateTime(original.getUpdatedDateTime());
+        clone.setNotificationType(original.getNotificationType());
+        clone.setDetail1(original.getDetail1());
+        clone.setSummary(original.getSummary());
+        clone.setShowPopup(original.getShowPopup());
+        clone.setEmployee(original.getEmployee());
+        clone.setCreatedBy(original.getCreatedBy());
+        clone.setUpdatedBy(original.getUpdatedBy());
+        clone.setService(original.getService());
+        clone.setProvision(original.getProvision());
+        clone.setCustomerOrder(original.getCustomerOrder());
+        clone.setInvoice(original.getInvoice());
+        clone.setQuotation(original.getQuotation());
+        clone.setTiers(original.getTiers());
+        clone.setResponsable(original.getResponsable());
+        clone.setAffaire(original.getAffaire());
+
+        return clone;
     }
 }

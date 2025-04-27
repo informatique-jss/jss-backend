@@ -62,7 +62,7 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	private String title;
 
 	@Column(length = 1000)
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String adPath;
 
 	private Boolean isActive;
@@ -173,5 +173,13 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	public List<String> getNotificationTypeToHide() {
+		return notificationTypeToHide;
+	}
+
+	public void setNotificationTypeToHide(List<String> notificationTypeToHide) {
+		this.notificationTypeToHide = notificationTypeToHide;
 	}
 }

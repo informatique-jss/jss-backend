@@ -2,6 +2,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from "@angular/material/dialog";
@@ -75,6 +76,7 @@ const routes: Routes = [
     MiscellaneousModule,
     QuotationModule,
     MatRadioModule,
+    MatBadgeModule,
     MatTableModule,
     MatTableExporterModule
   ],

@@ -132,4 +132,8 @@ export class SidenavListComponent implements OnInit {
     return this.notidicationService.getNotificationsResult();
   }
 
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
+  }
+
 }

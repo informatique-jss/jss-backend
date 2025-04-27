@@ -52,3 +52,9 @@
   (click)="refreshAffaire()" *ngIf="affaire && affaire.siret">
   <mat-icon>refresh</mat-icon>
 </button>
+<button matTooltip="Ajouter une notification sur cette affaire" mat-fab color="accent" class="third-fab-button"
+  *ngIf="getNotificationForAffaire() &&  canDisplayNotifications()" (click)="addNewNotification()"
+  [matBadge]="getNotificationForAffaire()!.length" [matBadgeHidden]="getNotificationForAffaire()!.length<=0"
+  matBadgePosition="below after" matBadgeColor="warn">
+  <mat-icon>notifications</mat-icon>
+</button>

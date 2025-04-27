@@ -6,13 +6,14 @@ import { AppService } from '../../services/app.service';
 import { User } from './User';
 
 export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
+export const BETA_TESTEURS: string = 'ROLE_OSIRIS_BETA_TESTEURS';
 export const ACCOUNTING: string = 'ROLE_OSIRIS_COMPTABILITÉ';
 export const ACCOUNTING_RESPONSIBLE: string = 'ROLE_OSIRIS_RESPONSABLE_COMPTABILITÉ';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService extends AppRestService<User>{
+export class LoginService extends AppRestService<User> {
 
   constructor(http: HttpClient, private appService: AppService) {
     super(http, "profile");
@@ -30,10 +31,6 @@ export class LoginService extends AppRestService<User>{
   logUser(user: User) {
     this.currentUsername = user.username.toUpperCase();
     return this.loginUser(new HttpParams(), "login", user);
-  }
-
-  getCurrentUserName() {
-    return this.currentUsername;
   }
 
   setUserRoleAndRefresh() {
