@@ -27,11 +27,11 @@
     <mat-icon>factory</mat-icon> <span>Fournisseurs</span>
   </a>
   <a mat-list-item routerLink="/quotation" *ngIf="canViewQuotationModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0}">
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
     <mat-icon>request_quote</mat-icon> <span>Devis</span>
   </a>
   <a mat-list-item routerLink="/order" *ngIf="canViewCustomerOrderModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0}">
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
     <mat-icon>shopping_cart</mat-icon> <span>Commandes</span>
   </a>
   <a mat-list-item routerLink="/recurring-order" *ngIf="canViewCustomerOrderModule()"
@@ -79,8 +79,9 @@
 <button mat-mini-fab color="accent" class="search" (click)="openSearch()">
   <mat-icon>search</mat-icon>
 </button>
-<button mat-mini-fab color="accent" class="notif" (click)="openNotificationDialog()"
-  [matBadge]="getNotificationNumber()" matBadgePosition="below after" [matBadgeHidden]="getNotificationNumber()==0"
-  matBadgeColor="warn" matBadgeSize="small">
+<button mat-mini-fab color="accent" class="notif" routerLink="notifications" [matBadge]="getNotificationNumber()"
+  matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small" [matBadgeHidden]="getNotificationNumber()<=0"
+  [matTooltip]="getNotificationNumber() + ' notification'+(getNotificationNumber()>1?'s':'')"
+  *ngIf="canDisplayNotifications()">
   <mat-icon>notifications</mat-icon>
 </button>

@@ -14,6 +14,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,17 +32,20 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(length = 20)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String firstname;
 
 	@Column(length = 20)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String lastname;
 
 	@IndexedField
@@ -58,6 +62,7 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	private String title;
 
 	@Column(length = 1000)
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String adPath;
 
 	private Boolean isActive;
@@ -66,6 +71,9 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	@JoinTable(name = "asso_employee_backup", joinColumns = @JoinColumn(name = "id_employee"), inverseJoinColumns = @JoinColumn(name = "id_employee_backup"))
 	@JsonIgnoreProperties(value = { "backups" }, allowSetters = true)
 	private List<Employee> backups;
+
+	@CollectionTable(name = "EMPLOYEE_NOTIFICATION_EXCLUSION")
+	private List<String> notificationTypeToHide;
 
 	public Employee mapFromAttributes(Attributes attrs) throws NamingException {
 		if (attrs.get("givenName") == null || attrs.get("sn") == null || attrs.get("sAMAccountName") == null
@@ -165,5 +173,13 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	public List<String> getNotificationTypeToHide() {
+		return notificationTypeToHide;
+	}
+
+	public void setNotificationTypeToHide(List<String> notificationTypeToHide) {
+		this.notificationTypeToHide = notificationTypeToHide;
 	}
 }

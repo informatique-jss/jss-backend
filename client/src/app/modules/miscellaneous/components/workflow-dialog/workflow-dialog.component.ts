@@ -11,10 +11,10 @@ import { IWorkflowElement } from '../../model/IWorkflowElement';
 export class WorkflowDialogComponent implements OnInit {
 
   title: string = "Worklow";
-  workflowElements: IWorkflowElement[] | undefined;
-  fixedWorkflowElement: IWorkflowElement | undefined;
-  activeWorkflowElement: IWorkflowElement | undefined;
-  excludedWorkflowElement: IWorkflowElement | undefined;
+  workflowElements: IWorkflowElement<any>[] | undefined;
+  fixedWorkflowElement: IWorkflowElement<any> | undefined;
+  activeWorkflowElement: IWorkflowElement<any> | undefined;
+  excludedWorkflowElement: IWorkflowElement<any> | undefined;
 
   chartOption: EChartsOption = {};
 

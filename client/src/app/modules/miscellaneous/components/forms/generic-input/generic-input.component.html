@@ -5,4 +5,8 @@
     (change)="parse($event)">
   <mat-hint *ngIf="hint && hint.length>0">
     {{hint}}</mat-hint>
+  <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation() "
+    *ngIf="displayClearField && !isDisabled && model!=undefined" class="pointer">
+    close
+  </mat-icon>
 </mat-form-field>

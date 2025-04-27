@@ -9,7 +9,7 @@ export interface AffaireSearch {
   responsible: Employee | undefined;
   assignedTo: Employee | undefined;
   label: string | undefined;
-  status: IWorkflowElement[];
+  status: IWorkflowElement<any>[];
   customerOrders: Tiers[];
   affaire: Affaire;
   waitedCompetentAuthority: CompetentAuthority;

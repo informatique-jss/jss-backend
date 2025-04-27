@@ -7,12 +7,15 @@ import { Observable, Subscription } from 'rxjs';
 import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
+import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { ANNOUNCEMENT_STATUS_WAITING_CONFRERE } from '../../../../libs/Constants';
+import { Notification } from '../../../../modules/miscellaneous/model/Notification';
 import { IWorkflowElement } from '../../../miscellaneous/model/IWorkflowElement';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
+import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementStatus } from '../../model/AnnouncementStatus';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -93,7 +96,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private affaireService: AffaireService,
     private serviceService: ServiceService,
     private domiciliationService: DomiciliationService,
-    private habilitationService: HabilitationsService
+    private habilitationService: HabilitationsService,
+    private notificationService: NotificationService
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -363,7 +367,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     dialogRef.componentInstance.title = "Workflow de la prestation";
   }
 
-  getWorkflowElementsForProvision(provision: Provision): IWorkflowElement[] {
+  getWorkflowElementsForProvision(provision: Provision): IWorkflowElement<any>[] {
     if (provision.announcement)
       return this.announcementStatus;
     if (provision.formalite)
@@ -372,14 +376,14 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       return this.simpleProvisionStatus;
     if (provision.domiciliation)
       return this.domiciliationStatus;
-    return [] as Array<IWorkflowElement>;
+    return [] as Array<IWorkflowElement<any>>;
   }
 
   getActiveWorkflowElementsForProvisionFn(provision: Provision) {
     return ProvisionComponent.getActiveWorkflowElementsForProvision(provision);
   }
 
-  public static getActiveWorkflowElementsForProvision(provision: Provision): IWorkflowElement {
+  public static getActiveWorkflowElementsForProvision(provision: Provision): IWorkflowElement<any> {
     if (provision.announcement)
       return provision.announcement.announcementStatus;
     if (provision.formalite)
@@ -388,7 +392,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       return provision.simpleProvision.simpleProvisionStatus;
     if (provision.domiciliation)
       return provision.domiciliation.domiciliationStatus;
-    return {} as IWorkflowElement;
+    return {} as IWorkflowElement<any>;
   }
 
   publicationReceiptFound(provision: Provision): boolean {
@@ -399,7 +403,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     return false;
   }
 
-  changeStatus(status: IWorkflowElement, provision: Provision) {
+  changeStatus(status: IWorkflowElement<any>, provision: Provision) {
     if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
       if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
@@ -723,5 +727,50 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     }
     else
       this.provisionService.downloadTrackingSheet(provision.id);
+  }
+
+
+  addNewNotificationOnAffaire(affaire: Affaire) {
+    this.appService.addPersonnalNotification(() => this.affaireNotification = [], this.affaireNotification ? this.affaireNotification[affaire.id] : undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, affaire);
+  }
+
+  addNewNotificationOnProvision(provision: Provision) {
+    this.appService.addPersonnalNotification(() => this.provisionNotification = [], this.provisionNotification ? this.provisionNotification[provision.id] : undefined, undefined, provision, undefined, undefined, undefined, undefined, undefined, undefined);
+  }
+
+  addNewNotificationOnService(service: Service) {
+    this.appService.addPersonnalNotification(() => this.serviceNotification = [], this.serviceNotification ? this.serviceNotification[service.id] : undefined, undefined, undefined, service, undefined, undefined, undefined, undefined, undefined);
+  }
+
+  affaireNotification: Notification[][] = [];
+  provisionNotification: Notification[][] = [];
+  serviceNotification: Notification[][] = [];
+
+  getNotificationForAffaire(affaire: Affaire) {
+    if (this.affaireNotification[affaire.id] == undefined) {
+      this.affaireNotification[affaire.id] = [];
+      this.notificationService.getNotificationsForAffaire(affaire.id).subscribe(response => this.affaireNotification[affaire.id] = response);
+    }
+    return this.affaireNotification[affaire.id];
+  }
+
+  getNotificationForService(service: Service) {
+    if (this.serviceNotification[service.id] == undefined) {
+      this.serviceNotification[service.id] = [];
+      this.notificationService.getNotificationsForService(service.id).subscribe(response => this.serviceNotification[service.id] = response);
+    }
+    return this.serviceNotification[service.id];
+  }
+
+  getNotificationForProvision(provision: Provision) {
+    if (this.provisionNotification[provision.id] == undefined) {
+      this.provisionNotification[provision.id] = [];
+      this.notificationService.getNotificationsForProvision(provision.id).subscribe(response => this.provisionNotification[provision.id] = response);
+    }
+    return this.provisionNotification[provision.id];
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
   }
 }

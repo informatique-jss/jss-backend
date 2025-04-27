@@ -261,3 +261,9 @@
       </mat-tab-group>
     </form>
   </div>
+  <button matTooltip="Ajouter une notification sur ce responsable" mat-fab color="accent" class="fourth-fab-button"
+    (click)="addNewNotification();$event.stopPropagation()" [matBadge]="getNotificationForResponsable().length"
+    [matBadgeHidden]="getNotificationForResponsable().length<=0" matBadgePosition="below after" matBadgeColor="warn"
+    *ngIf="editMode==false &&  selectedResponsable && selectedResponsable.id && canDisplayNotifications()">
+    <mat-icon>notifications</mat-icon>
+  </button>

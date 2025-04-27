@@ -1,7 +1,19 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { Notification } from '../../app/modules/miscellaneous/model/Notification';
+import { AddNotificationDialogComponent } from '../modules/miscellaneous/components/add-notification-dialog/add-notification-dialog.component';
+import { NotificationService } from '../modules/miscellaneous/services/notification.service';
+import { Affaire } from '../modules/quotation/model/Affaire';
+import { CustomerOrder } from '../modules/quotation/model/CustomerOrder';
+import { Invoice } from '../modules/quotation/model/Invoice';
+import { Provision } from '../modules/quotation/model/Provision';
+import { Quotation } from '../modules/quotation/model/Quotation';
+import { Service } from '../modules/quotation/model/Service';
+import { Responsable } from '../modules/tiers/model/Responsable';
+import { Tiers } from '../modules/tiers/model/Tiers';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +31,9 @@ export class AppService {
 
   constructor(
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private confirmationDialog: MatDialog,
+    private notificationService: NotificationService
   ) { }
 
   changeHeaderTitle(title: string) {
@@ -61,6 +75,41 @@ export class AppService {
         sameWindowEndFonction();
     }
     return;
+  }
+
+  addPersonnalNotification(
+    callback: (() => void),
+    preLoadedNotifications: Notification[] | undefined,
+    order: CustomerOrder | undefined,
+    provision: Provision | undefined,
+    service: Service | undefined,
+    invoice: Invoice | undefined,
+    quotation: Quotation | undefined,
+    tiers: Tiers | undefined,
+    responsable: Responsable | undefined,
+    affaire: Affaire | undefined,
+  ) {
+    const dialogRef = this.confirmationDialog.open(AddNotificationDialogComponent, {
+      width: "80%",
+    });
+
+    dialogRef.componentInstance.preLoadedNotifications = preLoadedNotifications;
+    dialogRef.componentInstance.notification.customerOrder = order;
+    dialogRef.componentInstance.notification.provision = provision;
+    dialogRef.componentInstance.notification.service = service;
+    dialogRef.componentInstance.notification.invoice = invoice;
+    dialogRef.componentInstance.notification.quotation = quotation;
+    dialogRef.componentInstance.notification.tiers = tiers;
+    dialogRef.componentInstance.notification.responsable = responsable;
+    dialogRef.componentInstance.notification.affaire = affaire;
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.notificationService.addPersonnalNotification(dialogResult).subscribe(response => {
+          callback();
+          this.notificationService.refreshNotificationsNumber();
+        });
+      }
+    });
   }
 
 }

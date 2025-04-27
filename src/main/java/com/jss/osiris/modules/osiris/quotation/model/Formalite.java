@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
@@ -37,20 +39,24 @@ public class Formalite implements IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formalite_status")
     @IndexedField
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private FormaliteStatus formaliteStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_waited_competent_authority")
     @JsonIgnoreProperties(value = { "attachments", "departments", "cities", "regions" }, allowSetters = true)
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private CompetentAuthority waitedCompetentAuthority;
 
     @OneToMany(mappedBy = "formalite")
     @JsonIgnoreProperties(value = { "content" })
     @IndexedField
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private List<FormaliteGuichetUnique> formalitesGuichetUnique;
 
     @OneToMany(mappedBy = "formalite")
     @IndexedField
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private List<FormaliteInfogreffe> formalitesInfogreffe;
 
     @OneToMany(mappedBy = "formalite")

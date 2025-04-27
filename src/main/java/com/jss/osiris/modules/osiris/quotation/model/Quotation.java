@@ -46,7 +46,8 @@ public class Quotation implements IQuotation {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	private Integer validationId;
@@ -56,49 +57,44 @@ public class Quotation implements IQuotation {
 	@IndexedField
 	private Employee assignedTo;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "id_tiers")
-	// @IndexedField
-	// private Tiers tiers;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Responsable responsable;
-
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "id_confrere")
-	// private Confrere confrere;
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	@JsonIgnoreProperties(value = { "assoSpecialOfferBillingTypes" }, allowSetters = true)
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation_status")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private QuotationStatus quotationStatus;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime lastStatusUpdate;
 
 	@Column(columnDefinition = "TEXT") // TODO : delete when new website
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private String description;
 
 	@OneToMany(mappedBy = "quotation")
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -150,12 +146,18 @@ public class Quotation implements IQuotation {
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	public String affairesList;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	public String servicesList;
+
+	@Transient
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	public Boolean hasMissingInformations;
 
 	public Integer getId() {
 		return id;
@@ -347,6 +349,14 @@ public class Quotation implements IQuotation {
 
 	public void setValidationId(Integer validationId) {
 		this.validationId = validationId;
+	}
+
+	public Boolean getHasMissingInformations() {
+		return hasMissingInformations;
+	}
+
+	public void setHasMissingInformations(Boolean hasMissingInformations) {
+		this.hasMissingInformations = hasMissingInformations;
 	}
 
 }

@@ -347,3 +347,9 @@
   (click)="generateCreditNoteForCustomerOrderInvoice($event)">
   <mat-icon>shopping_cart_checkout</mat-icon>
 </button>
+<button matTooltip="Ajouter une notification sur cette facture" mat-fab color="accent" class="fifth-fab-button"
+  *ngIf="getNotificationForInvoice() && canDisplayNotifications()" [matBadge]="getNotificationForInvoice()!.length"
+  [matBadgeHidden]="getNotificationForInvoice()!.length<=0" matBadgePosition="below after" matBadgeColor="warn"
+  (click)="addNewNotification()">
+  <mat-icon>notifications</mat-icon>
+</button>

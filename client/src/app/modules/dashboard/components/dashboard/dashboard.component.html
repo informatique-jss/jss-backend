@@ -71,6 +71,10 @@
   </div>
 </div>
 <mat-menu #menu="matMenu" style="max-width: 100%;">
+  <!--div mat-menu-item>
+    <span routerLink="/dashboard/kanban">Nouveau tableau</span>
+  </div-->
+  <mat-divider></mat-divider>
   <div mat-menu-item *ngFor="let checkbox of checkboxes">
     <mat-checkbox [(ngModel)]="checkbox.value" (click)="toggleDisplay(checkbox.id);$event.stopPropagation()">
       {{checkbox.id}}

@@ -1,0 +1,150 @@
+<div class="description-block"
+  *ngIf="selectedEntity && selectedEntity.description && selectedEntity.description.length>0">
+  <h3>Commentaire du devis</h3>
+  <p>{{selectedEntity.description}}</p>
+</div>
+
+<div *ngIf="selectedEntity">
+  <mat-accordion class="custom-panel">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Détails
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="field-row" *ngIf="selectedEntity.responsable && selectedEntity.responsable.salesEmployee">
+        <div class="label">Commercial</div>
+        <div class="value">
+          <div style="display: flex;" (click)="displayInTeams(selectedEntity.responsable.salesEmployee)"
+            class="pointer">
+            <avatar class="avatar-select" [employee]="selectedEntity.responsable.salesEmployee" [size]="14">
+            </avatar> {{selectedEntity.responsable.salesEmployee.firstname}}
+            {{selectedEntity.responsable.salesEmployee.lastname}}
+          </div>
+        </div>
+      </div>
+      <div class="field-row" *ngIf="selectedEntity.responsable && selectedEntity.responsable.formalisteEmployee">
+        <div class="label">Formaliste</div>
+        <div class="value">
+          <div style="display: flex;" (click)="displayInTeams(selectedEntity.responsable.formalisteEmployee)"
+            class="pointer">
+            <avatar class="avatar-select" [employee]="selectedEntity.responsable.formalisteEmployee" [size]="14">
+            </avatar> {{selectedEntity.responsable.formalisteEmployee.firstname}}
+            {{selectedEntity.responsable.formalisteEmployee.lastname}}
+          </div>
+        </div>
+      </div>
+      <div class="field-row" *ngIf="selectedEntity.responsable && selectedEntity.responsable.insertionEmployee">
+        <div class="label">Publisciste</div>
+        <div class="value">
+          <div style="display: flex;" (click)="displayInTeams(selectedEntity.responsable.insertionEmployee)"
+            class="pointer">
+            <avatar class="avatar-select" [employee]="selectedEntity.responsable.insertionEmployee" [size]="14">
+            </avatar> {{selectedEntity.responsable.insertionEmployee.firstname}}
+            {{selectedEntity.responsable.insertionEmployee.lastname}}
+          </div>
+        </div>
+      </div>
+      <div class="field-row" *ngIf="selectedEntity.responsable && selectedEntity.responsable.tiers "
+        (click)="openTiers($event,selectedEntity)">
+        <div class="label">Tiers</div>
+        <div class="value pointer">{{getCustomerOrderNameForTiers(selectedEntity.responsable.tiers)}}</div>
+      </div>
+      <div class="field-row" *ngIf="selectedEntity.responsable  " (click)="openResponsable($event,selectedEntity)">
+        <div class="label">Responsable</div>
+        <div class="value pointer">{{selectedEntity.responsable.firstname}} {{selectedEntity.responsable.lastname}}
+        </div>
+      </div>
+      <div class="field-row" *ngIf="selectedEntity.responsable && selectedEntity.responsable.mail"
+        (click)="sendResponsableMail($event,selectedEntity)">
+        <div class="label">Mail</div>
+        <div class="value pointer">{{selectedEntity.responsable.mail.mail}}</div>
+      </div>
+      <div class="field-row"
+        *ngIf="selectedEntity.responsable && selectedEntity.responsable.phones && selectedEntity.responsable.phones.length>0"
+        (click)="callResponsable($event,selectedEntity)">
+        <div class="label">Téléphone</div>
+        <div class="value pointer">{{selectedEntity.responsable.phones[0].phoneNumber}}</div>
+      </div>
+      <div class="field-row" *ngIf="selectedEntity.responsable && selectedEntity.responsable.mail">
+        <div class="label">Adresse</div>
+        <div class="value">{{selectedEntity.responsable.tiers.address}}
+          {{selectedEntity.responsable.tiers.postalCode}}
+          {{selectedEntity.responsable.tiers.city?selectedEntity.responsable.tiers.city.label:""}}
+          {{selectedEntity.responsable.tiers.country?selectedEntity.responsable.tiers.country.label:""}}</div>
+      </div>
+      <div class="field-row" *ngIf="selectedEntity.specialOffers && selectedEntity.specialOffers.length>0">
+        <div class="label">Tarifs spéciaux</div>
+        <div class="value">{{getSpecialOffersLabel(selectedEntity)}}</div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
+<div style="margin-top: 10px;" *ngIf="selectedEntity">
+  <mat-accordion class="custom-panel">
+    <ng-container *ngFor="let asso of selectedEntity.assoAffaireOrders">
+      <mat-expansion-panel *ngFor="let service of asso.services;let indexService = index" [expanded]="indexService==0">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{selectedEntity.assoAffaireOrders.length>1?getAffaireFromAssoAffaireOrder(asso):''}}{{getServiceFromService(service)}}</mat-panel-title>
+          <mat-panel-description>
+
+            <mat-icon *ngIf="service.hasMissingInformations" color="warn"
+              matTooltip="Des informations manquent sur ce service">warning</mat-icon>
+            <button mat-icon-button [matMenuTriggerFor]="menuService" (click)="$event.stopPropagation()">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menuService="matMenu">
+              <button mat-menu-item (click)="modifyService(service)">
+                <span>Modifier le service</span>
+              </button>
+              <button mat-menu-item (click)="deleteService(service)">
+                <span>Supprimer le service</span>
+              </button>
+            </mat-menu>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div class="custom-panel" style="margin-bottom: 15px;">
+          <div class="field-row">
+            <div class="label">Montant du service</div>
+            <div class="value">
+              {{service.servicePrice | currency:'EUR'}}
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngFor="let provision of service.provisions; let index = index">
+          <provision-side-panel-details [provision]="provision" [displayStatus]="false"></provision-side-panel-details>
+          <hr *ngIf="index<service.provisions.length-1" />
+        </ng-container>
+      </mat-expansion-panel>
+    </ng-container>
+  </mat-accordion>
+</div>
+
+<div class="timestamps" *ngIf="selectedEntity">
+  <p>Créé le {{selectedEntity.createdDate | date:'EEEE d MMMM HH:mm'}}<br />
+    Mis à jour le {{selectedEntity.lastStatusUpdate | date:'EEEE d MMMM HH:mm'}}</p>
+</div>
+
+<div class="activity" *ngIf="selectedEntity">
+  <div class="activity-tabs">
+    <button mat-raised-button [color]="currentTabDisplayed === 'COMMENTS' ? 'primary' : 'accent'"
+      (click)="currentTabDisplayed='COMMENTS'">Commentaires</button>
+    <button mat-raised-button [color]="currentTabDisplayed === 'ATTACHMENT' ? 'primary' : 'accent'"
+      (click)="currentTabDisplayed='ATTACHMENT'">Documents</button>
+    <button mat-raised-button [color]="currentTabDisplayed === 'MAILS' ? 'primary' : 'accent'"
+      (click)="currentTabDisplayed='MAILS'">Mails</button>
+    <button mat-raised-button [color]="currentTabDisplayed === 'HISTORY' ? 'primary' : 'accent'"
+      (click)="currentTabDisplayed='HISTORY'">Historique</button>
+  </div>
+  <customer-order-comment [isDisplayCommentInput]="true" [quotation]="selectedEntity"
+    *ngIf="currentTabDisplayed=='COMMENTS'"></customer-order-comment>
+  <history [entity]="selectedEntity" [entityType]="QUOTATION_ENTITY_TYPE" [parseTypeList]="possibleEntityStatus"
+    *ngIf="currentTabDisplayed=='HISTORY'"></history>
+  <attachments [entity]="selectedEntity" *ngIf="currentTabDisplayed=='ATTACHMENT'" [editMode]="true"
+    [entityType]="QUOTATION_ENTITY_TYPE.entityType"></attachments>
+  <automatic-mail-list [quotation]="selectedEntity" *ngIf="currentTabDisplayed=='MAILS'"></automatic-mail-list>
+</div>

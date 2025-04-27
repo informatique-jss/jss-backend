@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { Employee } from '../../profile/model/Employee';
@@ -70,5 +71,14 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
   reinitInvoicing(quotation: CustomerOrder) {
     return this.get(new HttpParams().set("customerOrderId", quotation.id), "customer-order/invoicing/reinit", "Facturation réinitialisée");
   }
+
+  searchCustomerOrder(commercialsIds: number[], statusIds: number[]) {
+    return this.getList(new HttpParams().set("commercialIds", commercialsIds.join(",")).set("statusIds", statusIds.join(',')), 'customer-order/search') as Observable<CustomerOrder[]>;
+  }
+
+  getSingleCustomerOrder(idCustomerOrder: number) {
+    return this.getById("customer-order/single", idCustomerOrder);
+  }
+
 
 }

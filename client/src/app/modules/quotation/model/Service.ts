@@ -1,9 +1,9 @@
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { AssoServiceDocument } from "./AssoServiceDocument";
+import { AssoServiceFieldType } from './AssoServiceFieldType';
 import { MissingAttachmentQuery } from "./MissingAttachmentQuery";
 import { Provision } from "./Provision";
 import { ServiceType } from "./ServiceType";
-import { AssoServiceFieldType } from './AssoServiceFieldType';
 
 export interface Service {
   id: number;
@@ -15,4 +15,8 @@ export interface Service {
   customerComment: string;
   missingAttachmentQueries: MissingAttachmentQuery[];
   assoServiceFieldTypes: AssoServiceFieldType[];
+  hasMissingInformations: boolean;
+  serviceStatus: string;
+  servicePrice: number;
+  lastMissingAttachmentQueryDateTime: Date;
 }
