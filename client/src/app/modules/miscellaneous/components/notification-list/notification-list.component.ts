@@ -188,8 +188,8 @@ export class NotificationListComponent implements OnInit {
           notification.isRead = true;
           promises.push(this.notificationService.addOrUpdateNotification(notification));
         }
-        combineLatest(promises).subscribe(response => this.refresh());
       }
+    combineLatest(promises).subscribe(response => this.refresh());
   }
 
   setAllAsUnread() {
@@ -200,8 +200,8 @@ export class NotificationListComponent implements OnInit {
           notification.isRead = false;
           promises.push(this.notificationService.addOrUpdateNotification(notification));
         }
-        combineLatest(promises).subscribe(response => this.refresh());
       }
+    combineLatest(promises).subscribe(response => this.refresh());
   }
 
   delete(notification: Notification, isAll: boolean) {
