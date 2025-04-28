@@ -588,7 +588,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/service/modify")
   public ResponseEntity<Service> modifyServiceType(@RequestParam Integer serviceId,
-      @RequestParam Integer serviceTypeId) throws OsirisValidationException {
+      @RequestParam Integer serviceTypeId) throws OsirisException {
 
     Service service = serviceService.getService(serviceId);
     if (service == null)
@@ -1189,7 +1189,8 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/update")
-  public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder)
+  public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder,
+      @RequestParam Boolean isByPassMandatoryField)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
@@ -1211,7 +1212,8 @@ public class QuotationController {
 
     for (Service service : assoAffaireOrder.getServices())
       for (Provision provision : service.getProvisions())
-        quotationValidationHelper.validateProvisionTransactionnal(provision, null, customerOrder);
+        quotationValidationHelper.validateProvisionTransactionnal(provision, customerOrder,
+            isByPassMandatoryField);
 
     assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(assoAffaireOrder);
 

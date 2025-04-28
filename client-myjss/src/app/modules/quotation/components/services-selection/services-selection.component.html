@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container d-flex flex-column min-vh-100 pb-5 mb-5 custom-container">
 
   <section>
     <p class="sub-title" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>0  ">
@@ -119,15 +119,19 @@
       </div>
     </div>
   </section>
-</div>
-<div class="row position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 ">
-  <div>
-    <button type="button" class="btn btn-secondary rounded-1 col-auto mx-5" (click)="goBackQuotation()">
-      <i class="ai-arrow-left ms-2"></i>Etape précédente</button>
-  </div>
-  <div class="justify-content-end">
-    <button type="button" class="btn btn-secondary rounded-1 col-auto mx-5" *ngIf="canSaveQuotation()"
+
+  <div
+    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 mt-3 d-flex justify-content-between align-items-center z-3">
+    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
+      (click)="goBackQuotation()">
+      <i class="ai-arrow-left"></i>
+      <span class="d-none d-sm-inline ms-2">Étape précédente</span>
+    </button>
+
+    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center" *ngIf="canSaveQuotation()"
       (click)="saveQuotation()">
-      Etape suivante<i class="ai-arrow-right ms-2"></i></button>
+      <span class="d-none d-sm-inline me-2">Étape suivante</span>
+      <i class="ai-arrow-right"></i>
+    </button>
   </div>
 </div>

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.beust.jcommander.Strings;
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
@@ -39,6 +41,9 @@ public class ServiceServiceImpl implements ServiceService {
     @Autowired
     AttachmentService attachmentService;
 
+    @Autowired
+    BatchService batchService;
+
     @Override
     public Service getService(Integer id) {
         Optional<Service> service = serviceRepository.findById(id);
@@ -49,10 +54,13 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Service addOrUpdateService(
-            Service service) {
+    public Service addOrUpdateService(Service service) throws OsirisException {
         if (service.getCustomLabel() != null && service.getCustomLabel().trim().length() == 0)
             service.setCustomLabel(null);
+
+        if (service.getAssoAffaireOrder().getCustomerOrder() != null)
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, service.getAssoAffaireOrder().getId());
+
         return serviceRepository.save(service);
     }
 
@@ -247,7 +255,7 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Service modifyServiceType(ServiceType serviceType, Service service) {
+    public Service modifyServiceType(ServiceType serviceType, Service service) throws OsirisException {
         serviceType = serviceTypeService.getServiceType(serviceType.getId());
         service = getService(service.getId());
 

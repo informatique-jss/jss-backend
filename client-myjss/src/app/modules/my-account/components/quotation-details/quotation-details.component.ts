@@ -26,10 +26,10 @@ import { getCustomerOrderBillingMailList, initTooltips } from '../orders/orders.
 import { getClassForQuotationStatus, getQuotationStatusLabel } from '../quotations/quotations.component';
 
 @Component({
-    selector: 'app-quotation-details',
-    templateUrl: './quotation-details.component.html',
-    styleUrls: ['./quotation-details.component.css'],
-    standalone: false
+  selector: 'app-quotation-details',
+  templateUrl: './quotation-details.component.html',
+  styleUrls: ['./quotation-details.component.css'],
+  standalone: false
 })
 export class QuotationDetailsComponent implements OnInit {
 
@@ -193,7 +193,7 @@ export class QuotationDetailsComponent implements OnInit {
   }
 
   saveFieldsValue(service: Service) {
-    this.serviceService.addOrUpdateServiceFields(service).subscribe(response => {
+    this.serviceService.addOrUpdateService(service).subscribe(response => {
       this.appService.displayToast("Vos informations complémentaires ont bien été enrengistrées", false, "Succès", 15000);
       this.refreshCurrentAssoAffaireOrder();
     })

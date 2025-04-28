@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
 import { ConstantService } from '../../../../libs/constant.service';
-import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { Employee } from '../../../profile/model/Employee';
 import { Responsable } from '../../../profile/model/Responsable';
@@ -33,10 +33,10 @@ import { UploadAttachmentService } from '../../services/upload.attachment.servic
 import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, getLastMissingAttachmentQueryDateLabel, initTooltips } from '../orders/orders.component';
 
 @Component({
-    selector: 'app-order-details',
-    templateUrl: './order-details.component.html',
-    styleUrls: ['./order-details.component.css'],
-    standalone: false
+  selector: 'app-order-details',
+  templateUrl: './order-details.component.html',
+  styleUrls: ['./order-details.component.css'],
+  standalone: false
 })
 export class OrderDetailsComponent implements OnInit {
 
@@ -257,7 +257,7 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   saveFieldsValue(service: Service) {
-    this.serviceService.addOrUpdateServiceFields(service).subscribe(response => {
+    this.serviceService.addOrUpdateService(service).subscribe(response => {
       this.appService.displayToast("Vos informations complémentaires ont bien été enrengistrées", false, "Succès", 15000);
       this.refreshCurrentAssoAffaireOrder();
     })

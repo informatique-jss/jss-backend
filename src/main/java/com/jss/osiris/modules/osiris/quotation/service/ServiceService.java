@@ -11,11 +11,11 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 public interface ServiceService {
     public Service getService(Integer id);
 
-    public Service addOrUpdateService(Service service);
+    public Service addOrUpdateService(Service service) throws OsirisException;
 
     public Boolean deleteService(Service service);
 
-    public Service modifyServiceType(ServiceType serviceType, Service service);
+    public Service modifyServiceType(ServiceType serviceType, Service service) throws OsirisException;
 
     public String getServiceLabel(Service service) throws OsirisException;
 

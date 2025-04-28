@@ -52,6 +52,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
@@ -61,6 +62,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeTypeFamily;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
@@ -106,6 +108,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	MyJssQuotationValidationHelper myJssQuotationValidationHelper;
+
+	@Autowired
+	QuotationValidationHelper quotationValidationHelper;
 
 	@Autowired
 	ServiceService serviceService;
@@ -942,13 +947,24 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Quotation>(customerOrder.getQuotations().get(0), HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/service/fields")
-	public ResponseEntity<Boolean> addOrUpdateServiceFields(@RequestBody Service service)
-			throws OsirisValidationException, OsirisException {
+	@PostMapping(inputEntryPoint + "/service")
+	public ResponseEntity<Boolean> addOrUpdateService(@RequestBody Service service) throws OsirisException {
 		if (service == null || service.getId() == null || service.getAssoServiceFieldTypes() == null)
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
 		Service serviceFetched = serviceService.getService(service.getId());
+
+		for (Provision provision : serviceFetched.getProvisions()) {
+			if (serviceFetched.getAssoAffaireOrder().getCustomerOrder() == null) {
+				quotationValidationHelper.validateProvisionTransactionnal(provision,
+						serviceFetched.getAssoAffaireOrder().getQuotation(), true);
+			} else {
+				quotationValidationHelper.validateProvisionTransactionnal(provision,
+						serviceFetched.getAssoAffaireOrder().getCustomerOrder(), true);
+			}
+
+			provision.setService(serviceFetched);
+		}
 
 		if (serviceFetched.getAssoAffaireOrder().getCustomerOrder() == null
 				&& serviceFetched.getAssoAffaireOrder().getQuotation() == null

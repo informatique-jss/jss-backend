@@ -16,8 +16,8 @@ export class ServiceService extends AppRestService<Service> {
     super(http, "quotation");
   }
 
-  addOrUpdateServiceFields(service: Service) {
-    return this.addOrUpdate(new HttpParams(), "service/fields", service);
+  addOrUpdateService(service: Service) {
+    return this.addOrUpdate(new HttpParams(), "service", service);
   }
 
   getServiceForServiceTypeAndAffaire(service: ServiceType, affaire: Affaire) {

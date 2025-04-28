@@ -49,6 +49,14 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
     color: #2C4057;
 }
 
+:host ::ng-deep .btn-secondary span {
+    color: #ffffff;
+}
+
+:host ::ng-deep .btn-secondary:hover span {
+    color: #2C4057;
+}
+
 :host ::ng-deep .btn.btn-outline-primary {
     color: #2C4057;
 }

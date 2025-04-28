@@ -368,8 +368,8 @@ public class QuotationValidationHelper {
 
                                 for (Service service : assoAffaireOrder.getServices())
                                         for (Provision provision : service.getProvisions()) {
-                                                validateProvision(provision, targetStatusCode, isCustomerOrder,
-                                                                quotation);
+                                                validateProvision(provision, isCustomerOrder,
+                                                                quotation, false);
 
                                                 // Check unique frequency in all customer order
                                                 if (provision.getProvisionType().getIsRecurring() != null
@@ -417,19 +417,20 @@ public class QuotationValidationHelper {
         }
 
         @Transactional
-        public void validateProvisionTransactionnal(Provision provision, String targetStatusCode,
-                        CustomerOrder customerOrder)
+        public void validateProvisionTransactionnal(Provision provision,
+                        IQuotation iQuotation, Boolean isByPassMandatoryFields)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-                validateProvision(provision, targetStatusCode, true,
-                                customerOrderService.getCustomerOrder(customerOrder.getId()));
+                validateProvision(provision, !iQuotation.getIsQuotation(), iQuotation, isByPassMandatoryFields);
         }
 
-        private void validateProvision(Provision provision, String targetStatusCode, boolean isCustomerOrder,
-                        IQuotation quotation)
+        private void validateProvision(Provision provision, boolean isCustomerOrder,
+                        IQuotation quotation, Boolean isByPassMandatoryFields)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
-                validationHelper.validateReferential(provision.getProvisionFamilyType(), true, "Famille de prestation");
-                validationHelper.validateReferential(provision.getProvisionType(), true, "Type de prestation");
+                validationHelper.validateReferential(provision.getProvisionFamilyType(),
+                                !isByPassMandatoryFields || true, "Famille de prestation");
+                validationHelper.validateReferential(provision.getProvisionType(), !isByPassMandatoryFields || true,
+                                "Type de prestation");
 
                 if (quotation.getId() == null && !quotation.getCustomerOrderOrigin().getId()
                                 .equals(constantService.getCustomerOrderOriginOsiris().getId()))
@@ -575,25 +576,31 @@ public class QuotationValidationHelper {
                                                         || announcement.getAnnouncementStatus().getCode().equals(
                                                                         AnnouncementStatus.ANNOUNCEMENT_DONE));
 
-                        validationHelper.validateDateMin(announcement.getPublicationDate(), verifyAnnouncement,
+                        validationHelper.validateDateMin(announcement.getPublicationDate(),
+                                        !isByPassMandatoryFields || verifyAnnouncement,
                                         publicationDateVerification,
                                         "Date de publication de l'annonce");
-                        validationHelper.validateReferential(announcement.getDepartment(), verifyAnnouncement,
+                        validationHelper.validateReferential(announcement.getDepartment(),
+                                        !isByPassMandatoryFields || verifyAnnouncement,
                                         "Department");
-                        validationHelper.validateReferential(announcement.getConfrere(), verifyAnnouncement,
+                        validationHelper.validateReferential(announcement.getConfrere(),
+                                        !isByPassMandatoryFields || verifyAnnouncement,
                                         "Confrere");
-                        validationHelper.validateReferential(announcement.getNoticeTypeFamily(), verifyAnnouncement,
+                        validationHelper.validateReferential(announcement.getNoticeTypeFamily(),
+                                        !isByPassMandatoryFields || verifyAnnouncement,
                                         "NoticeTypeFamily");
-                        if (verifyAnnouncement && (announcement.getNoticeTypes() == null
+                        if ((!isByPassMandatoryFields || verifyAnnouncement) && (announcement.getNoticeTypes() == null
                                         || announcement.getNoticeTypes().size() == 0))
                                 throw new OsirisValidationException("NoticeTypes");
 
                         if (announcement.getNoticeTypes() != null)
                                 for (NoticeType noticeType : announcement.getNoticeTypes()) {
-                                        validationHelper.validateReferential(noticeType, verifyAnnouncement,
+                                        validationHelper.validateReferential(noticeType,
+                                                        !isByPassMandatoryFields || verifyAnnouncement,
                                                         "noticeType");
                                 }
-                        validationHelper.validateString(announcement.getNotice(), verifyAnnouncement, "Notice");
+                        validationHelper.validateString(announcement.getNotice(),
+                                        !isByPassMandatoryFields || verifyAnnouncement, "Notice");
 
                         if (announcement.getAnnouncementStatus() != null && (announcement.getAnnouncementStatus()
                                         .getCode()

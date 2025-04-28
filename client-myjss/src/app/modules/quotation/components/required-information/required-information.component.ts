@@ -10,6 +10,7 @@ import { Service } from '../../../my-account/model/Service';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
+import { ServiceService } from '../../../my-account/services/service.service';
 import { Civility } from '../../../profile/model/Civility';
 import { Department } from '../../../profile/model/Department';
 import { Responsable } from '../../../profile/model/Responsable';
@@ -22,7 +23,6 @@ import { CivilityService } from '../../services/civility.service';
 import { DepartmentService } from '../../services/department.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
-import { ServiceTypeService } from '../../services/service.type.service';
 
 @Component({
   selector: 'required-information',
@@ -77,7 +77,7 @@ export class RequiredInformationComponent implements OnInit {
     private quotationService: QuotationService,
     private assoServiceDocumentService: AssoServiceDocumentService,
     private orderService: CustomerOrderService,
-    private serviceTypeService: ServiceTypeService,
+    private serviceService: ServiceService,
     private noticeTypeFamilyService: NoticeTypeFamilyService,
     private noticeTypeService: NoticeTypeService,
     private departmentService: DepartmentService,
@@ -124,7 +124,7 @@ export class RequiredInformationComponent implements OnInit {
   initIndexesAndServiceType() {
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
       this.selectedAssoIndex = 0;
-      // Init order of provisions
+      // Init order of provisions for front-end
       for (let asso of this.quotation.assoAffaireOrders) {
         if (asso.services && asso.services.length > 0) {
           for (let serv of asso.services) {
@@ -240,6 +240,22 @@ export class RequiredInformationComponent implements OnInit {
       }
       this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
       this.appService.openRoute(undefined, "quotation", undefined);
+    }
+  }
+
+  saveFieldsValue() {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
+      this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe(response => {
+        if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! + 1])
+          this.selectedServiceIndex!++;
+
+        else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! + 1])
+          this.selectedAssoIndex!++;
+      });
+
+    } else if (this.quotation) {
+      this.selectedAssoIndex = 0;
+      this.selectedServiceIndex = 0;
     }
   }
 }
