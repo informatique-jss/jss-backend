@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -214,6 +215,8 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_document_associe_infogreffe")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private DocumentAssocieInfogreffe documentAssocieInfogreffe;
+
+	private LocalDate attachmentDate;
 
 	public Integer getId() {
 		return id;
@@ -431,4 +434,11 @@ public class Attachment implements Serializable, IId {
 		this.missingAttachmentQuery = missingAttachmentQuery;
 	}
 
+	public LocalDate getAttachmentDate() {
+		return attachmentDate;
+	}
+
+	public void setAttachmentDate(LocalDate attachmentDate) {
+		this.attachmentDate = attachmentDate;
+	}
 }

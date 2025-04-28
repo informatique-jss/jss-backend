@@ -3,6 +3,7 @@ package com.jss.osiris.modules.myjss.quotation.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -351,8 +352,13 @@ public class MyJssQuotationController {
 		if (attachment == null)
 			throw new OsirisValidationException("service");
 
-		return new ResponseEntity<Boolean>(attachmentService.definitivelyDeleteAttachment(attachment),
-				HttpStatus.OK);
+		if (attachment.getQuotation() != null
+				&& myJssQuotationValidationHelper.canSeeQuotation(attachment.getQuotation())) {
+			attachmentService.definitivelyDeleteAttachment(attachment);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/attachments")
@@ -479,10 +485,31 @@ public class MyJssQuotationController {
 
 		AssoServiceDocument assoServiceDocument = assoServiceDocumentService
 				.getAssoServiceDocument(idAssoServiceDocument);
-		if (assoServiceDocument == null)
-			return new ResponseEntity<AssoServiceDocument>(null, new HttpHeaders(), HttpStatus.OK);
 
-		return new ResponseEntity<AssoServiceDocument>(assoServiceDocument, new HttpHeaders(), HttpStatus.OK);
+		if (assoServiceDocument != null && assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null
+				&& myJssQuotationValidationHelper
+						.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()))
+			return new ResponseEntity<AssoServiceDocument>(assoServiceDocument, new HttpHeaders(), HttpStatus.OK);
+
+		return new ResponseEntity<AssoServiceDocument>(null, new HttpHeaders(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/attachment/set-date")
+	public ResponseEntity<Boolean> modifyAttachmentDate(
+			@RequestParam("attachmentDate") LocalDate attachmentDate,
+			@RequestParam("idAttachment") Integer idAttachment) {
+
+		boolean canModify = false;
+
+		Attachment attachmentToModify = attachmentService.getAttachment(idAttachment);
+
+		if (attachmentDate != null && attachmentToModify != null && attachmentToModify.getQuotation() != null
+				&& myJssQuotationValidationHelper.canSeeQuotation(attachmentToModify.getQuotation())) {
+			attachmentService.modifyAttachmentDate(attachmentDate, idAttachment);
+			canModify = true;
+		}
+
+		return new ResponseEntity<Boolean>(canModify, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/order/payment/cb/qrcode")
