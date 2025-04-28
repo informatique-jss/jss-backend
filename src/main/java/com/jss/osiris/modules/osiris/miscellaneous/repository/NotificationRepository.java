@@ -25,7 +25,7 @@ public interface NotificationRepository extends QueryCacheCrudRepository<Notific
                         @Param("notificationTypeToHide") List<String> notificationTypeToHide,
                         @Param("notificationToDisplay") List<String> notificationToDisplay);
 
-        @Query(value = "select * from Notification n where n.created_date_time<(now() - make_interval(months => :monthNbr))  ", nativeQuery = true)
+        @Query(value = "select * from Notification n where coalesce(n.isRead,false) = true and coalesce(n.updated_date_time,n.created_date_time)<(now() - make_interval(months => :monthNbr))  ", nativeQuery = true)
         List<Notification> findNotificationOlderThanMonths(@Param("monthNbr") Integer monthNbr);
 
         List<Notification> findByEmployeeAndNotificationTypeAndService(Employee toEmployee, String notificationType,
