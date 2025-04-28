@@ -37,6 +37,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.miscellaneous.repository.AttachmentRepository;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -133,6 +134,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     MissingAttachmentQueryService missingAttachmentQueryService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -264,8 +268,9 @@ public class AttachmentServiceImpl implements AttachmentService {
                         null);
             }
 
-            // Notify user
-            notificationService.notifyAttachmentAddToProvision(provision, attachment);
+            // Notify user only if it's a Osiris user
+            if (employeeService.getCurrentEmployee() != null)
+                notificationService.notifyAttachmentAddToProvision(provision, attachment);
 
             // Attached publication flag to service
             if (attachment.getAttachmentType().getId()
@@ -287,8 +292,10 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (customerOrder == null)
                 return new ArrayList<Attachment>();
             attachment.setCustomerOrder(customerOrder);
-            // Notify user
-            notificationService.notifyAttachmentAddToCustomerorder(customerOrder, attachment);
+            // Notify user only if not a mail and by a Osiris user
+            if (!attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAutomaticMail().getId())
+                    && employeeService.getCurrentEmployee() != null)
+                notificationService.notifyAttachmentAddToCustomerorder(customerOrder, attachment);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             Invoice invoice = invoiceService.getInvoice(idEntity);
             if (invoice == null)
