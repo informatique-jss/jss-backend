@@ -6,16 +6,19 @@ import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
+import { Notification } from 'src/app/modules/miscellaneous/model/Notification';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { EmployeeService } from '../../../profile/services/employee.service';
@@ -75,11 +78,13 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     protected tiersService: TiersService,
     protected tiersTypeService: TiersTypeService,
     private employeeService: EmployeeService,
+    protected habilitationService: HabilitationsService,
     private constantService: ConstantService,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
     private changeDetectorRef: ChangeDetectorRef,
     protected tiersCategoryService: TiersCategoryService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private notificationService: NotificationService
   ) { }
 
   ngAfterContentChecked(): void {
@@ -311,5 +316,25 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     }
 
     this.employeeService.renewResponsablePassword(this.selectedResponsable!).subscribe(response => { });
+  }
+
+  addNewNotification() {
+    if (this.selectedResponsable)
+      this.appService.addPersonnalNotification(() => this.responsableNotification = undefined, this.responsableNotification, undefined, undefined, undefined, undefined, undefined, undefined, this.selectedResponsable, undefined);
+  }
+
+  responsableNotification: Notification[] | undefined;
+
+  getNotificationForResponsable() {
+    if (this.responsableNotification == undefined) {
+      this.responsableNotification = [];
+      if (this.selectedResponsable)
+        this.notificationService.getNotificationsForResponsable(this.selectedResponsable.id).subscribe(response => this.responsableNotification = response);
+    }
+    return this.responsableNotification;
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
   }
 }

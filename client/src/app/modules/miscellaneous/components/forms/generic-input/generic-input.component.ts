@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { GenericFormComponent } from '../generic-form.components';
 import { AppService } from 'src/app/services/app.service';
+import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
   selector: 'generic-input',
@@ -34,6 +34,7 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
  * Hint to display
  */
   @Input() hint: string = "";
+  @Input() displayClearField: boolean = false;
 
   constructor(
     private formBuilder2: UntypedFormBuilder, private appService2: AppService
@@ -61,5 +62,11 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
 
   getPreviewActionLinkFunction(entity: any): string[] | undefined {
     return undefined;
+  }
+
+  clearField(): void {
+    this.model = undefined;
+    this.modelChange.emit(this.model);
+    this.onFormChange.emit(undefined);
   }
 }

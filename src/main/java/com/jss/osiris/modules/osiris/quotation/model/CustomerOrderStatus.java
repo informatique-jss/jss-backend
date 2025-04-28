@@ -35,28 +35,36 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private String label;
 
 	@Column(nullable = false, length = 100)
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String code;
 
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String icon;
 
 	@OneToMany(targetEntity = CustomerOrderStatus.class)
 	@JoinTable(name = "asso_customer_order_status_successor", joinColumns = @JoinColumn(name = "id_customer_order_status"), inverseJoinColumns = @JoinColumn(name = "id_customer_order_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<CustomerOrderStatus> successors;
 
 	@OneToMany(targetEntity = CustomerOrderStatus.class)
 	@JoinTable(name = "asso_customer_order_status_predecessor", joinColumns = @JoinColumn(name = "id_customer_order_status"), inverseJoinColumns = @JoinColumn(name = "id_customer_order_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<CustomerOrderStatus> predecessors;
 
 	public Integer getId() {

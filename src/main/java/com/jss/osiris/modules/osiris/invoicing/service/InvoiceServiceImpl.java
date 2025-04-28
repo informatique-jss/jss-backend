@@ -232,11 +232,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceHelper.setPriceTotal(invoice);
 
         // Generate accounting records
-        if (invoice.getProvider() != null || invoice.getRff() != null)
-            accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReception(invoice);
-        else if (invoice.getProvider() != null && invoice.getIsCreditNote())
+        if (invoice.getProvider() != null && invoice.getIsCreditNote())
             accountingRecordGenerationService.generateAccountingRecordsOnCreditNoteReception(invoice,
                     invoice.getReverseCreditNote());
+        else if (invoice.getProvider() != null || invoice.getRff() != null)
+            accountingRecordGenerationService.generateAccountingRecordsOnInvoiceReception(invoice);
         else if (invoice.getIsCreditNote())
             accountingRecordGenerationService
                     .generateAccountingRecordsOnInvoiceEmissionCancellation(invoice.getReverseCreditNote(), invoice);
@@ -713,8 +713,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                     if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8))) {
                         toSend = true;
                         invoice.setFirstReminderDateTime(LocalDateTime.now());
-
-                        notificationService.notifyTiersDepositMandatory(invoice.getResponsable(), invoice);
                     }
                 } else if (invoice.getSecondReminderDateTime() == null) {
                     if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(8 + 15))
@@ -729,7 +727,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                                     .isAfter(invoice.getSecondReminderDateTime().toLocalDate())) {
                         toSend = true;
                         invoice.setThirdReminderDateTime(LocalDateTime.now());
-                        notificationService.notifyInvoiceToReminder(invoice);
                     }
                 }
 

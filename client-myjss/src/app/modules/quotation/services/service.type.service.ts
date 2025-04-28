@@ -19,4 +19,8 @@ export class ServiceTypeService extends AppRestService<ServiceType> {
   getServiceType(idServiceType: number) {
     return this.get(new HttpParams().set("idServiceType", idServiceType), "service-type");
   }
+
+  getServiceTypeWithIsMandatoryDocuments(serviceType: ServiceType, isFetchOnlyMandatoryDocuments: boolean) {
+    return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("isFetchOnlyMandatoryDocuments", isFetchOnlyMandatoryDocuments), "service-type");
+  }
 }

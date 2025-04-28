@@ -35,6 +35,7 @@ public class ProvisionType implements Serializable, IId {
 
 	@Column(nullable = false, length = 255)
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
@@ -30,6 +31,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
@@ -382,14 +384,111 @@ public class MiscellaneousController {
     }
 
     @GetMapping(inputEntryPoint + "/notifications")
-    public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture,
+            @RequestParam Boolean displayRead,
+            @RequestParam(required = false) List<String> notificationTypes) {
         return new ResponseEntity<List<Notification>>(
-                notificationService.getNotificationsForCurrentEmployee(displayFuture), HttpStatus.OK);
+                notificationService.getNotificationsForCurrentEmployee(displayFuture, displayRead,
+                        notificationTypes, false),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/nbr")
+    public ResponseEntity<Integer> getNotificationsNumber(@RequestParam Boolean displayFuture,
+            @RequestParam Boolean displayRead) {
+        List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(displayFuture,
+                displayRead, null,
+                true);
+        return new ResponseEntity<Integer>(notifications != null ? notifications.size() : 0, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/customer-order")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Notification>> getNotificationsForCustomerOrder(@RequestParam Integer customerOrderId) {
+        return new ResponseEntity<List<Notification>>(
+                notificationService.getNotificationsForCustomerOrder(customerOrderId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/quotation")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Notification>> getNotificationsForQuotation(@RequestParam Integer quotationId) {
+        return new ResponseEntity<List<Notification>>(
+                notificationService.getNotificationsForQuotation(quotationId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/provision")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Notification>> getNotificationsForProvision(@RequestParam Integer provisionId) {
+        return new ResponseEntity<List<Notification>>(
+                notificationService.getNotificationsForProvision(provisionId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/invoice")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Notification>> getNotificationsForInvoice(@RequestParam Integer invoiceId) {
+        return new ResponseEntity<List<Notification>>(
+                notificationService.getNotificationsForInvoice(invoiceId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/service")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Notification>> getNotificationsForService(@RequestParam Integer serviceId) {
+        return new ResponseEntity<List<Notification>>(
+                notificationService.getNotificationsForService(serviceId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/affaire")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Notification>> getNotificationsForAffaire(@RequestParam Integer affaireId) {
+        return new ResponseEntity<List<Notification>>(
+                notificationService.getNotificationsForAffaire(affaireId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/tiers")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Notification>> getNotificationsForTiers(@RequestParam Integer tiersId) {
+        return new ResponseEntity<List<Notification>>(
+                notificationService.getNotificationsForTiers(tiersId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/responsable")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<Notification>> getNotificationsForResponsable(@RequestParam Integer responsableId) {
+        return new ResponseEntity<List<Notification>>(
+                notificationService.getNotificationsForResponsable(responsableId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/notifications/types")
+    @JsonView(JacksonViews.OsirisListView.class)
+    public ResponseEntity<List<String>> getAllNotificationTypes() {
+        return new ResponseEntity<List<String>>(notificationService.getAllNotificationTypes(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/notification/personnal")
     public ResponseEntity<Notification> addPOrUpdatePersonnalNotification(
             @RequestBody Notification notifications) {
+
+        if (notifications.getId() != null) {
+            Notification oldNotification = notificationService.getNotification(notifications.getId());
+            oldNotification.setDetail1(notifications.getDetail1());
+            oldNotification.setUpdatedBy(employeeService.getCurrentEmployee());
+            if (notifications.getUpdatedDateTime() == null) {
+                oldNotification.setUpdatedDateTime(LocalDateTime.now());
+            } else {
+                oldNotification.setUpdatedDateTime(notifications.getUpdatedDateTime());
+            }
+            return new ResponseEntity<Notification>(
+                    notificationService.addOrUpdatePersonnalNotification(oldNotification), HttpStatus.OK);
+        }
         return new ResponseEntity<Notification>(notificationService
                 .addOrUpdatePersonnalNotification(notifications), HttpStatus.OK);
     }

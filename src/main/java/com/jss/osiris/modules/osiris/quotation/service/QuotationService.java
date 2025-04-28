@@ -90,4 +90,10 @@ public interface QuotationService {
         public Quotation saveQuotationFromMyJss(Quotation order, HttpServletRequest request)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
+        public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders);
+
+        public List<Quotation> searchQuotation(List<Employee> commercials, List<QuotationStatus> status);
+
+        public Quotation completeAdditionnalInformationForQuotation(Quotation customerOrder);
+
 }

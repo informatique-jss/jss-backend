@@ -1,0 +1,32 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout" *ngIf="!isForIntegration">
+      <tr>
+        <td>
+          <select-notification-types [(model)]="notificationTypes" label="Type de notifications"
+            [form]="notificationForm" propertyName="notificationTypes"></select-notification-types>
+        </td>
+        <td>
+          <generic-toggle [(model)]="displayFuture" label="Afficher les notifications futures" [form]="notificationForm"
+            propertyName="displayFuture" [isDisabled]="false"></generic-toggle>
+        </td>
+        <td>
+          <generic-toggle [(model)]="displayRead" label="Afficher les notifications lues" [form]="notificationForm"
+            propertyName="displayRead" [isDisabled]="false"></generic-toggle>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="refresh()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [columns]="displayedColumns" [values]="notifications" tableName="Notifications" [actions]="tableAction"
+      [displayTotalLines]="true" [isSmallestHeight]="isForIntegration">
+    </sort-table>
+  </div>
+</div>
+<button matTooltip="Ajouter une notification libre" mat-fab color="accent" class="fab-button" *ngIf="!isForIntegration"
+  (click)="addPersonnalNotification()">
+  <mat-icon>add</mat-icon>
+</button>

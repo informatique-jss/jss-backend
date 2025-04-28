@@ -1,35 +1,35 @@
-<h1 mat-dialog-title>Programmer une notification</h1>
+<h1 mat-dialog-title>Programmer/éditer une notification</h1>
 <div mat-dialog-content>
-  <p>Décriver ci-dessous la notification à programmer. Celle-ci apparaitra à l'heure demandée.
-  <table class="full-width">
-    <tr>
-      <td>
-        <generic-input [(model)]="notification.summary" label="Titre" [form]="notificationForm" propertyName="summary"
-          [isMandatory]="true" [isDisabled]="false" [maxLength]="255"></generic-input>
-      </td>
-    </tr>
+  <p>Décrivez / commentez ci-dessous la notification.</p>
+  <div *ngIf="notification.customerOrder">Commande n°{{notification.customerOrder.id}}</div>
+  <div *ngIf="notification.quotation">Devis n°{{notification.quotation.id}}</div>
+  <div *ngIf="notification.service">Service {{notification.service.serviceType.label}}</div>
+  <div *ngIf="notification.provision">Prestation {{notification.provision.provisionType.label}}</div>
+  <div *ngIf="notification.invoice">Facture {{notification.invoice.id}}</div>
+  <div *ngIf="notification.tiers">Tiers {{notification.tiers.denomination ?notification.tiers.denomination :
+    (notification.tiers.firstname +' '+notification.tiers.lastname)}}</div>
+  <div *ngIf="notification.responsable">Responsable {{ (notification.responsable.firstname +'
+    '+notification.responsable.lastname)}}</div>
+  <div *ngIf="notification.affaire">Affaire {{notification.affaire.denomination ?notification.affaire.denomination :
+    (notification.affaire.firstname +' '+notification.affaire.lastname)}}</div>
+  <table class="full-width" style="padding-top: 15px;">
     <tr>
       <td>
         <generic-textarea [(model)]="notification.detail1" label="Contenu de la notification" [form]="notificationForm"
-          propertyName="detail1" [isMandatory]="true" [isDisabled]="false"></generic-textarea>
+          propertyName="detail1" [isMandatory]="true" [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
       </td>
     </tr>
     <tr>
       <td>
-        <generic-datetime-picker [(model)]="notification.createdDateTime" label="Date/heure de notification"
-          [form]="notificationForm" propertyName="createdDateTime" [isMandatory]="true" [isDisabled]="false">
+        <generic-datetime-picker [(model)]="notification.updatedDateTime" label="Date/heure de notification"
+          [form]="notificationForm" propertyName="updatedDateTime" [isMandatory]="false" [isDisabled]="false">
         </generic-datetime-picker>
       </td>
-    <tr>
-      <td>
-        <generic-toggle [(model)]="notification.showPopup" label="Afficher une notification visuelle ?"
-          [form]="notificationForm" propertyName="showPopup"
-          hint="Permet d'afficher une notification Windows à la date choisie"></generic-toggle>
-      </td>
-    </tr>
   </table>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
   <button mat-raised-button color="warn" (click)="onConfirm()">Enregistrer</button>
 </div>
+<notification-list [isForIntegration]="true" [notifications]="preLoadedNotifications"
+  *ngIf="preLoadedNotifications && preLoadedNotifications.length>0"></notification-list>

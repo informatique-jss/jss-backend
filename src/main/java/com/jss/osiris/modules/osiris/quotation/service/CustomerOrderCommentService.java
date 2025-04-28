@@ -5,11 +5,15 @@ import java.util.List;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 
 public interface CustomerOrderCommentService {
     public List<CustomerOrderComment> getCustomerOrderComments();
 
     public CustomerOrderComment getCustomerOrderComment(Integer id);
+
+    public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder);
 
     public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
 
@@ -17,4 +21,8 @@ public interface CustomerOrderCommentService {
 
     public CustomerOrderComment tagActiveDirectoryGroupOnCustomerOrderComment(CustomerOrderComment customerOrderComment,
             ActiveDirectoryGroup activeDirectoryGroup);
+
+    public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation);
+
+    public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
 }

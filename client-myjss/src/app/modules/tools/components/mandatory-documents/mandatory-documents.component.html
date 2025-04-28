@@ -40,7 +40,17 @@
       </div>
     </div>
   </div>
-
+  <div class="accordion-item border-top mb-0" *ngIf="!filteredServiceTypesByFamily">
+    <div class="accordion-header">
+      <p class="card-text placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4 me-2"></span>
+        <span class="placeholder placeholder-sm col-6"></span>
+        <span class="placeholder placeholder-sm col-8"></span>
+      </p>
+    </div>
+  </div>
   <ul class="nav nav-tabs" role="tablist">
     <ng-container *ngFor="let item of serviceFamilies;">
       <li class="nav-item"
@@ -52,18 +62,7 @@
     </ng-container>
   </ul>
   <ng-container *ngFor="let serviceType of filteredServiceTypesByFamily[selectedFamilyTab.id];">
-    <div class="accordion-item border-top mb-0" *ngIf="!serviceType.id">
-      <div class="accordion-header">
-        <p class="card-text placeholder-glow">
-          <span class="placeholder placeholder-sm col-7 me-2"></span>
-          <span class="placeholder placeholder-sm col-4"></span>
-          <span class="placeholder placeholder-sm col-4 me-2"></span>
-          <span class="placeholder placeholder-sm col-6"></span>
-          <span class="placeholder placeholder-sm col-8"></span>
-        </p>
-      </div>
-    </div>
-    <ng-container *ngIf="serviceType.id">
+    <ng-container *ngIf="serviceType">
       <div class="card dark-blue-dropdown rounded-3 mt-3 pointer"
         [ngClass]="{ 'expanded-card':  isExpanded(serviceType.id) }" (click)="toggleCard(serviceType)">
         <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
@@ -89,7 +88,7 @@
             <hr
               *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeDocuments && serviceType.assoServiceTypeDocuments.length>0 &&  serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0" />
             <ng-container
-              *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0">
+              *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeFieldTypes && serviceType.assoServiceTypeFieldTypes.length>0">
               <div class="col-4 g-2" *ngFor="let item of  serviceType.assoServiceTypeFieldTypes">
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>

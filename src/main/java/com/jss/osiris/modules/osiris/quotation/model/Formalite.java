@@ -41,20 +41,24 @@ public class Formalite implements IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formalite_status")
     @IndexedField
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private FormaliteStatus formaliteStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_waited_competent_authority")
     @JsonIgnoreProperties(value = { "attachments", "departments", "cities", "regions" }, allowSetters = true)
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private CompetentAuthority waitedCompetentAuthority;
 
     @OneToMany(mappedBy = "formalite")
     @JsonIgnoreProperties(value = { "content" })
     @IndexedField
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private List<FormaliteGuichetUnique> formalitesGuichetUnique;
 
     @OneToMany(mappedBy = "formalite")
     @IndexedField
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private List<FormaliteInfogreffe> formalitesInfogreffe;
 
     @OneToMany(mappedBy = "formalite")

@@ -18,5 +18,6 @@ export interface Attachment {
   invoice: Invoice;
   isAlreadySent: boolean;
   typeDocument: TypeDocument;
+  creatDateTime: Date;
 }
 

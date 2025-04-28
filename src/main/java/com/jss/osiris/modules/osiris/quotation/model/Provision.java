@@ -49,39 +49,44 @@ public class Provision implements IId, IAttachment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service")
 	@JsonIgnoreProperties(value = { "provisions" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Service service;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private ProvisionType provisionType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_family_type")
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private ProvisionFamilyType provisionFamilyType;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domiciliation")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Domiciliation domiciliation;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Announcement announcement;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_simple_provision")
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private SimpleProvision simpleProvision;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	@JoinColumn(name = "id_formalite")
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private Formalite formalite;
 
@@ -95,6 +100,7 @@ public class Provision implements IId, IAttachment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private Employee assignedTo;
 
 	@Column(nullable = false)
@@ -198,7 +204,10 @@ public class Provision implements IId, IAttachment {
 
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class }) // TODO : remove and use
+																								// attachment getter in
+																								// attachment
+	// component
 	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Invoice.class, mappedBy = "provision")
@@ -212,10 +221,6 @@ public class Provision implements IId, IAttachment {
 			"childrenPayments",
 			"invoice" }, allowSetters = true)
 	private List<Payment> payments;
-
-	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
-	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
 	private LocalDateTime lastStatusReminderAcDateTime;
@@ -612,14 +617,6 @@ public class Provision implements IId, IAttachment {
 
 	public void setLastCompetentAuthorityReminderDateTime(LocalDateTime lastCompetentAuthorityReminderDateTime) {
 		this.lastCompetentAuthorityReminderDateTime = lastCompetentAuthorityReminderDateTime;
-	}
-
-	public List<CustomerOrderComment> getCustomerOrderComments() {
-		return customerOrderComments;
-	}
-
-	public void setCustomerOrderComments(List<CustomerOrderComment> customerOrderComments) {
-		this.customerOrderComments = customerOrderComments;
 	}
 
 	public Boolean getIsSupplyFullBeCopy() {

@@ -1,14 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
+import { Quotation } from '../model/Quotation';
 
 @Injectable({
   providedIn: 'root'
 })
-export class QuotationService extends AppRestService<IQuotation>{
+export class QuotationService extends AppRestService<IQuotation> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
@@ -53,4 +55,13 @@ export class QuotationService extends AppRestService<IQuotation>{
   associateCustomerOrderToQuotation(customerOrderId: number, quotationId: number) {
     return this.get(new HttpParams().set("idQuotation", quotationId).set("idCustomerOrder", customerOrderId), "customer-order/associate");
   }
+
+  searchQuotation(commercialsIds: number[], statusIds: number[]) {
+    return this.getList(new HttpParams().set("commercialIds", commercialsIds.join(",")).set("statusIds", statusIds.join(',')), 'quotation/search') as Observable<Quotation[]>;
+  }
+
+  getSingleQuotation(idCustomerOrder: number) {
+    return this.getById("quotation/single", idCustomerOrder);
+  }
+
 }

@@ -116,35 +116,42 @@ mini-fab-add mat-form-field.mat-mdc-form-field, mat-option, .mat-mdc-cell {
   position: fixed !important;
   bottom: 40px !important;
   right: 40px !important;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .second-fab-button {
   position: fixed !important;
   bottom: 40px !important;
   right: 110px !important;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .third-fab-button {
   position: fixed !important;
   bottom: 40px !important;
   right: 180px !important;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .fourth-fab-button {
   position: fixed !important;
   bottom: 40px !important;
   right: 250px !important;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .fifth-fab-button {
   position: fixed !important;
   bottom: 40px !important;
   right: 320px !important;
-  z-index: 9999;
+  z-index: 999;
+}
+
+.sixth-fab-button {
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 390px !important;
+  z-index: 999;
 }
 
 .mat-expansion-panel-header-description {

@@ -2,9 +2,8 @@ import { Component, HostListener } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { NOTIFICATION_KEY_CODE, SAVE_KEY_CODE, SEARCH_KEY_CODE } from './libs/Constants';
+import { SAVE_KEY_CODE, SEARCH_KEY_CODE } from './libs/Constants';
 import { ConstantService } from './modules/miscellaneous/services/constant.service';
-import { NotificationService } from './modules/miscellaneous/services/notification.service';
 import { LoginDialogComponent } from './routing/login-dialog/login-dialog.component';
 import { LoginService } from './routing/login-dialog/login.service';
 import { AppService } from './services/app.service';
@@ -31,7 +30,6 @@ export class AppComponent {
     public loginDialog: MatDialog,
     private loginService: LoginService,
     public confirmationDialog: MatDialog,
-    private notificationService: NotificationService,
     private userPreferenceService: UserPreferenceService,
     private constantService: ConstantService,
     protected searchService: SearchService) { }
@@ -62,8 +60,6 @@ export class AppComponent {
   keyEvent(event: KeyboardEvent) {
     if (event != undefined && event != null && event.code != null && event != undefined && event.code == SEARCH_KEY_CODE)
       this.searchService.openSearch();
-    if (event != undefined && event != null && event.code != null && event != undefined && event.code == NOTIFICATION_KEY_CODE)
-      this.notificationService.openNotificationDialog();
     if (event != undefined && event != null && event.code != null && event != undefined && event.code == SAVE_KEY_CODE)
       this.appService.triggerSaveEvent();
   }

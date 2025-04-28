@@ -147,4 +147,9 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders);
 
+        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder);
+
+        public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
+                        List<CustomerOrderStatus> status);
+
 }

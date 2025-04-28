@@ -31,12 +31,14 @@ public class SimpleProvision implements IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_simple_provision_status")
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private SimpleProvisionStatus simpleProvisionStatus;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_waited_competent_authority")
 	@JsonIgnoreProperties(value = { "attachments", "departments", "cities", "regions" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private CompetentAuthority waitedCompetentAuthority;
 
 	public Integer getId() {

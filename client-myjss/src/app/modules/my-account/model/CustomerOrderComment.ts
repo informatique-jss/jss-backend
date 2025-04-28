@@ -8,6 +8,5 @@ export interface CustomerOrderComment {
   employee: Employee;
   currentCustomer: Responsable;
   comment: string;
-  isRead: boolean;
   customerOrder: CustomerOrder;
 }

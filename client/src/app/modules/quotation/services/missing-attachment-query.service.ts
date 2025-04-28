@@ -13,6 +13,10 @@ export class MissingAttachmentQueryService extends AppRestService<MissingAttachm
     super(http, "quotation");
   }
 
+  getMissingAttachmentQueriesForService(serviceId: number) {
+    return this.getList(new HttpParams().set("serviceId", serviceId), "mail/missing-attachment/service");
+  }
+
   generateMissingAttachmentMail(query: MissingAttachmentQuery, isWaitingForAttachmentToUpload: boolean) {
     return this.postItem(new HttpParams().set("isWaitingForAttachmentToUpload", isWaitingForAttachmentToUpload), "mail/generate/missing-attachment", query, "Mail envoyé", "Erreur lors de l'envoi du mail");
   }

@@ -25,7 +25,7 @@ public class AssoServiceTypeFieldType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "asso_service_type_field_type_sequence", sequenceName = "asso_service_type_field_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_service_type_field_type_sequence")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

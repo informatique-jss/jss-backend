@@ -1,7 +1,9 @@
 import { SortTableColumn } from "../../miscellaneous/model/SortTableColumn";
 import { Affaire } from "../../quotation/model/Affaire";
+import { AssoAffaireOrder } from "../../quotation/model/AssoAffaireOrder";
 import { Invoice } from "../../quotation/model/Invoice";
 import { IQuotation } from '../../quotation/model/IQuotation';
+import { Service } from "../../quotation/model/Service";
 import { Tiers } from "../../tiers/model/Tiers";
 import { InvoiceSearchResult } from "../model/InvoiceSearchResult";
 
@@ -56,19 +58,49 @@ export function getCustomerOrderNameForIQuotation(element: IQuotation) {
 
 export function getAffaireList(invoice: Invoice): string {
   if (invoice && invoice.customerOrder)
-    return invoice.customerOrder.assoAffaireOrders.map(asso => (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)) + (asso.affaire.city ? " (" + asso.affaire.city.label + ")" : "")).join(", ");
+    return invoice.customerOrder.assoAffaireOrders.map(asso => { return getAffaireFromAssoAffaireOrder(asso) }).join(", ");
   return "";
 }
 
 export function getAffaireListForProviderInvoice(invoice: Invoice): string {
   if (invoice && invoice.customerOrderForInboundInvoice)
-    return invoice.customerOrderForInboundInvoice.assoAffaireOrders.map(asso => (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)) + (asso.affaire.city ? " (" + asso.affaire.city.label + ", " + + asso.affaire.siret + ")" : "")).join(", ");
+    return invoice.customerOrderForInboundInvoice.assoAffaireOrders.map(asso => { return getAffaireFromAssoAffaireOrder(asso) }).join(", ");
   return "";
 }
 
 export function getAffaireListFromIQuotation(customerOrder: IQuotation): string {
   if (customerOrder)
-    return customerOrder.assoAffaireOrders.map(asso => (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)) + (asso.affaire.city ? " (" + asso.affaire.city.label + ")" : "")).join(", ");
+    return customerOrder.assoAffaireOrders.map(asso => { return getAffaireFromAssoAffaireOrder(asso) }).join(", ");
+  return "";
+}
+
+export function getAffaireFromAssoAffaireOrder(asso: AssoAffaireOrder): string {
+  if (asso)
+    return (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)) + (asso.affaire.city ? " (" + asso.affaire.city.label + ")" : "");
+  return "";
+}
+
+export function getServiceListFromIQuotation(customerOrder: IQuotation): string {
+  if (customerOrder)
+    return customerOrder.assoAffaireOrders.map(asso => asso.services.map(service => { return getServiceFromService(service) }).join(', ')).join(", ");
+  return "";
+}
+
+export function getServiceFromService(service: Service): string {
+  if (service)
+    return service.customLabel ? service.customLabel : service.serviceType.label;
+  return "";
+}
+
+export function getResponsableLabelIQuotation(order: IQuotation): string {
+  if (order)
+    return order.responsable ? (order.responsable.firstname + ' ' + order.responsable.lastname) : '';
+  return "";
+}
+
+export function getTiersLabelIQuotation(order: IQuotation): string {
+  if (order)
+    return ((order.responsable && order.responsable.tiers) ? ((order.responsable.tiers.denomination) ? order.responsable.tiers.denomination : (order.responsable.tiers.firstname + ' ' + order.responsable.tiers.lastname)) : '');
   return "";
 }
 

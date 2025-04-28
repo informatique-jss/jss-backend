@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -464,16 +465,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 if (customerOrder.getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
-                    notificationService.notifyCustomerOrderToBeingProcessedFromDeposit(customerOrder, isFromUser);
-                } else
-                    notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
+                }
             }
         }
 
         // Target : TO BILLED => notify
         if (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)) {
-            notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
-
             // Auto billed for JSS Announcement only customer order
             if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     && isOnlyJssAnnouncement(customerOrder)
@@ -647,7 +644,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
-            notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, false);
         }
 
         return customerOrder;
@@ -1557,41 +1553,47 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders) {
         if (customerOrders != null && customerOrders.size() > 0)
             for (CustomerOrder customerOrder : customerOrders) {
-                List<String> affaireLabels = new ArrayList<String>();
-                List<String> serviceLabels = new ArrayList<String>();
-                customerOrder.setHasMissingInformations(false);
-                if (customerOrder.getAssoAffaireOrders() != null)
-                    for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-                        String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
-                        if (affaireDenomination == null || affaireDenomination.length() == 0)
-                            affaireDenomination = assoAffaireOrder.getAffaire().getFirstname() + " "
-                                    + assoAffaireOrder.getAffaire().getLastname();
-                        if (affaireLabels.indexOf(affaireDenomination) < 0)
-                            affaireLabels.add(affaireDenomination);
-
-                        if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0)
-                            for (Service service : assoAffaireOrder.getServices()) {
-                                String serviceLabel = service.getCustomLabel();
-                                if (serviceLabel == null || serviceLabel.length() == 0)
-                                    serviceLabel = service.getServiceType().getLabel();
-                                if (serviceLabels.indexOf(serviceLabel) < 0)
-                                    serviceLabels.add(serviceLabel);
-                            }
-
-                        if (assoAffaireOrder.getServices() != null)
-                            for (Service service : assoAffaireOrder.getServices()) {
-                                if (assoAffaireOrderService.isServiceHasMissingInformations(service)) {
-                                    customerOrder.setHasMissingInformations(true);
-                                }
-                            }
-                    }
-
-                if (affaireLabels.size() > 0)
-                    customerOrder.setAffairesList(String.join(" / ", affaireLabels));
-                customerOrder.setServicesList(String.join(" / ", serviceLabels));
+                completeAdditionnalInformationForCustomerOrder(customerOrder);
             }
 
         return customerOrders;
+    }
+
+    @Override
+    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder) {
+        List<String> affaireLabels = new ArrayList<String>();
+        List<String> serviceLabels = new ArrayList<String>();
+        customerOrder.setHasMissingInformations(false);
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+                String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
+                if (affaireDenomination == null || affaireDenomination.length() == 0)
+                    affaireDenomination = assoAffaireOrder.getAffaire().getFirstname() + " "
+                            + assoAffaireOrder.getAffaire().getLastname();
+                if (affaireLabels.indexOf(affaireDenomination) < 0)
+                    affaireLabels.add(affaireDenomination);
+
+                if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0)
+                    for (Service service : assoAffaireOrder.getServices()) {
+                        String serviceLabel = service.getCustomLabel();
+                        if (serviceLabel == null || serviceLabel.length() == 0)
+                            serviceLabel = service.getServiceType().getLabel();
+                        if (serviceLabels.indexOf(serviceLabel) < 0)
+                            serviceLabels.add(serviceLabel);
+                    }
+
+                if (assoAffaireOrder.getServices() != null)
+                    for (Service service : assoAffaireOrder.getServices()) {
+                        if (assoAffaireOrderService.isServiceHasMissingInformations(service)) {
+                            customerOrder.setHasMissingInformations(true);
+                        }
+                    }
+            }
+
+        if (affaireLabels.size() > 0)
+            customerOrder.setAffairesList(String.join(" / ", affaireLabels));
+        customerOrder.setServicesList(String.join(" / ", serviceLabels));
+        return customerOrder;
     }
 
     @Override
@@ -1852,5 +1854,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable) {
         return customerOrderRepository.findByResponsable(responsable);
+    }
+
+    @Override
+    public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
+            List<CustomerOrderStatus> status) {
+
+        List<Integer> commercialIds = (commercials != null && commercials.size() > 0)
+                ? commercials.stream().map(Employee::getId).collect(Collectors.toList())
+                : Arrays.asList(0);
+
+        List<Integer> statusIds = (status != null && status.size() > 0)
+                ? status.stream().map(CustomerOrderStatus::getId).collect(Collectors.toList())
+                : Arrays.asList(0);
+
+        return completeAdditionnalInformationForCustomerOrders(
+                customerOrderRepository.searchCustomerOrders(commercialIds, statusIds));
     }
 }

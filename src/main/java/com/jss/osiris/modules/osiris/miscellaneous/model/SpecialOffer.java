@@ -21,7 +21,7 @@ public class SpecialOffer implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "special_offer_sequence", sequenceName = "special_offer_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "special_offer_sequence")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
@@ -29,7 +29,7 @@ public class SpecialOffer implements Serializable, IId {
 	private String label;
 
 	@Column(nullable = false, length = 100)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private String customLabel;
 
 	@Column(nullable = false, length = 20)

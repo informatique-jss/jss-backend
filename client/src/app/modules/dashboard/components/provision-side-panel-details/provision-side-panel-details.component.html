@@ -1,0 +1,53 @@
+<div class="field-row" *ngIf="provision">
+  <div class="label" style="width: 100%;"><strong>{{provision.provisionFamilyType.label}} -
+      {{provision.provisionType.label}}</strong>
+  </div>
+</div>
+
+<ng-container *ngIf="provision && provision.announcement">
+  <div class="field-row" *ngIf="displayStatus">
+    <div class="label">Status</div>
+    <div class="value">
+      {{provision.announcement.announcementStatus.label}}
+    </div>
+  </div>
+  <div class="field-row" *ngIf="provision.announcement.confrere">
+    <div class="label">Confrère</div>
+    <div class="value">
+      {{provision.announcement.confrere.label}}
+    </div>
+  </div>
+  <div class="field-row" *ngIf="provision.announcement.department">
+    <div class="label">Département</div>
+    <div class="value">
+      {{provision.announcement.department.code}}
+    </div>
+  </div>
+  <div class="field-row" *ngIf="provision.announcement.noticeTypeFamily">
+    <div class="label">Rubrique</div>
+    <div class="value">
+      {{provision.announcement.noticeTypeFamily.label}} - {{(provision.announcement.noticeTypes &&
+      provision.announcement.noticeTypes[0])?provision.announcement.noticeTypes[0].label:''}}
+    </div>
+  </div>
+  <div class="field-row" *ngIf="provision.announcement.publicationDate">
+    <div class="label">Date de publication</div>
+    <div class="value">
+      {{provision.announcement.publicationDate | date:'EEEE d MMMM HH:mm'}}
+    </div>
+  </div>
+  <div class="field-row" *ngIf="provision.announcement.characterNumber">
+    <div class="label">Nombre de caractères</div>
+    <div class="value">
+      {{provision.announcement.characterNumber}}
+    </div>
+  </div>
+  <div class="field-row" *ngIf="provision.announcement.notice">
+    <div class="label">Annonce</div>
+    <div class="value td-label" [matTooltip]="provision.announcement.notice">
+      <span *ngIf="provision.announcement.noticeHeader"
+        [innerHTML]="provision.announcement.noticeHeader| trustHtml"></span>
+      <span *ngIf="provision.announcement.noticeHeader" [innerHTML]="provision.announcement.notice| trustHtml"></span>
+    </div>
+  </div>
+</ng-container>
