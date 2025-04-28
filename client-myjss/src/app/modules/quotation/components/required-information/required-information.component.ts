@@ -173,10 +173,17 @@ export class RequiredInformationComponent implements OnInit {
     this.selectedAssoIndex = assoIndex;
   }
 
-  selectServiceIndex(selectedService: number, selectedAssoIndex: number) {
-    this.selectedServiceIndex = selectedService;
-    this.selectedAssoIndex = selectedAssoIndex;
+  selectServiceIndex(newServiceIndex: number, newAssoIndex: number, event: any): void {
+    if (this.selectedAssoIndex !== null && this.selectedServiceIndex !== null && this.quotation) {
+      if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]) {
+        this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe();
+      }
+    }
+
+    this.selectedAssoIndex = newAssoIndex;
+    this.selectedServiceIndex = newServiceIndex;
   }
+
 
   config = {
     toolbar: ['undo', 'redo', '|', 'fontFamily', 'fontSize', 'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
@@ -251,6 +258,11 @@ export class RequiredInformationComponent implements OnInit {
 
         else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! + 1])
           this.selectedAssoIndex!++;
+
+        else {
+          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+          this.appService.openRoute(undefined, "quotation", undefined);
+        }
       });
 
     } else if (this.quotation) {

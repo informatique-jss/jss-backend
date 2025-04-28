@@ -4,7 +4,7 @@
     <p class="sub-title">Sélectionnez une affaire</p>
 
     <div class="row mb-5">
-      <!-- Afficher les cartes avec ngFor -->
+      <!-- Show card with ngFor -->
       <div *ngFor="let asso of quotation.assoAffaireOrders;let index = index" class="col-12 col-sm-6 col-lg-4 my-2">
         <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 "
           [ngClass]="{'selected': selectedAssoIndex == index}" (click)="selectCard(index, $event)">
@@ -17,13 +17,13 @@
           </div>
 
           <div class="row align-items-center" *ngIf="asso.services">
-            <!-- Les boutons pills -->
+            <!-- Pill buttons -->
             <a *ngFor="let service of asso.services;let indexService = index"
-              (click)="selectServiceIndex(indexService, index)"
-              [ngClass]="{'btn-secondary' : selectedAssoIndex == index && indexService == selectedServiceIndex, 'btn-outline-primary': selectedAssoIndex != index || indexService!=selectedServiceIndex}"
+              (click)="selectServiceIndex(indexService, selectedAssoIndex!, $event)"
+              [ngClass]="{'btn-secondary': selectedAssoIndex == selectedAssoIndex && indexService == selectedServiceIndex, 'btn-outline-primary': selectedAssoIndex != selectedAssoIndex || indexService != selectedServiceIndex}"
               class="btn btn-secondary rounded-pill mt-2 ms-1 mt-md-3 ms-md-3 col-auto pill">
-              {{service.customLabel?service.customLabel : service.serviceType.label }} <i
-                *ngIf="selectedAssoIndex == index && indexService == selectedServiceIndex"
+              {{service.customLabel? service.customLabel : service.serviceType.label}}
+              <i *ngIf="selectedAssoIndex == selectedAssoIndex && indexService == selectedServiceIndex"
                 class="ai-circle-arrow-right ms-2"></i>
             </a>
           </div>
@@ -101,7 +101,7 @@
                 <div class="col-12 col-lg-4"
                   *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
                   <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
-                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm" [maxLength]="255"
                     [propertyName]="'textAreaFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory">
                   </generic-textarea>
                 </div>
