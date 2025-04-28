@@ -1,4 +1,4 @@
-<h1 *ngIf="service" mat-dialog-title>Demande des pièces manquantes - {{getServiceLabel(service)}}</h1>
+<h1 *ngIf="service" mat-dialog-title>Demande des pièces manquantes - {{service.customLabel}}</h1>
 <div mat-dialog-content
   *ngIf="service && service.assoServiceDocuments && service.assoServiceDocuments.length>0 || selectedAssoServiceDocument || selectedAssoServiceFieldType">
   <p *ngIf="editMode">Choisissez ci-dessous la liste des pièces jointes à envoyer :</p>

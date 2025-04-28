@@ -135,10 +135,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   quotationForm = this.formBuilder.group({});
 
-  getServiceLabel(service: Service) {
-    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
-  }
-
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
   }
@@ -437,10 +433,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response != null) {
-        asso.services.push(response);
+        asso.services.push(...response);
         this.generateInvoiceItem();
       }
-    })
+    });
   }
 
   deleteService(asso: AssoAffaireOrder, service: Service) {
@@ -1068,7 +1064,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
     if (!doNotDisplayService)
-      label = this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther()) + " - " + label;
+      label = service.customLabel + " - " + label;
     return label;
   }
 

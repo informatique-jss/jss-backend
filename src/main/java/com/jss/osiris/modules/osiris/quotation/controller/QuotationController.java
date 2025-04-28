@@ -588,17 +588,19 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/service/modify")
   public ResponseEntity<Service> modifyServiceType(@RequestParam Integer serviceId,
-      @RequestParam Integer serviceTypeId) throws OsirisValidationException {
+      @RequestParam List<Integer> serviceTypeIds) throws OsirisValidationException {
 
     Service service = serviceService.getService(serviceId);
     if (service == null)
       throw new OsirisValidationException("service");
 
-    ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
-    if (serviceType == null)
+    if (serviceTypeIds.isEmpty())
       throw new OsirisValidationException("ServiceType");
 
-    return new ResponseEntity<Service>(serviceService.modifyServiceType(serviceType, service),
+    List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
+    for (Integer serviceTypeId : serviceTypeIds)
+      serviceTypes.add(serviceTypeService.getServiceType(serviceTypeId));
+    return new ResponseEntity<Service>(serviceService.modifyServiceType(serviceTypes, service),
         HttpStatus.OK);
   }
 
@@ -613,26 +615,31 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/service-types/provisions")
-  public ResponseEntity<Service> getServiceForMultiServiceTypesAndAffaire(@RequestParam Integer idAffaire,
-      @RequestBody List<ServiceType> serviceTypes, String customLabel) throws OsirisException {
+  @GetMapping(inputEntryPoint + "/service-types/provisions")
+  public ResponseEntity<List<Service>> getServiceForMultiServiceTypesAndAffaire(@RequestParam Integer idAffaire,
+      @RequestParam List<Integer> serviceTypeIds, String customLabel) throws OsirisException {
 
     Affaire affaire = affaireService.getAffaire(idAffaire);
     if (affaire == null)
       throw new OsirisValidationException("Affaire");
 
-    if (serviceTypes == null || serviceTypes.size() == 0)
+    if (serviceTypeIds == null || serviceTypeIds.size() == 0)
       throw new OsirisValidationException("ServiceType");
 
-    for (ServiceType serviceType : serviceTypes)
-      validationHelper.validateReferential(serviceType, true, "serviceType");
+    List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
+    for (Integer id : serviceTypeIds)
+      serviceTypes.add(serviceTypeService.getServiceType(id));
+
+    if (!serviceTypes.isEmpty())
+      for (ServiceType serviceType : serviceTypes)
+        validationHelper.validateReferential(serviceType, true, "serviceType");
 
     validationHelper.validateString(customLabel, false, 2000, "customLabel");
     if (customLabel != null && customLabel.length() == 0)
       customLabel = null;
 
-    return new ResponseEntity<Service>(
-        serviceService.getServiceForMultiServiceTypesAndAffaire(serviceTypes, affaire, customLabel),
+    return new ResponseEntity<List<Service>>(
+        serviceService.generateServiceInstanceFromMultiServiceTypes(serviceTypes, affaire, customLabel),
         HttpStatus.OK);
   }
 

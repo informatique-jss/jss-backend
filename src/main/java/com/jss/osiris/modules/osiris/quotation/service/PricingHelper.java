@@ -34,6 +34,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.AssoServiceServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -322,20 +323,18 @@ public class PricingHelper {
                         (confrere.getShippingCosts() != null ? BigDecimal.valueOf(confrere.getShippingCosts())
                                 : zeroValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
-        } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()) {
-            if (billingItem.getBillingType().getIsNonTaxable() == false
-                    && provision.getService().getServiceTypes().getDefaultDeboursPrice() != null) {
-                invoiceItem.setPreTaxPrice(provision.getService().getServiceTypes().getDefaultDeboursPrice()); // TODO
-                                                                                                               // boucler
-                                                                                                               // et
-                                                                                                               // sommer
-            } else if (billingItem.getBillingType().getIsNonTaxable() == true
-                    && provision.getService().getServiceTypes().getDefaultDeboursPriceNonTaxable() != null) {
-                invoiceItem.setPreTaxPrice(provision.getService().getServiceTypes().getDefaultDeboursPrice()); // TODO
-                                                                                                               // boucler
-                                                                                                               // et
-                                                                                                               // sommer
-                invoiceItem.setPreTaxPrice(provision.getService().getServiceTypes().getDefaultDeboursPriceNonTaxable());
+        } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()
+                && !provision.getService().getAssoServiceServiceTypes().isEmpty()) {
+            for (AssoServiceServiceType assoServiceServiceType : provision.getService().getAssoServiceServiceTypes()) {
+                if (billingItem.getBillingType().getIsNonTaxable() == false
+                        && assoServiceServiceType.getServiceType().getDefaultDeboursPrice() != null) {
+                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                            .add(assoServiceServiceType.getServiceType().getDefaultDeboursPrice()));
+                } else if (billingItem.getBillingType().getIsNonTaxable() == true
+                        && assoServiceServiceType.getServiceType().getDefaultDeboursPriceNonTaxable() != null) {
+                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                            .add(assoServiceServiceType.getServiceType().getDefaultDeboursPriceNonTaxable()));
+                }
             }
         } else {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
@@ -865,7 +864,7 @@ public class PricingHelper {
         for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
             serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
             Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
-                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire());
+                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire(), null);
 
             if (order.getIsEmergency() != null && order.getIsEmergency() && service.getProvisions() != null
                     && service.getProvisions().size() > 0
@@ -894,7 +893,6 @@ public class PricingHelper {
                                 && (serviceTypeChosen.getAnnouncementRedactedByJss() == null
                                         || serviceTypeChosen.getAnnouncementRedactedByJss()))
                             provision.getAnnouncement().setNotice(serviceTypeChosen.getAnnouncementNotice());
-                        ;
 
                         if (serviceTypeChosen.getAnnouncementPublicationDate() != null)
                             provision.getAnnouncement()

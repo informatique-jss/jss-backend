@@ -20,7 +20,6 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
@@ -89,9 +88,6 @@ public class BillingClosureReceiptHelper {
 
     @Autowired
     MailHelper mailHelper;
-
-    @Autowired
-    CustomerMailService customerMailService;
 
     @Autowired
     ServiceService serviceService;
@@ -450,7 +446,7 @@ public class BillingClosureReceiptHelper {
                 && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
                 for (Service service : asso.getServices())
-                    serviceLabels.add(serviceService.getServiceLabel(service));
+                    serviceLabels.add(service.getCustomLabel());
 
                 Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
                 // Add annual reference if defined

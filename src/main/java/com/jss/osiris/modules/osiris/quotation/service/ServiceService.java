@@ -17,6 +17,9 @@ public interface ServiceService {
 
     public Service modifyServiceType(List<ServiceType> services, Service service);
 
+    public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes, Affaire affaire,
+            String customLabel) throws OsirisException;
+
     public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire,
             String customLabel)
             throws OsirisException;

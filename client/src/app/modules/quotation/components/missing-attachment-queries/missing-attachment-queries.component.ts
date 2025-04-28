@@ -4,13 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
 import { Service } from '../../model/Service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
-import { ServiceService } from '../../services/service.service';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 
 @Component({
@@ -24,16 +22,12 @@ export class MissingAttachmentQueriesComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private serviceService: ServiceService,
     private missingAttachmentQueryService: MissingAttachmentQueryService,
     private appService: AppService,
-    private constantService: ConstantService,
     public missingAttachmentMailDialog: MatDialog,
   ) { }
 
-  getServiceLabel(service: Service) {
-    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
-  }
+
   missingAttachmentForm = this.formBuilder.group({});
 
   displayedColumns: SortTableColumn<MissingAttachmentQuery>[] = [];

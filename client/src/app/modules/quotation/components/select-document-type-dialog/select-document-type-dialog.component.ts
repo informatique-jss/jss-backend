@@ -2,7 +2,7 @@ import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
+import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 
 @Component({
   selector: 'app-select-document-type-dialog',
@@ -15,7 +15,7 @@ export class SelectDocumentTypeDialogComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     private dialog: MatDialog,
-    public dialogRef: MatDialogRef<SelectServiceTypeDialogComponent>
+    public dialogRef: MatDialogRef<SelectMultiServiceTypeDialogComponent>
   ) { }
 
   documentTypeForm = this.formBuilder.group({});

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -393,7 +394,8 @@ public class NotificationServiceImpl implements NotificationService {
                         : (affaire.getFirstname() + " " + affaire.getLastname());
             details += " - ";
             details += service.getCustomLabel() != null ? service.getCustomLabel()
-                    : service.getServiceTypes().getLabel();
+                    : String.join(" / ", service.getAssoServiceServiceTypes().stream()
+                            .map(asso -> asso.getServiceType().getLabel()).collect(Collectors.toList()));
             details += " - ";
             details += attachment.getAttachmentType().getLabel() + " (" + attachment.getDescription() + ")";
             generateNewNotification((Employee) employeeService.getCurrentEmployee(),

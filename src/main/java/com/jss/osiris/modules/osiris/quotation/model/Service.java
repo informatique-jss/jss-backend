@@ -20,8 +20,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
@@ -49,14 +47,10 @@ public class Service implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "services" }, allowSetters = true)
 	private AssoAffaireOrder assoAffaireOrder;
 
-	@ManyToMany
-	@JoinColumn(name = "id_service_type")
-	@IndexedField
+	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
 	@JsonView(JacksonViews.MyJssListView.class)
-	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments", "assoServiceTypeFieldTypes",
-			"assoServiceProvisionTypes" }, allowSetters = true)
-	@JoinTable(name = "asso_service_service_type", joinColumns = @JoinColumn(name = "id_service"), inverseJoinColumns = @JoinColumn(name = "id_service_type"))
-	private List<ServiceType> serviceTypes;
+	private List<AssoServiceServiceType> assoServiceServiceTypes;
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
@@ -199,14 +193,6 @@ public class Service implements Serializable, IId {
 		this.lastMissingAttachmentQueryDateTime = lastMissingAttachmentQueryDateTime;
 	}
 
-	public List<ServiceType> getServiceTypes() {
-		return serviceTypes;
-	}
-
-	public void setServiceTypes(List<ServiceType> serviceType) {
-		this.serviceTypes = serviceType;
-	}
-
 	public String getCustomLabel() {
 		return customLabel;
 	}
@@ -221,6 +207,14 @@ public class Service implements Serializable, IId {
 
 	public void setServiceLabelToDisplay(String serviceLabelToDisplay) {
 		this.serviceLabelToDisplay = serviceLabelToDisplay;
+	}
+
+	public List<AssoServiceServiceType> getAssoServiceServiceTypes() {
+		return assoServiceServiceTypes;
+	}
+
+	public void setAssoServiceServiceTypes(List<AssoServiceServiceType> assoServiceServiceTypes) {
+		this.assoServiceServiceTypes = assoServiceServiceTypes;
 	}
 
 }

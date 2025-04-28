@@ -1,8 +1,10 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
+import com.jss.osiris.modules.osiris.quotation.model.AssoServiceServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
@@ -37,6 +40,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     AttachmentService attachmentService;
+
+    @Autowired
+    AssoServiceServiceTypeService assoServiceServiceTypeService;
 
     @Override
     public Service getService(Integer id) {
@@ -74,22 +80,47 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes, Affaire affaire,
+            String customLabel) throws OsirisException {
+
+        List<Service> services = new ArrayList<Service>();
+        List<ServiceType> serviceTypeNonMergeables = new ArrayList<ServiceType>();
+
+        services.add(getServiceForMultiServiceTypesAndAffaire(
+                serviceTypes.stream().filter(s -> s.getIsMergeable()).toList(), affaire, customLabel));
+
+        serviceTypeNonMergeables = serviceTypes.stream().filter(s -> !s.getIsMergeable())
+                .toList();
+        for (ServiceType serviceType : serviceTypeNonMergeables)
+            services.add(
+                    getServiceForMultiServiceTypesAndAffaire(Arrays.asList(serviceType), affaire, customLabel));
+
+        return services;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire,
             String customLabel)
             throws OsirisException {
-        Service service = new Service();
-        service.setServiceTypes(serviceTypes);
 
+        ArrayList<AssoServiceServiceType> assoServiceServiceTypes = new ArrayList<AssoServiceServiceType>();
+        ArrayList<Integer> newAssoServiceServiceTypeIds = new ArrayList<Integer>();
         ArrayList<AssoServiceDocument> assoServiceDocuments = new ArrayList<AssoServiceDocument>();
         ArrayList<String> typeDocumentCodes = new ArrayList<String>();
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
         ArrayList<Integer> serviceFieldTypeIds = new ArrayList<Integer>();
-        ArrayList<String> serviceLabels = new ArrayList<String>();
+
+        Service service = new Service();
 
         for (ServiceType serviceType : serviceTypes) {
-            // Name of service concat
-            serviceLabels.add(serviceType.getLabel());
-            // Documents
+            // Asso service - serviceType
+            AssoServiceServiceType newAssoServiceServiceType = generateAssoServiceServiceType(serviceType, service);
+            if (!newAssoServiceServiceTypeIds.contains(newAssoServiceServiceType.getServiceType().getId())) {
+                assoServiceServiceTypes.add(newAssoServiceServiceType);
+                newAssoServiceServiceTypeIds.add(newAssoServiceServiceType.getServiceType().getId());
+            }
+
             if (serviceType.getAssoServiceTypeDocuments() != null)
                 for (AssoServiceTypeDocument assoServiceTypeDocument : serviceType.getAssoServiceTypeDocuments()) {
                     AssoServiceDocument newAssoServiceDocument = getAssoServiceDocumentFromAssoServiceTypeDocument(
@@ -121,7 +152,6 @@ public class ServiceServiceImpl implements ServiceService {
                     }
                 }
         }
-
         // Always add further information field
         AssoServiceFieldType newAssoServiceFieldType = new AssoServiceFieldType();
         newAssoServiceFieldType.setIsMandatory(false);
@@ -129,9 +159,19 @@ public class ServiceServiceImpl implements ServiceService {
         newAssoServiceFieldType.setServiceFieldType(constantService.getFurtherInformationServiceFieldType());
         assoServiceFieldTypes.add(newAssoServiceFieldType);
 
+        service.setAssoServiceServiceTypes(assoServiceServiceTypes);
         service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         service.setAssoServiceDocuments(assoServiceDocuments);
+        service = computeServiceLabel(service);
         return service;
+    }
+
+    private AssoServiceServiceType generateAssoServiceServiceType(
+            ServiceType serviceType, Service service) {
+        AssoServiceServiceType assoServiceServiceType = new AssoServiceServiceType();
+        assoServiceServiceType.setServiceType(serviceType);
+        assoServiceServiceType.setService(service);
+        return assoServiceServiceType;
     }
 
     private AssoServiceDocument getAssoServiceDocumentFromAssoServiceTypeDocument(
@@ -244,11 +284,15 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional(rollbackFor = Exception.class)
     public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) {
         service = getService(service.getId());
-        service.setServiceTypes(serviceTypes);
+
         ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
+        ArrayList<AssoServiceServiceType> assoServiceToDelete = new ArrayList<AssoServiceServiceType>();
 
         for (ServiceType serviceType : serviceTypes) {
             serviceType = serviceTypeService.getServiceType(serviceType.getId());
+
+            service.getAssoServiceServiceTypes().add(generateAssoServiceServiceType(serviceType, service));
+
             for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
                 boolean found = false;
                 for (AssoServiceFieldType serviceFieldType : service.getAssoServiceFieldTypes()) {
@@ -315,15 +359,26 @@ public class ServiceServiceImpl implements ServiceService {
                     .addAll(getProvisionsFromServiceType(serviceType, service.getAssoAffaireOrder().getAffaire(),
                             service));
         }
-
+        // Remove old service - serviceType assos
+        if (!service.getAssoServiceServiceTypes().isEmpty()) {
+            for (AssoServiceServiceType asso : service.getAssoServiceServiceTypes())
+                if (service.getAssoServiceServiceTypes().stream().map(a -> a.getServiceType().getId())
+                        .collect(Collectors.toList()).contains(asso.getServiceType().getId()))
+                    assoServiceToDelete.add(asso);
+        }
+        service.getAssoServiceServiceTypes().removeAll(assoServiceToDelete);
+        // TODO
         return addOrUpdateService(service);
     }
 
     private Service computeServiceLabel(Service service) {
         if (service != null) {
             if (service.getCustomLabel() == null || service.getCustomLabel().length() == 0)
-                service.setServiceLabelToDisplay(String.join(" / ",
-                        service.getServiceTypes().stream().map(ServiceType::getCustomLabel).toList()));
+                service.setServiceLabelToDisplay(
+                        String.join(" / ",
+                                service.getAssoServiceServiceTypes().stream()
+                                        .map(asso -> asso.getServiceType().getCustomLabel())
+                                        .collect(Collectors.toList())));
             else
                 service.setServiceLabelToDisplay(service.getCustomLabel());
         }

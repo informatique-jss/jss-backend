@@ -31,12 +31,13 @@ export class ServiceService extends AppRestService<Service> {
   }
 
   getServiceForMultiServiceTypesAndAffaire(serviceTypes: ServiceType[], affaire: Affaire, customLabel: string | undefined) {
-    return this.postItem(new HttpParams().set("idAffaire", affaire.id).set("customLabel", customLabel + ""), "service-types/provisions", serviceTypes);
+    const ids = serviceTypes.map(st => st.id).join(',');
+    return this.getList(new HttpParams().set("idAffaire", affaire.id).set("customLabel", customLabel + "").set("serviceTypeIds", ids), "service-types/provisions");
   }
 
   modifyServiceType(service: Service, serviceTypes: ServiceType[]) {
-
-    return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("serviceId", service.id), "service/modify");
+    const ids = serviceTypes.map(st => st.id).join(',');
+    return this.get(new HttpParams().set("serviceTypeIds", ids).set("serviceId", service.id), "service/modify");
   }
 
 }

@@ -86,6 +86,7 @@ public class ServiceType implements Serializable, IId {
 
 	private Integer suspiciousMarkup;
 
+	@JsonView(JacksonViews.MyJssListView.class)
 	private Boolean isMergeable;
 
 	public Integer getId() {

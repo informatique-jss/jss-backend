@@ -486,8 +486,7 @@ public class MailHelper {
             } else
                 ctx.setVariable("assoServiceFieldTypes", null);
 
-            ctx.setVariable("serviceLabel",
-                    serviceService.getServiceLabel(mail.getMissingAttachmentQuery().getService()));
+            ctx.setVariable("serviceLabel", mail.getMissingAttachmentQuery().getService().getCustomLabel());
         }
 
         ctx.setVariable("isLastReminder", mail.getIsLastReminder() != null && mail.getIsLastReminder());
@@ -1414,8 +1413,6 @@ public class MailHelper {
                     + provision.getProvisionFamilyType().getLabel();
             label += " / "
                     + provision.getProvisionType().getLabel();
-            label += " / "
-                    + provision.getService().getServiceTypes().getServiceFamily().getServiceFamilyGroup().getLabel();
 
             if (provision.getFormalite() != null && provision.getFormalite().getFormalitesGuichetUnique() != null) {
                 ArrayList<String> liasseList = new ArrayList<String>();
