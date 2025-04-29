@@ -16,4 +16,8 @@ export interface Service {
   customerComment: string;
   missingAttachmentQueries: MissingAttachmentQuery[];
   assoServiceFieldTypes: AssoServiceFieldType[];
+  hasMissingInformations: boolean;
+  serviceStatus: string;
+  servicePrice: number;
+  lastMissingAttachmentQueryDateTime: Date;
 }

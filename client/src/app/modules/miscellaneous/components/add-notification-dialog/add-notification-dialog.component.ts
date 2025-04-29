@@ -18,8 +18,9 @@ export class AddNotificationDialogComponent implements OnInit, AfterContentCheck
   ) { }
 
   notification: Notification = {} as Notification;
-
+  preLoadedNotifications: Notification[] | undefined;
   notificationForm = this.formBuilder.group({});
+
 
   ngOnInit() {
   }

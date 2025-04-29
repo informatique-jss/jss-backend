@@ -28,6 +28,15 @@
       <table class="full-width">
         <tr>
           <td>
+            <select-notification-types [(model)]="currentEmployee.notificationTypeToHide"
+              label="Type de notifications masquées" [form]="employeeForm" propertyName="notificationTypeToHide"
+              [isMandatory]="false" [isDisabled]="!editMode"></select-notification-types>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
             <chips-employee label="Mode vacances" [(model)]="currentEmployee.backups" [form]="employeeForm"
               propertyName="backups" [isMandatory]="false" [isDisabled]="!editMode"
               hint="Indiquez ici les personnes qui vous remplaceront pendant vos vacances. Elles verront alors vos objets associés aux leurs."></chips-employee>

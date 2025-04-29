@@ -88,7 +88,7 @@ export class AttachmentsComponent implements OnInit {
 
   setDataTable() {
     this.entity.attachments.sort(function (a: Attachment, b: Attachment) {
-      return new Date(b.uploadedFile.creationDate).getTime() - new Date(a.uploadedFile.creationDate).getTime();
+      return new Date(b.creatDateTime).getTime() - new Date(a.creatDateTime).getTime();
     });
 
     this.filteredAttachments = [];

@@ -1,0 +1,142 @@
+<div class="filter-bar">
+  <div class="kanban-box-settings">
+    <mat-icon color="accent" class="pointer" [matMenuTriggerFor]="menu">settings</mat-icon>
+  </div>
+  <generic-input [(model)]="filterText" label="Rechercher" [form]="kanbanForm" propertyName="filterText"
+    [isMandatory]="false" [isDisabled]="false" (onFormChange)="startFilter(true)"
+    [displayClearField]="true"></generic-input>
+  <select-quotation-status [(model)]="statusSelected" label="Statut" [form]="kanbanForm" (onFormChange)="startFilter()"
+    propertyName="statusSelected" [isMandatory]="false" [isDisabled]="false"></select-quotation-status>
+  <select-employee [(model)]="employeesSelected" label="Collaborateur" [form]="kanbanForm"
+    propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false" [filteredAdGroups]="[adGroupSales]"
+    (onFormChange)="startFilter()"></select-employee>
+</div>
+
+<div class="kanban-container top-container">
+  <div *ngFor="let status of statusSelected" class="kanban-column">
+    <h3 style="margin: 0px;">{{ status.label }}</h3>
+  </div>
+</div>
+<ng-container *ngFor="let swimlane of swimlanes">
+  <div class="swimlane" *ngIf="swimlane.totalItems>0">
+    <h3 style="margin: 0px;">
+    </h3>
+    <div class="swimlane-header" (click)="swimlane.isCollapsed=!swimlane.isCollapsed">
+      <span>{{ swimlane.label }} ({{swimlane.totalItems}} devis)</span>
+      <mat-icon [class.rotated]="!swimlane.isCollapsed">expand_more</mat-icon>
+    </div>
+    <div class="kanban-container" *ngIf="!swimlane.isCollapsed">
+      <div *ngFor="let status of swimlane.status" class="kanban-column">
+        <div cdkDropList [cdkDropListData]="status.entities" class="task-list" [id]="'list-' + status.id"
+          [cdkDropListConnectedTo]="connectedDropLists" [ngClass]="{
+           'drop-valid': isValidDropTarget(status.id!),
+           'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.id!)
+         }" (cdkDropListDropped)="drop($event)">
+          <div *ngFor="let order of status.entities" cdkDrag class="task-card"
+            (cdkDragStarted)="onDragStarted(status.id!)" (cdkDragEnded)="onDragEnded()"
+            (click)="fetchEntityAndOpenPanel(order)">
+            <div class="card-content">
+              <strong>{{order.affairesList}} </strong>
+              <p>{{order.servicesList}}</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-ticket">
+                {{ order.id }} - {{getResponsableLabelIQuotation(order)}} - {{getTiersLabelIQuotation(order)}}
+                <br /> le {{formatDateFrance(order.createdDate)}}
+              </div>
+              <div class="card-avatar">
+                <avatar class="avatar-select" [employee]="order.responsable?.salesEmployee" [size]="20">
+                </avatar>
+              </div>
+            </div>
+            <ng-template cdkDragPreview>
+              <div class="task-card drag-preview">
+                <div class="card-content">
+                  <strong>{{order.affairesList}} </strong>
+                  <p>{{order.servicesList}}</p>
+                </div>
+                <div class="card-footer">
+                  <div class="card-ticket pointer" (click)="openQuotation($event, order);$event.stopPropagation()">
+                    {{ order.id }}
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<mat-menu #menu="matMenu" style="max-width: 100%;">
+  <div mat-menu-item>
+    <span>Regrouper par : </span>
+  </div>
+  <div mat-menu-item *ngFor="let swimlaneType of swimlaneTypes"
+    (click)="selectedSwimlaneType=swimlaneType;startFilter(true)" class="pointer">
+    <mat-icon
+      *ngIf="selectedSwimlaneType && swimlaneType.fieldName==selectedSwimlaneType.fieldName">check</mat-icon>{{swimlaneType.label}}
+  </div>
+  <mat-divider></mat-divider>
+  <div mat-menu-item class="pointer" (click)="expandAll()">Déplier tout </div>
+  <div mat-menu-item class="pointer" (click)="collapseAll()">Replier tout </div>
+</mat-menu>
+
+<div class="side-panel" *ngIf="panelOpen">
+  <div *ngIf="!selectedEntity">
+    <div class="panel-loader">
+      <div class="skeleton skeleton-header"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line short"></div>
+      <div class="skeleton skeleton-block"></div>
+    </div>
+  </div>
+  <div *ngIf="selectedEntity">
+    <div class="panel-header">
+      <span class="task-id pointer" (click)="openQuotation($event, selectedEntity)">{{selectedEntity.id}}</span>
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="generateQuotationConfirmationToCustomer()">
+          <span>Recevoir le mail de confirmation du devis</span>
+        </button>
+        <mat-divider></mat-divider>
+      </mat-menu>
+      <button mat-icon-button (click)="panelOpen = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <h2 class="panel-title">{{selectedEntity.affairesList}}</h2>
+
+    <div class="status-wrapper">
+      <button mat-raised-button color="accent" [matMenuTriggerFor]="statusMenu">{{selectedEntity.quotationStatus.label}}
+        <mat-icon>expand_more</mat-icon></button>
+      <mat-menu #statusMenu="matMenu">
+        <button mat-menu-item (click)="displayQuotationWorkflowDialog()">
+          <span>Voir le workflow</span>
+        </button>
+        <button disabled mat-menu-item *ngIf="selectedEntity.quotationStatus.successors">
+          <span>Passer à</span>
+        </button>
+        <button mat-menu-item *ngFor="let status of selectedEntity.quotationStatus.successors"
+          (click)="changeQuotationStatus(selectedEntity,status)">
+          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+        </button>
+        <button disabled mat-menu-item
+          *ngIf="selectedEntity.quotationStatus.predecessors && selectedEntity.quotationStatus.predecessors.length>0">
+          <span>Revenir à</span>
+        </button>
+        <button mat-menu-item *ngFor="let status of selectedEntity.quotationStatus.predecessors"
+          (click)="changeQuotationStatus(selectedEntity, status)">
+          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+        </button>
+      </mat-menu>
+    </div>
+
+    <quotation-side-panel-details [selectedEntity]="selectedEntity" [possibleEntityStatus]="possibleEntityStatus!"
+      (triggerRefreshEntity)="fetchEntityAndOpenPanel(this.selectedEntity!, false, false)"></quotation-side-panel-details>
+  </div>

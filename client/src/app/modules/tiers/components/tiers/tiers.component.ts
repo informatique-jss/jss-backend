@@ -4,13 +4,16 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { Notification } from 'src/app/modules/miscellaneous/model/Notification';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { SearchService } from 'src/app/services/search.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { InvoiceSearch } from '../../../invoicing/model/InvoiceSearch';
@@ -59,10 +62,12 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     private tiersService: TiersService,
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
+    protected habilitationService: HabilitationsService,
     private constantService: ConstantService,
     public confirmationDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -248,5 +253,24 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   printLabel() {
     if (this.tiers && this.tiers.id)
       this.tiersService.printTiersLabel(this.tiers).subscribe();
+  }
+
+  addNewNotification() {
+    this.appService.addPersonnalNotification(() => this.tiersNotification = undefined, this.tiersNotification, undefined, undefined, undefined, undefined, undefined, this.tiers, undefined, undefined);
+  }
+
+  tiersNotification: Notification[] | undefined;
+
+  getNotificationForTiers() {
+    if (this.tiersNotification == undefined) {
+      this.tiersNotification = [];
+      if (this.tiers && this.tiers.id)
+        this.notificationService.getNotificationsForTiers(this.tiers.id).subscribe(response => this.tiersNotification = response);
+    }
+    return this.tiersNotification;
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
   }
 }

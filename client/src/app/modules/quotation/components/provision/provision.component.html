@@ -26,6 +26,11 @@
           {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
           +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
           {{asso.affaire.city.label}}
+          <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
+            (click)="addNewNotificationOnAffaire(asso.affaire);$event.stopPropagation();"
+            [matBadge]="getNotificationForAffaire(asso.affaire).length" *ngIf="canDisplayNotifications()"
+            [matBadgeHidden]="getNotificationForAffaire(asso.affaire).length<=0" matBadgePosition="below after"
+            matBadgeColor="warn" matBadgeSize="small" class="pointer">notifications</mat-icon>
         </mat-panel-title>
         <mat-panel-description>
           <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
@@ -55,13 +60,18 @@
         <mat-expansion-panel-header>
           <mat-panel-title>Service - {{service.serviceLabelToDisplay}}
           </mat-panel-title>
-          <mat-panel-description>
+          <mat-panel-description style="height:40px">
             <mat-icon color="accent" *ngIf="!editMode && service.id" matTooltip="Modifier le type de service"
               (click)="modifyService(service);$event.stopPropagation()" class="pointer">
               edit</mat-icon>
             <mat-icon color="accent" *ngIf="editMode  " matTooltip="Supprimer le service"
               (click)="deleteService(asso,service);$event.stopPropagation()" class="pointer">
               delete</mat-icon>
+            <mat-icon color="accent" matTooltip="Ajouter une notification sur ce service"
+              (click)="addNewNotificationOnService(service);$event.stopPropagation();"
+              [matBadge]="getNotificationForService(service).length" matBadgeSize="small"
+              *ngIf="canDisplayNotifications()" [matBadgeHidden]="getNotificationForService(service).length<=0"
+              matBadgePosition="below after" matBadgeColor="warn" class="pointer">notifications</mat-icon>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <service [service]=" service" [editMode]="editMode"
@@ -77,7 +87,7 @@
           <mat-panel-title>
             {{computeProvisionLabel(service, provision, true)}}
           </mat-panel-title>
-          <mat-panel-description>
+          <mat-panel-description style="height:40px">
             <span class="status-text"
               *ngIf="getActiveWorkflowElementsForProvisionFn(provision)">{{getActiveWorkflowElementsForProvisionFn(provision).label}}</span>
             <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
@@ -85,10 +95,15 @@
             </avatar-chip>
             <ng-template></ng-template>
           </mat-panel-description>
-          <mat-panel-description *ngIf="editMode">
+          <mat-panel-description>
             <mat-icon color="accent" matTooltip="Supprimer la prestation" (click)="deleteProvision(service,provision)"
-              class="pointer">
+              class="pointer" *ngIf="editMode">
               delete</mat-icon>
+            <mat-icon color="accent" matTooltip="Ajouter une notification sur cette prestation"
+              (click)="addNewNotificationOnProvision(provision);$event.stopPropagation();"
+              [matBadge]="getNotificationForProvision(provision).length" matBadgeSize="small"
+              *ngIf="canDisplayNotifications()" [matBadgeHidden]="getNotificationForProvision(provision).length<=0"
+              matBadgePosition="below after" matBadgeColor="warn" class="pointer">notifications</mat-icon>
           </mat-panel-description>
           <mat-panel-description *ngIf="editMode">
             <mat-icon color="accent" matTooltip="Dupliquer la prestation"

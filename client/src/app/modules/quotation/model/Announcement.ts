@@ -26,4 +26,5 @@ export interface Announcement extends IDocument {
   confrere: Confrere;
   isComplexAnnouncement: boolean;
   firstConfrereSentMailDateTime: boolean;
+  characterNumber: number;
 }

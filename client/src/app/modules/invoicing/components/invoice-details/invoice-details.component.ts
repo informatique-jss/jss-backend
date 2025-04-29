@@ -3,7 +3,9 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
+import { Notification } from 'src/app/modules/miscellaneous/model/Notification';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { QuotationComponent } from 'src/app/modules/quotation/components/quotation/quotation.component';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
@@ -51,7 +53,8 @@ export class InvoiceDetailsComponent implements OnInit {
     private serviceService: ServiceService,
     private invoiceItemService: InvoiceItemService,
     public editAmountInvoiceItemDialogComponent: MatDialog,
-    private mailComputeResultService: MailComputeResultService
+    private mailComputeResultService: MailComputeResultService,
+    private notificationService: NotificationService
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
@@ -290,5 +293,25 @@ export class InvoiceDetailsComponent implements OnInit {
 
   restoreTab() {
     this.index = this.userPreferenceService.getUserTabsSelectionIndex('invoice-details');
+  }
+
+  invoiceNotification: Notification[] | undefined;
+
+  getNotificationForInvoice() {
+    if (this.invoiceNotification == undefined) {
+      if (this.invoice) {
+        this.invoiceNotification = [];
+        this.notificationService.getNotificationsForInvoice(this.invoice.id).subscribe(response => this.invoiceNotification = response);
+      }
+    }
+    return this.invoiceNotification;
+  }
+
+  addNewNotification() {
+    this.appService.addPersonnalNotification(() => this.invoiceNotification = undefined, this.invoiceNotification, undefined, undefined, undefined, this.invoice, undefined, undefined, undefined, undefined);
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
   }
 }

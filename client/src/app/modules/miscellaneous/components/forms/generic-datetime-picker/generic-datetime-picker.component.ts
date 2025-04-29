@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { GenericFormComponent } from '../generic-form.components';
 import { AppService } from 'src/app/services/app.service';
+import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
   selector: 'generic-datetime-picker',
@@ -33,6 +33,27 @@ export class GenericDatetimePickerComponent extends GenericFormComponent impleme
   }
 
   callOnNgInit(): void {
+  }
+
+  ngOnInit() {
+    if (this.form != undefined) {
+      this.form.addControl(this.propertyName, this.formBuilder3.control({ value: '', disabled: this.isDisabled, validators: this.customValidators }, { updateOn: 'blur' }));
+      this.form.addValidators(this.checkField());
+      if (this.isDisabled) {
+        this.form?.get(this.propertyName)?.disable();
+      } else {
+        this.form?.get(this.propertyName)?.enable();
+      }
+      this.form.get(this.propertyName)!.valueChanges.subscribe(
+        (newValue) => {
+          this.model = newValue;
+          this.modelChange.emit(this.model);
+          this.onFormChange.emit(this.model);
+        }
+      )
+      this.callOnNgInit();
+      this.form.get(this.propertyName)?.setValue(this.model);
+    }
   }
 
   clearField(): void {

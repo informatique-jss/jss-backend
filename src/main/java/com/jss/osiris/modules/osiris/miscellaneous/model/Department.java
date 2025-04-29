@@ -29,7 +29,7 @@ public class Department implements Serializable, IId {
 	private String label;
 
 	@Column(nullable = false, length = 20)
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private String code;
 
 	@ManyToOne(fetch = FetchType.LAZY)

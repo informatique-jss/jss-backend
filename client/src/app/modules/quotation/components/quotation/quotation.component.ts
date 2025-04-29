@@ -10,7 +10,9 @@ import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { IReferential } from 'src/app/modules/administration/model/IReferential';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
@@ -24,6 +26,7 @@ import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
+import { Notification } from '../../../../modules/miscellaneous/model/Notification';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
@@ -131,6 +134,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private userPreferenceService: UserPreferenceService,
     private serviceService: ServiceService,
     private habilitationService: HabilitationsService,
+    private notificationService: NotificationService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -669,7 +673,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return newProvisionDuplicated;
   }
 
-  changeStatus(targetStatus: QuotationStatus) {
+  changeStatus(targetStatus: IWorkflowElement<any>) {
     this.isStatusOpen = true;
     this.editMode = true;
     setTimeout(() => {
@@ -1078,4 +1082,72 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return false;
   }
 
+  addNewNotification() {
+    if (instanceOfCustomerOrder(this.quotation))
+      this.appService.addPersonnalNotification(() => this.quotationNotification = undefined, this.quotationNotification, this.quotation, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+    if (instanceOfQuotation(this.quotation))
+      this.appService.addPersonnalNotification(() => this.quotationNotification = undefined, this.quotationNotification, undefined, undefined, undefined, undefined, this.quotation, undefined, undefined, undefined);
+  }
+
+  addNewNotificationOnAffaire(affaire: Affaire) {
+    this.appService.addPersonnalNotification(() => this.affaireNotification = [], this.affaireNotification ? this.affaireNotification[affaire.id] : undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, affaire);
+  }
+
+  addNewNotificationOnProvision(provision: Provision) {
+    this.appService.addPersonnalNotification(() => this.provisionNotification = [], this.provisionNotification ? this.provisionNotification[provision.id] : undefined, undefined, provision, undefined, undefined, undefined, undefined, undefined, undefined);
+  }
+
+  addNewNotificationOnService(service: Service) {
+    this.appService.addPersonnalNotification(() => this.serviceNotification = [], this.serviceNotification ? this.serviceNotification[service.id] : undefined, undefined, undefined, service, undefined, undefined, undefined, undefined, undefined);
+  }
+
+  affaireNotification: Notification[][] = [];
+  provisionNotification: Notification[][] = [];
+  serviceNotification: Notification[][] = [];
+  quotationNotification: Notification[] | undefined;
+
+
+  getNotificationForCustomerOrder() {
+    if (this.quotationNotification == undefined) {
+      this.quotationNotification = [];
+      this.notificationService.getNotificationsForCustomerOrder(this.quotation.id).subscribe(response => this.quotationNotification = response);
+    }
+    return this.quotationNotification;
+  }
+
+  getNotificationForQuotation() {
+    if (this.quotationNotification == undefined) {
+      this.quotationNotification = [];
+      this.notificationService.getNotificationsForQuotation(this.quotation.id).subscribe(response => this.quotationNotification = response);
+    }
+    return this.quotationNotification;
+  }
+
+  getNotificationForAffaire(affaire: Affaire) {
+    if (this.affaireNotification[affaire.id] == undefined) {
+      this.affaireNotification[affaire.id] = [];
+      this.notificationService.getNotificationsForAffaire(affaire.id).subscribe(response => this.affaireNotification[affaire.id] = response);
+    }
+    return this.affaireNotification[affaire.id];
+  }
+
+  getNotificationForService(service: Service) {
+    if (this.serviceNotification[service.id] == undefined) {
+      this.serviceNotification[service.id] = [];
+      this.notificationService.getNotificationsForService(service.id).subscribe(response => this.serviceNotification[service.id] = response);
+    }
+    return this.serviceNotification[service.id];
+  }
+
+  getNotificationForProvision(provision: Provision) {
+    if (this.provisionNotification[provision.id] == undefined) {
+      this.provisionNotification[provision.id] = [];
+      this.notificationService.getNotificationsForProvision(provision.id).subscribe(response => this.provisionNotification[provision.id] = response);
+    }
+    return this.provisionNotification[provision.id];
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
+  }
 }

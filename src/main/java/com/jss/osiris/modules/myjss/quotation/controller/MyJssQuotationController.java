@@ -1038,37 +1038,19 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/type-documents/service-type")
-	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<TypeDocument>> getTypeDocumentMandatoryByServiceType(
+	@GetMapping(inputEntryPoint + "/service-type")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<ServiceType> getServiceType(
 			@RequestParam("serviceTypeId") Integer serviceTypeId,
+			@RequestParam("isFetchOnlyMandatoryDocuments") Boolean isFetchOnlyMandatoryDocuments,
 			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
-		ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
+		if (serviceTypeId == null)
+			return new ResponseEntity<ServiceType>(new ServiceType(), HttpStatus.OK);
 
-		if (serviceType == null)
-			return new ResponseEntity<List<TypeDocument>>(new ArrayList<TypeDocument>(), HttpStatus.OK);
-
-		return new ResponseEntity<List<TypeDocument>>(
-				typeDocumentService.getTypeDocumentMandatoryByServiceType(serviceType),
-				HttpStatus.OK);
-	}
-
-	@GetMapping(inputEntryPoint + "/service-field-types/service-type")
-	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypeByServiceType(
-			@RequestParam("serviceTypeId") Integer serviceTypeId,
-			HttpServletRequest request) throws OsirisException {
-		detectFlood(request);
-
-		ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
-
-		if (serviceType == null)
-			return new ResponseEntity<List<ServiceFieldType>>(new ArrayList<ServiceFieldType>(), HttpStatus.OK);
-
-		return new ResponseEntity<List<ServiceFieldType>>(
-				serviceFieldTypeService.getServiceFieldTypeByServiceType(serviceType),
+		return new ResponseEntity<ServiceType>(
+				serviceTypeService.getServiceType(serviceTypeId, isFetchOnlyMandatoryDocuments),
 				HttpStatus.OK);
 	}
 

@@ -219,6 +219,7 @@ import { SelectDeliveryServiceComponent } from '../forms/select-delivery-service
 import { SelectDepartmentComponent } from '../forms/select-department/select-department.component';
 import { SelectDepartmentsComponent } from '../forms/select-departments/select-departments.component';
 import { SelectDocumentTypeComponent } from '../forms/select-document-type/select-document-type.component';
+import { SelectEmployeeComponent } from '../forms/select-employee/select-employee.component';
 import { SelectFollowupComponent } from '../forms/select-followup/select-followup.component';
 import { SelectFormaliteInfogreffeStatusComponent } from '../forms/select-formalite-infogreffe-status/select-formalite-infogreffe-status.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
@@ -232,6 +233,7 @@ import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection
 import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
 import { SelectNodeComponent } from '../forms/select-node/select-node.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
+import { SelectNotificationTypesComponent } from '../forms/select-notification-types/select-notification-types.component';
 import { SelectPaperSetTypeComponent } from '../forms/select-paper-set-type/select-paper-set-type.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
@@ -266,6 +268,7 @@ import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
 import { MultipleUploadComponent } from '../multiple-upload/multiple-upload.component';
 import { NotificationDialogComponent } from '../notification-dialog/notification-dialog.component';
+import { NotificationListComponent } from '../notification-list/notification-list.component';
 import { SingleAttachmentComponent } from '../single-attachment/single-attachment.component';
 import { SortTableComponent } from '../sort-table/sort-table.component';
 import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.component';
@@ -275,6 +278,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
+  { path: 'notifications', component: NotificationListComponent }
 ];
 
 @NgModule({
@@ -557,7 +561,10 @@ const routes: Routes = [
     SelectCategoryComponent,
     SelectPrintLabelRecipientComponent,
     SelectMyJssCategoryComponent,
-    SelectJssCategoryComponent
+    SelectJssCategoryComponent,
+    SelectEmployeeComponent,
+    SelectNotificationTypesComponent,
+    NotificationListComponent
   ],
   exports: [
     HistoryComponent,
@@ -803,7 +810,9 @@ const routes: Routes = [
     SelectCategoryComponent,
     SelectPrintLabelRecipientComponent,
     SelectMyJssCategoryComponent,
-    SelectJssCategoryComponent
+    SelectJssCategoryComponent,
+    SelectEmployeeComponent,
+    SelectNotificationTypesComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

@@ -4,12 +4,9 @@ import { jarallax } from 'jarallax';
 import { SERVICE_FIELD_TYPE_SELECT } from '../../../../libs/Constants';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { ServiceType } from '../../../my-account/model/ServiceType';
-import { TypeDocument } from '../../../my-account/model/TypeDocument';
-import { ServiceFieldTypeService } from '../../../my-account/services/service.field.type.service';
 import { ServiceFamily } from '../../../quotation/model/ServiceFamily';
 import { ServiceFamilyService } from '../../../quotation/services/service.family.service';
 import { ServiceTypeService } from '../../../quotation/services/service.type.service';
-import { TypeDocumentService } from '../../../quotation/services/type.document.service';
 
 @Component({
   selector: 'mandatory-documents',
@@ -19,23 +16,18 @@ import { TypeDocumentService } from '../../../quotation/services/type.document.s
 })
 export class MandatoryDocumentsComponent implements OnInit {
 
-  debounce: any;
   searchText: string = "";
   serviceFamilies: ServiceFamily[] = [];
   expandedCardIndex: number = -1;
-  serviceTypesFullLoaded: number[] = [];
   selectedFamilyTab: ServiceFamily = {} as ServiceFamily;
   serviceTypesByFamily: { [key: number]: Array<ServiceType> } = {};
   filteredServiceTypesByFamily: { [key: number]: Array<ServiceType> } = {};
-  mandatoryDocumentsByServiceTypes: { [key: number]: Array<TypeDocument | ServiceFieldType> } = {};
 
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyService: ServiceFamilyService,
     private serviceTypeService: ServiceTypeService,
-    private typeDocumentService: TypeDocumentService,
-    private serviceFieldTypeService: ServiceFieldTypeService
   ) { }
 
   ngOnInit() {
@@ -48,7 +40,10 @@ export class MandatoryDocumentsComponent implements OnInit {
             if (response) {
               if (!this.serviceTypesByFamily[serviceFamily.id])
                 this.serviceTypesByFamily[serviceFamily.id] = [];
-              this.serviceTypesByFamily[serviceFamily.id] = response;
+              if (response)
+                for (let service of response) {
+                  this.serviceTypesByFamily[serviceFamily.id][service.id] = service;
+                }
               this.applyFilterOnServiceTypes();
             }
           });
@@ -79,22 +74,12 @@ export class MandatoryDocumentsComponent implements OnInit {
     else if (serviceType.id)
       this.expandedCardIndex = serviceType.id;
 
-    if (this.expandedCardIndex >= 0 && serviceType.id && this.serviceTypesFullLoaded.indexOf(serviceType.id) < 0) {
-      this.typeDocumentService.getTypeDocumentMandatoryByServiceType(serviceType).subscribe(response => {
+    if (this.expandedCardIndex >= 0 && serviceType.id && (!this.serviceTypesByFamily[this.selectedFamilyTab.id][serviceType.id].assoServiceTypeFieldTypes && !this.serviceTypesByFamily[this.selectedFamilyTab.id][serviceType.id].assoServiceTypeDocuments)) {
+      this.serviceTypeService.getServiceTypeWithIsMandatoryDocuments(serviceType, true).subscribe(response => {
         if (response && serviceType.id) {
-          if (!this.mandatoryDocumentsByServiceTypes[serviceType.id])
-            this.mandatoryDocumentsByServiceTypes[serviceType.id] = [];
-          this.mandatoryDocumentsByServiceTypes[serviceType.id] = response;
-          this.serviceTypesFullLoaded.push(serviceType.id);
+          this.serviceTypesByFamily[this.selectedFamilyTab.id][serviceType.id] = response;
+          this.applyFilterOnServiceTypes();
         }
-        this.serviceFieldTypeService.getServiceFieldTypesByServiceType(serviceType).subscribe(response => {
-          if (response) {
-            if (!this.mandatoryDocumentsByServiceTypes[serviceType.id])
-              this.mandatoryDocumentsByServiceTypes[serviceType.id] = [];
-            if (this.serviceTypesFullLoaded.indexOf(serviceType.id) < 0)
-              this.serviceTypesFullLoaded.push(serviceType.id);
-          }
-        });
       });
     }
   }
@@ -109,8 +94,10 @@ export class MandatoryDocumentsComponent implements OnInit {
   applyFilterOnServiceTypes() {
     if (this.serviceFamilies)
       for (let serviceFamily of this.serviceFamilies)
-        this.filteredServiceTypesByFamily[serviceFamily.id] = this.serviceTypesByFamily[serviceFamily.id].
-          filter(serviceType => serviceType.customLabel.toLowerCase().includes(this.searchText.toLowerCase()));
+        if (this.searchText && this.searchText.length > 2)
+          this.filteredServiceTypesByFamily[serviceFamily.id] = this.serviceTypesByFamily[serviceFamily.id].
+            filter(serviceType => serviceType.customLabel.toLowerCase().includes(this.searchText.toLowerCase()));
+        else this.filteredServiceTypesByFamily[serviceFamily.id] = this.serviceTypesByFamily[serviceFamily.id];
   }
 
   clearSearch() {

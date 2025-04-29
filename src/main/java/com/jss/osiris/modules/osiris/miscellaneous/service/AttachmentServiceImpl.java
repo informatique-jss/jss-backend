@@ -37,6 +37,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.miscellaneous.repository.AttachmentRepository;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -134,6 +135,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     MissingAttachmentQueryService missingAttachmentQueryService;
 
+    @Autowired
+    EmployeeService employeeService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -196,9 +200,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (attachments != null && attachments.size() > 0) {
                 for (Attachment attachment : attachments) {
                     if (attachment.getAttachmentType().getCode().equals(attachmentType.getCode())) {
-                        storageFileService.deleteFile(attachment.getUploadedFile().getPath());
-                        uploadedFileService.deleteUploadedFile(attachment.getUploadedFile());
-                        deleteAttachment(attachment);
+                        definitivelyDeleteAttachment(attachment);
                     }
                 }
             }
@@ -266,8 +268,9 @@ public class AttachmentServiceImpl implements AttachmentService {
                         null);
             }
 
-            // Notify user
-            notificationService.notifyAttachmentAddToProvision(provision, attachment);
+            // Notify user only if it's a Osiris user
+            if (employeeService.getCurrentEmployee() != null)
+                notificationService.notifyAttachmentAddToProvision(provision, attachment);
 
             // Attached publication flag to service
             if (attachment.getAttachmentType().getId()
@@ -289,6 +292,10 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (customerOrder == null)
                 return new ArrayList<Attachment>();
             attachment.setCustomerOrder(customerOrder);
+            // Notify user only if not a mail and by a Osiris user
+            if (!attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAutomaticMail().getId())
+                    && employeeService.getCurrentEmployee() != null)
+                notificationService.notifyAttachmentAddToCustomerorder(customerOrder, attachment);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             Invoice invoice = invoiceService.getInvoice(idEntity);
             if (invoice == null)
@@ -338,11 +345,20 @@ public class AttachmentServiceImpl implements AttachmentService {
         return getAttachmentForEntityType(entityType, idEntity, codeEntity);
     }
 
-    @Override
-    public void deleteAttachment(Attachment attachment) {
+    private void deleteAttachment(Attachment attachment) {
         if (attachment != null) {
             attachmentRepository.delete(attachment);
         }
+    }
+
+    public Boolean definitivelyDeleteAttachment(Attachment attachment) {
+        Boolean isDelete = uploadedFileService.definitivelyDeleteUploadedFile(attachment.getUploadedFile());
+        if (isDelete) {
+            uploadedFileService.deleteUploadedFile(attachment.getUploadedFile());
+            deleteAttachment(attachment);
+            return true;
+        }
+        return false;
     }
 
     @Override

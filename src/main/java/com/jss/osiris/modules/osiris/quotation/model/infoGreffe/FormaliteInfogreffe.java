@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 
@@ -52,6 +54,7 @@ public class FormaliteInfogreffe {
     private GreffeInfogreffe greffeDestinataire;
 
     @IndexedField
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private String referenceTechnique;
     private String referenceClient;
     private String numeroLiasse;

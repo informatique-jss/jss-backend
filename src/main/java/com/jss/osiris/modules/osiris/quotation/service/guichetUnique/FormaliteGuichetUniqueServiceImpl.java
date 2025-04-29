@@ -404,6 +404,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                                         .getLabel()
                                                 + ")");
 
+                        notificationService.notifyGuichetUniqueFormaliteStatus(formalite.getProvision().get(0));
                         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                                 constantService.getActiveDirectoryGroupFormalites());
 
@@ -422,6 +423,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                                 .getCustomerOrder(),
                                         "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " validée");
 
+                        notificationService.notifyGuichetUniqueFormaliteStatus(formalite.getProvision().get(0));
                         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                                 constantService.getActiveDirectoryGroupFormalites());
                     }
@@ -536,6 +538,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setManualAccountingDocumentDate(
                 LocalDate.parse(cart.getPaymentDate(),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+
+        if (invoice.getManualAccountingDocumentDate().isBefore(constantService.getDateAccountingClosureForAll()))
+            invoice.setManualAccountingDocumentDate(constantService.getDateAccountingClosureForAll());
 
         if (invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())

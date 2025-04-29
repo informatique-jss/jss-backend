@@ -26,4 +26,7 @@ export interface IQuotation extends IAttachment, IDocument {
   customerOrderOrigin: CustomerOrderOrigin;
   abandonReason: QuotationAbandonReason;
   customerOrderComments: CustomerOrderComment[];
+  lastStatusUpdate: Date;
+  affairesList: string;
+  servicesList: string;
 }

@@ -3,7 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
 import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { formatDateTimeFrance } from 'src/app/libs/FormatHelper';
-import { copyObject, copyObjectList } from 'src/app/libs/GenericHelper';
 import { ActiveDirectoryGroup } from 'src/app/modules/miscellaneous/model/ActiveDirectoryGroup';
 import { ActiveDirectoryGroupService } from 'src/app/modules/miscellaneous/services/active.directory.group.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -12,7 +11,6 @@ import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { Employee } from '../../../profile/model/Employee';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
-import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { Quotation } from '../../model/Quotation';
 import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
@@ -32,7 +30,7 @@ export class CustomerOrderCommentComponent implements OnInit {
   newComment: CustomerOrderComment = {} as CustomerOrderComment;
   currentEmployee: Employee | undefined;
   adGroups: ActiveDirectoryGroup[] = [];
-  isDisplayCommentInput: boolean = false;
+  @Input() isDisplayCommentInput: boolean = false;
   initialCommentValue: string = "";
 
   constructor(
@@ -69,42 +67,21 @@ export class CustomerOrderCommentComponent implements OnInit {
   refreshComments() {
     this.comments = [];
     if (this.provision) {
-      this.comments = copyObjectList(this.provision.customerOrderComments, false);
+      this.customerOrderCommentService.getCustomerOrderCommentForProvision(this.provision.id).subscribe(response => { this.comments = response; this.sortComments() });
     } else if (this.quotation) {
-      this.comments = copyObjectList(this.quotation.customerOrderComments, false);
-      this.pushCommentsFromIQuotation(this.quotation);
+      this.customerOrderCommentService.getCustomerOrderCommentForQuotation(this.quotation.id).subscribe(response => { this.comments = response; this.sortComments() });
     } else if (this.customerOrder) {
-      this.comments = copyObjectList(this.customerOrder.customerOrderComments, false);
-      this.pushCommentsFromIQuotation(this.customerOrder);
+      this.customerOrderCommentService.getCustomerOrderCommentForOrder(this.customerOrder.id).subscribe(response => { this.comments = response; this.sortComments() });
     }
+
+  }
+
+  sortComments() {
     if (this.comments && this.currentEmployee) {
       this.comments.sort((a: CustomerOrderComment, b: CustomerOrderComment) => new Date(b.createdDateTime).getTime() - new Date(a.createdDateTime).getTime());
 
       for (let comment of this.comments) {
         comment.isCurrentUserInGroup = this.activeDirectoryGroupService.isEmployeeInGroupList(this.currentEmployee, comment.activeDirectoryGroups);
-      }
-    }
-  }
-
-  pushCommentsFromIQuotation(quotation: IQuotation) {
-    if (quotation && quotation.assoAffaireOrders) {
-      for (let asso of quotation.assoAffaireOrders) {
-        if (asso.services) {
-          for (let service of asso.services) {
-            if (service.provisions) {
-              for (let provision of service.provisions) {
-                if (provision.customerOrderComments) {
-                  for (let comment of provision.customerOrderComments) {
-                    let commentCopy = copyObject(comment, false);
-                    commentCopy.provision = copyObject(provision, false);
-                    commentCopy.provision.service = copyObject(service, false);
-                    this.comments.push(commentCopy);
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     }
   }
@@ -218,7 +195,7 @@ export class CustomerOrderCommentComponent implements OnInit {
           styles: true
         }
       ]
-    }
+    },
   } as any;
 
   onCommentChange(event: ChangeEvent) {

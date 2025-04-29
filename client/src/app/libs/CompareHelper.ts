@@ -5,5 +5,5 @@ export function compareWithId(o1: any, o2: any) {
     return o1.id == o2.id;
   if (o1.code && o2.code)
     return o1.code == o2.code;
-  return false
+  return o1 == o2;
 }

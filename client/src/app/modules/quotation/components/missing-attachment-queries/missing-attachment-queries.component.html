@@ -1,46 +1,25 @@
 <ng-container *ngIf="customerOrder">
   <ng-container *ngFor="let asso of customerOrder.assoAffaireOrders">
     <div class="mat-accordion-container full-width">
-      <mat-accordion multi>
-        <mat-expansion-panel expanded="false">
-          <mat-expansion-panel-header>
-            <mat-panel-title>Détails de l'affaire -
-              {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
-              +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
-              {{asso.affaire.city.label}}
-            </mat-panel-title>
-            <mat-panel-description>
-              <avatar-chip *ngIf="asso.assignedTo && asso.id" [employee]="asso.assignedTo">
-              </avatar-chip>
-              <ng-template></ng-template>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
-          <div>
-            <autocomplete-employee [(model)]="asso.assignedTo" [form]="missingAttachmentForm" propertyName="assignedTo"
-              [isMandatory]="true" [isDisabled]="false" label="Affaire assignée à">
-            </autocomplete-employee>
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
+      <p> {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
+        +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
+        {{asso.affaire.city.label}}</p>
     </div>
     <ng-container *ngFor="let service of asso.services">
-      <ng-container *ngIf="service.missingAttachmentQueries && service.missingAttachmentQueries.length>0">
-        <div class="mat-accordion-container full-width">
-          <mat-accordion multi>
-            <mat-expansion-panel expanded="false" class="service-tab ">
-              <mat-expansion-panel-header>
-                <mat-panel-title>Service - {{service.serviceLabelToDisplay}}
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
-        <div class="mat-accordion-container">
-          <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="getValues(service)"
-            tableName="Demandes de PM" [isSmallerHeight]="true"></sort-table>
-        </div>
-      </ng-container>
+      <div class="mat-accordion-container full-width">
+        <mat-accordion multi>
+          <mat-expansion-panel expanded="false" class="service-tab ">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Service - {{getServiceLabel(service)}}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+      <div class="mat-accordion-container">
+        <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="queries" tableName="Demandes de PM"
+          [isSmallerHeight]="true"></sort-table>
+      </div>
     </ng-container>
   </ng-container>
 </ng-container>

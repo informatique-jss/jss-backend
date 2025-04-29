@@ -28,6 +28,9 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
 
+    @Autowired
+    StorageFileService storageFileService;
+
     @Override
     public List<UploadedFile> getUploadedFiles() {
         return IterableUtils.toList(uploadedFileRepository.findAll());
@@ -60,6 +63,15 @@ public class UploadedFileServiceImpl implements UploadedFileService {
         if (uploadedFile != null) {
             uploadedFileRepository.delete(uploadedFile);
         }
+    }
+
+    @Override
+    public Boolean definitivelyDeleteUploadedFile(UploadedFile uploadedFile) {
+        if (storageFileService.deleteFile(uploadedFile.getPath())) {
+            deleteUploadedFile(uploadedFile);
+            return true;
+        }
+        return false;
     }
 
     private String computeChecksumForFile(String absoluteFilePath) throws OsirisException {

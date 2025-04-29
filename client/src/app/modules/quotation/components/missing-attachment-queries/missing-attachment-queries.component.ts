@@ -19,6 +19,7 @@ import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-
 export class MissingAttachmentQueriesComponent implements OnInit {
 
   @Input() customerOrder: CustomerOrder | undefined;
+  queries: MissingAttachmentQuery[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -64,17 +65,25 @@ export class MissingAttachmentQueriesComponent implements OnInit {
       }, display: true
     } as SortTableAction<MissingAttachmentQuery>);
 
+    this.getValues();
+
   }
 
-  getValues(service: Service) {
-    if (service && service.missingAttachmentQueries && service.missingAttachmentQueries.length > 0) {
-      service.missingAttachmentQueries.sort(function (a: MissingAttachmentQuery, b: MissingAttachmentQuery) {
-        return new Date(b.createdDateTime!).getTime() - new Date(a.createdDateTime!).getTime();
-      });
-
-      return service.missingAttachmentQueries;
-    }
-    return [];
+  getValues() {
+    if (this.customerOrder && this.customerOrder.assoAffaireOrders)
+      for (let asso of this.customerOrder.assoAffaireOrders)
+        if (asso.services)
+          for (let service of asso.services)
+            if (service) {
+              this.missingAttachmentQueryService.getMissingAttachmentQueriesForService(service.id).subscribe(response => {
+                if (response) {
+                  this.queries = response;
+                  this.queries.sort(function (a: MissingAttachmentQuery, b: MissingAttachmentQuery) {
+                    return new Date(b.createdDateTime!).getTime() - new Date(a.createdDateTime!).getTime();
+                  });
+                }
+              })
+            }
   }
 
 }

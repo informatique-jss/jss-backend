@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ACCOUNTING, ACCOUNTING_RESPONSIBLE, ADMINISTRATEURS, LoginService } from '../routing/login-dialog/login.service';
+import { ACCOUNTING, ACCOUNTING_RESPONSIBLE, ADMINISTRATEURS, BETA_TESTEURS, LoginService } from '../routing/login-dialog/login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +9,10 @@ export class HabilitationsService {
   constructor(http: HttpClient,
     private loginService: LoginService,
   ) {
+  }
+
+  canDisplayNotifications() {
+    return this.loginService.hasGroup([BETA_TESTEURS])
   }
 
   isAdministrator() {

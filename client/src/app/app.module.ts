@@ -64,7 +64,7 @@ registerLocaleData(localeFr, 'fr');
       spinner: false,
     }),
     NgProgressHttpModule.withConfig({
-      silentApis: ['notifications']
+      silentApis: ['nbr']
     }),
     // Angular material modules
     MatIconModule,

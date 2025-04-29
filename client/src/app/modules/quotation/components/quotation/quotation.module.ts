@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -121,6 +122,7 @@ const routes: Routes = [
     MatTabsModule,
     MatDividerModule,
     MiscellaneousModule,
+    MatBadgeModule,
     MatSidenavModule,
     MatTableModule,
     MatSortModule,
@@ -197,7 +199,9 @@ const routes: Routes = [
     DirectDebitTransfertListComponent,
     QuotationComponent,
     OrderingListTaggedComponent,
-    InfogreffeStatusComponent
+    InfogreffeStatusComponent,
+    CustomerOrderCommentComponent,
+    MissingAttachmentQueriesComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
