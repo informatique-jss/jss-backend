@@ -1060,6 +1060,24 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
+	@PostMapping(inputEntryPoint + "/services")
+	public ResponseEntity<Boolean> addOrUpdateServices(@RequestBody List<Service> services,
+			@RequestParam("affaireId") Integer affaireId) throws OsirisException {
+
+		Affaire affaire = null;
+
+		if (affaireId != null) {
+			affaire = affaireService.getAffaire(affaireId);
+		}
+
+		if (affaire != null) {
+			serviceService.addOrUpdateServices(services, affaire, null);
+
+			return new ResponseEntity<>(true, HttpStatus.OK);
+		}
+		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/service-family-groups")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<ServiceFamilyGroup>> getServiceFamilyGroups(HttpServletRequest request) {

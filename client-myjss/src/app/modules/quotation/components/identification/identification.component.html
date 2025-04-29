@@ -9,7 +9,7 @@
       propertyName="quotationType"></radio-group-quotation-type>
   </section>
 
-  <section class="quotation-container">
+  <section *ngIf="!currentDraftStep" class="quotation-container">
     <div *ngIf="!hideFamilyGroupServiceSelection">
       <h6><i class="ai-pen pe-2"></i>Pour quel service ?</h6>
       <div *ngFor="let serviceFamily of familyGroupService" class="btn btn-outline-secondary m-2"

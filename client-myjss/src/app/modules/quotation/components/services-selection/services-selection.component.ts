@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { combineLatest } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -93,7 +94,7 @@ export class ServicesSelectionComponent implements OnInit {
     if (this.quotation && this.selectedAssoIndex != null)
       if (this.currentUser) {
         if (!this.applyToAllAffaires)
-          this.serviceService.addServiceToAssoAffaireOrder(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex]).subscribe(response => {
+          this.serviceService.getServiceForServiceTypeAndAffaire(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire).subscribe(response => {
             if (!this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services)
               this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services = [];
             this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services.push(response);
@@ -101,7 +102,7 @@ export class ServicesSelectionComponent implements OnInit {
         else
           for (let asso of this.quotation.assoAffaireOrders) {
             let index = this.quotation.assoAffaireOrders.indexOf(asso);
-            this.serviceService.addServiceToAssoAffaireOrder(service, this.quotation.assoAffaireOrders[index]).subscribe(response => {
+            this.serviceService.getServiceForServiceTypeAndAffaire(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire).subscribe(response => {
               if (!this.quotation!.assoAffaireOrders[index].services)
                 this.quotation!.assoAffaireOrders[index].services = [];
               this.quotation!.assoAffaireOrders[index].services.push(response);
@@ -164,7 +165,14 @@ export class ServicesSelectionComponent implements OnInit {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
         } else {
           this.orderService.setCurrentDraftOrder(this.quotation);
+
         }
+      } else {
+        let promises = [];
+        for (let asso of this.quotation.assoAffaireOrders) {
+          promises.push(this.serviceService.addOrUpdateServices(asso.services, asso.affaire.id));
+        }
+        combineLatest(promises).subscribe();
       }
       this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
       this.appService.openRoute(undefined, "quotation", undefined);
@@ -172,6 +180,7 @@ export class ServicesSelectionComponent implements OnInit {
   }
 
   goBackQuotation() {
-
+    this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[0]);
+    this.appService.openRoute(undefined, "quotation", undefined);
   }
 }

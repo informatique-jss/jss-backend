@@ -169,6 +169,11 @@ public class Quotation implements IQuotation {
 			JacksonViews.OsirisDetailedView.class })
 	public Boolean hasMissingInformations;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_service_family_group")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceFamilyGroup serviceFamilyGroup;
+
 	public Integer getId() {
 		return id;
 	}
@@ -367,6 +372,14 @@ public class Quotation implements IQuotation {
 
 	public void setHasMissingInformations(Boolean hasMissingInformations) {
 		this.hasMissingInformations = hasMissingInformations;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroup() {
+		return serviceFamilyGroup;
+	}
+
+	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup) {
+		this.serviceFamilyGroup = serviceFamilyGroup;
 	}
 
 }

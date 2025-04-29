@@ -65,6 +65,16 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
+    public Boolean addOrUpdateServices(List<Service> services, Affaire affaire, String customLabel)
+            throws OsirisException {
+        for (Service service : generateServiceInstanceFromMultiServiceTypes(
+                services.stream().map(Service::getServiceType).toList(), affaire, customLabel)) {
+            addOrUpdateService(service);
+        }
+        return true;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean deleteService(Service service) {
         if (service.getProvisions() != null && service.getProvisions().size() > 0) {
@@ -78,6 +88,17 @@ public class ServiceServiceImpl implements ServiceService {
         }
         serviceRepository.delete(service);
         return true;
+    }
+
+    // TODO : delete before merge
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes, Affaire affaire,
+            String customLabel) throws OsirisException {
+
+        List<Service> services = new ArrayList<Service>();
+
+        return services;
     }
 
     @Override
@@ -360,4 +381,5 @@ public class ServiceServiceImpl implements ServiceService {
                         }
         return attachments;
     }
+
 }

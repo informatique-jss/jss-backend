@@ -43,6 +43,8 @@ export class IdentificationComponent implements OnInit {
   currentUser: Responsable | undefined;
   isSavingQuotation: boolean = false;
 
+  currentDraftStep: string | null = this.quotationService.getCurrentDraftQuotationStep();
+
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyGroupService: ServiceFamilyGroupService,
     private affaireService: AffaireService,
