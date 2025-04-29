@@ -26,15 +26,12 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.BillingItemService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
-import com.jss.osiris.modules.osiris.quotation.model.AssoServiceServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -49,6 +46,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
 import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -78,16 +76,7 @@ public class PricingHelper {
     InvoiceItemService invoiceItemService;
 
     @Autowired
-    DocumentService documentService;
-
-    @Autowired
     VatService vatService;
-
-    @Autowired
-    CityService cityService;
-
-    @Autowired
-    ProvisionService provisionService;
 
     @Autowired
     AuditService auditService;
@@ -324,16 +313,16 @@ public class PricingHelper {
                                 : zeroValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
         } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()
-                && !provision.getService().getAssoServiceServiceTypes().isEmpty()) {
-            for (AssoServiceServiceType assoServiceServiceType : provision.getService().getAssoServiceServiceTypes()) {
+                && !provision.getService().getServiceTypes().isEmpty()) {
+            for (ServiceType serviceType : provision.getService().getServiceTypes()) {
                 if (billingItem.getBillingType().getIsNonTaxable() == false
-                        && assoServiceServiceType.getServiceType().getDefaultDeboursPrice() != null) {
+                        && serviceType.getDefaultDeboursPrice() != null) {
                     invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
-                            .add(assoServiceServiceType.getServiceType().getDefaultDeboursPrice()));
+                            .add(serviceType.getDefaultDeboursPrice()));
                 } else if (billingItem.getBillingType().getIsNonTaxable() == true
-                        && assoServiceServiceType.getServiceType().getDefaultDeboursPriceNonTaxable() != null) {
+                        && serviceType.getDefaultDeboursPriceNonTaxable() != null) {
                     invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
-                            .add(assoServiceServiceType.getServiceType().getDefaultDeboursPriceNonTaxable()));
+                            .add(serviceType.getDefaultDeboursPriceNonTaxable()));
                 }
             }
         } else {

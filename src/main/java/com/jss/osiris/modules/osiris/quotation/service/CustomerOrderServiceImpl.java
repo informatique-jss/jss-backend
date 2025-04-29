@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1573,10 +1572,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             for (Service service : assoAffaireOrder.getServices()) {
                                 String serviceLabel = service.getCustomLabel();
                                 if (serviceLabel == null || serviceLabel.length() == 0)
-                                    serviceLabel = String.join(" / ",
-                                            service.getAssoServiceServiceTypes().stream()
-                                                    .map(asso -> asso.getServiceType().getLabel())
-                                                    .collect(Collectors.toList()));
+                                    serviceLabel = service.getServiceLabelToDisplay();
                                 if (serviceLabels.indexOf(serviceLabel) < 0)
                                     serviceLabels.add(serviceLabel);
                             }

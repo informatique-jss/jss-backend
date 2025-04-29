@@ -79,7 +79,7 @@
             <ng-container *ngFor="let provision of service.provisions;let indexProvision = index">
               <tr class="mat-mdc-row mdc-data-table__row ">
                 <td class="mat-mdc-cell mdc-data-table__cell  affaire  affaire-align  " colspan="2">
-                  {{service.customLabel}}
+                  {{service.serviceLabelToDisplay}}
                 </td>
               </tr>
               <tr class="mat-mdc-row mdc-data-table__row " *ngIf="provision.provisionType">

@@ -36,16 +36,15 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentVatSettingService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
-import com.jss.osiris.modules.osiris.quotation.model.AssoServiceServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Cart;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.CartRate;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -90,9 +89,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     InvoiceService invoiceService;
-
-    @Autowired
-    NotificationService notificationService;
 
     @Autowired
     PricingHelper pricingHelper;
@@ -760,13 +756,13 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         .equals(constantService.getDocumentTypeSynthesisRbeUnsigned().getCode())) {
             Boolean isProvisionRbe = false;
 
-            if (!currentService.getAssoServiceServiceTypes().isEmpty()) {
-                for (AssoServiceServiceType asso : currentService.getAssoServiceServiceTypes()) {
-                    if (asso.getServiceType().getServiceFamily().getId()
+            if (!currentService.getServiceTypes().isEmpty()) {
+                for (ServiceType serviceType : currentService.getServiceTypes()) {
+                    if (serviceType.getServiceFamily().getId()
                             .equals(constantService.getServiceFamilyImmatriculationAlAndFormality().getId()))
                         return false;
 
-                    if (asso.getServiceType().getId()
+                    if (serviceType.getId()
                             .equals(constantService.getServiceTypeSecondaryCenterOpeningAlAndFormality().getId()))
                         return false;
                 }

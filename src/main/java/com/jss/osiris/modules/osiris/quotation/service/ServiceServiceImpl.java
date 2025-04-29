@@ -17,7 +17,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
-import com.jss.osiris.modules.osiris.quotation.model.AssoServiceServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
@@ -44,7 +43,7 @@ public class ServiceServiceImpl implements ServiceService {
     AttachmentService attachmentService;
 
     @Autowired
-    AssoServiceServiceTypeService assoServiceServiceTypeService;
+    ProvisionService provisionService;
 
     @Override
     public Service getService(Integer id) {
@@ -108,7 +107,6 @@ public class ServiceServiceImpl implements ServiceService {
             String customLabel)
             throws OsirisException {
 
-        ArrayList<AssoServiceServiceType> assoServiceServiceTypes = new ArrayList<AssoServiceServiceType>();
         ArrayList<Integer> newAssoServiceServiceTypeIds = new ArrayList<Integer>();
         ArrayList<AssoServiceDocument> assoServiceDocuments = new ArrayList<AssoServiceDocument>();
         ArrayList<String> typeDocumentCodes = new ArrayList<String>();
@@ -130,10 +128,13 @@ public class ServiceServiceImpl implements ServiceService {
                     }
 
             // Asso service - serviceType
-            AssoServiceServiceType newAssoServiceServiceType = generateAssoServiceServiceType(serviceType, service);
-            if (!newAssoServiceServiceTypeIds.contains(newAssoServiceServiceType.getServiceType().getId())) {
-                assoServiceServiceTypes.add(newAssoServiceServiceType);
-                newAssoServiceServiceTypeIds.add(newAssoServiceServiceType.getServiceType().getId());
+            if (!newAssoServiceServiceTypeIds.contains(serviceType.getId())) {
+                newAssoServiceServiceTypeIds.add(serviceType.getId());
+                if (service.getServiceTypes() != null && service.getServiceTypes().size() > 0)
+                    service.getServiceTypes().add(serviceType);
+                else
+                    service.setServiceTypes(new ArrayList<>(Arrays.asList(serviceType)));
+
             }
 
             if (serviceType.getAssoServiceTypeDocuments() != null)
@@ -174,7 +175,6 @@ public class ServiceServiceImpl implements ServiceService {
         newAssoServiceFieldType.setServiceFieldType(constantService.getFurtherInformationServiceFieldType());
         assoServiceFieldTypes.add(newAssoServiceFieldType);
 
-        service.setAssoServiceServiceTypes(assoServiceServiceTypes);
         service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         service.setAssoServiceDocuments(assoServiceDocuments);
         service = computeServiceLabel(service);
@@ -190,7 +190,7 @@ public class ServiceServiceImpl implements ServiceService {
         ArrayList<AssoServiceProvisionType> provisionTypeSimpleProvisionNotMergeable = new ArrayList<AssoServiceProvisionType>();
         ArrayList<AssoServiceProvisionType> provisionTypeAnnouncementCharacter = new ArrayList<AssoServiceProvisionType>();
 
-        if (assoServiceProvisionTypes != null && assoServiceProvisionTypes.size() > 1) {
+        if (assoServiceProvisionTypes != null && assoServiceProvisionTypes.size() > 0) {
             provisionTypeFormalitesMergeable.addAll(assoServiceProvisionTypes.stream()
                     .filter(s -> s.getProvisionType().getIsMergeable()
                             && s.getProvisionType().getProvisionScreenType().getCode()
@@ -220,21 +220,21 @@ public class ServiceServiceImpl implements ServiceService {
                     .toList());
         }
 
-        if (provisionTypeFormalitesMergeable.size() > 1)
+        if (provisionTypeFormalitesMergeable.size() > 0)
             newProvisions
                     .add(generateProvisionFromProvisionType(provisionTypeFormalitesMergeable.get(0).getProvisionType(),
                             service));
-        if (provisionTypeFormalitesNotMergeable.size() > 1)
+        if (provisionTypeFormalitesNotMergeable.size() > 0)
             for (AssoServiceProvisionType asso : provisionTypeFormalitesNotMergeable)
                 newProvisions.add(generateProvisionFromProvisionType(asso.getProvisionType(), service));
 
-        if (provisionTypeSimpleProvisionMergeable.size() > 1)
+        if (provisionTypeSimpleProvisionMergeable.size() > 0)
             newProvisions
                     .add(generateProvisionFromProvisionType(
                             provisionTypeSimpleProvisionMergeable.get(0).getProvisionType(),
                             service));
 
-        if (provisionTypeSimpleProvisionNotMergeable.size() > 1)
+        if (provisionTypeSimpleProvisionNotMergeable.size() > 0)
             for (AssoServiceProvisionType asso : provisionTypeSimpleProvisionNotMergeable)
                 newProvisions.add(generateProvisionFromProvisionType(asso.getProvisionType(), service));
 
@@ -288,14 +288,6 @@ public class ServiceServiceImpl implements ServiceService {
             provision.setIsSupplyFullBeCopy(false);
         }
         return provision;
-    }
-
-    private AssoServiceServiceType generateAssoServiceServiceType(
-            ServiceType serviceType, Service service) {
-        AssoServiceServiceType assoServiceServiceType = new AssoServiceServiceType();
-        assoServiceServiceType.setServiceType(serviceType);
-        assoServiceServiceType.setService(service);
-        return assoServiceServiceType;
     }
 
     private AssoServiceDocument getAssoServiceDocumentFromAssoServiceTypeDocument(
@@ -410,13 +402,14 @@ public class ServiceServiceImpl implements ServiceService {
         service = getService(service.getId());
 
         ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
-        ArrayList<AssoServiceServiceType> assoServiceToDelete = new ArrayList<AssoServiceServiceType>();
+        ArrayList<Integer> serviceTypeIds = new ArrayList<Integer>();
 
         for (ServiceType serviceType : serviceTypes) {
             serviceType = serviceTypeService.getServiceType(serviceType.getId());
-            service.getAssoServiceServiceTypes()
-                    .add(assoServiceServiceTypeService
-                            .addOrUpdateAssoServiceServiceType(generateAssoServiceServiceType(serviceType, service)));
+            if (!serviceTypeIds.contains(serviceType.getId())) {
+                serviceTypeIds.add(serviceType.getId());
+                service.getServiceTypes().add(serviceType);
+            }
 
             for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
                 boolean found = false;
@@ -480,9 +473,10 @@ public class ServiceServiceImpl implements ServiceService {
                 for (AssoServiceDocument asso : finalAssos)
                     service.getAssoServiceDocuments().add(asso);
 
-            service.getProvisions()
-                    .addAll(getProvisionsFromServiceType(serviceType, service.getAssoAffaireOrder().getAffaire(),
-                            service));
+            List<Provision> newProvisions = getProvisionsFromServiceType(serviceType,
+                    service.getAssoAffaireOrder().getAffaire(), service);
+            newProvisions.forEach(provision -> provisionService.addOrUpdateProvision(provision));
+            service.getProvisions().addAll(newProvisions);
         }
 
         return addOrUpdateService(service);
@@ -491,11 +485,8 @@ public class ServiceServiceImpl implements ServiceService {
     private Service computeServiceLabel(Service service) {
         if (service != null) {
             if (service.getCustomLabel() == null || service.getCustomLabel().length() == 0)
-                service.setServiceLabelToDisplay(
-                        String.join(" / ",
-                                service.getAssoServiceServiceTypes().stream()
-                                        .map(asso -> asso.getServiceType().getCustomLabel())
-                                        .collect(Collectors.toList())));
+                service.setServiceLabelToDisplay(String.join(" / ", service.getServiceTypes().stream()
+                        .map(s -> s.getCustomLabel()).collect(Collectors.toList())));
             else
                 service.setServiceLabelToDisplay(service.getCustomLabel());
         }

@@ -14,7 +14,7 @@
           <ng-container *ngFor="let service of asso.services ">
             <tr *ngIf="service  ">
               <td class="affaire " colspan="2">
-                <strong>{{service.customLabel || service.serviceLabelToDisplay}}</strong>
+                <strong>{{service.serviceLabelToDisplay}}</strong>
               </td>
             </tr>
             <ng-container *ngFor="let provision of service.provisions">
@@ -168,7 +168,7 @@
                         <mat-accordion multi>
                           <mat-expansion-panel expanded="false" class="service-tab ">
                             <mat-expansion-panel-header>
-                              <mat-panel-title>Service - {{service.customLabel}}
+                              <mat-panel-title>Service - {{service.serviceLabelToDisplay}}
                               </mat-panel-title>
                               <mat-panel-description>
                                 <mat-icon color="accent" *ngIf="!editMode && service.id"
@@ -228,7 +228,7 @@
                       <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
                           *ngIf="editMode" (click)="createProvision(service)">
                           <mat-icon>work</mat-icon>
-                          Ajouter une prestation pour le service {{service.customLabel}}
+                          Ajouter une prestation pour le service {{service.serviceLabelToDisplay}}
                         </button></div>
                     </ng-container>
                     <div class="fab-extended-button-containter"><button mat-fab extended color="primary"

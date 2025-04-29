@@ -153,7 +153,7 @@ export class CustomerOrderCommentComponent implements OnInit {
   }
 
   getProvisionLabel(provision: Provision) {
-    return provision.service.customLabel + " - " + this.computeProvisionLabel(provision);
+    return provision.service.serviceLabelToDisplay + " - " + this.computeProvisionLabel(provision);
   }
 
   computeProvisionLabel(provision: Provision): string {

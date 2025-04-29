@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -20,6 +21,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
@@ -47,10 +50,11 @@ public class Service implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "services" }, allowSetters = true)
 	private AssoAffaireOrder assoAffaireOrder;
 
-	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
+	@ManyToMany
+	@JoinTable(name = "asso_service_service_type", joinColumns = @JoinColumn(name = "id_service"), inverseJoinColumns = @JoinColumn(name = "id_service_type"))
+	@JsonProperty(value = "serviceTypes")
 	@JsonView(JacksonViews.MyJssListView.class)
-	private List<AssoServiceServiceType> assoServiceServiceTypes;
+	private List<ServiceType> serviceTypes;
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
@@ -209,12 +213,12 @@ public class Service implements Serializable, IId {
 		this.serviceLabelToDisplay = serviceLabelToDisplay;
 	}
 
-	public List<AssoServiceServiceType> getAssoServiceServiceTypes() {
-		return assoServiceServiceTypes;
+	public List<ServiceType> getServiceTypes() {
+		return serviceTypes;
 	}
 
-	public void setAssoServiceServiceTypes(List<AssoServiceServiceType> assoServiceServiceTypes) {
-		this.assoServiceServiceTypes = assoServiceServiceTypes;
+	public void setServiceTypes(List<ServiceType> serviceTypes) {
+		this.serviceTypes = serviceTypes;
 	}
 
 }

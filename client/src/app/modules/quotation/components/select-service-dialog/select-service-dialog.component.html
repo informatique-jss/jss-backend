@@ -4,7 +4,7 @@
   <ul>
     <ng-container *ngFor="let service of assoAffaireOrder.services">
       <li class="pointer" *ngIf="!currentService || currentService.id !=service.id" (click)="selectService(service)">
-        {{service.customLabel}}</li>
+        {{service.serviceLabelToDisplay}}</li>
     </ng-container>
   </ul>
 </div>

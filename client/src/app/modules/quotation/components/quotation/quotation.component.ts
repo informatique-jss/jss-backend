@@ -1064,7 +1064,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
     if (!doNotDisplayService)
-      label = service.customLabel + " - " + label;
+      label = service.serviceLabelToDisplay + " - " + label;
     return label;
   }
 

@@ -40,7 +40,6 @@ export class SelectMultiServiceTypeDialogComponent implements OnInit {
     if (this.selectedServiceTypes && this.affaire)
       this.serviceService.getServiceForMultiServiceTypesAndAffaire(this.selectedServiceTypes, this.affaire, this.customLabel).subscribe(response => {
         if (response) {
-          // response[0].customerComment = this.customerComment;
           this.dialogRef.close(response);
         }
       })
