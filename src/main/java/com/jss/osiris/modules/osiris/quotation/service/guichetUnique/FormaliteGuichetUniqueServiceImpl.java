@@ -36,6 +36,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentVatSettingService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
@@ -134,6 +135,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
+
+    @Autowired
+    NotificationService notificationService;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";

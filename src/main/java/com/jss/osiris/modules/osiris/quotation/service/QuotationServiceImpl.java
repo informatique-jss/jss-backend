@@ -745,7 +745,7 @@ public class QuotationServiceImpl implements QuotationService {
                     for (Service service : assoAffaireOrder.getServices()) {
                         String serviceLabel = service.getCustomLabel();
                         if (serviceLabel == null || serviceLabel.length() == 0)
-                            serviceLabel = service.getServiceType().getLabel();
+                            serviceLabel = service.getServiceLabelToDisplay();
                         if (serviceLabels.indexOf(serviceLabel) < 0)
                             serviceLabels.add(serviceLabel);
                     }
