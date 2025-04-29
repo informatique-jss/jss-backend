@@ -25,3 +25,11 @@
 :host ::ng-deep .ck-rounded-corners .ck.ck-editor__main>.ck-editor__editable, .ck.ck-editor__main>.ck-editor__editable.ck-rounded-corners {
     min-height: 200px;
 }
+
+.modal-content {
+    background-color: white;
+}
+
+.modal-footer .btn-danger:hover {
+    color: var(--ar-danger);
+}
