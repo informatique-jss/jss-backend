@@ -102,7 +102,7 @@ public class Quotation implements IQuotation {
 	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<Attachment> attachments;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<Document> documents;
 
