@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
@@ -44,6 +46,21 @@ public class ServiceServiceImpl implements ServiceService {
     @Autowired
     BatchService batchService;
 
+    @Autowired
+    AffaireService affaireService;
+
+    @Autowired
+    AssoAffaireOrderService assoAffaireOrderService;
+
+    @Autowired
+    AssoServiceDocumentService assoServiceDocumentService;
+
+    @Autowired
+    AssoServiceFieldTypeService assoServiceFieldTypeService;
+
+    @Autowired
+    ProvisionService provisionService;
+
     @Override
     public Service getService(Integer id) {
         Optional<Service> service = serviceRepository.findById(id);
@@ -65,13 +82,40 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public Boolean addOrUpdateServices(List<Service> services, Affaire affaire, String customLabel)
+    public Boolean addOrUpdateServices(List<Service> services, Integer affaireId, Integer assoAffaireOrderId,
+            String customLabel)
             throws OsirisException {
-        for (Service service : generateServiceInstanceFromMultiServiceTypes(
-                services.stream().map(Service::getServiceType).toList(), affaire, customLabel)) {
-            addOrUpdateService(service);
+
+        Affaire affaire = affaireService.getAffaire(affaireId);
+
+        AssoAffaireOrder assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(assoAffaireOrderId);
+
+        if (assoAffaireOrder != null) {
+            for (Service service : generateServiceInstanceFromMultiServiceTypes(
+                    services.stream().map(Service::getServiceType).toList(), affaire, customLabel)) {
+                service.setAssoAffaireOrder(assoAffaireOrder);
+                addOrUpdateService(service);
+                linkNewServiceWithAsso(service);
+            }
         }
         return true;
+    }
+
+    private void linkNewServiceWithAsso(Service newService) {
+        for (Service service : newService.getAssoAffaireOrder().getServices()) {
+            for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
+                assoServiceDocument.setService(newService);
+                assoServiceDocumentService.addOrUpdateAssoServiceDocument(assoServiceDocument);
+            }
+            for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+                assoServiceFieldType.setService(newService);
+                assoServiceFieldTypeService.addOrUpdateServiceFieldType(assoServiceFieldType);
+            }
+            for (Provision provision : service.getProvisions()) {
+                provision.setService(newService);
+                provisionService.addOrUpdateProvision(provision);
+            }
+        }
     }
 
     @Override
@@ -96,7 +140,7 @@ public class ServiceServiceImpl implements ServiceService {
     public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes, Affaire affaire,
             String customLabel) throws OsirisException {
 
-        return new ArrayList<Service>();
+        return Arrays.asList(getServiceForMultiServiceTypesAndAffaire(serviceTypes, affaire));
     }
 
     @Override

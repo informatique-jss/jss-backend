@@ -20,8 +20,8 @@ export class ServiceService extends AppRestService<Service> {
     return this.addOrUpdate(new HttpParams(), "service", service);
   }
 
-  addOrUpdateServices(services: Service[], affaireId: number) {
-    return this.postList(new HttpParams().set("affaireId", affaireId), "services", services);
+  addOrUpdateServices(services: Service[], affaireId: number, affaireOrderId: number) {
+    return this.postList(new HttpParams().set("affaireId", affaireId).set("affaireOrderId", affaireOrderId), "services", services);
   }
 
   getServiceForServiceTypeAndAffaire(service: ServiceType, affaire: Affaire) {

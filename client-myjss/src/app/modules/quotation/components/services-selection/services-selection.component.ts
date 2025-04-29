@@ -162,12 +162,13 @@ export class ServicesSelectionComponent implements OnInit {
       } else {
         let promises = [];
         for (let asso of this.quotation.assoAffaireOrders) {
-          promises.push(this.serviceService.addOrUpdateServices(asso.services, asso.affaire.id));
+          promises.push(this.serviceService.addOrUpdateServices(asso.services, asso.affaire.id, asso.id));
         }
-        combineLatest(promises).subscribe();
+        combineLatest(promises).subscribe(response => {
+          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
+          this.appService.openRoute(undefined, "quotation", undefined);
+        });
       }
-      this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
-      this.appService.openRoute(undefined, "quotation", undefined);
     }
   }
 

@@ -1062,16 +1062,22 @@ public class MyJssQuotationController {
 
 	@PostMapping(inputEntryPoint + "/services")
 	public ResponseEntity<Boolean> addOrUpdateServices(@RequestBody List<Service> services,
-			@RequestParam("affaireId") Integer affaireId) throws OsirisException {
+			@RequestParam("affaireId") Integer affaireId, @RequestParam("affaireOrderId") Integer affaireOrderId)
+			throws OsirisException {
 
 		Affaire affaire = null;
+		AssoAffaireOrder assoAffaireOrder = null;
 
 		if (affaireId != null) {
 			affaire = affaireService.getAffaire(affaireId);
 		}
 
-		if (affaire != null) {
-			serviceService.addOrUpdateServices(services, affaire, null);
+		if (affaireOrderId != null) {
+			assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(affaireOrderId);
+		}
+
+		if (affaire != null && assoAffaireOrder != null) {
+			serviceService.addOrUpdateServices(services, affaireId, affaireOrderId, null);
 
 			return new ResponseEntity<>(true, HttpStatus.OK);
 		}
