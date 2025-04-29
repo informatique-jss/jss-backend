@@ -894,6 +894,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         asso = getAssoAffaireOrder(asso.getId());
         Service serviceInstance = serviceService.getServiceForMultiServiceTypesAndAffaire(Arrays.asList(service),
                 asso.getAffaire());
+        serviceInstance.setAssoAffaireOrder(asso);
         serviceService.addOrUpdateService(serviceInstance);
         if (asso.getServices() == null)
             asso.setServices(new ArrayList<Service>());

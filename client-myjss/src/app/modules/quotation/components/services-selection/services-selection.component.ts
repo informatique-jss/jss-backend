@@ -128,15 +128,7 @@ export class ServicesSelectionComponent implements OnInit {
 
   removeServiceFromCurrentAffaire(service: ServiceType, assoIndex: number) {
     if (this.quotation)
-      if (this.currentUser) {
-        this.serviceService.addServiceToAssoAffaireOrder(service, this.quotation.assoAffaireOrders[assoIndex]).subscribe(response => {
-          if (!this.quotation!.assoAffaireOrders[assoIndex].services)
-            this.quotation!.assoAffaireOrders[assoIndex].services = [];
-          this.quotation!.assoAffaireOrders[assoIndex].services.push(response);
-        })
-      } else {
-        this.quotation!.assoAffaireOrders[assoIndex].services.splice(this.getServiceIndexInCurrentAffaire(service), 1);
-      }
+      this.quotation!.assoAffaireOrders[assoIndex].services.splice(this.getServiceIndexInCurrentAffaire(service), 1);
   }
 
   getServiceIndexInCurrentAffaire(service: ServiceType): number {

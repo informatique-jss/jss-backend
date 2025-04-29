@@ -96,9 +96,7 @@ public class ServiceServiceImpl implements ServiceService {
     public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes, Affaire affaire,
             String customLabel) throws OsirisException {
 
-        List<Service> services = new ArrayList<Service>();
-
-        return services;
+        return new ArrayList<Service>();
     }
 
     @Override
