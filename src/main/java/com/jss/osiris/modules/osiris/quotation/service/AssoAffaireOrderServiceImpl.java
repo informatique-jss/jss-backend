@@ -41,6 +41,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.AssoServiceServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
@@ -226,6 +227,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         for (Service service : assoAffaireOrder.getServices()) {
 
             service.setAssoAffaireOrder(assoAffaireOrder);
+            if (service.getAssoServiceServiceTypes() != null)
+                for (AssoServiceServiceType assoServiceServiceType : service.getAssoServiceServiceTypes())
+                    assoServiceServiceType.setService(service);
+
             if (service.getAssoServiceDocuments() != null)
                 for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments())
                     assoServiceDocument.setService(service);

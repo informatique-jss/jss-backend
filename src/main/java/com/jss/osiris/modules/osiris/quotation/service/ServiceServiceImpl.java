@@ -290,8 +290,9 @@ public class ServiceServiceImpl implements ServiceService {
 
         for (ServiceType serviceType : serviceTypes) {
             serviceType = serviceTypeService.getServiceType(serviceType.getId());
-
-            service.getAssoServiceServiceTypes().add(generateAssoServiceServiceType(serviceType, service));
+            service.getAssoServiceServiceTypes()
+                    .add(assoServiceServiceTypeService
+                            .addOrUpdateAssoServiceServiceType(generateAssoServiceServiceType(serviceType, service)));
 
             for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
                 boolean found = false;
@@ -359,15 +360,7 @@ public class ServiceServiceImpl implements ServiceService {
                     .addAll(getProvisionsFromServiceType(serviceType, service.getAssoAffaireOrder().getAffaire(),
                             service));
         }
-        // Remove old service - serviceType assos
-        if (!service.getAssoServiceServiceTypes().isEmpty()) {
-            for (AssoServiceServiceType asso : service.getAssoServiceServiceTypes())
-                if (service.getAssoServiceServiceTypes().stream().map(a -> a.getServiceType().getId())
-                        .collect(Collectors.toList()).contains(asso.getServiceType().getId()))
-                    assoServiceToDelete.add(asso);
-        }
-        service.getAssoServiceServiceTypes().removeAll(assoServiceToDelete);
-        // TODO
+
         return addOrUpdateService(service);
     }
 
