@@ -365,6 +365,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.provisionTypeRbe;
   }
 
+  getProvisionTypeCharacterAnnouncement() {
+    return this.constant.provisionTypeCharacterAnnouncement;
+  }
+
   getProvisionFamilyTypeDeposit() {
     return this.constant.provisionFamilyTypeDeposit;
   }

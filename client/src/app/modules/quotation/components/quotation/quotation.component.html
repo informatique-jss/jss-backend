@@ -14,7 +14,7 @@
           <ng-container *ngFor="let service of asso.services ">
             <tr *ngIf="service  ">
               <td class="affaire " colspan="2">
-                <strong>{{service.customLabel ? service.customLabel : service.serviceLabelToDisplay}}</strong>
+                <strong>{{service.customLabel || service.serviceLabelToDisplay}}</strong>
               </td>
             </tr>
             <ng-container *ngFor="let provision of service.provisions">

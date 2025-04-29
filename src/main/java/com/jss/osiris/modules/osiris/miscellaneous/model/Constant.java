@@ -855,6 +855,10 @@ public class Constant implements Serializable, IId {
 	private ProvisionType provisionTypeRbe;
 
 	@ManyToOne
+	@JoinColumn(name = "id_provision_type_character_announcement")
+	private ProvisionType provisionTypeCharacterAnnouncement;
+
+	@ManyToOne
 	@JoinColumn(name = "id_provision_family_type_deposit")
 	private ProvisionFamilyType provisionFamilyTypeDeposit;
 
@@ -2711,6 +2715,14 @@ public class Constant implements Serializable, IId {
 
 	public void setServiceFamilyGroupAnnouncement(ServiceFamilyGroup serviceFamilyGroupAnnouncement) {
 		this.serviceFamilyGroupAnnouncement = serviceFamilyGroupAnnouncement;
+	}
+
+	public ProvisionType getProvisionTypeCharacterAnnouncement() {
+		return provisionTypeCharacterAnnouncement;
+	}
+
+	public void setProvisionTypeCharacterAnnouncement(ProvisionType provisionTypeCharacterAnnouncement) {
+		this.provisionTypeCharacterAnnouncement = provisionTypeCharacterAnnouncement;
 	}
 
 }

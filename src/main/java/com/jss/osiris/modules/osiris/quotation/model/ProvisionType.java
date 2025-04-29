@@ -74,6 +74,8 @@ public class ProvisionType implements Serializable, IId {
 
 	private Boolean isRecurring;
 
+	private Boolean isMergeable;
+
 	public Integer getId() {
 		return id;
 	}
@@ -185,6 +187,14 @@ public class ProvisionType implements Serializable, IId {
 
 	public void setIsRecurring(Boolean isRecurring) {
 		this.isRecurring = isRecurring;
+	}
+
+	public Boolean getIsMergeable() {
+		return isMergeable;
+	}
+
+	public void setIsMergeable(Boolean isMergeable) {
+		this.isMergeable = isMergeable;
 	}
 
 }

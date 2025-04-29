@@ -1569,8 +1569,13 @@
                 propertyName="provisionTypeRbe" [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type>
             </td>
           </tr>
-
-
+          <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeCharacterAnnouncement"
+                label="Type de prestation - Annonce légale au caractère" [form]="constantForm"
+                propertyName="provisionTypeCharacterAnnouncement" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-provision-type>
+            </td>
+          </tr>
           <tr>
           <tr>
             <td>
