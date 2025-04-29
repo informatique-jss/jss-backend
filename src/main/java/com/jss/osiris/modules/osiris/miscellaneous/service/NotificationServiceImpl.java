@@ -387,13 +387,8 @@ public class NotificationServiceImpl implements NotificationService {
         if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
-                if (provision.getAssignedTo() != null) {
-                    if (provision.getAssignedTo().getId().equals(employeeService.getCurrentEmployee().getId()))
-                        return;
-
-                    generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                            Notification.PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, false, null, provision, null);
-                }
+                generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, false, null, provision, null);
             }
         }
     }
@@ -405,13 +400,8 @@ public class NotificationServiceImpl implements NotificationService {
         if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
-                if (provision.getAssignedTo() != null) {
-                    if (provision.getAssignedTo().getId().equals(employeeService.getCurrentEmployee().getId()))
-                        return;
-
-                    generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                            Notification.PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, false, null, provision, null);
-                }
+                generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, false, null, provision, null);
             }
         }
     }
