@@ -18,8 +18,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -32,7 +30,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -72,9 +69,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     AssoAffaireOrderRepository assoAffaireOrderRepository;
 
     @Autowired
-    EmployeeService employeeService;
-
-    @Autowired
     FormaliteStatusService formaliteStatusService;
 
     @Autowired
@@ -105,16 +99,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     InvoiceItemService invoiceItemService;
 
     @Autowired
-    MailHelper mailHelper;
-
-    @Autowired
     AttachmentService attachmentService;
-
-    @Autowired
-    BankTransfertService bankTransfertService;
-
-    @Autowired
-    AccountingRecordService accountingRecordService;
 
     @Autowired
     ProvisionService provisionService;
@@ -139,9 +124,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     PaymentService paymentService;
-
-    @Autowired
-    ServiceService serviceService;
 
     @Autowired
     QuotationService quotationService;
@@ -226,6 +208,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         for (Service service : assoAffaireOrder.getServices()) {
 
             service.setAssoAffaireOrder(assoAffaireOrder);
+
             if (service.getAssoServiceDocuments() != null)
                 for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments())
                     assoServiceDocument.setService(service);

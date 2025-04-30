@@ -252,6 +252,7 @@ export interface Constant {
   provisionTypeRegistrationAct: ProvisionType;
   provisionFamilyTypeDeposit: ProvisionFamilyType;
   provisionTypeRbe: ProvisionType;
+  provisionTypeCharacterAnnouncement: ProvisionType;
   dateAccountingClosureForAll: Date;
   dateAccountingClosureForAccountant: Date;
   activeDirectoryGroupFormalites: ActiveDirectoryGroup;

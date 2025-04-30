@@ -5,7 +5,7 @@ import { callNumber, displayInTeams, prepareMail } from 'src/app/libs/MailHelper
 import { getAffaireFromAssoAffaireOrder, getCustomerOrderNameForTiers, getServiceFromService } from 'src/app/modules/invoicing/components/invoice-tools';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { Employee } from 'src/app/modules/profile/model/Employee';
-import { SelectServiceTypeDialogComponent } from 'src/app/modules/quotation/components/select-service-type-dialog/select-service-type-dialog.component';
+import { SelectMultiServiceTypeDialogComponent } from 'src/app/modules/quotation/components/select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
 import { CustomerOrderStatus } from 'src/app/modules/quotation/model/CustomerOrderStatus';
 import { Service } from 'src/app/modules/quotation/model/Service';
@@ -112,7 +112,7 @@ export class OrderSidePanelDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && service) {
-        const dialogRef2 = this.selectServiceTypeDialog.open(SelectServiceTypeDialogComponent, {
+        const dialogRef2 = this.selectServiceTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
           width: "50%",
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;

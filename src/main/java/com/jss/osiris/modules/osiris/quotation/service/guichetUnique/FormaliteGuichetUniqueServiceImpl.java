@@ -45,6 +45,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Cart;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.CartRate;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -91,9 +92,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     InvoiceService invoiceService;
 
     @Autowired
-    NotificationService notificationService;
-
-    @Autowired
     PricingHelper pricingHelper;
 
     @Autowired
@@ -137,6 +135,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
+
+    @Autowired
+    NotificationService notificationService;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
@@ -764,14 +765,17 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                         .equals(constantService.getDocumentTypeSynthesisRbeUnsigned().getCode())) {
             Boolean isProvisionRbe = false;
 
-            if (currentService.getServiceType().getServiceFamily().getId()
-                    .equals(constantService.getServiceFamilyImmatriculationAlAndFormality().getId()))
-                return false;
+            if (!currentService.getServiceTypes().isEmpty()) {
+                for (ServiceType serviceType : currentService.getServiceTypes()) {
+                    if (serviceType.getServiceFamily().getId()
+                            .equals(constantService.getServiceFamilyImmatriculationAlAndFormality().getId()))
+                        return false;
 
-            if (currentService.getServiceType().getId()
-                    .equals(constantService.getServiceTypeSecondaryCenterOpeningAlAndFormality().getId()))
-                return false;
-
+                    if (serviceType.getId()
+                            .equals(constantService.getServiceTypeSecondaryCenterOpeningAlAndFormality().getId()))
+                        return false;
+                }
+            }
             if (currentService.getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus().getCode()
                     .equals(CustomerOrderStatus.ABANDONED))
                 return false;

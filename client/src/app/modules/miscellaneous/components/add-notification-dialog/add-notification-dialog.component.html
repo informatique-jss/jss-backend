@@ -3,7 +3,7 @@
   <p>Décrivez / commentez ci-dessous la notification.</p>
   <div *ngIf="notification.customerOrder">Commande n°{{notification.customerOrder.id}}</div>
   <div *ngIf="notification.quotation">Devis n°{{notification.quotation.id}}</div>
-  <div *ngIf="notification.service">Service {{notification.service.serviceType.label}}</div>
+  <div *ngIf="notification.service">Service {{notification.service.serviceLabelToDisplay}}</div>
   <div *ngIf="notification.provision">Prestation {{notification.provision.provisionType.label}}</div>
   <div *ngIf="notification.invoice">Facture {{notification.invoice.id}}</div>
   <div *ngIf="notification.tiers">Tiers {{notification.tiers.denomination ?notification.tiers.denomination :

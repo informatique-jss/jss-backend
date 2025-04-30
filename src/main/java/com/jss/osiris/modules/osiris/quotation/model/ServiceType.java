@@ -88,6 +88,9 @@ public class ServiceType implements Serializable, IId {
 
 	private Integer suspiciousMarkup;
 
+	@JsonView(JacksonViews.MyJssListView.class)
+	private Boolean isMergeable;
+
 	public Integer getId() {
 		return id;
 	}
@@ -214,6 +217,14 @@ public class ServiceType implements Serializable, IId {
 
 	public void setSuspiciousMarkup(Integer suspiciousMarkup) {
 		this.suspiciousMarkup = suspiciousMarkup;
+	}
+
+	public Boolean getIsMergeable() {
+		return isMergeable;
+	}
+
+	public void setIsMergeable(Boolean isMergeable) {
+		this.isMergeable = isMergeable;
 	}
 
 }

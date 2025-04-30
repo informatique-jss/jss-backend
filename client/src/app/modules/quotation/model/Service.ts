@@ -9,9 +9,10 @@ export interface Service {
   id: number;
   provisions: Provision[];
   assoAffaireOrder: AssoAffaireOrder;
-  serviceType: ServiceType;
+  serviceTypes: ServiceType[];
   assoServiceDocuments: AssoServiceDocument[];
   customLabel: string;
+  serviceLabelToDisplay: string;
   customerComment: string;
   missingAttachmentQueries: MissingAttachmentQuery[];
   assoServiceFieldTypes: AssoServiceFieldType[];

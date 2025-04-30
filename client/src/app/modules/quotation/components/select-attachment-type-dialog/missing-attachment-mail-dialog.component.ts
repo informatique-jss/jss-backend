@@ -9,14 +9,12 @@ import { AttachmentType } from 'src/app/modules/miscellaneous/model/AttachmentTy
 import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { MISSING_ATTACHMENT_QUERY_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
 import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
 import { Service } from '../../model/Service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
-import { ServiceService } from '../../services/service.service';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 
 @Component({
@@ -48,19 +46,13 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
-    private uploadAttachmentService: UploadAttachmentService,
     public dialogRef: MatDialogRef<SelectAttachmentsDialogComponent>,
     private missingAttachmentQueryService: MissingAttachmentQueryService,
-    private serviceService: ServiceService,
     private constantService: ConstantService,
   ) { }
 
   refreshTable: Subject<void> = new Subject<void>();
   attachmentTypeAutomaticMail: AttachmentType = this.constantService.getAttachmentTypeAutomaticMail();
-
-  getServiceLabel(service: Service) {
-    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
-  }
 
   ngOnInit() {
     this.displayedColumns = [];

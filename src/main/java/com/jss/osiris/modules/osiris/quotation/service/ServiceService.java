@@ -9,18 +9,17 @@ import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 
 public interface ServiceService {
-    public Service getService(Integer id);
+        public Service getService(Integer id);
 
-    public Service addOrUpdateService(Service service);
+        public Service addOrUpdateService(Service service);
 
-    public Boolean deleteService(Service service);
+        public Boolean deleteService(Service service);
 
-    public Service modifyServiceType(ServiceType serviceType, Service service);
+        public Service modifyServiceType(List<ServiceType> services, Service service);
 
-    public String getServiceLabel(Service service) throws OsirisException;
+        public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes,
+                        Affaire affaire,
+                        String customLabel) throws OsirisException;
 
-    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire)
-            throws OsirisException;
-
-    public List<Attachment> getAttachmentsForProvisionOfService(Service service);
+        public List<Attachment> getAttachmentsForProvisionOfService(Service service);
 }
