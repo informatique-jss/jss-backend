@@ -17,7 +17,7 @@ public interface ServiceService {
                         String customLabel)
                         throws OsirisException;
 
-        public Boolean deleteService(Service service);
+        public Boolean deleteServiceFromUser(Service service);
 
         public Service modifyServiceType(List<ServiceType> serviceType, Service service) throws OsirisException;
 

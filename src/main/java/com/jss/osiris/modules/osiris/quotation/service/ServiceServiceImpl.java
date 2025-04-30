@@ -122,12 +122,19 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteService(Service service) {
+    public Boolean deleteServiceFromUser(Service service) {
+        return deleteService(service, false);
+    }
+
+    private Boolean deleteService(Service service, boolean permanentlyDeleteAttachments) {
         if (service.getProvisions() != null && service.getProvisions().size() > 0) {
             for (Provision provision : service.getProvisions()) {
                 if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
                     for (Attachment attachment : provision.getAttachments()) {
-                        attachmentService.cleanAttachmentForDelete(attachment);
+                        if (permanentlyDeleteAttachments)
+                            attachmentService.definitivelyDeleteAttachment(attachment);
+                        else
+                            attachmentService.cleanAttachmentForDelete(attachment);
                     }
                 }
             }

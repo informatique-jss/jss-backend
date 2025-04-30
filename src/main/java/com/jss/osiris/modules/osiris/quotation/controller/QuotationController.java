@@ -659,7 +659,7 @@ public class QuotationController {
     if (service == null)
       throw new OsirisValidationException("service");
 
-    return new ResponseEntity<Boolean>(serviceService.deleteService(service),
+    return new ResponseEntity<Boolean>(serviceService.deleteServiceFromUser(service),
         HttpStatus.OK);
   }
 
