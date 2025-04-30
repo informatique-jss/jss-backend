@@ -30,9 +30,11 @@ export class GenericSwiperComponent implements OnInit {
   @Input() items: any[] = [];
   @Input() subtitle: string = '';
   @Input() title: string = '';
-  @Input() slidesPerView: number = 3;
+  @Input() firstFixedImage: string | null = null;
   @ContentChild(TemplateRef) templateRefFirstItem!: TemplateRef<any>; // Take the content of the personalised HTML
   @ContentChild(TemplateRef) templateRef!: TemplateRef<any>; // Take the content of the personalised HTML
+  slidesPerView: number = 3;
+  maxHeight: number = 0;
 
   private destroy$ = new Subject<void>();
 
@@ -113,7 +115,6 @@ export class GenericSwiperComponent implements OnInit {
     if (!swiperEl) return;
 
     const slides = swiperEl.querySelectorAll('swiper-slide');
-    let maxHeight = 0;
 
     slides.forEach((slide: HTMLElement) => {
       // Reset the height to properly calculate the new value
@@ -122,15 +123,15 @@ export class GenericSwiperComponent implements OnInit {
 
     slides.forEach((slide: HTMLElement) => {
       const slideHeight = slide.scrollHeight;
-      if (slideHeight > maxHeight) {
-        maxHeight = slideHeight;
+      if (slideHeight > this.maxHeight) {
+        this.maxHeight = slideHeight;
       }
     });
 
-    swiperEl.style.height = `${maxHeight}px`;
+    swiperEl.style.height = `${this.maxHeight}px`;
 
     slides.forEach((slide: HTMLElement) => {
-      slide.style.height = `${maxHeight}px`;
+      slide.style.height = `${this.maxHeight}px`;
     });
 
   }

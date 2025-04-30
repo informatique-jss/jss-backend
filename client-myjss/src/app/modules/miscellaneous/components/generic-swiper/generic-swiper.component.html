@@ -18,11 +18,22 @@
         </div>
       </div>
     </div>
-
-    <swiper-container #genericSwiper class="genericSwiper" init="false">
-      <swiper-slide *ngFor="let item of items" class="pb-5">
-        <ng-container *ngTemplateOutlet="templateRef; context: { $implicit: item }"></ng-container>
-      </swiper-slide>
-    </swiper-container>
+    <div class="row">
+      <!-- Fixed img on the left if set -->
+      <div *ngIf="firstFixedImage && maxHeight" class="col-lg-3 d-none d-lg-block p-0 pb-5"
+        [style.height.px]="maxHeight">
+        <div class="card border-0 h-100">
+          <img [src]="firstFixedImage" [style.height.px]="maxHeight" class="card-img object-fit-cover"
+            alt="Fixed image">
+        </div>
+      </div>
+      <div class="col-12" [ngClass]="firstFixedImage ? 'col-lg-9': 'col-lg-12'">
+        <swiper-container #genericSwiper class="genericSwiper" init="false">
+          <swiper-slide *ngFor="let item of items" class="pb-5">
+            <ng-container *ngTemplateOutlet="templateRef; context: { $implicit: item }"></ng-container>
+          </swiper-slide>
+        </swiper-container>
+      </div>
+    </div>
   </div>
 </section>
