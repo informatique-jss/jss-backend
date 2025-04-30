@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Category } from '../../../../../../client/src/app/modules/miscellaneous/model/Category';
 import { AppRestService } from '../../../libs/appRest.service';
 import { Media } from '../model/Media';
 import { MyJssCategory } from '../model/MyJssCategory';
@@ -60,6 +61,16 @@ export class PostService extends AppRestService<Post> {
 
     httpParams.set("page", page).set("size", size);
     return this.getPagedList(httpParams, "search/myjss-category");
+  }
+
+  searchMyJssPostsByCategory(searchText: string, category: Category, page: number, size: number) {
+    let httpParams = new HttpParams();
+    if (searchText)
+      httpParams = httpParams.set("searchText", searchText);
+
+    httpParams = httpParams.set("categoryId", category.id);
+    httpParams.set("page", page).set("size", size);
+    return this.getPagedList(httpParams, "search/posts/category");
   }
 
   getPostsByMyJssCategory(myJssCategory: MyJssCategory, page: number, size: number) {

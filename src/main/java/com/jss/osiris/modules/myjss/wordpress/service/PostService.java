@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
+import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
@@ -57,6 +58,9 @@ public interface PostService {
         public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest);
 
         public Page<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
+
+        public Page<Post> searchMyJssPostsByCategory(String searchText, Category category,
+                        Pageable pageableRequest);
 
         public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory);
 

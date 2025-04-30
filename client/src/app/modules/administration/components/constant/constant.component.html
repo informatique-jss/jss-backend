@@ -1637,6 +1637,13 @@
           </tr>
           <tr>
             <td>
+              <select-category [(model)]="constant.categoryExclusivity" label="Categorie Wordpress - Exclusivité"
+                [form]="constantForm" propertyName="categoryExclusivity" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-myjss-category [(model)]="constant.myJssCategoryAnnouncement"
                 label="Catégorie MyJss - Annonces légales" [form]="constantForm"
                 propertyName="myJssCategoryAnnouncement" [isMandatory]="false"
