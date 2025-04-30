@@ -1,0 +1,229 @@
+<div class="container mb-5 pb-5">
+  <p class="sub-title">
+    Remplissez les champs suivants
+  </p>
+
+  <section class="quotation-container">
+    <h6><i class="ai-wallet pe-2"></i>Type de demande</h6>
+    <radio-group-quotation-type [(model)]="selectedQuotationType" [form]="idenficationForm" [isDisabled]="!quotation.id"
+      propertyName="quotationType"></radio-group-quotation-type>
+  </section>
+
+  <section *ngIf="!currentDraftStep" class="quotation-container">
+    <div *ngIf="!hideFamilyGroupServiceSelection">
+      <h6><i class="ai-pen pe-2"></i>Pour quel service ?</h6>
+      <div *ngFor="let serviceFamily of familyGroupService" class="btn btn-outline-secondary m-2"
+        [class.active]="quotation.serviceFamilyGroup && serviceFamily.id == quotation.serviceFamilyGroup.id"
+        (click)="selectFamilyGroupService(serviceFamily)">
+        {{serviceFamily.customLabel}}</div>
+    </div>
+  </section>
+
+  <div *ngIf="quotation.serviceFamilyGroup">
+    <div class="quotation-container" *ngFor="let asso of quotation.assoAffaireOrders; let indexAsso = index">
+      <div class="row d-flex align-items-center pb-md-3 m-0" (click)=" openPanel(indexAsso)" style="cursor: pointer;">
+        <div class="col-auto p-0">
+          <button type="button" class="btn btn-icon btn-outline-secondary rounded-4" aria-label="Delete"
+            (click)="deleteAffaire(indexAsso)">
+            <i class="ai-trash "></i>
+          </button>
+        </div>
+        <div class="col">
+          <h6 class="flex-grow-1 mb-0" *ngIf="!(this.quotation.assoAffaireOrders[indexAsso].affaire.siret
+          || this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual && this.quotation.assoAffaireOrders[indexAsso].affaire.firstname
+          || !this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual && this.quotation.assoAffaireOrders[indexAsso].affaire.denomination
+          || this.quotation.assoAffaireOrders[indexAsso].affaire.city
+          || this.quotation.assoAffaireOrders[indexAsso].affaire.address)">
+            Identification de l'entreprise
+          </h6>
+          <strong class="flex-grow-1">
+            <ng-container *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire">
+              <span
+                *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.siret">{{this.quotation.assoAffaireOrders[indexAsso].affaire.siret}}
+                - </span><span
+                *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual && this.quotation.assoAffaireOrders[indexAsso].affaire.firstname">{{this.quotation.assoAffaireOrders[indexAsso].affaire.firstname}}
+                {{this.quotation.assoAffaireOrders[indexAsso].affaire.lastname}} - </span><span
+                *ngIf="!this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual && this.quotation.assoAffaireOrders[indexAsso].affaire.denomination">{{this.quotation.assoAffaireOrders[indexAsso].affaire.denomination}}
+                - </span><span
+                *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.city">{{this.quotation.assoAffaireOrders[indexAsso].affaire.city.label}}
+                - </span><span>{{this.quotation.assoAffaireOrders[indexAsso].affaire.address}}</span>
+            </ng-container>
+          </strong>
+        </div>
+        <div class="col-auto ms-auto">
+          <button *ngIf="indexAsso==currentOpenedPanel" type="button"
+            class="btn btn-icon btn-outline-secondary rounded-4 col-auto ms-auto" aria-label="Collapse"
+            (click)="openPanel(indexAsso)">
+            <i class="ai-chevron-up fs-3"></i>
+          </button>
+          <button *ngIf="indexAsso!=currentOpenedPanel" type="button"
+            class="btn btn-icon btn-outline-secondary rounded-4 col-auto ms-auto" aria-label="Collapse"
+            (click)="openPanel(indexAsso)">
+            <i class="ai-chevron-down fs-3"></i>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="indexAsso==currentOpenedPanel">
+        <div class="my-3">
+          <generic-toggle [(model)]="isRegisteredAffaire[indexAsso]" label="L'entreprise existe"
+            [form]="idenficationForm" [propertyName]="'isRegisteredAffaire'+indexAsso">
+          </generic-toggle>
+        </div>
+        <!-- Choose affaire by SIRET -->
+        <div *ngIf="isRegisteredAffaire[indexAsso]">
+          <p class="mb-1 mt-4 ms-1">Indiquez le SIRET</p>
+          <div class="w-100"
+            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && !this.quotation.assoAffaireOrders[indexAsso].affaire.id">
+            <generic-input [(model)]=" siretSearched" label="Indiquez le SIRET" [form]="idenficationForm"
+              propertyName="siretSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+              (onFormChange)="searchSiret(indexAsso)" [icon]="'search'"></generic-input>
+          </div>
+          <div class="w-100"
+            *ngIf="loadingSiretSearch && (!this.quotation.assoAffaireOrders[indexAsso].affaire || ! this.quotation.assoAffaireOrders[indexAsso].affaire.id)">
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4 me-2"></span>
+              <span class="placeholder placeholder-sm col-6"></span>
+              <span class="placeholder placeholder-sm col-8"></span>
+            </p>
+          </div>
+          <div
+            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && this.quotation.assoAffaireOrders[indexAsso].affaire.id">
+            <div class="card rounded-1 px-4 py-3">
+              <div class="row my-1">
+                <strong class="col-2 ">
+                  Denomination
+                </strong>
+                <div class="col-10">
+                  <div *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual">
+                    {{this.quotation.assoAffaireOrders[indexAsso].affaire.denomination }}
+                  </div>
+                  <div *ngIf="!this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual">
+                    {{this.quotation.assoAffaireOrders[indexAsso].affaire.firstname }}
+                    {{this.quotation.assoAffaireOrders[indexAsso].affaire.lastname}}
+                  </div>
+                </div>
+              </div>
+              <div class="row my-1">
+                <strong class="col-2 ">
+                  Pays
+                </strong>
+                <div class="col-10" *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.country">
+                  {{this.quotation.assoAffaireOrders[indexAsso].affaire.country.label }}
+                </div>
+              </div>
+              <div class="row my-1">
+                <strong class="col-2 ">
+                  Adresse
+                </strong>
+                <div class="col-10">
+                  {{this.quotation.assoAffaireOrders[indexAsso].affaire.address }}
+                </div>
+              </div>
+              <div class="row my-1">
+                <strong class="col-2 ">
+                  Code postal
+                </strong>
+                <div class="col-10">
+                  {{this.quotation.assoAffaireOrders[indexAsso].affaire.postalCode }}
+                </div>
+              </div>
+              <div class="row my-1">
+                <strong class="col-2 ">
+                  Ville
+                </strong>
+                <div class="col-10" *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.city.label">
+                  {{this.quotation.assoAffaireOrders[indexAsso].affaire.city.label }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!isRegisteredAffaire[indexAsso]">
+          <!-- Type d'affaire -->
+          <div class="mb-3">
+            <label class="form-label">Type d'affaire</label>
+            <div class="form-check">
+              <radio-group-affaire-type [(model)]="affaireTypes[indexAsso]" [form]="idenficationForm"
+                [isDisabled]="false" [propertyName]="'affaireType'+indexAsso">
+              </radio-group-affaire-type>
+            </div>
+          </div>
+
+          <!-- Si type = entreprise -->
+          <div class="mb-3" *ngIf="affaireTypes[indexAsso].id == notIndividual.id">
+            <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.denomination" label="Dénomination"
+              [form]="idenficationForm" [propertyName]="'denomination'+indexAsso" [isMandatory]="true"
+              [isDisabled]="false" [maxLength]="150">
+            </generic-input>
+          </div>
+
+          <!-- Si type = particulier -->
+          <div class="row mb-3" *ngIf="affaireTypes[indexAsso].id == individual.id">
+            <div class="col-md-6">
+              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.firstname" label="Prénom"
+                [form]="idenficationForm" [propertyName]="'firstname'+indexAsso" [isMandatory]="true"
+                [isDisabled]="false" [maxLength]="50">
+              </generic-input>
+            </div>
+            <div class="col-md-6">
+              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.lastname" label="Nom"
+                [form]="idenficationForm" [propertyName]="'lastname'+indexAsso" [isMandatory]="true"
+                [isDisabled]="false" [maxLength]="50">
+              </generic-input>
+            </div>
+          </div>
+
+          <!-- Adresse -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.address" label="Adresse"
+                [form]="idenficationForm" [propertyName]="'address'+indexAsso" [isMandatory]="true" [isDisabled]="false"
+                [maxLength]="100">
+              </generic-input>
+            </div>
+            <div class="col-md-6">
+              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.cedexComplement"
+                label="Complément d'adresse" [form]="idenficationForm" [propertyName]="'cedexComplement'+indexAsso"
+                [isMandatory]="true" [isDisabled]="false" [maxLength]="50">
+              </generic-input>
+            </div>
+          </div>
+
+          <!-- Code postal, Ville, Pays -->
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.postalCode" label="Code postal"
+                [form]="idenficationForm" [propertyName]="'postalCode'+indexAsso" [isMandatory]="true"
+                [isDisabled]="false" [maxLength]="10">
+              </generic-input>
+            </div>
+            <div class="col-md-4">
+              <autocomplete-city [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.city" label="Ville"
+                [form]="idenficationForm" [propertyName]="'city'+indexAsso" [isMandatory]="true" [isDisabled]="false"
+                [modelCountry]="" [preFilterPostalCode]="quotation.assoAffaireOrders[indexAsso].affaire.postalCode">
+              </autocomplete-city>
+            </div>
+            <div class="col-md-4">
+              <select-country [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.country" label="Pays"
+                [form]="idenficationForm" [propertyName]="'city'+indexAsso" [isMandatory]="true" [isDisabled]="false">
+              </select-country>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-end m-0" *ngIf="quotation.serviceFamilyGroup">
+    <a class="col-md-auto p-md-4" (click)="addAffaire()"><strong>Ajouter</strong></a>
+  </div>
+  <div class="row position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 justify-content-end"
+    *ngIf="quotation.serviceFamilyGroup">
+    <button type="button" class="btn btn-secondary rounded-1 col-auto mx-5" *ngIf="canStartQuotation()"
+      (click)="startQuotation()">
+      <span class="spinner-grow spinner-grow-sm me-2  text-body-secondary" role="status" aria-hidden="true"
+        *ngIf="isSavingQuotation"></span>
+      Démarrer<i class="ai-arrow-right ms-2"></i></button>
+  </div>
+</div>

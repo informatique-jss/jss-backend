@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { MenuItem } from '../../../general/model/MenuItem';
@@ -15,7 +16,10 @@ import { LoginService } from '../../services/login.service';
 })
 export class TopBarComponent implements OnInit {
 
+  @Input() isForQuotationNavbar: boolean = false;
+
   logoJss: string = '/assets/images/white-logo-myjss.svg';
+  logoJssDark: string = '/assets/images/dark-logo-myjss.svg';
   paymentMethods: string = '/assets/images/payment-methods.png';
   map: string = '/assets/images/map.png';
   anonymousConnexion: string = '/assets/images/anonymous.svg';
@@ -34,6 +38,7 @@ export class TopBarComponent implements OnInit {
 
   constructor(private loginService: LoginService,
     private appService: AppService,
+    private router: Router,
   ) { }
 
   capitalizeName = capitalizeName;
@@ -46,6 +51,15 @@ export class TopBarComponent implements OnInit {
         this.refreshCurrentUser()
       initTooltips('bottom');
     });
+  }
+
+  isDisplaySecondHeader() {
+    let url: String = this.router.url;
+    if (url)
+      if (url.indexOf("quotation") >= 0)
+        return false;
+
+    return !this.isNavbarCollapsed;
   }
 
   refreshCurrentUser() {

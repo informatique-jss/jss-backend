@@ -32,33 +32,33 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(length = 20)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String firstname;
 
 	@Column(length = 20)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String lastname;
 
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String username;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String mail;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String phoneNumber;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String title;
 
 	@Column(length = 1000)

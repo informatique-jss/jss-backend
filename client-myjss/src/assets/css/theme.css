@@ -105,7 +105,7 @@
   --ar-blue-step: #4B6380;
   --ar-blue-dark-bg: #2C4057;
   --ar-step-active-custom: #F3E3CA;
-  --ar-primary: rgba(255, 255, 255, 1);
+  --ar-primary: #ffffff;
   --ar-secondary: #1c2d41;
   --ar-tertiary: #f3e3ca;
   --ar-success: #4b6380;
@@ -721,6 +721,23 @@ progress {
   /* background-image usage to add multiple SVG images */
   background-image:
     url('../images/background.svg');
+
+  /* Positionning of both images */
+  background-position: top;
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  background-attachment: scroll;
+}
+
+.background-secondary {
+  /* Background color definition */
+  background-color: var(--ar-gray-100);
+  width: 100%;
+  height: 100%;
+
+  /* background-image usage to add multiple SVG images */
+  background-image:
+    url('../images/Background-quotation.svg');
 
   /* Positionning of both images */
   background-position: top;
@@ -2786,7 +2803,7 @@ textarea.form-control-lg {
 }
 
 .form-check-input:checked {
-  background-color: var(--ar-primary);
+  background-color: var(--ar-secondary);
   border-color: var(--ar-primary);
 }
 
@@ -9580,6 +9597,7 @@ textarea.form-control-lg {
 .bg-secondary {
   --ar-bg-opacity: 1;
   background-color: var(--ar-gray-100) !important;
+
 }
 
 .bg-tertiary {
@@ -20294,6 +20312,13 @@ h1.secondary-heading,
   background-color: #1c2d4199;
 }
 
+.quotation-container {
+  background-color: var(--ar-primary);
+  padding: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 .btn-search {
   color: var(--ar-blue-dark-bg) !important;
 }
@@ -20318,6 +20343,15 @@ h1.secondary-heading,
   width: 100%;
   object-fit: cover;
   height: 250px;
+}
+
+.text-truncate-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }
 
 .card-title-truncate {

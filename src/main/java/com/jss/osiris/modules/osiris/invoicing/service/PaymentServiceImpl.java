@@ -1517,7 +1517,7 @@ public class PaymentServiceImpl implements PaymentService {
                 CustomerOrder customerOrder = customerOrderService.getCustomerOrder(foundEntity.getEntityId());
                 if (customerOrder.getCustomerOrderStatus() != null
                         && (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)
-                                || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+                                || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT)
                                 || customerOrder.getCustomerOrderStatus().getCode()
                                         .equals(CustomerOrderStatus.BEING_PROCESSED)
                                 || customerOrder.getCustomerOrderStatus().getCode()

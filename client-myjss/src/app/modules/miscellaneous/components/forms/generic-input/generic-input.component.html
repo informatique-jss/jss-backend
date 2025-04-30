@@ -2,7 +2,7 @@
   <div [formGroup]="form!" class="needs-validation">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
       class="form-label">{{label}}</label>
-    <i class=" fs-lg position-absolute top-50 start-0 ms-3" *ngIf="icon" [ngClass]="{'icon-with-error':errorMessage && form!.controls[propertyName].hasError('notFilled'),
+    <i class="fs-lg position-absolute top-50 start-0 ms-3" *ngIf="icon" [ngClass]="{'icon-with-error':errorMessage && form!.controls[propertyName].hasError('notFilled'),
       'translate-middle-y' : !isDisplayLabel,'translate-quarter-y' : isDisplayLabel}" [class]="'ai-'+icon"></i>
     <input class="form-control form-control" [ngClass]="{'ps-45': icon}" [id]="'fl-text'+uniqueId"
       [maxlength]="maxLength+''" [minlength]="minLength+''" [formControlName]="propertyName" [placeholder]="label"

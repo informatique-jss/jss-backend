@@ -6,32 +6,44 @@ import { GenericFormComponent } from '../generic-form.components';
 @Directive()
 export abstract class GenericSelectComponent<T> extends GenericFormComponent implements OnInit {
 
+  /**
+ * Triggered when value is changed by user
+ */
   @Output() selectionChange: EventEmitter<T> = new EventEmitter();
-  selectedType: T | undefined;
 
   abstract types: T[];
-  constructor(private formBuilder3: UntypedFormBuilder) {
+
+  constructor(
+    private formBuilder3: UntypedFormBuilder
+  ) {
     super(formBuilder3)
   }
 
   callOnNgInit(): void {
     this.initTypes();
-    if (this.types) {
+    if (this.types)
       this.types.sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)));
-    }
 
-    if (this.form) {
-      this.form.get(this.propertyName)?.valueChanges.subscribe((newValue) => {
-        this.selectionChange.emit(newValue);
-      });
-    }
-
+    if (this.form)
+      this.form.get(this.propertyName)?.valueChanges.subscribe(
+        (newValue) => {
+          this.selectionChange.emit(this.model);
+        }
+      );
   }
 
   abstract initTypes(): void;
 
   compareWithId = compareWithId;
 
+  clearField(): void {
+    this.model = undefined;
+    this.modelChange.emit(this.model);
+    this.selectionChange.emit(undefined);
+  }
+  getPreviewActionLinkFunction(entity: T): string[] | undefined {
+    return undefined;
+  }
 
   override displayLabel(object: any): string {
     if (object && object.label)

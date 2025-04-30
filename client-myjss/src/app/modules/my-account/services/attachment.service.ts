@@ -21,4 +21,8 @@ export class AttachmentService extends AppRestService<Attachment> {
   getAttachmentsForAffaire(idAffaire: number) {
     return this.getList(new HttpParams().set("idAffaire", idAffaire), "affaire/attachments");
   }
+
+  deleteAttachment(idAttachment: number) {
+    return this.get(new HttpParams().set("idAttachment", idAttachment), "attachments/delete", "Attachment deleted", "Impossible to delete attachment")
+  }
 }

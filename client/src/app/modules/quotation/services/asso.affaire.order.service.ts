@@ -32,8 +32,8 @@ export class AssoAffaireOrderService extends AppRestService<AssoAffaireOrder> {
     return this.getById("asso/affaire/order/service", idService);
   }
 
-  updateAsso(asso: AssoAffaireOrder): Observable<AssoAffaireOrder> {
-    return this.postItem(new HttpParams(), "asso/affaire/order/update", asso, "Prestations mises à jour", "Erreur lors de la mise à jour de l'affaire / prestations");
+  updateAsso(asso: AssoAffaireOrder, isByPassMandatoryField: boolean): Observable<AssoAffaireOrder> {
+    return this.postItem(new HttpParams().set("isByPassMandatoryField", isByPassMandatoryField), "asso/affaire/order/update", asso, "Prestations mises à jour", "Erreur lors de la mise à jour de l'affaire / prestations");
   }
 
   getAssoAffaireOrdersForCustomerOrder(customerOrder: CustomerOrder) {

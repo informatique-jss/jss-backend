@@ -41,70 +41,70 @@ public class Affaire implements IId, IAttachment {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Civility civility;
 
 	@Column(length = 150)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String denomination;
 
 	@Column(length = 150)
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String acronym;
 
 	@Column(nullable = false)
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isIndividual;
 
 	@Column(length = 50)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String firstname;
 
 	@Column(length = 50)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String lastname;
 
 	@Column(length = 9)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String siren;
 
 	@Column(length = 14)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String siret;
 
 	@Column(length = 10)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String rna;
 
 	@Column(length = 10)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 
 	private String postalCode;
 
 	@Column(length = 20)
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String cedexComplement;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 
 	private City city;
@@ -112,22 +112,22 @@ public class Affaire implements IId, IAttachment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Country country;
 
 	@Column(length = 100, nullable = false)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private String address;
 
 	@ManyToMany
 	@JoinTable(name = "asso_affaire_mail", joinColumns = @JoinColumn(name = "id_affaire"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<Mail> mails;
 
 	@ManyToMany
 	@JoinTable(name = "asso_affaire_phone", joinColumns = @JoinColumn(name = "id_affaire"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<Phone> phones;
 
 	@Column(length = 60)
@@ -140,11 +140,11 @@ public class Affaire implements IId, IAttachment {
 	private BigDecimal shareCapital;
 
 	@Column(length = 40, name = "payment_iban")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String paymentIban;
 
 	@Column(length = 40, name = "payment_bic")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String paymentBic;
 
 	private Boolean isUnregistered;
@@ -155,19 +155,19 @@ public class Affaire implements IId, IAttachment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_forme_juridique")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private FormeJuridique legalForm;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_forme_exercice")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private FormeExerciceActivitePrincipal mainActivity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_competent_authority")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JsonIgnoreProperties(value = { "attachments", "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
@@ -179,7 +179,7 @@ public class Affaire implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "affaire" }, allowSetters = true)
 	private List<Attachment> attachments;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer employeeNumber;
 
 	private LocalDate lastRneUpdate;
@@ -187,7 +187,7 @@ public class Affaire implements IId, IAttachment {
 	private Boolean isMainOffice;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String apeCodes;
 
 	public String getPaymentIban() {

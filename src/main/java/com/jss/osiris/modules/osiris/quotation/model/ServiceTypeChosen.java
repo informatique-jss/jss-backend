@@ -8,40 +8,40 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 
 public class ServiceTypeChosen {
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private ServiceType service;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Affaire affaire;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer temporaryId;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal preTaxPrice;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal discountedAmount;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private LocalDate announcementPublicationDate;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Boolean announcementRedactedByJss;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Boolean announcementProofReading;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private NoticeTypeFamily announcementNoticeFamily;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private NoticeType announcementNoticeType;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Department announcementDepartment;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String announcementNotice;
 
     public ServiceType getService() {

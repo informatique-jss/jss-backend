@@ -7,22 +7,22 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 
 public class InvoicingSummary {
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal totalPrice;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal discountTotal;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal preTaxPriceTotal;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal vatTotal;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal remainingToPay;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private BillingLabelType billingLabelType;
 
     public BigDecimal getTotalPrice() {

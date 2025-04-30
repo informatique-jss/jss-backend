@@ -64,4 +64,8 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public void setAbandonReason(QuotationAbandonReason abandonReason);
 
+	public ServiceFamilyGroup getServiceFamilyGroup();
+
+	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup);
+
 }

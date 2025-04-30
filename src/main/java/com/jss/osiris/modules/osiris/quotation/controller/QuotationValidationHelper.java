@@ -80,6 +80,47 @@ public class QuotationValidationHelper {
         @Autowired
         ActiveDirectoryHelper activeDirectoryHelper;
 
+        public void validateAffaire(Affaire affaire) throws OsirisValidationException, OsirisException {
+                validationHelper.validateReferential(affaire.getCountry(), true, "Country");
+                validationHelper.validateReferential(affaire.getMainActivity(), false, "MainActivity");
+                validationHelper.validateReferential(affaire.getLegalForm(), false, "LegalForm");
+                validationHelper.validateReferential(affaire.getCompetentAuthority(), false, "CompetentAuthority");
+                validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
+                validationHelper.validateString(affaire.getIntercommunityVat(), false, 20, "IntercommunityVat");
+                if (affaire.getCountry() != null
+                                && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
+                        validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
+                validationHelper.validateString(affaire.getCedexComplement(), false, 20, "CedexComplement");
+                validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
+                validationHelper.validateReferential(affaire.getCity(), true, "City");
+
+                if (affaire.getIsIndividual()) {
+                        validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
+                        validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
+                        validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
+                        affaire.setDenomination(null);
+                        if (affaire.getLastname() != null)
+                                affaire.setLastname(affaire.getLastname().toUpperCase());
+
+                } else {
+                        validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
+                        affaire.setFirstname(null);
+                        affaire.setLastname(null);
+                        if (affaire.getRna() != null
+                                        && !validationHelper.validateRna(
+                                                        affaire.getRna().toUpperCase().replaceAll(" ", "")))
+                                throw new OsirisValidationException("RNA");
+                        if (affaire.getSiren() != null
+                                        && !validationHelper.validateSiren(
+                                                        affaire.getSiren().toUpperCase().replaceAll(" ", "")))
+                                throw new OsirisValidationException("SIREN");
+                        if (affaire.getSiret() != null
+                                        && !validationHelper.validateSiret(
+                                                        affaire.getSiret().toUpperCase().replaceAll(" ", "")))
+                                throw new OsirisValidationException("SIRET");
+                }
+        }
+
         @Transactional(rollbackFor = Exception.class)
         public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
@@ -111,16 +152,16 @@ public class QuotationValidationHelper {
                         CustomerOrder customerOrder = (CustomerOrder) quotation;
                         isOpen = customerOrder.getCustomerOrderStatus() == null ||
                                         customerOrder.getCustomerOrderStatus().getCode()
-                                                        .equals(CustomerOrderStatus.OPEN);
+                                                        .equals(CustomerOrderStatus.DRAFT);
 
                         if (targetStatusCode != null)
-                                isOpen = targetStatusCode.equals(CustomerOrderStatus.OPEN);
+                                isOpen = targetStatusCode.equals(CustomerOrderStatus.DRAFT);
                 }
 
                 if (quotation instanceof Quotation) {
                         Quotation quotationQuotation = (Quotation) quotation;
                         isOpen = quotationQuotation.getQuotationStatus() == null ||
-                                        quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+                                        quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.DRAFT);
                 }
 
                 validationHelper.validateReferential(quotation.getAssignedTo(), false, "AssignedTo");
@@ -327,8 +368,8 @@ public class QuotationValidationHelper {
 
                                 for (Service service : assoAffaireOrder.getServices())
                                         for (Provision provision : service.getProvisions()) {
-                                                validateProvision(provision, targetStatusCode, isCustomerOrder,
-                                                                quotation);
+                                                validateProvision(provision, isCustomerOrder,
+                                                                quotation, false);
 
                                                 // Check unique frequency in all customer order
                                                 if (provision.getProvisionType().getIsRecurring() != null
@@ -376,19 +417,20 @@ public class QuotationValidationHelper {
         }
 
         @Transactional
-        public void validateProvisionTransactionnal(Provision provision, String targetStatusCode,
-                        CustomerOrder customerOrder)
+        public void validateProvisionTransactionnal(Provision provision,
+                        IQuotation iQuotation, Boolean isByPassMandatoryFields)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-                validateProvision(provision, targetStatusCode, true,
-                                customerOrderService.getCustomerOrder(customerOrder.getId()));
+                validateProvision(provision, !iQuotation.getIsQuotation(), iQuotation, isByPassMandatoryFields);
         }
 
-        private void validateProvision(Provision provision, String targetStatusCode, boolean isCustomerOrder,
-                        IQuotation quotation)
+        private void validateProvision(Provision provision, boolean isCustomerOrder,
+                        IQuotation quotation, Boolean isByPassMandatoryFields)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
-                validationHelper.validateReferential(provision.getProvisionFamilyType(), true, "Famille de prestation");
-                validationHelper.validateReferential(provision.getProvisionType(), true, "Type de prestation");
+                validationHelper.validateReferential(provision.getProvisionFamilyType(),
+                                !isByPassMandatoryFields || true, "Famille de prestation");
+                validationHelper.validateReferential(provision.getProvisionType(), !isByPassMandatoryFields || true,
+                                "Type de prestation");
 
                 if (quotation.getId() == null && !quotation.getCustomerOrderOrigin().getId()
                                 .equals(constantService.getCustomerOrderOriginOsiris().getId()))
@@ -496,7 +538,7 @@ public class QuotationValidationHelper {
                         // Do not verify date when quotation has started
                         if (isCustomerOrder) {
                                 CustomerOrderStatus status = ((CustomerOrder) quotation).getCustomerOrderStatus();
-                                if (status != null && (status.getCode().equals(CustomerOrderStatus.OPEN)
+                                if (status != null && (status.getCode().equals(CustomerOrderStatus.DRAFT)
                                                 || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)
                                                 || status.getCode().equals(CustomerOrderStatus.ABANDONED)))
                                         publicationDateVerification = null;
@@ -534,25 +576,31 @@ public class QuotationValidationHelper {
                                                         || announcement.getAnnouncementStatus().getCode().equals(
                                                                         AnnouncementStatus.ANNOUNCEMENT_DONE));
 
-                        validationHelper.validateDateMin(announcement.getPublicationDate(), verifyAnnouncement,
+                        validationHelper.validateDateMin(announcement.getPublicationDate(),
+                                        !isByPassMandatoryFields || verifyAnnouncement,
                                         publicationDateVerification,
                                         "Date de publication de l'annonce");
-                        validationHelper.validateReferential(announcement.getDepartment(), verifyAnnouncement,
+                        validationHelper.validateReferential(announcement.getDepartment(),
+                                        !isByPassMandatoryFields || verifyAnnouncement,
                                         "Department");
-                        validationHelper.validateReferential(announcement.getConfrere(), verifyAnnouncement,
+                        validationHelper.validateReferential(announcement.getConfrere(),
+                                        !isByPassMandatoryFields || verifyAnnouncement,
                                         "Confrere");
-                        validationHelper.validateReferential(announcement.getNoticeTypeFamily(), verifyAnnouncement,
+                        validationHelper.validateReferential(announcement.getNoticeTypeFamily(),
+                                        !isByPassMandatoryFields || verifyAnnouncement,
                                         "NoticeTypeFamily");
-                        if (verifyAnnouncement && (announcement.getNoticeTypes() == null
+                        if ((!isByPassMandatoryFields || verifyAnnouncement) && (announcement.getNoticeTypes() == null
                                         || announcement.getNoticeTypes().size() == 0))
                                 throw new OsirisValidationException("NoticeTypes");
 
                         if (announcement.getNoticeTypes() != null)
                                 for (NoticeType noticeType : announcement.getNoticeTypes()) {
-                                        validationHelper.validateReferential(noticeType, verifyAnnouncement,
+                                        validationHelper.validateReferential(noticeType,
+                                                        !isByPassMandatoryFields || verifyAnnouncement,
                                                         "noticeType");
                                 }
-                        validationHelper.validateString(announcement.getNotice(), verifyAnnouncement, "Notice");
+                        validationHelper.validateString(announcement.getNotice(),
+                                        !isByPassMandatoryFields || verifyAnnouncement, "Notice");
 
                         if (announcement.getAnnouncementStatus() != null && (announcement.getAnnouncementStatus()
                                         .getCode()

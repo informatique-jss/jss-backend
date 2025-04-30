@@ -64,6 +64,8 @@ import com.jss.osiris.modules.osiris.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @org.springframework.stereotype.Service
 public class QuotationServiceImpl implements QuotationService {
 
@@ -167,19 +169,27 @@ public class QuotationServiceImpl implements QuotationService {
             }
 
         // Set default customer order assignation to sales employee if not set
-        if (quotation.getAssignedTo() == null)
+        if (quotation.getAssignedTo() == null && quotation.getResponsable() != null)
             quotation.setAssignedTo(quotation.getResponsable().getDefaultCustomerOrderEmployee());
 
         // Complete provisions
         boolean oneNewProvision = false;
+        boolean computePrice = false;
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 assoAffaireOrder.setQuotation(quotation);
-                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
-                for (Service service : assoAffaireOrder.getServices())
-                    for (Provision provision : service.getProvisions())
-                        if (provision.getId() == null)
-                            oneNewProvision = true;
+                if (assoAffaireOrder.getId() == null)
+                    oneNewProvision = true;
+                if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
+                    assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
+                    for (Service service : assoAffaireOrder.getServices())
+                        if (service.getProvisions() != null && service.getProvisions().size() > 0) {
+                            computePrice = true;
+                            for (Provision provision : service.getProvisions())
+                                if (provision.getId() == null)
+                                    oneNewProvision = true;
+                        }
+                }
             }
 
         boolean isNewQuotation = quotation.getId() == null;
@@ -192,8 +202,10 @@ public class QuotationServiceImpl implements QuotationService {
         if (oneNewProvision)
             quotation = quotationRepository.save(quotation);
 
-        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
-        quotation = quotationRepository.save(quotation);
+        if (computePrice) {
+            pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+            quotation = quotationRepository.save(quotation);
+        }
 
         quotation = getQuotation(quotation.getId());
 
@@ -566,13 +578,13 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation instanceof CustomerOrder) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
             return customerOrder.getCustomerOrderStatus() != null
-                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
+                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT);
         }
 
         if (quotation instanceof Quotation) {
             Quotation quotationQuotation = getQuotation(quotation.getId());
             return quotationQuotation.getQuotationStatus() != null
-                    && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+                    && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.DRAFT);
         }
         return false;
     }
@@ -716,6 +728,17 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Quotation saveQuotationFromMyJss(Quotation quotation, HttpServletRequest request)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        quotation.setResponsable(employeeService.getCurrentMyJssUser());
+        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
+        quotation.setQuotationStatus(
+                quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
+        return addOrUpdateQuotationFromUser(quotation);
+
+    }
+
     public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations) {
         if (quotations != null && quotations.size() > 0)
             for (Quotation quotation : quotations) {

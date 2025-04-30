@@ -20,8 +20,6 @@ export class MyJssServicesComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.myJssServicesItems = this.appService.getAllServicesMenuItems();
-
     if (this.myJssServicesItems.length > 0 && this.router.url) {
       this.matchRoute(this.router.url);
     } else {

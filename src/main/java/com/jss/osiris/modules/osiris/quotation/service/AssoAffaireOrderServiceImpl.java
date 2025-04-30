@@ -126,6 +126,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     PaymentService paymentService;
 
     @Autowired
+    ServiceService serviceService;
+
+    @Autowired
+    ServiceTypeService serviceTypeService;
+
+    @Autowired
     QuotationService quotationService;
 
     @Override
@@ -167,12 +173,18 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             }
         }
 
-        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder(), true);
+        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder,
+                assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
+                        : assoAffaireOrder.getQuotation(),
+                true);
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
+        assoAffaireOrder.setQuotation(assoAffaireOrder.getQuotation());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
             batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, affaireSaved.getId());
-        customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
+
+        if (assoAffaireOrder.getCustomerOrder() != null)
+            customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }
 
@@ -655,7 +667,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             formaliteInfogreffeStatusCode = affaireSearch.getFormaliteInfogreffeStatusCode();
 
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
-        excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
+        excludedCustomerOrderStatusCode.add(CustomerOrderStatus.DRAFT);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.ABANDONED);
 

@@ -27,32 +27,31 @@ public class City implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "city_sequence", sequenceName = "city_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "city_sequence")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String code;
 
 	@Column(length = 10)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
 	private String postalCode;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_department")
-	@JsonView(JacksonViews.MyJssListView.class)
 	private Department department;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
-	@JsonView(JacksonViews.MyJssListView.class)
 	private Country country;
 
 	public Integer getId() {

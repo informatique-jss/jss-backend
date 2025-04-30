@@ -26,6 +26,7 @@ public class SimpleProvision implements IId {
 	@Id
 	@SequenceGenerator(name = "simple_provision_sequence", sequenceName = "simple_provision_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "simple_provision_sequence")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

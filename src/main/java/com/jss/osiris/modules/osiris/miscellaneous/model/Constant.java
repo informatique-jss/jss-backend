@@ -59,22 +59,22 @@ public class Constant implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_code_affaire")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private BillingLabelType billingLabelTypeCodeAffaire;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_other")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private BillingLabelType billingLabelTypeOther;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_customer")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private BillingLabelType billingLabelTypeCustomer;
 
 	@ManyToOne
@@ -119,17 +119,17 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_digital")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private DocumentType documentTypeDigital;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_paper")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private DocumentType documentTypePaper;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_billing")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private DocumentType documentTypeBilling;
 
 	@ManyToOne
@@ -260,7 +260,7 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeClientCommunication;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -441,37 +441,37 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_prelevement")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypePrelevement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_virement")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeVirement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_cb")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeCB;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_especes")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeEspeces;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_cheques")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeCheques;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_account")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeAccount;
 
 	@ManyToOne
 	@JoinColumn(name = "id_refund_type_virement")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private RefundType refundTypeVirement;
 
 	@ManyToOne

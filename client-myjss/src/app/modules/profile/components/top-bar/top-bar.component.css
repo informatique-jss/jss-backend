@@ -10,3 +10,25 @@
     color: rgb(255, 255, 255);
     margin-bottom: 20px;
 }
+
+.navbar-toogler-light {
+    color: var(--ar-secondary);
+}
+
+.navbar-toggler-icon-light, .navbar-toggler-icon-light::before, .navbar-toggler-icon-light::after {
+    background-color: var(--ar-secondary);
+}
+
+.jss-navbar-light {
+    background-color: var(--ar-primary);
+    --ar-nav-link-color: var(--ar-secondary) !important;
+    --ar-nav-link-hover-color: var(--ar-primary);
+    color: var(--ar-secondary) !important;
+}
+
+.jss-navbar-light .nav-link,
+.jss-navbar-light .dropdown-item,
+.jss-navbar-light .fs-xs,
+.jss-navbar-light .fs-sm {
+    color: var(--ar-secondary) !important;
+}

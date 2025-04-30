@@ -9,11 +9,14 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
@@ -43,6 +46,21 @@ public class ServiceServiceImpl implements ServiceService {
     AttachmentService attachmentService;
 
     @Autowired
+    BatchService batchService;
+
+    @Autowired
+    AffaireService affaireService;
+
+    @Autowired
+    AssoAffaireOrderService assoAffaireOrderService;
+
+    @Autowired
+    AssoServiceDocumentService assoServiceDocumentService;
+
+    @Autowired
+    AssoServiceFieldTypeService assoServiceFieldTypeService;
+
+    @Autowired
     ProvisionService provisionService;
 
     @Override
@@ -55,22 +73,68 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Service addOrUpdateService(
-            Service service) {
+    public Service addOrUpdateService(Service service) throws OsirisException {
         computeServiceLabel(service);
         if (service.getCustomLabel() != null && service.getCustomLabel().trim().length() == 0)
             service.setCustomLabel(null);
+
+        if (service.getAssoAffaireOrder().getCustomerOrder() != null)
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, service.getAssoAffaireOrder().getId());
+
         return serviceRepository.save(service);
     }
 
     @Override
+    public Boolean addOrUpdateServices(List<ServiceType> services, Integer affaireId, Integer assoAffaireOrderId,
+            String customLabel)
+            throws OsirisException {
+
+        Affaire affaire = affaireService.getAffaire(affaireId);
+
+        AssoAffaireOrder assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(assoAffaireOrderId);
+
+        if (assoAffaireOrder != null) {
+            for (Service service : generateServiceInstanceFromMultiServiceTypes(services, affaire, customLabel)) {
+                service.setAssoAffaireOrder(assoAffaireOrder);
+                addOrUpdateService(service);
+                linkNewServiceWithAsso(service);
+            }
+        }
+        return true;
+    }
+
+    private void linkNewServiceWithAsso(Service newService) {
+        for (Service service : newService.getAssoAffaireOrder().getServices()) {
+            for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
+                assoServiceDocument.setService(newService);
+                assoServiceDocumentService.addOrUpdateAssoServiceDocument(assoServiceDocument);
+            }
+            for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+                assoServiceFieldType.setService(newService);
+                assoServiceFieldTypeService.addOrUpdateServiceFieldType(assoServiceFieldType);
+            }
+            for (Provision provision : service.getProvisions()) {
+                provision.setService(newService);
+                provisionService.addOrUpdateProvision(provision);
+            }
+        }
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteService(Service service) {
+    public Boolean deleteServiceFromUser(Service service) {
+        return deleteService(service, false);
+    }
+
+    private Boolean deleteService(Service service, boolean permanentlyDeleteAttachments) {
         if (service.getProvisions() != null && service.getProvisions().size() > 0) {
             for (Provision provision : service.getProvisions()) {
                 if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
                     for (Attachment attachment : provision.getAttachments()) {
-                        attachmentService.cleanAttachmentForDelete(attachment);
+                        if (permanentlyDeleteAttachments)
+                            attachmentService.definitivelyDeleteAttachment(attachment);
+                        else
+                            attachmentService.cleanAttachmentForDelete(attachment);
                     }
                 }
             }
@@ -318,7 +382,8 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) {
+
+    public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) throws OsirisException {
         service = getService(service.getId());
 
         ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
@@ -436,4 +501,5 @@ public class ServiceServiceImpl implements ServiceService {
                         }
         return attachments;
     }
+
 }

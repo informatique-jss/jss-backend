@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../../libs/appRest.service';
+import { IQuotation } from '../../quotation/model/IQuotation';
 import { CustomerOrder } from '../model/CustomerOrder';
 
 @Injectable({
@@ -29,5 +30,27 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
 
   getCustomerOrderForQuotation(idQuotation: number) {
     return this.get(new HttpParams().set("idQuotation", idQuotation), 'quotation/order');
+  }
+
+  saveOrder(order: IQuotation) {
+    return this.postItem(new HttpParams(), 'order/user/save', order);
+  }
+
+  getCurrentDraftOrderId() {
+    return localStorage.getItem('current-draft-order-id');
+  }
+
+  setCurrentDraftOrderId(quotationId: number) {
+    localStorage.setItem('current-draft-order-id', quotationId + "");
+  }
+
+  setCurrentDraftOrder(quotation: IQuotation) {
+    localStorage.setItem('current-draft-order', JSON.stringify(quotation));
+  }
+
+  getCurrentDraftOrder(): CustomerOrder | undefined {
+    if (localStorage.getItem('current-draft-order'))
+      return JSON.parse(localStorage.getItem('current-draft-order')!) as CustomerOrder;
+    return undefined;
   }
 }

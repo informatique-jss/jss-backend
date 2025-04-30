@@ -37,13 +37,13 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@SequenceGenerator(name = "asso_affaire_order_sequence", sequenceName = "asso_affaire_order_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_affaire_order_sequence")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_affaire")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Affaire affaire;
 
@@ -66,7 +66,7 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@OneToMany(targetEntity = Service.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private List<Service> services;
 

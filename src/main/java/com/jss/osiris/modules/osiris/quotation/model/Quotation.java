@@ -46,7 +46,8 @@ public class Quotation implements IQuotation {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
@@ -60,25 +61,29 @@ public class Quotation implements IQuotation {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Responsable responsable;
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	@JsonIgnoreProperties(value = { "assoSpecialOfferBillingTypes" }, allowSetters = true)
 	private List<SpecialOffer> specialOffers;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation_status")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private QuotationStatus quotationStatus;
@@ -89,7 +94,7 @@ public class Quotation implements IQuotation {
 	private LocalDateTime lastStatusUpdate;
 
 	@Column(columnDefinition = "TEXT") // TODO : delete when new website
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private String description;
 
 	@OneToMany(mappedBy = "quotation")
@@ -97,19 +102,20 @@ public class Quotation implements IQuotation {
 	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<Attachment> attachments;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<Document> documents;
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
 	@Column(length = 40)
 	private String quotationLabel;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isQuotation;
 
 	@Column(length = 40)
@@ -146,19 +152,27 @@ public class Quotation implements IQuotation {
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	public String affairesList;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 
 	public String servicesList;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	public Boolean hasMissingInformations;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_service_family_group")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceFamilyGroup serviceFamilyGroup;
 
 	public Integer getId() {
 		return id;
@@ -358,6 +372,14 @@ public class Quotation implements IQuotation {
 
 	public void setHasMissingInformations(Boolean hasMissingInformations) {
 		this.hasMissingInformations = hasMissingInformations;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroup() {
+		return serviceFamilyGroup;
+	}
+
+	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup) {
+		this.serviceFamilyGroup = serviceFamilyGroup;
 	}
 
 }

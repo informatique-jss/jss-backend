@@ -19,15 +19,15 @@ public class BillingLabelType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "billing_label_type_sequence", sequenceName = "billing_label_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billing_label_type_sequence")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private String code;
 
 	public Integer getId() {

@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -30,7 +29,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
-import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
@@ -41,15 +39,11 @@ import com.jss.osiris.modules.osiris.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
-import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
-import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
-import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @org.springframework.stereotype.Service
 public class PricingHelper {
@@ -832,97 +826,105 @@ public class PricingHelper {
         vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
     }
 
-    public UserCustomerOrder completePricingOfUserCustomerOrder(UserCustomerOrder order)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        CustomerOrder customerOrder = new CustomerOrder();
-        Responsable user = employeeService.getCurrentMyJssUser();
-        ProvisionScreenType provisionScreenTypeAnnouncement = constantService.getProvisionScreenTypeAnnouncement();
-        if (user == null)
-            user = constantService.getResponsableDummyCustomerFrance();
+    // public UserCustomerOrder completePricingOfUserCustomerOrder(UserCustomerOrder
+    // order)
+    // throws OsirisClientMessageException, OsirisValidationException,
+    // OsirisException {
+    // CustomerOrder customerOrder = new CustomerOrder();
+    // Responsable user = employeeService.getCurrentMyJssUser();
+    // ProvisionScreenType provisionScreenTypeAnnouncement =
+    // constantService.getProvisionScreenTypeAnnouncement();
+    // if (user == null)
+    // user = constantService.getResponsableDummyCustomerFrance();
 
-        customerOrder.setResponsable(user);
-        customerOrder.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
-        customerOrder.getAssoAffaireOrders().add(new AssoAffaireOrder());
-        customerOrder.getAssoAffaireOrders().get(0).setAffaire(order.getServiceTypes().get(0).getAffaire());
+    // customerOrder.setResponsable(user);
+    // customerOrder.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
+    // customerOrder.getAssoAffaireOrders().add(new AssoAffaireOrder());
+    // customerOrder.getAssoAffaireOrders().get(0).setAffaire(order.getServiceTypes().get(0).getAffaire());
 
-        if (user.getTiers() != null && user.getTiers().getSpecialOffers() != null)
-            customerOrder.setSpecialOffers(user.getTiers().getSpecialOffers());
+    // if (user.getTiers() != null && user.getTiers().getSpecialOffers() != null)
+    // customerOrder.setSpecialOffers(user.getTiers().getSpecialOffers());
 
-        List<InvoiceItem> invoiceItemsToConsider = new ArrayList<InvoiceItem>();
+    // List<InvoiceItem> invoiceItemsToConsider = new ArrayList<InvoiceItem>();
 
-        for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
-            serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
-            Service service = serviceService.generateServiceInstanceFromMultiServiceTypes(
-                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire(), null).get(0);
+    // for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
+    // serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
+    // Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
+    // Arrays.asList(serviceTypeChosen.getService()),
+    // serviceTypeChosen.getAffaire());
 
-            if (order.getIsEmergency() != null && order.getIsEmergency() && service.getProvisions() != null
-                    && service.getProvisions().size() > 0
-                    && order.getServiceTypes().indexOf(serviceTypeChosen) == 0)
-                service.getProvisions().get(0).setIsEmergency(true);
+    // if (order.getIsEmergency() != null && order.getIsEmergency() &&
+    // service.getProvisions() != null
+    // && service.getProvisions().size() > 0
+    // && order.getServiceTypes().indexOf(serviceTypeChosen) == 0)
+    // service.getProvisions().get(0).setIsEmergency(true);
 
-            if (service != null && service.getProvisions() != null)
-                for (Provision provision : service.getProvisions()) {
-                    // map announcement
-                    if (provision.getProvisionType().getProvisionScreenType().getId()
-                            .equals(provisionScreenTypeAnnouncement.getId())) {
-                        provision.setAnnouncement(new Announcement());
-                        if (serviceTypeChosen.getAnnouncementProofReading() != null
-                                && serviceTypeChosen.getAnnouncementProofReading())
-                            provision.getAnnouncement().setIsProofReadingDocument(true);
+    // if (service != null && service.getProvisions() != null)
+    // for (Provision provision : service.getProvisions()) {
+    // // map announcement
+    // if (provision.getProvisionType().getProvisionScreenType().getId()
+    // .equals(provisionScreenTypeAnnouncement.getId())) {
+    // provision.setAnnouncement(new Announcement());
+    // if (serviceTypeChosen.getAnnouncementProofReading() != null
+    // && serviceTypeChosen.getAnnouncementProofReading())
+    // provision.getAnnouncement().setIsProofReadingDocument(true);
 
-                        if (serviceTypeChosen.getAnnouncementNoticeType() != null)
-                            provision.getAnnouncement()
-                                    .setNoticeTypes(Arrays.asList(serviceTypeChosen.getAnnouncementNoticeType()));
+    // if (serviceTypeChosen.getAnnouncementNoticeType() != null)
+    // provision.getAnnouncement()
+    // .setNoticeTypes(Arrays.asList(serviceTypeChosen.getAnnouncementNoticeType()));
 
-                        if (serviceTypeChosen.getAnnouncementNoticeFamily() != null)
-                            provision.getAnnouncement()
-                                    .setNoticeTypeFamily(serviceTypeChosen.getAnnouncementNoticeFamily());
+    // if (serviceTypeChosen.getAnnouncementNoticeFamily() != null)
+    // provision.getAnnouncement()
+    // .setNoticeTypeFamily(serviceTypeChosen.getAnnouncementNoticeFamily());
 
-                        if (serviceTypeChosen.getAnnouncementNotice() != null
-                                && (serviceTypeChosen.getAnnouncementRedactedByJss() == null
-                                        || serviceTypeChosen.getAnnouncementRedactedByJss()))
-                            provision.getAnnouncement().setNotice(serviceTypeChosen.getAnnouncementNotice());
+    // if (serviceTypeChosen.getAnnouncementNotice() != null
+    // && (serviceTypeChosen.getAnnouncementRedactedByJss() == null
+    // || serviceTypeChosen.getAnnouncementRedactedByJss()))
+    // provision.getAnnouncement().setNotice(serviceTypeChosen.getAnnouncementNotice());
+    // ;
 
-                        if (serviceTypeChosen.getAnnouncementPublicationDate() != null)
-                            provision.getAnnouncement()
-                                    .setPublicationDate(serviceTypeChosen.getAnnouncementPublicationDate());
+    // if (serviceTypeChosen.getAnnouncementPublicationDate() != null)
+    // provision.getAnnouncement()
+    // .setPublicationDate(serviceTypeChosen.getAnnouncementPublicationDate());
 
-                        if (serviceTypeChosen.getAnnouncementRedactedByJss() != null
-                                && serviceTypeChosen.getAnnouncementRedactedByJss())
-                            provision.setIsRedactedByJss(true);
-                    }
+    // if (serviceTypeChosen.getAnnouncementRedactedByJss() != null
+    // && serviceTypeChosen.getAnnouncementRedactedByJss())
+    // provision.setIsRedactedByJss(true);
+    // }
 
-                    setInvoiceItemsForProvision(provision, customerOrder, false);
-                    invoiceItemsToConsider.addAll(provision.getInvoiceItems());
-                }
-            serviceTypeChosen.setDiscountedAmount(assoAffaireOrderService.getServicePrice(service, true, false));
-            serviceTypeChosen.setPreTaxPrice(assoAffaireOrderService.getServicePrice(service, false, false));
-        }
+    // setInvoiceItemsForProvision(provision, customerOrder, false);
+    // invoiceItemsToConsider.addAll(provision.getInvoiceItems());
+    // }
+    // serviceTypeChosen.setDiscountedAmount(assoAffaireOrderService.getServicePrice(service,
+    // true, false));
+    // serviceTypeChosen.setPreTaxPrice(assoAffaireOrderService.getServicePrice(service,
+    // false, false));
+    // }
 
-        BigDecimal discountTotal = new BigDecimal(0);
-        BigDecimal preTaxPriceTotal = new BigDecimal(0);
-        BigDecimal vatTotal = new BigDecimal(0);
-        if (invoiceItemsToConsider != null)
-            for (InvoiceItem invoiceItem : invoiceItemsToConsider) {
-                if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
-                    preTaxPriceTotal = preTaxPriceTotal
-                            .add(invoiceItem.getPreTaxPriceReinvoiced());
-                } else if (invoiceItem.getPreTaxPrice() != null) {
-                    preTaxPriceTotal = preTaxPriceTotal.add(invoiceItem.getPreTaxPrice());
-                }
+    // BigDecimal discountTotal = new BigDecimal(0);
+    // BigDecimal preTaxPriceTotal = new BigDecimal(0);
+    // BigDecimal vatTotal = new BigDecimal(0);
+    // if (invoiceItemsToConsider != null)
+    // for (InvoiceItem invoiceItem : invoiceItemsToConsider) {
+    // if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
+    // preTaxPriceTotal = preTaxPriceTotal
+    // .add(invoiceItem.getPreTaxPriceReinvoiced());
+    // } else if (invoiceItem.getPreTaxPrice() != null) {
+    // preTaxPriceTotal = preTaxPriceTotal.add(invoiceItem.getPreTaxPrice());
+    // }
 
-                if (invoiceItem.getVatPrice() != null) {
-                    vatTotal = vatTotal.add(invoiceItem.getVatPrice());
-                }
-                if (invoiceItem.getDiscountAmount() != null) {
-                    discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
-                }
-            }
+    // if (invoiceItem.getVatPrice() != null) {
+    // vatTotal = vatTotal.add(invoiceItem.getVatPrice());
+    // }
+    // if (invoiceItem.getDiscountAmount() != null) {
+    // discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
+    // }
+    // }
 
-        order.setPreTaxPrice(preTaxPriceTotal.subtract(discountTotal));
-        order.setTotalPrice(preTaxPriceTotal.add(vatTotal).subtract(discountTotal));
-        order.setVatPrice(vatTotal);
+    // order.setPreTaxPrice(preTaxPriceTotal.subtract(discountTotal));
+    // order.setTotalPrice(preTaxPriceTotal.add(vatTotal).subtract(discountTotal));
+    // order.setVatPrice(vatTotal);
 
-        return order;
-    }
+    // return order;
+    // }
 }

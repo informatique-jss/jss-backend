@@ -24,7 +24,7 @@ export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCa
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
       this.types.push(this.additionnalType);
       this.types.push(...response);
-      this.selectedType = this.types[0];
+      this.model = this.types[0];
     });
   }
 }

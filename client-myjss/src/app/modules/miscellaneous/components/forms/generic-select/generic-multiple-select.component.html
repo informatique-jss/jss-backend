@@ -1,0 +1,10 @@
+<div class="position-relative ">
+  <div [formGroup]="form!">
+    <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
+      class="form-label">{{label}}</label>
+    <select class="form-control form-control ps-5" [id]="'fl-text'+uniqueId" [formControlName]="propertyName"
+      (blur)="blurForm()" [disabled]="disabled" multiple>
+      <option *ngFor="let type of types" [value]="type">{{displayLabel(type)}}</option>
+    </select>
+  </div>
+</div>

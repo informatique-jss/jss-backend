@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -67,7 +68,8 @@ public class Attachment implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "attachment_sequence", sequenceName = "attachment_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attachment_sequence")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -148,12 +150,14 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_attachment_type")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private AttachmentType attachmentType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_type_document")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private TypeDocument typeDocument;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -171,12 +175,14 @@ public class Attachment implements Serializable, IId {
 	private Boolean isDisabled;
 
 	@Column(length = 2000)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String description;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime creatDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -209,6 +215,8 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_document_associe_infogreffe")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private DocumentAssocieInfogreffe documentAssocieInfogreffe;
+
+	private LocalDate attachmentDate;
 
 	public Integer getId() {
 		return id;
@@ -426,4 +434,11 @@ public class Attachment implements Serializable, IId {
 		this.missingAttachmentQuery = missingAttachmentQuery;
 	}
 
+	public LocalDate getAttachmentDate() {
+		return attachmentDate;
+	}
+
+	public void setAttachmentDate(LocalDate attachmentDate) {
+		this.attachmentDate = attachmentDate;
+	}
 }

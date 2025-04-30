@@ -1,0 +1,10 @@
+<div class="form-group">
+  <label class="form-label" *ngIf="label && label.length > 0" for="{{propertyName}}">{{label}}</label>
+  <div class="position-relative">
+    <input type="datetime-local" id="{{propertyName}}" class="form-control date-picker pe-5" [placeholder]="label"
+      [min]="minDate" [max]="maxDate" (change)="dateChange()">
+    <small *ngIf="hint && hint.length > 0" class="form-text text-muted">
+      {{hint}}
+    </small>
+  </div>
+</div>

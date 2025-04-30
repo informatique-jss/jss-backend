@@ -5,25 +5,25 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 
 public class DashboardUserStatistics {
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer customerOrderInProgress;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer quotationToValidate;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer invoiceToPay;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer invoiceAfterDueDate;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer customerOrderRequieringAttention;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer customerOrderDraft;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer quotationDraft;
 
     public Integer getCustomerOrderInProgress() {

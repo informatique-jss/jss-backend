@@ -1,0 +1,35 @@
+.white-card {
+    background-color: var(--ar-primary);
+    position: relative;
+    cursor: pointer;
+    border: 3px solid transparent;
+}
+
+.card.selected {
+    border: 3px solid var(--ar-secondary);
+}
+
+.pill {
+    position: relative;
+    z-index: 1;
+}
+
+.right-border {
+    border-right: 1px solid var(--ar-gray-500);
+}
+
+:host ::ng-deep .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+    min-height: 200px;
+}
+
+:host ::ng-deep .ck-rounded-corners .ck.ck-editor__main>.ck-editor__editable, .ck.ck-editor__main>.ck-editor__editable.ck-rounded-corners {
+    min-height: 200px;
+}
+
+.modal-content {
+    background-color: white;
+}
+
+.modal-footer .btn-danger:hover {
+    color: var(--ar-danger);
+}

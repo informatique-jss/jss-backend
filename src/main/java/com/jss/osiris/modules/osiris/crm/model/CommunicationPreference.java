@@ -24,18 +24,18 @@ public class CommunicationPreference implements Serializable {
     @Id
     @SequenceGenerator(name = "communication_preference_sequence", sequenceName = "communication_preference_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "communication_preference_sequence")
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "id_mail", nullable = false)
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Mail mail;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Boolean isSubscribedToNewspaperNewletter;
 
-    @JsonView(JacksonViews.MyJssListView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Boolean isSubscribedToCorporateNewsletter;
 
     private String validationToken;

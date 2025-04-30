@@ -29,7 +29,7 @@ public class Comment implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -43,7 +43,7 @@ public class Comment implements Serializable, IId {
 	private Comment parentComment;
 
 	@OneToMany(targetEntity = Comment.class, mappedBy = "parentComment")
-	@JsonView({ JacksonViews.MyJssListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	@JsonIgnoreProperties(value = { "parentComment", "childrenComments" }, allowSetters = true)
 	private List<Comment> childrenComments;
 
@@ -53,10 +53,10 @@ public class Comment implements Serializable, IId {
 	private Post post;
 
 	@Column(columnDefinition = "TEXT", nullable = false)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private String content;
 
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private String authorFirstName;
 
 	@JsonView({ JacksonViews.OsirisListView.class })
@@ -65,7 +65,7 @@ public class Comment implements Serializable, IId {
 	@Transient
 	private String authorLastNameInitials;
 
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private LocalDateTime creationDate;
 
 	@JsonView(JacksonViews.OsirisListView.class)

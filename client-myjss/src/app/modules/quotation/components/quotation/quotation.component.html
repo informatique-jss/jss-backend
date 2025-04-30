@@ -1,3 +1,25 @@
-<p>
-  quotation works!
-</p>
+<section class="pt-5 mt-5 quotation-breadcrumb">
+  <div class="container">
+
+    <h2>{{selectedTab?.label?.substring(2)}}</h2>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs align-items-center d-flex" role="tablist">
+      <li class="nav-item d-flex align-items-center rounded-4" *ngFor="let item of myJssQuotationItems;">
+        <i class="ai-chevron-right quotation-nav-link me-2 fs-5" *ngIf="item!=myJssQuotationItems[0]"></i>
+        <a class="quotation-nav-link nav-link rounded-1" [class.active]="item == selectedTab" [routerLink]="item.route">
+          {{ item.label }}
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- Content Section -->
+<div class="tab-content">
+  <div>
+    <div class="tab-pane">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

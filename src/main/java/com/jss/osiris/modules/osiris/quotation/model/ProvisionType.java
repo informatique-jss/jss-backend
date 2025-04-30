@@ -52,6 +52,7 @@ public class ProvisionType implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_screen_type")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ProvisionScreenType provisionScreenType;
 
 	private Boolean isDisplayActeDepositScreen;

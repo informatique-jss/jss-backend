@@ -35,7 +35,8 @@ public class ServiceType implements Serializable, IId {
 
 	@Column(nullable = false)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String label;
 
@@ -47,7 +48,7 @@ public class ServiceType implements Serializable, IId {
 	private String code;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private String comment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -69,14 +70,14 @@ public class ServiceType implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<AssoServiceTypeFieldType> assoServiceTypeFieldTypes;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private Boolean isRequiringNewUnregisteredAffaire;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@Transient
 	private Boolean hasAnnouncement;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@Transient
 	private Boolean hasOnlyAnnouncement;
 

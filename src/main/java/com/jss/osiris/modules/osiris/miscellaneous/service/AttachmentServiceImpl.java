@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.miscellaneous.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -351,11 +352,26 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
     }
 
+    @Override
+    @Transactional
+    public Boolean modifyAttachmentDate(LocalDate attachmentDate, Integer idAttachment) {
+
+        Attachment attachmentToModify = attachmentRepository.findById(idAttachment).get();
+
+        if (attachmentToModify != null && attachmentDate != null) {
+            attachmentToModify.setAttachmentDate(attachmentDate);
+            attachmentRepository.save(attachmentToModify);
+            return true;
+        }
+
+        return false;
+    }
+
     public Boolean definitivelyDeleteAttachment(Attachment attachment) {
         Boolean isDelete = uploadedFileService.definitivelyDeleteUploadedFile(attachment.getUploadedFile());
         if (isDelete) {
-            uploadedFileService.deleteUploadedFile(attachment.getUploadedFile());
             deleteAttachment(attachment);
+            uploadedFileService.deleteUploadedFile(attachment.getUploadedFile());
             return true;
         }
         return false;

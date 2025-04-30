@@ -805,7 +805,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/unique")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Announcement> getAnnouncement(@RequestParam Integer announcementId,
 			HttpServletRequest request)
 			throws OsirisException {
@@ -821,7 +821,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/post/comments")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Page<Comment>> getParentCommentsForPost(
 			@RequestParam Integer postId,
 			@RequestParam(defaultValue = "0") int page,
@@ -837,7 +837,7 @@ public class WordpressController {
 	}
 
 	@PostMapping(inputEntryPoint + "/post/comment/add")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
 			@RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
 			@RequestParam Integer postId)

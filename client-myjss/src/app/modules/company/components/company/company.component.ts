@@ -21,8 +21,6 @@ export class CompanyComponent implements OnInit, AfterContentChecked {
     private router: Router) { }
 
   ngOnInit() {
-    this.companyItems = this.appService.getAllCompanyMenuItems();
-
     if (this.companyItems.length > 0 && this.router.url) {
       this.matchRoute(this.router.url);
     } else {

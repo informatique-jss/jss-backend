@@ -35,6 +35,7 @@ public class Formalite implements IId {
     @Id
     @SequenceGenerator(name = "formalite_sequence", sequenceName = "formalite_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "formalite_sequence")
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)

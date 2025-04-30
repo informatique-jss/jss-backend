@@ -16,6 +16,8 @@ import com.jss.osiris.modules.osiris.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface QuotationService {
         public Quotation getQuotation(Integer id);
 
@@ -84,6 +86,9 @@ public interface QuotationService {
         public Boolean checkValidationIdQuotation(Integer validationId);
 
         public List<Quotation> findQuotationByResponsable(Responsable responsable);
+
+        public Quotation saveQuotationFromMyJss(Quotation order, HttpServletRequest request)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders);
 

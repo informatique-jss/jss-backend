@@ -126,8 +126,6 @@ export class BankBalanceComponent implements OnInit {
   }
 
   selectPayments(event: any) {
-    console.log(event);
-
     if (event.id)
       if (event.id == this.REFUND) {
         this.bankBalancePaymentService.getRefundList(this.accountingDate).subscribe(response => this.paymentList = response);

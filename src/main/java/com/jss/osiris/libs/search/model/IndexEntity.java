@@ -22,14 +22,14 @@ import jakarta.persistence.Table;
 @Table(indexes = { @Index(name = "pk_index", columnList = "entityType,entityId", unique = true) })
 public class IndexEntity implements Serializable {
 	@Id
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private String entityType;
 	@Id
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Integer entityId;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private String text;
 
 	private LocalDateTime createdDate;

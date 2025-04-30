@@ -50,7 +50,7 @@ const routes: Routes = [
     MyJssServicesModule,
     GeneralModule,
     CompanyModule,
-    ToolsModule
+    ToolsModule,
   ], providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: HttpErrorInterceptor,

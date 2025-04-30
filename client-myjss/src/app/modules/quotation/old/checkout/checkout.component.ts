@@ -16,12 +16,12 @@ import { Mail } from '../../../profile/model/Mail';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { ServiceTypeChosen } from '../../model/ServiceTypeChosen';
-import { UserCustomerOrder } from '../../model/UserCustomerOrder';
+// import { UserCustomerOrder } from '../../model/UserCustomerOrder';
 import { CityService } from '../../services/city.service';
 import { CivilityService } from '../../services/civility.service';
 import { CountryService } from '../../services/country.service';
-import { UserCustomerOrderService } from '../../services/user.customer.service';
-import { TYPE_CHOSEN_ORDER, TYPE_CHOSEN_QUOTATION } from '../choose-type/choose-type.component';
+// import { UserCustomerOrderService } from '../../services/user.customer.service';
+// import { TYPE_CHOSEN_ORDER, TYPE_CHOSEN_QUOTATION } from '../choose-type/choose-type.component';
 
 @Component({
   selector: 'checkout',
@@ -39,7 +39,7 @@ export class CheckoutComponent implements OnInit {
 
   currentUser: Responsable | undefined;
 
-  userCustomerOrder: UserCustomerOrder = { "customerIsIndividual": false } as UserCustomerOrder;
+  // userCustomerOrder: UserCustomerOrder = { "customerIsIndividual": false } as UserCustomerOrder;
 
   documentTypeBilling = this.constantService.getDocumentTypeBilling();
   documentTypeDigital = this.constantService.getDocumentTypeDigital();
@@ -81,7 +81,7 @@ export class CheckoutComponent implements OnInit {
     private constantService: ConstantService,
     private documentService: DocumentService,
     private formBuilder: FormBuilder,
-    private userCustomerOrderService: UserCustomerOrderService,
+    // private userCustomerOrderService: UserCustomerOrderService,
     private appService: AppService,
     private affaireService: AffaireService,
     private countryService: CountryService,
@@ -111,17 +111,17 @@ export class CheckoutComponent implements OnInit {
           if (this.countries)
             for (let country of this.countries)
               if (country.id == this.countryFrance.id) {
-                this.userCustomerOrder.customerCountry = country;
+                // this.userCustomerOrder.customerCountry = country;
                 break;
               }
         });
 
-        this.userCustomerOrder.billingDocument = { isRecipientClient: true } as Document;
-        this.userCustomerOrder.digitalDocument = { isRecipientClient: true } as Document;
-        this.userCustomerOrder.paperDocument = { isRecipientClient: true } as Document;
-        this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeCustomer;
+        // this.userCustomerOrder.billingDocument = { isRecipientClient: true } as Document;
+        // this.userCustomerOrder.digitalDocument = { isRecipientClient: true } as Document;
+        // this.userCustomerOrder.paperDocument = { isRecipientClient: true } as Document;
+        // this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeCustomer;
 
-        this.computePrices();
+        // this.computePrices();
       } else {
         this.logCurrentUser(response);
       }
@@ -162,28 +162,29 @@ export class CheckoutComponent implements OnInit {
         behavior: 'smooth',
       }), 100);
 
-      this.userCustomerOrder.billingDocument = this.getDocument(this.documentTypeBilling, response);
+      // this.userCustomerOrder.billingDocument = this.getDocument(this.documentTypeBilling, response);
 
-      if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeAffaire.id)
-        this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeAffaire;
-      if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeCustomer.id)
-        this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeCustomer;
-      if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeOther.id)
-        this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeOther;
+      // if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeAffaire.id)
+      //   this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeAffaire;
+      // if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeCustomer.id)
+      //   this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeCustomer;
+      // if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeOther.id)
+      //   this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeOther;
 
-      this.userCustomerOrder.digitalDocument = this.getDocument(this.documentTypeDigital, response);
-      this.userCustomerOrder.paperDocument = this.getDocument(this.documentTypePaper, response);
+      // this.userCustomerOrder.digitalDocument = this.getDocument(this.documentTypeDigital, response);
+      // this.userCustomerOrder.paperDocument = this.getDocument(this.documentTypePaper, response);
 
-      this.computePrices();
+      // this.computePrices();
     })
   }
 
   isAnOrder() {
-    return this.typeChosen && this.typeChosen == TYPE_CHOSEN_ORDER;
+    return true;
+    // return this.typeChosen && this.typeChosen == TYPE_CHOSEN_ORDER;
   }
 
   isAQuotation() {
-    return this.typeChosen && this.typeChosen == TYPE_CHOSEN_QUOTATION;
+    // return this.typeChosen && this.typeChosen == TYPE_CHOSEN_QUOTATION;
   }
 
   removeService(service: ServiceTypeChosen) {
@@ -198,69 +199,69 @@ export class CheckoutComponent implements OnInit {
     this.onAddServiceChoosen.next(true);
   }
 
-  computePrices() {
-    if (this.userCustomerOrder) {
-      this.userCustomerOrder.preTaxPrice = undefined;
-      this.userCustomerOrder.vatPrice = undefined;
-      this.userCustomerOrder.totalPrice = undefined;
-      if (this.userCustomerOrder && this.userCustomerOrder.serviceTypes)
-        for (let service of this.userCustomerOrder.serviceTypes) {
-          service.preTaxPrice = undefined;
-          service.discountedAmount = undefined;
-        }
+  // computePrices() {
+  //   if (this.userCustomerOrder) {
+  //     this.userCustomerOrder.preTaxPrice = undefined;
+  //     this.userCustomerOrder.vatPrice = undefined;
+  //     this.userCustomerOrder.totalPrice = undefined;
+  //     if (this.userCustomerOrder && this.userCustomerOrder.serviceTypes)
+  //       for (let service of this.userCustomerOrder.serviceTypes) {
+  //         service.preTaxPrice = undefined;
+  //         service.discountedAmount = undefined;
+  //       }
 
-      if (this.serviceTypesSelected) {
-        this.userCustomerOrder.serviceTypes = this.serviceTypesSelected;
-        if (this.userCustomerOrder.serviceTypes) {
-          this.userCustomerOrderService.completePricingOfUserCustomerOrder(this.userCustomerOrder).subscribe(response => {
-            if (response) {
-              this.userCustomerOrder.preTaxPrice = response.preTaxPrice;
-              this.userCustomerOrder.totalPrice = response.totalPrice;
-              this.userCustomerOrder.vatPrice = response.vatPrice;
-              if (this.userCustomerOrder.serviceTypes && response.serviceTypes)
-                for (let serviceClient of this.userCustomerOrder.serviceTypes) {
-                  for (let serviceServer of response.serviceTypes) {
-                    if (serviceClient.temporaryId == serviceServer.temporaryId) {
-                      serviceClient.discountedAmount = serviceServer.discountedAmount;
-                      serviceClient.preTaxPrice = serviceServer.preTaxPrice;
-                    }
-                  }
-                }
-              console.log(this.userCustomerOrder);
-            }
-          })
-        }
-      }
-    }
-  }
+  //     if (this.serviceTypesSelected) {
+  //       this.userCustomerOrder.serviceTypes = this.serviceTypesSelected;
+  //       if (this.userCustomerOrder.serviceTypes) {
+  //         this.userCustomerOrderService.completePricingOfUserCustomerOrder(this.userCustomerOrder).subscribe(response => {
+  //           if (response) {
+  //             this.userCustomerOrder.preTaxPrice = response.preTaxPrice;
+  //             this.userCustomerOrder.totalPrice = response.totalPrice;
+  //             this.userCustomerOrder.vatPrice = response.vatPrice;
+  //             if (this.userCustomerOrder.serviceTypes && response.serviceTypes)
+  //               for (let serviceClient of this.userCustomerOrder.serviceTypes) {
+  //                 for (let serviceServer of response.serviceTypes) {
+  //                   if (serviceClient.temporaryId == serviceServer.temporaryId) {
+  //                     serviceClient.discountedAmount = serviceServer.discountedAmount;
+  //                     serviceClient.preTaxPrice = serviceServer.preTaxPrice;
+  //                   }
+  //                 }
+  //               }
+  //             console.log(this.userCustomerOrder);
+  //           }
+  //         })
+  //       }
+  //     }
+  //   }
+  // }
 
-  validateCustomerOrder() {
-    this.userCustomerOrder.isCustomerOrder = true;
-    this.userCustomerOrder.isDraft = false;
-    this.isSavingOrder = true;
-    this.saveOrder();
-  }
+  // validateCustomerOrder() {
+  //   this.userCustomerOrder.isCustomerOrder = true;
+  //   this.userCustomerOrder.isDraft = false;
+  //   this.isSavingOrder = true;
+  //   this.saveOrder();
+  // }
 
-  validateQuotation() {
-    this.userCustomerOrder.isCustomerOrder = false;
-    this.userCustomerOrder.isDraft = false;
-    this.isSavingOrder = true;
-    this.saveOrder();
-  }
+  // validateQuotation() {
+  //   this.userCustomerOrder.isCustomerOrder = false;
+  //   this.userCustomerOrder.isDraft = false;
+  //   this.isSavingOrder = true;
+  //   this.saveOrder();
+  // }
 
-  validateCustomerOrderDraft() {
-    this.userCustomerOrder.isCustomerOrder = true;
-    this.userCustomerOrder.isDraft = true;
-    this.isSavingDraft = true;
-    this.saveOrder();
-  }
+  // validateCustomerOrderDraft() {
+  //   this.userCustomerOrder.isCustomerOrder = true;
+  //   this.userCustomerOrder.isDraft = true;
+  //   this.isSavingDraft = true;
+  //   this.saveOrder();
+  // }
 
-  validateQuotationDraft() {
-    this.userCustomerOrder.isCustomerOrder = false;
-    this.userCustomerOrder.isDraft = true;
-    this.isSavingDraft = true;
-    this.saveOrder();
-  }
+  // validateQuotationDraft() {
+  //   this.userCustomerOrder.isCustomerOrder = false;
+  //   this.userCustomerOrder.isDraft = true;
+  //   this.isSavingDraft = true;
+  //   this.saveOrder();
+  // }
 
   saveOrder() {
     if (!this.validateCgv) {
@@ -272,26 +273,26 @@ export class CheckoutComponent implements OnInit {
 
     if (!this.currentUser) {
       let hasError = false;
-      if (this.isMoralPerson && !this.userCustomerOrder.customerDenomination)
-        hasError = true;
-      if (!this.userCustomerOrder.customerAddress)
-        hasError = true;
-      if (!this.userCustomerOrder.customerCity)
-        hasError = true;
-      if (!this.userCustomerOrder.customerCountry)
-        hasError = true;
-      if (!this.userCustomerOrder.responsableCivility)
-        hasError = true;
-      if (!this.userCustomerOrder.responsableFirstname)
-        hasError = true;
-      if (!this.userCustomerOrder.responsableLastname)
-        hasError = true;
-      if (!this.userCustomerOrder.responsableMail || !validateEmail(this.userCustomerOrder.responsableMail))
-        hasError = true;
-      if (this.userCustomerOrder.responsablePhone && !validateFrenchPhone(this.userCustomerOrder.responsablePhone) && !validateInternationalPhone(this.userCustomerOrder.responsablePhone))
-        hasError = true;
-      if (this.userCustomerOrder.customerCountry.id == this.countryFrance.id && !this.userCustomerOrder.customerPostalCode)
-        hasError = true;
+      // if (this.isMoralPerson && !this.userCustomerOrder.customerDenomination)
+      //   hasError = true;
+      // if (!this.userCustomerOrder.customerAddress)
+      //   hasError = true;
+      // if (!this.userCustomerOrder.customerCity)
+      //   hasError = true;
+      // if (!this.userCustomerOrder.customerCountry)
+      //   hasError = true;
+      // if (!this.userCustomerOrder.responsableCivility)
+      //   hasError = true;
+      // if (!this.userCustomerOrder.responsableFirstname)
+      //   hasError = true;
+      // if (!this.userCustomerOrder.responsableLastname)
+      //   hasError = true;
+      // if (!this.userCustomerOrder.responsableMail || !validateEmail(this.userCustomerOrder.responsableMail))
+      //   hasError = true;
+      // if (this.userCustomerOrder.responsablePhone && !validateFrenchPhone(this.userCustomerOrder.responsablePhone) && !validateInternationalPhone(this.userCustomerOrder.responsablePhone))
+      //   hasError = true;
+      // if (this.userCustomerOrder.customerCountry.id == this.countryFrance.id && !this.userCustomerOrder.customerPostalCode)
+      //   hasError = true;
 
       if (hasError) {
         this.checkedOnce = true;
@@ -303,18 +304,18 @@ export class CheckoutComponent implements OnInit {
       }
     }
 
-    this.userCustomerOrder.customerIsIndividual = !this.isMoralPerson;
-    this.userCustomerOrderService.saveOrder(this.userCustomerOrder).subscribe(response => {
-      // If not logged, the creation of the order will create account and log user
-      if (!this.currentUser)
-        this.loginService.logUser(0, "");
-      this.isSavingDraft = false;
-      this.isSavingOrder = false;
-      if (this.userCustomerOrder.isCustomerOrder)
-        this.appService.openRoute(undefined, "account/orders/details/" + response.orderId, undefined);
-      if (!this.userCustomerOrder.isCustomerOrder)
-        this.appService.openRoute(undefined, "account/quotations/details/" + response.orderId, undefined);
-    })
+    // this.userCustomerOrder.customerIsIndividual = !this.isMoralPerson;
+    // this.userCustomerOrderService.saveOrder(this.userCustomerOrder).subscribe(response => {
+    //   // If not logged, the creation of the order will create account and log user
+    //   if (!this.currentUser)
+    //     this.loginService.logUser(0, "");
+    //   this.isSavingDraft = false;
+    //   this.isSavingOrder = false;
+    //   if (this.userCustomerOrder.isCustomerOrder)
+    //     this.appService.openRoute(undefined, "account/orders/details/" + response.orderId, undefined);
+    //   if (!this.userCustomerOrder.isCustomerOrder)
+    //     this.appService.openRoute(undefined, "account/quotations/details/" + response.orderId, undefined);
+    // })
   }
 
 
@@ -390,16 +391,16 @@ export class CheckoutComponent implements OnInit {
         this.loadingCustomerSiret = false;
         if (response && response.length == 1) {
           let affaire = response[0];
-          this.userCustomerOrder.customerSiret = affaire.siret;
-          this.userCustomerOrder.customerCity = affaire.city;
-          this.userCustomerOrder.customerDenomination = affaire.denomination;
-          this.userCustomerOrder.customerPostalCode = affaire.postalCode;
-          this.userCustomerOrder.customerAddress = affaire.address;
-          this.userCustomerOrder.siret = affaire.siret;
+          // this.userCustomerOrder.customerSiret = affaire.siret;
+          // this.userCustomerOrder.customerCity = affaire.city;
+          // this.userCustomerOrder.customerDenomination = affaire.denomination;
+          // this.userCustomerOrder.customerPostalCode = affaire.postalCode;
+          // this.userCustomerOrder.customerAddress = affaire.address;
+          // this.userCustomerOrder.siret = affaire.siret;
           if (this.countries)
             for (let country of this.countries)
               if (country.id == affaire.country.id) {
-                this.userCustomerOrder.customerCountry = country;
+                // this.userCustomerOrder.customerCountry = country;
                 break;
               }
         }
@@ -416,20 +417,20 @@ export class CheckoutComponent implements OnInit {
 
   effectiveFetchCities() {
     this.foundCities = undefined;
-    if (this.userCustomerOrder)
-      if (this.userCustomerOrder.customerCountry && this.userCustomerOrder.customerCountry.id) {
-        if (this.userCustomerOrder.customerCountry.id != this.countryFrance.id) {
-          this.cityService.getCitiesByCountry(this.userCustomerOrder.customerCountry).subscribe(response => {
-            this.foundCities = response;
-          })
-        } else if (this.userCustomerOrder.customerPostalCode && this.userCustomerOrder.customerPostalCode.length > 4) {
-          this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(this.userCustomerOrder.customerCountry, this.userCustomerOrder.customerPostalCode).subscribe(response => {
-            this.foundCities = response;
-            if (this.foundCities && this.foundCities.length == 1)
-              this.userCustomerOrder.customerCity = this.foundCities[0];
-          })
-        }
-      }
+    // if (this.userCustomerOrder)
+    //   if (this.userCustomerOrder.customerCountry && this.userCustomerOrder.customerCountry.id) {
+    //     if (this.userCustomerOrder.customerCountry.id != this.countryFrance.id) {
+    //       this.cityService.getCitiesByCountry(this.userCustomerOrder.customerCountry).subscribe(response => {
+    //         this.foundCities = response;
+    //       })
+    //     } else if (this.userCustomerOrder.customerPostalCode && this.userCustomerOrder.customerPostalCode.length > 4) {
+    //       this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(this.userCustomerOrder.customerCountry, this.userCustomerOrder.customerPostalCode).subscribe(response => {
+    //         this.foundCities = response;
+    //         if (this.foundCities && this.foundCities.length == 1)
+    //           this.userCustomerOrder.customerCity = this.foundCities[0];
+    //       })
+    //     }
+    // }
   }
 
 }

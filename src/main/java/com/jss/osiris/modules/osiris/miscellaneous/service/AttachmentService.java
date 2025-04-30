@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.miscellaneous.service;
 
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +39,8 @@ public interface AttachmentService {
         public void disableAttachment(Attachment attachment);
 
         public Attachment addOrUpdateAttachment(Attachment attachment);
+
+        public Boolean modifyAttachmentDate(LocalDate attachmentDate, Integer idAttachment);
 
         public List<Attachment> sortAttachmentByDateDesc(List<Attachment> attachments);
 

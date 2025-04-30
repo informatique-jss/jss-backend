@@ -56,7 +56,8 @@ public class Provision implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private ProvisionType provisionType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -67,13 +68,13 @@ public class Provision implements IId, IAttachment {
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domiciliation")
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Domiciliation domiciliation;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement")
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Announcement announcement;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -203,8 +204,10 @@ public class Provision implements IId, IAttachment {
 
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
-	@JsonView({ JacksonViews.OsirisDetailedView.class }) // TODO : remove and use attachment getter in attachment
-															// component
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class }) // TODO : remove and use
+																								// attachment getter in
+																								// attachment
+	// component
 	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Invoice.class, mappedBy = "provision")

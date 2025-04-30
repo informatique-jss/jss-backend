@@ -24,7 +24,7 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 	/**
 	 * WARNINNG : add update in Service when adding a new status
 	 */
-	public static String OPEN = "OPEN";
+	public static String DRAFT = "OPEN";
 	public static String ABANDONED = "ABANDONED";
 	public static String BILLED = "BILLED";
 	public static String WAITING_DEPOSIT = "WAITING_DEPOSIT";
@@ -35,18 +35,21 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private String label;
 
 	@Column(nullable = false, length = 100)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String code;
 
 	@JsonView({ JacksonViews.OsirisDetailedView.class })
@@ -96,12 +99,12 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 		this.icon = icon;
 	}
 
-	public static String getOPEN() {
-		return OPEN;
+	public static String getDRAFT() {
+		return DRAFT;
 	}
 
-	public static void setOPEN(String oPEN) {
-		OPEN = oPEN;
+	public static void setDRAFT(String oPEN) {
+		DRAFT = oPEN;
 	}
 
 	public static String getABANDONED() {

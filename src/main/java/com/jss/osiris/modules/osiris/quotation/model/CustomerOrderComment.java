@@ -41,7 +41,7 @@ public class CustomerOrderComment implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "customer_order_comment_sequence", sequenceName = "customer_order_comment_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_order_comment_sequence")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
@@ -55,7 +55,7 @@ public class CustomerOrderComment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private Responsable currentCustomer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -81,13 +81,13 @@ public class CustomerOrderComment implements Serializable, IId {
 	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private LocalDateTime createdDateTime;
 
-	@JsonView({ JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private Boolean isRead;
 
-	@JsonView({ JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private Boolean isToDisplayToCustomer;
 
 	public Integer getId() {

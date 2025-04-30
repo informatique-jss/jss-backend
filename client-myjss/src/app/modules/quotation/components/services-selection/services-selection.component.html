@@ -1,0 +1,138 @@
+<div class="container d-flex flex-column min-vh-100 pb-5 mb-5 custom-container">
+
+  <section>
+    <p class="sub-title" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>0  ">
+      Sélectionnez une affaire</p>
+
+    <div class="w-100" *ngIf="!quotation ">
+      <p class="card-text placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4 me-2"></span>
+        <span class="placeholder placeholder-sm col-6"></span>
+        <span class="placeholder placeholder-sm col-8"></span>
+      </p>
+    </div>
+
+    <div class="row" *ngIf="quotation && quotation.assoAffaireOrders  ">
+      <!-- Afficher les cartes avec ngFor -->
+      <div *ngFor="let asso of quotation.assoAffaireOrders; let indexAsso = index;" class="col-6  my-2"
+        [ngClass]="{'col-sm-6 col-lg-4' : quotation.assoAffaireOrders.length>1}">
+        <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 "
+          [ngClass]="{'selected': selectedAssoIndex == indexAsso}"
+          (click)="selectCard(indexAsso);$event.stopPropagation()">
+          <div class="row d-flex flex-row align-items-center">
+            <i class="ai-briefcase col-1 selected-hover" [ngClass]="{'selected': selectedAssoIndex == indexAsso}"></i>
+            <h6 class="col m-0 selected-hover" [ngClass]="{'selected': selectedAssoIndex == indexAsso}">
+              {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
+              asso.affaire.denomination
+              ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
+              asso.affaire.lastname) }} -{{asso.affaire.address}}</h6>
+          </div>
+          <div class="row align-items-center">
+            <!-- Les boutons pills -->
+            <a *ngFor="let serviceType of selectedServiceTypes[indexAsso]"
+              class="btn rounded-pill mt-3 ms-3 col-auto pill"
+              [ngClass]="{'btn-secondary': selectedAssoIndex == indexAsso,'btn-outline-primary':selectedAssoIndex != indexAsso}"
+              (click)="removeServiceFromCurrentAffaire(serviceType);$event.stopPropagation()">
+              {{serviceType.customLabel?serviceType.customLabel : serviceType.label }} <i class="ai-cross ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section>
+    <p class="sub-title">
+      Sélectionnez vos services
+    </p>
+    <div class="w-100" *ngIf="!serviceFamilies || serviceFamilies.length<=0 ">
+      <p class="card-text placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4 me-2"></span>
+        <span class="placeholder placeholder-sm col-6"></span>
+        <span class="placeholder placeholder-sm col-8"></span>
+      </p>
+    </div>
+    <ul *ngIf="serviceFamilies" class="nav nav-tabs" role="tablist">
+      <li class="nav-item " *ngFor="let serviceFamily of serviceFamilies">
+        <a href="#home" class="nav-link quotation-tabs"
+          [ngClass]="{'active' : selectedServiceFamily && selectedServiceFamily.id == serviceFamily.id}"
+          data-bs-toggle="tab" role="tab" (click)="selecteServiceFamily(serviceFamily)">
+          <i class="{{serviceFamily.myJssIcon}} me-2"></i>
+          {{serviceFamily.customLabel}}
+        </a>
+      </li>
+    </ul>
+
+    <!-- Tabs content -->
+    <div class="tab-content quotation-container" *ngIf="selectedServiceFamily">
+      <div class="tab-pane fade show active" id="home" role="tabpanel">
+        <div class="pb-3">
+          <generic-input [(model)]="searchtext" label="Rechercher" [form]="servicesForm" propertyName="servicesSearched"
+            [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false" [icon]="'search'"></generic-input>
+        </div>
+        <!-- Stacked checkboxes -->
+        <div class="d-flex flex-column flex-md-row flex-wrap">
+          <ng-container *ngFor="let service of selectedServiceFamily.services">
+            <div class="form-check service-item m-1"
+              *ngIf="service.customLabel.toLocaleLowerCase().indexOf(searchtext.toLocaleLowerCase())>=0 && selectedAssoIndex!=null">
+              <input class="form-check-input" type="checkbox" id="ex-check-1"
+                (click)="removeServiceFromCurrentAffaire(service)" *ngIf="getServiceIndexInCurrentAffaire(service)>=0"
+                checked>
+              <input class="form-check-input" type="checkbox" id="ex-check-1"
+                (click)="addServiceToCurrentAffaire(service)" *ngIf="getServiceIndexInCurrentAffaire(service)<0">
+              <label class="form-check-label" for="ex-check-1">{{service.customLabel }}</label>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="text-end">
+        <button type="button" class="btn btn-outline-primary rounded-1  mt-5 ms-auto"
+          [ngClass]="{'btn-secondary' : applyToAllAffaires}" (click)="applyToAllAffaires=!applyToAllAffaires"
+          *ngIf="quotation && quotation.assoAffaireOrders.length>1"><i class="ai-check ms-2"
+            *ngIf="applyToAllAffaires"></i> Appliquer mes choix
+          à
+          toutes les affaires</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-4">
+    <hr>
+    <div class="row">
+      <div class="col with-right-border">
+        <div class="row align-items-center mx-2">
+          <img class="col-1" src="/assets/img/quotation/services-selection/message-question.svg" />
+          <p class="col-11 mb-0">Une question sur la liste des pièces à transmettre pour votre formalité, consultez le
+            guide des formalités du JSS à <a href="">télécharger ici</a></p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="row align-items-center mx-2">
+          <img class="col-1" src="/assets/img/quotation/services-selection/file-validation.svg" />
+          <p class="col-11 mb-0">Transmettez-nous vos actes signés et documents justificatifs numérisés en PDF
+            accompagnés d'un pouvoir au JSS à <a href="">télécharger ici</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div
+    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 mt-3 d-flex justify-content-between align-items-center z-3">
+    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
+      (click)="goBackQuotation()">
+      <i class="ai-arrow-left"></i>
+      <span class="d-none d-sm-inline ms-2">Étape précédente</span>
+    </button>
+
+    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center" *ngIf="canSaveQuotation()"
+      (click)="saveQuotation()">
+      <span class="d-none d-sm-inline me-2">Étape suivante</span>
+      <i class="ai-arrow-right"></i>
+    </button>
+  </div>
+</div>

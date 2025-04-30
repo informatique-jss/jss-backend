@@ -22,7 +22,7 @@ public class QuotationStatus extends IWorkflowElement implements Serializable {
 	/**
 	 * WARNINNG : add update in QuotationStatutsService when adding a new status
 	 */
-	public static String OPEN = "OPEN";
+	public static String DRAFT = "OPEN";
 	public static String TO_VERIFY = "TO_VERIFY";
 	public static String QUOTATION_WAITING_CONFRERE = "QUOTATION_WAITING_CONFRERE";
 	public static String SENT_TO_CUSTOMER = "SENT_TO_CUSTOMER";
@@ -33,17 +33,20 @@ public class QuotationStatus extends IWorkflowElement implements Serializable {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 100)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String code;
 
@@ -79,12 +82,12 @@ public class QuotationStatus extends IWorkflowElement implements Serializable {
 		return code;
 	}
 
-	public static String getOPEN() {
-		return OPEN;
+	public static String getDRAFT() {
+		return DRAFT;
 	}
 
-	public static void setOPEN(String oPEN) {
-		OPEN = oPEN;
+	public static void setDRAFT(String oPEN) {
+		DRAFT = oPEN;
 	}
 
 	public static String getTO_VERIFY() {

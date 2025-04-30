@@ -636,7 +636,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/service/modify")
   public ResponseEntity<Service> modifyServiceType(@RequestParam Integer serviceId,
-      @RequestParam List<Integer> serviceTypeIds) throws OsirisValidationException {
+      @RequestParam List<Integer> serviceTypeIds) throws OsirisException {
 
     Service service = serviceService.getService(serviceId);
     if (service == null)
@@ -659,7 +659,7 @@ public class QuotationController {
     if (service == null)
       throw new OsirisValidationException("service");
 
-    return new ResponseEntity<Boolean>(serviceService.deleteService(service),
+    return new ResponseEntity<Boolean>(serviceService.deleteServiceFromUser(service),
         HttpStatus.OK);
   }
 
@@ -1249,7 +1249,8 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/update")
-  public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder)
+  public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder,
+      @RequestParam Boolean isByPassMandatoryField)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
@@ -1271,7 +1272,8 @@ public class QuotationController {
 
     for (Service service : assoAffaireOrder.getServices())
       for (Provision provision : service.getProvisions())
-        quotationValidationHelper.validateProvisionTransactionnal(provision, null, customerOrder);
+        quotationValidationHelper.validateProvisionTransactionnal(provision, customerOrder,
+            isByPassMandatoryField);
 
     assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(assoAffaireOrder);
 
@@ -1812,7 +1814,7 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validateQuotationAndCustomerOrder(quotation);
 
-    QuotationStatus openQuotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
+    QuotationStatus openQuotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT);
     if (openQuotationStatus == null)
       if (quotation.getQuotationStatus() == null)
         throw new OsirisException(null, "OPEN Quotation status not found");
@@ -1899,7 +1901,7 @@ public class QuotationController {
       throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
     validateQuotationAndCustomerOrder(customerOrder);
     CustomerOrderStatus customerOrderStatus = customerOrderStatusService
-        .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
+        .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT);
     if (customerOrderStatus == null)
       if (customerOrder.getCustomerOrderStatus() == null)
         throw new OsirisException(null, "OPEN Customer Order status not found");
@@ -1978,40 +1980,7 @@ public class QuotationController {
   public ResponseEntity<Affaire> addOrUpdateAffaire(@RequestBody Affaire affaire)
       throws OsirisValidationException, OsirisException, OsirisDuplicateException {
 
-    validationHelper.validateReferential(affaire.getCountry(), true, "Country");
-    validationHelper.validateReferential(affaire.getMainActivity(), false, "MainActivity");
-    validationHelper.validateReferential(affaire.getLegalForm(), false, "LegalForm");
-    validationHelper.validateReferential(affaire.getCompetentAuthority(), false, "CompetentAuthority");
-    validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
-    validationHelper.validateString(affaire.getIntercommunityVat(), false, 20, "IntercommunityVat");
-    if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
-      validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
-    validationHelper.validateString(affaire.getCedexComplement(), false, 20, "CedexComplement");
-    validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
-    validationHelper.validateReferential(affaire.getCity(), true, "City");
-
-    if (affaire.getIsIndividual()) {
-      validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
-      validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
-      validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
-      affaire.setDenomination(null);
-      if (affaire.getLastname() != null)
-        affaire.setLastname(affaire.getLastname().toUpperCase());
-
-    } else {
-      validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
-      affaire.setFirstname(null);
-      affaire.setLastname(null);
-      if (affaire.getRna() != null
-          && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
-        throw new OsirisValidationException("RNA");
-      if (affaire.getSiren() != null
-          && !validationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
-        throw new OsirisValidationException("SIREN");
-      if (affaire.getSiret() != null
-          && !validationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
-        throw new OsirisValidationException("SIRET");
-    }
+    quotationValidationHelper.validateAffaire(affaire);
     return new ResponseEntity<Affaire>(affaireService.addOrUpdateAffaire(affaire), HttpStatus.OK);
   }
 

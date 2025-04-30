@@ -84,7 +84,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
@@ -99,7 +100,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Responsable responsable;
 
@@ -116,13 +118,15 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order_status")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private CustomerOrderStatus customerOrderStatus;
@@ -162,6 +166,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private List<Quotation> quotations;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isQuotation;
 
 	@OneToMany(mappedBy = "customerOrder")
@@ -206,20 +211,20 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private LocalDate recurringPeriodStartDate;
 	private LocalDate recurringPeriodEndDate;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private LocalDate recurringStartDate;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private LocalDate recurringEndDate;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isRecurring;
 	private Boolean isRecurringAutomaticallyBilled;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isGifted;
 
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@Column(name = "is_payed")
 	private Boolean isPayed;
 
@@ -228,18 +233,26 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	public String affairesList;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	public String servicesList;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	public Boolean hasMissingInformations;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_service_family_group")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceFamilyGroup serviceFamilyGroup;
 
 	public Integer getId() {
 		return id;
@@ -551,6 +564,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setValidationId(Integer validationId) {
 		this.validationId = validationId;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroup() {
+		return serviceFamilyGroup;
+	}
+
+	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup) {
+		this.serviceFamilyGroup = serviceFamilyGroup;
 	}
 
 }
