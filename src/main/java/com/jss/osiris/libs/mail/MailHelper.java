@@ -486,7 +486,7 @@ public class MailHelper {
             } else
                 ctx.setVariable("assoServiceFieldTypes", null);
 
-            ctx.setVariable("serviceLabel", mail.getMissingAttachmentQuery().getService().getCustomLabel());
+            ctx.setVariable("serviceLabel", mail.getMissingAttachmentQuery().getService().getServiceLabelToDisplay());
         }
 
         ctx.setVariable("isLastReminder", mail.getIsLastReminder() != null && mail.getIsLastReminder());

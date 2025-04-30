@@ -446,7 +446,7 @@ public class BillingClosureReceiptHelper {
                 && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
                 for (Service service : asso.getServices())
-                    serviceLabels.add(service.getCustomLabel());
+                    serviceLabels.add(service.getServiceLabelToDisplay());
 
                 Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
                 // Add annual reference if defined

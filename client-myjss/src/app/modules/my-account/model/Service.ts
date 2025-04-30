@@ -7,11 +7,11 @@ export interface Service extends IAttachment {
   id: number;
   serviceTypes: ServiceType[];
   assoServiceDocuments: AssoServiceDocument[];
-  customLabel: string;
   assoServiceFieldTypes: AssoServiceFieldType[];
   hasMissingInformations: boolean;
   serviceStatus: string;
   servicePrice: number;
   confrereLabel: string;
   lastMissingAttachmentQueryDateTime: Date;
+  serviceLabelToDisplay: string;
 }
