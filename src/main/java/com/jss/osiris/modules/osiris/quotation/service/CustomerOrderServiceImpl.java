@@ -1770,8 +1770,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 serviceTypeChosen.setAffaire(affaireService.addOrUpdateAffaire(serviceTypeChosen.getAffaire()));
             }
 
-            Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
-                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire(), null);
+            Service service = serviceService.generateServiceInstanceFromMultiServiceTypes(
+                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire(), null).get(0);
 
             if (assoAffaireOrders.get(serviceTypeChosen.getAffaire().getId()) == null) {
                 AssoAffaireOrder asso = new AssoAffaireOrder();

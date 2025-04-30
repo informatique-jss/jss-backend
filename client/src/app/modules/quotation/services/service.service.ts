@@ -36,8 +36,7 @@ export class ServiceService extends AppRestService<Service> {
   }
 
   modifyServiceType(service: Service, serviceTypes: ServiceType[]) {
-    const ids = serviceTypes.map(st => st.id).join(',');
-    return this.get(new HttpParams().set("serviceTypeIds", ids).set("serviceId", service.id), "service/modify");
+    return this.get(new HttpParams().set("serviceTypeIds", serviceTypes.map(st => st.id).join(',')).set("serviceId", service.id), "service/modify");
   }
 
 }

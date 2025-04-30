@@ -852,8 +852,8 @@ public class PricingHelper {
 
         for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
             serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
-            Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
-                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire(), null);
+            Service service = serviceService.generateServiceInstanceFromMultiServiceTypes(
+                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire(), null).get(0);
 
             if (order.getIsEmergency() != null && order.getIsEmergency() && service.getProvisions() != null
                     && service.getProvisions().size() > 0

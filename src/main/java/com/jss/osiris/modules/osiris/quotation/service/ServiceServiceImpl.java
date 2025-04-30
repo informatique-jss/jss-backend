@@ -85,14 +85,13 @@ public class ServiceServiceImpl implements ServiceService {
             String customLabel) throws OsirisException {
 
         List<Service> services = new ArrayList<Service>();
-        List<ServiceType> serviceTypeNonMergeables = new ArrayList<ServiceType>();
 
         List<ServiceType> mergeableTypes = serviceTypes.stream().filter(s -> s.getIsMergeable()).toList();
         if (!mergeableTypes.isEmpty()) {
             services.add(getServiceForMultiServiceTypesAndAffaire(mergeableTypes, affaire, customLabel));
         }
 
-        serviceTypeNonMergeables = serviceTypes.stream().filter(s -> !s.getIsMergeable())
+        List<ServiceType> serviceTypeNonMergeables = serviceTypes.stream().filter(s -> !s.getIsMergeable())
                 .toList();
         for (ServiceType serviceType : serviceTypeNonMergeables)
             services.add(
@@ -101,41 +100,24 @@ public class ServiceServiceImpl implements ServiceService {
         return services;
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire,
+    private Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire,
             String customLabel)
             throws OsirisException {
 
-        ArrayList<Integer> newAssoServiceServiceTypeIds = new ArrayList<Integer>();
         ArrayList<AssoServiceDocument> assoServiceDocuments = new ArrayList<AssoServiceDocument>();
         ArrayList<String> typeDocumentCodes = new ArrayList<String>();
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
         ArrayList<Integer> serviceFieldTypeIds = new ArrayList<Integer>();
 
         ArrayList<AssoServiceProvisionType> assoServiceProvisionTypes = new ArrayList<AssoServiceProvisionType>();
-        ArrayList<Integer> provisionTypesIds = new ArrayList<Integer>();
 
         Service service = new Service();
+        service.setServiceTypes(serviceTypes);
 
         for (ServiceType serviceType : serviceTypes) {
             // fill all provisions type in list
             if (!serviceType.getAssoServiceProvisionTypes().isEmpty())
-                for (AssoServiceProvisionType assoServiceProvision : serviceType.getAssoServiceProvisionTypes())
-                    if (!provisionTypesIds.contains(assoServiceProvision.getId())) {
-                        assoServiceProvisionTypes.add(assoServiceProvision);
-                        provisionTypesIds.add(assoServiceProvision.getId());
-                    }
-
-            // Asso service - serviceType
-            if (!newAssoServiceServiceTypeIds.contains(serviceType.getId())) {
-                newAssoServiceServiceTypeIds.add(serviceType.getId());
-                if (service.getServiceTypes() != null && service.getServiceTypes().size() > 0)
-                    service.getServiceTypes().add(serviceType);
-                else
-                    service.setServiceTypes(new ArrayList<>(Arrays.asList(serviceType)));
-
-            }
+                assoServiceProvisionTypes.addAll(serviceType.getAssoServiceProvisionTypes());
 
             if (serviceType.getAssoServiceTypeDocuments() != null)
                 for (AssoServiceTypeDocument assoServiceTypeDocument : serviceType.getAssoServiceTypeDocuments()) {
@@ -162,6 +144,7 @@ public class ServiceServiceImpl implements ServiceService {
                     }
                 }
         }
+
         // Merge provisions Type before create instances
         if (service.getProvisions() != null && service.getProvisions().size() > 0)
             service.getProvisions().addAll(mergeProvisionTypes(assoServiceProvisionTypes, service));
@@ -184,67 +167,40 @@ public class ServiceServiceImpl implements ServiceService {
     private List<Provision> mergeProvisionTypes(ArrayList<AssoServiceProvisionType> assoServiceProvisionTypes,
             Service service) throws OsirisException {
         List<Provision> newProvisions = new ArrayList<Provision>();
-        ArrayList<AssoServiceProvisionType> provisionTypeFormalitesMergeable = new ArrayList<AssoServiceProvisionType>();
-        ArrayList<AssoServiceProvisionType> provisionTypeFormalitesNotMergeable = new ArrayList<AssoServiceProvisionType>();
-        ArrayList<AssoServiceProvisionType> provisionTypeSimpleProvisionMergeable = new ArrayList<AssoServiceProvisionType>();
-        ArrayList<AssoServiceProvisionType> provisionTypeSimpleProvisionNotMergeable = new ArrayList<AssoServiceProvisionType>();
-        ArrayList<AssoServiceProvisionType> provisionTypeAnnouncementCharacter = new ArrayList<AssoServiceProvisionType>();
 
-        if (assoServiceProvisionTypes != null && assoServiceProvisionTypes.size() > 0) {
-            provisionTypeFormalitesMergeable.addAll(assoServiceProvisionTypes.stream()
-                    .filter(s -> s.getProvisionType().getIsMergeable()
-                            && s.getProvisionType().getProvisionScreenType().getCode()
-                                    .equals(ProvisionScreenType.FORMALITE))
-                    .toList());
+        for (String screenType : Arrays.asList(ProvisionScreenType.DOMICILIATION, ProvisionScreenType.FORMALITE,
+                ProvisionScreenType.STANDARD, ProvisionScreenType.ANNOUNCEMENT)) {
 
-            provisionTypeFormalitesNotMergeable.addAll(assoServiceProvisionTypes.stream()
-                    .filter(s -> !s.getProvisionType().getIsMergeable()
-                            && s.getProvisionType().getProvisionScreenType().getCode()
-                                    .equals(ProvisionScreenType.FORMALITE))
-                    .toList());
+            List<AssoServiceProvisionType> provisionTypeMergeable = assoServiceProvisionTypes.stream()
+                    .filter(s -> s.getProvisionType().getIsMergeable() != null && s.getProvisionType().getIsMergeable()
+                            && s.getProvisionType().getProvisionScreenType().getCode().equals(screenType))
+                    .toList();
 
-            provisionTypeAnnouncementCharacter.addAll(assoServiceProvisionTypes.stream()
-                    .filter(s -> s.getProvisionType().getProvisionScreenType().getCode()
-                            .equals(ProvisionScreenType.ANNOUNCEMENT))
-                    .toList());
+            if (provisionTypeMergeable != null && provisionTypeMergeable.size() > 0) {
+                if (!screenType.equals(ProvisionScreenType.ANNOUNCEMENT) || provisionTypeMergeable.size() == 1) {
+                    newProvisions.add(
+                            generateProvisionFromProvisionType(provisionTypeMergeable.get(0).getProvisionType(),
+                                    service));
+                } else {
+                    newProvisions.add(generateProvisionFromProvisionType(
+                            this.constantService.getProvisionTypeCharacterAnnouncement(), service));
+                }
+            }
 
-            provisionTypeSimpleProvisionMergeable.addAll(assoServiceProvisionTypes.stream()
-                    .filter(s -> s.getProvisionType().getIsMergeable()
-                            && s.getProvisionType().getProvisionScreenType().getCode()
-                                    .equals(ProvisionScreenType.STANDARD))
-                    .toList());
-            provisionTypeSimpleProvisionNotMergeable.addAll(assoServiceProvisionTypes.stream()
-                    .filter(s -> !s.getProvisionType().getIsMergeable()
-                            && s.getProvisionType().getProvisionScreenType().getCode()
-                                    .equals(ProvisionScreenType.STANDARD))
-                    .toList());
+            List<AssoServiceProvisionType> provisionTypeNonMergeable = assoServiceProvisionTypes.stream()
+                    .filter(s -> (s.getProvisionType().getIsMergeable() == null
+                            || !s.getProvisionType().getIsMergeable())
+                            && s.getProvisionType().getProvisionScreenType().getCode().equals(screenType))
+                    .toList();
+
+            for (AssoServiceProvisionType assoServiceProvisionType : provisionTypeNonMergeable) {
+                if (provisionTypeNonMergeable != null && provisionTypeNonMergeable.size() > 0) {
+                    newProvisions.add(
+                            generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(), service));
+                }
+            }
+
         }
-
-        if (provisionTypeFormalitesMergeable.size() > 0)
-            newProvisions
-                    .add(generateProvisionFromProvisionType(provisionTypeFormalitesMergeable.get(0).getProvisionType(),
-                            service));
-        if (provisionTypeFormalitesNotMergeable.size() > 0)
-            for (AssoServiceProvisionType asso : provisionTypeFormalitesNotMergeable)
-                newProvisions.add(generateProvisionFromProvisionType(asso.getProvisionType(), service));
-
-        if (provisionTypeSimpleProvisionMergeable.size() > 0)
-            newProvisions
-                    .add(generateProvisionFromProvisionType(
-                            provisionTypeSimpleProvisionMergeable.get(0).getProvisionType(),
-                            service));
-
-        if (provisionTypeSimpleProvisionNotMergeable.size() > 0)
-            for (AssoServiceProvisionType asso : provisionTypeSimpleProvisionNotMergeable)
-                newProvisions.add(generateProvisionFromProvisionType(asso.getProvisionType(), service));
-
-        if (!provisionTypeAnnouncementCharacter.isEmpty() && provisionTypeAnnouncementCharacter.size() > 1)
-            newProvisions.add(generateProvisionFromProvisionType(
-                    this.constantService.getProvisionTypeCharacterAnnouncement(), service));
-        else if (!provisionTypeAnnouncementCharacter.isEmpty() && provisionTypeAnnouncementCharacter.size() == 1)
-            newProvisions.add(generateProvisionFromProvisionType(
-                    provisionTypeAnnouncementCharacter.get(0).getProvisionType(), service));
-
         return newProvisions;
     }
 
@@ -354,44 +310,8 @@ public class ServiceServiceImpl implements ServiceService {
                 }
 
                 if (shouldAdd) {
-                    Provision provision = new Provision();
-                    provision.setProvisionFamilyType(
-                            assoServiceProvisionType.getProvisionType().getProvisionFamilyType());
-                    provision.setProvisionType(assoServiceProvisionType.getProvisionType());
-                    provision.setService(service);
-
-                    provision.setIsLogo(false);
-                    provision.setIsRedactedByJss(false);
-                    provision.setIsBaloPackage(false);
-                    provision.setIsPublicationPaper(false);
-                    provision.setIsPublicationReceipt(false);
-                    provision.setIsPublicationFlag(false);
-                    provision.setIsBodaccFollowup(false);
-                    provision.setIsBodaccFollowupAndRedaction(false);
-                    provision.setIsNantissementDeposit(false);
-                    provision.setIsSocialShareNantissementRedaction(false);
-                    provision.setIsBusinnessNantissementRedaction(false);
-                    provision.setIsSellerPrivilegeRedaction(false);
-                    provision.setIsTreatmentMultipleModiciation(false);
-                    provision.setIsVacationMultipleModification(false);
-                    provision.setIsRegisterPurchase(false);
-                    provision.setIsRegisterInitials(false);
-                    provision.setIsRegisterShippingCosts(false);
-                    provision.setIsDisbursement(false);
-                    provision.setIsFeasibilityStudy(false);
-                    provision.setIsChronopostFees(false);
-                    provision.setIsApplicationFees(false);
-                    provision.setIsBankCheque(false);
-                    provision.setIsComplexeFile(false);
-                    provision.setIsBilan(false);
-                    provision.setIsDocumentScanning(false);
-                    provision.setIsEmergency(false);
-                    provision.setIsRneUpdate(false);
-                    provision.setIsVacationUpdateBeneficialOwners(false);
-                    provision.setIsFormalityAdditionalDeclaration(false);
-                    provision.setIsCorrespondenceFees(false);
-                    provision.setIsSupplyFullBeCopy(false);
-                    provisions.add(provision);
+                    provisions.add(
+                            generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(), service));
                 }
             }
         return provisions;
@@ -489,6 +409,9 @@ public class ServiceServiceImpl implements ServiceService {
                         .map(s -> s.getCustomLabel()).collect(Collectors.toList())));
             else
                 service.setServiceLabelToDisplay(service.getCustomLabel());
+
+            if (service.getServiceLabelToDisplay() != null && service.getServiceLabelToDisplay().length() > 2000)
+                service.setServiceLabelToDisplay(service.getServiceLabelToDisplay().substring(0, 1999));
         }
         return service;
     }
