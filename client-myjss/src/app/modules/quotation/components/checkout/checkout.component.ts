@@ -227,7 +227,6 @@ export class CheckoutComponent implements OnInit {
   //                   }
   //                 }
   //               }
-  //             console.log(this.userCustomerOrder);
   //           }
   //         })
   //       }

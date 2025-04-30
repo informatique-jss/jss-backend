@@ -46,7 +46,6 @@ export class QuotationFileUploaderComponent implements OnInit {
   }
 
   handleUploadedSizeChange(kb: number) {
-    console.log(kb);
     this.uploadedKB = kb;
   }
 

@@ -40,7 +40,6 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
 
   override ngOnChanges(changes: SimpleChanges) {
     super.ngOnChanges(changes);
-    console.log(this.model);
     if (changes && changes['preFilterPostalCode'] && this.preFilterPostalCode && this.preFilterPostalCode.length > 2 && !this.model)
       this.searchEntities("").subscribe(response => this.filteredTypes = response);
   }
