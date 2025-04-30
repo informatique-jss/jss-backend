@@ -232,6 +232,8 @@ public interface ConstantService {
 
     public ProvisionType getProvisionTypeRbe() throws OsirisException;
 
+    public ProvisionType getProvisionTypeCharacterAnnouncement() throws OsirisException;
+
     public ProvisionFamilyType getProvisionFamilyTypeDeposit() throws OsirisException;
 
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;

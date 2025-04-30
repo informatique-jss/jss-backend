@@ -88,7 +88,7 @@ export function getServiceListFromIQuotation(customerOrder: IQuotation): string 
 
 export function getServiceFromService(service: Service): string {
   if (service)
-    return service.customLabel ? service.customLabel : service.serviceType.label;
+    return service.customLabel ? service.customLabel : service.serviceLabelToDisplay;
   return "";
 }
 

@@ -22,7 +22,7 @@
               (click)="selectServiceIndex(indexService, selectedAssoIndex!, $event)"
               [ngClass]="{'btn-secondary': selectedAssoIndex == selectedAssoIndex && indexService == selectedServiceIndex, 'btn-outline-primary': selectedAssoIndex != selectedAssoIndex || indexService != selectedServiceIndex}"
               class="btn btn-secondary rounded-pill mt-2 ms-1 mt-md-3 ms-md-3 col-auto pill">
-              {{service.customLabel? service.customLabel : service.serviceType.label}}
+              {{service.serviceLabelToDisplay}}
               <i *ngIf="selectedAssoIndex == selectedAssoIndex && indexService == selectedServiceIndex"
                 class="ai-circle-arrow-right ms-2"></i>
             </a>
@@ -47,8 +47,7 @@
         </ng-container>
       </strong>
       <a class="btn btn-secondary rounded-pill col-auto pill ms-3 fs-xs">
-        {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].customLabel?quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].customLabel
-        : quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceType.label }}
+        {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceLabelToDisplay }}
       </a>
     </div>
     <ul class="nav nav-tabs" role="tablist"

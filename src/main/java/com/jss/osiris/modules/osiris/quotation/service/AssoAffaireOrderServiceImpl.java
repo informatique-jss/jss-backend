@@ -18,8 +18,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -32,7 +30,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -53,7 +50,6 @@ import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
-import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -71,9 +67,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     AssoAffaireOrderRepository assoAffaireOrderRepository;
-
-    @Autowired
-    EmployeeService employeeService;
 
     @Autowired
     FormaliteStatusService formaliteStatusService;
@@ -106,16 +99,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     InvoiceItemService invoiceItemService;
 
     @Autowired
-    MailHelper mailHelper;
-
-    @Autowired
     AttachmentService attachmentService;
-
-    @Autowired
-    BankTransfertService bankTransfertService;
-
-    @Autowired
-    AccountingRecordService accountingRecordService;
 
     @Autowired
     ProvisionService provisionService;
@@ -236,6 +220,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         for (Service service : assoAffaireOrder.getServices()) {
 
             service.setAssoAffaireOrder(assoAffaireOrder);
+
             if (service.getAssoServiceDocuments() != null)
                 for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments())
                     assoServiceDocument.setService(service);
@@ -885,21 +870,5 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
             }
         return totalPrice;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Service addServiceToAssoAffaireOrder(ServiceType service, AssoAffaireOrder asso) throws OsirisException {
-        service = serviceTypeService.getServiceType(service.getId());
-        asso = getAssoAffaireOrder(asso.getId());
-        Service serviceInstance = serviceService.getServiceForMultiServiceTypesAndAffaire(Arrays.asList(service),
-                asso.getAffaire());
-        serviceInstance.setAssoAffaireOrder(asso);
-        serviceService.addOrUpdateService(serviceInstance);
-        if (asso.getServices() == null)
-            asso.setServices(new ArrayList<Service>());
-        asso.getServices().add(serviceInstance);
-        addOrUpdateAssoAffaireOrder(asso);
-        return serviceInstance;
     }
 }

@@ -154,8 +154,7 @@
                         <div class="d-flex align-items-center">
                           <div class="ps-3 ps-sm-4">
                             <h4 class="h6 mb-2">
-                              <a>{{service.customLabel?service.customLabel :
-                                service.serviceType.label}}</a>
+                              <a>{{service.serviceLabelToDisplay}}</a>
                             </h4>
                             <div class="text-body-secondary fs-sm me-3">
                               {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname

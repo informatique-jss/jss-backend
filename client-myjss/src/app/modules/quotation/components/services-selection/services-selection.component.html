@@ -31,10 +31,11 @@
           </div>
           <div class="row align-items-center">
             <!-- Les boutons pills -->
-            <a *ngFor="let service of asso.services" class="btn rounded-pill mt-3 ms-3 col-auto pill"
+            <a *ngFor="let serviceType of selectedServiceTypes[indexAsso]"
+              class="btn rounded-pill mt-3 ms-3 col-auto pill"
               [ngClass]="{'btn-secondary': selectedAssoIndex == indexAsso,'btn-outline-primary':selectedAssoIndex != indexAsso}"
-              (click)="removeServiceFromCurrentAffaire(service.serviceType, indexAsso);$event.stopPropagation()">
-              {{service.customLabel?service.customLabel : service.serviceType.label }} <i class="ai-cross ms-2"></i>
+              (click)="removeServiceFromCurrentAffaire(serviceType);$event.stopPropagation()">
+              {{serviceType.customLabel?serviceType.customLabel : serviceType.label }} <i class="ai-cross ms-2"></i>
             </a>
           </div>
         </div>
@@ -80,8 +81,8 @@
             <div class="form-check service-item m-1"
               *ngIf="service.customLabel.toLocaleLowerCase().indexOf(searchtext.toLocaleLowerCase())>=0 && selectedAssoIndex!=null">
               <input class="form-check-input" type="checkbox" id="ex-check-1"
-                (click)="removeServiceFromCurrentAffaire(service,selectedAssoIndex)"
-                *ngIf="getServiceIndexInCurrentAffaire(service)>=0" checked>
+                (click)="removeServiceFromCurrentAffaire(service)" *ngIf="getServiceIndexInCurrentAffaire(service)>=0"
+                checked>
               <input class="form-check-input" type="checkbox" id="ex-check-1"
                 (click)="addServiceToCurrentAffaire(service)" *ngIf="getServiceIndexInCurrentAffaire(service)<0">
               <label class="form-check-label" for="ex-check-1">{{service.customLabel }}</label>

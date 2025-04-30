@@ -25,9 +25,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.BillingItemService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
@@ -45,6 +43,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 
 @org.springframework.stereotype.Service
 public class PricingHelper {
@@ -71,16 +70,7 @@ public class PricingHelper {
     InvoiceItemService invoiceItemService;
 
     @Autowired
-    DocumentService documentService;
-
-    @Autowired
     VatService vatService;
-
-    @Autowired
-    CityService cityService;
-
-    @Autowired
-    ProvisionService provisionService;
 
     @Autowired
     AuditService auditService;
@@ -316,13 +306,18 @@ public class PricingHelper {
                         (confrere.getShippingCosts() != null ? BigDecimal.valueOf(confrere.getShippingCosts())
                                 : zeroValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
-        } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()) {
-            if (billingItem.getBillingType().getIsNonTaxable() == false
-                    && provision.getService().getServiceType().getDefaultDeboursPrice() != null) {
-                invoiceItem.setPreTaxPrice(provision.getService().getServiceType().getDefaultDeboursPrice());
-            } else if (billingItem.getBillingType().getIsNonTaxable() == true
-                    && provision.getService().getServiceType().getDefaultDeboursPriceNonTaxable() != null) {
-                invoiceItem.setPreTaxPrice(provision.getService().getServiceType().getDefaultDeboursPriceNonTaxable());
+        } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()
+                && !provision.getService().getServiceTypes().isEmpty()) {
+            for (ServiceType serviceType : provision.getService().getServiceTypes()) {
+                if (billingItem.getBillingType().getIsNonTaxable() == false
+                        && serviceType.getDefaultDeboursPrice() != null) {
+                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                            .add(serviceType.getDefaultDeboursPrice()));
+                } else if (billingItem.getBillingType().getIsNonTaxable() == true
+                        && serviceType.getDefaultDeboursPriceNonTaxable() != null) {
+                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                            .add(serviceType.getDefaultDeboursPriceNonTaxable()));
+                }
             }
         } else {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());

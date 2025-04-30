@@ -144,7 +144,7 @@
             <ng-container *ngFor="let service of asso.services">
               <tr class="mat-mdc-row mdc-data-table__row ">
                 <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2">
-                  {{getServiceLabel(service)}}
+                  {{service.serviceLabelToDisplay}}
                 </td>
               </tr>
               <ng-container *ngFor="let provision of service.provisions">

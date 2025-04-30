@@ -524,6 +524,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ProvisionType getProvisionTypeCharacterAnnouncement() throws OsirisException {
+        return getConstants().getProvisionTypeCharacterAnnouncement();
+    }
+
+    @Override
     public ProvisionFamilyType getProvisionFamilyTypeDeposit() throws OsirisException {
         return getConstants().getProvisionFamilyTypeDeposit();
     }

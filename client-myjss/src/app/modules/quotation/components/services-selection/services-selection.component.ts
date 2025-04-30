@@ -22,6 +22,7 @@ export class ServicesSelectionComponent implements OnInit {
 
   serviceFamilies: ServiceFamily[] = [];
   selectedServiceFamily: ServiceFamily | undefined;
+  selectedServiceTypes: ServiceType[][] = [];
   selectedAssoIndex: number | null = null;
   searchtext: string = '';
   quotation: IQuotation | undefined;
@@ -91,54 +92,23 @@ export class ServicesSelectionComponent implements OnInit {
   }
 
   addServiceToCurrentAffaire(service: ServiceType) {
-    if (this.quotation && this.selectedAssoIndex != null)
-      if (this.currentUser) {
-        if (!this.applyToAllAffaires)
-          this.serviceService.getServiceForServiceTypeAndAffaire(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire).subscribe(response => {
-            if (!this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services)
-              this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services = [];
-            this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services.push(response);
-          })
-        else
-          for (let asso of this.quotation.assoAffaireOrders) {
-            let index = this.quotation.assoAffaireOrders.indexOf(asso);
-            this.serviceService.getServiceForServiceTypeAndAffaire(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire).subscribe(response => {
-              if (!this.quotation!.assoAffaireOrders[index].services)
-                this.quotation!.assoAffaireOrders[index].services = [];
-              this.quotation!.assoAffaireOrders[index].services.push(response);
-            })
-          }
-      } else {
-        this.serviceService.getServiceForServiceTypeAndAffaire(service, this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire).subscribe(response => {
-          if (!this.applyToAllAffaires) {
-            if (!this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services)
-              this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services = [];
-            this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services.push(response);
-          } else if (this.quotation) {
-            for (let asso of this.quotation.assoAffaireOrders) {
-              let index = this.quotation.assoAffaireOrders.indexOf(asso);
-              if (!this.quotation!.assoAffaireOrders[index!].services)
-                this.quotation!.assoAffaireOrders[index].services = [];
-              this.quotation!.assoAffaireOrders[index].services.push(response);
-            }
-          }
-        })
-      }
+    if (this.selectedAssoIndex) {
+      if (!this.selectedServiceTypes[this.selectedAssoIndex])
+        this.selectedServiceTypes[this.selectedAssoIndex] = [];
+      this.selectedServiceTypes[this.selectedAssoIndex].push(service);
+    }
   }
 
-  removeServiceFromCurrentAffaire(service: ServiceType, assoIndex: number) {
-    if (this.quotation)
-      this.quotation!.assoAffaireOrders[assoIndex].services.splice(this.getServiceIndexInCurrentAffaire(service), 1);
+  removeServiceFromCurrentAffaire(service: ServiceType) {
+    if (this.selectedAssoIndex) {
+      if (this.selectedServiceTypes[this.selectedAssoIndex] && this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) >= 0)
+        this.selectedServiceTypes[this.selectedAssoIndex].splice(this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service), 1);
+    }
   }
 
   getServiceIndexInCurrentAffaire(service: ServiceType): number {
     if (this.quotation && this.selectedAssoIndex != null)
-      for (let asso of this.quotation.assoAffaireOrders)
-        if (this.quotation.assoAffaireOrders.indexOf(asso) == this.selectedAssoIndex && asso.services)
-          for (let serviceAsso of asso.services)
-            if (serviceAsso.serviceType.id == service.id) {
-              return asso.services.indexOf(serviceAsso);
-            }
+      return this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service);
     return -1;
   }
 
@@ -153,16 +123,25 @@ export class ServicesSelectionComponent implements OnInit {
   saveQuotation() {
     if (this.quotation) {
       if (!this.currentUser) {
-        if (this.quotation.isQuotation) {
-          this.quotationService.setCurrentDraftQuotation(this.quotation);
-        } else {
-          this.orderService.setCurrentDraftOrder(this.quotation);
-
+        let promises = [];
+        for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+          promises.push(this.serviceService.getServiceForServiceTypeAndAffaire(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].affaire));
         }
+        combineLatest(promises).subscribe(response => {
+          for (let i = 0; i < this.quotation!.assoAffaireOrders.length; i++) {
+            this.quotation!.assoAffaireOrders[i].services = response[i];
+          }
+
+          if (this.quotation!.isQuotation) {
+            this.quotationService.setCurrentDraftQuotation(this.quotation!);
+          } else {
+            this.orderService.setCurrentDraftOrder(this.quotation!);
+          }
+        });
       } else {
         let promises = [];
-        for (let asso of this.quotation.assoAffaireOrders) {
-          promises.push(this.serviceService.addOrUpdateServices(asso.services, asso.affaire.id, asso.id));
+        for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+          promises.push(this.serviceService.addOrUpdateServices(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].affaire.id, this.quotation.assoAffaireOrders[i].id));
         }
         combineLatest(promises).subscribe(response => {
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);

@@ -1,11 +1,5 @@
 <ng-container *ngIf="service">
   <table class="full-width">
-    <tr *ngIf="service.serviceType.id ==otherServiceType.id">
-      <td>
-        <generic-input [(model)]="service.customLabel" label="Libellé du service" [form]="serviceForm"
-          propertyName="customLabel" [isMandatory]="false" [maxLength]="250"></generic-input>
-      </td>
-    </tr>
     <tr *ngIf="service.customerComment ">
       <td>Commentaire client : {{service.customerComment}}
       </td>

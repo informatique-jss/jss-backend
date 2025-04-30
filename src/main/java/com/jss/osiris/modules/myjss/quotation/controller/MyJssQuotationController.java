@@ -1060,8 +1060,8 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/services")
-	public ResponseEntity<Boolean> addOrUpdateServices(@RequestBody List<Service> services,
+	@GetMapping(inputEntryPoint + "/services")
+	public ResponseEntity<Boolean> addOrUpdateServices(@RequestParam List<Integer> serviceTypeIds,
 			@RequestParam("affaireId") Integer affaireId, @RequestParam("affaireOrderId") Integer affaireOrderId)
 			throws OsirisException {
 
@@ -1076,8 +1076,20 @@ public class MyJssQuotationController {
 			assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(affaireOrderId);
 		}
 
+		List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
+		if (serviceTypeIds != null) {
+			for (Integer serviceTypeId : serviceTypeIds) {
+				ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
+				if (serviceType == null)
+					throw new OsirisValidationException("servicesType");
+				serviceTypes.add(serviceType);
+			}
+		} else {
+			throw new OsirisValidationException("servicesTypeIds");
+		}
+
 		if (affaire != null && assoAffaireOrder != null) {
-			serviceService.addOrUpdateServices(services, affaireId, affaireOrderId, null);
+			serviceService.addOrUpdateServices(serviceTypes, affaireId, affaireOrderId, null);
 
 			return new ResponseEntity<>(true, HttpStatus.OK);
 		}
@@ -1296,43 +1308,29 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/service/add")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Service> addServiceToAssoAffaireOrder(@RequestParam Integer serviceTypeId,
-			@RequestParam Integer assoAffaireOrderId,
-			HttpServletRequest request)
-			throws OsirisValidationException, OsirisException {
-		detectFlood(request);
-
-		ServiceType service = serviceTypeService.getServiceType(serviceTypeId);
-		AssoAffaireOrder assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(assoAffaireOrderId);
-
-		if (service == null)
-			throw new OsirisValidationException("service");
-
-		if (assoAffaireOrder == null)
-			throw new OsirisValidationException("assoAffaireOrders");
-
-		return new ResponseEntity<Service>(
-				assoAffaireOrderService.addServiceToAssoAffaireOrder(service, assoAffaireOrder),
-				HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/service-types/provisions")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Service> getServiceForServiceTypeAndAffaire(@RequestParam Integer idAffaire,
-			@RequestParam Integer serviceTypeId) throws OsirisException {
+	public ResponseEntity<List<Service>> getServiceForServiceTypeAndAffaire(@RequestParam Integer idAffaire,
+			@RequestParam List<Integer> serviceTypeIds) throws OsirisException {
 
 		Affaire affaire = affaireService.getAffaire(idAffaire);
 		if (affaire == null)
 			throw new OsirisValidationException("Affaire");
 
-		ServiceType service = serviceTypeService.getServiceType(serviceTypeId);
-		if (service == null)
-			throw new OsirisValidationException("service");
+		List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
+		if (serviceTypeIds != null) {
+			for (Integer serviceTypeId : serviceTypeIds) {
+				ServiceType serviceType = serviceTypeService.getServiceType(serviceTypeId);
+				if (serviceType == null)
+					throw new OsirisValidationException("servicesType");
+				serviceTypes.add(serviceType);
+			}
+		} else {
+			throw new OsirisValidationException("servicesTypeIds");
+		}
 
-		return new ResponseEntity<Service>(
-				serviceService.getServiceForMultiServiceTypesAndAffaire(Arrays.asList(service), affaire),
+		return new ResponseEntity<List<Service>>(
+				serviceService.generateServiceInstanceFromMultiServiceTypes(serviceTypes, affaire, null),
 				HttpStatus.OK);
 	}
 }

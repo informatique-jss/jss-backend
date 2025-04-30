@@ -89,7 +89,8 @@
                         style="font-weight:normal;" th:text="${affaireDenomination}"></span></span><br />
 
                 <span style="font-weight: bold;" th:if="${provision!=null}">Formalité demandée : <span
-                        style="font-weight:normal;" th:text="${provision.service.customLabel}"></span></span><br />
+                        style="font-weight:normal;"
+                        th:text="${provision.service.serviceLabelToDisplay}"></span></span><br />
 
                 <span style="font-weight: bold;" th:if="${currentDate!=null}"> Date de dépôt : <span
                         style="font-weight:normal;" th:text="${currentDate}"></span></span><br />

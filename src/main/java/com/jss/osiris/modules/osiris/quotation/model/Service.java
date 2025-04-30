@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -20,6 +21,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
@@ -50,15 +53,15 @@ public class Service implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "services" }, allowSetters = true)
 	private AssoAffaireOrder assoAffaireOrder;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_service_type")
-	@IndexedField
+	@ManyToMany
+	@JoinTable(name = "asso_service_service_type", joinColumns = @JoinColumn(name = "id_service"), inverseJoinColumns = @JoinColumn(name = "id_service_type"))
+	@JsonProperty(value = "serviceTypes")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments", "assoServiceTypeFieldTypes",
 			"assoServiceProvisionTypes" }, allowSetters = true)
-	private ServiceType serviceType;
+	private List<ServiceType> serviceTypes;
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
@@ -106,6 +109,10 @@ public class Service implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime lastMissingAttachmentQueryDateTime;
 
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@Column(length = 2000)
+	private String serviceLabelToDisplay;
+
 	public Integer getId() {
 		return id;
 	}
@@ -128,22 +135,6 @@ public class Service implements Serializable, IId {
 
 	public void setAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder) {
 		this.assoAffaireOrder = assoAffaireOrder;
-	}
-
-	public String getCustomLabel() {
-		return customLabel;
-	}
-
-	public void setCustomLabel(String customLabel) {
-		this.customLabel = customLabel;
-	}
-
-	public ServiceType getServiceType() {
-		return serviceType;
-	}
-
-	public void setServiceType(ServiceType serviceType) {
-		this.serviceType = serviceType;
 	}
 
 	public String getCustomerComment() {
@@ -216,6 +207,30 @@ public class Service implements Serializable, IId {
 
 	public void setLastMissingAttachmentQueryDateTime(LocalDateTime lastMissingAttachmentQueryDateTime) {
 		this.lastMissingAttachmentQueryDateTime = lastMissingAttachmentQueryDateTime;
+	}
+
+	public String getCustomLabel() {
+		return customLabel;
+	}
+
+	public void setCustomLabel(String customLabel) {
+		this.customLabel = customLabel;
+	}
+
+	public String getServiceLabelToDisplay() {
+		return serviceLabelToDisplay;
+	}
+
+	public void setServiceLabelToDisplay(String serviceLabelToDisplay) {
+		this.serviceLabelToDisplay = serviceLabelToDisplay;
+	}
+
+	public List<ServiceType> getServiceTypes() {
+		return serviceTypes;
+	}
+
+	public void setServiceTypes(List<ServiceType> serviceTypes) {
+		this.serviceTypes = serviceTypes;
 	}
 
 }

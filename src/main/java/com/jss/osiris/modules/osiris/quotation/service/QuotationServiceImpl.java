@@ -680,9 +680,7 @@ public class QuotationServiceImpl implements QuotationService {
 
                         if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0)
                             for (Service service : assoAffaireOrder.getServices()) {
-                                String serviceLabel = service.getCustomLabel();
-                                if (serviceLabel == null || serviceLabel.length() == 0)
-                                    serviceLabel = service.getServiceType().getLabel();
+                                String serviceLabel = service.getServiceLabelToDisplay();
                                 if (serviceLabels.indexOf(serviceLabel) < 0)
                                     serviceLabels.add(serviceLabel);
                             }
@@ -766,9 +764,7 @@ public class QuotationServiceImpl implements QuotationService {
 
                 if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0)
                     for (Service service : assoAffaireOrder.getServices()) {
-                        String serviceLabel = service.getCustomLabel();
-                        if (serviceLabel == null || serviceLabel.length() == 0)
-                            serviceLabel = service.getServiceType().getLabel();
+                        String serviceLabel = service.getServiceLabelToDisplay();
                         if (serviceLabels.indexOf(serviceLabel) < 0)
                             serviceLabels.add(serviceLabel);
                     }
