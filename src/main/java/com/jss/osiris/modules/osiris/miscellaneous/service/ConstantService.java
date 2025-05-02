@@ -488,6 +488,8 @@ public interface ConstantService {
 
     public Category getCategorySerie() throws OsirisException;
 
+    public Category getCategoryExclusivity() throws OsirisException;
+
     public MyJssCategory getMyJssCategoryAnnouncement() throws OsirisException;
 
     public MyJssCategory getMyJssCategoryFormality() throws OsirisException;

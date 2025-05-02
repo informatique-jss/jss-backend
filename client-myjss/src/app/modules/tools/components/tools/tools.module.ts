@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { GeneralModule } from '../../../general/components/general/general.module';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
+import { ExclusivesComponent } from '../exclusives/exclusives.component';
 import { MandatoryDocumentsComponent } from '../mandatory-documents/mandatory-documents.component';
 import { PostComponent } from '../post/post.component';
 import { PracticalSheetsComponent } from '../practical-sheets/practical-sheets.component';
@@ -15,6 +16,7 @@ const routes: Routes = [
     children: [
       { path: 'practical-sheets', component: PracticalSheetsComponent },
       { path: 'mandatory-documents', component: MandatoryDocumentsComponent },
+      { path: 'exclusives', component: ExclusivesComponent },
     ]
   },
   { path: 'post/:slug', component: PostComponent },
@@ -32,7 +34,8 @@ const routes: Routes = [
     ToolsComponent,
     PostComponent,
     PracticalSheetsComponent,
-    MandatoryDocumentsComponent
+    MandatoryDocumentsComponent,
+    ExclusivesComponent
   ], schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class ToolsModule { }

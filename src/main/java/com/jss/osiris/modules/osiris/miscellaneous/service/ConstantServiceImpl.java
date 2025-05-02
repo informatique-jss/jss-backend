@@ -1174,6 +1174,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public Category getCategoryExclusivity() throws OsirisException {
+        return this.getConstants().getCategoryExclusivity();
+    }
+
+    @Override
     public MyJssCategory getMyJssCategoryAnnouncement() throws OsirisException {
         return this.getConstants().getMyJssCategoryAnnouncement();
     }

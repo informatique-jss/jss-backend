@@ -265,6 +265,7 @@ export interface Constant {
   categoryPodcast: Category;
   categoryArticle: Category;
   categorySerie: Category;
+  categoryExclusivity: Category;
   myJssCategoryAnnouncement: MyJssCategory;
   myJssCategoryFormality: MyJssCategory;
   jssCategoryHomepageFirstHighlighted: JssCategory;

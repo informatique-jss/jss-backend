@@ -95,4 +95,7 @@ export class ConstantService extends AppRestService<Constant> {
   getServiceFamilyGroupAnnouncement() {
     return this.constant.serviceFamilyGroupAnnouncement;
   }
+  getCategoryExclusivity() {
+    return this.constant.categoryExclusivity;
+  }
 }

@@ -907,6 +907,11 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_category_exclusivity")
+	private Category categoryExclusivity;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssListView.class)
 	@JoinColumn(name = "id_myjss_category_announcement")
 	private MyJssCategory myJssCategoryAnnouncement;
 
@@ -2723,6 +2728,14 @@ public class Constant implements Serializable, IId {
 
 	public void setProvisionTypeCharacterAnnouncement(ProvisionType provisionTypeCharacterAnnouncement) {
 		this.provisionTypeCharacterAnnouncement = provisionTypeCharacterAnnouncement;
+	}
+
+	public Category getCategoryExclusivity() {
+		return categoryExclusivity;
+	}
+
+	public void setCategoryExclusivity(Category categoryExclusivity) {
+		this.categoryExclusivity = categoryExclusivity;
 	}
 
 }
