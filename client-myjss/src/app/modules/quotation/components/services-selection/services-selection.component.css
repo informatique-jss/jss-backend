@@ -17,3 +17,7 @@
 .btn.btn-outline-primary:hover {
   color: var(--ar-secondary) !important;
 }
+
+.btn.btn-secondary {
+  color: var(--ar-primary) !important;
+}

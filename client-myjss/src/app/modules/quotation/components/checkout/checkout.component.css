@@ -1,0 +1,9 @@
+.image-height {
+    height: 245px;
+    width: 245px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+}

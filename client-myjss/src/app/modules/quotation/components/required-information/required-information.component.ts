@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
@@ -31,6 +31,8 @@ import { NoticeTypeService } from '../../services/notice.type.service';
   standalone: false
 })
 export class RequiredInformationComponent implements OnInit {
+
+  @ViewChild('confirmBackModal') confirmBackModal!: ElementRef<HTMLDivElement>;
 
 
   selectedAssoIndex: number | null = null;
@@ -93,8 +95,6 @@ export class RequiredInformationComponent implements OnInit {
     })
     this.initIQuotation();
     this.fetchAnnouncementReferentials();
-
-
   }
 
   initIQuotation() {
@@ -236,42 +236,62 @@ export class RequiredInformationComponent implements OnInit {
     return true;
   }
 
-  saveQuotation() {
-    if (this.quotation) {
-      if (!this.currentUser) {
+  saveFieldsValue() {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
+      if (this.currentUser) {
+        this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe(response => {
+          this.moveToNextService();
+        });
+
+      } else {
         if (this.quotation.isQuotation) {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
         } else {
           this.orderService.setCurrentDraftOrder(this.quotation);
         }
+        this.moveToNextService();
       }
-      this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-      this.appService.openRoute(undefined, "quotation", undefined);
-    }
-  }
-
-  saveFieldsValue() {
-    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
-      this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe(response => {
-        if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! + 1])
-          this.selectedServiceIndex!++;
-
-        else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! + 1])
-          this.selectedAssoIndex!++;
-
-        else {
-          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-          this.appService.openRoute(undefined, "quotation", undefined);
-        }
-      });
-
     } else if (this.quotation) {
       this.selectedAssoIndex = 0;
       this.selectedServiceIndex = 0;
     }
   }
 
-  goBackQuotation() {
+  private moveToNextService() {
+    if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! + 1])
+      this.selectedServiceIndex!++;
+
+    else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! + 1]) {
+      this.selectedAssoIndex!++;
+      this.selectedServiceIndex = 0;
+    }
+
+    else {
+      this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+      this.appService.openRoute(undefined, "quotation", undefined);
+    }
+  }
+
+  moveToPreviousService() {
+    if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! - 1])
+      this.selectedServiceIndex!--;
+
+    else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! - 1]) {
+      this.selectedAssoIndex!--;
+      this.selectedServiceIndex = this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services.length - 1;
+    }
+    else {
+      this.goBackQuotationModale();
+    }
+  }
+
+  goBackQuotationModale() {
+    const modalElement = this.confirmBackModal.nativeElement;
+    const modal = new (window as any).bootstrap.Modal(modalElement);
+    modal.show();
+  }
+
+  confirmGoBack() {
     this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
     this.appService.openRoute(undefined, "quotation", undefined);
   }

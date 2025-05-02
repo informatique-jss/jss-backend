@@ -1,1 +1,451 @@
-<div> Checkout works !</div>
+<div class="container py-5">
+    <!-- Main layout -->
+    <div class="row g-5">
+        <!-- Left column -->
+        <div class="col-lg-8">
+
+            <!-- Connexion -->
+            <div class="row " *ngIf="!currentUser && !isLinkSent">
+                <div class="card mb-4 bg-secondary-subtle">
+                    <div class="row">
+                        <div class="col-lg-4 ps-0">
+                            <div class=" d-lg-block d-none">
+                                <div class="w-100 border-0">
+                                    <img src="assets/img/account/cover.jpg"
+                                        class="rounded-1 object-fit-cover w-100 m-4 image-height" alt="Card image">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 p-4">
+                            <h3 class="text-white">Se connecter</h3>
+                            <div class="row p-0 ">
+                                <label class="col-md-12 col-form-label text-white" for="inputMail">Vous avez déjà un
+                                    compte ? Renseignez votre mail ci-dessous et ouvrez le lien reçu par mail.</label>
+                                <div class="col-md-12 ">
+                                    <generic-input [(model)]="inputMail" label="Votre adresse mail"
+                                        [form]="documentForm" propertyName="inputMail" [isMandatory]="true"
+                                        [isDisabled]="false" type="mail" [isDisplayLabel]="false" [icon]="'mail'">
+                                    </generic-input>
+                                </div>
+                                <div class="my-3">
+                                    <button class="btn btn-lg btn-primary w-100" (click)="sendConnectionLink()"><span
+                                            class="spinner-border spinner-border-sm me-2" role="status"
+                                            aria-hidden="true" *ngIf="isSendingLink"></span>Recevoir un lien de
+                                        connexion</button>
+                                </div>
+                                <div class="alert alert-info d-flex mb-0 mb-2" role="alert" *ngIf="isLinkSent">
+                                    <i class="ai-circle-info fs-xl"></i>
+                                    <div class="ps-2">Un lien vous a été envoyé par mail. Ouvez le et revenez sur cette
+                                        page.</div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message rapide -->
+            <div class="row">
+                <div class="card form-check form-switch mb-4 py-4 ">
+                    <h2 class="pb-3">Gagnez du temps dans vos démarches !</h2>
+                    <div *ngIf="quotation">
+                        <generic-toggle
+                            [(ngModel)]="quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency"
+                            label="Traiter cette commande en urgence" [form]="documentForm" propertyName="isEmergency"
+                            (ngModelChange)="computePrices()">
+                        </generic-toggle>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Votre entreprise -->
+            <div class="row" *ngIf="!currentUser">
+                <div class="card mb-4" *ngIf="notSignedResponsable">
+                    <h6 class="card-header"><i class="ai-briefcase me-2"></i>Votre entreprise</h6>
+                    <div class="card-body pt-2">
+                        <div class="mb-3">
+                            <generic-toggle [(ngModel)]="notSignedResponsable.tiers.isIndividual"
+                                label="Vous représentez une entreprise ?" [form]="documentForm"
+                                propertyName="isIndividual">
+                            </generic-toggle>
+                        </div>
+                        <div class="mb-3">
+                            <generic-input [(model)]="inputMail" label="Votre adresse mail" [form]="documentForm"
+                                propertyName="inputMail" [isMandatory]="true" [isDisabled]="false" type="mail"
+                                [icon]="'mail'">
+                            </generic-input>
+                        </div>
+                        <div class="mb-3">
+                            <generic-input [(model)]="notSignedResponsable.tiers.denomination"
+                                label="R.C.S de /!\ TODO /!\" [form]="documentForm" propertyName="firstname"
+                                [isMandatory]="true" [isDisabled]="false" type="text">
+                            </generic-input>
+                        </div>
+                        <div class="mb-3">
+                            <generic-input [(model)]="notSignedResponsable.tiers.denomination" label="Dénomination"
+                                [form]="documentForm" propertyName="firstname" [isMandatory]="true" [isDisabled]="false"
+                                type="text">
+                            </generic-input>
+                        </div>
+                        <div class="row mt-3">
+                            <generic-input class="col" [(model)]="notSignedResponsable.address" label="Adresse"
+                                [form]="documentForm" propertyName="adress" [isMandatory]="true" [isDisabled]="false"
+                                type="text">
+                            </generic-input>
+                        </div>
+                        <div class="row mt-3">
+                            <generic-input class="col" [(model)]="notSignedResponsable.addressComplement"
+                                label="Complément d'adresse" [form]="documentForm" propertyName="addressComplement"
+                                [isMandatory]="true" [isDisabled]="false" type="text">
+                            </generic-input>
+                        </div>
+                        <div class="row g-3 mt-3">
+                            <generic-input class="col-md-4" [(model)]="notSignedResponsable.postalCode"
+                                label="Code postal" [form]="documentForm" propertyName="postalCode" [isMandatory]="true"
+                                [isDisabled]="false" [maxLength]="10">
+                            </generic-input>
+                            <autocomplete-city class="col-md-4" [(model)]="notSignedResponsable.city" label="Ville"
+                                [form]="documentForm" propertyName="city" [isMandatory]="true" [isDisabled]="false"
+                                [modelCountry]="notSignedResponsable.country"
+                                [preFilterPostalCode]="notSignedResponsable.postalCode">
+                            </autocomplete-city>
+                            <select-country class="col-md-4" [(model)]="notSignedResponsable.country" label="Pays"
+                                [form]="documentForm" propertyName="country" [isMandatory]="true" [isDisabled]="false">
+                            </select-country>
+                        </div>
+                        <div class="row g-3 mt-3">
+                            <generic-input class="col-md-6" [(model)]="notSignedResponsable.phones" label="Téléphone"
+                                [form]="documentForm" propertyName="phone" [isMandatory]="true" [isDisabled]="false"
+                                [maxLength]="13">
+                            </generic-input>
+                            <generic-input class="col-md-6" [(model)]="notSignedResponsable.mail"
+                                label="Votre adresse mail" [form]="documentForm" propertyName="mail"
+                                [isMandatory]="true" [isDisabled]="false" type="mail" [icon]="'mail'">
+                            </generic-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donneur d'ordre -->
+            <div class="row" *ngIf="!currentUser">
+                <div class="card mb-4">
+                    <h6 class="card-header"><i class="ai-user me-2"></i>Donneur d'ordre</h6>
+                    <div class="card-body pt-2" *ngIf="notSignedResponsable">
+                        <div class="mb-3">
+                            <select-civility [(model)]="notSignedResponsable" label="Civilité" [form]="documentForm"
+                                propertyName="civilty" [isMandatory]="true" [isDisabled]="false">
+                            </select-civility>
+                        </div>
+                        <div class="row g-3 mt-3">
+                            <generic-input class="col-md-6" [(model)]="notSignedResponsable.firstname" label="Prénom"
+                                [form]="documentForm" propertyName="firstname" [isMandatory]="true" [isDisabled]="false"
+                                type="text">
+                            </generic-input>
+                            <generic-input class="col-md-6" [(model)]="notSignedResponsable.lastname" label="Nom"
+                                [form]="documentForm" propertyName="lastname" [isMandatory]="true" [isDisabled]="false"
+                                type="text">
+                            </generic-input>
+                        </div>
+                        <div class="row mt-3">
+                            <generic-input class="col" [(model)]="notSignedResponsable.address" label="Adresse"
+                                [form]="documentForm" propertyName="adress" [isMandatory]="true" [isDisabled]="false"
+                                type="text">
+                            </generic-input>
+                        </div>
+                        <div class="row mt-3">
+                            <generic-input class="col" [(model)]="notSignedResponsable.addressComplement"
+                                label="Complément d'adresse" [form]="documentForm" propertyName="addressComplement"
+                                [isMandatory]="true" [isDisabled]="false" type="text">
+                            </generic-input>
+                        </div>
+                        <div class="row g-3 mt-3">
+                            <generic-input class="col-md-4" [(model)]="notSignedResponsable.postalCode"
+                                label="Code postal" [form]="documentForm" propertyName="postalCode" [isMandatory]="true"
+                                [isDisabled]="false" [maxLength]="10">
+                            </generic-input>
+                            <autocomplete-city class="col-md-4" [(model)]="notSignedResponsable.city" label="Ville"
+                                [form]="documentForm" propertyName="city" [isMandatory]="true" [isDisabled]="false"
+                                [modelCountry]="notSignedResponsable.country"
+                                [preFilterPostalCode]="notSignedResponsable.postalCode">
+                            </autocomplete-city>
+                            <select-country class="col-md-4" [(model)]="notSignedResponsable.country" label="Pays"
+                                [form]="documentForm" propertyName="country" [isMandatory]="true" [isDisabled]="false">
+                            </select-country>
+                        </div>
+                        <div class="row g-3 mt-3">
+                            <generic-input class="col-md-6" [(model)]="notSignedResponsable.phones" label="Téléphone"
+                                [form]="documentForm" propertyName="phone" [isMandatory]="true" [isDisabled]="false"
+                                [maxLength]="13">
+                            </generic-input>
+                            <generic-input class="col-md-6" [(model)]="notSignedResponsable.mail"
+                                label="Votre adresse mail" [form]="documentForm" propertyName="mail"
+                                [isMandatory]="true" [isDisabled]="false" type="mail" [icon]="'mail'">
+                            </generic-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="notSignedResponsable">
+                <span #topAlert></span>
+                <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce && !notSignedResponsable.firstname ">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">Le prénom est obligatoire</div>
+                </div>
+                <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce && !notSignedResponsable.lastname ">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">Le nom est obligatoire</div>
+                </div>
+                <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce && !notSignedResponsable.address">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">L'adresse est obligatoire</div>
+                </div>
+                <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce && notSignedResponsable.country.id == countryFrance.id && !notSignedResponsable.postalCode">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">Le code postal est obligatoire</div>
+                </div>
+                <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce  && !notSignedResponsable.city">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">La ville est obligatoire</div>
+                </div>
+                <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce  && !notSignedResponsable.country">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">Le pays est obligatoire</div>
+                </div>
+                <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce  && !notSignedResponsable.civility ">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">La civilité est obligatoire</div>
+                </div>
+                <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce && (!notSignedResponsable.mail || !validateEmail(notSignedResponsable.mail.mail) )">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">Le mail est obligatoire</div>
+                </div>
+                <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+                    *ngIf="checkedOnce && notSignedResponsable.phones &&  !validateFrenchPhone(notSignedResponsable.phones[0].phoneNumber) && !validateInternationalPhone(notSignedResponsable.phones[0].phoneNumber)">
+                    <i class="ai-octagon-alert fs-xl"></i>
+                    <div class="ps-2">Le numéro de téléphone est incorrect</div>
+                </div>
+            </div>
+
+            <!-- Renseignement administratif -->
+            <div class="row" *ngIf="currentUser">
+                <div class="card mb-4">
+                    <h6 class="card-header"><i class="ai-note me-2"></i>Renseignement administratif</h6>
+                    <div *ngFor="let doc of currentUser.documents">
+                        <div class="card-body" *ngIf="doc.documentType == documentTypeBilling">
+                            <div class="mb-3">
+                                <generic-toggle [(ngModel)]="doc.isCommandNumberMandatory"
+                                    label="J'ai un numéro de commande" [form]="documentForm"
+                                    propertyName="isCommandNumberMandatory">
+                                </generic-toggle>
+                            </div>
+                            <div class="mb-3">
+                                <generic-input *ngIf="doc.isCommandNumberMandatory" [(model)]="doc.commandNumber"
+                                    label="N° de commande" [form]="documentForm" propertyName="commandNumber"
+                                    [isMandatory]="true" [isDisabled]="false" type="text">
+                                </generic-input>
+                            </div>
+                            <div class="mb-3">
+                                <generic-toggle *ngIf="doc.isCommandNumberMandatory" [(ngModel)]="isExtRefMandatory"
+                                    label="J'ai un numéro de référence" [form]="documentForm"
+                                    propertyName="isExtRefMandatory">
+                                </generic-toggle>
+                            </div>
+                            <div class="mb-3" *ngIf="isExtRefMandatory">
+                                <generic-input [(model)]="doc.externalReference" label="N° de référence"
+                                    [form]="documentForm" propertyName="externalReference" [isMandatory]="true"
+                                    [isDisabled]="false" type="text">
+                                </generic-input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Libellé de facturation et adressage -->
+            <div class="row" *ngIf="this.documents">
+                <div class="card mb-4">
+                    <h6 class="card-header">Libellé de facturation et adressage</h6>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs mb-3" role="tablist">
+                            <li class="nav-item" *ngFor="let doc of documents">
+                                <a class="nav-link" [ngClass]="{'active': doc===documents[0]}"
+                                    [href]="'#' + doc.documentType.code" data-bs-toggle="tab"
+                                    role="tab">{{doc.documentType.label}}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade" [id]="documentTypeBilling.code" role="tabpanel">
+                                <div *ngFor="let doc of documents">
+                                    <div *ngIf="doc.documentType===documentTypeBilling">
+                                        <radio-group-billing-label [(model)]="doc.billingLabelType"
+                                            [form]="documentForm" [isDisabled]="false" propertyName="billingLabelType"
+                                            label="Libellé sur facture">
+                                        </radio-group-billing-label>
+                                        <div class="quotation-container">
+                                            <table class="full-width"
+                                                *ngIf="doc.billingLabelType!=undefined && doc.billingLabelType.code!=undefined && doc.billingLabelType.id==documentTypeBilling.id">
+                                                <tr>
+                                                    <td>
+                                                        <generic-input [(model)]="doc.billingLabel" label="Libellé"
+                                                            [form]="documentForm" propertyName="billingLabel"
+                                                            [maxLength]="200" [isMandatory]="true"
+                                                            [isDisabled]="false"></generic-input>
+                                                    </td>
+                                                    <td>
+                                                        <generic-input [(model)]="doc.billingAddress" label="Adresse"
+                                                            [form]="documentForm" propertyName="billingAddress"
+                                                            [isMandatory]="true" [isDisabled]="false"
+                                                            [maxLength]="200"></generic-input>
+                                                    </td>
+                                                    <td>
+                                                        <generic-input class="col-md-4"
+                                                            [(model)]="doc.billingPostalCode" label="Code postal"
+                                                            [form]="documentForm" propertyName="postalCode"
+                                                            [isMandatory]="true" [isDisabled]="false" [maxLength]="10">
+                                                        </generic-input>
+                                                    </td>
+                                                    <td>
+                                                        <generic-input [(model)]="doc.cedexComplement"
+                                                            label="Complément CEDEX" [form]="documentForm"
+                                                            propertyName="cedexComplement" [isMandatory]="false"
+                                                            [isDisabled]="false" [maxLength]="20"></generic-input>
+                                                    </td>
+                                                    <td>
+                                                        <autocomplete-city class="col-md-4"
+                                                            [(model)]="doc.billingLabelCity" label="Ville"
+                                                            [form]="documentForm" propertyName="city"
+                                                            [isMandatory]="true" [isDisabled]="false"
+                                                            [modelCountry]="doc.billingLabelCountry"
+                                                            [preFilterPostalCode]="doc.billingPostalCode">
+                                                        </autocomplete-city>
+                                                    </td>
+                                                    <td>
+                                                        <select-country class="col-md-4"
+                                                            [(model)]="doc.billingLabelCountry" label="Pays"
+                                                            [form]="documentForm" propertyName="country"
+                                                            [isMandatory]="true" [isDisabled]="false">
+                                                        </select-country>
+                                                    </td>
+                                                    <td>
+                                                        <generic-toggle [(model)]="doc.billingLabelIsIndividual"
+                                                            label="Est particulier ?" [form]="documentForm"
+                                                            propertyName="billingLabelIsIndividual"></generic-toggle>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <hr>
+                                            <label class="form-label">Destinataire de la facture</label>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="destinataire"
+                                                    id="dest1" checked>
+                                                <label class="form-check-label" for="dest1">Envoyer à l'affaire</label>
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" name="destinataire"
+                                                    id="dest2">
+                                                <label class="form-check-label" for="dest2">Envoyer à mon
+                                                    attention</label>
+                                            </div>
+
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="copyEmail">
+                                                <label class="form-check-label" for="copyEmail">Ajouter des adresses
+                                                    email
+                                                    en
+                                                    copie</label>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">E-mail</label>
+                                                <input type="email" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="tab-content">
+                            <div class="tab-pane fade" [id]="documentTypeDigital.code" role="tabpanel">
+                                <div *ngFor="let doc of documents">
+                                    <div *ngIf="doc.documentType===documentTypeDigital">
+                                        <radio-group-billing-label [(model)]="doc.billingLabelType"
+                                            [form]="documentForm" [isDisabled]="false" propertyName="billingLabelType"
+                                            label="Libellé sur facture">
+                                        </radio-group-billing-label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Commentaire -->
+                <div class="row">
+
+                    <div class="card mb-4">
+                        <div class="card-header">Commentaire</div>
+                        <div class="card-body">
+                            <label class="form-label">Rédiger toute information utile au traitement de votre
+                                dossier
+                                (optionnel)</label>
+                            <textarea class="form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column: Summary -->
+            <div class="col-lg-4 bg-dark">
+                <div class="row">
+
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Immatriculation - SC</h5>
+                            <p class="card-text small">11 documents nécessaires<br>Dénomination - Adresse - Code
+                                postal</p>
+                            <div class="d-flex justify-content-between">
+                                <span>Total :</span>
+                                <strong>45,00 €</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline-secondary w-100 mb-3">Ajouter un service</button>
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="accept1">
+                        <label class="form-check-label small" for="accept1">
+                            Je certifie que les pièces justificatives fournies sont conformes.
+                        </label>
+                    </div>
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="accept2">
+                        <label class="form-check-label small" for="accept2">
+                            En cochant cette case, je reconnais avoir pris connaissance et accepte les
+                            Conditions Générales
+                            de
+                            Vente (CGV) du site.
+                        </label>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary">Enregistrer en brouillon</button>
+                        <button class="btn btn-primary">Valider la commande</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

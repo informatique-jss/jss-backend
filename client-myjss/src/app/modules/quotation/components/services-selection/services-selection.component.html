@@ -91,12 +91,10 @@
         </div>
       </div>
       <div class="text-end">
-        <button type="button" class="btn btn-outline-primary rounded-1  mt-5 ms-auto"
+        <button type="button" class="btn btn-outline-primary rounded-1 mt-5 ms-auto"
           [ngClass]="{'btn-secondary' : applyToAllAffaires}" (click)="applyToAllAffaires=!applyToAllAffaires"
-          *ngIf="quotation && quotation.assoAffaireOrders.length>1"><i class="ai-check ms-2"
-            *ngIf="applyToAllAffaires"></i> Appliquer mes choix
-          à
-          toutes les affaires</button>
+          *ngIf="quotation && quotation.assoAffaireOrders.length>1"><i class="ai-check me-2"
+            *ngIf="applyToAllAffaires"></i> Appliquer mes choix à toutes les affaires</button>
       </div>
     </div>
   </section>

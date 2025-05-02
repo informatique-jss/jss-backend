@@ -706,6 +706,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             for (AssoAffaireOrder assoAffaireOrder : assoAffaireOrders) {
                 if (assoAffaireOrder.getServices() != null)
                     for (Service service : assoAffaireOrder.getServices()) {
+                        // TODO bouger dans ServiceServiceImpl ce bout là
                         service.setHasMissingInformations(false);
                         if (isServiceHasMissingInformations(service)) {
                             service.setHasMissingInformations(true);
@@ -758,6 +759,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         return assoAffaireOrders;
     }
 
+    // TODO bouger dans ServiceServiceImpl
     private void removeDisabledAttachments(Service service) {
         if (service != null && service.getAssoServiceDocuments() != null)
             for (AssoServiceDocument asso : service.getAssoServiceDocuments()) {
@@ -774,6 +776,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             }
     }
 
+    // TODO bouger dans ServiceServiceImpl
     private void removePublicationFlagAssoServiceDocument(Service service) throws OsirisException {
         // When published in the same service, do not ask for publication flag, JSS will
         // provide it
@@ -797,6 +800,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         }
     }
 
+    // TODO bouger dans ServiceServiceImpl
     @Override
     public boolean isServiceHasMissingInformations(Service service) {
         if (service.getMissingAttachmentQueries() != null
@@ -817,6 +821,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         return false;
     }
 
+    // TODO bouger dans ServiceServiceImpl
     private String getServiceStatusLabel(Service service) {
         Integer currentPriority = -1;
         String currentStatus = "";
@@ -850,6 +855,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         return currentStatus;
     }
 
+    // TODO bouger dans ServiceServiceImpl
     @Override
     public BigDecimal getServicePrice(Service service, boolean withDiscount, boolean withVat) {
         BigDecimal totalPrice = new BigDecimal(0);

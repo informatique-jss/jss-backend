@@ -723,3 +723,314 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="container py-5">
+  <!-- Main layout -->
+  <div class="row">
+    <!-- Left column -->
+    <div class="col-lg-8">
+      <!-- Connexion -->
+      <div class="card mb-4 bg-secondary-subtle">
+        <div class="card-body">
+          <h5 class="card-title">Se connecter</h5>
+          <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Votre adresse e-mail">
+          </div>
+          <button class="btn btn-outline-primary w-100">Recevoir un lien de connexion</button>
+        </div>
+      </div>
+
+      <!-- Message rapide -->
+      <div class="alert alert-light text-center mb-4">
+        <strong>Gagnez du temps dans vos démarches !</strong><br>
+        <a href="#">Traiter cette commande en urgence</a>
+      </div>
+
+      <!-- Affaire -->
+      <div class="card mb-4">
+        <div class="card-header">Affaire</div>
+        <div class="card-body">
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="isEntreprise">
+            <label class="form-check-label" for="isEntreprise">Vous représentez une entreprise ?</label>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">SIRET</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">R.C.S de</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Dénomination</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Adresse</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Complément d'adresse</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Code postal</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Ville</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Pays</label>
+              <input type="text" class="form-control" value="FRANCE" disabled>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Téléphone (facultatif)</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">E-mail</label>
+              <input type="email" class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Donneur d'ordre -->
+      <div class="card mb-4">
+        <div class="card-header">Donneur d'ordre</div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Civilité</label>
+            <select class="form-select">
+              <option selected disabled>Choisir</option>
+              <option>Mr</option>
+              <option>Mme</option>
+            </select>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Prénom</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nom</label>
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="mb-3 mt-3">
+            <label class="form-label">Adresse</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Complément d'adresse</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Code postal</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Ville</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Pays</label>
+              <input type="text" class="form-control" value="FRANCE" disabled>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Téléphone (facultatif)</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">E-mail</label>
+              <input type="email" class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Renseignement administratif -->
+      <div class="card mb-4">
+        <div class="card-header">Renseignement administratif</div>
+        <div class="card-body">
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="hasCommande">
+            <label class="form-check-label" for="hasCommande">J’ai un numéro de commande</label>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">N° de commande</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="hasReference">
+            <label class="form-check-label" for="hasReference">J’ai un numéro de référence</label>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">N° de référence</label>
+            <input type="text" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <!-- Libellé de facturation et adressage -->
+      <div class="card mb-4">
+        <div class="card-header">Libellé de facturation et adressage</div>
+        <div class="card-body">
+          <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Libellé de la facture</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Facture e-mail</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Documents e-mail</a>
+            </li>
+          </ul>
+
+          <div class="mb-3">
+            <label class="form-label">Adresse</label>
+            <select class="form-select">
+              <option selected>Autre</option>
+              <option>Adresse 1</option>
+              <option>Adresse 2</option>
+            </select>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Civilité</label>
+              <select class="form-select">
+                <option selected disabled>Choisir</option>
+                <option>Mr</option>
+                <option>Mme</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Prénom</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nom</label>
+              <input type="text" class="form-control">
+            </div>
+          </div>
+
+          <div class="mb-3 mt-3">
+            <label class="form-label">Adresse</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Complément d'adresse</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Code postal</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Ville</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Pays</label>
+              <input type="text" class="form-control" value="FRANCE" disabled>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Téléphone (facultatif)</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">E-mail</label>
+              <input type="email" class="form-control">
+            </div>
+          </div>
+
+          <hr>
+          <label class="form-label">Destinataire de la facture</label>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="destinataire" id="dest1" checked>
+            <label class="form-check-label" for="dest1">Envoyer à l'affaire</label>
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="destinataire" id="dest2">
+            <label class="form-check-label" for="dest2">Envoyer à mon attention</label>
+          </div>
+
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="copyEmail">
+            <label class="form-check-label" for="copyEmail">Ajouter des adresses email en copie</label>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">E-mail</label>
+            <input type="email" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <!-- Commentaire -->
+      <div class="card mb-4">
+        <div class="card-header">Commentaire</div>
+        <div class="card-body">
+          <label class="form-label">Rédiger toute information utile au traitement de votre dossier
+            (optionnel)</label>
+          <textarea class="form-control" rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: Summary -->
+    <div class="col-lg-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Immatriculation - SC</h5>
+          <p class="card-text small">11 documents nécessaires<br>Dénomination - Adresse - Code postal</p>
+          <div class="d-flex justify-content-between">
+            <span>Total :</span>
+            <strong>45,00 €</strong>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-outline-secondary w-100 mb-3">Ajouter un service</button>
+
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="accept1">
+        <label class="form-check-label small" for="accept1">
+          Je certifie que les pièces justificatives fournies sont conformes.
+        </label>
+      </div>
+      <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" id="accept2">
+        <label class="form-check-label small" for="accept2">
+          En cochant cette case, je reconnais avoir pris connaissance et accepte les Conditions Générales de
+          Vente (CGV) du site.
+        </label>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button class="btn btn-outline-primary">Enregistrer en brouillon</button>
+        <button class="btn btn-primary">Valider la commande</button>
+      </div>
+    </div>
+  </div>
+</div>

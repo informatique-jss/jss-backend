@@ -199,41 +199,41 @@ export class CheckoutComponent implements OnInit {
     this.onAddServiceChoosen.next(true);
   }
 
-  // computePrices() {
-  //   if (this.userCustomerOrder) {
-  //     this.userCustomerOrder.preTaxPrice = undefined;
-  //     this.userCustomerOrder.vatPrice = undefined;
-  //     this.userCustomerOrder.totalPrice = undefined;
-  //     if (this.userCustomerOrder && this.userCustomerOrder.serviceTypes)
-  //       for (let service of this.userCustomerOrder.serviceTypes) {
-  //         service.preTaxPrice = undefined;
-  //         service.discountedAmount = undefined;
-  //       }
+  computePrices() {
+    if (this.userCustomerOrder) {
+      this.userCustomerOrder.preTaxPrice = undefined;
+      this.userCustomerOrder.vatPrice = undefined;
+      this.userCustomerOrder.totalPrice = undefined;
+      if (this.userCustomerOrder && this.userCustomerOrder.serviceTypes)
+        for (let service of this.userCustomerOrder.serviceTypes) {
+          service.preTaxPrice = undefined;
+          service.discountedAmount = undefined;
+        }
 
-  //     if (this.serviceTypesSelected) {
-  //       this.userCustomerOrder.serviceTypes = this.serviceTypesSelected;
-  //       if (this.userCustomerOrder.serviceTypes) {
-  //         this.userCustomerOrderService.completePricingOfUserCustomerOrder(this.userCustomerOrder).subscribe(response => {
-  //           if (response) {
-  //             this.userCustomerOrder.preTaxPrice = response.preTaxPrice;
-  //             this.userCustomerOrder.totalPrice = response.totalPrice;
-  //             this.userCustomerOrder.vatPrice = response.vatPrice;
-  //             if (this.userCustomerOrder.serviceTypes && response.serviceTypes)
-  //               for (let serviceClient of this.userCustomerOrder.serviceTypes) {
-  //                 for (let serviceServer of response.serviceTypes) {
-  //                   if (serviceClient.temporaryId == serviceServer.temporaryId) {
-  //                     serviceClient.discountedAmount = serviceServer.discountedAmount;
-  //                     serviceClient.preTaxPrice = serviceServer.preTaxPrice;
-  //                   }
-  //                 }
-  //               }
-  //             console.log(this.userCustomerOrder);
-  //           }
-  //         })
-  //       }
-  //     }
-  //   }
-  // }
+      if (this.serviceTypesSelected) {
+        this.userCustomerOrder.serviceTypes = this.serviceTypesSelected;
+        if (this.userCustomerOrder.serviceTypes) {
+          this.userCustomerOrderService.completePricingOfUserCustomerOrder(this.userCustomerOrder).subscribe(response => {
+            if (response) {
+              this.userCustomerOrder.preTaxPrice = response.preTaxPrice;
+              this.userCustomerOrder.totalPrice = response.totalPrice;
+              this.userCustomerOrder.vatPrice = response.vatPrice;
+              if (this.userCustomerOrder.serviceTypes && response.serviceTypes)
+                for (let serviceClient of this.userCustomerOrder.serviceTypes) {
+                  for (let serviceServer of response.serviceTypes) {
+                    if (serviceClient.temporaryId == serviceServer.temporaryId) {
+                      serviceClient.discountedAmount = serviceServer.discountedAmount;
+                      serviceClient.preTaxPrice = serviceServer.preTaxPrice;
+                    }
+                  }
+                }
+              console.log(this.userCustomerOrder);
+            }
+          })
+        }
+      }
+    }
+  }
 
   // validateCustomerOrder() {
   //   this.userCustomerOrder.isCustomerOrder = true;
