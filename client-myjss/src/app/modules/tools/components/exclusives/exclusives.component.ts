@@ -17,8 +17,6 @@ import { PostService } from '../../services/post.service';
 })
 export class ExclusivesComponent implements OnInit {
 
-  allPosts: Post[] = [];
-  paginatedSearchResults: Post[] = [];
   searchResults: Post[] = [];
   searchText: string = "";
   debounce: any;
@@ -27,6 +25,7 @@ export class ExclusivesComponent implements OnInit {
   categoryExclusive: Category = this.constantService.getCategoryExclusivity();
 
   currentPage: number = 0;
+  page: number = 0;
   pageSize: number = 10;
   totalPages: number = 0;
 
@@ -39,7 +38,7 @@ export class ExclusivesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.searchPosts();
+    this.searchPosts(0);
   }
 
   ngAfterViewInit(): void {
@@ -56,21 +55,20 @@ export class ExclusivesComponent implements OnInit {
       this.isLoading = true;
       this.searchResults = [];
       this.debounce = setTimeout(() => {
-        this.searchPosts();
+        this.searchPosts(0);
       }, 500);
     }
   }
 
-  searchPosts() {
+  searchPosts(page: number) {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
     if (this.categoryExclusive)
-      this.searchObservableRef = this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, 0, 100).subscribe(response => {
+      this.searchObservableRef = this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, page, this.pageSize).subscribe(response => {
         if (response && response.content) {
           this.searchResults = response.content;
           this.currentPage = 0;
-          this.totalPages = Math.ceil(this.searchResults.length / this.pageSize);
-          this.updatePaginatedPosts();
+          this.totalPages = response.page.totalPages;
         }
         this.isLoading = false;
       });
@@ -78,25 +76,30 @@ export class ExclusivesComponent implements OnInit {
 
   clearSearch() {
     this.searchText = '';
-    this.currentPage = 0;
-    this.searchPosts();
-    this.updatePaginatedPosts();
+    this.searchPosts(0);
   }
 
-  updatePaginatedPosts() {
-    const start = this.currentPage * this.pageSize;
-    const end = start + this.pageSize;
-
-    this.paginatedSearchResults = this.searchResults.slice(start, end);
-    this.totalPages = Math.ceil(this.searchResults.length / this.pageSize);
-  }
-
-  loadPosts(page: number) {
-    this.currentPage = page;
-    this.updatePaginatedPosts();
-    if (this.exclusivitySection && this.exclusivitySection.nativeElement) {
-      this.exclusivitySection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  goToPage(pageNumber: number): void {
+    if (pageNumber >= 0 && pageNumber < this.totalPages) {
+      this.page = pageNumber;
+      this.searchPosts(pageNumber);
+      if (this.exclusivitySection && this.exclusivitySection.nativeElement) {
+        this.exclusivitySection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
+  }
+
+  get pages(): number[] {
+    const pagesToShow = 5;
+    let start = Math.max(0, this.page - Math.floor(pagesToShow / 2));
+    let end = start + pagesToShow;
+
+    if (end > this.totalPages) {
+      end = this.totalPages;
+      start = Math.max(0, end - pagesToShow);
+    }
+
+    return Array.from({ length: end - start }, (_, i) => start + i);
   }
 
   openPost(slug: string, event: any) {
