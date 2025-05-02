@@ -38,31 +38,8 @@
       </div>
     </div>
   </div>
-  <div *ngIf="exclusivePosts && exclusivePosts.length>0 && !searchText">
-    <div *ngFor="let post of exclusivePosts">
-      <article class="row g-0 border-0 mb-5">
-        <img class="col-sm-5 col-lg-4 rounded-5 post-image" (click)="openPost(post.slug, $event)"
-          [src]="post.media && post.media.urlLarge ? post.media.urlLarge : (post.media && post.media.urlFull ? post.media.urlFull : 'assets/img/blog/list/01.jpg')"
-          alt="Post image">
-        <div class="col-sm-7 col-lg-8">
-          <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
-            <h3>
-              <a class="card-title-truncate" (click)="openPost(post.slug, $event)">{{post.titleText}}</a>
-            </h3>
-            <p class="d-sm-none d-md-block card-text-truncate" [innerHTML]="post.excerptText | trustHtml">
-            </p>
-            <div class="d-flex flex-wrap align-items-center mt-n2">
-              <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM'}}</span>
-              <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
-              <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
-                class="badge text-nav fs-xs border mt-2">{{tag.slug}}</a>
-            </div>
-          </div>
-        </div>
-      </article>
-    </div>
-  </div>
-  <div *ngIf="paginatedSearchResults && paginatedSearchResults.length>0 && searchText">
+
+  <div *ngIf="paginatedSearchResults && paginatedSearchResults.length>0 ">
     <div *ngFor="let post of paginatedSearchResults">
       <article class="row g-0 border-0 mb-5">
         <img class="col-sm-5 col-lg-4 rounded-5 post-image" (click)="openPost(post.slug, $event)"
@@ -87,28 +64,17 @@
     </div>
   </div>
 
-  <div
-    *ngIf="((!exclusivePosts || exclusivePosts.length==0) && !searchText) && ((!paginatedSearchResults || paginatedSearchResults.length==0) && searchText)">
+  <div *ngIf="!paginatedSearchResults || paginatedSearchResults.length==0">
     <p> Aucun article trouvé</p>
   </div>
 
   <div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-3 pt-lg-0 mb-md-2 mb-xl-4">
-    <div class="col col-8 order-md-1 order-1">
-      <div class="d-flex align-items-center"><span class="text-body-secondary fs-sm">Voir</span>
-        <select class="form-select form-select-flush w-auto" (change)="changePageSize($event)">
-          <option value="6">6</option>
-          <option value="9">9</option>
-          <option value="12" selected>12</option>
-          <option value="24">24</option>
-        </select>
-      </div>
-    </div>
-    <div class="col col-4 order-md-1 order-1">
+    <div class="col-12 text-end order-md-1 order-1">
       <nav *ngIf="totalPages > 1" aria-label="Page navigation">
         <ul class="pagination pagination-sm justify-content-end">
           <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
             [class.active]="i === currentPage">
-            <a class="page-link" (click)="loadPosts(i, pageSize)">{{ i + 1 }}</a>
+            <a class="page-link" (click)="loadPosts(i)">{{ i + 1 }}</a>
           </li>
         </ul>
       </nav>
