@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { jarallax } from 'jarallax';
 import { Subscription } from 'rxjs';
@@ -18,17 +18,21 @@ import { PostService } from '../../services/post.service';
 export class ExclusivesComponent implements OnInit {
 
   exclusivePosts: Post[] = [];
-  searchText: string = "";
+  allPosts: Post[] = [];
+  paginatedSearchResults: Post[] = [];
   searchResults: Post[] = [];
+  searchText: string = "";
   debounce: any;
   isLoading: boolean = false;
   searchObservableRef: Subscription | undefined;
   categoryExclusive: Category = this.constantService.getCategoryExclusivity();
 
   currentPage: number = 0;
-  pageSize: number = 6;
+  pageSize: number = 12;
   totalPages: number = 0;
   totalPagesInit: number = 0;
+
+  @ViewChild('exclusivitySection') exclusivitySection!: ElementRef;
 
   constructor(private formBuilder: FormBuilder,
     private postService: PostService,
@@ -37,7 +41,7 @@ export class ExclusivesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadPosts(this.currentPage, this.pageSize);
+    this.fetchAllPostsExclusive();
   }
 
   ngAfterViewInit(): void {
@@ -63,14 +67,12 @@ export class ExclusivesComponent implements OnInit {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
     if (this.categoryExclusive)
-      this.searchObservableRef = this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, 0, this.pageSize).subscribe(response => {
-        if (!this.searchResults)
-          this.searchResults = [];
+      this.searchObservableRef = this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, 0, 100).subscribe(response => {
         if (response && response.content) {
           this.searchResults = response.content;
-          this.totalPages = response.page.totalPages;
-          this.currentPage = response.page.pageNumber;
-          this.pageSize = response.page.pageSize;
+          this.currentPage = 0;
+          this.totalPages = Math.ceil(this.searchResults.length / this.pageSize);
+          this.updatePaginatedPosts();
         }
         this.isLoading = false;
       });
@@ -79,28 +81,50 @@ export class ExclusivesComponent implements OnInit {
   clearSearch() {
     this.searchText = '';
     this.searchResults = [];
-    this.totalPages = this.totalPagesInit;
     this.currentPage = 0;
+    this.updatePaginatedPosts();
   }
 
-  loadPosts(page: number, size: number) {
+  fetchAllPostsExclusive() {
     if (this.categoryExclusive)
-      this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, page, size)
+      this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, 0, 100)
         .subscribe(response => {
           if (response) {
-            this.exclusivePosts = response.content;
-            this.totalPages = response.page.totalPages;
-            this.totalPagesInit = response.page.totalPages;
+            this.allPosts = response.content;
             this.currentPage = response.page.pageNumber;
-            this.pageSize = response.page.pageSize;
+            this.totalPagesInit = Math.ceil(this.allPosts.length / this.pageSize);
+            this.totalPages = this.totalPagesInit;
+            this.updatePaginatedPosts();
           }
         });
   }
 
+  updatePaginatedPosts() {
+    const start = this.currentPage * this.pageSize;
+    const end = start + this.pageSize;
+
+    if (this.searchText.length > 2) {
+      this.paginatedSearchResults = this.searchResults.slice(start, end);
+      this.totalPages = Math.ceil(this.searchResults.length / this.pageSize);
+    } else {
+      this.exclusivePosts = this.allPosts.slice(start, end);
+      this.totalPages = Math.ceil(this.allPosts.length / this.pageSize);
+    }
+  }
+
   changePageSize(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
-    this.pageSize = +value;
-    this.loadPosts(0, this.pageSize);
+    this.pageSize = +(event.target as HTMLSelectElement).value;
+    this.currentPage = 0;
+    this.updatePaginatedPosts();
+  }
+
+  loadPosts(page: number, size: number) {
+    this.currentPage = page;
+    this.pageSize = size;
+    this.updatePaginatedPosts();
+    if (this.exclusivitySection && this.exclusivitySection.nativeElement) {
+      this.exclusivitySection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   openPost(slug: string, event: any) {

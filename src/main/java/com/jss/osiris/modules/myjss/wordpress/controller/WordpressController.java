@@ -589,7 +589,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/search/posts/category")
-	public ResponseEntity<Page<Post>> searchMyJssPostsByCategory(@RequestParam(required = false) String searchText,
+	public ResponseEntity<Page<Post>> searchPostsByCategory(@RequestParam(required = false) String searchText,
 			@RequestParam Integer categoryId,
 			@RequestParam(required = false, defaultValue = "0") Integer page,
 			@RequestParam(required = false, defaultValue = "10") Integer size,
@@ -607,7 +607,7 @@ public class WordpressController {
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size), sort);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.searchMyJssPostsByCategory(searchText, categoryExclusive, pageableRequest), HttpStatus.OK);
+				postService.searchPostsByCategory(searchText, categoryExclusive, pageableRequest), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss-category")
