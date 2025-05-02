@@ -10,3 +10,9 @@
 .custom-input-group {
   --ar-input-group-border-color: var(--ar-gray-500);
 }
+
+.post-image {
+  height: 18rem;
+  object-fit: cover;
+  border-radius: 1rem;
+}

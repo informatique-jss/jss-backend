@@ -23,7 +23,12 @@ export class ExclusivesComponent implements OnInit {
   debounce: any;
   isLoading: boolean = false;
   searchObservableRef: Subscription | undefined;
-  categoryExclusive: Category | undefined;
+  categoryExclusive: Category = this.constantService.getCategoryExclusivity();
+
+  currentPage: number = 0;
+  pageSize: number = 6;
+  totalPages: number = 0;
+  totalPagesInit: number = 0;
 
   constructor(private formBuilder: FormBuilder,
     private postService: PostService,
@@ -32,12 +37,7 @@ export class ExclusivesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.categoryExclusive = this.constantService.getCategoryExclusivity();
-    console.log(this.categoryExclusive);
-    this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, 0, 100).subscribe(response => {
-      if (response)
-        this.exclusivePosts = response.content;
-    });
+    this.loadPosts(this.currentPage, this.pageSize);
   }
 
   ngAfterViewInit(): void {
@@ -63,12 +63,15 @@ export class ExclusivesComponent implements OnInit {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
     if (this.categoryExclusive)
-      this.searchObservableRef = this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, 0, 100).subscribe(response => {
+      this.searchObservableRef = this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, 0, this.pageSize).subscribe(response => {
         if (!this.searchResults)
           this.searchResults = [];
-        if (response && response.content)
+        if (response && response.content) {
           this.searchResults = response.content;
-
+          this.totalPages = response.page.totalPages;
+          this.currentPage = response.page.pageNumber;
+          this.pageSize = response.page.pageSize;
+        }
         this.isLoading = false;
       });
   }
@@ -76,6 +79,28 @@ export class ExclusivesComponent implements OnInit {
   clearSearch() {
     this.searchText = '';
     this.searchResults = [];
+    this.totalPages = this.totalPagesInit;
+    this.currentPage = 0;
+  }
+
+  loadPosts(page: number, size: number) {
+    if (this.categoryExclusive)
+      this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, page, size)
+        .subscribe(response => {
+          if (response) {
+            this.exclusivePosts = response.content;
+            this.totalPages = response.page.totalPages;
+            this.totalPagesInit = response.page.totalPages;
+            this.currentPage = response.page.pageNumber;
+            this.pageSize = response.page.pageSize;
+          }
+        });
+  }
+
+  changePageSize(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.pageSize = +value;
+    this.loadPosts(0, this.pageSize);
   }
 
   openPost(slug: string, event: any) {

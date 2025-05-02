@@ -5374,7 +5374,7 @@ textarea.form-control-lg {
   --ar-pagination-focus-color: var(--ar-gray-800);
   --ar-pagination-focus-bg: transparent;
   --ar-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(68, 140, 116, 0.25);
-  --ar-pagination-active-color: var(--ar-gray-900);
+  --ar-pagination-active-color: var(--ar-gray-200);
   --ar-pagination-active-bg: transparent;
   --ar-pagination-active-border-color: #448c74;
   --ar-pagination-disabled-color: var(--ar-gray-500);
@@ -15615,7 +15615,7 @@ label {
   padding-right: 0.75rem;
   padding-left: 0.75rem;
   font-weight: 500;
-  color: var(--ar-gray-800);
+  color: var(--ar-gray-300);
   border: 0;
 }
 

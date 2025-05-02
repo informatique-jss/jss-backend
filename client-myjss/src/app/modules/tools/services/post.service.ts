@@ -59,7 +59,7 @@ export class PostService extends AppRestService<Post> {
     if (myJssCategory && myJssCategory.id)
       httpParams = httpParams.set("myJssCategoryId", myJssCategory.id);
 
-    httpParams.set("page", page).set("size", size);
+    httpParams = httpParams.set("page", page).set("size", size);
     return this.getPagedList(httpParams, "search/myjss-category");
   }
 
@@ -68,8 +68,7 @@ export class PostService extends AppRestService<Post> {
     if (searchText)
       httpParams = httpParams.set("searchText", searchText);
 
-    httpParams = httpParams.set("categoryId", category.id);
-    httpParams.set("page", page).set("size", size);
+    httpParams = httpParams.set("categoryId", category.id).set("page", page).set("size", size);
     return this.getPagedList(httpParams, "search/posts/category");
   }
 
