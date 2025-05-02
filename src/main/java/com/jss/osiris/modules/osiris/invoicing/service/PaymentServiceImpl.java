@@ -891,7 +891,12 @@ public class PaymentServiceImpl implements PaymentService {
         if (refundAmount.compareTo(paymentAmount.negate()) == 0) {
             if (refund.getPayments() != null && refund.getPayments().size() == 1) {
                 Payment paymentChild = refund.getPayments().get(0);
-                payment.setOriginPayment(paymentChild);
+                Payment oldParent = paymentChild.getOriginPayment();
+
+                paymentChild.setOriginPayment(payment);
+                addOrUpdatePayment(paymentChild);
+
+                payment.setOriginPayment(oldParent);
             }
             refund.setIsMatched(true);
             refundService.addOrUpdateRefund(refund);
