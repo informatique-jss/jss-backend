@@ -1,0 +1,157 @@
+<div class="filter-bar">
+  <div class="kanban-box-settings">
+    <mat-icon color="accent" class="pointer" [matMenuTriggerFor]="menu">settings</mat-icon>
+  </div>
+  <generic-input [(model)]="filterText" label="Rechercher" [form]="kanbanForm" propertyName="filterText"
+    [isMandatory]="false" [isDisabled]="false" (onFormChange)="startFilter(true)"
+    [displayClearField]="true"></generic-input>
+  <select-provision-stauts [(model)]="statusSelected" label="Statut" [form]="kanbanForm" (onFormChange)="startFilter()"
+    propertyName="statusSelected" [isMandatory]="false" [isDisabled]="false"></select-provision-stauts>
+  <select-employee [(model)]="employeesSelected" label="Collaborateur" [form]="kanbanForm"
+    propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false"
+    [filteredAdGroups]="[adGroupFormalistes, adGroupInsertions]" (onFormChange)="startFilter()"></select-employee>
+</div>
+
+<div class="kanban-container top-container">
+  <div *ngFor="let status of deduplicateArrayById(statusSelected)" class="kanban-column">
+    <h3 style="margin: 0px; text-align: center;"><span [matBadge]="getNumberEntitiesByStatusLabel(status.label)"
+        [matBadgeHidden]="!status.id || getNumberEntitiesByStatusLabel(status.label)==0" matBadgePosition="after"
+        matBadgeSize="small">{{ status.label }}</span></h3>
+  </div>
+</div>
+<ng-container *ngFor="let swimlane of swimlanes">
+  <div class="swimlane" *ngIf="swimlane.totalItems>0">
+    <h3 style="margin: 0px;">
+    </h3>
+    <div class="swimlane-header" (click)="swimlane.isCollapsed=!swimlane.isCollapsed">
+      <span>{{ swimlane.label }} ({{swimlane.totalItems}} prestation{{swimlane.totalItems>1?'s':''}})</span>
+      <mat-icon [class.rotated]="!swimlane.isCollapsed">expand_more</mat-icon>
+    </div>
+    <div class="kanban-container" *ngIf="!swimlane.isCollapsed">
+      <div *ngFor="let status of swimlane.aggregatedStatus" class="kanban-column">
+        <div cdkDropList [cdkDropListData]="status.entities" class="task-list" [id]="'list-' + status.id"
+          [cdkDropListConnectedTo]="connectedDropLists" [ngClass]="{
+           'drop-valid': isValidDropTarget(status.id!),
+           'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.id!)
+         }" (cdkDropListDropped)="drop($event)">
+          <div *ngFor="let provision of status.entities" cdkDrag class="task-card"
+            (cdkDragStarted)="onDragStarted(status.id!)" (cdkDragEnded)="onDragEnded()"
+            (click)="fetchEntityAndOpenPanel(provision)">
+            <div class="card-content">
+              <strong>{{provision.service.assoAffaireOrder.affaire.denomination
+                ?provision.service.assoAffaireOrder.affaire.denomination :
+                (provision.service.assoAffaireOrder.affaire.firstname + '
+                '+provision.service.assoAffaireOrder.affaire.lastname)}} </strong>
+              {{provision.service.assoAffaireOrder.affaire.city ? (' - ' +
+              provision.service.assoAffaireOrder.affaire.city.label)
+              :''}}
+              <p>{{provision.service.customLabel}}</p>
+              <p>{{provision.provisionType.label}}</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-ticket">
+                {{ provision.service.assoAffaireOrder.customerOrder.id }} -
+                {{getResponsableLabelIQuotation(provision.service.assoAffaireOrder.customerOrder)}} -
+                {{getTiersLabelIQuotation(provision.service.assoAffaireOrder.customerOrder)}}
+                <br /> le {{formatDateFrance(provision.service.assoAffaireOrder.customerOrder.createdDate)}}
+              </div>
+              <div class="card-avatar">
+                <avatar class="avatar-select" [employee]="provision.assignedTo" [size]="20">
+                </avatar>
+              </div>
+            </div>
+            <ng-template cdkDragPreview>
+              <div class="task-card drag-preview">
+                <div class="card-content">
+                  <strong>{{provision.service.assoAffaireOrder.affaire.denomination
+                    ?provision.service.assoAffaireOrder.affaire.denomination :
+                    (provision.service.assoAffaireOrder.affaire.firstname + '
+                    '+provision.service.assoAffaireOrder.affaire.lastname)}} </strong>
+                  <p>{{provision.service.customLabel}}</p>
+                  <p>{{provision.provisionType.label}}</p>
+                </div>
+                <div class="card-footer">
+                  <div class="card-ticket  ">
+                    {{ provision.service.assoAffaireOrder.customerOrder.id }}
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<mat-menu #menu="matMenu" style="max-width: 100%;">
+  <div mat-menu-item>
+    <span>Regrouper par : </span>
+  </div>
+  <div mat-menu-item *ngFor="let swimlaneType of swimlaneTypes"
+    (click)="selectedSwimlaneType=swimlaneType;startFilter(true)" class="pointer">
+    <mat-icon
+      *ngIf="selectedSwimlaneType && swimlaneType.fieldName==selectedSwimlaneType.fieldName">check</mat-icon>{{swimlaneType.label}}
+  </div>
+  <mat-divider></mat-divider>
+  <div mat-menu-item class="pointer" (click)="expandAll()">Déplier tout </div>
+  <div mat-menu-item class="pointer" (click)="collapseAll()">Replier tout </div>
+</mat-menu>
+
+<div class="side-panel" *ngIf="panelOpen">
+  <div *ngIf="!selectedEntity">
+    <div class="panel-loader">
+      <div class="skeleton skeleton-header"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line short"></div>
+      <div class="skeleton skeleton-block"></div>
+    </div>
+  </div>
+  <div *ngIf="selectedEntity">
+    <div class="panel-header">
+      <!-- <span class="task-id pointer" (click)="openOrder($event, selectedEntity)">{{selectedEntity.id}}</span> -->
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <!--button mat-menu-item (click)="generateCustomerOrderCreationConfirmationToCustomer()">
+          <span>Recevoir le mail de confirmation de la commande</span>
+        </button-->
+      </mat-menu>
+      <button mat-icon-button (click)="panelOpen = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <!-- <h2 class="panel-title">{{selectedEntity.affairesList}}</h2> -->
+
+    <div class="status-wrapper">
+      <button mat-raised-button color="accent"
+        [matMenuTriggerFor]="statusMenu">{{getEntityStatus(selectedEntity).label}}
+        <mat-icon>expand_more</mat-icon></button>
+      <mat-menu #statusMenu="matMenu">
+        <button mat-menu-item (click)="displayProvisionWorkflowDialog(selectedEntity)">
+          <span>Voir le workflow</span>
+        </button>
+        <button disabled mat-menu-item *ngIf="getEntityStatus(selectedEntity).successors">
+          <span>Passer à</span>
+        </button>
+        <button mat-menu-item *ngFor="let status of getEntityStatus(selectedEntity).successors"
+          (click)="changeProvisionStatus(selectedEntity,status)">
+          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+        </button>
+        <button disabled mat-menu-item
+          *ngIf="getEntityStatus(selectedEntity).predecessors && getEntityStatus(selectedEntity).predecessors.length>0">
+          <span>Revenir à</span>
+        </button>
+        <button mat-menu-item *ngFor="let status of getEntityStatus(selectedEntity).predecessors"
+          (click)="changeProvisionStatus(selectedEntity, status)">
+          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+        </button>
+      </mat-menu>
+    </div>
+
+    <provision-side-panel-details [provision]="selectedEntity"
+      [assoAffaireOrder]="selectedEntity.service.assoAffaireOrder"></provision-side-panel-details>
+  </div>

@@ -202,6 +202,7 @@ const routes: Routes = [
     QuotationComponent,
     OrderingListTaggedComponent,
     InfogreffeStatusComponent,
+    PaperSetComponent,
     CustomerOrderCommentComponent,
     MissingAttachmentQueriesComponent
   ],

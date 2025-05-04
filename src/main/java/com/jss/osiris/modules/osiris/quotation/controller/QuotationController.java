@@ -92,6 +92,7 @@ import com.jss.osiris.modules.osiris.quotation.model.FundType;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.JournalType;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
@@ -2770,5 +2771,68 @@ public class QuotationController {
     return new ResponseEntity<Quotation>(
         quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id)),
         HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/provision/search")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Provision>> searchProvisions(
+      @RequestParam(required = false) List<Integer> formalisteIds,
+      @RequestParam(required = false) List<Integer> statusIds)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    List<Employee> formalistes = new ArrayList<Employee>();
+    if (formalisteIds != null)
+      for (Integer id : formalisteIds) {
+        Employee commercial = employeeService.getEmployee(id);
+        if (commercial == null)
+          throw new OsirisValidationException("formalisteIds");
+        else
+          formalistes.add(commercial);
+      }
+
+    List<IWorkflowElement> status = new ArrayList<IWorkflowElement>();
+    if (statusIds != null)
+      for (Integer id : statusIds) {
+        AnnouncementStatus announcementStatu = null;
+        FormaliteStatus formaliteStatu = null;
+        SimpleProvisionStatus simpleProvisionStatus = null;
+        DomiciliationStatus domiciliationStatus = null;
+
+        announcementStatu = announcementStatusService.getAnnouncementStatus(id);
+        if (announcementStatu != null) {
+          status.add(announcementStatu);
+          continue;
+        }
+
+        formaliteStatu = formaliteStatusService.getFormaliteStatus(id);
+        if (formaliteStatu != null) {
+          status.add(formaliteStatu);
+          continue;
+        }
+
+        simpleProvisionStatus = simpleProvisonStatusService.getSimpleProvisonStatus(id);
+        if (simpleProvisionStatus != null) {
+          status.add(simpleProvisionStatus);
+          continue;
+        }
+
+        domiciliationStatus = domiciliationStatusService.getDomiciliationStatus(id);
+        if (domiciliationStatus != null) {
+          status.add(domiciliationStatus);
+          continue;
+        }
+        throw new OsirisValidationException("statusIds");
+      }
+
+    return new ResponseEntity<List<Provision>>(provisionService.searchProvisions(formalistes, status),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/provision/single")
+  @JsonView(JacksonViews.OsirisDetailedView.class)
+  public ResponseEntity<Provision> getSingleProvision(Integer id)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    return new ResponseEntity<Provision>(provisionService.getProvision(id), HttpStatus.OK);
   }
 }

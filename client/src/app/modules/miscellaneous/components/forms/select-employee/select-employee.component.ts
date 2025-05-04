@@ -27,13 +27,17 @@ export class SelectEmployeeComponent extends GenericMultipleSelectComponent<Empl
     this.employeeService.getEmployees().subscribe(response => {
       for (let employee of response)
         if (employee.isActive) {
-          let addIt = true;
+          let addIt = false;
 
           if (this.filteredAdGroups) {
             for (let group of this.filteredAdGroups) {
-              if (employee.adPath.indexOf(group.activeDirectoryPath) < 0)
-                addIt = false;
+              if (employee.adPath.indexOf(group.activeDirectoryPath) >= 0) {
+                addIt = true;
+                break;
+              }
             }
+          } else {
+            addIt = true;
           }
 
           if (addIt)

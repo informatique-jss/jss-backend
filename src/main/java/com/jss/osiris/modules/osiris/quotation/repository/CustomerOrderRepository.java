@@ -192,7 +192,8 @@ public interface CustomerOrderRepository
 
         List<CustomerOrder> findByResponsable(Responsable responsable);
 
-        @Query("select c from CustomerOrder c join c.responsable r " +
+        @Query("select c from CustomerOrder c join c.responsable r  join fetch c.assoAffaireOrders a join fetch a.affaire af "
+                        +
                         "  where (0 in :commercials or r.salesEmployee.id in :commercials) " +
                         "    and (0 in :status or  c.customerOrderStatus.id in :status) order by c.createdDate desc ")
         List<CustomerOrder> searchCustomerOrders(List<Integer> commercials,

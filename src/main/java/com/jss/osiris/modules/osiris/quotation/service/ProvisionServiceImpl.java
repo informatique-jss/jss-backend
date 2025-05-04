@@ -2,8 +2,10 @@ package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,14 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.DomiciliationStatus;
+import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionBoardResult;
+import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.repository.AnnouncementStatusRepository;
 import com.jss.osiris.modules.osiris.quotation.repository.ProvisionRepository;
 
@@ -90,5 +97,21 @@ public class ProvisionServiceImpl implements ProvisionService {
     @Override
     public File getTrackingSheetPdf(Provision provision) throws OsirisException {
         return generatePdfDelegate.generateTrackingSheetPdf(provision);
+    }
+
+    @Override
+    public List<Provision> searchProvisions(List<Employee> commercials,
+            List<IWorkflowElement> status) {
+
+        List<Integer> formalistesIds = (commercials != null && commercials.size() > 0)
+                ? commercials.stream().map(Employee::getId).collect(Collectors.toList())
+                : Arrays.asList(0);
+
+        return provisionRepository.searchProvision(formalistesIds,
+                status.stream().filter(s -> s instanceof AnnouncementStatus).toList(),
+                status.stream().filter(s -> s instanceof SimpleProvisionStatus).toList(),
+                status.stream().filter(s -> s instanceof FormaliteStatus).toList(),
+                status.stream().filter(s -> s instanceof DomiciliationStatus).toList(),
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED));
     }
 }

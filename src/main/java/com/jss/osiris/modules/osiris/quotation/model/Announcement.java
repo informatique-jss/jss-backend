@@ -58,7 +58,7 @@ public class Announcement implements IId, IDocument {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement_status")
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private AnnouncementStatus announcementStatus;
 
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)

@@ -1121,6 +1121,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupInsertions() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupInsertions();
+    }
+
+    @Override
     public ActiveDirectoryGroup getActiveDirectoryGroupSales() throws OsirisException {
         return this.getConstants().getActiveDirectoryGroupSales();
     }

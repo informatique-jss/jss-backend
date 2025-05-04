@@ -22,6 +22,8 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
   abstract filterText: string;
   selectedEntity: T | null = null;
   possibleEntityStatus: U[] | undefined;
+  numberOfEntitiesByStatus: number[] = [];
+  computeAggregatedStatus: boolean = false;
 
   applyFilter(isOnlyFilterText = false) {
     if (this.swimlanes)
@@ -33,7 +35,9 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
     this.connectedDropLists = this.statusSelected.map((status) => 'list-' + status.id);
 
     // Set bookmark
-    this.saveUserPreferencesOnApplyFilter();
+    this.numberOfEntitiesByStatus = [];
+    if (this.allEntities && this.allEntities.length > 0)
+      this.saveUserPreferencesOnApplyFilter();
     if (!isOnlyFilterText) {
       if (this.statusSelected && this.statusSelected.length > 0) {
         this.findEntities().subscribe(response => {
@@ -67,10 +71,21 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
                 statu.entities = [];
               statu.entities.push(order as any);
               swimlane.totalItems++;
+
+              if (statu.id) {
+                if (!this.numberOfEntitiesByStatus[statu.id])
+                  this.numberOfEntitiesByStatus[statu.id] = 0;
+                this.numberOfEntitiesByStatus[statu.id]++;
+              }
             }
           }
         }
       }
+    }
+
+    if (this.computeAggregatedStatus) {
+      for (let swimlane of this.swimlanes)
+        swimlane.aggregatedStatus = this.getAggregatedSwimlane(swimlane);
     }
     return this.swimlanes.sort((a, b) => a.label.localeCompare(b.label));
   }
@@ -85,6 +100,38 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
         }
     }
     return undefined;
+  }
+
+  getAggregatedSwimlane(swimlane: Swimlane<U>): U[] {
+    const grouped = new Map<string, U>();
+
+    for (const status of swimlane.status) {
+      const key = status.label;
+      const currentEntities = status.entities ?? [];
+
+      if (grouped.has(key)) {
+        const existing = grouped.get(key)!;
+        existing.entities = [...(existing.entities ?? []), ...currentEntities];
+      } else {
+        grouped.set(key, {
+          ...status,
+          entities: [...currentEntities],
+        });
+      }
+    }
+    return Array.from(grouped.values());
+  }
+
+  deduplicateArrayById(array: U[]) {
+    let seen = new Set<number>();
+    var deduplicated = array.filter(item => {
+      if (seen.has(item.id!)) {
+        return false;
+      }
+      seen.add(item.id!);
+      return true;
+    });
+    return deduplicated;
   }
 
   expandAll() {
@@ -150,4 +197,10 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
   }
 
   abstract changeEntityStatus(entity: T, toStatus: U): void;
+
+  getCompleteStatus(status: U) {
+    if (this.possibleEntityStatus)
+      return this.possibleEntityStatus.filter(s => s.code == status.code)[0];
+    return null;
+  }
 }

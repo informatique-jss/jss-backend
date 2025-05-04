@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -503,7 +504,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     try {
                         attachmentService.addAttachment(new FileInputStream(file), provision.getId(), null,
                                 Provision.class.getSimpleName(),
-                                typeDocument.getAttachmentType(), piecesJointe.getNomDocument(), false,
+                                typeDocument.getAttachmentType(),
+                                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-"
+                                        + piecesJointe.getNomDocument(),
+                                false,
                                 piecesJointe.getNomDocument(), piecesJointe, null, piecesJointe.getTypeDocument());
                         file.delete();
                     } catch (FileNotFoundException e) {

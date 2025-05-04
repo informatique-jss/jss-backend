@@ -30,7 +30,7 @@ public class SimpleProvision implements IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_simple_provision_status")
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private SimpleProvisionStatus simpleProvisionStatus;
 

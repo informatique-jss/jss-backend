@@ -6,7 +6,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +18,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class AnnouncementStatus implements Serializable, IId {
+public class AnnouncementStatus extends IWorkflowElement implements Serializable {
 
 	/**
 	 * WARNINNG : add update in AnnouncementStatutsService when adding a new status
@@ -38,10 +37,11 @@ public class AnnouncementStatus implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 100)
@@ -118,16 +118,8 @@ public class AnnouncementStatus implements Serializable, IId {
 		return successors;
 	}
 
-	public void setSuccessors(List<AnnouncementStatus> successors) {
-		this.successors = successors;
-	}
-
 	public List<AnnouncementStatus> getPredecessors() {
 		return predecessors;
-	}
-
-	public void setPredecessors(List<AnnouncementStatus> predecessors) {
-		this.predecessors = predecessors;
 	}
 
 	public String getAggregateStatus() {
