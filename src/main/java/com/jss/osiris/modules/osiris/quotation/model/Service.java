@@ -51,6 +51,7 @@ public class Service implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_asso_affaire_order")
 	@JsonIgnoreProperties(value = { "services" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private AssoAffaireOrder assoAffaireOrder;
 
 	@ManyToMany

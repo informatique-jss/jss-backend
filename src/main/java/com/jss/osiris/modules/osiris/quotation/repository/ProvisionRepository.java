@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionBoardResult;
 
@@ -48,4 +50,17 @@ public interface ProvisionRepository extends QueryCacheCrudRepository<Provision,
                         @Param("customerOrderStatusIdAbandonned") Integer customerOrderStatusIdAbandonned,
                         @Param("customerOrderStatusIdWaitingDeposit") Integer customerOrderStatusIdWaitingDeposit,
                         @Param("customerOrderStatusIdOpen") Integer customerOrderStatusIdOpen);
+
+        @Query("select p from Provision p left join p.announcement " +
+                        " left join p.simpleProvision left join p.domiciliation left join p.formalite " +
+                        " join fetch p.service s join fetch s.assoAffaireOrder a join fetch a.affaire  join a.customerOrder co "
+                        +
+                        " where (p.announcement.announcementStatus in (:announcementStatus) or" +
+                        " p.formalite.formaliteStatus in (:formaliteStatus) or " +
+                        " p.simpleProvision.simpleProvisionStatus in (:simpleProvisionStatus) or " +
+                        " p.domiciliation.domiciliationStatus in (:domiciliationStatus))  " +
+                        " and    (0 in :formalisteIds or p.assignedTo.id in :formalisteIds) and co.customerOrderStatus =:customerOrderStatusInProgress    ")
+        List<Provision> searchProvision(List<Integer> formalisteIds, List<IWorkflowElement> announcementStatus,
+                        List<IWorkflowElement> simpleProvisionStatus, List<IWorkflowElement> formaliteStatus,
+                        List<IWorkflowElement> domiciliationStatus, CustomerOrderStatus customerOrderStatusInProgress);
 }

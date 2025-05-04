@@ -123,7 +123,8 @@
         </div>
 
         <ng-container *ngFor="let provision of service.provisions; let index = index">
-          <provision-side-panel-details [provision]="provision"></provision-side-panel-details>
+          <provision-side-panel-details [provision]="provision"
+            [assoAffaireOrder]="asso"></provision-side-panel-details>
           <hr *ngIf="index<service.provisions.length-1" />
         </ng-container>
       </mat-expansion-panel>
@@ -155,6 +156,7 @@
     *ngIf="currentTabDisplayed=='HISTORY'"></history>
   <attachments [entity]="selectedEntity" *ngIf="currentTabDisplayed=='ATTACHMENT'" [editMode]="true"
     [entityType]="CUSTOMER_ORDER_ENTITY_TYPE.entityType"></attachments>
+  <paper-set *ngIf="currentTabDisplayed=='ATTACHMENT'" [customerOrder]="selectedEntity"></paper-set>
   <automatic-mail-list [customerOrder]="selectedEntity" *ngIf="currentTabDisplayed=='MAILS'"></automatic-mail-list>
   <missing-attachment-queries [customerOrder]="selectedEntity" *ngIf="currentTabDisplayed=='MISSING_ATTACHMENT_QUERY'">
   </missing-attachment-queries>

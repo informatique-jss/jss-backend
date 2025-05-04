@@ -256,6 +256,7 @@ export interface Constant {
   dateAccountingClosureForAll: Date;
   dateAccountingClosureForAccountant: Date;
   activeDirectoryGroupFormalites: ActiveDirectoryGroup;
+  activeDirectoryGroupInsertions: ActiveDirectoryGroup;
   activeDirectoryGroupFacturation: ActiveDirectoryGroup;
   activeDirectoryGroupSales: ActiveDirectoryGroup;
   furtherInformationServiceFieldType: ServiceFieldType;

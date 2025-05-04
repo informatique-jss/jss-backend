@@ -44,12 +44,13 @@ public class Provision implements IId, IAttachment {
 	@Id
 	@SequenceGenerator(name = "provision_sequence", sequenceName = "provision_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_sequence")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service")
 	@JsonIgnoreProperties(value = { "provisions" }, allowSetters = true)
-	@JsonView({ JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Service service;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -68,25 +69,27 @@ public class Provision implements IId, IAttachment {
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domiciliation")
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Domiciliation domiciliation;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Announcement announcement;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_simple_provision")
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private SimpleProvision simpleProvision;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	@JoinColumn(name = "id_formalite")
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private Formalite formalite;
 
@@ -100,7 +103,7 @@ public class Provision implements IId, IAttachment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
 	private Employee assignedTo;
 
 	@Column(nullable = false)

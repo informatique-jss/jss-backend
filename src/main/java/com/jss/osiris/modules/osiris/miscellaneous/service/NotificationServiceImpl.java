@@ -161,7 +161,7 @@ public class NotificationServiceImpl implements NotificationService {
         else
             return;
 
-        if (existingNotification == null) {
+        if (existingNotification == null || existingNotification.size() == 0) {
             existingNotification = new ArrayList<Notification>();
             existingNotification.add(new Notification());
         }
@@ -217,7 +217,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getNotificationsForCustomerOrder(Integer customerOrderId) {
         return completeNotifications(notificationRepository.findByEmployees(
-                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getCustomerOrder() != null && n.getCustomerOrder().getId().equals(customerOrderId))
                 .toList());
@@ -226,7 +226,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getNotificationsForQuotation(Integer quotationId) {
         return completeNotifications(notificationRepository.findByEmployees(
-                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getQuotation() != null && n.getQuotation().getId().equals(quotationId))
                 .toList());
@@ -235,7 +235,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getNotificationsForService(Integer serviceId) {
         return completeNotifications(notificationRepository.findByEmployees(
-                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getService() != null && n.getService().getId().equals(serviceId))
                 .toList());
@@ -244,7 +244,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getNotificationsForProvision(Integer provisionId) {
         return completeNotifications(notificationRepository.findByEmployees(
-                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getProvision() != null && n.getProvision().getId().equals(provisionId))
                 .toList());
@@ -253,7 +253,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getNotificationsForInvoice(Integer invoiceId) {
         return completeNotifications(notificationRepository.findByEmployees(
-                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getInvoice() != null && n.getInvoice().getId().equals(invoiceId))
                 .toList());
@@ -262,7 +262,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getNotificationsForAffaire(Integer affaireId) {
         return completeNotifications(notificationRepository.findByEmployees(
-                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getAffaire() != null && n.getAffaire().getId().equals(affaireId))
                 .toList());
@@ -271,7 +271,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getNotificationsForTiers(Integer tiersId) {
         return completeNotifications(notificationRepository.findByEmployees(
-                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getTiers() != null && n.getTiers().getId().equals(tiersId))
                 .toList());
@@ -280,7 +280,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getNotificationsForResponsable(Integer responsableId) {
         return completeNotifications(notificationRepository.findByEmployees(
-                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, true,
+                employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getResponsable() != null && n.getResponsable().getId().equals(responsableId))
                 .toList());
