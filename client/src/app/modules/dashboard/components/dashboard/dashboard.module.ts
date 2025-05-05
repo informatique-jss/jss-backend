@@ -2,6 +2,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
@@ -19,6 +20,7 @@ import { QuotationModule } from 'src/app/modules/quotation/components/quotation/
 import { OrderKabanComponent } from '../order-kaban/order-kaban.component';
 import { OrderSidePanelDetailsComponent } from '../order-side-panel-details/order-side-panel-details.component';
 import { ProvisionBoardComponent } from '../provision-board/provision-board.component';
+import { ProvisionKanbanComponent } from '../provision-kanban/provision-kanban.component';
 import { ProvisionSidePanelDetailsComponent } from '../provision-side-panel-details/provision-side-panel-details.component';
 import { QuotationKanbanComponent } from '../quotation-kanban/quotation-kanban.component';
 import { QuotationSidePanelDetailsComponent } from '../quotation-side-panel-details/quotation-side-panel-details.component';
@@ -28,6 +30,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'dashboard/kanban/order', component: OrderKabanComponent },
   { path: 'dashboard/kanban/quotation', component: QuotationKanbanComponent },
+  { path: 'dashboard/kanban/provision', component: ProvisionKanbanComponent },
 ];
 
 @NgModule({
@@ -43,6 +46,7 @@ const routes: Routes = [
     MatButtonModule,
     MatIconModule,
     MiscellaneousModule,
+    MatBadgeModule,
     MatTooltipModule,
     DragDropModule,
     MatMenuModule,
@@ -59,6 +63,7 @@ const routes: Routes = [
     QuotationSidePanelDetailsComponent,
     ProvisionSidePanelDetailsComponent,
     QuotationKanbanComponent,
+    ProvisionKanbanComponent
   ],
   providers: [
   ]

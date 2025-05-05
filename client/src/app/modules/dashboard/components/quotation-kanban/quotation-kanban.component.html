@@ -14,7 +14,9 @@
 
 <div class="kanban-container top-container">
   <div *ngFor="let status of statusSelected" class="kanban-column">
-    <h3 style="margin: 0px;">{{ status.label }}</h3>
+    <h3 style="margin: 0px; text-align: center;"><span [matBadge]="status.id?numberOfEntitiesByStatus[status.id]:0"
+        [matBadgeHidden]="!status.id || numberOfEntitiesByStatus[status.id]==0" matBadgePosition="after"
+        matBadgeSize="small">{{ status.label }}</span></h3>
   </div>
 </div>
 <ng-container *ngFor="let swimlane of swimlanes">
@@ -116,24 +118,26 @@
       <button mat-raised-button color="accent" [matMenuTriggerFor]="statusMenu">{{selectedEntity.quotationStatus.label}}
         <mat-icon>expand_more</mat-icon></button>
       <mat-menu #statusMenu="matMenu">
-        <button mat-menu-item (click)="displayQuotationWorkflowDialog()">
-          <span>Voir le workflow</span>
-        </button>
-        <button disabled mat-menu-item *ngIf="selectedEntity.quotationStatus.successors">
-          <span>Passer à</span>
-        </button>
-        <button mat-menu-item *ngFor="let status of selectedEntity.quotationStatus.successors"
-          (click)="changeQuotationStatus(selectedEntity,status)">
-          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
-        </button>
-        <button disabled mat-menu-item
-          *ngIf="selectedEntity.quotationStatus.predecessors && selectedEntity.quotationStatus.predecessors.length>0">
-          <span>Revenir à</span>
-        </button>
-        <button mat-menu-item *ngFor="let status of selectedEntity.quotationStatus.predecessors"
-          (click)="changeQuotationStatus(selectedEntity, status)">
-          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
-        </button>
+        <ng-container *ngIf="getCompleteStatus(selectedEntity.quotationStatus)">
+          <button mat-menu-item (click)="displayQuotationWorkflowDialog()">
+            <span>Voir le workflow</span>
+          </button>
+          <button disabled mat-menu-item *ngIf="getCompleteStatus(selectedEntity.quotationStatus)!.successors">
+            <span>Passer à</span>
+          </button>
+          <button mat-menu-item *ngFor="let status of getCompleteStatus(selectedEntity.quotationStatus)!.successors"
+            (click)="changeQuotationStatus(selectedEntity,status)">
+            <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+          </button>
+          <button disabled mat-menu-item
+            *ngIf="selectedEntity.quotationStatus.predecessors && getCompleteStatus(selectedEntity.quotationStatus)!.predecessors.length>0">
+            <span>Revenir à</span>
+          </button>
+          <button mat-menu-item *ngFor="let status of getCompleteStatus(selectedEntity.quotationStatus)!.predecessors"
+            (click)="changeQuotationStatus(selectedEntity, status)">
+            <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+          </button>
+        </ng-container>
       </mat-menu>
     </div>
 

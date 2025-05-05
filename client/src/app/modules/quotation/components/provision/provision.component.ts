@@ -326,7 +326,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
     if (provisionStatus && this.affaireForm.valid) {
       this.editMode = false;
-      this.assoAffaireOrderService.updateAsso(this.asso).subscribe(response => {
+      this.assoAffaireOrderService.updateAsso(this.asso, false).subscribe(response => {
         this.asso = response;
         this.appService.openRoute(null, '/provision/' + this.idAffaire, null);
       })

@@ -134,8 +134,13 @@ public class FormaliteGuichetUnique implements IId {
     private Integer year;
     private String created;
 
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private Boolean isFormality;
+
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private Boolean isAnnualAccounts;
+
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
     private Boolean isActeDeposit;
 
     public FormaliteGuichetUniqueStatus getStatus() {

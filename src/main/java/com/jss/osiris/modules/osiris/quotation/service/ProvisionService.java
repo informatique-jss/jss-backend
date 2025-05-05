@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionBoardResult;
 
@@ -22,4 +23,6 @@ public interface ProvisionService {
     public File getRegistrationActPdf(Provision provision) throws OsirisException;
 
     public File getTrackingSheetPdf(Provision provision) throws OsirisException;
+
+    public List<Provision> searchProvisions(List<Employee> formalistes, List<IWorkflowElement> status);
 }

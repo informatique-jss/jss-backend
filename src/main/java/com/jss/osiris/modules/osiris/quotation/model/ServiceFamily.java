@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -52,6 +53,7 @@ public class ServiceFamily implements Serializable, IId {
 
 	@OneToMany(mappedBy = "serviceFamily")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
+	@JsonIgnoreProperties(value = { "serviceFamily" }, allowSetters = true)
 	private List<ServiceType> services;
 
 	public Integer getId() {

@@ -311,12 +311,18 @@ public class PricingHelper {
             for (ServiceType serviceType : provision.getService().getServiceTypes()) {
                 if (billingItem.getBillingType().getIsNonTaxable() == false
                         && serviceType.getDefaultDeboursPrice() != null) {
-                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
-                            .add(serviceType.getDefaultDeboursPrice()));
+                    if (invoiceItem.getPreTaxPrice() == null)
+                        invoiceItem.setPreTaxPrice(serviceType.getDefaultDeboursPrice());
+                    else
+                        invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                                .add(serviceType.getDefaultDeboursPrice()));
                 } else if (billingItem.getBillingType().getIsNonTaxable() == true
                         && serviceType.getDefaultDeboursPriceNonTaxable() != null) {
-                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
-                            .add(serviceType.getDefaultDeboursPriceNonTaxable()));
+                    if (invoiceItem.getPreTaxPrice() == null)
+                        invoiceItem.setPreTaxPrice(serviceType.getDefaultDeboursPriceNonTaxable());
+                    else
+                        invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                                .add(serviceType.getDefaultDeboursPriceNonTaxable()));
                 }
             }
         } else {

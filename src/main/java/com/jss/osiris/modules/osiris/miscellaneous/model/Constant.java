@@ -867,6 +867,10 @@ public class Constant implements Serializable, IId {
 	private ActiveDirectoryGroup activeDirectoryGroupFormalites;
 
 	@ManyToOne
+	@JoinColumn(name = "id_active_directory_group_insertions")
+	private ActiveDirectoryGroup activeDirectoryGroupInsertions;
+
+	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_facturation")
 	private ActiveDirectoryGroup activeDirectoryGroupFacturation;
 
@@ -904,6 +908,11 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_category_serie")
 	private Category categorySerie;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssListView.class)
+	@JoinColumn(name = "id_category_exclusivity")
+	private Category categoryExclusivity;
 
 	@ManyToOne
 	@JsonView(JacksonViews.MyJssListView.class)
@@ -2723,6 +2732,22 @@ public class Constant implements Serializable, IId {
 
 	public void setProvisionTypeCharacterAnnouncement(ProvisionType provisionTypeCharacterAnnouncement) {
 		this.provisionTypeCharacterAnnouncement = provisionTypeCharacterAnnouncement;
+	}
+
+	public Category getCategoryExclusivity() {
+		return categoryExclusivity;
+	}
+
+	public void setCategoryExclusivity(Category categoryExclusivity) {
+		this.categoryExclusivity = categoryExclusivity;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupInsertions() {
+		return activeDirectoryGroupInsertions;
+	}
+
+	public void setActiveDirectoryGroupInsertions(ActiveDirectoryGroup activeDirectoryGroupInsertions) {
+		this.activeDirectoryGroupInsertions = activeDirectoryGroupInsertions;
 	}
 
 }

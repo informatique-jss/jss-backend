@@ -912,6 +912,14 @@
           </tr>
           <tr>
             <td>
+              <select-active-directory-group [(model)]="constant.activeDirectoryGroupInsertions"
+                label="Groupe Active Directory - Insertions" [form]="constantForm"
+                propertyName="activeDirectoryGroupInsertions" [isMandatory]=" true"
+                [isDisabled]="!editMode"></select-active-directory-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-active-directory-group [(model)]="constant.activeDirectoryGroupSales"
                 label="Groupe Active Directory - Commerciaux" [form]="constantForm"
                 propertyName="activeDirectoryGroupSales" [isMandatory]=" true"
@@ -1632,6 +1640,13 @@
             <td>
               <select-category [(model)]="constant.categorySerie" label="Categorie Wordpress - Série"
                 [form]="constantForm" propertyName="categorySerie" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-category [(model)]="constant.categoryExclusivity" label="Categorie Wordpress - Exclusivité"
+                [form]="constantForm" propertyName="categoryExclusivity" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-category>
             </td>
           </tr>

@@ -69,10 +69,11 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
 
       // Retrieve bookmark
       let bookmarkpossibleEntityStatusIds = this.userPreferenceService.getUserSearchBookmark("kanban-order-status") as number[];
-      for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
-        for (let orderStatu of this.possibleEntityStatus!)
-          if (bookmarkpossibleEntityStatusId == orderStatu.id)
-            this.statusSelected.push(orderStatu);
+      if (bookmarkpossibleEntityStatusIds)
+        for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
+          for (let orderStatu of this.possibleEntityStatus!)
+            if (bookmarkpossibleEntityStatusId == orderStatu.id)
+              this.statusSelected.push(orderStatu);
 
       let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-order-employee") as Employee[];
       if (bookmarkOrderEmployees && bookmarkOrderEmployees.length > 0)
@@ -83,6 +84,8 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
         for (let swimlaneType of this.swimlaneTypes)
           if (swimlaneType.fieldName == bookmarkSwimlaneType.fieldName)
             this.selectedSwimlaneType = swimlaneType;
+      } else {
+        this.selectedSwimlaneType = this.swimlaneTypes[0];
       }
 
       if (this.possibleEntityStatus && this.statusSelected) {
