@@ -14,6 +14,8 @@ public class IWorkflowElement implements IId {
     private String code;
     private Boolean isOpenState;
     private Boolean isCloseState;
+    private String aggregateStatus;
+    private Integer servicePriority;
 
     public Integer getId() {
         return id;
@@ -77,6 +79,22 @@ public class IWorkflowElement implements IId {
 
     public void setIsCloseState(Boolean isCloseState) {
         this.isCloseState = isCloseState;
+    }
+
+    public String getAggregateStatus() {
+        return aggregateStatus;
+    }
+
+    public void setAggregateStatus(String aggregateStatus) {
+        this.aggregateStatus = aggregateStatus;
+    }
+
+    public Integer getServicePriority() {
+        return servicePriority;
+    }
+
+    public void setServicePriority(Integer servicePriority) {
+        this.servicePriority = servicePriority;
     }
 
 }
