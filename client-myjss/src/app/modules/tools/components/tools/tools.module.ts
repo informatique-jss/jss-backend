@@ -7,6 +7,7 @@ import { MiscellaneousModule } from '../../../miscellaneous/components/miscellan
 import { MandatoryDocumentsComponent } from '../mandatory-documents/mandatory-documents.component';
 import { PostComponent } from '../post/post.component';
 import { PracticalSheetsComponent } from '../practical-sheets/practical-sheets.component';
+import { WebinarsComponent } from '../webinars/webinars.component';
 import { ToolsComponent } from './tools.component';
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
     children: [
       { path: 'practical-sheets', component: PracticalSheetsComponent },
       { path: 'mandatory-documents', component: MandatoryDocumentsComponent },
+      { path: 'webinars', component: WebinarsComponent },
     ]
   },
   { path: 'post/:slug', component: PostComponent },
@@ -32,7 +34,8 @@ const routes: Routes = [
     ToolsComponent,
     PostComponent,
     PracticalSheetsComponent,
-    MandatoryDocumentsComponent
+    MandatoryDocumentsComponent,
+    WebinarsComponent
   ], schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class ToolsModule { }

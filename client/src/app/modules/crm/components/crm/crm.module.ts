@@ -8,6 +8,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { CommunicationPreferenceComponent } from '../communication-preference/communication-preference.component';
 import { MyjssCommentManagementComponent } from '../myjss-comment-management/myjss-comment-management.component';
+import { WebinarParticipantComponent } from '../webinar-participant/webinar-participant.component';
 import { CrmComponent } from './crm.component';
 
 
@@ -29,7 +30,8 @@ const routes: Routes = [
   declarations: [
     CrmComponent,
     CommunicationPreferenceComponent,
-    MyjssCommentManagementComponent
+    MyjssCommentManagementComponent,
+    WebinarParticipantComponent
   ],
   exports: [
     CommunicationPreferenceComponent,

@@ -9,13 +9,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
+import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -37,6 +42,9 @@ public class MyJssCrmController {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    WebinarParticipantService webinarParticipantService;
 
     private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
     private final long rateLimit = 1000;
@@ -184,4 +192,19 @@ public class MyJssCrmController {
             return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
         }
     }
+
+    // @JsonView(JacksonViews.MyJssDetailedView.class)
+    @PostMapping(inputEntryPoint + "/webinar/subscribe")
+    public ResponseEntity<Boolean> subscribeToWebinar(@RequestBody WebinarParticipant webinarParticipant,
+            HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
+        if (validationHelper.validateMail(webinarParticipant.getMail())
+                && validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber())) {
+            webinarParticipantService.subscribeToWebinar(webinarParticipant);
+            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
