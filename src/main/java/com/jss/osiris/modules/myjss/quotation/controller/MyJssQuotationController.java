@@ -88,7 +88,9 @@ import com.jss.osiris.modules.osiris.quotation.service.ServiceFieldTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
+import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.service.BillingLabelTypeService;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -136,6 +138,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	DocumentService documentService;
+
+	@Autowired
+	BillingLabelTypeService billingLabelTypeService;
 
 	@Autowired
 	ConstantService constantService;
@@ -744,6 +749,13 @@ public class MyJssQuotationController {
 		}
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/billing-label-types")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<BillingLabelType>> getBillingLabels() {
+		return new ResponseEntity<List<BillingLabelType>>(billingLabelTypeService.getBillingLabelTypes(),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation/documents")

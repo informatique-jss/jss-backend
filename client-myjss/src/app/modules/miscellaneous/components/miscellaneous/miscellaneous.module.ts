@@ -13,8 +13,8 @@ import { GenericInputComponent } from '../forms/generic-input/generic-input.comp
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
 import { RadioGroupAffaireTypeComponent } from '../forms/radio-group-affaire-type/radio-group-affaire-type.component';
-import { RadioGroupBillingLabelComponent } from '../forms/radio-group-billing-laber/radio-group-billing-label.component';
 import { RadioGroupQuotationTypeComponent } from '../forms/radio-group-quotation-type/radio-group-quotation-type.component';
+import { SelectBillingLabelTypeComponent } from '../forms/select-billing-label-type/select-billing-label-type.component';
 import { SelectCivilityComponent } from '../forms/select-civility/select-civility.component';
 import { SelectCountryComponent } from '../forms/select-country/select-country.component';
 import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
@@ -46,10 +46,10 @@ const routes: Routes = [{}];
     GenericDatePickerComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
-    RadioGroupBillingLabelComponent,
     AutocompleteCityComponent,
     SelectCountryComponent,
     SelectValueServiceFieldTypeComponent,
+    SelectBillingLabelTypeComponent,
     GenericInputComponent,
     SelectMyJssCategoryComponent,
     SelectCivilityComponent
@@ -67,11 +67,11 @@ const routes: Routes = [{}];
     GenericSwiperComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
-    RadioGroupBillingLabelComponent,
     AutocompleteCityComponent,
     SelectCountryComponent,
     SelectMyJssCategoryComponent,
     SelectValueServiceFieldTypeComponent,
+    SelectBillingLabelTypeComponent,
     OurClientsComponent,
     SelectCivilityComponent
   ]

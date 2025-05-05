@@ -267,6 +267,7 @@ export class RequiredInformationComponent implements OnInit {
     }
 
     else {
+
       this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
       this.appService.openRoute(undefined, "quotation", undefined);
     }
