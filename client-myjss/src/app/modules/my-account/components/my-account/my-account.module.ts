@@ -6,6 +6,7 @@ import { CopyClipboardDirective } from '../../../../libs/CopyClipboard.directive
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountMenuComponent } from '../account-menu/account-menu.component';
 import { AffairesComponent } from '../affaires/affaires.component';
+import { AppointmentComponent } from '../appointment/appointment.component';
 import { BillingClosureComponent } from '../billing-closure/billing-closure.component';
 import { CommunicationPreferenceComponent } from '../communication-preference/communication-preference.component';
 import { EditAddressComponent } from '../edit-address/edit-address.component';
@@ -21,6 +22,7 @@ import { QuotationsComponent } from '../quotations/quotations.component';
 import { ScopeComponent } from '../scope/scope.component';
 import { SignInComponent } from '../sign-in/sign-in.component';
 import { SignOutComponent } from '../sign-out/sign-out.component';
+import { SubscriptionsComponent } from '../subscriptions/subscriptions.component';
 import { UserSettingsComponent } from '../user-settings/user-settings.component';
 import { MyAccountComponent } from './my-account.component';
 
@@ -46,6 +48,8 @@ const routes: Routes = [
       { path: 'settings', component: UserSettingsComponent },
       { path: 'settings/:idResponsable', component: UserSettingsComponent },
       { path: 'settings/address/edit/:idResponsable', component: EditAddressComponent },
+      { path: 'subscription', component: SubscriptionsComponent },
+      { path: 'appointment ', component: AppointmentComponent },
     ]
   },
   { path: 'account/signin', component: SignInComponent },
@@ -81,7 +85,9 @@ const routes: Routes = [
     BillingClosureComponent,
     UserSettingsComponent,
     CommunicationPreferenceComponent,
-    EmailCommunicationPreferenceComponent
+    EmailCommunicationPreferenceComponent,
+    SubscriptionsComponent,
+    AppointmentComponent,
   ],
   exports: [
     CommunicationPreferenceComponent,

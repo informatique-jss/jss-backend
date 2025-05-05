@@ -7,11 +7,14 @@ import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { AuthorHubComponent } from '../author-hub/author-hub.component';
 import { CategoryHubComponent } from '../category-hub/category-hub.component';
+import { ContributeComponent } from '../contribute/contribute.component';
 import { DepartmentHubComponent } from '../department-hub/department-hub.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { HeaderComponent } from '../header/header.component';
 import { IdfHubComponent } from '../idf-hub/idf-hub.component';
+import { KioskComponent } from '../kiosk/kiosk.component';
 import { NewsletterComponent } from '../newsletter/newsletter.component';
+import { PodcastsComponent } from '../podcasts/podcasts.component';
 import { PostAuthorHeaderComponent } from '../post-author-header/post-author-header.component';
 import { PostCategoryHeaderComponent } from '../post-category-header/post-category-header.component';
 import { PostDepartmentHeaderComponent } from '../post-department-header/post-department-header.component';
@@ -21,6 +24,7 @@ import { PostTagHeaderComponent } from '../post-tag-header/post-tag-header.compo
 import { PostComponent } from '../post/post.component';
 import { SearchAnnouncementComponent } from '../search-announcement/search-announcement.component';
 import { SerieHubComponent } from '../serie-hub/serie-hub.component';
+import { SubscriptionComponent } from '../subscription/subscription.component';
 import { TagHubComponent } from '../tag-hub/tag-hub.component';
 import { MainComponent } from './main.component';
 
@@ -35,6 +39,10 @@ const routes: Routes = [
   { path: 'post/:slug', component: PostComponent },
   { path: 'announcement/search', component: SearchAnnouncementComponent },
   { path: 'announcement/:id', component: AnnouncementComponent },
+  { path: 'podcasts', component: PodcastsComponent },
+  { path: 'subscription', component: SubscriptionComponent },
+  { path: 'kiosk', component: KioskComponent },
+  { path: 'contribute', component: ContributeComponent },
 ];
 
 @NgModule({
@@ -65,8 +73,11 @@ const routes: Routes = [
     PostSerieHeaderComponent,
     PostDepartmentHeaderComponent,
     PostIdfHeaderComponent,
-    GenericInputComponent
-
+    GenericInputComponent,
+    PodcastsComponent,
+    SubscriptionComponent,
+    KioskComponent,
+    ContributeComponent
   ],
   exports: [
     HeaderComponent,

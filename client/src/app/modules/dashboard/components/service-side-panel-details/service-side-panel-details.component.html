@@ -1,0 +1,37 @@
+<attachments [entity]="serviceAttachments" [editMode]="false" [forIntegration]="true">
+</attachments>
+<table class="full-width" *ngIf="service">
+  <ng-container *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
+    <tr>
+      <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
+        <generic-input [(model)]="assoServiceFieldType.stringValue"
+          [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+          [propertyName]='"stringFieldType"+i' [isDisabled]="true" [isMandatory]="assoServiceFieldType.isMandatory"
+          [maxLength]="255"></generic-input>
+      </td>
+      <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
+        <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+          [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+          [propertyName]='"textAreaFieldType"+i' [isDisabled]="true"
+          [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
+      </td>
+      <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
+        <generic-datepicker [(model)]="assoServiceFieldType.dateValue"
+          [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm" [propertyName]='"dateFieldType"+i'
+          [isMandatory]="assoServiceFieldType.isMandatory" [isDisabled]="true"></generic-datepicker>
+      </td>
+      <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
+        <generic-input [(model)]="assoServiceFieldType.integerValue"
+          [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+          [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory" [isDisabled]=" true"
+          type="number"></generic-input>
+      </td>
+      <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
+        <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+          [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+          [propertyName]='"selectFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+          [isMandatory]="assoServiceFieldType.isMandatory" [isDisabled]="true"></select-value-service-field-type>
+      </td>
+    </tr>
+  </ng-container>
+</table>
