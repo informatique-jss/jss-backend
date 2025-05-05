@@ -3,6 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { AppService } from '../../../../libs/app.service';
 import { ConstantService } from '../../../../libs/constant.service';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
+import { getDocument } from '../../../../libs/DocumentHelper';
+import { copyObject } from '../../../../libs/GenericHelper';
 import { BillingLabelType } from '../../../my-account/model/BillingLabelType';
 import { Document } from '../../../my-account/model/Document';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -41,6 +43,8 @@ export class CheckoutComponent implements OnInit {
   intervalId: any;
   countries: Country[] | undefined;
   civilities: Civility[] | undefined;
+
+  isIndividualTiers: boolean = false;
 
   checkedOnce: boolean = false;
   countryFrance: Country = this.constantService.getCountryFrance();
@@ -85,27 +89,6 @@ export class CheckoutComponent implements OnInit {
     this.loginService.getCurrentUser(false, true).subscribe(response => {
       if (!response) {
         this.intervalId = setInterval(() => this.checkUserConnected(), 2000);
-        this.civilityService.getCivilities().subscribe(response => this.civilities = response);
-        this.countryService.getCountries().subscribe(response => {
-          setTimeout(() => window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-          }), 100);
-          this.countries = response;
-          if (this.countries)
-            for (let country of this.countries)
-              if (country.id == this.countryFrance.id) {
-                // this.userCustomerOrder.customerCountry = country;
-                break;
-              }
-        });
-
-        // this.userCustomerOrder.billingDocument = { isRecipientClient: true } as Document;
-        // this.userCustomerOrder.digitalDocument = { isRecipientClient: true } as Document;
-        // this.userCustomerOrder.paperDocument = { isRecipientClient: true } as Document;
-        // this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeCustomer;
-
-        // this.computePrices();
       } else {
         this.logCurrentUser(response);
       }
@@ -115,18 +98,30 @@ export class CheckoutComponent implements OnInit {
     this.initIQuotation();
   }
 
-  initEmptyDocuments(): Document[] {
-    let document1: Document = { documentType: this.documentTypeBilling } as Document;
-    let document2: Document = { documentType: this.documentTypeDigital } as Document;
-    let document3: Document = { documentType: this.documentTypePaper } as Document;
-    document1.mailsAffaire = [];
-    document1.mailsClient = [];
-    document2.mailsAffaire = [];
-    document2.mailsClient = [];
-    document3.mailsAffaire = [];
-    document3.mailsClient = [];
+  initEmptyDocuments() {
+    if (this.quotation) {
+      let responsableForDocument = undefined;
+      if (!this.quotation.responsable) {
+        if (this.currentUser) {
+          responsableForDocument = this.currentUser;
+          this.quotation.responsable = this.currentUser;
+        } else {
+          responsableForDocument = this.constantService.getResponsableDummyCustomerFrance();
+          this.quotation.responsable = { tiers: { isIndividual: !this.isIndividualTiers } as Tiers, mail: {} as Mail } as Responsable;
+        }
+      }
 
-    return [document1, document2, document3];
+      if (responsableForDocument && (!this.quotation.documents || this.quotation.documents.length == 0)) {
+        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeBilling(), responsableForDocument)))
+        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeDigital(), responsableForDocument)))
+        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypePaper(), responsableForDocument)))
+      }
+    }
+  }
+
+  toggleTiersIndividual() {
+    if (this.quotation && this.quotation.responsable && this.quotation.responsable.tiers)
+      this.quotation.responsable.tiers.isIndividual = !this.quotation.responsable.tiers.isIndividual;
   }
 
   initIQuotation() {
@@ -134,23 +129,23 @@ export class CheckoutComponent implements OnInit {
       if (this.quotationService.getCurrentDraftQuotationId()) {
         this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
           this.quotation = response;
+          this.initEmptyDocuments();
         });
       } else if (this.orderService.getCurrentDraftOrderId()) {
         this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
           this.quotation = response;
+          this.initEmptyDocuments();
         });
       }
     } else {
       if (this.quotationService.getCurrentDraftQuotation()) {
         this.quotation = this.quotationService.getCurrentDraftQuotation()!;
+        this.initEmptyDocuments();
+        this.quotationService.setCurrentDraftQuotation(this.quotation);
       } else if (this.orderService.getCurrentDraftOrder()) {
         this.quotation = this.orderService.getCurrentDraftOrder()!;
-      }
-      if (this.quotation && !this.quotation.responsable) {
-        let notSignedResponsable = { civility: {} as Civility, mail: {} as Mail, tiers: {} as Tiers } as Responsable;
-        this.quotation.responsable = notSignedResponsable;
-        this.quotation.responsable.documents = this.initEmptyDocuments();
-        this.quotationService.setCurrentDraftQuotation(this.quotation);
+        this.initEmptyDocuments();
+        this.orderService.setCurrentDraftOrder(this.quotation);
       }
     }
   }
@@ -182,27 +177,11 @@ export class CheckoutComponent implements OnInit {
 
   logCurrentUser(response: Responsable) {
     this.currentUser = response;
-    this.documentService.getDocumentForResponsable(this.currentUser.id).subscribe(response => {
-      this.currentUser!.documents = response;
-      setTimeout(() => window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      }), 100);
-
-      // this.userCustomerOrder.billingDocument = this.getDocument(this.documentTypeBilling, response);
-
-      // if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeAffaire.id)
-      //   this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeAffaire;
-      // if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeCustomer.id)
-      //   this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeCustomer;
-      // if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeOther.id)
-      //   this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeOther;
-
-      // this.userCustomerOrder.digitalDocument = this.getDocument(this.documentTypeDigital, response);
-      // this.userCustomerOrder.paperDocument = this.getDocument(this.documentTypePaper, response);
-
-      // this.computePrices();
-    })
+    if (this.quotation) {
+      this.quotation.responsable = undefined;
+      this.quotation.documents = [];
+      this.initEmptyDocuments();
+    }
   }
 
   // TODO non relu

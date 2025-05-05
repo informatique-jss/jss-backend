@@ -129,9 +129,9 @@ public interface CustomerOrderService {
                         OsirisValidationException, OsirisDuplicateException;
 
         public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
-                        String sortBy);
+                        String sortBy) throws OsirisException;
 
-        public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire);
+        public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException;
 
         public List<Payment> getApplicablePaymentsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
@@ -145,11 +145,16 @@ public interface CustomerOrderService {
         public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, HttpServletRequest request)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
-        public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders);
+        public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
+                        throws OsirisException;
 
-        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder);
+        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+                        throws OsirisException;
 
         public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
-                        List<CustomerOrderStatus> status);
+                        List<CustomerOrderStatus> status) throws OsirisException;
+
+        public CustomerOrder setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
 }

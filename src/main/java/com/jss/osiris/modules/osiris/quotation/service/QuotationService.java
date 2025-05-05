@@ -90,10 +90,15 @@ public interface QuotationService {
         public Quotation saveQuotationFromMyJss(Quotation order, HttpServletRequest request)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
-        public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders);
+        public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders)
+                        throws OsirisException;
 
-        public List<Quotation> searchQuotation(List<Employee> commercials, List<QuotationStatus> status);
+        public List<Quotation> searchQuotation(List<Employee> commercials, List<QuotationStatus> status)
+                        throws OsirisException;
 
-        public Quotation completeAdditionnalInformationForQuotation(Quotation customerOrder);
+        public Quotation completeAdditionnalInformationForQuotation(Quotation customerOrder) throws OsirisException;
+
+        public Quotation setEmergencyOnQuotation(Quotation quotation, Boolean isEnabled)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
 }

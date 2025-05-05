@@ -25,4 +25,9 @@ public interface ServiceService {
                         Affaire affaire, String customLabel) throws OsirisException;
 
         public List<Attachment> getAttachmentsForProvisionOfService(Service service);
+
+        public boolean isServiceHasMissingInformations(Service service);
+
+        public List<Service> populateTransientField(List<Service> services) throws OsirisException;
+
 }

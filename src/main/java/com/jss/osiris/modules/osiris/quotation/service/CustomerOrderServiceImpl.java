@@ -220,6 +220,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     MyJssProfileController myJssProfileController;
 
+    @Autowired
+    ProvisionService provisionService;
+
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
@@ -1494,7 +1497,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
-            String sortBy) {
+            String sortBy) throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
         boolean displayPayed = false;
 
@@ -1538,7 +1541,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return null;
     }
 
-    public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) {
+    public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException {
         List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
         CustomerOrderStatus statusAbandonned = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
@@ -1552,7 +1555,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders) {
+    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
+            throws OsirisException {
         if (customerOrders != null && customerOrders.size() > 0)
             for (CustomerOrder customerOrder : customerOrders) {
                 completeAdditionnalInformationForCustomerOrder(customerOrder);
@@ -1562,11 +1566,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder) {
+    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+            throws OsirisException {
         List<String> affaireLabels = new ArrayList<String>();
         List<String> serviceLabels = new ArrayList<String>();
         customerOrder.setHasMissingInformations(false);
-        if (customerOrder.getAssoAffaireOrders() != null)
+        if (customerOrder.getAssoAffaireOrders() != null) {
+            assoAffaireOrderService.populateTransientField(customerOrder.getAssoAffaireOrders());
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
                 if (affaireDenomination == null || affaireDenomination.length() == 0)
@@ -1580,15 +1586,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         String serviceLabel = service.getServiceLabelToDisplay();
                         if (serviceLabels.indexOf(serviceLabel) < 0)
                             serviceLabels.add(serviceLabel);
+
                     }
 
                 if (assoAffaireOrder.getServices() != null)
                     for (Service service : assoAffaireOrder.getServices()) {
-                        if (assoAffaireOrderService.isServiceHasMissingInformations(service)) {
+                        if (serviceService.isServiceHasMissingInformations(service)) {
                             customerOrder.setHasMissingInformations(true);
                         }
                     }
             }
+        }
 
         if (affaireLabels.size() > 0)
             customerOrder.setAffairesList(String.join(" / ", affaireLabels));
@@ -1858,7 +1866,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
-            List<CustomerOrderStatus> status) {
+            List<CustomerOrderStatus> status) throws OsirisException {
 
         List<Integer> commercialIds = (commercials != null && commercials.size() > 0)
                 ? commercials.stream().map(Employee::getId).collect(Collectors.toList())
@@ -1870,5 +1878,23 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         return completeAdditionnalInformationForCustomerOrders(
                 customerOrderRepository.searchCustomerOrders(commercialIds, statusIds));
+    }
+
+    @Override
+    public CustomerOrder setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0
+                && customerOrder.getAssoAffaireOrders().get(0).getServices() != null
+                && customerOrder.getAssoAffaireOrders().get(0).getServices().size() > 0
+                && customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions() != null
+                && customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().size() > 0) {
+            customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0)
+                    .setIsEmergency(isEnabled);
+            provisionService.addOrUpdateProvision(
+                    customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0));
+            customerOrder = getCustomerOrder(customerOrder.getId());
+            pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+        }
+        return customerOrder = getCustomerOrder(customerOrder.getId());
     }
 }
