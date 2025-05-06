@@ -42,6 +42,7 @@ export class WebinarsComponent implements OnInit {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Inscription validée", 3000);
         this.webinarsForm.reset();
         this.isConditionAccepted = false;
+        this.webinarParticipant = { mail: {} as Mail } as WebinarParticipant;
         this.checkedOnce = false;
       }
     });

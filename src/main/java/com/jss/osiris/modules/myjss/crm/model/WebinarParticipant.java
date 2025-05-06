@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.myjss.crm.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
@@ -9,6 +8,7 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.crm.model.Webinar;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,14 +16,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = {
-        @Index(name = "idx_webinar_participant_mail", columnList = "id_mail", unique = true) })
+        @Index(name = "idx_webinar_participant_mail", columnList = "id_mail") })
 public class WebinarParticipant implements Serializable {
     @Id
     @SequenceGenerator(name = "webinar_participant_sequence", sequenceName = "webinar_participant_sequence", allocationSize = 1)
@@ -32,9 +31,11 @@ public class WebinarParticipant implements Serializable {
     private Integer id;
 
     @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+    @Column(length = 50)
     private String firstname;
 
     @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+    @Column(length = 50)
     private String lastname;
 
     @ManyToOne
@@ -44,13 +45,14 @@ public class WebinarParticipant implements Serializable {
 
     @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
     private String phoneNumber;
+
     private Boolean isParticipating;
 
-    @ManyToMany
+    @ManyToOne
     @JoinTable(name = "asso_webinar_participant", joinColumns = @JoinColumn(name = "id_webinar_participant"), inverseJoinColumns = @JoinColumn(name = "id_webinar"))
     @IndexedField
     @JsonView(JacksonViews.OsirisListView.class)
-    private List<Webinar> webinars;
+    private Webinar webinar;
 
     public Integer getId() {
         return id;
@@ -92,20 +94,20 @@ public class WebinarParticipant implements Serializable {
         this.isParticipating = isParticipating;
     }
 
-    public List<Webinar> getWebinars() {
-        return webinars;
-    }
-
-    public void setWebinars(List<Webinar> webinars) {
-        this.webinars = webinars;
-    }
-
     public Mail getMail() {
         return mail;
     }
 
     public void setMail(Mail mail) {
         this.mail = mail;
+    }
+
+    public Webinar getWebinar() {
+        return webinar;
+    }
+
+    public void setWebinar(Webinar webinar) {
+        this.webinar = webinar;
     }
 
 }

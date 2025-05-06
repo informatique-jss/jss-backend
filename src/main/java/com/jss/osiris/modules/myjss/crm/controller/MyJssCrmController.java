@@ -185,12 +185,11 @@ public class MyJssCrmController {
         if (responsable != null)
             userMail = responsable.getMail().getMail();
 
-        if (validationHelper.validateMail(userMail)) {
-            communicationPreferenceService.unsubscribeToCorporateNewsletter(userMail, validationToken);
-            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
-        }
+        if (!validationHelper.validateMail(userMail))
+            throw new OsirisValidationException("mail");
+
+        communicationPreferenceService.unsubscribeToCorporateNewsletter(userMail, validationToken);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @JsonView(JacksonViews.MyJssDetailedView.class)
@@ -198,14 +197,18 @@ public class MyJssCrmController {
     public ResponseEntity<Boolean> subscribeToWebinar(@RequestBody WebinarParticipant webinarParticipant,
             HttpServletRequest request) throws OsirisException {
         detectFlood(request);
-        if (validationHelper.validateMail(webinarParticipant.getMail())) {
-            if (webinarParticipant.getPhoneNumber() != null)
-                validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber());
-            webinarParticipantService.subscribeToWebinar(webinarParticipant);
-            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
-        }
+        if (!validationHelper.validateMail(webinarParticipant.getMail()))
+            throw new OsirisValidationException("mail");
+
+        if (webinarParticipant.getPhoneNumber() != null
+                && validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber()))
+            throw new OsirisValidationException("phone");
+
+        validationHelper.validateString(webinarParticipant.getFirstname(), true, 50, "frstname");
+        validationHelper.validateString(webinarParticipant.getLastname(), true, 50, "lastname");
+
+        webinarParticipantService.subscribeToWebinar(webinarParticipant);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
 }

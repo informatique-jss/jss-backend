@@ -13,7 +13,6 @@ import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.myjss.crm.repository.WebinarParticipantRepository;
 import com.jss.osiris.modules.osiris.crm.model.Webinar;
 import com.jss.osiris.modules.osiris.crm.service.WebinarService;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 
 @Service
@@ -50,15 +49,20 @@ public class WebinarParticipantServiceImpl implements WebinarParticipantService 
         WebinarParticipant existingWebinarParticipant = null;
         if (webinarParticipant != null) {
             webinarParticipant.setIsParticipating(true);
-            webinarParticipant.setWebinars(List.of(webinarService.getWebinar(1)));
+            webinarParticipant.setWebinar(webinarService.getWebinar(1));
+            mailService.populateMailId(webinarParticipant.getMail());
+
             existingWebinarParticipant = webinarParticipantRepository
-                    .findByMail_Mail(webinarParticipant.getMail().getMail());
+                    .findByMailAndWebinar(webinarParticipant.getMail(), webinarParticipant.getWebinar());
+
             if (existingWebinarParticipant == null) {
-                Mail newWebinarParticipantMail = mailService.populateMailId(webinarParticipant.getMail());
-                webinarParticipant.setMail(newWebinarParticipantMail);
-                webinarParticipantRepository.save(webinarParticipant);
+                addOrUpdateWebinarParticipant(webinarParticipant);
                 mailHelper.sendConfirmationSubscriptionWebinarMyJss(webinarParticipant);
                 return webinarParticipant;
+            } else {
+                existingWebinarParticipant.setIsParticipating(true);
+                addOrUpdateWebinarParticipant(existingWebinarParticipant);
+                return existingWebinarParticipant;
             }
         }
         return null;
@@ -67,7 +71,7 @@ public class WebinarParticipantServiceImpl implements WebinarParticipantService 
     @Override
     public List<WebinarParticipant> getWebinarParticipants(Webinar webinar) {
         if (webinar != null)
-            return webinarParticipantRepository.findByWebinarsAndIsParticipating(webinar, true);
+            return webinarParticipantRepository.findByWebinarAndIsParticipating(webinar, true);
         return null;
     }
 
@@ -75,6 +79,6 @@ public class WebinarParticipantServiceImpl implements WebinarParticipantService 
     public WebinarParticipant deleteWebinarParticipant(WebinarParticipant webinarParticipant) {
         if (webinarParticipant != null)
             webinarParticipant.setIsParticipating(false);
-        return webinarParticipantRepository.save(webinarParticipant);
+        return addOrUpdateWebinarParticipant(webinarParticipant);
     }
 }

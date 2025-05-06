@@ -46,13 +46,13 @@
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.mail.mail"
               placeholder="E-mail professionnel*" label="E-mail professionnel*" [form]="webinarsForm"
-              propertyName="mail" [isMandatory]="true" [isDisabled]="false" [maxLength]="50"
+              propertyName="mail" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"
               type="email"></generic-input>
           </div>
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.phoneNumber"
               label="Téléphone" placeholder="Numéro de téléphone" [form]="webinarsForm" propertyName="phoneNumber"
-              [isMandatory]="false" [isDisabled]="false" [maxLength]="50" type="text"></generic-input>
+              [isMandatory]="false" [isDisabled]="false" [maxLength]="250" type="text"></generic-input>
           </div>
           <div class="col-12">
             <div class="form-check form-check-inline">

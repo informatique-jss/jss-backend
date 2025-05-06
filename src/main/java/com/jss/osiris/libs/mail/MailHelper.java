@@ -738,7 +738,7 @@ public class MailHelper {
 
     public void sendConfirmationSubscriptionWebinarMyJss(WebinarParticipant webinarParticipant) throws OsirisException {
         CustomerMail mail = new CustomerMail();
-        mail.setReplyToMail("accueil@jss.fr");
+        mail.setReplyToMail("contact@jss.fr");
         mail.setSubject("Confirmation d'inscription au webinaire");
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_WEBINAR_SUBSCRIPTION);
         mail.setHeaderPicture("images/mails/quotation-validated.png");

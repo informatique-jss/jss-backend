@@ -23,11 +23,4 @@ export class SelectWebinarComponent extends GenericSelectComponent<Webinar> impl
       this.types = response.sort((a, b) => a.label.localeCompare(b.label));
     })
   }
-
-  displayLabel(object: Webinar): string {
-    if (object)
-      return object.label;
-    return "";
-  }
-
 }
