@@ -405,7 +405,7 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/affaire/attachments")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForAffaire(@RequestParam Integer idAffaire)
-			throws OsirisClientMessageException {
+			throws OsirisException {
 
 		if (idAffaire == null)
 			return new ResponseEntity<List<Attachment>>(new ArrayList<Attachment>(), HttpStatus.OK);

@@ -93,7 +93,7 @@ public class Quotation implements IQuotation {
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime lastStatusUpdate;
 
-	@Column(columnDefinition = "TEXT") // TODO : delete when new website
+	@Column(columnDefinition = "TEXT")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private String description;
 

@@ -170,9 +170,9 @@
                           data-bs-toggle="tooltip" data-bs-placement="right" *ngIf="service.hasMissingInformations"
                           [title]="'Le '+getLastMissingAttachmentQueryDateLabel(service)+' : des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du service'"></i>
                       </td>
-                      <td class="border-0 text-end py-1 pe-0 ps-3 ps-sm-4" *ngIf="service.servicePrice">
+                      <td class="border-0 text-end py-1 pe-0 ps-3 ps-sm-4" *ngIf="service.serviceTotalPrice">
                         <div class="fs-sm text-body-secondary mb-2">Total</div>
-                        <div class="fs-sm fw-medium text-dark">{{service.servicePrice | currency:'EUR' }}</div>
+                        <div class="fs-sm fw-medium text-dark">{{service.serviceTotalPrice | currency:'EUR' }}</div>
                       </td>
                     </tr>
                   </ng-container>

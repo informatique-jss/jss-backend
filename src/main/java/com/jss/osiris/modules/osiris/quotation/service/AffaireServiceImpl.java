@@ -635,7 +635,7 @@ public class AffaireServiceImpl implements AffaireService {
     }
 
     @Override
-    public List<Attachment> getAttachmentsForAffaire(Affaire affaire) {
+    public List<Attachment> getAttachmentsForAffaire(Affaire affaire) throws OsirisException {
         List<Attachment> attachments = new ArrayList<Attachment>();
         List<CustomerOrder> customerOrders = customerOrderService.searchOrdersForCurrentUserAndAffaire(affaire);
 

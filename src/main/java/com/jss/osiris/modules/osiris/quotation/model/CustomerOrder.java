@@ -138,7 +138,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JoinColumn(name = "id_abandon_reason")
 	private QuotationAbandonReason abandonReason;
 
-	@Column(columnDefinition = "TEXT") // TODO : delete when new website
+	@Column(columnDefinition = "TEXT")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private String description;
 

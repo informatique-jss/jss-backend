@@ -84,12 +84,6 @@
                   [form]="documentForm" propertyName="adress" [isMandatory]="true" [isDisabled]="false" type="text">
                 </generic-input>
               </div>
-              <div class="row mt-3">
-                <generic-input class="col" [(model)]="quotation.responsable.tiers.addressComplement"
-                  label="Complément d'adresse" [form]="documentForm" propertyName="addressComplement"
-                  [isMandatory]="true" [isDisabled]="false" type="text">
-                </generic-input>
-              </div>
               <div class="row g-3 mt-3">
                 <generic-input class="col-md-4" [(model)]="quotation.responsable.tiers.postalCode" label="Code postal"
                   [form]="documentForm" propertyName="postalCode" [isMandatory]="true" [isDisabled]="false"
@@ -108,7 +102,7 @@
                 <generic-input class="col-md-6" [(model)]="quotation.responsable.phones" label="Téléphone"
                   [form]="documentForm" propertyName="phone" [isMandatory]="true" [isDisabled]="false" [maxLength]="13">
                 </generic-input>
-                <generic-input class="col-md-6" [(model)]="quotation.responsable.mails" label="Votre adresse mail"
+                <generic-input class="col-md-6" [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail"
                   [form]="documentForm" propertyName="mail" [isMandatory]="true" [isDisabled]="false" type="mail"
                   [icon]="'mail'">
                 </generic-input>
@@ -226,7 +220,7 @@
       <div class="row">
         <div class="card mb-4">
           <h6 class="card-header"><i class="ai-note me-2"></i>Renseignements administratifs</h6>
-          <div *ngFor="let doc of quotation.documents">
+          <div *ngFor="let doc of quotation?.documents">
             <div class="card-body" *ngIf="doc.documentType.code == documentTypeBilling.code">
               <div class="mb-3">
                 <generic-toggle [(model)]="doc.isCommandNumberMandatory" label="J'ai un numéro de commande"
@@ -512,7 +506,7 @@
         </div>
 
         <!-- Commentaire -->
-        <div class="row">
+        <div class="row" *ngIf="quotation">
 
           <div class="card mb-4">
             <div class="card-header"><i class="ai-edit-alt me-2"></i>Commentaire</div>
@@ -546,7 +540,7 @@
                   </p>
                 </div>
                 <div class="col-2">
-                  <p>{{service.servicePrice}} €</p>
+                  <p>{{service.serviceTotalPrice}} €</p>
                   <a href=""><i class="ai-trash"></i></a>
                 </div>
 
@@ -611,7 +605,7 @@
                   </p>
                 </div>
                 <div class="col-2">
-                  <p>{{service.servicePrice}} €</p>
+                  <p>{{service.serviceTotalPrice}} €</p>
                   <a href=""><i class="ai-trash"></i></a>
                 </div>
                 <hr>

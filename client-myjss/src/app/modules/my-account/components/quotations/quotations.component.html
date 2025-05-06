@@ -169,9 +169,9 @@
                           data-bs-toggle="tooltip" data-bs-placement="right" *ngIf="service.hasMissingInformations"
                           title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du devis"></i>
                       </td>
-                      <td class="border-0 text-end py-1 pe-0 ps-3 ps-sm-4" *ngIf="service.servicePrice">
+                      <td class="border-0 text-end py-1 pe-0 ps-3 ps-sm-4" *ngIf="service.serviceTotalPrice">
                         <div class="fs-sm text-body-secondary mb-2">Total</div>
-                        <div class="fs-sm fw-medium text-dark">{{service.servicePrice | currency:'EUR' }}</div>
+                        <div class="fs-sm fw-medium text-dark">{{service.serviceTotalPrice | currency:'EUR' }}</div>
                       </td>
                     </tr>
                   </ng-container>

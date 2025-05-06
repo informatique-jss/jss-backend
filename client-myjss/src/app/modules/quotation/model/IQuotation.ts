@@ -9,4 +9,5 @@ export interface IQuotation extends IDocument {
   serviceFamilyGroup: ServiceFamilyGroup;
   isQuotation: boolean;
   responsable: Responsable | undefined;
+  description: string;
 }

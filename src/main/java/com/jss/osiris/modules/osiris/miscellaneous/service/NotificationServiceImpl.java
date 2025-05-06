@@ -58,7 +58,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
-            List<String> notificationTypes, Boolean onlyForNumber) {
+            List<String> notificationTypes, Boolean onlyForNumber) throws OsirisException {
         Employee currentEmployee = (Employee) employeeService.getCurrentEmployee();
         if (currentEmployee == null)
             return null;
@@ -83,7 +83,7 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationTypesToHide;
     }
 
-    private List<Notification> completeNotifications(List<Notification> notifications) {
+    private List<Notification> completeNotifications(List<Notification> notifications) throws OsirisException {
         if (notifications != null) {
             List<Notification> ouNotifications = new ArrayList<Notification>();
             for (Notification notificationIn : notifications) {
@@ -215,7 +215,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForCustomerOrder(Integer customerOrderId) {
+    public List<Notification> getNotificationsForCustomerOrder(Integer customerOrderId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -224,7 +224,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForQuotation(Integer quotationId) {
+    public List<Notification> getNotificationsForQuotation(Integer quotationId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -233,7 +233,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForService(Integer serviceId) {
+    public List<Notification> getNotificationsForService(Integer serviceId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -242,7 +242,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForProvision(Integer provisionId) {
+    public List<Notification> getNotificationsForProvision(Integer provisionId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -251,7 +251,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForInvoice(Integer invoiceId) {
+    public List<Notification> getNotificationsForInvoice(Integer invoiceId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -260,7 +260,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForAffaire(Integer affaireId) {
+    public List<Notification> getNotificationsForAffaire(Integer affaireId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -269,7 +269,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForTiers(Integer tiersId) {
+    public List<Notification> getNotificationsForTiers(Integer tiersId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -278,7 +278,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForResponsable(Integer responsableId) {
+    public List<Notification> getNotificationsForResponsable(Integer responsableId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
