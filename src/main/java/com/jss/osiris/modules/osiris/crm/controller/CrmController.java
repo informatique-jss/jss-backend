@@ -245,11 +245,13 @@ public class CrmController {
         }
 
         @GetMapping(inputEntryPoint + "/webinars")
+        @JsonView(JacksonViews.OsirisListView.class)
         public ResponseEntity<List<Webinar>> getWebinars() {
                 return new ResponseEntity<List<Webinar>>(webinarService.getWebinars(), HttpStatus.OK);
         }
 
         @PostMapping(inputEntryPoint + "/webinar")
+        @JsonView(JacksonViews.OsirisDetailedView.class)
         public ResponseEntity<Webinar> addOrUpdateWebinar(
                         @RequestBody Webinar webinars) throws OsirisValidationException, OsirisException {
                 if (webinars.getId() != null)
@@ -261,6 +263,7 @@ public class CrmController {
         }
 
         @GetMapping(inputEntryPoint + "/webinar-participants")
+        @JsonView(JacksonViews.OsirisListView.class)
         public ResponseEntity<List<WebinarParticipant>> getWebinarParticipants(@RequestParam Integer webinarId) {
                 Webinar webinar = webinarService.getWebinar(webinarId);
                 if (webinar == null)
@@ -271,6 +274,7 @@ public class CrmController {
         }
 
         @GetMapping(inputEntryPoint + "/webinar-participant/delete")
+        @JsonView(JacksonViews.OsirisListView.class)
         public ResponseEntity<WebinarParticipant> deleteWebinarParticipant(@RequestParam Integer webinarParticipantId)
                         throws OsirisValidationException {
                 WebinarParticipant webinarParticipant = webinarParticipantService

@@ -193,7 +193,7 @@ public class MyJssCrmController {
         }
     }
 
-    // @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     @PostMapping(inputEntryPoint + "/webinar/subscribe")
     public ResponseEntity<Boolean> subscribeToWebinar(@RequestBody WebinarParticipant webinarParticipant,
             HttpServletRequest request) throws OsirisException {

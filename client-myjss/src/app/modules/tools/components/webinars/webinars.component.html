@@ -16,52 +16,209 @@
       style="background-image: url('assets/img/my-jss-tools/mandatory-documents-jarallax.jpg');"></div>
   </div>
 </section>
+<section class="dark-blue-dropdown">
+  <section class="container pt-5 pb-lg-2 pb-xl-4 py-xxl-5 my-5">
+    <div class="row pb-1 pb-sm-3 pb-lg-4">
+      <div class="col-lg-4 pe-xxl-4">
+        <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">Ne manquez pas notre prochain webinaire le 24 mars à 13h00
+        </h2>
+      </div>
 
-<section class="container pt-5 pb-lg-2 pb-xl-4 py-xxl-5 my-5">
-  <div class="row pb-1 pb-sm-3 pb-lg-4">
-    <div class="col-lg-4 pe-xxl-4">
-      <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">Ne manquez pas notre prochain webinaire le 24 mars à 13h00</h2>
+      <div class="col-lg-8 col-xl-7 offset-xl-1">
+        <form class="row g-4 needs-validation" novalidate>
+          <div class="col-sm-6">
+            <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.firstname" label="Prénom*"
+              placeholder="Prénom*" [form]="webinarsForm" propertyName="firstname" [isMandatory]="true"
+              [isDisabled]="false" [maxLength]="50" type="text"></generic-input>
+          </div>
+          <div class="col-sm-6">
+            <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.lastname"
+              placeholder="Nom*" label="Nom*" [form]="webinarsForm" propertyName="lastname" [isMandatory]="true"
+              [isDisabled]="false" [maxLength]="50" type="text"></generic-input>
+          </div>
+          <div class="col-sm-6">
+            <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.mail.mail"
+              placeholder="E-mail professionnel*" label="E-mail professionnel*" [form]="webinarsForm"
+              propertyName="mail" [isMandatory]="true" [isDisabled]="false" [maxLength]="50"
+              type="email"></generic-input>
+          </div>
+          <div class="col-sm-6">
+            <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.phoneNumber"
+              label="Téléphone*" placeholder="Numéro de téléphone*" [form]="webinarsForm" propertyName="phoneNumber"
+              [isMandatory]="true" [isDisabled]="false" [maxLength]="50" type="text"></generic-input>
+          </div>
+          <div class="col-12">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" name="agree" type="checkbox" id="agree" [(ngModel)]="isConditionAccepted">
+              <label class="form-check-label" for="agree">J’accepte d’être contacté.e par le Journal Spécial des
+                Sociétés
+                à des fins d’information et de marketing conformément à la Politique de Confidentialité*</label>
+            </div>
+          </div>
+          <div class="col-sm-12 pt-2">
+            <button class="btn btn-lg btn-primary" type="submit" (click)="subscribeWebinar($event)">S'inscrire</button>
+          </div>
+        </form>
+      </div>
     </div>
+  </section>
+</section>
 
-    <div class="col-lg-8 col-xl-7 offset-xl-1">
-      <form class="row g-4 needs-validation" novalidate>
-        <div class="col-sm-6">
-          <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.firstname" label="Prénom*"
-            placeholder="Prénom*" [form]="webinarsForm" propertyName="firstname" [isMandatory]="true"
-            [isDisabled]="false" [maxLength]="50" type="text"></generic-input>
-          <div class="invalid-feedback">Veuillez renseigner votre prénom</div>
+<section class="container overflow-hidden py-5 my-5">
+  <div class="row">
+    <h2 class="h2 pb-3 mb-lg-4 text-white">Myriam de Montis, spécialiste des annonces légales et formalités</h2>
+  </div>
+  <div class="card-info">
+    <div class="row g-4">
+      <div class="col-md-4 order-md-1">
+        <img class="object-fit-cover rounded-circle" src="assets/img/my-jss-tools/MM.png" alt="Image">
+      </div>
+      <div class="col-md-8 order-md-2">
+        <div class="d-flex flex-column h-100 card border-0 rounded-3 pt-5 px-4 px-lg-5">
+          <p class="mb-4 mb-xl-5">Présidente du Journal Spécial des Sociétés, Myriam de Montis accompagne depuis plus de
+            30 ans les entreprises dans leurs démarches juridiques.
+            Son expertise en annonces légales et formalités d’entreprises fait d’elle une référente dans le
+            domaine.<br />
+            Elle suit quotidiennement les évolutions réglementaires et éclaire les professionnels sur leurs obligations.
+            Grâce à son expérience, elle apporte un regard concrêt et opérationnel sur ces enjeux complexes et participe
+            aux réflexions menées par les différents acteurs réglementaires du marché.
+          </p>
+          <p class="mb-4 mb-xl-5">À travers nos webinaires, Myriam de Montis décrypte entre autre le Guichet unique et
+            répond aux questions des participants.
+            Ne manquez pas la prochaine édition !
+          </p>
         </div>
-        <div class="col-sm-6">
-          <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.lastname" placeholder="Nom*"
-            label="Nom*" [form]="webinarsForm" propertyName="lastname" [isMandatory]="true" [isDisabled]="false"
-            [maxLength]="50" type="text"></generic-input>
-          <div class="invalid-feedback">Veuillez renseigner votre nom</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5 mb-lg-2 mt-lg-3 my-xl-4 my-xxl-5">
+  <div class="d-md-flex align-items-center justify-content-between pt-2 pt-sm-3 pb-3 mt-md-3 mb-3 mb-lg-4">
+    <div class="d-flex align-items-center mb-4 mb-md-0">
+      <h2 class="h2 mb-0">Les grands moments d'un webinaire</h2>
+      <div class="text-warning flex-shrink-0 ps-sm-1 ms-3">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M12 0L12.6798 4.12733C13.2879 7.81883 16.1812 10.7121 19.8727 11.3202L24 12L19.8727 12.6798C16.1812 13.2879 13.2879 16.1812 12.6798 19.8727L12 24L11.3202 19.8727C10.7121 16.1812 7.81882 13.2879 4.12733 12.6798L0 12L4.12733 11.3202C7.81883 10.7121 10.7121 7.81882 11.3202 4.12733L12 0Z">
+          </path>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="tab-content border-top border-bottom mb-3 mb-sm-4 mb-lg-5">
+    <div class="tab-pane fade show active" id="dayOne" role="tabpanel">
+      <div class="row py-3 my-2 my-md-3">
+        <div class="col-md-3">
+          <div class="h6 mb-2 mb-md-0">9:30 - 9:35</div>
         </div>
-        <div class="col-sm-6">
-          <label class="form-label fs-base" for="email">E-mail professionnel*</label>
-          <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.mail.mail"
-            placeholder="e-mail professionnel*" [form]="webinarsForm" propertyName="mail" [isMandatory]="true"
-            [isDisabled]="false" [maxLength]="50" type="email"></generic-input>
-          <div class="invalid-feedback">Veuillez renseigner votre e-mail</div>
+        <div class="col-md-6">
+          <h3 class="h4 mb-0">Introduction : Le circuit des formalités</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">Présentation du Guichet Unique, son fonctionnement et son impact sur les
+            formalités des entreprises.</p>
         </div>
-        <div class="col-sm-6">
-          <label class="form-label fs-base" for="phone">Téléphone*</label>
-          <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.phoneNumber"
-            placeholder="Numéro de téléphone*" [form]="webinarsForm" propertyName="phoneNumber" [isMandatory]="true"
-            [isDisabled]="false" [maxLength]="50" type="text"></generic-input>
-          <div class="invalid-feedback">Veuillez renseigner votre numéro de téléphone</div>
-        </div>
-        <div class="col-12">
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" name="agree" type="checkbox" id="agree" [(ngModel)]="isConditionAccepted">
-            <label class="form-check-label" for="agree">J’accepte d’être contacté.e par le Journal Spécial des Sociétés
-              à des fins d’information et de marketing conformément à la Politique de Confidentialité*</label>
+        <div class="col-md-3 text-md-end">
+          <div class="d-inline-flex">
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/05.jpg" width="48" alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-3 ms-n3" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/08.jpg" width="48" alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-2 ms-n3" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/09.jpg" width="48" alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-1 ms-n3" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/12.jpg" width="48" alt="Avatar">
+            </div>
           </div>
         </div>
-        <div class="col-sm-12 pt-2">
-          <button class="btn btn-lg btn-primary" type="submit" (click)="subscribeWebinar($event)">S'inscrire</button>
+      </div>
+      <hr>
+      <div class="row py-3 my-2 my-md-3">
+        <div class="col-md-3">
+          <div class="h6 mb-2 mb-md-0">9:30 - 10:00</div>
         </div>
-      </form>
+        <div class="col-md-6">
+          <h3 class="h4 mb-0">Points d'actualités</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">Tour d’horizon de toutes les dernières actualités juridiques liées au Guichet
+            Unique et point de situation global.</p>
+        </div>
+        <div class="col-md-3 text-md-end">
+          <div class="d-inline-flex">
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/10.jpg" width="48" alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-3 ms-n3" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/06.jpg" width="48" alt="Avatar">
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row py-3 my-2 my-md-3">
+        <div class="col-md-3">
+          <div class="h6 mb-2 mb-md-0">10:00 - 10:15</div>
+        </div>
+        <div class="col-md-6">
+          <h3 class="h4 mb-0">Les conseils du JSS</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">Les bonnes pratiques à observer et l’accompagnement que propose le JSS. </p>
+        </div>
+        <div class="col-md-3 text-md-end">
+          <div class="d-inline-flex">
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row py-3 my-2 my-md-3">
+        <div class="col-md-3">
+          <div class="h6 mb-2 mb-md-0">10:15 - 10:30</div>
+        </div>
+        <div class="col-md-6">
+          <h3 class="h4 mb-0">Questions/réponses avec nos experts</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">Échanges en direct pour répondre aux interrogations des participants et
+            clarifier les points essentiels.</p>
+        </div>
+        <div class="col-md-3 text-md-end">
+          <div class="d-inline-flex">
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/08.jpg" width="48" alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-3 ms-n3" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/06.jpg" width="48" alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-2 ms-n3" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/avatar/09.jpg" width="48" alt="Avatar">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5 my-5">
+  <div class="card text-center dark-blue-dropdown py-5">
+    <div class="row">
+      <div class="col-md-8 m-auto">
+        <h2 class="text-white">Visionnez le dernier webinaire en replay et ne manquez aucune des nouveautés !</h2>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-6 align-items-center">
+        <div class="input-group custom-input-border align-items-center py-0 rounded-1 row">
+          <generic-input style="flex-grow: 1;" label="E-mail" [form]="webinarsForm" propertyName="email"
+            [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false" class="col"
+            [icon]="'mail'"></generic-input>
+
+          <button class="btn btn-light col-12 col-sm-6 col-md-4 col-lg-2 mx-1 my-1" type="button">
+            Voir le replay <i class="fas fa-envelope-open-text ms-1"></i>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
