@@ -1723,6 +1723,20 @@
                 [isDisabled]="!editMode"></select-service-family-group>
             </td>
           </tr>
+          <tr>
+            <td>
+              <select-mail [(model)]="constant.mailJssDemoRequest" label="Mail de redirection Jss - Demande de Démo"
+                [form]="constantForm" propertyName="mailJssDemoRequest" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-mail>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-mail [(model)]="constant.mailJssWebinarRequest"
+                label="Mail de redirection Jss - Inscription webinaire" [form]="constantForm"
+                propertyName="mailJssWebinarRequest" [isMandatory]="true" [isDisabled]="!editMode"></select-mail>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

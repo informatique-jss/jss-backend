@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.miscellaneous.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,11 @@ public class MailServiceImpl implements MailService {
         if (mail != null)
             return mailRepository.findByMailContainingIgnoreCase(mail);
         return null;
+    }
+
+    @Override
+    public List<Mail> findAllMails() {
+        return IterableUtils.toList(mailRepository.findAll());
     }
 
     @Override

@@ -19,6 +19,7 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
@@ -45,6 +46,9 @@ public class MyJssCrmController {
 
     @Autowired
     WebinarParticipantService webinarParticipantService;
+
+    @Autowired
+    MailHelper mailHelper;
 
     private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
     private final long rateLimit = 1000;
@@ -211,4 +215,23 @@ public class MyJssCrmController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/demo/send")
+    public ResponseEntity<Boolean> receiveDemoByMail(@RequestParam String mail, @RequestParam String firstName,
+            @RequestParam String lastName, @RequestParam(required = false) String phoneNumber,
+            HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
+        if (!validationHelper.validateMail(mail))
+            throw new OsirisValidationException("mail");
+
+        if (phoneNumber != null
+                && validationHelper.validateFrenchPhone(phoneNumber))
+            throw new OsirisValidationException("phone");
+
+        validationHelper.validateString(firstName, true, 50, "firstname");
+        validationHelper.validateString(lastName, true, 50, "lastname");
+
+        mailHelper.sendConfirmationDemoMyJss(mail);
+        mailHelper.sendCustomerDemoRequestToCommercial(mail, firstName, lastName, phoneNumber);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
 }

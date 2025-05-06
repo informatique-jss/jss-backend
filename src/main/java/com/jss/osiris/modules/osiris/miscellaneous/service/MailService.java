@@ -7,6 +7,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 public interface MailService {
     public List<Mail> findMails(String mail);
 
+    public List<Mail> findAllMails();
+
     public Mail getMail(Integer id);
 
     public List<Mail> populateMailIds(List<Mail> mails);

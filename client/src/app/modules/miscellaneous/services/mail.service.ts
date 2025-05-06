@@ -6,7 +6,7 @@ import { Mail } from '../model/Mail';
 @Injectable({
   providedIn: 'root'
 })
-export class MailService extends AppRestService<Mail>{
+export class MailService extends AppRestService<Mail> {
 
   constructor(http: HttpClient) {
     super(http, "tiers");
@@ -14,6 +14,10 @@ export class MailService extends AppRestService<Mail>{
 
   getMails(mail: string) {
     return this.getList(new HttpParams().set("mail", mail), "mails/search");
+  }
+
+  getAllMails() {
+    return this.getList(new HttpParams(), "mails/all");
   }
 
 }

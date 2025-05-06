@@ -907,4 +907,12 @@ export class ConstantService extends AppRestService<Constant> {
   getServiceFamilyGroupAnnouncement() {
     return this.constant.serviceFamilyGroupAnnouncement;
   }
+
+  getMailJssDemoRequest() {
+    return this.constant.mailJssDemoRequest;
+  }
+  getMailJssWebinarRequest() {
+    return this.constant.mailJssWebinarRequest;
+  }
+
 }

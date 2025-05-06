@@ -951,6 +951,14 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_service_family_group_announcement")
 	private ServiceFamilyGroup serviceFamilyGroupAnnouncement;
 
+	@ManyToOne
+	@JoinColumn(name = "id_mail_jss_demo_request")
+	private Mail mailJssDemoRequest;
+
+	@ManyToOne
+	@JoinColumn(name = "id_mail_jss_webinar_request")
+	private Mail mailJssWebinarRequest;
+
 	public Integer getId() {
 		return id;
 	}
@@ -2748,6 +2756,22 @@ public class Constant implements Serializable, IId {
 
 	public void setActiveDirectoryGroupInsertions(ActiveDirectoryGroup activeDirectoryGroupInsertions) {
 		this.activeDirectoryGroupInsertions = activeDirectoryGroupInsertions;
+	}
+
+	public Mail getMailJssDemoRequest() {
+		return mailJssDemoRequest;
+	}
+
+	public void setMailJssDemoRequest(Mail mailJssDemoRequest) {
+		this.mailJssDemoRequest = mailJssDemoRequest;
+	}
+
+	public Mail getMailJssWebinarRequest() {
+		return mailJssWebinarRequest;
+	}
+
+	public void setMailJssWebinarRequest(Mail mailJssWebinarRequest) {
+		this.mailJssWebinarRequest = mailJssWebinarRequest;
 	}
 
 }

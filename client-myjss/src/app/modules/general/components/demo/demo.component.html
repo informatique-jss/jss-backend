@@ -1,3 +1,92 @@
-<p>
-  demo works!
-</p>
+<section class="pt-5 mt-5 container">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
+      <li class="breadcrumb-item"><a routerLink="/demo">Démo</a></li>
+    </ol>
+  </nav>
+</section>
+
+<section class="container pb-lg-2 pb-xl-4 py-xxl-5 my-2 bg-body-secondary">
+
+  <div class="card-info">
+    <div class="row g-4">
+      <div class="col-md-5 order-md-1">
+        <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/others/Demo.png" alt="Image">
+      </div>
+      <div class="col-md-7 order-md-2">
+        <div class="d-flex flex-column h-100 card border-0 rounded-3 pt-5 px-4 px-lg-5">
+
+          <form class="row g-4">
+
+            <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">Demandez votre démo
+            </h2>
+            <div class="col-sm-6">
+              <generic-input class="form-control form-control-lg" [(model)]="firstName" label="Prénom*"
+                placeholder="Prénom*" [form]="demoForm" propertyName="firstname" [isMandatory]="true"
+                [isDisabled]="false" [maxLength]="50" type="text"></generic-input>
+            </div>
+            <div class="col-sm-6">
+              <generic-input class="form-control form-control-lg" [(model)]="lastName" placeholder="Nom*" label="Nom*"
+                [form]="demoForm" propertyName="lastname" [isMandatory]="true" [isDisabled]="false" [maxLength]="50"
+                type="text"></generic-input>
+            </div>
+            <div class="col-sm-6">
+              <generic-input class="form-control form-control-lg" [(model)]="mail" placeholder="E-mail professionnel*"
+                label="E-mail professionnel*" [form]="demoForm" propertyName="mail" [isMandatory]="true"
+                [isDisabled]="false" [maxLength]="250" type="email"></generic-input>
+            </div>
+            <div class="col-sm-6">
+              <generic-input class="form-control form-control-lg" [(model)]="phoneNumber" label="Téléphone"
+                placeholder="Numéro de téléphone" [form]="demoForm" propertyName="phoneNumber" [isMandatory]="false"
+                [isDisabled]="false" [maxLength]="250" type="text"></generic-input>
+            </div>
+            <div class="col-12">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" name="agree" type="checkbox" id="agree"
+                  [(ngModel)]="isConditionAccepted">
+                <label class="form-check-label" for="agree">J’accepte d’être contacté.e par le Journal Spécial des
+                  Sociétés
+                  à des fins d’information et de marketing conformément à la Politique de Confidentialité*</label>
+              </div>
+            </div>
+            <div class="col-12 pt-2">
+              <button class="btn btn-lg btn-primary" type="submit" (click)="getDemoByMail($event)">Demander une
+                démo</button>
+            </div>
+          </form>
+        </div>
+
+
+        <div *ngIf="checkedOnce">
+          <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert" *ngIf="checkedOnce && !firstName ">
+            <i class="ai-octagon-alert fs-xl"></i>
+            <div class="ps-2">Le prénom est obligatoire</div>
+          </div>
+          <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert" *ngIf="checkedOnce && !lastName ">
+            <i class="ai-octagon-alert fs-xl"></i>
+            <div class="ps-2">Le nom est obligatoire</div>
+          </div>
+          <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+            *ngIf="checkedOnce && (!mail || !validateEmail(mail) )">
+            <i class="ai-octagon-alert fs-xl"></i>
+            <div class="ps-2">Le mail est obligatoire</div>
+          </div>
+          <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+            *ngIf="checkedOnce && !isConditionAccepted">
+            <i class="ai-octagon-alert fs-xl"></i>
+            <div class="ps-2">L'acceptation des CGV est obligatoire</div>
+          </div>
+          <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
+            *ngIf="checkedOnce && phoneNumber &&  !validateFrenchPhone(phoneNumber) && !validateInternationalPhone(phoneNumber)">
+            <i class="ai-octagon-alert fs-xl"></i>
+            <div class="ps-2">Le numéro de téléphone est incorrect</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</section>

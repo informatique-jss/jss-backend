@@ -32,6 +32,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
@@ -1221,5 +1222,15 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() throws OsirisException {
         return this.getConstants().getServiceFamilyGroupAnnouncement();
+    }
+
+    @Override
+    public Mail getMailJssWebinarRequest() throws OsirisException {
+        return this.getConstants().getMailJssWebinarRequest();
+    }
+
+    @Override
+    public Mail getMailJssDemoRequest() throws OsirisException {
+        return this.getConstants().getMailJssDemoRequest();
     }
 }
