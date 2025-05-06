@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { Webinar } from '../../model/Webinar';
 import { WebinarParticipant } from '../../model/WebinarParticipant';
 import { WebinarParticipantService } from '../../services/webinar.participant.service';
@@ -19,10 +20,12 @@ export class WebinarParticipantComponent implements OnInit {
   tableActionWebinarParticipant: SortTableAction<WebinarParticipant>[] = [];
   webinarParticipants: WebinarParticipant[] = [];
   selectedWebinar: Webinar | undefined;
+  bookmark: Webinar | undefined;
 
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
     private webinarParticipantService: WebinarParticipantService,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   ngOnInit() {
@@ -56,17 +59,23 @@ export class WebinarParticipantComponent implements OnInit {
         }
       }, display: true,
     } as SortTableAction<WebinarParticipant>);
-
+    this.bookmark = this.userPreferenceService.getUserSearchBookmark("webinar") as Webinar;
+    if (this.bookmark) {
+      this.selectedWebinar = this.bookmark;
+      this.searchWebinarParticipants();
+    }
   }
 
   webinarParticipantForm = this.formBuilder.group({
   });
 
   searchWebinarParticipants() {
-    if (this.selectedWebinar)
+    if (this.selectedWebinar) {
+      this.userPreferenceService.setUserSearchBookmark(this.selectedWebinar, "webinar");
       this.webinarParticipantService.getWebinarParticipants(this.selectedWebinar).subscribe(response => {
         if (response)
           this.webinarParticipants = response;
       });
+    }
   }
 }
