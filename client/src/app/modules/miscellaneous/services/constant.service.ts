@@ -830,6 +830,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.activeDirectoryGroupFormalites;
   }
 
+  getActiveDirectoryGroupInsertions() {
+    return this.constant.activeDirectoryGroupInsertions;
+  }
+
   getActiveDirectoryGroupSales() {
     return this.constant.activeDirectoryGroupSales;
   }
@@ -863,6 +867,10 @@ export class ConstantService extends AppRestService<Constant> {
 
   getCategorySerie() {
     return this.constant.categorySerie;
+  }
+
+  getCategoryExclusivity() {
+    return this.constant.categoryExclusivity;
   }
 
   getMyJssCategoryAnnouncement() {

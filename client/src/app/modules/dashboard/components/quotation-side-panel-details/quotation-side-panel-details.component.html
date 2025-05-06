@@ -116,7 +116,8 @@
         </div>
 
         <ng-container *ngFor="let provision of service.provisions; let index = index">
-          <provision-side-panel-details [provision]="provision" [displayStatus]="false"></provision-side-panel-details>
+          <provision-side-panel-details [provision]="provision" [displayStatus]="false"
+            [assoAffaireOrder]="asso"></provision-side-panel-details>
           <hr *ngIf="index<service.provisions.length-1" />
         </ng-container>
       </mat-expansion-panel>
@@ -126,7 +127,9 @@
 
 <div class="timestamps" *ngIf="selectedEntity">
   <p>Créé le {{selectedEntity.createdDate | date:'EEEE d MMMM HH:mm'}}<br />
-    Mis à jour le {{selectedEntity.lastStatusUpdate | date:'EEEE d MMMM HH:mm'}}</p>
+    <span *ngIf="selectedEntity.lastStatusUpdate">Mis à jour le {{selectedEntity.lastStatusUpdate | date:'EEEE d MMMM
+      HH:mm'}}</span>
+  </p>
 </div>
 
 <div class="activity" *ngIf="selectedEntity">

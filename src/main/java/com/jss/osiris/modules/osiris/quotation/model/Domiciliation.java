@@ -54,6 +54,7 @@ public class Domiciliation implements IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domicilisation_status")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private DomiciliationStatus domiciliationStatus;
 
 	@ManyToOne(fetch = FetchType.LAZY)

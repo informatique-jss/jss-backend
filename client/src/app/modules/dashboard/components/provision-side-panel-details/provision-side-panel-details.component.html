@@ -1,5 +1,7 @@
 <div class="field-row" *ngIf="provision">
-  <div class="label" style="width: 100%;"><strong>{{provision.provisionFamilyType.label}} -
+  <div class="label pointer" style="width: 100%;"
+    (click)="assoAffaireOrder?displayProvision($event, assoAffaireOrder, provision):''">
+    <strong>{{provision.provisionFamilyType.label}} -
       {{provision.provisionType.label}}</strong>
   </div>
 </div>
@@ -42,12 +44,43 @@
       {{provision.announcement.characterNumber}}
     </div>
   </div>
-  <div class="field-row" *ngIf="provision.announcement.notice">
-    <div class="label">Annonce</div>
-    <div class="value td-label" [matTooltip]="provision.announcement.notice">
-      <span *ngIf="provision.announcement.noticeHeader"
-        [innerHTML]="provision.announcement.noticeHeader| trustHtml"></span>
-      <span *ngIf="provision.announcement.noticeHeader" [innerHTML]="provision.announcement.notice| trustHtml"></span>
+</ng-container>
+<ng-container *ngIf="provision && provision.simpleProvision">
+  <div class="field-row" *ngIf="displayStatus">
+    <div class="label">Status</div>
+    <div class="value">
+      {{provision.simpleProvision.simpleProvisionStatus.label}}
     </div>
   </div>
+  <div class="field-row"
+    *ngIf="provision.simpleProvision.waitedCompetentAuthority && provision.simpleProvision.simpleProvisionStatus.code==SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY">
+    <div class="label">AC en attente</div>
+    <div class="value">
+      {{provision.simpleProvision.waitedCompetentAuthority.label}}
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="provision && provision.formalite">
+  <div class="field-row" *ngIf="displayStatus">
+    <div class="label">Status</div>
+    <div class="value">
+      {{provision.formalite.formaliteStatus.label}}
+    </div>
+  </div>
+  <div class="field-row"
+    *ngIf="provision.formalite.waitedCompetentAuthority && provision.formalite.formaliteStatus.code==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY">
+    <div class="label">AC en attente</div>
+    <div class="value">
+      {{provision.formalite.waitedCompetentAuthority.label}}
+    </div>
+  </div>
+  <ng-container
+    *ngIf="provision.formalite.formalitesGuichetUnique && provision.formalite.formalitesGuichetUnique.length>0">
+    <div class="field-row" *ngFor="let formaliteGu of provision.formalite.formalitesGuichetUnique">
+      <div class="label pointer" (click)="openFormaliteGu(formaliteGu)">Liasse {{formaliteGu.liasseNumber}}</div>
+      <div class="value">
+        {{formaliteGu.status.label}}
+      </div>
+    </div>
+  </ng-container>
 </ng-container>

@@ -44,7 +44,7 @@
 .kanban-container {
   display: flex;
   gap: 16px;
-  padding: 16px;
+  padding-bottom: 16px;
   padding-left: 0px;
   padding-right: 0px;
   justify-content: flex-start;

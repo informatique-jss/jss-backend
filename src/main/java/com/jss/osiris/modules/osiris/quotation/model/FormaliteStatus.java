@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class FormaliteStatus implements Serializable, IId {
+public class FormaliteStatus extends IWorkflowElement implements Serializable {
 
 	/**
 	 * WARNINNG : add update in FormaliteStatutsService when adding a new status
@@ -37,11 +36,12 @@ public class FormaliteStatus implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 100)
@@ -126,16 +126,8 @@ public class FormaliteStatus implements Serializable, IId {
 		return successors;
 	}
 
-	public void setSuccessors(List<FormaliteStatus> successors) {
-		this.successors = successors;
-	}
-
 	public List<FormaliteStatus> getPredecessors() {
 		return predecessors;
-	}
-
-	public void setPredecessors(List<FormaliteStatus> predecessors) {
-		this.predecessors = predecessors;
 	}
 
 	public String getAggregateStatus() {

@@ -21,9 +21,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 
 public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> {
 
-        @Query("select p from Post p where isCancelled=false")
-        List<Post> searchAll(Pageable pageableRequest);
-
         @Query("select p from Post p where p.isCancelled =:isCancelled and ((:jssCategory IS NOT NULL AND :jssCategory MEMBER OF p.jssCategories) OR (:jssCategory IS NULL AND size(p.jssCategories) > 0))")
         Page<Post> findByJssCategoriesAndIsCancelled(@Param("jssCategory") JssCategory jssCategory,
                         @Param("isCancelled") Boolean isCancelled,
@@ -34,6 +31,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         @Param("isCancelled") Boolean isCancelled,
                         Pageable pageableRequest);
 
+        @Query("select p from Post p where p.isCancelled =:isCancelled and :category MEMBER OF p.postCategories")
         Page<Post> findByPostCategoriesAndIsCancelled(Category category, Boolean isCancelled, Pageable pageableRequest);
 
         Post findBySlugAndIsCancelled(String slug, Boolean isCancelled);
@@ -118,5 +116,4 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         + " ")
         List<Post> searchPostsByMyJssCategory(@Param("myJssCategory") MyJssCategory myJssCategory,
                         Pageable pageable);
-
 }

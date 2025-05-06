@@ -41,7 +41,7 @@ public class Formalite implements IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formalite_status")
     @IndexedField
-    @JsonView({ JacksonViews.OsirisDetailedView.class })
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
     private FormaliteStatus formaliteStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -588,6 +588,28 @@ public class WordpressController {
 				postService.searchPostsByMyJssCategory(searchText, myJssCategory, pageableRequest), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/search/posts/category")
+	public ResponseEntity<Page<Post>> searchPostsByCategory(@RequestParam(required = false) String searchText,
+			@RequestParam Integer categoryId,
+			@RequestParam(required = false, defaultValue = "0") Integer page,
+			@RequestParam(required = false, defaultValue = "10") Integer size,
+			HttpServletRequest request) {
+		detectFlood(request);
+
+		if (searchText == null || searchText.trim().length() == 0)
+			searchText = "";
+		searchText = searchText.trim().toLowerCase();
+
+		Category categoryExclusive = categoryService.getCategory(categoryId);
+
+		Order order = new Order(Direction.DESC, "date");
+		Sort sort = Sort.by(Arrays.asList(order));
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size), sort);
+
+		return new ResponseEntity<Page<Post>>(
+				postService.searchPostsByCategory(searchText, categoryExclusive, pageableRequest), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/myjss-category")
 	public ResponseEntity<Page<Post>> getPostsByMyJssCategory(@RequestParam Integer myJssCategoryId,
 			@RequestParam(required = false) String searchText,

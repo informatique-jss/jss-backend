@@ -117,7 +117,7 @@ export class AppService {
     menuItem.push({ label: "Nos fiches pratiques", iconClass: "ai-wallet", route: "/tools/practical-sheets" } as MenuItem);
     menuItem.push({ label: "Pièces obligatoires", iconClass: "ai-user-check", route: "/tools/mandatory-documents" } as MenuItem);
     menuItem.push({ label: "Webinaires", iconClass: "ai-chart", route: "/tools/webinars" } as MenuItem);
-    // menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "/tools/our-exclusives" } as MenuItem);
+    menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "/tools/exclusives" } as MenuItem);
 
     return menuItem;
   }

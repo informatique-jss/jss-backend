@@ -67,10 +67,11 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
 
       // Retrieve bookmark
       let bookmarkpossibleEntityStatusIds = this.userPreferenceService.getUserSearchBookmark("kanban-quotation-status") as number[];
-      for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
-        for (let orderStatu of this.possibleEntityStatus!)
-          if (bookmarkpossibleEntityStatusId == orderStatu.id)
-            this.statusSelected.push(orderStatu);
+      if (bookmarkpossibleEntityStatusIds)
+        for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
+          for (let orderStatu of this.possibleEntityStatus!)
+            if (bookmarkpossibleEntityStatusId == orderStatu.id)
+              this.statusSelected.push(orderStatu);
 
       let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-quotation-employee") as Employee[];
       if (bookmarkOrderEmployees && bookmarkOrderEmployees.length > 0)
@@ -81,6 +82,8 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
         for (let swimlaneType of this.swimlaneTypes)
           if (swimlaneType.fieldName == bookmarkSwimlaneType.fieldName)
             this.selectedSwimlaneType = swimlaneType;
+      } else {
+        this.selectedSwimlaneType = this.swimlaneTypes[0];
       }
 
       if (this.possibleEntityStatus && this.statusSelected) {
@@ -173,7 +176,6 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
       this.fetchEntityAndOpenPanel(order, true, false);
     });
   }
-
 
   startFilter(isOnlyFilterText = false) {
     clearTimeout(this.debounce);

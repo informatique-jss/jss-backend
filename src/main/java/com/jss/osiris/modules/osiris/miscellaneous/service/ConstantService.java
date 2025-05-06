@@ -466,6 +466,8 @@ public interface ConstantService {
 
     public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException;
 
+    public ActiveDirectoryGroup getActiveDirectoryGroupInsertions() throws OsirisException;
+
     public ActiveDirectoryGroup getActiveDirectoryGroupSales() throws OsirisException;
 
     public ActiveDirectoryGroup getActiveDirectoryGroupFacturation() throws OsirisException;
@@ -487,6 +489,8 @@ public interface ConstantService {
     public Category getCategoryArticle() throws OsirisException;
 
     public Category getCategorySerie() throws OsirisException;
+
+    public Category getCategoryExclusivity() throws OsirisException;
 
     public MyJssCategory getMyJssCategoryAnnouncement() throws OsirisException;
 

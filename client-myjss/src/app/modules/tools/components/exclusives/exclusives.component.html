@@ -1,0 +1,92 @@
+<section class="container my-5">
+  <div class="row align-items-center  pt-md-2 pt-lg-3 pt-xl-4 pb-lg-2 pb-xl-3">
+    <div class="col-md-6">
+      <h1 class="h1 pe-xxl-5 me-xl-4 mb-md-0 text-white">Nos contenus exclusifs à ne pas manquer !</h1>
+    </div>
+    <div class="col-md-6 col-xl-5 offset-xl-1">
+      <p class="text-body fs-lg mb-5 text-white">Retrouvez les dernières actualités du marché des annonces et formalités
+        légales en exclusivité sur MyJSS.
+      </p>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="jarallax overflow-hidden z-2" data-speed="0.5">
+    <div class="jarallax-img"
+      style="background-image: url('assets/img/my-jss-tools/mandatory-documents-jarallax.jpg');"></div>
+  </div>
+</section>
+
+<section class="container py-5" #exclusivitySection>
+  <div class="row align-items-center gy-2 mb-4 pb-1 pb-sm-2 pb-lg-3">
+    <div class="col-lg-8">
+      <h2 class="mb-lg-0">Nos exclus</h2>
+    </div>
+    <div class="col-lg-4 col-sm-7">
+      <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
+        <div class="row align-items-center">
+          <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="exclusivePostsForm"
+            propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+            (onFormChange)="searchForPosts()" [icon]="'search'" class="btn-search col"></generic-input>
+          <div *ngIf="isLoading" class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
+            <span class="visually-hidden">chargement...</span>
+          </div>
+          <button *ngIf="searchText" class="col-1 btn btn-link btn-search" (click)="clearSearch()">
+            <i class="ai ai-cross-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item border-top mb-0" *ngIf="isLoading">
+    <div class="accordion-header">
+      <p class="article placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4 me-2"></span>
+        <span class="placeholder placeholder-sm col-6"></span>
+        <span class="placeholder placeholder-sm col-8"></span>
+      </p>
+    </div>
+  </div>
+  <div *ngIf="searchResults && searchResults.length>0 ">
+    <div *ngFor="let post of searchResults">
+      <article class="row g-0 border-0 mb-5">
+        <img class="col-sm-5 col-lg-4 rounded-5 post-image" (click)="openPost(post.slug, $event)"
+          [src]="post.media && post.media.urlLarge ? post.media.urlLarge : (post.media && post.media.urlFull ? post.media.urlFull : 'assets/img/blog/list/01.jpg')"
+          alt="Post image">
+        <div class="col-sm-7 col-lg-8">
+          <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+            <h3>
+              <a class="card-title-truncate" (click)="openPost(post.slug, $event)">{{post.titleText}}</a>
+            </h3>
+            <p class="d-sm-none d-md-block card-text-truncate" [innerHTML]="post.excerptText | trustHtml">
+            </p>
+            <div class="d-flex flex-wrap align-items-center mt-n2">
+              <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+              <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+              <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
+                class="badge text-nav fs-xs border mt-2">{{tag.slug}}</a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div *ngIf="(!searchResults || searchResults.length==0) && !isLoading">
+    <p> Aucun article trouvé</p>
+  </div>
+
+  <div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-3 pt-lg-0 mb-md-2 mb-xl-4">
+    <div class="col-12 text-end order-md-1 order-1">
+      <nav *ngIf="totalPages > 1" aria-label="Page navigation">
+        <ul class="pagination pagination-sm justify-content-end">
+          <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
+            <a class="page-link" (click)="goToPage(p)">{{ p + 1 }}</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>
