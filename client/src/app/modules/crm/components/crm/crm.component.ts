@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 
@@ -16,5 +17,15 @@ export class CrmComponent implements OnInit {
 
   ngOnInit() {
     this.appService.changeHeaderTitle("CRM");
+    this.restoreTab();
+  }
+
+  index: number = 0;
+  onTabChange(event: MatTabChangeEvent) {
+    this.userPreferenceService.setUserTabsSelectionIndex('crm', event.index);
+  }
+
+  restoreTab() {
+    this.index = this.userPreferenceService.getUserTabsSelectionIndex('crm');
   }
 }

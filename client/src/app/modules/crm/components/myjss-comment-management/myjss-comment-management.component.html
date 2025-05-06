@@ -1,55 +1,44 @@
-<div>
-  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
-    <mat-tab label="Gestion des commentaires MyJSS">
-      <ng-template matTabContent>
-        <div class="mat-elevation-z2 form-div">
-          <div class=" full-width">
-            <table class="full-width table-fixed-layout" *ngIf=" commentSearch">
-              <tr>
-                <td>
-                  <autocomplete-post [(model)]="commentSearch.post" label="Titre de l'article"
-                    [form]="commentSearchForm" propertyName="postTitle" [isMandatory]=" false">
-                  </autocomplete-post>
-                </td>
-                <td>
-                  <generic-input [(model)]="commentSearch.content" label="Contenu du commentaire"
-                    [form]="commentSearchForm" propertyName="content" [isMandatory]="false">
-                  </generic-input>
-                </td>
-                <td>
-                  <generic-datepicker [(model)]="commentSearch.creationDate" label="Date de création"
-                    [form]="commentSearchForm" propertyName="creationDate" [isMandatory]="false"
-                    [isDisabled]="false"></generic-datepicker>
-                </td>
-                <td>
-                  <generic-input [(model)]="commentSearch.authorFirstLastName" label="Prénom et/ou nom de l'auteur"
-                    [form]="commentSearchForm" propertyName="authorFirstLastName" [isMandatory]="false"
-                    [isDisabled]="false"></generic-input>
-                </td>
-                <td>
-                  <generic-toggle [(model)]="commentSearch.isModerated" label="Est modéré ?" [form]="commentSearchForm"
-                    propertyName="isModerated" [isMandatory]="false" [isDisabled]="false"></generic-toggle>
-                </td>
-                <td>
-                  <generic-toggle [(model)]="commentSearch.isDeleted" label="Commentaire supprimé ?"
-                    [form]="commentSearchForm" propertyName="isDeleted" [isMandatory]="false"
-                    [isDisabled]="false"></generic-toggle>
-                </td>
-                <td>
-                  <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchComments(0)"
-                    class="add-button">
-                    <mat-icon>search</mat-icon>
-                  </button>
-                </td>
-              </tr>
-            </table>
-            <sort-table [actions]="tableActionComment" [columns]="displayedColumnsComments" [values]="myjssComments"
-              tableName="Comments" [isSmallestHeight]="true"
-              *ngIf="displayedColumnsComments && displayedColumnsComments.length>0 " [displayTotalLines]="true">
-            </sort-table>
-          </div>
-        </div>
-      </ng-template>
-    </mat-tab>
-  </mat-tab-group>
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout" *ngIf=" commentSearch">
+      <tr>
+        <td>
+          <autocomplete-post [(model)]="commentSearch.post" label="Titre de l'article" [form]="commentSearchForm"
+            propertyName="postTitle" [isMandatory]=" false">
+          </autocomplete-post>
+        </td>
+        <td>
+          <generic-input [(model)]="commentSearch.content" label="Contenu du commentaire" [form]="commentSearchForm"
+            propertyName="content" [isMandatory]="false">
+          </generic-input>
+        </td>
+        <td>
+          <generic-datepicker [(model)]="commentSearch.creationDate" label="Date de création" [form]="commentSearchForm"
+            propertyName="creationDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+        </td>
+        <td>
+          <generic-input [(model)]="commentSearch.authorFirstLastName" label="Prénom et/ou nom de l'auteur"
+            [form]="commentSearchForm" propertyName="authorFirstLastName" [isMandatory]="false"
+            [isDisabled]="false"></generic-input>
+        </td>
+        <td>
+          <generic-toggle [(model)]="commentSearch.isModerated" label="Est modéré ?" [form]="commentSearchForm"
+            propertyName="isModerated" [isMandatory]="false" [isDisabled]="false"></generic-toggle>
+        </td>
+        <td>
+          <generic-toggle [(model)]="commentSearch.isDeleted" label="Commentaire supprimé ?" [form]="commentSearchForm"
+            propertyName="isDeleted" [isMandatory]="false" [isDisabled]="false"></generic-toggle>
+        </td>
+        <td>
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchComments(0)" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableActionComment" [columns]="displayedColumnsComments" [values]="myjssComments"
+      tableName="Comments" [isSmallestHeight]="true"
+      *ngIf="displayedColumnsComments && displayedColumnsComments.length>0 " [displayTotalLines]="true">
+    </sort-table>
+  </div>
 </div>

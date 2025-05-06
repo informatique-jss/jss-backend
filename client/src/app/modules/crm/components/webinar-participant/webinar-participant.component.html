@@ -1,0 +1,22 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout table-bilan">
+      <tr>
+        <select-webinar [(model)]="selectedWebinar" label="Webinaire" [form]="webinarParticipantForm"
+          propertyName="webinar" [isMandatory]="true" [isDisabled]=false></select-webinar>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchWebinarParticipants()"
+            class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+
+    <sort-table [actions]="tableActionWebinarParticipant" [columns]="displayedColumnsWebinarParticipants"
+      [values]="webinarParticipants" tableName="webinarParticipants"
+      *ngIf="displayedColumnsWebinarParticipants && displayedColumnsWebinarParticipants.length>0 "
+      [displayTotalLines]="true">
+    </sort-table>
+  </div>
+</div>

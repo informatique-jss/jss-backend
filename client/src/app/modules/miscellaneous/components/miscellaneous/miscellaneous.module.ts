@@ -262,6 +262,7 @@ import { SelectTypeDocumentComponent } from '../forms/select-type-document/selec
 import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component';
 import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
+import { SelectWebinarComponent } from '../forms/select-webinar/select-webinar.component';
 import { SingleChipsMailComponent } from '../forms/single-chips-mail/single-chips-mail.component';
 import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
 import { GradeComponent } from '../grade/grade.component';
@@ -564,7 +565,8 @@ const routes: Routes = [
     SelectJssCategoryComponent,
     SelectEmployeeComponent,
     SelectNotificationTypesComponent,
-    NotificationListComponent
+    NotificationListComponent,
+    SelectWebinarComponent
   ],
   exports: [
     HistoryComponent,
@@ -812,7 +814,8 @@ const routes: Routes = [
     SelectMyJssCategoryComponent,
     SelectJssCategoryComponent,
     SelectEmployeeComponent,
-    SelectNotificationTypesComponent
+    SelectNotificationTypesComponent,
+    SelectWebinarComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

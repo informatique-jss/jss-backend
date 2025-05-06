@@ -8,6 +8,7 @@ import { ExclusivesComponent } from '../exclusives/exclusives.component';
 import { MandatoryDocumentsComponent } from '../mandatory-documents/mandatory-documents.component';
 import { PostComponent } from '../post/post.component';
 import { PracticalSheetsComponent } from '../practical-sheets/practical-sheets.component';
+import { WebinarsComponent } from '../webinars/webinars.component';
 import { ToolsComponent } from './tools.component';
 
 const routes: Routes = [
@@ -16,6 +17,7 @@ const routes: Routes = [
     children: [
       { path: 'practical-sheets', component: PracticalSheetsComponent },
       { path: 'mandatory-documents', component: MandatoryDocumentsComponent },
+      { path: 'webinars', component: WebinarsComponent },
       { path: 'exclusives', component: ExclusivesComponent },
     ]
   },
@@ -35,6 +37,7 @@ const routes: Routes = [
     PostComponent,
     PracticalSheetsComponent,
     MandatoryDocumentsComponent,
+    WebinarsComponent,
     ExclusivesComponent
   ], schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
