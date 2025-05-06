@@ -1,27 +1,30 @@
 package com.jss.osiris.modules.myjss.crm.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.crm.model.Webinar;
-import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
-public class WebinarParticipant implements IId {
+@Table(indexes = {
+        @Index(name = "idx_webinar_participant_mail", columnList = "id_mail", unique = true) })
+public class WebinarParticipant implements Serializable {
     @Id
     @SequenceGenerator(name = "webinar_participant_sequence", sequenceName = "webinar_participant_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "webinar_participant_sequence")
@@ -34,7 +37,7 @@ public class WebinarParticipant implements IId {
     @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
     private String lastname;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_mail", nullable = false)
     @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
     private Mail mail;

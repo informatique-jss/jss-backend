@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
@@ -12,6 +13,7 @@ import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.myjss.crm.repository.WebinarParticipantRepository;
 import com.jss.osiris.modules.osiris.crm.model.Webinar;
 import com.jss.osiris.modules.osiris.crm.service.WebinarService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 
 @Service
@@ -42,15 +44,22 @@ public class WebinarParticipantServiceImpl implements WebinarParticipantService 
         return webinarParticipantRepository.save(webinarParticipant);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public WebinarParticipant subscribeToWebinar(WebinarParticipant webinarParticipant) throws OsirisException {
+        WebinarParticipant existingWebinarParticipant = null;
         if (webinarParticipant != null) {
             webinarParticipant.setIsParticipating(true);
-            webinarParticipant.setWebinars(List.of(webinarService.getWebinars().get(0)));
-            if (webinarParticipant.getMail() != null)
-                mailService.populateMailId(webinarParticipant.getMail());
-            this.addOrUpdateWebinarParticipant(webinarParticipant);
-            mailHelper.sendConfirmationSubscriptionWebinarMyJss(webinarParticipant);
+            webinarParticipant.setWebinars(List.of(webinarService.getWebinar(1)));
+            existingWebinarParticipant = webinarParticipantRepository
+                    .findByMail_Mail(webinarParticipant.getMail().getMail());
+            if (existingWebinarParticipant == null) {
+                Mail newWebinarParticipantMail = mailService.populateMailId(webinarParticipant.getMail());
+                webinarParticipant.setMail(newWebinarParticipantMail);
+                webinarParticipantRepository.save(webinarParticipant);
+                mailHelper.sendConfirmationSubscriptionWebinarMyJss(webinarParticipant);
+                return webinarParticipant;
+            }
         }
         return null;
     }

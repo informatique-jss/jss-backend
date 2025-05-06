@@ -1,4 +1,4 @@
-<mat-tab-group animationDuration="0ms">
+<mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
   <mat-tab label="Gestion des commentaires MyJSS">
     <ng-template matTabContent>
       <myjss-comment-management></myjss-comment-management>

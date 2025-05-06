@@ -8,4 +8,6 @@ import com.jss.osiris.modules.osiris.crm.model.Webinar;
 
 public interface WebinarParticipantRepository extends QueryCacheCrudRepository<WebinarParticipant, Integer> {
     List<WebinarParticipant> findByWebinarsAndIsParticipating(Webinar webinar, Boolean isParticipating);
+
+    WebinarParticipant findByMail_Mail(String mail);
 }

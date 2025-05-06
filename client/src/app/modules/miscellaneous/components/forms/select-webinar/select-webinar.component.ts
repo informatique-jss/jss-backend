@@ -26,7 +26,7 @@ export class SelectWebinarComponent extends GenericSelectComponent<Webinar> impl
 
   displayLabel(object: Webinar): string {
     if (object)
-      return object.label + " (" + object.code + ")";
+      return object.label;
     return "";
   }
 

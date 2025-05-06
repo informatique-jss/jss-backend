@@ -198,8 +198,9 @@ public class MyJssCrmController {
     public ResponseEntity<Boolean> subscribeToWebinar(@RequestBody WebinarParticipant webinarParticipant,
             HttpServletRequest request) throws OsirisException {
         detectFlood(request);
-        if (validationHelper.validateMail(webinarParticipant.getMail())
-                && validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber())) {
+        if (validationHelper.validateMail(webinarParticipant.getMail())) {
+            if (webinarParticipant.getPhoneNumber() != null)
+                validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber());
             webinarParticipantService.subscribeToWebinar(webinarParticipant);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
         } else {
