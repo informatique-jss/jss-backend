@@ -774,6 +774,25 @@ public class MailHelper {
         customerMailService.addMailToQueue(customerMail);
     }
 
+    public void sendConfirmationContactFormMyJss(String mailAdress) throws OsirisException {
+        CustomerMail customerMail = new CustomerMail();
+        customerMail.setReplyToMail(constantService.getStringMyJssDemoRequestMail());
+        customerMail.setSubject("Confirmation de la réception de votre demande d'information");
+        customerMail.setMailTemplate(CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
+        customerMail.setHeaderPicture("images/mails/quotation-validated.png");
+        MailComputeResult mailComputeResult = new MailComputeResult();
+
+        Mail mail = new Mail();
+        mail.setMail(mailAdress);
+        mail = mailService.populateMailId(mail);
+        mailComputeResult.setRecipientsMailTo(List.of(mail));
+        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
+        mailComputeResult.setIsSendToClient(false);
+        mailComputeResult.setIsSendToAffaire(false);
+        customerMail.setMailComputeResult(mailComputeResult);
+        customerMailService.addMailToQueue(customerMail);
+    }
+//TODO factoriser les methodes 
     public void sendCustomerDemoRequestToCommercial(String mailAdress, String firstName, String lastName,
             String phoneNumber) throws OsirisException {
         CustomerMail customerMail = new CustomerMail();
@@ -792,6 +811,27 @@ public class MailHelper {
         mailComputeResult.setIsSendToAffaire(false);
         customerMail.setMailComputeResult(mailComputeResult);
         customerMail.setExplaination(firstName + " " + lastName + " - " + mailAdress);
+        customerMailService.addMailToQueue(customerMail);
+    }
+
+    public void sendContactFormNotificationMail(String mailAdress, String firstName, String lastName,
+            String message) throws OsirisException {
+        CustomerMail customerMail = new CustomerMail();
+        customerMail.setReplyToMail(constantService.getStringMyJssDemoRequestMail());
+        customerMail.setSubject("Notification d'une prise d'information client");
+        customerMail.setMailTemplate(CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST);
+        customerMail.setHeaderPicture("images/mails/quotation-validated.png");// TODO change for right picture
+        MailComputeResult mailComputeResult = new MailComputeResult();
+
+        Mail mail = new Mail();
+        mail.setMail(constantService.getStringMyJssDemoRequestMail());
+        mail = mailService.populateMailId(mail);
+        mailComputeResult.setRecipientsMailTo(List.of(mail));
+        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
+        mailComputeResult.setIsSendToClient(false);
+        mailComputeResult.setIsSendToAffaire(false);
+        customerMail.setMailComputeResult(mailComputeResult);
+        customerMail.setExplaination(firstName + " " + lastName + " - " + mailAdress + " : " + message);
         customerMailService.addMailToQueue(customerMail);
     }
 
