@@ -38,6 +38,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
+import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
@@ -732,6 +733,21 @@ public class MailHelper {
         mail.setSubject("Attente d'acompte - Votre commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, null));
 
+        mailService.addMailToQueue(mail);
+    }
+
+    public void sendConfirmationSubscriptionWebinarMyJss(WebinarParticipant webinarParticipant) throws OsirisException {
+        CustomerMail mail = new CustomerMail();
+        mail.setReplyToMail("contact@jss.fr");
+        mail.setSubject("Confirmation d'inscription au webinaire");
+        mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_WEBINAR_SUBSCRIPTION);
+        mail.setHeaderPicture("images/mails/quotation-validated.png");
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        mailComputeResult.setRecipientsMailTo(List.of(webinarParticipant.getMail()));
+        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
+        mailComputeResult.setIsSendToClient(false);
+        mailComputeResult.setIsSendToAffaire(false);
+        mail.setMailComputeResult(mailComputeResult);
         mailService.addMailToQueue(mail);
     }
 

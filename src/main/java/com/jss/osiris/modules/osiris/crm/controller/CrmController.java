@@ -1,5 +1,8 @@
 package com.jss.osiris.modules.osiris.crm.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,11 +22,15 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
+import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.model.CommentSearch;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
+import com.jss.osiris.modules.osiris.crm.model.Webinar;
 import com.jss.osiris.modules.osiris.crm.service.CommentService;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
+import com.jss.osiris.modules.osiris.crm.service.WebinarService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
 @RestController
@@ -39,6 +46,12 @@ public class CrmController {
 
         @Autowired
         private CommentService commentService;
+
+        @Autowired
+        WebinarService webinarService;
+
+        @Autowired
+        WebinarParticipantService webinarParticipantService;
 
         @JsonView(JacksonViews.MyJssDetailedView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
@@ -229,5 +242,47 @@ public class CrmController {
                 }
 
                 return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/webinars")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<List<Webinar>> getWebinars() {
+                return new ResponseEntity<List<Webinar>>(webinarService.getWebinars(), HttpStatus.OK);
+        }
+
+        @PostMapping(inputEntryPoint + "/webinar")
+        @JsonView(JacksonViews.OsirisDetailedView.class)
+        public ResponseEntity<Webinar> addOrUpdateWebinar(
+                        @RequestBody Webinar webinars) throws OsirisValidationException, OsirisException {
+                if (webinars.getId() != null)
+                        validationHelper.validateReferential(webinars, true, "webinars");
+                validationHelper.validateString(webinars.getCode(), true, "code");
+                validationHelper.validateString(webinars.getLabel(), true, "label");
+
+                return new ResponseEntity<Webinar>(webinarService.addOrUpdateWebinar(webinars), HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/webinar-participants")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<List<WebinarParticipant>> getWebinarParticipants(@RequestParam Integer webinarId) {
+                Webinar webinar = webinarService.getWebinar(webinarId);
+                if (webinar == null)
+                        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+                return new ResponseEntity<List<WebinarParticipant>>(
+                                webinarParticipantService.getWebinarParticipants(webinar),
+                                HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/webinar-participant/delete")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<WebinarParticipant> deleteWebinarParticipant(@RequestParam Integer webinarParticipantId)
+                        throws OsirisValidationException {
+                WebinarParticipant webinarParticipant = webinarParticipantService
+                                .getWebinarParticipant(webinarParticipantId);
+                if (webinarParticipant == null)
+                        throw new OsirisValidationException("webinarParticipant");
+
+                return new ResponseEntity<WebinarParticipant>(
+                                webinarParticipantService.deleteWebinarParticipant(webinarParticipant), HttpStatus.OK);
         }
 }
