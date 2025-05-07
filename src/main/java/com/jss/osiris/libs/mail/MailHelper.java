@@ -788,6 +788,7 @@ public class MailHelper {
         mailComputeResult.setIsSendToClient(false);
         mailComputeResult.setIsSendToAffaire(false);
         customerMail.setMailComputeResult(mailComputeResult);
+        customerMail.setExplaination(firstName + " " + lastName + " - " + mailAdress);
         customerMailService.addMailToQueue(customerMail);
     }
 
