@@ -1725,16 +1725,17 @@
           </tr>
           <tr>
             <td>
-              <select-mail [(model)]="constant.mailJssDemoRequest" label="Mail de redirection Jss - Demande de Démo"
-                [form]="constantForm" propertyName="mailJssDemoRequest" [isMandatory]="true"
-                [isDisabled]="!editMode"></select-mail>
+              <generic-input [(model)]="constant.mailJssDemoRequest" label="Mail de redirection Jss - Demande de Démo"
+                [form]="constantForm" propertyName="mailJssDemoRequest" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="255"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
-              <select-mail [(model)]="constant.mailJssWebinarRequest"
+              <generic-input [(model)]="constant.mailJssWebinarRequest"
                 label="Mail de redirection Jss - Inscription webinaire" [form]="constantForm"
-                propertyName="mailJssWebinarRequest" [isMandatory]="true" [isDisabled]="!editMode"></select-mail>
+                propertyName="mailJssWebinarRequest" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="255"></generic-input>
             </td>
           </tr>
         </table>

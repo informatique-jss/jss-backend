@@ -46,7 +46,6 @@ import { Department } from "./Department";
 import { DocumentType } from "./DocumentType";
 import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
-import { Mail } from './Mail';
 import { MyJssCategory } from './MyJssCategory';
 import { PaymentType } from "./PaymentType";
 import { TiersFollowupType } from './TiersFollowupType';
@@ -276,6 +275,6 @@ export interface Constant {
   accountingAccountClassProduct: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
-  mailJssDemoRequest: Mail;
-  mailJssWebinarRequest: Mail;
+  mailJssDemoRequest: string;
+  mailJssWebinarRequest: string;
 }

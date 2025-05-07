@@ -24,7 +24,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
@@ -509,7 +508,7 @@ public interface ConstantService {
 
     public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() throws OsirisException;
 
-    public Mail getMailJssWebinarRequest() throws OsirisException;
+    public String getMailJssWebinarRequest() throws OsirisException;
 
-    public Mail getMailJssDemoRequest() throws OsirisException;
+    public String getMailJssDemoRequest() throws OsirisException;
 }
