@@ -742,7 +742,7 @@ public class MailHelper {
 
     public void sendConfirmationSubscriptionWebinarMyJss(WebinarParticipant webinarParticipant) throws OsirisException {
         CustomerMail mail = new CustomerMail();
-        mail.setReplyToMail(constantService.getMailJssWebinarRequest());
+        mail.setReplyToMail(constantService.getStringMyJssWebinarRequestMail());
         mail.setSubject("Confirmation d'inscription au webinaire");
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_WEBINAR_SUBSCRIPTION);
         mail.setHeaderPicture("images/mails/quotation-validated.png");
@@ -757,7 +757,7 @@ public class MailHelper {
 
     public void sendConfirmationDemoMyJss(String mailAdress) throws OsirisException {
         CustomerMail customerMail = new CustomerMail();
-        customerMail.setReplyToMail(constantService.getMailJssDemoRequest());
+        customerMail.setReplyToMail(constantService.getStringMyJssDemoRequestMail());
         customerMail.setSubject("Confirmation de votre demande de démo");
         customerMail.setMailTemplate(CustomerMail.TEMPLATE_SEND_DEMO_CONFIRMATION);
         customerMail.setHeaderPicture("images/mails/quotation-validated.png");
@@ -765,8 +765,8 @@ public class MailHelper {
 
         Mail mail = new Mail();
         mail.setMail(mailAdress);
-
-        mailComputeResult.setRecipientsMailTo(List.of(mailService.populateMailId(mail)));
+        mail = mailService.populateMailId(mail);
+        mailComputeResult.setRecipientsMailTo(List.of(mail));
         mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
         mailComputeResult.setIsSendToClient(false);
         mailComputeResult.setIsSendToAffaire(false);
@@ -777,13 +777,16 @@ public class MailHelper {
     public void sendCustomerDemoRequestToCommercial(String mailAdress, String firstName, String lastName,
             String phoneNumber) throws OsirisException {
         CustomerMail customerMail = new CustomerMail();
-        customerMail.setReplyToMail(constantService.getMailJssDemoRequest());
+        customerMail.setReplyToMail(constantService.getStringMyJssDemoRequestMail());
         customerMail.setSubject("Notification de demande de démo client");
         customerMail.setMailTemplate(CustomerMail.TEMPLATE_SEND_DEMO_REQUEST);
         customerMail.setHeaderPicture("images/mails/quotation-validated.png");// TODO change for right picture
         MailComputeResult mailComputeResult = new MailComputeResult();
 
-        mailComputeResult.setRecipientsMailTo(mailService.findMails(constantService.getMailJssDemoRequest()));
+        Mail mail = new Mail();
+        mail.setMail(constantService.getStringMyJssDemoRequestMail());
+        mail = mailService.populateMailId(mail);
+        mailComputeResult.setRecipientsMailTo(List.of(mail));
         mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
         mailComputeResult.setIsSendToClient(false);
         mailComputeResult.setIsSendToAffaire(false);

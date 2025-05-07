@@ -2,16 +2,18 @@ package com.jss.osiris.modules.osiris.miscellaneous.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
 public interface MailService {
     public List<Mail> findMails(String mail);
-
-    public List<Mail> findJssMails();
 
     public Mail getMail(Integer id);
 
     public List<Mail> populateMailIds(List<Mail> mails);
 
     public Mail populateMailId(Mail mail);
+
+    public Boolean sendMyJssDemoMails(String mail, String firstName, String lastName, String phoneNumber)
+            throws OsirisException;
 }

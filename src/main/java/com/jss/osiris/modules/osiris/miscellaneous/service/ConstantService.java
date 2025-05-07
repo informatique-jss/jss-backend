@@ -508,7 +508,7 @@ public interface ConstantService {
 
     public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() throws OsirisException;
 
-    public String getMailJssWebinarRequest() throws OsirisException;
+    public String getStringMyJssDemoRequestMail() throws OsirisException;
 
-    public String getMailJssDemoRequest() throws OsirisException;
+    public String getStringMyJssWebinarRequestMail() throws OsirisException;
 }

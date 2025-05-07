@@ -19,12 +19,12 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
@@ -48,7 +48,7 @@ public class MyJssCrmController {
     WebinarParticipantService webinarParticipantService;
 
     @Autowired
-    MailHelper mailHelper;
+    MailService mailService;
 
     private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
     private final long rateLimit = 1000;
@@ -206,7 +206,7 @@ public class MyJssCrmController {
 
         if (webinarParticipant.getPhoneNumber() != null
                 && !validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber()))
-            throw new OsirisValidationException("téléphone");
+            throw new OsirisValidationException("phone");
 
         validationHelper.validateString(webinarParticipant.getFirstname(), true, 50, "firstname");
         validationHelper.validateString(webinarParticipant.getLastname(), true, 50, "lastname");
@@ -225,13 +225,12 @@ public class MyJssCrmController {
 
         if (phoneNumber != null
                 && !validationHelper.validateFrenchPhone(phoneNumber))
-            throw new OsirisValidationException("téléphone");
+            throw new OsirisValidationException("phone");
 
         validationHelper.validateString(firstName, true, 50, "firstname");
         validationHelper.validateString(lastName, true, 50, "lastname");
 
-        mailHelper.sendConfirmationDemoMyJss(mail);
-        mailHelper.sendCustomerDemoRequestToCommercial(mail, firstName, lastName, phoneNumber);
+        mailService.sendMyJssDemoMails(mail, firstName, lastName, phoneNumber);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 }

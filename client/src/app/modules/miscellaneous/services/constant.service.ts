@@ -908,11 +908,11 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.serviceFamilyGroupAnnouncement;
   }
 
-  getMailJssDemoRequest() {
-    return this.constant.mailJssDemoRequest;
+  getStringMyJssDemoRequestMail() {
+    return this.constant.stringMyJssDemoRequestMail;
   }
-  getMailJssWebinarRequest() {
-    return this.constant.mailJssWebinarRequest;
+  getStringMyJssWebinarRequestMail() {
+    return this.constant.stringMyJssWebinarRequestMail;
   }
 
 }

@@ -951,8 +951,8 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_service_family_group_announcement")
 	private ServiceFamilyGroup serviceFamilyGroupAnnouncement;
 
-	private String mailJssDemoRequest;
-	private String mailJssWebinarRequest;
+	private String stringMyJssDemoRequestMail;
+	private String stringMyJssWebinarRequestMail;
 
 	public Integer getId() {
 		return id;
@@ -2753,20 +2753,20 @@ public class Constant implements Serializable, IId {
 		this.activeDirectoryGroupInsertions = activeDirectoryGroupInsertions;
 	}
 
-	public String getMailJssDemoRequest() {
-		return mailJssDemoRequest;
+	public String getStringMyJssDemoRequestMail() {
+		return stringMyJssDemoRequestMail;
 	}
 
-	public void setMailJssDemoRequest(String mailJssDemoRequest) {
-		this.mailJssDemoRequest = mailJssDemoRequest;
+	public void setStringMyJssDemoRequestMail(String stringMyJssDemoRequestMail) {
+		this.stringMyJssDemoRequestMail = stringMyJssDemoRequestMail;
 	}
 
-	public String getMailJssWebinarRequest() {
-		return mailJssWebinarRequest;
+	public String getStringMyJssWebinarRequestMail() {
+		return stringMyJssWebinarRequestMail;
 	}
 
-	public void setMailJssWebinarRequest(String mailJssWebinarRequest) {
-		this.mailJssWebinarRequest = mailJssWebinarRequest;
+	public void setStringMyJssWebinarRequestMail(String stringMyJssWebinarRequestMail) {
+		this.stringMyJssWebinarRequestMail = stringMyJssWebinarRequestMail;
 	}
 
 }

@@ -230,7 +230,6 @@ import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
 import { SelectJssCategoryComponent } from '../forms/select-jss-category/select-jss-category.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
-import { SelectMailComponent } from '../forms/select-mail/select-mail.component';
 import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
 import { SelectNodeComponent } from '../forms/select-node/select-node.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
@@ -568,7 +567,6 @@ const routes: Routes = [
     SelectNotificationTypesComponent,
     NotificationListComponent,
     SelectWebinarComponent,
-    SelectMailComponent
   ],
   exports: [
     HistoryComponent,
@@ -818,7 +816,6 @@ const routes: Routes = [
     SelectEmployeeComponent,
     SelectNotificationTypesComponent,
     SelectWebinarComponent,
-    SelectMailComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

@@ -16,8 +16,4 @@ export class MailService extends AppRestService<Mail> {
     return this.getList(new HttpParams().set("mail", mail), "mails/search");
   }
 
-  getAllMails() {
-    return this.getList(new HttpParams(), "mails/all");
-  }
-
 }

@@ -1224,12 +1224,12 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public String getMailJssWebinarRequest() throws OsirisException {
-        return this.getConstants().getMailJssWebinarRequest();
+    public String getStringMyJssWebinarRequestMail() throws OsirisException {
+        return this.getConstants().getStringMyJssWebinarRequestMail();
     }
 
     @Override
-    public String getMailJssDemoRequest() throws OsirisException {
-        return this.getConstants().getMailJssDemoRequest();
+    public String getStringMyJssDemoRequestMail() throws OsirisException {
+        return this.getConstants().getStringMyJssDemoRequestMail();
     }
 }
