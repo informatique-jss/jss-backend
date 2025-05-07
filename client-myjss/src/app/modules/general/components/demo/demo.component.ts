@@ -25,7 +25,7 @@ export class DemoComponent implements OnInit {
   demoForm = this.formBuilder.group({});
 
   constructor(private formBuilder: FormBuilder,
-    private generalService: MailService,
+    private mailService: MailService,
     private appService: AppService
   ) { }
 
@@ -38,7 +38,7 @@ export class DemoComponent implements OnInit {
       return;
     }
 
-    this.generalService.receiveDemoByMail(this.mail, this.firstName, this.lastName, this.phoneNumber).subscribe(response => {
+    this.mailService.subscribeDemo(this.mail, this.firstName, this.lastName, this.phoneNumber).subscribe(response => {
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande validée", 3000);
         this.demoForm.reset();

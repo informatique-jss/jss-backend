@@ -215,8 +215,8 @@ public class MyJssCrmController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/demo/send")
-    public ResponseEntity<Boolean> receiveDemoByMail(@RequestParam String mail, @RequestParam String firstName,
+    @GetMapping(inputEntryPoint + "/subscribe/demo")
+    public ResponseEntity<Boolean> subscribeDemo(@RequestParam String mail, @RequestParam String firstName,
             @RequestParam String lastName, @RequestParam(required = false) String phoneNumber,
             HttpServletRequest request) throws OsirisException {
         detectFlood(request);

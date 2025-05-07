@@ -11,11 +11,11 @@ export class MailService extends AppRestService<Boolean> {
     super(http, "crm");
   }
 
-  receiveDemoByMail(mail: string, firstName: string, lastName: string, phone: string) {
+  subscribeDemo(mail: string, firstName: string, lastName: string, phone: string) {
     let httpParams = new HttpParams().set("mail", mail).set("firstName", firstName).set("lastName", lastName);
     if (phone && phone.length > 0)
       httpParams = httpParams.set("phoneNumber", phone);
-    return this.get(httpParams, "demo/send");
+    return this.get(httpParams, "subscribe/demo");
   }
 
 }
