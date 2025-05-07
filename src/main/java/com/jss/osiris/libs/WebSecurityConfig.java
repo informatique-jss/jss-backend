@@ -75,6 +75,7 @@ public class WebSecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/affaire").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/billing-label-types").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/crm/communication-preferences/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/myjss/crm/webinar/subscribe").permitAll()
 				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
 				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
 				.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()

@@ -2,7 +2,7 @@
   <label class="form-label" *ngIf="label && label.length > 0" for="{{propertyName}}">{{label}}</label>
   <div class="position-relative">
     <input type="date" id="{{propertyName}}" class="form-control date-picker pe-5" [placeholder]="label" [min]="minDate"
-      [max]="maxDate" (change)="dateChange()">
+      [required]="isMandatory" [max]="maxDate" (change)="dateChange()">
     <small *ngIf="hint && hint.length > 0" class="form-text text-muted">
       {{hint}}
     </small>

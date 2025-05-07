@@ -1,1 +1,12 @@
-<myjss-comment-management></myjss-comment-management>
+<mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
+  <mat-tab label="Gestion des commentaires MyJSS">
+    <ng-template matTabContent>
+      <myjss-comment-management></myjss-comment-management>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label=" Gestion des webinaires">
+    <ng-template matTabContent>
+      <webinar-participant></webinar-participant>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
