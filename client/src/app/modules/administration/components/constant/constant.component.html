@@ -1723,6 +1723,22 @@
                 [isDisabled]="!editMode"></select-service-family-group>
             </td>
           </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.stringMyJssDemoRequestMail"
+                label="Mail de redirection Jss - Demande de Démo" [form]="constantForm"
+                propertyName="mailJssDemoRequest" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="255"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.stringMyJssWebinarRequestMail"
+                label="Mail de redirection Jss - Inscription webinaire" [form]="constantForm"
+                propertyName="mailJssWebinarRequest" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="255"></generic-input>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

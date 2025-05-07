@@ -1222,4 +1222,14 @@ public class ConstantServiceImpl implements ConstantService {
     public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() throws OsirisException {
         return this.getConstants().getServiceFamilyGroupAnnouncement();
     }
+
+    @Override
+    public String getStringMyJssWebinarRequestMail() throws OsirisException {
+        return this.getConstants().getStringMyJssWebinarRequestMail();
+    }
+
+    @Override
+    public String getStringMyJssDemoRequestMail() throws OsirisException {
+        return this.getConstants().getStringMyJssDemoRequestMail();
+    }
 }

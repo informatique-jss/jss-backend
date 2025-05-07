@@ -275,4 +275,6 @@ export interface Constant {
   accountingAccountClassProduct: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
+  stringMyJssDemoRequestMail: string;
+  stringMyJssWebinarRequestMail: string;
 }
