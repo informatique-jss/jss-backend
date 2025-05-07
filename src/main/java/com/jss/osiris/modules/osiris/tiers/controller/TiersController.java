@@ -562,8 +562,8 @@ public class TiersController {
   }
 
   @GetMapping(inputEntryPoint + "/mails/all")
-  public ResponseEntity<List<Mail>> findMails() {
-    return new ResponseEntity<List<Mail>>(mailService.findAllMails(), HttpStatus.OK);
+  public ResponseEntity<List<Mail>> findJssMails() {
+    return new ResponseEntity<List<Mail>>(mailService.findJssMails(), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/tiers-types")

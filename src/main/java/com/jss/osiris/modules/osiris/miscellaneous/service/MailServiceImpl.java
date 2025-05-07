@@ -24,8 +24,8 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public List<Mail> findAllMails() {
-        return IterableUtils.toList(mailRepository.findAll());
+    public List<Mail> findJssMails() {
+        return IterableUtils.toList(mailRepository.findByMailContainingIgnoreCase("@jss.fr"));
     }
 
     @Override

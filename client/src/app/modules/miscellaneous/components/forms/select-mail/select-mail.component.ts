@@ -24,4 +24,10 @@ export class SelectMailComponent extends GenericSelectComponent<Mail> implements
       this.types = response;
     })
   }
+
+  displayLabel(object: any): string {
+    if (object && object.mail)
+      return object.mail;
+    return super.displayLabel(object);
+  }
 }

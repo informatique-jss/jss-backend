@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AppService } from '../../../../libs/app.service';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
-import { GeneralService } from '../../services/general.service';
+import { MailService } from '../../services/mail.service';
 
 @Component({
   selector: 'demo',
@@ -25,7 +25,7 @@ export class DemoComponent implements OnInit {
   demoForm = this.formBuilder.group({});
 
   constructor(private formBuilder: FormBuilder,
-    private generalService: GeneralService,
+    private generalService: MailService,
     private appService: AppService
   ) { }
 
@@ -38,7 +38,7 @@ export class DemoComponent implements OnInit {
       return;
     }
 
-    this.generalService.receiveDemoByMail(this.mail).subscribe(response => {
+    this.generalService.receiveDemoByMail(this.mail, this.firstName, this.lastName, this.phoneNumber).subscribe(response => {
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande validée", 3000);
         this.demoForm.reset();

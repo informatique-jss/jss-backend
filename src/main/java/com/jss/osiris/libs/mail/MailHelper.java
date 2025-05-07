@@ -780,10 +780,10 @@ public class MailHelper {
         customerMail.setReplyToMail("contact@jss.fr");
         customerMail.setSubject("Notification de demande de démo client");
         customerMail.setMailTemplate(CustomerMail.TEMPLATE_SEND_DEMO_REQUEST);
-        customerMail.setHeaderPicture("images/mails/quotation-validated.png");
+        customerMail.setHeaderPicture("images/mails/quotation-validated.png");// TODO change for right picture
         MailComputeResult mailComputeResult = new MailComputeResult();
 
-        mailComputeResult.setRecipientsMailTo(List.of(constantService.getMailJssDemoRequest())); 
+        mailComputeResult.setRecipientsMailTo(List.of(constantService.getMailJssDemoRequest()));
         mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
         mailComputeResult.setIsSendToClient(false);
         mailComputeResult.setIsSendToAffaire(false);
