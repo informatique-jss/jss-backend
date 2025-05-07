@@ -205,10 +205,10 @@ public class MyJssCrmController {
             throw new OsirisValidationException("mail");
 
         if (webinarParticipant.getPhoneNumber() != null
-                && validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber()))
-            throw new OsirisValidationException("phone");
+                && !validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber()))
+            throw new OsirisValidationException("téléphone");
 
-        validationHelper.validateString(webinarParticipant.getFirstname(), true, 50, "frstname");
+        validationHelper.validateString(webinarParticipant.getFirstname(), true, 50, "firstname");
         validationHelper.validateString(webinarParticipant.getLastname(), true, 50, "lastname");
 
         webinarParticipantService.subscribeToWebinar(webinarParticipant);
@@ -224,8 +224,8 @@ public class MyJssCrmController {
             throw new OsirisValidationException("mail");
 
         if (phoneNumber != null
-                && validationHelper.validateFrenchPhone(phoneNumber))
-            throw new OsirisValidationException("phone");
+                && !validationHelper.validateFrenchPhone(phoneNumber))
+            throw new OsirisValidationException("téléphone");
 
         validationHelper.validateString(firstName, true, 50, "firstname");
         validationHelper.validateString(lastName, true, 50, "lastname");

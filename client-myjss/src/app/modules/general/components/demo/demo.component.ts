@@ -42,12 +42,12 @@ export class DemoComponent implements OnInit {
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande validée", 3000);
         this.demoForm.reset();
+        this.checkedOnce = false;
         this.firstName = "";
         this.lastName = "";
         this.phoneNumber = "";
         this.mail = "";
         this.isConditionAccepted = false;
-        this.checkedOnce = false;
       }
     });
   }

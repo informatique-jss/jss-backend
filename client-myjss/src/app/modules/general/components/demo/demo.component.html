@@ -16,7 +16,7 @@
     </div>
     <div class="col-md-7 order-md-2">
       <div class="d-flex flex-column h-100 border-0 rounded-3 pt-5 px-4 px-lg-5">
-        <form class="row g-4">
+        <form class="needs-validation row g-4 " novalidate>
           <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">Demandez votre démo
           </h2>
           <div class="col-sm-6">
@@ -51,29 +51,11 @@
             <button class="btn btn-lg btn-primary" type="submit" (click)="getDemoByMail($event)">Demander une
               démo</button>
           </div>
+
           <div *ngIf="checkedOnce">
-            <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert" *ngIf="checkedOnce && !firstName ">
-              <i class="ai-octagon-alert fs-xl"></i>
-              <div class="ps-2">Le prénom est obligatoire</div>
-            </div>
-            <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert" *ngIf="checkedOnce && !lastName ">
-              <i class="ai-octagon-alert fs-xl"></i>
-              <div class="ps-2">Le nom est obligatoire</div>
-            </div>
-            <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-              *ngIf="checkedOnce && (!mail || !validateEmail(mail) )">
-              <i class="ai-octagon-alert fs-xl"></i>
-              <div class="ps-2">Le mail est obligatoire</div>
-            </div>
-            <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-              *ngIf="checkedOnce && !isConditionAccepted">
+            <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert" *ngIf="!isConditionAccepted">
               <i class="ai-octagon-alert fs-xl"></i>
               <div class="ps-2">L'acceptation des CGV est obligatoire</div>
-            </div>
-            <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-              *ngIf="checkedOnce && phoneNumber &&  !validateFrenchPhone(phoneNumber) && !validateInternationalPhone(phoneNumber)">
-              <i class="ai-octagon-alert fs-xl"></i>
-              <div class="ps-2">Le numéro de téléphone est incorrect</div>
             </div>
           </div>
         </form>
