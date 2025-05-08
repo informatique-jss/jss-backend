@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.repository.MailRepository;
 
@@ -15,11 +17,22 @@ public class MailServiceImpl implements MailService {
     @Autowired
     MailRepository mailRepository;
 
+    @Autowired
+    MailHelper mailHelper;
+
     @Override
     public List<Mail> findMails(String mail) {
         if (mail != null)
             return mailRepository.findByMailContainingIgnoreCase(mail);
         return null;
+    }
+
+    @Override
+    public Boolean sendMyJssDemoMails(String mail, String firstName, String lastName, String phoneNumber)
+            throws OsirisException {
+        mailHelper.sendConfirmationDemoMyJss(mail);
+        mailHelper.sendCustomerDemoRequestToCommercial(mail, firstName, lastName, phoneNumber);
+        return true;
     }
 
     @Override

@@ -566,7 +566,7 @@ const routes: Routes = [
     SelectEmployeeComponent,
     SelectNotificationTypesComponent,
     NotificationListComponent,
-    SelectWebinarComponent
+    SelectWebinarComponent,
   ],
   exports: [
     HistoryComponent,
@@ -815,7 +815,7 @@ const routes: Routes = [
     SelectJssCategoryComponent,
     SelectEmployeeComponent,
     SelectNotificationTypesComponent,
-    SelectWebinarComponent
+    SelectWebinarComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

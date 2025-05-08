@@ -6,7 +6,7 @@ import { Mail } from '../model/Mail';
 @Injectable({
   providedIn: 'root'
 })
-export class MailService extends AppRestService<Mail>{
+export class MailService extends AppRestService<Mail> {
 
   constructor(http: HttpClient) {
     super(http, "tiers");
