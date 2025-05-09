@@ -1,18 +1,25 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { callNumber, displayInTeams, prepareMail } from 'src/app/libs/MailHelper';
 import { getAffaireFromAssoAffaireOrder, getCustomerOrderNameForTiers, getServiceFromService } from 'src/app/modules/invoicing/components/invoice-tools';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { SelectMultiServiceTypeDialogComponent } from 'src/app/modules/quotation/components/select-multi-service-type-dialog/select-multi-service-type-dialog.component';
+import { Affaire } from 'src/app/modules/quotation/model/Affaire';
+import { AssoAffaireOrder } from 'src/app/modules/quotation/model/AssoAffaireOrder';
 import { Quotation } from 'src/app/modules/quotation/model/Quotation';
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { Service } from 'src/app/modules/quotation/model/Service';
+import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
+import { AssoAffaireOrderService } from 'src/app/modules/quotation/services/asso.affaire.order.service';
 import { ServiceService } from 'src/app/modules/quotation/services/service.service';
 import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
+import { Notification } from '../../../../modules/miscellaneous/model/Notification';
 
 
 @Component({
@@ -26,6 +33,7 @@ export class QuotationSidePanelDetailsComponent implements OnInit {
   @Input() possibleEntityStatus: QuotationStatus[] = [];
   currentTabDisplayed: string = '';
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
+  affaireNotification: Notification[][] = [];
 
   @Output() triggerRefreshEntity = new EventEmitter<void>();
 
@@ -37,9 +45,30 @@ export class QuotationSidePanelDetailsComponent implements OnInit {
     public quotationWorkflowDialog: MatDialog,
     private habilitationsService: HabilitationsService,
     private serviceService: ServiceService,
+    private affaireService: AffaireService,
+    private notificationService: NotificationService,
+    private formBuilder: FormBuilder,
+    private habilitationService: HabilitationsService,
+    private assoAffaireOrderService: AssoAffaireOrderService
   ) { }
 
+  orderForm = this.formBuilder.group({});
+
   ngOnInit() {
+    if (this.selectedEntity)
+      this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(this.selectedEntity).subscribe(response => {
+        this.selectedEntity!.assoAffaireOrders = response;
+        for (let i = 0; i < this.selectedEntity!.assoAffaireOrders.length; i++) {
+          this.affaireService.getAffaire(this.selectedEntity!.assoAffaireOrders[i].affaire.id).subscribe(response => {
+            this.selectedEntity!.assoAffaireOrders[i].affaire = response;
+          })
+        }
+      })
+
+  }
+
+  triggerRefreshEntityFn() {
+    this.triggerRefreshEntity.next();
   }
 
   formatDateFrance = formatDateFrance;
@@ -49,12 +78,12 @@ export class QuotationSidePanelDetailsComponent implements OnInit {
 
   openTiers(event: any, order: Quotation) {
     if (order.responsable && order.responsable.tiers)
-      this.appService.openRoute(event, 'tiers/' + order.responsable.tiers.id, undefined);
+      this.appService.openRoute({ ctrlKey: true }, 'tiers/' + order.responsable.tiers.id, undefined);
   }
 
   openResponsable(event: any, order: Quotation) {
     if (order.responsable)
-      this.appService.openRoute(event, 'tiers/responsable/' + order.responsable.id, undefined);
+      this.appService.openRoute({ ctrlKey: true }, 'tiers/responsable/' + order.responsable.id, undefined);
   }
 
   sendResponsableMail(event: any, order: Quotation) {
@@ -65,6 +94,31 @@ export class QuotationSidePanelDetailsComponent implements OnInit {
   callResponsable(event: any, order: Quotation) {
     if (order.responsable && order.responsable.phones)
       callNumber(order.responsable.phones[0].phoneNumber);
+  }
+
+  addNewNotificationOnAffaire(affaire: Affaire) {
+    this.appService.addPersonnalNotification(() => this.affaireNotification = [], this.affaireNotification ? this.affaireNotification[affaire.id] : undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, affaire);
+  }
+
+  getNotificationForAffaire(affaire: Affaire) {
+    if (this.affaireNotification[affaire.id] == undefined) {
+      this.affaireNotification[affaire.id] = [];
+      this.notificationService.getNotificationsForAffaire(affaire.id).subscribe(response => this.affaireNotification[affaire.id] = response);
+    }
+    return this.affaireNotification[affaire.id];
+  }
+
+  updateAssignedToForAffaire(employee: any, asso: AssoAffaireOrder) {
+    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
+    });
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
+  }
+
+  displayAffaire(event: any, asso: AssoAffaireOrder) {
+    this.appService.openRoute({ ctrlKey: true }, '/affaire/' + asso.affaire.id, null);
   }
 
 

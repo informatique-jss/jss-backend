@@ -58,7 +58,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
-            List<String> notificationTypes, Boolean onlyForNumber) throws OsirisException {
+            List<String> notificationTypes, Boolean onlyForNumber, Boolean completeAdditionnalInformation)
+            throws OsirisException {
         Employee currentEmployee = (Employee) employeeService.getCurrentEmployee();
         if (currentEmployee == null)
             return null;
@@ -72,7 +73,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (onlyForNumber)
             return notifications.stream().filter(n -> n.getIsRead() != null && n.getIsRead() == false).toList();
 
-        return completeNotifications(notifications);
+        return completeNotifications(notifications, completeAdditionnalInformation);
     }
 
     private List<String> getNotificationTypesToHideForCurrentUser() {
@@ -83,7 +84,8 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationTypesToHide;
     }
 
-    private List<Notification> completeNotifications(List<Notification> notifications) throws OsirisException {
+    private List<Notification> completeNotifications(List<Notification> notifications,
+            Boolean completeAdditionnalInformation) throws OsirisException {
         if (notifications != null) {
             List<Notification> ouNotifications = new ArrayList<Notification>();
             for (Notification notificationIn : notifications) {
@@ -101,7 +103,7 @@ public class NotificationServiceImpl implements NotificationService {
                         notification.setCustomerOrder(notification.getInvoice().getCustomerOrderForInboundInvoice());
                     }
                 }
-                if (notification.getCustomerOrder() != null) {
+                if (notification.getCustomerOrder() != null && completeAdditionnalInformation) {
                     notification.getCustomerOrder().setServicesList(customerOrderService
                             .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder())
                             .getServicesList());
@@ -220,7 +222,7 @@ public class NotificationServiceImpl implements NotificationService {
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getCustomerOrder() != null && n.getCustomerOrder().getId().equals(customerOrderId))
-                .toList());
+                .toList(), true);
     }
 
     @Override
@@ -229,7 +231,7 @@ public class NotificationServiceImpl implements NotificationService {
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getQuotation() != null && n.getQuotation().getId().equals(quotationId))
-                .toList());
+                .toList(), true);
     }
 
     @Override
@@ -238,7 +240,7 @@ public class NotificationServiceImpl implements NotificationService {
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getService() != null && n.getService().getId().equals(serviceId))
-                .toList());
+                .toList(), true);
     }
 
     @Override
@@ -247,7 +249,7 @@ public class NotificationServiceImpl implements NotificationService {
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getProvision() != null && n.getProvision().getId().equals(provisionId))
-                .toList());
+                .toList(), true);
     }
 
     @Override
@@ -256,7 +258,7 @@ public class NotificationServiceImpl implements NotificationService {
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getInvoice() != null && n.getInvoice().getId().equals(invoiceId))
-                .toList());
+                .toList(), true);
     }
 
     @Override
@@ -265,7 +267,7 @@ public class NotificationServiceImpl implements NotificationService {
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getAffaire() != null && n.getAffaire().getId().equals(affaireId))
-                .toList());
+                .toList(), true);
     }
 
     @Override
@@ -274,7 +276,7 @@ public class NotificationServiceImpl implements NotificationService {
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getTiers() != null && n.getTiers().getId().equals(tiersId))
-                .toList());
+                .toList(), true);
     }
 
     @Override
@@ -283,7 +285,7 @@ public class NotificationServiceImpl implements NotificationService {
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
                 .filter(n -> n.getResponsable() != null && n.getResponsable().getId().equals(responsableId))
-                .toList());
+                .toList(), true);
     }
 
     @Override

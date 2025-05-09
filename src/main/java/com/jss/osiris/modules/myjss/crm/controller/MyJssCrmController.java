@@ -24,6 +24,7 @@ import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
@@ -45,6 +46,9 @@ public class MyJssCrmController {
 
     @Autowired
     WebinarParticipantService webinarParticipantService;
+
+    @Autowired
+    MailService mailService;
 
     private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
     private final long rateLimit = 1000;
@@ -201,14 +205,32 @@ public class MyJssCrmController {
             throw new OsirisValidationException("mail");
 
         if (webinarParticipant.getPhoneNumber() != null
-                && validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber()))
+                && !validationHelper.validateFrenchPhone(webinarParticipant.getPhoneNumber()))
             throw new OsirisValidationException("phone");
 
-        validationHelper.validateString(webinarParticipant.getFirstname(), true, 50, "frstname");
+        validationHelper.validateString(webinarParticipant.getFirstname(), true, 50, "firstname");
         validationHelper.validateString(webinarParticipant.getLastname(), true, 50, "lastname");
 
         webinarParticipantService.subscribeToWebinar(webinarParticipant);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/subscribe/demo")
+    public ResponseEntity<Boolean> subscribeDemo(@RequestParam String mail, @RequestParam String firstName,
+            @RequestParam String lastName, @RequestParam(required = false) String phoneNumber,
+            HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
+        if (!validationHelper.validateMail(mail))
+            throw new OsirisValidationException("mail");
+
+        if (phoneNumber != null
+                && !validationHelper.validateFrenchPhone(phoneNumber))
+            throw new OsirisValidationException("phone");
+
+        validationHelper.validateString(firstName, true, 50, "firstname");
+        validationHelper.validateString(lastName, true, 50, "lastname");
+
+        mailService.sendMyJssDemoMails(mail, firstName, lastName, phoneNumber);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
 }

@@ -174,6 +174,10 @@ public class Quotation implements IQuotation {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ServiceFamilyGroup serviceFamilyGroup;
 
+	@Transient
+	@JsonView({ JacksonViews.OsirisListView.class })
+	public Boolean isHasNotifications;
+
 	public Integer getId() {
 		return id;
 	}
@@ -380,6 +384,14 @@ public class Quotation implements IQuotation {
 
 	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup) {
 		this.serviceFamilyGroup = serviceFamilyGroup;
+	}
+
+	public Boolean getIsHasNotifications() {
+		return isHasNotifications;
+	}
+
+	public void setIsHasNotifications(Boolean isHasNotifications) {
+		this.isHasNotifications = isHasNotifications;
 	}
 
 }

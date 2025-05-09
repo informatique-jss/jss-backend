@@ -39,6 +39,7 @@ import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CustomerOrderOriginService;
@@ -755,10 +756,16 @@ public class QuotationServiceImpl implements QuotationService {
 
     public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations)
             throws OsirisException {
-        if (quotations != null && quotations.size() > 0)
+        if (quotations != null && quotations.size() > 0) {
+            List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
+                    false, false).stream().filter(n -> n.getQuotation() != null).toList();
+
             for (Quotation quotation : quotations) {
                 completeAdditionnalInformationForQuotation(quotation);
+                notifications.stream().filter(n -> n.getQuotation().getId().equals(quotation.getId())).findFirst()
+                        .ifPresent(n -> quotation.setIsHasNotifications(true));
             }
+        }
 
         return quotations;
     }

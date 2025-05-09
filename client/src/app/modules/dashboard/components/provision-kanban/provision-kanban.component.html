@@ -13,9 +13,9 @@
 </div>
 
 <div class="kanban-container top-container">
-  <div *ngFor="let status of deduplicateArrayById(statusSelected)" class="kanban-column">
-    <h3 style="margin: 0px; text-align: center;"><span [matBadge]="getNumberEntitiesByStatusLabel(status.label)"
-        [matBadgeHidden]="!status.id || getNumberEntitiesByStatusLabel(status.label)==0" matBadgePosition="after"
+  <div *ngFor="let status of deduplicateArrayByLabel(statusSelected)" class="kanban-column">
+    <h3 style="margin: 0px; text-align: center;"><span [matBadge]="getNumberOfEntitiesByStatus(status)"
+        [matBadgeHidden]="!status.id || getNumberOfEntitiesByStatus(status)==0" matBadgePosition="after"
         matBadgeSize="small">{{ status.label }}</span></h3>
   </div>
 </div>
@@ -29,13 +29,14 @@
     </div>
     <div class="kanban-container" *ngIf="!swimlane.isCollapsed">
       <div *ngFor="let status of swimlane.aggregatedStatus" class="kanban-column">
-        <div cdkDropList [cdkDropListData]="status.entities" class="task-list" [id]="'list-' + status.id"
-          [cdkDropListConnectedTo]="connectedDropLists" [ngClass]="{
-           'drop-valid': isValidDropTarget(status.id!),
-           'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.id!)
+        <div cdkDropList [cdkDropListData]="status.entities" class="task-list"
+          [id]="'list-'+statusId.indexOf(status.label+'-' + swimlane.id + '')"
+          [cdkDropListConnectedTo]="getConnectedDropLists(swimlane)" [ngClass]="{
+           'drop-valid': isValidDropTarget(status.label!),
+           'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.label!)
          }" (cdkDropListDropped)="drop($event)">
           <div *ngFor="let provision of status.entities" cdkDrag class="task-card"
-            (cdkDragStarted)="onDragStarted(status.id!)" (cdkDragEnded)="onDragEnded()"
+            (cdkDragStarted)="onDragStarted(status.id!, provision)" (cdkDragEnded)="onDragEnded()"
             (click)="fetchEntityAndOpenPanel(provision)">
             <div class="card-content">
               <strong>{{provision.service.assoAffaireOrder.affaire.denomination
@@ -110,15 +111,76 @@
   </div>
   <div *ngIf="selectedEntity">
     <div class="panel-header">
-      <!-- <span class="task-id pointer" (click)="openOrder($event, selectedEntity)">{{selectedEntity.id}}</span> -->
+      <span class="task-id pointer"
+        (click)="openOrder($event, selectedEntity.service.assoAffaireOrder.customerOrder)">{{selectedEntity.service.assoAffaireOrder.customerOrder.id}}
+        <mat-icon color="accent" class="small-mat-icon">open_in_new</mat-icon></span>
       <span class="spacer"></span>
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <!--button mat-menu-item (click)="generateCustomerOrderCreationConfirmationToCustomer()">
-          <span>Recevoir le mail de confirmation de la commande</span>
-        </button-->
+        <button mat-menu-item (click)="sendRibRequestToAffaire()">
+          <span>Envoyer une demande de RIB à l'affaire</span>
+        </button>
+        <button mat-menu-item (click)="sendMissingAttachmentMail(selectedEntity.service)">
+          <span>Demander des pièces manquantes pour le service {{selectedEntity.service.customLabel}}</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item
+          *ngIf="selectedEntity && selectedEntity.announcement && selectedEntity.announcement.isProofReadingDocument"
+          (click)="generateProofReading(selectedEntity.announcement,selectedEntity)">
+          <span>Générer une épreuve de relecture</span>
+        </button>
+        <button mat-menu-item
+          *ngIf="selectedEntity && selectedEntity.announcement && selectedEntity.announcement.confrere && selectedEntity.announcement.confrere.id==confrereJssSpel.id"
+          (click)="generatePublicationReceipt(selectedEntity.announcement,selectedEntity)">
+          <span>Générer une attestation de parution</span>
+        </button>
+        <button mat-menu-item
+          *ngIf="selectedEntity && selectedEntity.announcement && selectedEntity.announcement.confrere && selectedEntity.announcement.confrere.journalType.id==journalTypeSpel.id"
+          (click)="generatePublicationReceiptMail(selectedEntity.announcement)">
+          <span>Recevoir le mail d'attestation de parution</span>
+        </button>
+        <button mat-menu-item
+          *ngIf="selectedEntity && selectedEntity.announcement && selectedEntity.announcement.confrere && selectedEntity.announcement.confrere.id==confrereJssSpel.id"
+          (click)="generatePublicationFlag(selectedEntity.announcement,selectedEntity)">
+          <span>Générer un témoin de publication</span>
+        </button>
+        <button mat-menu-item
+          *ngIf="selectedEntity && selectedEntity.announcement && selectedEntity.announcement.confrere && selectedEntity.announcement.confrere.journalType.id==journalTypeSpel.id"
+          (click)="generatePublicationFlagMail()">
+          <span>Recevoir le mail de témoin de publication</span>
+          <button mat-menu-item
+            *ngIf="selectedEntity && selectedEntity.announcement && selectedEntity.announcement.confrere && selectedEntity.announcement.confrere.journalType.id!=journalTypeSpel.id"
+            (click)="generateAnnouncementRequestToConfrereMail(selectedEntity.announcement)">
+            <span>Recevoir le mail d'envoi au confrère</span>
+          </button>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item
+          *ngIf="selectedEntity && selectedEntity.provisionType && registrationAct && selectedEntity.provisionType.code==registrationAct.code"
+          (click)="generateRegistrationAct()">
+          <span>Télécharger l'acte d'enregistrement</span> </button>
+        <button mat-menu-item *ngIf="selectedEntity" (click)="generateAttachmentsMail()">
+          <span>Envoyer des pièces jointes</span>
+        </button>
+        <button mat-menu-item
+          *ngIf="selectedEntity && selectedEntity.domiciliation && selectedEntity.service.assoAffaireOrder.customerOrder && selectedEntity.service.assoAffaireOrder.customerOrder.isRecurring"
+          (click)="generateDomiciliationContract(selectedEntity)">
+          <span>Générer le contrat</span>
+        </button>
+        <button mat-menu-item *ngIf="selectedEntity " (click)="downloadTrackingSheet(selectedEntity)">
+          <span>Générer une fiche de suivi</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item *ngIf="selectedEntity && !isDisplayOrderLevel "
+          (click)="fetchCustomerOrderAndOpenPanel(selectedEntity)">
+          <span>Voir la commande</span>
+        </button>
+        <button mat-menu-item *ngIf="selectedEntity && isDisplayOrderLevel "
+          (click)="fetchEntityAndOpenPanel(selectedEntity)">
+          <span>Voir la prestation</span>
+        </button>
       </mat-menu>
       <button mat-icon-button (click)="panelOpen = false">
         <mat-icon>close</mat-icon>
@@ -152,6 +214,13 @@
       </mat-menu>
     </div>
 
-    <provision-side-panel-details [provision]="selectedEntity"
-      [assoAffaireOrder]="selectedEntity.service.assoAffaireOrder"></provision-side-panel-details>
+    <order-side-panel-details [selectedEntity]="customerOrderFetched"
+      [possibleEntityStatus]="possibleEntityStatusCustomerOrder!" *ngIf="isDisplayOrderLevel && customerOrderFetched"
+      (triggerRefreshEntity)="fetchCustomerOrderAndOpenPanel(this.selectedEntity!, false, false)"></order-side-panel-details>
+
+    <mat-accordion class="custom-panel" *ngIf="!isDisplayOrderLevel">
+      <service-side-panel-details (triggerRefreshEntity)="fetchEntityAndOpenPanel(this.selectedEntity)"
+        [isExpanded]="true" [service]="this.selectedEntity.service"
+        [provision]="selectedEntity"></service-side-panel-details>
+    </mat-accordion>
   </div>

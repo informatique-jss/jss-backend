@@ -11,7 +11,8 @@ import com.jss.osiris.modules.osiris.quotation.model.Service;
 
 public interface NotificationService {
         public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
-                        List<String> notificationTypes, Boolean onlyForNumber) throws OsirisException;
+                        List<String> notificationTypes, Boolean onlyForNumber, Boolean completeAdditionnalInformation)
+                        throws OsirisException;
 
         public Notification getNotification(Integer id);
 

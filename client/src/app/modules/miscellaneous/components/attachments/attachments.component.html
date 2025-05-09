@@ -1,4 +1,5 @@
-<div class="mat-elevation-z2 form-div" *ngIf="entity && entity.id!=undefined && entity.id!=null">
+<div [ngClass]="{ 'mat-elevation-z2 form-div' : !forIntegration}"
+  *ngIf="entity && entity.id!=undefined && entity.id!=null">
   <div class="full-width">
     <div class="row-field-container">
       <mat-form-field class="full-width">

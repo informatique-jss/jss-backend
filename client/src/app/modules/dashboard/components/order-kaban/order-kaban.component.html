@@ -15,8 +15,8 @@
 
 <div class="kanban-container top-container">
   <div *ngFor="let status of statusSelected" class="kanban-column">
-    <h3 style="margin: 0px; text-align: center;"><span [matBadge]="status.id?numberOfEntitiesByStatus[status.id]:0"
-        [matBadgeHidden]="!status.id || numberOfEntitiesByStatus[status.id]==0" matBadgePosition="after"
+    <h3 style="margin: 0px; text-align: center;"><span [matBadge]="status.id?getNumberOfEntitiesByStatus(status):0"
+        [matBadgeHidden]="!status.id ||getNumberOfEntitiesByStatus(status)==0" matBadgePosition="after"
         matBadgeSize="small">{{ status.label }}</span></h3>
   </div>
 </div>
@@ -30,16 +30,18 @@
     </div>
     <div class="kanban-container" *ngIf="!swimlane.isCollapsed">
       <div *ngFor="let status of swimlane.status" class="kanban-column">
-        <div cdkDropList [cdkDropListData]="status.entities" class="task-list" [id]="'list-' + status.id"
-          [cdkDropListConnectedTo]="connectedDropLists" [ngClass]="{
-           'drop-valid': isValidDropTarget(status.id!),
-           'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.id!)
+        <div cdkDropList [cdkDropListData]="status.entities" class="task-list"
+          [id]="'list-'+statusId.indexOf(status.label+'-' + swimlane.id + '')"
+          [cdkDropListConnectedTo]="getConnectedDropLists(swimlane)" [ngClass]="{
+           'drop-valid': isValidDropTarget(status.label!),
+           'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.label!)
          }" (cdkDropListDropped)="drop($event)">
           <div *ngFor="let order of status.entities" cdkDrag class="task-card"
-            (cdkDragStarted)="onDragStarted(status.id!)" (cdkDragEnded)="onDragEnded()"
+            (cdkDragStarted)="onDragStarted(status.id!,order)" (cdkDragEnded)="onDragEnded()"
             (click)="fetchEntityAndOpenPanel(order)">
             <div class="card-content">
-              <strong>{{order.affairesList}} </strong>
+              <strong>{{order.affairesList}} </strong> <mat-icon color="warn"
+                *ngIf="order.isHasNotifications">notifications</mat-icon>
               <p>{{order.servicesList}}</p>
             </div>
             <div class="card-footer">
@@ -98,7 +100,13 @@
   </div>
   <div *ngIf="selectedEntity">
     <div class="panel-header">
-      <span class="task-id pointer" (click)="openOrder($event, selectedEntity)">{{selectedEntity.id}}</span>
+      <span class="task-id pointer" (click)="openOrder($event, selectedEntity)">{{selectedEntity.id}} <mat-icon
+          color="accent" class="small-mat-icon">open_in_new</mat-icon></span>
+      <mat-icon color="accent" matTooltip="Ajouter une notification sur cette commande" mat-fab color="accent"
+        [matBadge]="getNotificationForCustomerOrder().length"
+        [matBadgeHidden]="getNotificationForCustomerOrder().length<=0" matBadgePosition="below after"
+        matBadgeColor="warn" matBadgeSize="small" class="pointer" *ngIf="  canDisplayNotifications() "
+        (click)="addNewNotification();$event.stopPropagation();">notifications</mat-icon>
       <span class="spacer"></span>
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>

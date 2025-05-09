@@ -390,7 +390,7 @@ public class MiscellaneousController {
             @RequestParam(required = false) List<String> notificationTypes) throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForCurrentEmployee(displayFuture, displayRead,
-                        notificationTypes, false),
+                        notificationTypes, false, true),
                 HttpStatus.OK);
     }
 
@@ -399,7 +399,7 @@ public class MiscellaneousController {
             @RequestParam Boolean displayRead) throws OsirisException {
         List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(displayFuture,
                 displayRead, null,
-                true);
+                true, true);
         return new ResponseEntity<Integer>(notifications != null ? notifications.size() : 0, HttpStatus.OK);
     }
 

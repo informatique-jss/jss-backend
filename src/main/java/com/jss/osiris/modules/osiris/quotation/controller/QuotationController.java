@@ -2754,7 +2754,7 @@ public class QuotationController {
   @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<List<Provision>> searchProvisions(
       @RequestParam(required = false) List<Integer> formalisteIds,
-      @RequestParam(required = false) List<Integer> statusIds)
+      @RequestParam(required = false) List<String> statusCodes)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     List<Employee> formalistes = new ArrayList<Employee>();
@@ -2768,32 +2768,32 @@ public class QuotationController {
       }
 
     List<IWorkflowElement> status = new ArrayList<IWorkflowElement>();
-    if (statusIds != null)
-      for (Integer id : statusIds) {
+    if (statusCodes != null)
+      for (String code : statusCodes) {
         AnnouncementStatus announcementStatu = null;
         FormaliteStatus formaliteStatu = null;
         SimpleProvisionStatus simpleProvisionStatus = null;
         DomiciliationStatus domiciliationStatus = null;
 
-        announcementStatu = announcementStatusService.getAnnouncementStatus(id);
+        announcementStatu = announcementStatusService.getAnnouncementStatusByCode(code);
         if (announcementStatu != null) {
           status.add(announcementStatu);
           continue;
         }
 
-        formaliteStatu = formaliteStatusService.getFormaliteStatus(id);
+        formaliteStatu = formaliteStatusService.getFormaliteStatusByCode(code);
         if (formaliteStatu != null) {
           status.add(formaliteStatu);
           continue;
         }
 
-        simpleProvisionStatus = simpleProvisonStatusService.getSimpleProvisonStatus(id);
+        simpleProvisionStatus = simpleProvisonStatusService.getSimpleProvisionStatusByCode(code);
         if (simpleProvisionStatus != null) {
           status.add(simpleProvisionStatus);
           continue;
         }
 
-        domiciliationStatus = domiciliationStatusService.getDomiciliationStatus(id);
+        domiciliationStatus = domiciliationStatusService.getDomiciliationStatusByCode(code);
         if (domiciliationStatus != null) {
           status.add(domiciliationStatus);
           continue;
@@ -2811,5 +2811,30 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     return new ResponseEntity<Provision>(provisionService.getProvision(id), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/provision/status")
+  @JsonView(JacksonViews.OsirisDetailedView.class)
+  public ResponseEntity<Boolean> updateProvisionStatus(Integer provisionId, String targetStatusCode)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    Provision provision = provisionService.getProvision(provisionId);
+    if (provision == null)
+      throw new OsirisValidationException("provision");
+
+    IWorkflowElement status = null;
+
+    status = announcementStatusService.getAnnouncementStatusByCode(targetStatusCode);
+    if (status == null)
+      status = formaliteStatusService.getFormaliteStatusByCode(targetStatusCode);
+    if (status == null)
+      status = simpleProvisonStatusService.getSimpleProvisionStatusByCode(targetStatusCode);
+    if (status == null)
+      status = domiciliationStatusService.getDomiciliationStatusByCode(targetStatusCode);
+    if (status == null)
+      throw new OsirisValidationException("statusIds");
+    provisionService.updateProvisionStatus(provision, status);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 }

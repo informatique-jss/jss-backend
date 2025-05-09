@@ -47,6 +47,7 @@ public class AnnouncementStatus extends IWorkflowElement implements Serializable
 	@Column(nullable = false, length = 100)
 	private String code;
 
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String icon;
 
 	private Boolean isOpenState;
@@ -55,11 +56,13 @@ public class AnnouncementStatus extends IWorkflowElement implements Serializable
 	@OneToMany(targetEntity = AnnouncementStatus.class)
 	@JoinTable(name = "asso_announcement_status_successor", joinColumns = @JoinColumn(name = "id_announcement_status"), inverseJoinColumns = @JoinColumn(name = "id_announcement_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<AnnouncementStatus> successors;
 
 	@OneToMany(targetEntity = AnnouncementStatus.class)
 	@JoinTable(name = "asso_announcement_status_predecessor", joinColumns = @JoinColumn(name = "id_announcement_status"), inverseJoinColumns = @JoinColumn(name = "id_announcement_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<AnnouncementStatus> predecessors;
 
 	private String aggregateStatus;
