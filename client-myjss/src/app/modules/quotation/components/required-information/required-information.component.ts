@@ -7,8 +7,6 @@ import { ConstantService } from '../../../../libs/constant.service';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { Affaire } from '../../../my-account/model/Affaire';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
-import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
-import { Quotation } from '../../../my-account/model/Quotation';
 import { Service } from '../../../my-account/model/Service';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -274,29 +272,12 @@ export class RequiredInformationComponent implements OnInit {
 
     else {
       if (!this.currentUser && this.quotation) {
-        this.isFetchingPrincing = true
-        if (this.quotation.responsable && !this.quotation.responsable.country) {
-          this.quotation.responsable.country = this.constantService.getResponsableDummyCustomerFrance().country;
-
-          if (this.quotation.responsable.tiers && !this.quotation.responsable.tiers.country) {
-            this.quotation.responsable.tiers.country = this.constantService.getResponsableDummyCustomerFrance().tiers.country;
-            this.quotation.responsable.tiers.city = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
-          }
-        }
         if (this.quotation.isQuotation) {
-          this.quotationService.completePricingOfQuotation(this.quotation as Quotation, false).subscribe(res => {
-            this.quotation = res;
-            this.quotationService.setCurrentDraftQuotation(this.quotation);
-            this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-            this.appService.openRoute(undefined, "quotation", undefined);
-          });
+          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+          this.appService.openRoute(undefined, "quotation", undefined);
         } else {
-          this.orderService.completePricingOfOrder(this.quotation as CustomerOrder, false).subscribe(res => {
-            this.quotation = res;
-            this.orderService.setCurrentDraftOrder(this.quotation);
-            this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-            this.appService.openRoute(undefined, "quotation", undefined);
-          });
+          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+          this.appService.openRoute(undefined, "quotation", undefined);
         }
       }
     }

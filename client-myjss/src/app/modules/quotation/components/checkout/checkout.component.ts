@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
@@ -6,25 +6,19 @@ import { ConstantService } from '../../../../libs/constant.service';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { getDocument } from '../../../../libs/DocumentHelper';
 import { copyObject } from '../../../../libs/GenericHelper';
-import { BillingLabelType } from '../../../my-account/model/BillingLabelType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
 import { Quotation } from '../../../my-account/model/Quotation';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
-import { DocumentService } from '../../../my-account/services/document.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
+import { ServiceService } from '../../../my-account/services/service.service';
 import { City } from '../../../profile/model/City';
-import { Civility } from '../../../profile/model/Civility';
-import { Country } from '../../../profile/model/Country';
 import { Mail } from '../../../profile/model/Mail';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { LoginService } from '../../../profile/services/login.service';
 import { IQuotation } from '../../model/IQuotation';
-import { CityService } from '../../services/city.service';
-import { CivilityService } from '../../services/civility.service';
-import { CountryService } from '../../services/country.service';
 
 @Component({
   selector: 'checkout',
@@ -32,7 +26,7 @@ import { CountryService } from '../../services/country.service';
   styleUrls: ['./checkout.component.css'],
   standalone: false
 })
-export class CheckoutComponent implements OnInit, AfterViewInit {
+export class CheckoutComponent implements OnInit {
 
 
   @ViewChild('orderButton') orderButton: ElementRef | undefined;
@@ -40,7 +34,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   quotation: IQuotation | undefined;
   currentUser: Responsable | undefined;
   totalPrice: number = 0;
-  isComputingPrice: boolean = false;
   totalPriceWithoutVat: number = 0;
   totalVatPrice: number = 0;
 
@@ -51,32 +44,19 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   isLinkSent: boolean = false;
   isSendingLink: boolean = false;
   intervalId: any;
-  countries: Country[] | undefined;
-  civilities: Civility[] | undefined;
 
   isIndividualTiers: boolean = false;
-
-  checkedOnce: boolean = false;
-  countryFrance: Country = this.constantService.getCountryFrance();
-  postalCode: string = "06210";
-  city: City | undefined;
-
-  validateEmail = validateEmail;
-  validateFrenchPhone = validateFrenchPhone;
-  validateInternationalPhone = validateInternationalPhone;
+  isComputingPrice: boolean = false;
 
   documentTypeBilling = this.constantService.getDocumentTypeBilling();
   documentTypeDigital = this.constantService.getDocumentTypeDigital();
   documentTypePaper = this.constantService.getDocumentTypePaper();
+  billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
   isExtRefMandatory: boolean = false;
 
   documentForm = this.formBuilder.group({
   });
 
-
-  billingLabelTypeCodeAffaire: BillingLabelType = this.constantService.getBillingLabelTypeCodeAffaire();
-  billingLabelTypeCustomer: BillingLabelType = this.constantService.getBillingLabelTypeCustomer();
-  billingLabelTypeOther: BillingLabelType = this.constantService.getBillingLabelTypeOther();
   newMailBillingAffaire: string = "";
   newMailBillingClient: string = "";
 
@@ -90,8 +70,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   acceptDocs: boolean = false;
   acceptTerms: boolean = false;
 
-  isFirstViewRendered: boolean = false;
-
   quotationPriceObservableRef: Subscription | undefined;
 
   constructor(
@@ -101,10 +79,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private appService: AppService,
     private constantService: ConstantService,
-    private civilityService: CivilityService,
-    private countryService: CountryService,
-    private cityService: CityService,
-    private documentService: DocumentService,
+    private serviceService: ServiceService
   ) { }
 
   ngOnInit() {
@@ -122,124 +97,163 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     this.initIQuotation();
   }
 
-  ngAfterViewInit(): void {
-    this.isFirstViewRendered = true;
-    this.computeQuotationPrice();
-  }
-
-
   ngOnDestroy() {
     if (this.quotationPriceObservableRef)
       this.quotationPriceObservableRef.unsubscribe();
-
   }
 
-  initEmptyDocuments() {
-    if (this.quotation) {
-      if (!this.quotation.documents || this.quotation.documents.length == 0)
-        this.quotation.documents = [];
-      let responsableForDocument = undefined;
-      if (!this.quotation.responsable) {
-        if (this.currentUser) {
-          responsableForDocument = this.currentUser;
-          this.quotation.responsable = this.currentUser;
-        } else {
-          responsableForDocument = this.constantService.getResponsableDummyCustomerFrance();
-          this.quotation.responsable = { tiers: { isIndividual: !this.isIndividualTiers } as Tiers, mail: {} as Mail } as Responsable;
-          // TODO : delete after test
-          this.city = { id: 114155 } as City;
-          if (this.quotation && this.quotation.responsable) {
-            this.quotation.responsable.tiers.postalCode = this.postalCode;
-            this.quotation.responsable.tiers.city = this.city;
-
-            this.quotation.responsable.postalCode = this.postalCode;
-            this.quotation.responsable.city = this.city;
-
-            for (let doc of this.quotation.documents) {
-              if (doc.billingLabelType.id === this.billingLabelTypeOther.id) {
-                doc.billingPostalCode = this.postalCode;
-                doc.billingLabelCity = this.city!;
-              }
-            }
-          }
-        }
-      } else {
-        responsableForDocument = this.quotation.responsable;
-        // TODO : delete after test
-        this.city = { id: 114155 } as City;
-        if (this.quotation && this.quotation.responsable) {
-          this.quotation.responsable.tiers.postalCode = this.postalCode;
-          this.quotation.responsable.tiers.city = this.city;
-
-          this.quotation.responsable.postalCode = this.postalCode;
-          this.quotation.responsable.city = this.city;
-
-          for (let doc of this.quotation.documents) {
-            if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id && doc.billingLabelType.id == this.billingLabelTypeOther.id) {
-              doc.billingPostalCode = this.postalCode;
-              doc.billingLabelCity = this.city!;
-            }
-          }
-        }
-      }
-
-      if (responsableForDocument && (!this.quotation.documents || this.quotation.documents.length == 0)) {
-        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeBilling(), responsableForDocument)))
-        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeDigital(), responsableForDocument)))
-        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypePaper(), responsableForDocument)))
-      }
-    }
-  }
-
-  toggleTiersIndividual() {
-    if (this.quotation && this.quotation.responsable && this.quotation.responsable.tiers)
-      this.quotation.responsable.tiers.isIndividual = !this.quotation.responsable.tiers.isIndividual;
-  }
-
-  toggleIsRecipientAffaire(docIndex: number) {
-    if (this.quotation)
-      this.quotation.documents[docIndex].isRecipientAffaire = !this.quotation.documents[docIndex].isRecipientAffaire;
-  }
-
-  toggleIsRecipientClient(docIndex: number) {
-    if (this.quotation)
-      this.quotation.documents[docIndex].isRecipientClient = !this.quotation.documents[docIndex].isRecipientClient;
-  }
-
-  toggleAddToAffaireMailList(docIndex: number) {
-    if (this.quotation)
-      this.quotation.documents[docIndex].addToAffaireMailList = !this.quotation.documents[docIndex].addToAffaireMailList;
-  }
-
-  toggleAddToClientMailList(docIndex: number) {
-    if (this.quotation)
-      this.quotation.documents[docIndex].addToClientMailList = !this.quotation.documents[docIndex].addToClientMailList;
-  }
+  /**
+   * Init and save quotation
+   */
 
   initIQuotation() {
     if (this.currentUser) {
       if (this.quotationService.getCurrentDraftQuotationId()) {
         this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
           this.quotation = response;
-          this.computeTotalPrices();
-          this.initEmptyDocuments();
+          this.prepareForPricingAndCompute(true);
         });
       } else if (this.orderService.getCurrentDraftOrderId()) {
         this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
           this.quotation = response;
-          this.computeTotalPrices();
-          this.initEmptyDocuments();
+          this.prepareForPricingAndCompute(true);
         });
       }
     } else {
       if (this.quotationService.getCurrentDraftQuotation()) {
         this.quotation = this.quotationService.getCurrentDraftQuotation()!;
-        this.initEmptyDocuments();
-        this.computeTotalPrices();
       } else if (this.orderService.getCurrentDraftOrder()) {
         this.quotation = this.orderService.getCurrentDraftOrder()!;
-        this.initEmptyDocuments();
-        this.computeTotalPrices();
+      }
+      this.prepareForPricingAndCompute();
+    }
+  }
+
+  makeOrder() {
+    this.saveOrder();
+    if (!this.acceptDocs || !this.acceptTerms) {
+      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      return;
+    }
+  }
+
+  saveOrder() {
+    if (!this.currentUser)
+      if (this.quotation)
+        this.quotationService.setCurrentDraftQuotation(this.quotation);
+  }
+
+  saveDraftQuotation() {
+    if (this.quotation) {
+      if (!this.currentUser)
+        if (this.quotation.isQuotation)
+          this.quotationService.setCurrentDraftQuotation(this.quotation);
+        else
+          this.orderService.setCurrentDraftOrder(this.quotation);
+    }
+  }
+
+  /**
+   * Price events management
+   */
+
+  prepareForPricingAndCompute(isFromInit = false) {
+    this.isComputingPrice = true;
+    this.populateEmptyResponsable();
+    this.initEmptyDocuments();
+    this.computeQuotationPrice(isFromInit);
+  }
+
+  finalizePricingAnswer() {
+    this.computeTotalPrices();
+    this.saveDraftQuotation();
+    this.isComputingPrice = false;
+  }
+
+  populateEmptyResponsable() {
+    if (this.quotation) {
+      if (!this.quotation.responsable)
+        this.quotation.responsable = { tiers: {} as Tiers, mail: {} as Mail } as Responsable;
+
+      if (this.quotation.responsable) {
+        if (!this.quotation.responsable.country) {
+          this.quotation.responsable.country = this.constantService.getResponsableDummyCustomerFrance().country;
+        }
+        if (this.quotation.responsable.tiers) {
+          if (!this.quotation.responsable.tiers.country) {
+            this.quotation.responsable.tiers.country = this.constantService.getResponsableDummyCustomerFrance().tiers.country;
+          }
+          if (!this.quotation.responsable.tiers.city) {
+            this.quotation.responsable.tiers.city = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
+          }
+        }
+      }
+    }
+  }
+
+  initEmptyDocuments() {
+    if (this.quotation) {
+      if (!this.quotation.responsable)
+        return;
+
+      if (!this.quotation.documents || this.quotation.documents.length == 0)
+        this.quotation.documents = [];
+      let responsableForDocument = this.quotation.responsable && this.quotation.responsable.id ? this.quotation.responsable : this.constantService.getResponsableDummyCustomerFrance();
+
+      if (responsableForDocument && (!this.quotation.documents || this.quotation.documents.length == 0)) {
+        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeBilling(), responsableForDocument)))
+        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeDigital(), responsableForDocument)))
+        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypePaper(), responsableForDocument)))
+      }
+
+      //TODO delete after test
+      for (let doc of this.quotation.documents) {
+        if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id
+          && doc.billingLabelType.id == this.constantService.getBillingLabelTypeOther().id) {
+          doc.billingPostalCode = "76230";
+          doc.billingLabelCity = { id: 106072 } as City;
+        }
+      }
+    }
+  }
+
+  computeQuotationPrice(isFromInit: boolean) {
+    if (this.quotationPriceObservableRef) {
+      this.quotationPriceObservableRef.unsubscribe();
+      this.quotationPriceObservableRef = undefined;
+    }
+
+    if (this.quotation) {
+      if (this.currentUser) {
+        if (!isFromInit) {
+          if (this.quotationService.getCurrentDraftQuotationId()) {
+            this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
+              this.quotation = response;
+              this.finalizePricingAnswer();
+            });
+          } else if (this.orderService.getCurrentDraftOrderId()) {
+            this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
+              this.quotation = response;
+              this.finalizePricingAnswer();
+            });
+          }
+        } else {
+          this.finalizePricingAnswer();
+        }
+      } else {
+        if (this.quotation.isQuotation) {
+          this.quotationPriceObservableRef = this.quotationService.completePricingOfQuotation(
+            this.quotation as Quotation, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+              this.quotation!.assoAffaireOrders = res.assoAffaireOrders;
+              this.finalizePricingAnswer();
+            });
+        } else {
+          this.quotationPriceObservableRef = this.orderService.completePricingOfOrder(
+            this.quotation as CustomerOrder, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+              this.quotation!.assoAffaireOrders = res.assoAffaireOrders;
+              this.finalizePricingAnswer();
+            });
+        }
       }
     }
   }
@@ -258,6 +272,67 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     }
   }
 
+  setEmergencyOption() {
+    if (this.quotation) {
+      if (this.currentUser) {
+        if (this.quotation.isQuotation) {
+          this.quotationService.setEmergencyOnQuotation(this.quotation.id, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+            this.prepareForPricingAndCompute();
+          });
+        } else {
+          this.orderService.setEmergencyOnOrder(this.quotation.id, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+            this.prepareForPricingAndCompute();
+          });
+        }
+      } else {
+        this.saveDraftQuotation();
+        this.prepareForPricingAndCompute();
+      }
+    }
+  }
+
+  setDocumentValue(document: Document) {
+    if (this.quotation && document.documentType === this.documentTypeBilling) {
+      if (this.currentUser) {
+        if (this.quotation.isQuotation) {
+          this.quotationService.setDocumentOnQuotation(this.quotation.id, document).subscribe(res => {
+            this.prepareForPricingAndCompute();
+          });
+        } else {
+          this.orderService.setDocumentOnOrder(this.quotation.id, document).subscribe(res => {
+            this.prepareForPricingAndCompute();
+          });
+        }
+      } else {
+        this.saveDraftQuotation();
+        this.prepareForPricingAndCompute();
+      }
+    }
+  }
+
+  applyCoupon() {
+    this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
+  }
+
+  deleteService(serviceIndex: number, assoIndex: number) {
+    if (this.quotation) {
+      if (this.currentUser) {
+        //TO implement
+        //  this.serviceService.deleteService(this.quotation.assoAffaireOrders[assoIndex].services[serviceIndex].id).suscribe(response=>{
+        //  this.prepareForPricingAndCompute();
+        //})
+      } else {
+        this.quotation.assoAffaireOrders[assoIndex].services.splice(serviceIndex, 1);
+        this.saveDraftQuotation();
+        this.prepareForPricingAndCompute();
+      }
+    }
+  }
+
+  /**
+   * Log user management
+   */
+
   sendConnectionLink() {
     if (validateEmail(this.inputMail)) {
       this.isSendingLink = true;
@@ -267,101 +342,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       })
     } else {
       this.appService.displayToast("L'adresse saisie n'est pas une adresse mail valide", true, "Erreur", 5000);
-    }
-  }
-
-  computeEmergencyPrice() {
-    if (this.quotation && this.isFirstViewRendered) {
-      this.isComputingPrice = true;
-      if (this.currentUser) {
-        if (this.quotation.isQuotation) {
-          this.quotationService.setEmergencyOnQuotation(this.quotation.id, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
-            if (res)
-              this.quotationService.getQuotation(this.quotation!.id).subscribe(res => this.quotation = res);
-            this.computeTotalPrices();
-            this.isComputingPrice = false;
-          });
-        } else {
-          this.orderService.setEmergencyOnOrder(this.quotation.id, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
-            if (res)
-              this.orderService.getCustomerOrder(this.quotation!.id).subscribe(res => this.quotation = res);
-            this.computeTotalPrices();
-            this.isComputingPrice = false;
-          });
-        }
-      } else {
-        if (this.quotation.responsable && this.quotation.responsable.tiers &&
-          (!this.quotation.responsable.country || !this.quotation.responsable.tiers.country || !this.quotation.responsable.tiers.city)) {
-          this.populateEmptyResponsable();
-        }
-        this.computeQuotationPrice();
-      }
-    }
-  }
-
-  computeDocumentPrice(document: Document) {
-    if (this.quotation && this.isFirstViewRendered) {
-      this.isComputingPrice = true;
-      if (this.currentUser) {
-        if (this.quotation.isQuotation) {
-          this.quotationService.setDocumentOnQuotation(this.quotation.id, document).subscribe(res => {
-            if (res && document.documentType === this.documentTypeBilling) {
-              this.quotationService.getQuotation(this.quotation!.id).subscribe(res => this.quotation = res);
-              this.computeTotalPrices();
-            }
-            this.isComputingPrice = false;
-          });
-        } else {
-          this.orderService.setDocumentOnOrder(this.quotation.id, document).subscribe(res => {
-            if (res && document.documentType === this.documentTypeBilling) {
-              this.orderService.getCustomerOrder(this.quotation!.id).subscribe(res => this.quotation = res);
-              this.computeTotalPrices();
-            }
-            this.isComputingPrice = false;
-          });
-        }
-      } else {
-        if (this.quotation.responsable && this.quotation.responsable.tiers &&
-          (!this.quotation.responsable.country || !this.quotation.responsable.tiers.country || !this.quotation.responsable.tiers.city)) {
-          this.populateEmptyResponsable();
-        }
-        this.computeQuotationPrice();
-      }
-    }
-  }
-
-  computeQuotationPrice() {
-    if (this.quotation) {
-      this.isComputingPrice = true;
-      if (this.quotation.isQuotation) {
-        this.quotationPriceObservableRef = this.quotationService.completePricingOfQuotation(
-          this.quotation as Quotation, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
-            this.updateNotConnectedUserQuotationAndPrices(res)
-          });
-      } else {
-        this.quotationPriceObservableRef = this.orderService.completePricingOfOrder(
-          this.quotation as CustomerOrder, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
-            this.updateNotConnectedUserQuotationAndPrices(res)
-          });
-      }
-    }
-  }
-
-  updateNotConnectedUserQuotationAndPrices(res: IQuotation) {
-    this.quotation!.assoAffaireOrders = res.assoAffaireOrders;
-    this.computeTotalPrices();
-    if (!this.currentUser)
-      this.saveDraftQuotation();
-    this.isComputingPrice = false;
-  }
-
-  saveDraftQuotation() {
-    if (this.quotation) {
-      if (!this.currentUser)
-        if (this.quotation.isQuotation)
-          this.quotationService.setCurrentDraftQuotation(this.quotation);
-        else
-          this.orderService.setCurrentDraftOrder(this.quotation);
     }
   }
 
@@ -382,6 +362,10 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       this.initEmptyDocuments();
     }
   }
+
+  /**
+   * Forms function
+   */
 
   deleteMail(mail: Mail, document: Document, isAffaire: boolean) {
     if (document)
@@ -478,46 +462,8 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       }
   }
 
-  applyCoupon() {
-    this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
-  }
-
-  makeOrder() {
-    this.saveOrder();
-    if (!this.acceptDocs || !this.acceptTerms) {
-      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
-      return;
-    }
-
-  }
-
-  saveOrder() {
-    if (!this.currentUser)
-      if (this.quotation)
-        this.quotationService.setCurrentDraftQuotation(this.quotation);
-  }
-
-  deleteService(serviceIndex: number, assoIndex: number) {
-    if (this.quotation) {
-      this.quotation.assoAffaireOrders[assoIndex].services.splice(serviceIndex, 1);
-      this.computeTotalPrices();
-      this.saveDraftQuotation();
-    }
-  }
-
-  populateEmptyResponsable() {
-    if (this.quotation && this.quotation.responsable) {
-      if (!this.quotation.responsable.country) {
-        this.quotation.responsable.country = this.constantService.getResponsableDummyCustomerFrance().country;
-      }
-      if (this.quotation.responsable.tiers) {
-        if (!this.quotation.responsable.tiers.country) {
-          this.quotation.responsable.tiers.country = this.constantService.getResponsableDummyCustomerFrance().tiers.country;
-        }
-        if (!this.quotation.responsable.tiers.city) {
-          this.quotation.responsable.tiers.city = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
-        }
-      }
-    }
+  toggleTiersIndividual() {
+    if (this.quotation && this.quotation.responsable && this.quotation.responsable.tiers)
+      this.quotation.responsable.tiers.isIndividual = !this.quotation.responsable.tiers.isIndividual;
   }
 }

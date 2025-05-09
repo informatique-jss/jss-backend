@@ -57,178 +57,19 @@
             <div *ngIf="quotation">
               <generic-toggle [(model)]="quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency"
                 [isMandatory]="false" label="Traiter cette commande en urgence" [form]="documentForm"
-                propertyName="isEmergency" (change)="computeEmergencyPrice()">
+                propertyName="isEmergency" (change)="setEmergencyOption()">
               </generic-toggle>
             </div>
           </div>
         </div>
         <!-- Votre entreprise -->
         <div class="row" *ngIf="!currentUser">
-          <div class="card mb-4" *ngIf="quotation && quotation.responsable">
-            <h6 class="card-header"><i class="ai-briefcase me-2"></i>Votre entreprise</h6>
-            <div class="card-body pt-2">
-              <div class="mb-3">
-                <generic-toggle [(model)]="isIndividualTiers" label="Vous représentez une entreprise ?"
-                  [isMandatory]="false" [form]="documentForm" propertyName="isIndividual"
-                  (isIndividualTiers)="toggleTiersIndividual()">
-                </generic-toggle>
-              </div>
-              <ng-container *ngIf="!isIndividualTiers">
-                <div class="mb-3">
-                  <!-- <generic-input [(model)]="quotation.responsable.tiers.firstname" label="R.C.S de /!\ TODO /!\"
-                    [form]="documentForm" propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false"
-                    type="text">
-                  </generic-input> -->
-                </div>
-                <div class="mb-3">
-                  <generic-input [(model)]="quotation.responsable.tiers.denomination" label="Dénomination"
-                    [form]="documentForm" propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false"
-                    type="text">
-                  </generic-input>
-                </div>
-                <div class="row mt-3">
-                  <generic-input class="col" [(model)]="quotation.responsable.tiers.address" label="Adresse"
-                    [form]="documentForm" propertyName="tiersAdress" [isMandatory]="true" [isDisabled]="false"
-                    type="text">
-                  </generic-input>
-                </div>
-                <div class="row g-3 mt-3">
-                  <div>Code postal : {{postalCode}}</div>
-
-                  <!-- <generic-input class="col-md-4" [(model)]="quotation.responsable.tiers.postalCode" label="Code postal"
-                    [form]="documentForm" propertyName="tiersPostalCode" [isMandatory]="true" [isDisabled]="false"
-                    [maxLength]="10" (change)="computeQuotationPrice()">
-                  </generic-input> -->
-                  <div>Ville : {{city?.label}}</div>
-
-                  <!-- <autocomplete-city class="col-md-4" [(model)]="quotation.responsable.tiers.city" label="Ville"
-                    [form]="documentForm" propertyName="tiersCity" [isMandatory]="true" [isDisabled]="false"
-                    [modelCountry]="quotation.responsable.country"
-                    [preFilterPostalCode]="quotation.responsable.tiers.postalCode">
-                  </autocomplete-city> -->
-                  <select-country class="col-md-4" [(model)]="quotation.responsable.tiers.country" label="Pays"
-                    [form]="documentForm" propertyName="tiersCountry" [isMandatory]="true" [isDisabled]="false"
-                    (change)="computeQuotationPrice()">
-                  </select-country>
-                </div>
-                <div class="row g-3 mt-3">
-                  <generic-input class="col mt-0" [(model)]="newPhoneTiers" label="Téléphone(s) (entrer pour valider)"
-                    [form]="documentForm" propertyName="newPhoneTiers" [isMandatory]="false" [isDisabled]="false"
-                    [icon]="'phone'" [maxLength]="13" (onEnter)="addPhone(quotation.responsable, true)">
-                  </generic-input>
-                  <ul class="list-group mt-1">
-                    <li class="list-group-item" *ngFor="let phone of quotation.responsable.tiers.phones">
-                      <div class="d-flex flex-wrap w-100 justify-content-between">
-                        <div class="mt-auto mb-auto">&#x2022; {{phone.phoneNumber}}</div>
-                        <div>
-                          <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
-                            (click)="deletePhone(phone, quotation.responsable, true)">
-                            <i class="ai-cross"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-
-                  <generic-input class="col mt-0" [(model)]="newMailTiers" label="Votre adresse mail"
-                    [form]="documentForm" propertyName="newMailTiers" [isMandatory]="false" [isDisabled]="false"
-                    type="mail" [icon]="'mail'" (onEnter)="addMailTiers(quotation.responsable.tiers)">
-                  </generic-input>
-                  <ul class="list-group mt-1">
-                    <li class="list-group-item" *ngFor="let mail of quotation.responsable.tiers.mails">
-                      <div class="d-flex flex-wrap w-100 justify-content-between">
-                        <div class="mt-auto mb-auto">&#x2022; {{mail.mail}}</div>
-                        <div>
-                          <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
-                            (click)="deleteMailTiers(mail, quotation.responsable.tiers, true)">
-                            <i class="ai-cross"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </ng-container>
-            </div>
-          </div>
+          <ng-container [ngTemplateOutlet]="tiersForm"></ng-container>
         </div>
 
         <!-- Donneur d'ordre -->
         <div class="row" *ngIf="!currentUser">
-          <div class="card mb-4">
-            <h6 class="card-header"><i class="ai-user me-2"></i>Donneur d'ordre</h6>
-            <div class="card-body pt-2" *ngIf="quotation && quotation.responsable">
-              <div class="mb-3">
-                <select-civility [(model)]="quotation.responsable.civility" label="Civilité" [form]="documentForm"
-                  propertyName="respCivilty" [isMandatory]="true" [isDisabled]="false">
-                </select-civility>
-              </div>
-              <div class="row g-3 mt-3">
-                <generic-input class="col-md-6" [(model)]="quotation.responsable.firstname" label="Prénom"
-                  [form]="documentForm" propertyName="respFirstname" [isMandatory]="true" [isDisabled]="false"
-                  type="text">
-                </generic-input>
-                <generic-input class="col-md-6" [(model)]="quotation.responsable.lastname" label="Nom"
-                  [form]="documentForm" propertyName="respLastname" [isMandatory]="true" [isDisabled]="false"
-                  type="text">
-                </generic-input>
-              </div>
-              <div class="row mt-3">
-                <generic-input class="col" [(model)]="quotation.responsable.address" label="Adresse"
-                  [form]="documentForm" propertyName="respAddress" [isMandatory]="true" [isDisabled]="false"
-                  type="text">
-                </generic-input>
-              </div>
-              <div class="row mt-3">
-                <generic-input class="col" [(model)]="quotation.responsable.addressComplement"
-                  label="Complément d'adresse" [form]="documentForm" propertyName="respAddressComplement"
-                  [isMandatory]="false" [isDisabled]="false" type="text">
-                </generic-input>
-              </div>
-              <div class="row g-3 mt-3">
-                <div>Code postal : {{postalCode}}</div>
-                <!-- <generic-input class="col-md-4" [(model)]="quotation.responsable.postalCode" label="Code postal"
-                  [form]="documentForm" propertyName="respPostalCode" [isMandatory]="true" [isDisabled]="false"
-                  [maxLength]="10" (change)="computeQuotationPrice()">
-                </generic-input> -->
-                <div>Ville : {{city?.label}}</div>
-                <!-- <autocomplete-city class="col-md-4" [(model)]="quotation.responsable.city" label="Ville"
-                  [form]="documentForm" propertyName="respCity" [isMandatory]="true" [isDisabled]="false"
-                  [modelCountry]="quotation.responsable.country"
-                  [preFilterPostalCode]="quotation.responsable.postalCode">
-                </autocomplete-city> -->
-                <select-country class="col-md-4" [(model)]="quotation.responsable.country" label="Pays"
-                  [form]="documentForm" propertyName="respCountry" [isMandatory]="true" [isDisabled]="false"
-                  (change)="computeQuotationPrice()">
-                </select-country>
-              </div>
-              <div class="row g-3 mt-3">
-                <ul class="list-group">
-                  <li class="list-group-item" *ngFor="let phone of quotation.responsable.tiers.phones">
-                    <div class="d-flex flex-wrap w-100 justify-content-between">
-                      <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
-                      <div>
-                        <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
-                          (click)="deletePhone(phone, quotation.responsable, true)">
-                          <i class="ai-cross"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-                <generic-input class="col-md-6 mt-0" [(model)]="newPhoneResponsable"
-                  label="Téléphone(s) (entrer pour valider)" [form]="documentForm" propertyName="newPhoneResponsable"
-                  [isMandatory]="false" [isDisabled]="false" [icon]="'phone'" [maxLength]="13"
-                  (onEnter)="addPhone(quotation.responsable, false)">
-                </generic-input>
-
-                <generic-input class="col-md-6 mt-0" [(model)]="quotation.responsable.mail.mail"
-                  label="Votre adresse mail" [form]="documentForm" propertyName="respMail" [isMandatory]="true"
-                  [isDisabled]="false" type="mail" [icon]="'mail'">
-                </generic-input>
-              </div>
-            </div>
-          </div>
+          <ng-container [ngTemplateOutlet]="responsableForm"></ng-container>
         </div>
 
         <!-- Renseignement administratif -->
@@ -275,248 +116,20 @@
                 </li>
               </ul>
               <div class="tab-content">
-                <div class="tab-pane fade show active" [id]="documentTypeBilling.code" role="tabpanel">
-                  <ng-container *ngFor="let document of quotation.documents; let docIndex = index">
-                    <ng-container *ngIf="document.documentType.code == documentTypeBilling.code ">
-                      <div class="d-flex align-items-center pb-1 mb-2">
-                        <h3 class="fs-base fw-normal text-body text-uppercase pb-2 pb-sm-3">
-                          <span class=" ms-1">&#x2022; Libellé de la facture</span>
-                        </h3>
-                      </div>
-                      <div class="form-check mb-3">
-                        <select-billing-label-type [(model)]="document.billingLabelType" label="Adressage"
-                          [form]="documentForm" [propertyName]="'billingLabelType'+document.billingLabelType.code"
-                          [isMandatory]="true" [isDisabled]="false" (selectionChange)="computeDocumentPrice(document)">
-                        </select-billing-label-type>
-                        <div class="pt-4">
-                          <form [formGroup]="documentForm">
-                            <div
-                              *ngIf="document.billingLabelType && document.billingLabelType.code && document.billingLabelType.id == billingLabelTypeOther.id">
-                              <div class="row mb-3">
-                                <div class="col">
-                                  <generic-input [(model)]="document.billingLabel" label="Libellé" [form]="documentForm"
-                                    propertyName="billingLabel" [maxLength]="200" [isMandatory]="true"
-                                    [isDisabled]="false"></generic-input>
-                                </div>
-
-                                <div class="col">
-                                  <generic-input [(model)]="document.billingAddress" label="Adresse"
-                                    [form]="documentForm" propertyName="billingAddress" [isMandatory]="true"
-                                    [isDisabled]="false" [maxLength]="200"></generic-input>
-                                </div>
-
-                              </div>
-
-                              <div class="row mb-3">
-                                <div class="col-md-4">
-                                  <div>Code postal : {{postalCode}}</div>
-
-                                  <!-- <generic-input [(model)]="document.billingPostalCode" label="Code postal"
-                                    [form]="documentForm" propertyName="billingPostalCode" [isMandatory]="true"
-                                    [isDisabled]="false" [maxLength]="10"
-                                    (change)="computeDocumentPrice(document)"></generic-input> -->
-                                </div>
-
-                                <div class="col-md-4">
-                                  <div>Ville : {{city?.label}}</div>
-                                  <!-- <autocomplete-city [(model)]="document.billingLabelCity" label="Ville"
-                                    [form]="documentForm" propertyName="billingCity" [isMandatory]="true"
-                                    [isDisabled]="false" [modelCountry]="document.billingLabelCountry"
-                                    [preFilterPostalCode]="document.billingPostalCode"></autocomplete-city> -->
-                                </div>
-
-                                <div class="col-md-4">
-                                  <select-country [(model)]="document.billingLabelCountry" label="Pays"
-                                    [form]="documentForm" propertyName="billingCountry" [isMandatory]="true"
-                                    [isDisabled]="false" (change)="computeDocumentPrice(document)"></select-country>
-                                </div>
-                              </div>
-
-                              <div class="row mb-3">
-                                <div class="col-md-4">
-                                  <generic-input [(model)]="document.cedexComplement" label="Complément CEDEX"
-                                    [form]="documentForm" propertyName="billingCedexComplement" [isMandatory]="false"
-                                    [isDisabled]="false" [maxLength]="20"></generic-input>
-                                </div>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                      <hr>
-                      <div class="d-flex align-items-center pb-1 mb-2">
-                        <h3 class="h6 mb-0 me-3 mt-3 text-blue">Destinataires de la facture</h3>
-                      </div>
-                      <div class="form-check">
-                        <generic-toggle *ngIf="quotation.assoAffaireOrders.length == 1"
-                          [(model)]="document.isRecipientAffaire" label="L'envoyer à l'affaire" [form]="documentForm"
-                          propertyName="isRecipientAffaireBilling" [isMandatory]="false"
-                          (document.isRecipientAffaire)="toggleIsRecipientAffaire(docIndex)">
-                        </generic-toggle>
-                        <div class="row ps-4 pb-2">
-                          <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire"
-                            [(model)]="document.addToAffaireMailList"
-                            label="Ajouter des adresses mails en copie de l'affaire" [form]="documentForm"
-                            propertyName="addToAffaireMailListBilling" [isMandatory]="false"
-                            (document.addToAffaireMailList)="toggleAddToAffaireMailList(docIndex)">
-                          </generic-toggle>
-
-                          <ul class="list-group mt-1 mb-3"
-                            *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
-                            <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
-                              <div class="d-flex flex-wrap w-100 justify-content-between">
-                                <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                                <div>
-                                  <button type="button" class="btn btn-danger btn-icon btn-sm me-3" title="Supprimer"
-                                    (click)="deleteMail(mail, document, true)">
-                                    <i class="ai-cross"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                          </ul>
-                          <generic-input class="pb-4"
-                            *ngIf="document.addToAffaireMailList && document.isRecipientAffaire"
-                            [(model)]="newMailBillingAffaire" label="Nouveau mail (entrer pour valider)"
-                            [form]="documentForm" propertyName="newMailBillingAffaireBilling" [isMandatory]="false"
-                            [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
-                            (onEnter)="addMail(document, true)">
-                          </generic-input>
-                        </div>
-
-                        <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer"
-                          [form]="documentForm" propertyName="isRecipientClientBilling"
-                          (document.isRecipientClient)="toggleIsRecipientClient(docIndex)" [isMandatory]="false">
-                        </generic-toggle>
-                        <div class="row ps-4 pb-2">
-                          <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
-                            label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
-                            propertyName="addToClientMailListBilling" [isMandatory]="false"
-                            (document.addToClientMailList)="toggleAddToClientMailList(docIndex)">
-                          </generic-toggle>
-
-                          <ul class="list-group mt-1 mb-3"
-                            *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
-                            <li class="list-group-item" *ngFor="let mail of document.mailsClient">
-                              <div class="d-flex flex-wrap w-100 justify-content-between">
-                                <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                                <div>
-                                  <button type="button" class="btn btn-danger btn-icon btn-sm me-3" title="Supprimer"
-                                    (click)="deleteMail(mail, document, false)">
-                                    <i class="ai-cross"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                          </ul>
-                          <generic-input *ngIf="document.addToClientMailList && document.isRecipientClient"
-                            [(model)]="newMailBillingClient" label="Nouveau mail (entrer pour valider)"
-                            [form]="documentForm" propertyName="newMailBillingClientBilling" [isMandatory]="false"
-                            [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
-                            (onEnter)="addMail(document, false)"></generic-input>
-                        </div>
-                      </div>
-                    </ng-container>
+                <ng-container *ngFor="let document of quotation.documents; let docIndex = index">
+                  <ng-container *ngIf="document.documentType.code == documentTypeBilling.code ">
+                    <ng-container [ngTemplateOutlet]="billingDocumentForm"
+                      [ngTemplateOutletContext]="{document:document}"></ng-container>
                   </ng-container>
-                </div>
-                <div class="tab-pane fade show " [id]="documentTypeDigital.code" role="tabpanel">
-                  <ng-container *ngFor="let document of quotation.responsable.documents; let docIndex = index">
-                    <ng-container *ngIf="document.documentType.code == documentTypeDigital.code ">
-                      <div class="d-flex align-items-center pb-1 mb-2">
-                        <h3 class="h6 mb-0 me-3 mt-3 text-blue">Destinataires des documents
-                          numériques</h3>
-                      </div>
-                      <div class="form-check">
-                        <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à l'affaire"
-                          [form]="documentForm" propertyName="isRecipientAffaireDigital" [isMandatory]="false"
-                          (document.isRecipientAffaire)="toggleIsRecipientAffaire(docIndex)">
-                        </generic-toggle>
-                        <div class="row ps-4 pb-2">
-                          <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire"
-                            [(model)]="document.addToAffaireMailList" [isMandatory]="false"
-                            label="Ajouter des adresses mails en copie de l'affaire" [form]="documentForm"
-                            propertyName="addToAffaireMailListDigital"
-                            (document.addToAffaireMailList)="toggleAddToAffaireMailList(docIndex)">
-                          </generic-toggle>
-
-                          <ul class="list-group mt-1 mb-3"
-                            *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
-                            <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
-                              <div class="d-flex flex-wrap w-100 justify-content-between">
-                                <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                                <div>
-                                  <button type="button" class="btn btn-danger btn-icon btn-sm me-3" title="Supprimer"
-                                    (click)="deleteMail(mail, document, true)">
-                                    <i class="ai-cross"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                          </ul>
-                          <generic-input class="pb-4"
-                            *ngIf="document.addToAffaireMailList && document.isRecipientAffaire"
-                            [(model)]="newMailBillingAffaire" label="Nouveau mail (entrer pour valider)"
-                            [form]="documentForm" propertyName="newMailBillingAffaireDigital" [isMandatory]="false"
-                            [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
-                            (onEnter)="addMail(document, true)">
-                          </generic-input>
-                        </div>
-
-                        <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer"
-                          [form]="documentForm" propertyName="isRecipientClientDigital" [isMandatory]="false"
-                          (document.isRecipientClient)="toggleIsRecipientClient(docIndex)">
-                        </generic-toggle>
-                        <div class="row ps-4 pb-2">
-                          <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
-                            label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
-                            propertyName="addToClientMailListDigital" [isMandatory]="false"
-                            (document.addToClientMailList)="toggleAddToClientMailList(docIndex)">
-                          </generic-toggle>
-
-                          <ul class="list-group mt-1 mb-3"
-                            *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
-                            <li class="list-group-item" *ngFor="let mail of document.mailsClient">
-                              <div class="d-flex flex-wrap w-100 justify-content-between">
-                                <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                                <div>
-                                  <button type="button" class="btn btn-danger btn-icon btn-sm me-3" title="Supprimer"
-                                    (click)="deleteMail(mail, document, false)">
-                                    <i class="ai-cross"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                          </ul>
-                          <generic-input *ngIf="document.addToClientMailList && document.isRecipientClient"
-                            [(model)]="newMailBillingClient" label="Nouveau mail (entrer pour valider)"
-                            [form]="documentForm" propertyName="newMailBillingClientDigital" [isMandatory]="false"
-                            [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
-                            (onEnter)="addMail(document, false)"></generic-input>
-                        </div>
-                      </div>
-                    </ng-container>
+                  <ng-container *ngIf="document.documentType.code == documentTypeDigital.code ">
+                    <ng-container [ngTemplateOutlet]="digitalDocumentForm"
+                      [ngTemplateOutletContext]="{document:document}"></ng-container>
                   </ng-container>
-                </div>
-                <div class="tab-pane fade show " [id]="documentTypePaper.code" role="tabpanel">
-                  <ng-container *ngFor="let document of quotation.responsable.documents; let docIndex = index ">
-                    <ng-container *ngIf="document.documentType.code == documentTypePaper.code ">
-                      <div class="d-flex align-items-center pb-1 mb-2">
-                        <h3 class="h6 mb-0 me-3 mt-3 text-blue">Destinataires des documents papiers
-                        </h3>
-                      </div>
-                      <div class="form-check">
-                        <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à l'affaire"
-                          [form]="documentForm" propertyName="isRecipientAffairePaper" [isMandatory]="false"
-                          (document.isRecipientAffaire)="toggleIsRecipientAffaire(docIndex)">
-                        </generic-toggle>
-                        <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer"
-                          [form]="documentForm" propertyName="isRecipientClientPaper" [isMandatory]="false"
-                          (document.isRecipientClient)="toggleIsRecipientClient(docIndex)">
-                        </generic-toggle>
-                      </div>
-                    </ng-container>
+                  <ng-container *ngIf="document.documentType.code == documentTypePaper.code ">
+                    <ng-container [ngTemplateOutlet]="paperDocumentForm"
+                      [ngTemplateOutletContext]="{document:document}"></ng-container>
                   </ng-container>
-                </div>
+                </ng-container>
               </div>
             </div>
           </div>
@@ -538,105 +151,496 @@
       <!-- Order summary -->
       <div class="d-none d-lg-block start-57 background-right position-fixed top-0 h-100">
       </div>
-      <div class="col">
-        <div class="row">
-          <div class="col-12 px-0">
-            <div class="card shadow px-4 ms-lg-5 pt-1" *ngIf="quotation">
-              <!-- Items -->
-              <div *ngFor="let asso of quotation.assoAffaireOrders; let assoIndex = index">
-                <div *ngFor="let service of asso.services; let serviceIndex = index" class="row">
+      <ng-container [ngTemplateOutlet]="checkoutSummary"></ng-container>
+    </div>
+  </form>
+</div>
 
-                  <div class="d-sm-flex align-items-center border-top py-4">
-                    <div class="w-100 pt-1">
-                      <div class="d-flex">
-                        <div class="me-3">
-                          <h3 class="h5 mb-2 text-blue">{{service.serviceLabelToDisplay}}
-                          </h3>
-                          <p class="card-text small">
-                            <strong>{{service.assoServiceDocuments.length}}</strong>
-                            documents nécessaires
-                            <br>
-                            <strong> {{asso.affaire.denomination}} - {{asso.affaire.address}} -
-                              {{asso.affaire.postalCode}}</strong>
-                          </p>
+<!-- Tiers form -->
+<ng-template #tiersForm>
+  <div class="card mb-4" *ngIf="quotation && quotation.responsable">
+    <h6 class="card-header"><i class="ai-briefcase me-2"></i>Votre entreprise</h6>
+    <div class="card-body pt-2">
+      <div class="mb-3">
+        <generic-toggle [(model)]="isIndividualTiers" label="Vous représentez une entreprise ?" [isMandatory]="false"
+          [form]="documentForm" propertyName="isIndividual" (isIndividualTiers)="toggleTiersIndividual()">
+        </generic-toggle>
+      </div>
+      <ng-container *ngIf="!isIndividualTiers">
+        <div class="mb-3">
+          <!-- <generic-input [(model)]="quotation.responsable.tiers.firstname" label="R.C.S de /!\ TODO /!\"
+            [form]="documentForm" propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false"
+            type="text">
+          </generic-input> -->
+        </div>
+        <div class="mb-3">
+          <generic-input [(model)]="quotation.responsable.tiers.denomination" label="Dénomination" [form]="documentForm"
+            propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false" type="text">
+          </generic-input>
+        </div>
+        <div class="row mt-3">
+          <generic-input class="col" [(model)]="quotation.responsable.tiers.address" label="Adresse"
+            [form]="documentForm" propertyName="tiersAdress" [isMandatory]="true" [isDisabled]="false" type="text">
+          </generic-input>
+        </div>
+        <div class="row g-3 mt-3">
+          <div>Code postal : {{quotation.responsable.tiers.postalCode}}</div>
 
-                        </div>
-                        <div class="text-end ms-auto">
-                          <div class="fs-6 mb-2">{{service.serviceTotalPrice |
-                            currency:'EUR'}}</div>
-                        </div>
-                      </div>
-                      <div class="nav justify-content-end mt-n5 mt-sm-n3">
-                        <a class="nav-link fs-xl p-2" (click)="deleteService(serviceIndex, assoIndex)">
-                          <i class="ai-trash"></i>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <hr>
+          <!-- <generic-input class="col-md-4" [(model)]="quotation.responsable.tiers.postalCode" label="Code postal"
+            [form]="documentForm" propertyName="tiersPostalCode" [isMandatory]="true" [isDisabled]="false"
+            [maxLength]="10" (change)="computeQuotationPrice()">
+          </generic-input> -->
+          <div>Ville : {{quotation.responsable.tiers.city.label}}</div>
+
+          <!-- <autocomplete-city class="col-md-4" [(model)]="quotation.responsable.tiers.city" label="Ville"
+            [form]="documentForm" propertyName="tiersCity" [isMandatory]="true" [isDisabled]="false"
+            [modelCountry]="quotation.responsable.country"
+            [preFilterPostalCode]="quotation.responsable.tiers.postalCode">
+          </autocomplete-city> -->
+          <select-country class="col-md-4" [(model)]="quotation.responsable.tiers.country" label="Pays"
+            [form]="documentForm" propertyName="tiersCountry" [isMandatory]="true" [isDisabled]="false"
+            (change)="prepareForPricingAndCompute()">
+          </select-country>
+        </div>
+        <div class="row g-3 mt-3">
+          <generic-input class="col mt-0" [(model)]="newPhoneTiers" label="Téléphone(s) (entrer pour valider)"
+            [form]="documentForm" propertyName="newPhoneTiers" [isMandatory]="false" [isDisabled]="false"
+            [icon]="'phone'" [maxLength]="13" (onEnter)="addPhone(quotation.responsable, true)">
+          </generic-input>
+          <ul class="list-group mt-1">
+            <li class="list-group-item" *ngFor="let phone of quotation.responsable.tiers.phones">
+              <div class="d-flex flex-wrap w-100 justify-content-between">
+                <div class="mt-auto mb-auto">&#x2022; {{phone.phoneNumber}}</div>
+                <div>
+                  <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
+                    (click)="deletePhone(phone, quotation.responsable, true)">
+                    <i class="ai-cross"></i>
+                  </button>
                 </div>
               </div>
+            </li>
+          </ul>
 
-              <div class="border-top pt-4 mb-3">
-                <div class="input-group input-group-sm border-dashed" style="max-width: 310px;">
-                  <input class="form-control text-uppercase" type="text" placeholder="Code de réduction">
-                  <button class="btn btn-secondary" type="button" (click)="applyCoupon()">Appliquer</button>
+          <generic-input class="col mt-0" [(model)]="newMailTiers" label="Votre adresse mail" [form]="documentForm"
+            propertyName="newMailTiers" [isMandatory]="false" [isDisabled]="false" type="mail" [icon]="'mail'"
+            (onEnter)="addMailTiers(quotation.responsable.tiers)">
+          </generic-input>
+          <ul class="list-group mt-1">
+            <li class="list-group-item" *ngFor="let mail of quotation.responsable.tiers.mails">
+              <div class="d-flex flex-wrap w-100 justify-content-between">
+                <div class="mt-auto mb-auto">&#x2022; {{mail.mail}}</div>
+                <div>
+                  <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
+                    (click)="deleteMailTiers(mail, quotation.responsable.tiers, true)">
+                    <i class="ai-cross"></i>
+                  </button>
                 </div>
               </div>
-              <ul class="list-unstyled pt-3 mb-0">
-                <li class="d-flex justify-content-between mb-2">
-                  Sous-total:
-                  <div *ngIf="isComputingPrice" class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden"></span>
-                  </div>
-                  <span *ngIf="!isComputingPrice" class="fw-semibold ms-2">{{totalPriceWithoutVat |
-                    currency:'EUR'}}</span>
-                </li>
-                <li class="d-flex justify-content-between mb-2">
-                  TVA:<span class="fw-semibold ms-2">{{totalVatPrice | currency:'EUR'}}</span>
-                </li>
-              </ul>
-              <hr>
-              <div class="d-flex align-items-center justify-content-between border-top fs-xl pb-4">
-                Total:
-                <div *ngIf="isComputingPrice" class="spinner-border" role="status">
-                  <span class="visually-hidden"></span>
-                </div>
-                <span *ngIf="!isComputingPrice" class="fs-3 fw-semibold text-dark ms-2">{{totalPrice |
-                  currency:'EUR'}}</span>
+            </li>
+          </ul>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Responsable form -->
+<ng-template #responsableForm>
+  <div class="card mb-4">
+    <h6 class="card-header"><i class="ai-user me-2"></i>Donneur d'ordre</h6>
+    <div class="card-body pt-2" *ngIf="quotation && quotation.responsable">
+      <div class="mb-3">
+        <select-civility [(model)]="quotation.responsable.civility" label="Civilité" [form]="documentForm"
+          propertyName="respCivilty" [isMandatory]="true" [isDisabled]="false">
+        </select-civility>
+      </div>
+      <div class="row g-3 mt-3">
+        <generic-input class="col-md-6" [(model)]="quotation.responsable.firstname" label="Prénom" [form]="documentForm"
+          propertyName="respFirstname" [isMandatory]="true" [isDisabled]="false" type="text">
+        </generic-input>
+        <generic-input class="col-md-6" [(model)]="quotation.responsable.lastname" label="Nom" [form]="documentForm"
+          propertyName="respLastname" [isMandatory]="true" [isDisabled]="false" type="text">
+        </generic-input>
+      </div>
+      <div class="row mt-3">
+        <generic-input class="col" [(model)]="quotation.responsable.address" label="Adresse" [form]="documentForm"
+          propertyName="respAddress" [isMandatory]="true" [isDisabled]="false" type="text">
+        </generic-input>
+      </div>
+      <div class="row mt-3">
+        <generic-input class="col" [(model)]="quotation.responsable.addressComplement" label="Complément d'adresse"
+          [form]="documentForm" propertyName="respAddressComplement" [isMandatory]="false" [isDisabled]="false"
+          type="text">
+        </generic-input>
+      </div>
+      <div class="row g-3 mt-3">
+        <div>Code postal : {{quotation.responsable.postalCode}}</div>
+        <!-- <generic-input class="col-md-4" [(model)]="quotation.responsable.postalCode" label="Code postal"
+          [form]="documentForm" propertyName="respPostalCode" [isMandatory]="true" [isDisabled]="false"
+          [maxLength]="10" (change)="computeQuotationPrice()">
+        </generic-input> -->
+        <div *ngIf="quotation.responsable.city">Ville : {{quotation.responsable.city.label}}</div>
+        <!-- <autocomplete-city class="col-md-4" [(model)]="quotation.responsable.city" label="Ville"
+          [form]="documentForm" propertyName="respCity" [isMandatory]="true" [isDisabled]="false"
+          [modelCountry]="quotation.responsable.country"
+          [preFilterPostalCode]="quotation.responsable.postalCode">
+        </autocomplete-city> -->
+        <select-country class="col-md-4" [(model)]="quotation.responsable.country" label="Pays" [form]="documentForm"
+          propertyName="respCountry" [isMandatory]="true" [isDisabled]="false" (change)="prepareForPricingAndCompute()">
+        </select-country>
+      </div>
+      <div class="row g-3 mt-3">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let phone of quotation.responsable.tiers.phones">
+            <div class="d-flex flex-wrap w-100 justify-content-between">
+              <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
+              <div>
+                <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
+                  (click)="deletePhone(phone, quotation.responsable, true)">
+                  <i class="ai-cross"></i>
+                </button>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <generic-input class="col-md-6 mt-0" [(model)]="newPhoneResponsable" label="Téléphone(s) (entrer pour valider)"
+          [form]="documentForm" propertyName="newPhoneResponsable" [isMandatory]="false" [isDisabled]="false"
+          [icon]="'phone'" [maxLength]="13" (onEnter)="addPhone(quotation.responsable, false)">
+        </generic-input>
+
+        <generic-input class="col-md-6 mt-0" [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail"
+          [form]="documentForm" propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="mail"
+          [icon]="'mail'">
+        </generic-input>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Billing document form -->
+<ng-template #billingDocumentForm let-document='document'>
+  <div class="tab-pane fade show active" [id]="documentTypeBilling.code" role="tabpanel">
+    <div class="d-flex align-items-center pb-1 mb-2">
+      <h3 class="fs-base fw-normal text-body text-uppercase pb-2 pb-sm-3">
+        <span class=" ms-1">&#x2022; Libellé de la facture</span>
+      </h3>
+    </div>
+    <div class="form-check mb-3">
+      <select-billing-label-type [(model)]="document.billingLabelType" label="Adressage"
+        *ngIf="document.billingLabelType" [form]="documentForm"
+        [propertyName]="'billingLabelType'+document.billingLabelType.code" [isMandatory]="true" [isDisabled]="false"
+        (selectionChange)="setDocumentValue(document)">
+      </select-billing-label-type>
+      <div class="pt-4">
+        <form [formGroup]="documentForm">
+          <div
+            *ngIf="document.billingLabelType && document.billingLabelType.code && document.billingLabelType.id == billingLabelTypeOther.id">
+            <div class="row mb-3">
+              <div class="col">
+                <generic-input [(model)]="document.billingLabel" label="Libellé" [form]="documentForm"
+                  propertyName="billingLabel" [maxLength]="200" [isMandatory]="true"
+                  [isDisabled]="false"></generic-input>
+              </div>
+
+              <div class="col">
+                <generic-input [(model)]="document.billingAddress" label="Adresse" [form]="documentForm"
+                  propertyName="billingAddress" [isMandatory]="true" [isDisabled]="false"
+                  [maxLength]="200"></generic-input>
+              </div>
+
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <div>Code postal : {{document.billingPostalCode}}</div>
+
+                <!-- <generic-input [(model)]="document.billingPostalCode" label="Code postal"
+                  [form]="documentForm" propertyName="billingPostalCode" [isMandatory]="true"
+                  [isDisabled]="false" [maxLength]="10"
+                  (change)="computeDocumentPrice(document)"></generic-input> -->
+              </div>
+
+              <div class="col-md-4">
+                <div *ngIf="document.billingLabelCity">Ville : {{document.billingLabelCity.label}}</div>
+                <!-- <autocomplete-city [(model)]="document.billingLabelCity" label="Ville"
+                  [form]="documentForm" propertyName="billingCity" [isMandatory]="true"
+                  [isDisabled]="false" [modelCountry]="document.billingLabelCountry"
+                  [preFilterPostalCode]="document.billingPostalCode"></autocomplete-city> -->
+              </div>
+
+              <div class="col-md-4">
+                <select-country [(model)]="document.billingLabelCountry" label="Pays" [form]="documentForm"
+                  propertyName="billingCountry" [isMandatory]="true" [isDisabled]="false"
+                  (change)="setDocumentValue(document)"></select-country>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <generic-input [(model)]="document.cedexComplement" label="Complément CEDEX" [form]="documentForm"
+                  propertyName="billingCedexComplement" [isMandatory]="false" [isDisabled]="false"
+                  [maxLength]="20"></generic-input>
               </div>
             </div>
           </div>
-        </div>
-        <div class="row pt-5">
-          <div class="col-12 ms-lg-5 pe-lg-5 px-0">
-            <div class="form-check mb-4">
-              <input class="form-check-input" type="checkbox" id="save-info" [(ngModel)]="acceptDocs" name="acceptDocs"
-                required>
-              <label class="form-check-label" for="save-info">Je certifie que les pièces justificatives fournies sont
-                conformes.
-              </label>
-            </div>
-            <div class="form-check mb-4 pe-2">
-              <input class="form-check-input" type="checkbox" id="save-info2" [(ngModel)]="acceptTerms"
-                name="acceptTerms" required>
-              <label class="form-check-label" for="save-info2">En cochant cette case, je reconnais avoir pris
-                connaissance et accepter les Conditions Générales de Vente (CGV) du site.
-              </label>
-            </div>
-            <div class="row gx-1 gy-3 justify-content-between">
-              <div class="col-auto">
-                <button class="btn btn-lg btn-primary" type="submit" (click)="saveOrder()">Enregistrer le
-                  brouillon</button>
+        </form>
+      </div>
+    </div>
+    <hr>
+    <div class="d-flex align-items-center pb-1 mb-2">
+      <h3 class="h6 mb-0 me-3 mt-3 text-blue">Destinataires de la facture</h3>
+    </div>
+    <div class="form-check">
+      <generic-toggle *ngIf="quotation!.assoAffaireOrders.length == 1" [(model)]="document.isRecipientAffaire"
+        label="L'envoyer à l'affaire" [form]="documentForm" propertyName="isRecipientAffaireBilling"
+        [isMandatory]="false">
+      </generic-toggle>
+      <div class="row ps-4 pb-2">
+        <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire" [(model)]="document.addToAffaireMailList"
+          label="Ajouter des adresses mails en copie de l'affaire" [form]="documentForm"
+          propertyName="addToAffaireMailListBilling" [isMandatory]="false">
+        </generic-toggle>
+
+        <ul class="list-group mt-1 mb-3"
+          *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
+          <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
+            <div class="d-flex flex-wrap w-100 justify-content-between">
+              <div class="mt-auto mb-auto">{{mail.mail}}</div>
+              <div>
+                <button type="button" class="btn btn-danger btn-icon btn-sm me-3" title="Supprimer"
+                  (click)="deleteMail(mail, document, true)">
+                  <i class="ai-cross"></i>
+                </button>
               </div>
-              <div class="col-auto">
-                <button class="btn btn-lg btn-secondary" type="submit" (click)="makeOrder()">Valider la
-                  commande</button>
+            </div>
+          </li>
+        </ul>
+        <generic-input class="pb-4" *ngIf="document.addToAffaireMailList && document.isRecipientAffaire"
+          [(model)]="newMailBillingAffaire" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
+          propertyName="newMailBillingAffaireBilling" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
+          [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, true)">
+        </generic-input>
+      </div>
+
+      <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer" [form]="documentForm"
+        propertyName="isRecipientClientBilling" [isMandatory]="false">
+      </generic-toggle>
+      <div class="row ps-4 pb-2">
+        <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
+          label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
+          propertyName="addToClientMailListBilling" [isMandatory]="false">
+        </generic-toggle>
+
+        <ul class="list-group mt-1 mb-3"
+          *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
+          <li class="list-group-item" *ngFor="let mail of document.mailsClient">
+            <div class="d-flex flex-wrap w-100 justify-content-between">
+              <div class="mt-auto mb-auto">{{mail.mail}}</div>
+              <div>
+                <button type="button" class="btn btn-danger btn-icon btn-sm me-3" title="Supprimer"
+                  (click)="deleteMail(mail, document, false)">
+                  <i class="ai-cross"></i>
+                </button>
               </div>
             </div>
+          </li>
+        </ul>
+        <generic-input *ngIf="document.addToClientMailList && document.isRecipientClient"
+          [(model)]="newMailBillingClient" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
+          propertyName="newMailBillingClientBilling" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
+          [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, false)"></generic-input>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Digital document form -->
+<ng-template #digitalDocumentForm let-document='document'>
+  <div class="tab-pane fade show " [id]="documentTypeDigital.code" role="tabpanel">
+    <div class="d-flex align-items-center pb-1 mb-2">
+      <h3 class="h6 mb-0 me-3 mt-3 text-blue">Destinataires des documents
+        numériques</h3>
+    </div>
+    <div class="form-check">
+      <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à l'affaire" [form]="documentForm"
+        propertyName="isRecipientAffaireDigital" [isMandatory]="false">
+      </generic-toggle>
+      <div class="row ps-4 pb-2">
+        <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire" [(model)]="document.addToAffaireMailList"
+          [isMandatory]="false" label="Ajouter des adresses mails en copie de l'affaire" [form]="documentForm"
+          propertyName="addToAffaireMailListDigital">
+        </generic-toggle>
+
+        <ul class="list-group mt-1 mb-3"
+          *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
+          <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
+            <div class="d-flex flex-wrap w-100 justify-content-between">
+              <div class="mt-auto mb-auto">{{mail.mail}}</div>
+              <div>
+                <button type="button" class="btn btn-danger btn-icon btn-sm me-3" title="Supprimer"
+                  (click)="deleteMail(mail, document, true)">
+                  <i class="ai-cross"></i>
+                </button>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <generic-input class="pb-4" *ngIf="document.addToAffaireMailList && document.isRecipientAffaire"
+          [(model)]="newMailBillingAffaire" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
+          propertyName="newMailBillingAffaireDigital" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
+          [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, true)">
+        </generic-input>
+      </div>
+
+      <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer" [form]="documentForm"
+        propertyName="isRecipientClientDigital" [isMandatory]="false">
+      </generic-toggle>
+      <div class="row ps-4 pb-2">
+        <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
+          label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
+          propertyName="addToClientMailListDigital" [isMandatory]="false">
+        </generic-toggle>
+
+        <ul class="list-group mt-1 mb-3"
+          *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
+          <li class="list-group-item" *ngFor="let mail of document.mailsClient">
+            <div class="d-flex flex-wrap w-100 justify-content-between">
+              <div class="mt-auto mb-auto">{{mail.mail}}</div>
+              <div>
+                <button type="button" class="btn btn-danger btn-icon btn-sm me-3" title="Supprimer"
+                  (click)="deleteMail(mail, document, false)">
+                  <i class="ai-cross"></i>
+                </button>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <generic-input *ngIf="document.addToClientMailList && document.isRecipientClient"
+          [(model)]="newMailBillingClient" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
+          propertyName="newMailBillingClientDigital" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
+          [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, false)"></generic-input>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Paper document form -->
+<ng-template #paperDocumentForm let-document='document'>
+  <div class="tab-pane fade show " [id]="documentTypePaper.code" role="tabpanel">
+    <div class="d-flex align-items-center pb-1 mb-2">
+      <h3 class="h6 mb-0 me-3 mt-3 text-blue">Destinataires des documents papiers
+      </h3>
+    </div>
+    <div class="form-check">
+      <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à l'affaire" [form]="documentForm"
+        propertyName="isRecipientAffairePaper" [isMandatory]="false">
+      </generic-toggle>
+      <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer" [form]="documentForm"
+        propertyName="isRecipientClientPaper" [isMandatory]="false">
+      </generic-toggle>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Checkout summmary -->
+<ng-template #checkoutSummary>
+  <div class="col">
+    <div class="row">
+      <div class="col-12 px-0">
+        <div class="card shadow px-4 ms-lg-5 pt-1" *ngIf="quotation">
+          <!-- Items -->
+          <div *ngFor="let asso of quotation.assoAffaireOrders; let assoIndex = index">
+            <div *ngFor="let service of asso.services; let serviceIndex = index" class="row">
+
+              <div class="d-sm-flex align-items-center border-top py-4">
+                <div class="w-100 pt-1">
+                  <div class="d-flex">
+                    <div class="me-3">
+                      <h3 class="h5 mb-2 text-blue">{{service.serviceLabelToDisplay}}
+                      </h3>
+                      <p class="card-text small">
+                        <strong>{{service.assoServiceDocuments.length}}</strong>
+                        documents nécessaires
+                        <br>
+                        <strong> {{asso.affaire.denomination}} - {{asso.affaire.address}} -
+                          {{asso.affaire.postalCode}}</strong>
+                      </p>
+
+                    </div>
+                    <div class="text-end ms-auto">
+                      <div class="fs-6 mb-2">{{service.serviceTotalPrice |
+                        currency:'EUR'}}</div>
+                    </div>
+                  </div>
+                  <div class="nav justify-content-end mt-n5 mt-sm-n3">
+                    <a class="nav-link fs-xl p-2" (click)="deleteService(serviceIndex, assoIndex)">
+                      <i class="ai-trash"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <hr>
+            </div>
+          </div>
+
+          <div class="border-top pt-4 mb-3">
+            <div class="input-group input-group-sm border-dashed" style="max-width: 310px;">
+              <input class="form-control text-uppercase" type="text" placeholder="Code de réduction">
+              <button class="btn btn-secondary" type="button" (click)="applyCoupon()">Appliquer</button>
+            </div>
+          </div>
+          <ul class="list-unstyled pt-3 mb-0">
+            <li class="d-flex justify-content-between mb-2">
+              Sous-total:
+              <div *ngIf="isComputingPrice" class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden"></span>
+              </div>
+              <span *ngIf="!isComputingPrice" class="fw-semibold ms-2">{{totalPriceWithoutVat |
+                currency:'EUR'}}</span>
+            </li>
+            <li class="d-flex justify-content-between mb-2">
+              TVA:<span class="fw-semibold ms-2">{{totalVatPrice | currency:'EUR'}}</span>
+            </li>
+          </ul>
+          <hr>
+          <div class="d-flex align-items-center justify-content-between border-top fs-xl pb-4">
+            Total:
+            <div *ngIf="isComputingPrice" class="spinner-border" role="status">
+              <span class="visually-hidden"></span>
+            </div>
+            <span *ngIf="!isComputingPrice" class="fs-3 fw-semibold text-dark ms-2">{{totalPrice |
+              currency:'EUR'}}</span>
           </div>
         </div>
       </div>
     </div>
-  </form>
-</div>
+    <div class="row pt-5">
+      <div class="col-12 ms-lg-5 pe-lg-5 px-0">
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" id="save-info" [(ngModel)]="acceptDocs" name="acceptDocs"
+            required>
+          <label class="form-check-label" for="save-info">Je certifie que les pièces justificatives fournies sont
+            conformes.
+          </label>
+        </div>
+        <div class="form-check mb-4 pe-2">
+          <input class="form-check-input" type="checkbox" id="save-info2" [(ngModel)]="acceptTerms" name="acceptTerms"
+            required>
+          <label class="form-check-label" for="save-info2">En cochant cette case, je reconnais avoir pris
+            connaissance et accepter les Conditions Générales de Vente (CGV) du site.
+          </label>
+        </div>
+        <div class="row gx-1 gy-3 justify-content-between">
+          <div class="col-auto">
+            <button class="btn btn-lg btn-primary" type="submit" (click)="saveOrder()">Enregistrer le
+              brouillon</button>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-lg btn-secondary" type="submit" (click)="makeOrder()">Valider la
+              commande</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

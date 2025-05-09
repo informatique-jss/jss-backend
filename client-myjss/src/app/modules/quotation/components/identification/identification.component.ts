@@ -55,7 +55,9 @@ export class IdentificationComponent implements OnInit {
     private appService: AppService
   ) { }
 
-  idenficationForm = this.formBuilder.group({});
+  idenficationForm = this.formBuilder.group({
+    quotationType: []
+  });
 
   ngOnInit() {
     this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => this.familyGroupService = response);
