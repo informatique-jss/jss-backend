@@ -138,17 +138,18 @@ public class Tiers implements IAttachment, IId {
 
 	@Column(length = 40)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private String firstname;
 
 	@Column(length = 40)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private String lastname;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_commercial")
 	@IndexedField
+	@JsonView(JacksonViews.OsirisDetailedView.class)
 	private Employee salesEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)

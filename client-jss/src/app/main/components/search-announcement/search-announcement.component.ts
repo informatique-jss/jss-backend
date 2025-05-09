@@ -74,7 +74,6 @@ export class SearchAnnouncementComponent implements OnInit {
         if (!this.searchResults)
           this.searchResults = [];
         this.searchResults.push(...response);
-        console.log(response);
         this.searchInProgress = false;
 
         if (!response || response.length == 0)

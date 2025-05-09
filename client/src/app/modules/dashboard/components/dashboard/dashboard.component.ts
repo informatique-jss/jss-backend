@@ -439,4 +439,8 @@ export class DashboardComponent implements OnInit {
       item.element.nativeElement.offsetTop
     );
   }
+
+  canDisplayKanban() {
+    return this.habilitationsService.canDisplayKanban();
+  }
 }

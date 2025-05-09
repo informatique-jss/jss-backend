@@ -204,7 +204,8 @@ const routes: Routes = [
     InfogreffeStatusComponent,
     PaperSetComponent,
     CustomerOrderCommentComponent,
-    MissingAttachmentQueriesComponent
+    MissingAttachmentQueriesComponent,
+    AddAffaireComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

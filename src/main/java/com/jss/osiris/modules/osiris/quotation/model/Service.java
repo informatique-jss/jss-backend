@@ -60,7 +60,7 @@ public class Service implements Serializable, IId {
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private List<AssoServiceDocument> assoServiceDocuments;
 
 	@OneToMany(targetEntity = MissingAttachmentQuery.class, mappedBy = "service", fetch = FetchType.LAZY)
@@ -69,7 +69,7 @@ public class Service implements Serializable, IId {
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	private List<AssoServiceFieldType> assoServiceFieldTypes;
 
 	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,

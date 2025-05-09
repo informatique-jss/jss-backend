@@ -49,11 +49,13 @@
       <div class="field-row" *ngIf="selectedEntity.responsable && selectedEntity.responsable.tiers "
         (click)="openTiers($event,selectedEntity)">
         <div class="label">Tiers</div>
-        <div class="value pointer">{{getCustomerOrderNameForTiers(selectedEntity.responsable.tiers)}}</div>
+        <div class="value pointer">{{getCustomerOrderNameForTiers(selectedEntity.responsable.tiers)}} <mat-icon
+            color="accent" class="small-mat-icon">open_in_new</mat-icon></div>
       </div>
       <div class="field-row" *ngIf="selectedEntity.responsable  " (click)="openResponsable($event,selectedEntity)">
         <div class="label">Responsable</div>
         <div class="value pointer">{{selectedEntity.responsable.firstname}} {{selectedEntity.responsable.lastname}}
+          <mat-icon color="accent" class="small-mat-icon">open_in_new</mat-icon>
         </div>
       </div>
       <div class="field-row" *ngIf="selectedEntity.responsable && selectedEntity.responsable.mail"
@@ -85,49 +87,39 @@
 <div style="margin-top: 10px;" *ngIf="selectedEntity">
   <mat-accordion class="custom-panel">
     <ng-container *ngFor="let asso of selectedEntity.assoAffaireOrders">
-      <mat-expansion-panel *ngFor="let service of asso.services;let indexService = index" [expanded]="indexService==0">
+      <mat-expansion-panel expanded="false">
         <mat-expansion-panel-header>
-          <mat-panel-title>{{selectedEntity.assoAffaireOrders.length>1?getAffaireFromAssoAffaireOrder(asso):''}}{{getServiceFromService(service)}}
-            - {{service.serviceStatus}}</mat-panel-title>
+          <mat-panel-title>Détails de l'affaire
+            {{getAffaireFromAssoAffaireOrder(asso)}}
+          </mat-panel-title>
           <mat-panel-description>
-
-            <mat-icon *ngIf="service.hasMissingInformations" color="warn"
-              matTooltip="Des informations manquent sur ce service">warning</mat-icon>
-            <button mat-icon-button [matMenuTriggerFor]="menuService" (click)="$event.stopPropagation()">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menuService="matMenu">
-              <button mat-menu-item (click)="modifyService(service)">
-                <span>Modifier le service</span>
-              </button>
-              <button mat-menu-item (click)="deleteService(service)">
-                <span>Supprimer le service</span>
-              </button>
-            </mat-menu>
+            <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
+              (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
+            </avatar-chip>
+            <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
+              (click)="addNewNotificationOnAffaire(asso.affaire);$event.stopPropagation();"
+              [matBadge]="getNotificationForAffaire(asso.affaire).length" *ngIf="canDisplayNotifications()"
+              [matBadgeHidden]="getNotificationForAffaire(asso.affaire).length<=0" matBadgePosition="below after"
+              matBadgeColor="warn" matBadgeSize="small" class="pointer">notifications</mat-icon>
+            <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
+              (click)="displayAffaire($event, asso);$event.stopPropagation();"
+              (auxclick)="displayAffaire($event,asso);$event.stopPropagation();" class="pointer status-text">
+              edit</mat-icon>
+            <ng-template></ng-template>
           </mat-panel-description>
         </mat-expansion-panel-header>
-
-        <div class="custom-panel" style="margin-bottom: 15px;">
-          <div class="field-row">
-            <div class="label">Montant du service</div>
-            <div class="value">
-              {{service.servicePrice | currency:'EUR'}}
-            </div>
-          </div>
-          <div class="field-row" *ngIf="service.lastMissingAttachmentQueryDateTime">
-            <div class="label">Date de la dernière PM</div>
-            <div class="value">
-              {{service.lastMissingAttachmentQueryDateTime | date:'EEEE d MMMM HH:mm'}}
-            </div>
-          </div>
+        <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
+        <div *ngIf="asso && asso.id ">
+          <autocomplete-employee [(model)]="asso.assignedTo" [form]="orderForm" propertyName="assignedTo"
+            [isMandatory]="true" [isDisabled]="false" label="Affaire assignée à"
+            (onOptionSelected)="updateAssignedToForAffaire($event,asso)">
+          </autocomplete-employee>
         </div>
-
-        <ng-container *ngFor="let provision of service.provisions; let index = index">
-          <provision-side-panel-details [provision]="provision"
-            [assoAffaireOrder]="asso"></provision-side-panel-details>
-          <hr *ngIf="index<service.provisions.length-1" />
-        </ng-container>
       </mat-expansion-panel>
+      <ng-container *ngFor="let service of asso.services;let indexService = index">
+        <service-side-panel-details (triggerRefreshEntity)="triggerRefreshEntityFn()" [isExpanded]="indexService==0"
+          [service]="service"></service-side-panel-details>
+      </ng-container>
     </ng-container>
   </mat-accordion>
 </div>
@@ -149,6 +141,8 @@
       (click)="currentTabDisplayed='MISSING_ATTACHMENT_QUERY'">PM</button>
     <button mat-raised-button [color]="currentTabDisplayed === 'HISTORY' ? 'primary' : 'accent'"
       (click)="currentTabDisplayed='HISTORY'">Historique</button>
+    <button mat-raised-button [color]="currentTabDisplayed === 'DOCS' ? 'primary' : 'accent'"
+      (click)="currentTabDisplayed='DOCS'">Actions doc.</button>
   </div>
   <customer-order-comment [isDisplayCommentInput]="true" [customerOrder]="selectedEntity"
     *ngIf="currentTabDisplayed=='COMMENTS'"></customer-order-comment>
@@ -160,4 +154,5 @@
   <automatic-mail-list [customerOrder]="selectedEntity" *ngIf="currentTabDisplayed=='MAILS'"></automatic-mail-list>
   <missing-attachment-queries [customerOrder]="selectedEntity" *ngIf="currentTabDisplayed=='MISSING_ATTACHMENT_QUERY'">
   </missing-attachment-queries>
+  <paper-set *ngIf="currentTabDisplayed=='MAILS'" [customerOrder]="selectedEntity"></paper-set>
 </div>

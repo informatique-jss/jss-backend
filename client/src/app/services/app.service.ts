@@ -108,6 +108,8 @@ export class AppService {
           callback();
           this.notificationService.refreshNotificationsNumber();
         });
+      } else {
+        callback();
       }
     });
   }

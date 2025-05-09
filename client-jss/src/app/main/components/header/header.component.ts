@@ -110,7 +110,6 @@ export class HeaderComponent implements OnInit {
             this.indexedEntities.push(foundEntity);
           }
         }
-        console.log(this.indexedEntities);
         this.searchInProgress = false;
       })
   }

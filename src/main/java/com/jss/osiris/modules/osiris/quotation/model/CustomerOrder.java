@@ -241,6 +241,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
 	public Boolean hasMissingInformations;
 
+	@Transient
+	@JsonView({ JacksonViews.OsirisListView.class })
+	public Boolean isHasNotifications;
+
 	public Integer getId() {
 		return id;
 	}
@@ -551,6 +555,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setValidationId(Integer validationId) {
 		this.validationId = validationId;
+	}
+
+	public Boolean getIsHasNotifications() {
+		return isHasNotifications;
+	}
+
+	public void setIsHasNotifications(Boolean isHasNotifications) {
+		this.isHasNotifications = isHasNotifications;
 	}
 
 }

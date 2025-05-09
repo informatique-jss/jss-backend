@@ -47,6 +47,7 @@ public class FormaliteStatus extends IWorkflowElement implements Serializable {
 	@Column(nullable = false, length = 100)
 	private String code;
 
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String icon;
 
 	private Boolean isOpenState;
@@ -55,11 +56,13 @@ public class FormaliteStatus extends IWorkflowElement implements Serializable {
 	@OneToMany(targetEntity = FormaliteStatus.class)
 	@JoinTable(name = "asso_formalite_status_successor", joinColumns = @JoinColumn(name = "id_formalite_status"), inverseJoinColumns = @JoinColumn(name = "id_formalite_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<FormaliteStatus> successors;
 
 	@OneToMany(targetEntity = FormaliteStatus.class)
 	@JoinTable(name = "asso_formalite_status_predecessor", joinColumns = @JoinColumn(name = "id_formalite_status"), inverseJoinColumns = @JoinColumn(name = "id_formalite_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<FormaliteStatus> predecessors;
 
 	private String aggregateStatus;

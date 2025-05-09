@@ -2,7 +2,12 @@
   <div class="label pointer" style="width: 100%;"
     (click)="assoAffaireOrder?displayProvision($event, assoAffaireOrder, provision):''">
     <strong>{{provision.provisionFamilyType.label}} -
-      {{provision.provisionType.label}}</strong>
+      {{provision.provisionType.label}} <mat-icon color="accent" class="small-mat-icon">open_in_new</mat-icon></strong>
+    <mat-icon color="accent" matTooltip="Ajouter une notification sur cette prestation"
+      (click)="addNewNotificationOnProvision(provision);$event.stopPropagation();"
+      [matBadge]="getNotificationForProvision(provision).length" matBadgeSize="small" *ngIf="canDisplayNotifications()"
+      [matBadgeHidden]="getNotificationForProvision(provision).length<=0" matBadgePosition="below after"
+      matBadgeColor="warn" class="pointer">notifications</mat-icon>
   </div>
 </div>
 
@@ -77,10 +82,27 @@
   <ng-container
     *ngIf="provision.formalite.formalitesGuichetUnique && provision.formalite.formalitesGuichetUnique.length>0">
     <div class="field-row" *ngFor="let formaliteGu of provision.formalite.formalitesGuichetUnique">
-      <div class="label pointer" (click)="openFormaliteGu(formaliteGu)">Liasse {{formaliteGu.liasseNumber}}</div>
+      <div class="label pointer" (click)="openFormaliteGu(formaliteGu)">Liasse {{formaliteGu.liasseNumber}} <mat-icon
+          color="accent" class="small-mat-icon">open_in_new</mat-icon></div>
       <div class="value">
         {{formaliteGu.status.label}}
       </div>
     </div>
   </ng-container>
 </ng-container>
+
+<div class="activity" *ngIf="provision">
+  <div class="activity-tabs">
+    <button mat-raised-button [color]="currentTabDisplayed === 'COMMENTS' ? 'primary' : 'accent'"
+      (click)="currentTabDisplayed='COMMENTS'">Commentaires</button>
+    <button mat-raised-button [color]="currentTabDisplayed === 'ATTACHMENT' ? 'primary' : 'accent'"
+      (click)="currentTabDisplayed='ATTACHMENT'">Documents</button>
+    <button mat-raised-button [color]="currentTabDisplayed === 'HISTORY' ? 'primary' : 'accent'"
+      (click)="currentTabDisplayed='HISTORY'">Historique</button>
+  </div>
+  <customer-order-comment [isDisplayCommentInput]="true" [provision]="provision"
+    *ngIf="currentTabDisplayed=='COMMENTS'"></customer-order-comment>
+  <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE" *ngIf="currentTabDisplayed=='HISTORY'"></history>
+  <attachments [entity]="provision" *ngIf="currentTabDisplayed=='ATTACHMENT'" [editMode]="false"
+    [entityType]="PROVISION_ENTITY_TYPE.entityType"></attachments>
+</div>

@@ -1,99 +1,76 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { formatDateFrance } from 'src/app/libs/FormatHelper';
-import { callNumber, displayInTeams, prepareMail } from 'src/app/libs/MailHelper';
-import { getAffaireFromAssoAffaireOrder, getCustomerOrderNameForTiers, getServiceFromService } from 'src/app/modules/invoicing/components/invoice-tools';
+import { MatExpansionPanel } from '@angular/material/expansion';
+import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from 'src/app/libs/Constants';
+import { getAffaireFromAssoAffaireOrder } from 'src/app/modules/invoicing/components/invoice-tools';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
+import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
-import { Employee } from 'src/app/modules/profile/model/Employee';
 import { SelectServiceTypeDialogComponent } from 'src/app/modules/quotation/components/select-service-type-dialog/select-service-type-dialog.component';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { AssoAffaireOrder } from 'src/app/modules/quotation/model/AssoAffaireOrder';
-import { Quotation } from 'src/app/modules/quotation/model/Quotation';
-import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
+import { Provision } from 'src/app/modules/quotation/model/Provision';
 import { Service } from 'src/app/modules/quotation/model/Service';
 import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
 import { AssoAffaireOrderService } from 'src/app/modules/quotation/services/asso.affaire.order.service';
 import { ServiceService } from 'src/app/modules/quotation/services/service.service';
-import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { Notification } from '../../../../modules/miscellaneous/model/Notification';
 
-
 @Component({
-  selector: 'quotation-side-panel-details',
-  templateUrl: './quotation-side-panel-details.component.html',
-  styleUrls: ['./quotation-side-panel-details.component.css']
+  selector: 'service-side-panel-details',
+  templateUrl: './service-side-panel-details.component.html',
+  styleUrls: ['./service-side-panel-details.component.css'],
+  viewProviders: [MatExpansionPanel]
 })
-export class QuotationSidePanelDetailsComponent implements OnInit {
+export class ServiceSidePanelDetailsComponent implements OnInit {
 
-  @Input() selectedEntity: Quotation | undefined;
-  @Input() possibleEntityStatus: QuotationStatus[] = [];
-  currentTabDisplayed: string = '';
-  QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
-  affaireNotification: Notification[][] = [];
+  @Input() service: Service | undefined;
+  @Input() provision: Provision | undefined;
+  @Input() isExpanded: boolean = false;
+
+  serviceAttachments: IAttachment = { id: 1, attachments: [] as Attachment[] } as IAttachment;
+
+  SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
+  SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
+  SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
+  SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
+  SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
   @Output() triggerRefreshEntity = new EventEmitter<void>();
 
-  constructor(
-    private appService: AppService,
-    public mailLabelDialog: MatDialog,
-    public confirmationDialog: MatDialog,
-    public selectServiceTypeDialog: MatDialog,
-    public quotationWorkflowDialog: MatDialog,
+  serviceNotification: Notification[][] = [];
+  affaireNotification: Notification[][] = [];
+
+  constructor(private formBuilder: FormBuilder,
     private habilitationsService: HabilitationsService,
     private serviceService: ServiceService,
-    private affaireService: AffaireService,
-    private notificationService: NotificationService,
-    private formBuilder: FormBuilder,
+    public confirmationDialog: MatDialog,
+    public selectServiceTypeDialog: MatDialog,
     private habilitationService: HabilitationsService,
-    private assoAffaireOrderService: AssoAffaireOrderService
+    private notificationService: NotificationService,
+    private appService: AppService,
+    private assoAffaireOrderService: AssoAffaireOrderService,
+    private affaireService: AffaireService
   ) { }
 
-  orderForm = this.formBuilder.group({});
+  serviceForm = this.formBuilder.group({});
+  getAffaireFromAssoAffaireOrder = getAffaireFromAssoAffaireOrder;
 
   ngOnInit() {
-    if (this.selectedEntity)
-      this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(this.selectedEntity).subscribe(response => {
-        this.selectedEntity!.assoAffaireOrders = response;
-        for (let i = 0; i < this.selectedEntity!.assoAffaireOrders.length; i++) {
-          this.affaireService.getAffaire(this.selectedEntity!.assoAffaireOrders[i].affaire.id).subscribe(response => {
-            this.selectedEntity!.assoAffaireOrders[i].affaire = response;
-          })
-        }
+    this.serviceAttachments = { id: 1, attachments: [] as Attachment[] } as IAttachment;
+    if (this.service)
+      if (this.service.assoServiceDocuments)
+        for (let doc of this.service.assoServiceDocuments)
+          this.serviceAttachments.attachments.push(...doc.attachments);
+
+    if (this.provision && this.service)
+      this.affaireService.getAffaire(this.service.assoAffaireOrder.affaire.id).subscribe(response => {
+        this.service!.assoAffaireOrder.affaire = response;
       })
-
-  }
-
-  triggerRefreshEntityFn() {
-    this.triggerRefreshEntity.next();
-  }
-
-  formatDateFrance = formatDateFrance;
-  getCustomerOrderNameForTiers = getCustomerOrderNameForTiers;
-  getAffaireFromAssoAffaireOrder = getAffaireFromAssoAffaireOrder;
-  getServiceFromService = getServiceFromService;
-
-  openTiers(event: any, order: Quotation) {
-    if (order.responsable && order.responsable.tiers)
-      this.appService.openRoute({ ctrlKey: true }, 'tiers/' + order.responsable.tiers.id, undefined);
-  }
-
-  openResponsable(event: any, order: Quotation) {
-    if (order.responsable)
-      this.appService.openRoute({ ctrlKey: true }, 'tiers/responsable/' + order.responsable.id, undefined);
-  }
-
-  sendResponsableMail(event: any, order: Quotation) {
-    if (order.responsable && order.responsable.mail)
-      prepareMail(order.responsable.mail.mail, null, null);
-  }
-
-  callResponsable(event: any, order: Quotation) {
-    if (order.responsable && order.responsable.phones)
-      callNumber(order.responsable.phones[0].phoneNumber);
   }
 
   addNewNotificationOnAffaire(affaire: Affaire) {
@@ -113,23 +90,24 @@ export class QuotationSidePanelDetailsComponent implements OnInit {
     });
   }
 
-  canDisplayNotifications() {
-    return this.habilitationService.canDisplayNotifications();
-  }
-
   displayAffaire(event: any, asso: AssoAffaireOrder) {
     this.appService.openRoute({ ctrlKey: true }, '/affaire/' + asso.affaire.id, null);
   }
 
-
-  displayInTeams = function (employee: Employee) {
-    displayInTeams(employee);
+  addNewNotificationOnService(service: Service) {
+    this.appService.addPersonnalNotification(() => this.serviceNotification = [], this.serviceNotification ? this.serviceNotification[service.id] : undefined, undefined, undefined, service, undefined, undefined, undefined, undefined, undefined);
   }
 
-  getSpecialOffersLabel(order: Quotation) {
-    if (order.specialOffers && order.specialOffers.length > 0)
-      return order.specialOffers.map(item => item.customLabel).join(", ");
-    return "";
+  getNotificationForService(service: Service) {
+    if (this.serviceNotification[service.id] == undefined) {
+      this.serviceNotification[service.id] = [];
+      this.notificationService.getNotificationsForService(service.id).subscribe(response => this.serviceNotification[service.id] = response);
+    }
+    return this.serviceNotification[service.id];
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
   }
 
   deleteService(service: Service) {
@@ -172,7 +150,7 @@ export class QuotationSidePanelDetailsComponent implements OnInit {
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;
         dialogRef2.afterClosed().subscribe(dialogResult => {
-          if (dialogResult && service && this.selectedEntity) {
+          if (dialogResult && service) {
             this.serviceService.modifyServiceType(service, dialogResult).subscribe(response => {
               this.triggerRefreshEntity.next();
             })
@@ -181,5 +159,6 @@ export class QuotationSidePanelDetailsComponent implements OnInit {
       }
     });
   }
+
 
 }
