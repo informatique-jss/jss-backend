@@ -304,45 +304,7 @@ public class QuotationValidationHelper {
 
                 if (quotation.getDocuments() != null && quotation.getDocuments().size() > 0) {
                         for (Document document : quotation.getDocuments()) {
-
-                                validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
-
-                                if (document.getMailsAffaire() != null
-                                                && !validationHelper.validateMailList(document.getMailsAffaire()))
-                                        throw new OsirisValidationException("MailsAffaire");
-                                if (document.getMailsClient() != null && document.getMailsClient() != null
-                                                && document.getMailsClient().size() > 0)
-                                        if (!validationHelper.validateMailList(document.getMailsClient()))
-                                                throw new OsirisValidationException("MailsClient");
-
-                                validationHelper.validateString(document.getAffaireAddress(), false, 200,
-                                                "AffaireAddress");
-                                validationHelper.validateString(document.getClientAddress(), false, 100,
-                                                "ClientAddress");
-                                validationHelper.validateString(document.getAffaireRecipient(), false, 100,
-                                                "AffaireRecipient");
-                                validationHelper.validateString(document.getClientRecipient(), false, 200,
-                                                "ClientRecipient");
-                                validationHelper.validateString(document.getCommandNumber(),
-                                                document.getIsCommandNumberMandatory() != null
-                                                                && document.getIsCommandNumberMandatory(),
-                                                40,
-                                                "CommandNumber");
-                                validationHelper.validateReferential(document.getPaymentDeadlineType(), false,
-                                                "PaymentDeadlineType");
-                                validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-                                validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
-                                validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
-                                validationHelper.validateReferential(document.getBillingClosureType(), false,
-                                                "BillingClosureType");
-                                validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
-                                                "BillingClosureRecipientType");
-
-                                if (document.getIsRecipientAffaire() == null)
-                                        document.setIsRecipientAffaire(false);
-                                if (document.getIsRecipientClient() == null)
-                                        document.setIsRecipientClient(false);
-
+                                validateDocument(document);
                         }
                 }
 
@@ -414,6 +376,50 @@ public class QuotationValidationHelper {
                                 throw new OsirisValidationException("Too many affaire");
                 }
 
+        }
+
+        @Transactional(rollbackFor = Exception.class)
+        public Document validateDocument(Document document)
+                        throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+                validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
+
+                if (document.getMailsAffaire() != null
+                                && !validationHelper.validateMailList(document.getMailsAffaire()))
+                        throw new OsirisValidationException("MailsAffaire");
+                if (document.getMailsClient() != null && document.getMailsClient() != null
+                                && document.getMailsClient().size() > 0)
+                        if (!validationHelper.validateMailList(document.getMailsClient()))
+                                throw new OsirisValidationException("MailsClient");
+
+                validationHelper.validateString(document.getAffaireAddress(), false, 200,
+                                "AffaireAddress");
+                validationHelper.validateString(document.getClientAddress(), false, 100,
+                                "ClientAddress");
+                validationHelper.validateString(document.getAffaireRecipient(), false, 100,
+                                "AffaireRecipient");
+                validationHelper.validateString(document.getClientRecipient(), false, 200,
+                                "ClientRecipient");
+                validationHelper.validateString(document.getCommandNumber(),
+                                document.getIsCommandNumberMandatory() != null
+                                                && document.getIsCommandNumberMandatory(),
+                                40,
+                                "CommandNumber");
+                validationHelper.validateReferential(document.getPaymentDeadlineType(), false,
+                                "PaymentDeadlineType");
+                validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
+                validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
+                validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
+                validationHelper.validateReferential(document.getBillingClosureType(), false,
+                                "BillingClosureType");
+                validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
+                                "BillingClosureRecipientType");
+
+                if (document.getIsRecipientAffaire() == null)
+                        document.setIsRecipientAffaire(false);
+                if (document.getIsRecipientClient() == null)
+                        document.setIsRecipientClient(false);
+
+                return document;
         }
 
         @Transactional

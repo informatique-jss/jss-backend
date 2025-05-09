@@ -295,7 +295,7 @@ export class ChooseServiceComponent implements OnInit {
             this.foundCities = response;
           })
         } else if (this.affaire.postalCode && this.affaire.postalCode.length > 4) {
-          this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(this.affaire.country, this.affaire.postalCode).subscribe(response => {
+          this.cityService.getCitiesFilteredByNameAndCountryAndPostalCode('', this.affaire.country, this.affaire.postalCode, 0, 100).subscribe(response => {
             this.foundCities = response;
             if (this.foundCities.length == 1)
               this.affaire.city = this.foundCities[0];

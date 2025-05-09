@@ -154,6 +154,7 @@ public class Responsable implements IAttachment, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Country country;
 
 	@Column(length = 40)

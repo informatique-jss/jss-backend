@@ -13,6 +13,8 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 
 .quotation-breadcrumb {
     background-color: var(--ar-primary);
+    z-index: 100;
+    position: relative;
 }
 
 .quotation-nav-link {
@@ -25,12 +27,25 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
     border-bottom-width: 0px;
 }
 
-:host ::ng-deep .form-control:focus {
+:host ::ng-deep .btn:hover {
+    background-color: #ECF5FF;
+    border-color: #2C4057;
+}
+
+:host ::ng-deep .btn-primary:hover {
     color: #2C4057;
 }
 
-:host ::ng-deep .btn:hover {
-    background-color: #ECF5FF;
+:host ::ng-deep .btn-primary:hover i {
+    color: #2C4057;
+}
+
+:host ::ng-deep .btn-primary:hover span {
+    color: #2C4057;
+}
+
+:host ::ng-deep .btn.btn-outline-primary {
+    color: #2C4057;
 }
 
 :host ::ng-deep .btn-secondary {
@@ -57,16 +72,16 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
     color: #2C4057;
 }
 
-:host ::ng-deep .btn.btn-outline-primary {
-    color: #2C4057;
-}
-
 :host ::ng-deep .form-label {
     color: var(--ar-secondary);
 }
 
 :host ::ng-deep .form-control {
     color: var(--ar-gray-600);
+}
+
+:host ::ng-deep .form-control:focus {
+    color: #2C4057;
 }
 
 .btn.btn-outline-primary:hover {

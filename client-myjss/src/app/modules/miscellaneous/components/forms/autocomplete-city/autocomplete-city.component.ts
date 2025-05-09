@@ -16,6 +16,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteCityComponent extends GenericAutocompleteComponent<City, City> implements OnInit, OnChanges {
 
+
   /**
    * The model of country property.
    * If undefined, cities are searched worldwide
@@ -32,10 +33,14 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
     super(formBuild)
   }
 
-  searchEntities(value: string): Observable<City[]> {
-    if (this.modelCountry)
-      return this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(this.modelCountry, this.preFilterPostalCode);
-    return this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(this.constantService.getCountryFrance(), this.preFilterPostalCode);
+  // searchEntities(value: string,): Observable<City[]> {
+  // if (this.modelCountry)
+  //   return this.cityService.getCitiesFilteredByNameAndCountryAndPostalCode(value, this.modelCountry, this.preFilterPostalCode);
+  // return this.cityService.getCitiesFilteredByNameAndCountryAndPostalCode(value, this.constantService.getCountryFrance(), this.preFilterPostalCode);
+  // return;
+  // }
+  override searchEntities(value: string): Observable<City[]> {
+    throw new Error('Method not implemented.');
   }
 
   override ngOnChanges(changes: SimpleChanges) {

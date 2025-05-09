@@ -42,6 +42,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CustomerOrderOriginService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
@@ -63,6 +64,7 @@ import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymen
 import com.jss.osiris.modules.osiris.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -128,6 +130,12 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    DocumentService documentService;
+
+    @Autowired
+    TiersService tiersService;
 
     @Autowired
     GeneratePdfDelegate generatePdfDelegate;
@@ -809,7 +817,8 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public Quotation setEmergencyOnQuotation(Quotation quotation, Boolean isEnabled)
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean setEmergencyOnQuotation(Quotation quotation, Boolean isEnabled)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
                 && quotation.getAssoAffaireOrders().get(0).getServices() != null
@@ -822,7 +831,21 @@ public class QuotationServiceImpl implements QuotationService {
                     quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0));
             quotation = getQuotation(quotation.getId());
             pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+            return true;
         }
-        return quotation = getQuotation(quotation.getId());
+        return false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean setDocumentOnOrder(Quotation quotation, Document document)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (quotation.getDocuments() != null && quotation.getDocuments().size() > 0) {
+            documentService.addOrUpdateDocument(document);
+            quotation = getQuotation(quotation.getId());
+            pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+            return true;
+        }
+        return false;
     }
 }

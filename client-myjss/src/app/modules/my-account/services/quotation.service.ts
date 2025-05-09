@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from '../../../libs/appRest.service';
 import { MenuItem } from '../../general/model/MenuItem';
 import { IQuotation } from '../../quotation/model/IQuotation';
+import { Document } from '../model/Document';
 import { Quotation } from '../model/Quotation';
 
 @Injectable({
@@ -27,6 +28,18 @@ export class QuotationService extends AppRestService<Quotation> {
 
   saveQuotation(quotation: IQuotation) {
     return this.postItem(new HttpParams(), 'quotation/user/save', quotation);
+  }
+
+  completePricingOfQuotation(quotation: Quotation, isEmergency: boolean) {
+    return this.postItem(new HttpParams().set("isEmergency", isEmergency), 'quotation/pricing', quotation);
+  }
+
+  setEmergencyOnQuotation(quotationId: number, isEmergency: boolean) {
+    return this.get(new HttpParams().set("quotationId", quotationId).set("isEmergency", isEmergency), 'quotation/emergency');
+  }
+
+  setDocumentOnQuotation(quotationId: number, document: Document) {
+    return this.postItem(new HttpParams().set("orderId", quotationId), 'quotation/document', document);
   }
 
   getCurrentDraftQuotationId() {

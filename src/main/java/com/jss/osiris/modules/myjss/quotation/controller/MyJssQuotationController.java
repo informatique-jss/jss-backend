@@ -7,11 +7,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -324,35 +330,66 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/order/emergency")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<CustomerOrder> setEmergencyOnOrder(@RequestParam Integer orderId,
-			@RequestParam Boolean isEnabled)
+	public ResponseEntity<Boolean> setEmergencyOnOrder(@RequestParam Integer orderId,
+			@RequestParam Boolean isEmergency, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
+
+		detectFlood(request);
 
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(orderId);
 
 		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
-			return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
-		return new ResponseEntity<CustomerOrder>(
-				customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService
-						.setEmergencyOnOrder(customerOrder, isEnabled)),
+		return new ResponseEntity<Boolean>(customerOrderService.setEmergencyOnOrder(customerOrder, isEmergency),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/order/document")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> setDocumentOnOrder(@RequestParam Integer orderId,
+			@RequestBody Document document, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(orderId);
+
+		document = quotationValidationHelper.validateDocument(document);
+
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		return new ResponseEntity<Boolean>(customerOrderService.setDocumentOnOrder(customerOrder, document),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation/emergency")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Quotation> setEmergencyOnQuotation(@RequestParam Integer quotationId,
-			@RequestParam Boolean isEnabled)
+	public ResponseEntity<Boolean> setEmergencyOnQuotation(@RequestParam Integer quotationId,
+			@RequestParam Boolean isEmergency, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
-
 		Quotation quotation = quotationService.getQuotation(quotationId);
 
 		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
-			return new ResponseEntity<Quotation>(new Quotation(), HttpStatus.OK);
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
-		return new ResponseEntity<Quotation>(
-				quotationService.completeAdditionnalInformationForQuotation(quotationService
-						.setEmergencyOnQuotation(quotation, isEnabled)),
+		return new ResponseEntity<Boolean>(quotationService.setEmergencyOnQuotation(quotation, isEmergency),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/quotation/document")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> setDocumentOnQuotation(@RequestParam Integer quotationId,
+			@RequestBody Document document, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		Quotation quotation = quotationService.getQuotation(quotationId);
+
+		document = quotationValidationHelper.validateDocument(document);
+
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		return new ResponseEntity<Boolean>(quotationService.setDocumentOnOrder(quotation, document),
 				HttpStatus.OK);
 	}
 
@@ -1213,16 +1250,22 @@ public class MyJssQuotationController {
 		return new ResponseEntity<List<Country>>(countryService.getCountries(), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/cities/search/country/postal-code")
+	@GetMapping(inputEntryPoint + "/cities/search/name/country/postal-code")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<City>> getCitiesByCountryAndPostalCode(@RequestParam Integer countryId,
-			@RequestParam String postalCode, HttpServletRequest request) {
+	public ResponseEntity<Page<City>> getCitiesByNameAndCountryAndPostalCode(@RequestParam String name,
+			@RequestParam Integer countryId, @RequestParam String postalCode, @RequestParam Integer page,
+			@RequestParam Integer size, HttpServletRequest request) {
 		detectFlood(request);
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.ASC, "label"));
+
 		Country country = countryService.getCountry(countryId);
 		if (country == null)
-			return new ResponseEntity<List<City>>(new ArrayList<City>(), HttpStatus.OK);
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
-		return new ResponseEntity<List<City>>(cityService.getCitiesByCountryAndPostalCode(countryId, postalCode),
+		return new ResponseEntity<Page<City>>(
+				cityService.getCitiesByLabelAndCountryAndPostalCode(name, countryId, postalCode, pageable),
 				HttpStatus.OK);
 	}
 
@@ -1287,10 +1330,8 @@ public class MyJssQuotationController {
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
 
-		return new ResponseEntity<Quotation>(
-				quotationService.completeAdditionnalInformationForQuotation(
-						(Quotation) pricingHelper.completePricingOfIQuotation(quotation, isEmergency)),
-				HttpStatus.OK);
+		return new ResponseEntity<Quotation>(quotationService.completeAdditionnalInformationForQuotation(
+				(Quotation) pricingHelper.completePricingOfIQuotation(quotation, isEmergency)), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/user/save")

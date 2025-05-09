@@ -201,14 +201,12 @@ public class Tiers implements IAttachment, IId {
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisDetailedView.class })
-
 	private City city;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisDetailedView.class })
-
 	private Country country;
 
 	@Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)

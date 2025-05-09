@@ -188,6 +188,7 @@ public class Provision implements IId, IAttachment {
 	private Boolean isDocumentScanning;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isEmergency;
 
 	@Column(nullable = false)

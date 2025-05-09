@@ -1881,7 +1881,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
+    public Boolean setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0
                 && customerOrder.getAssoAffaireOrders().get(0).getServices() != null
@@ -1894,7 +1894,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0));
             customerOrder = getCustomerOrder(customerOrder.getId());
             pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+            return true;
         }
-        return customerOrder = getCustomerOrder(customerOrder.getId());
+        return false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean setDocumentOnOrder(CustomerOrder customerOrder, Document document)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (customerOrder.getDocuments() != null && customerOrder.getDocuments().size() > 0) {
+            documentService.addOrUpdateDocument(document);
+            customerOrder = getCustomerOrder(customerOrder.getId());
+            pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+            return true;
+        }
+        return false;
     }
 }

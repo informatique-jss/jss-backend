@@ -3,9 +3,11 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { Routes } from '@angular/router';
+import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
+import { AutocompleteCityTestComponent } from '../forms/autocomplete-city-test/autocomplete-city-test.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
 import { GenericDatePickerComponent } from '../forms/generic-date-picker/generic-datetime-picker.component';
 import { GenericDatetimePickerComponent } from '../forms/generic-datetime-picker/generic-datetime-picker.component';
@@ -34,6 +36,7 @@ const routes: Routes = [{}];
     ReactiveFormsModule,
     GenericSwiperComponent,
     OurClientsComponent,
+    AutocompleteLibModule
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
@@ -52,7 +55,8 @@ const routes: Routes = [{}];
     SelectBillingLabelTypeComponent,
     GenericInputComponent,
     SelectMyJssCategoryComponent,
-    SelectCivilityComponent
+    SelectCivilityComponent,
+    AutocompleteCityTestComponent,
   ],
   exports: [
     AvatarComponent,
@@ -73,7 +77,8 @@ const routes: Routes = [{}];
     SelectValueServiceFieldTypeComponent,
     SelectBillingLabelTypeComponent,
     OurClientsComponent,
-    SelectCivilityComponent
+    SelectCivilityComponent,
+    AutocompleteCityTestComponent,
   ]
 })
 export class MiscellaneousModule { }

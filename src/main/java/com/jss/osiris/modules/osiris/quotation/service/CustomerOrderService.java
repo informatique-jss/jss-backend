@@ -11,6 +11,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -154,7 +155,10 @@ public interface CustomerOrderService {
         public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
                         List<CustomerOrderStatus> status) throws OsirisException;
 
-        public CustomerOrder setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
+        public Boolean setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
+
+        public Boolean setDocumentOnOrder(CustomerOrder customerOrder, Document document)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
 }
