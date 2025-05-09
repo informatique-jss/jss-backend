@@ -68,4 +68,5 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup);
 
+	public Boolean getIsHasNotifications();
 }

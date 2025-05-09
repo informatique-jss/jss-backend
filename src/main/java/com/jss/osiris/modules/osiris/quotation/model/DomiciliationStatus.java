@@ -40,6 +40,7 @@ public class DomiciliationStatus extends IWorkflowElement implements Serializabl
 	@Column(nullable = false, length = 100)
 	private String code;
 
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String icon;
 
 	private Boolean isOpenState;
@@ -48,11 +49,13 @@ public class DomiciliationStatus extends IWorkflowElement implements Serializabl
 	@OneToMany(targetEntity = DomiciliationStatus.class)
 	@JoinTable(name = "asso_domiciliation_status_successor", joinColumns = @JoinColumn(name = "id_domiciliation_status"), inverseJoinColumns = @JoinColumn(name = "id_domiciliation_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<DomiciliationStatus> successors;
 
 	@OneToMany(targetEntity = DomiciliationStatus.class)
 	@JoinTable(name = "asso_domiciliation_status_predecessor", joinColumns = @JoinColumn(name = "id_domiciliation_status"), inverseJoinColumns = @JoinColumn(name = "id_domiciliation_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<DomiciliationStatus> predecessors;
 
 	private String aggregateStatus;

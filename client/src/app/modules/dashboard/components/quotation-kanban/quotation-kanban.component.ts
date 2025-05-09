@@ -6,6 +6,7 @@ import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
 import { Quotation } from 'src/app/modules/quotation/model/Quotation';
@@ -16,10 +17,10 @@ import { QuotationService } from 'src/app/modules/quotation/services/quotation.s
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { Notification } from '../../../../modules/miscellaneous/model/Notification';
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from '../../../invoicing/components/invoice-tools';
 import { SwimlaneType } from '../../model/SwimlaneType';
 import { KanbanComponent } from '../kanban/kanban.component';
-
 
 @Component({
   selector: 'app-quotation-kanban',
@@ -31,6 +32,7 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
   employeesSelected: Employee[] = [];
   filterText: string = '';
   adGroupSales = this.constantService.getActiveDirectoryGroupSales();
+  quotationNotification: Notification[] | undefined;
 
   constructor(
     private quotationStatusService: QuotationStatusService,
@@ -45,6 +47,8 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
     public quotationWorkflowDialog: MatDialog,
     private habilitationsService: HabilitationsService,
     private assoAffaireOrderService: AssoAffaireOrderService,
+    private notificationService: NotificationService,
+    private habilitationService: HabilitationsService
   ) {
     super();
   }
@@ -90,6 +94,22 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
         this.startFilter();
       }
     });
+  }
+
+  getNotificationForQuotation() {
+    if (this.quotationNotification == undefined) {
+      this.quotationNotification = [];
+      this.notificationService.getNotificationsForQuotation(this.selectedEntity!.id).subscribe(response => this.quotationNotification = response);
+    }
+    return this.quotationNotification;
+  }
+
+  addNewNotification() {
+    this.appService.addPersonnalNotification(() => this.quotationNotification = undefined, this.quotationNotification, undefined, undefined, undefined, undefined, this.selectedEntity!, undefined, undefined, undefined);
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
   }
 
   fetchEntityAndOpenPanel(task: Quotation, refreshColumn: boolean = false, openPanel = true) {

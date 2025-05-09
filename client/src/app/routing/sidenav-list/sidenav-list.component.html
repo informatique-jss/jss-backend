@@ -51,7 +51,7 @@
     <mat-icon>work</mat-icon> <span>Affaires</span>
   </a>
   <a mat-list-item routerLink="/provision" *ngIf="canViewProvisionModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/provision' )>=0}">
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/provision' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
     <mat-icon>design_services</mat-icon> <span>Prestations</span>
   </a>
   <a mat-list-item routerLink="/invoicing" *ngIf="canViewInvoiceModule()"

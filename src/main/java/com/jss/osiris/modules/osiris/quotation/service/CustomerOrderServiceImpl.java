@@ -62,6 +62,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -1553,10 +1554,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders) {
-        if (customerOrders != null && customerOrders.size() > 0)
+        if (customerOrders != null && customerOrders.size() > 0) {
+            List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
+                    false, false).stream().filter(n -> n.getCustomerOrder() != null).toList();
+
             for (CustomerOrder customerOrder : customerOrders) {
                 completeAdditionnalInformationForCustomerOrder(customerOrder);
+                notifications.stream().filter(n -> n.getCustomerOrder().getId().equals(customerOrder.getId()))
+                        .findFirst()
+                        .ifPresent(n -> customerOrder.setIsHasNotifications(true));
             }
+        }
 
         return customerOrders;
     }

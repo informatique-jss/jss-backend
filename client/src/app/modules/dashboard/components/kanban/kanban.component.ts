@@ -13,26 +13,27 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
   swimlaneTypes: SwimlaneType<T>[] = [] as SwimlaneType<T>[];
   selectedSwimlaneType: SwimlaneType<T> | undefined;
   swimlanes: Swimlane<U>[] = [] as Swimlane<U>[];
-  connectedDropLists: string[] = [];
   debounce: any;
   statusSelected: U[] = [];
   allEntities: T[] = [];
   activeDraggedStatusId: number | null = null;
+  activeDraggedEntity: T | null = null;
   panelOpen: boolean = false;
   abstract filterText: string;
   selectedEntity: T | null = null;
   possibleEntityStatus: U[] | undefined;
   numberOfEntitiesByStatus: number[] = [];
   computeAggregatedStatus: boolean = false;
+  statusId: string[] = [];
 
   applyFilter(isOnlyFilterText = false) {
+
     if (this.swimlanes)
       for (let swimlane of this.swimlanes) {
         swimlane.status = [];
         swimlane.totalItems = 0;
       }
 
-    this.connectedDropLists = this.statusSelected.map((status) => 'list-' + status.id);
 
     // Set bookmark
     this.numberOfEntitiesByStatus = [];
@@ -48,6 +49,14 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
     } else {
       this.filterCard();
     }
+
+  }
+
+  getConnectedDropLists(swimlane: Swimlane<U>) {
+    if (this.computeAggregatedStatus)
+      return swimlane.aggregatedStatus.map(s => 'list-' + this.statusId.indexOf(s.label + '-' + swimlane.id));
+    else
+      return swimlane.status.map(s => 'list-' + this.statusId.indexOf(s.label + '-' + swimlane.id));
   }
 
   abstract saveUserPreferencesOnApplyFilter(): void;
@@ -56,12 +65,16 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
   abstract fetchEntityAndOpenPanel(task: T, refreshColumn: boolean, openPanel: boolean): void;
 
   filterCard() {
+    let i = 0;
+    this.numberOfEntitiesByStatus = [];
     if (this.allEntities && this.selectedSwimlaneType) {
       for (let order of this.allEntities) {
         let orderValue = this.selectedSwimlaneType.fieldValueFunction ? this.selectedSwimlaneType.fieldValueFunction(order) : getObjectPropertybyString(order, this.selectedSwimlaneType.fieldName);
         let swimlane = this.findSwimlaneByValue(this.swimlanes, orderValue);
         if (!swimlane) {
           swimlane = { rawLabel: orderValue, label: (this.selectedSwimlaneType.valueFonction ? this.selectedSwimlaneType.valueFonction(order) : orderValue), isCollapsed: false, status: copyObjectList(this.statusSelected, false), totalItems: 0 } as Swimlane<U>;
+          swimlane.id = i;
+          i++;
           this.swimlanes.push(swimlane);
         }
         if (swimlane.status) {
@@ -73,9 +86,9 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
               swimlane.totalItems++;
 
               if (statu.id) {
-                if (!this.numberOfEntitiesByStatus[statu.id])
-                  this.numberOfEntitiesByStatus[statu.id] = 0;
-                this.numberOfEntitiesByStatus[statu.id]++;
+                if (!this.numberOfEntitiesByStatus[statu.label as any])
+                  this.numberOfEntitiesByStatus[statu.label as any] = 0;
+                this.numberOfEntitiesByStatus[statu.label as any]++;
               }
             }
           }
@@ -84,10 +97,37 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
     }
 
     if (this.computeAggregatedStatus) {
-      for (let swimlane of this.swimlanes)
+      this.numberOfEntitiesByStatus = [];
+      for (let swimlane of this.swimlanes) {
         swimlane.aggregatedStatus = this.getAggregatedSwimlane(swimlane);
+        swimlane.totalItems = 0;
+        if (swimlane.aggregatedStatus)
+          for (let status of swimlane.aggregatedStatus) {
+            swimlane.totalItems += status.entities.length;
+
+            if (status.id) {
+              if (!this.numberOfEntitiesByStatus[status.label as any])
+                this.numberOfEntitiesByStatus[status.label as any] = status.entities.length;
+              else
+                this.numberOfEntitiesByStatus[status.label as any] += status.entities.length;
+            }
+          }
+      }
     }
+
+    this.statusId = [];
+    if (this.possibleEntityStatus)
+      for (let swimlane of this.swimlanes) {
+        for (let status of this.deduplicateArrayByLabel(this.possibleEntityStatus)) {
+          this.statusId.push(status.label + '-' + swimlane.id);
+        }
+      }
+
     return this.swimlanes.sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  getNumberOfEntitiesByStatus(status: U) {
+    return this.numberOfEntitiesByStatus[status.label as any];
   }
 
   findSwimlaneByValue(swimlanes: Swimlane<U>[], value: string): Swimlane<U> | undefined {
@@ -111,7 +151,19 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
 
       if (grouped.has(key)) {
         const existing = grouped.get(key)!;
-        existing.entities = [...(existing.entities ?? []), ...currentEntities];
+        const existingEntities = existing.entities ?? [];
+
+        // Dédoublonner selon une clé, ici par id
+        const mergedEntities = [...existingEntities, ...currentEntities];
+        const uniqueEntities = new Map<number | string, typeof mergedEntities[0]>();
+        for (const e of mergedEntities) {
+          const entityId = (e as any).id;
+          if (entityId !== undefined) {
+            uniqueEntities.set(entityId, e);
+          }
+        }
+
+        existing.entities = Array.from(uniqueEntities.values());
       } else {
         grouped.set(key, {
           ...status,
@@ -129,6 +181,18 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
         return false;
       }
       seen.add(item.id!);
+      return true;
+    });
+    return deduplicated;
+  }
+
+  deduplicateArrayByLabel(array: U[]) {
+    let seen = new Set<string>();
+    var deduplicated = array.filter(item => {
+      if (seen.has(item.label!)) {
+        return false;
+      }
+      seen.add(item.label!);
       return true;
     });
     return deduplicated;
@@ -165,8 +229,9 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
 
   // Drag & drop management
 
-  onDragStarted(statusId: number) {
+  onDragStarted(statusId: number, entity: T) {
     this.activeDraggedStatusId = statusId;
+    this.activeDraggedEntity = entity;
   }
 
   onDragEnded() {
@@ -177,23 +242,32 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      const fromId = parseInt(event.previousContainer.id.split('-')[1], 10);
-      const toId = parseInt(event.container.id.split('-')[1], 10);
+      const toLabel = this.statusId[parseInt(event.container.id.split('-')[1])].split('-')[0];
 
-      const fromStatus = this.possibleEntityStatus?.find(status => status.id === fromId);
-      const isAllowed = fromStatus?.successors?.some(successor => successor.id === toId) || fromStatus?.predecessors?.some(predecessor => predecessor.id === toId);
+      const fromStatus = this.getEntityStatus(this.activeDraggedEntity!);
+      const isAllowed = fromStatus?.successors?.some(successor => successor.label == toLabel) || fromStatus?.predecessors?.some(predecessor => predecessor.label == toLabel);
 
       if (!isAllowed) return;
 
-      const toStatus = this.possibleEntityStatus?.find(status => status.id === toId);
+      let toStatus = fromStatus?.successors?.find(status => status.label === toLabel);
+      if (!toStatus)
+        toStatus = fromStatus?.predecessors?.find(status => status.label === toLabel);
+
       if (toStatus && event.previousContainer.data && event.previousContainer.data.length > 0)
-        this.changeEntityStatus(event.previousContainer.data[event.previousIndex] as T, toStatus);
+        this.changeEntityStatus(event.previousContainer.data[event.previousIndex] as T, toStatus as U);
     }
   }
 
-  isValidDropTarget(targetId: number): boolean {
-    const fromStatus = this.possibleEntityStatus?.find(status => status.id === this.activeDraggedStatusId);
-    return !!fromStatus?.successors?.some(successor => successor.id === targetId) || !!fromStatus?.predecessors?.some(predecessor => predecessor.id === targetId);
+  isValidDropTarget(targetLabel: string): boolean {
+    const fromStatus = this.getFromStatus();
+    return !!fromStatus?.successors?.some(successor => successor.label === targetLabel) || !!fromStatus?.predecessors?.some(predecessor => predecessor.label === targetLabel);
+  }
+
+  getFromStatus() {
+    if (this.activeDraggedEntity != null && this.activeDraggedStatusId != null) {
+      return this.possibleEntityStatus?.find(status => status.id === this.getEntityStatus(this.activeDraggedEntity!).id);
+    }
+    return null;
   }
 
   abstract changeEntityStatus(entity: T, toStatus: U): void;

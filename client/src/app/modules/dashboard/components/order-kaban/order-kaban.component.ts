@@ -6,6 +6,7 @@ import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { PrintLabelDialogComponent } from 'src/app/modules/quotation/components/print-label-dialog/print-label-dialog.component';
 import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
@@ -16,6 +17,7 @@ import { QuotationService } from 'src/app/modules/quotation/services/quotation.s
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { Notification } from '../../../../modules/miscellaneous/model/Notification';
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from '../../../invoicing/components/invoice-tools';
 import { CustomerOrderStatusService } from '../../../quotation/services/customer.order.status.service';
 import { SwimlaneType } from '../../model/SwimlaneType';
@@ -32,6 +34,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
   employeesSelected: Employee[] = [];
   filterText: string = '';
   adGroupSales = this.constantService.getActiveDirectoryGroupSales();
+  orderNotification: Notification[] | undefined;
 
   constructor(
     private orderService: CustomerOrderService,
@@ -47,6 +50,8 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
     public quotationWorkflowDialog: MatDialog,
     private habilitationsService: HabilitationsService,
     private assoAffaireOrderService: AssoAffaireOrderService,
+    private notificationService: NotificationService,
+    private habilitationService: HabilitationsService
   ) {
     super();
   }
@@ -92,6 +97,22 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
         this.startFilter();
       }
     });
+  }
+
+  getNotificationForCustomerOrder() {
+    if (this.orderNotification == undefined) {
+      this.orderNotification = [];
+      this.notificationService.getNotificationsForCustomerOrder(this.selectedEntity!.id).subscribe(response => this.orderNotification = response);
+    }
+    return this.orderNotification;
+  }
+
+  addNewNotification() {
+    this.appService.addPersonnalNotification(() => this.orderNotification = undefined, this.orderNotification, this.selectedEntity!, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+  }
+
+  canDisplayNotifications() {
+    return this.habilitationService.canDisplayNotifications();
   }
 
   fetchEntityAndOpenPanel(task: CustomerOrder, refreshColumn: boolean = false, openPanel = true) {
@@ -140,7 +161,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
   formatDateFrance = formatDateFrance;
 
   openOrder(event: any, order: CustomerOrder) {
-    this.appService.openRoute(event, 'order/' + order.id, undefined);
+    this.appService.openRoute({ ctrlKey: true }, 'order/' + order.id, undefined);
   }
 
 

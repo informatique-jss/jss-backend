@@ -45,6 +45,7 @@ public class SimpleProvisionStatus extends IWorkflowElement implements Serializa
 	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String code;
 
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String icon;
 
 	private Boolean isOpenState;
@@ -53,11 +54,13 @@ public class SimpleProvisionStatus extends IWorkflowElement implements Serializa
 	@OneToMany(targetEntity = SimpleProvisionStatus.class)
 	@JoinTable(name = "asso_simple_provision_status_successor", joinColumns = @JoinColumn(name = "id_simple_provision_status"), inverseJoinColumns = @JoinColumn(name = "id_simple_provision_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<SimpleProvisionStatus> successors;
 
 	@OneToMany(targetEntity = SimpleProvisionStatus.class)
 	@JoinTable(name = "asso_simple_provision_status_predecessor", joinColumns = @JoinColumn(name = "id_simple_provision_status"), inverseJoinColumns = @JoinColumn(name = "id_simple_provision_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<SimpleProvisionStatus> predecessors;
 
 	private String aggregateStatus;

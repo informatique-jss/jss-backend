@@ -1,7 +1,8 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
   <mat-select [formControlName]="propertyName" multiple
-    [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)" [compareWith]="compareWithId">
+    [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)"
+    [compareWith]="compareWithCode">
     <mat-optgroup label="Annonce légale" [disabled]="isDisabled">
       <mat-option *ngFor="let type of announcementStatus" [value]="type">
         {{displayLabel(type)}}
