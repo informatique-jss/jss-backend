@@ -1,13 +1,4 @@
 <div class="container">
-  <!-- Page content -->
-  <div *ngIf="quotation && quotation.responsable">
-    <autocomplete-city-test [(ngModel)]="quotation.responsable.tiers.city"
-      [modelCountry]="quotation.responsable.tiers.country" [preFilterPostalCode]="'062'"
-      name="autocompleteCity"></autocomplete-city-test>
-  </div>
-
-
-
   <form class="needs-validation container position-relative z-2 pt-5 pb-lg-5 pb-md-4 pb-2" novalidate>
     <div class="row justify-content-between">
       <div class="col-lg-7">
@@ -190,7 +181,13 @@
             [form]="documentForm" propertyName="tiersPostalCode" [isMandatory]="true" [isDisabled]="false"
             [maxLength]="10" (change)="computeQuotationPrice()">
           </generic-input> -->
-          <div>Ville : {{quotation.responsable.tiers.city.label}}</div>
+          <div>
+            <autocomplete-city [(model)]="quotation.responsable.tiers.city" [form]="documentForm"
+              [modelCountry]="quotation.responsable.tiers.country"
+              [preFilterPostalCode]="quotation.responsable.tiers.postalCode" label="Ville"
+              propertyName="autocompleteCity"></autocomplete-city>
+          </div>
+
 
           <!-- <autocomplete-city class="col-md-4" [(model)]="quotation.responsable.tiers.city" label="Ville"
             [form]="documentForm" propertyName="tiersCity" [isMandatory]="true" [isDisabled]="false"

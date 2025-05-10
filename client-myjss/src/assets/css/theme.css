@@ -20398,3 +20398,32 @@ textarea::selection {
 .pointer {
   cursor: pointer;
 }
+
+.custom-class-input {
+  display: block !important;
+  width: 100% !important;
+  padding: 0.825rem 1rem !important;
+  font-size: calc(var(--ar-body-font-size) * 0.875) !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-color: transparent !important;
+  background-clip: padding-box !important;
+  border: var(--ar-border-width) solid var(--ar-gray-700) !important;
+  border-radius: var(--ar-border-radius) !important;
+  transition: border-color 0.15s ease-in-out !important;
+}
+
+.autocomplete-container {
+  box-shadow: none !important;
+}
+
+ng-autocomplete .autocomplete-container b {
+  font-weight: bolder;
+  background-color: yellow;
+  color: black;
+  padding: 0 2px;
+  border-radius: 2px;
+}

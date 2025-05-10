@@ -7,7 +7,6 @@ import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
-import { AutocompleteCityTestComponent } from '../forms/autocomplete-city-test/autocomplete-city-test.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
 import { GenericDatePickerComponent } from '../forms/generic-date-picker/generic-datetime-picker.component';
 import { GenericDatetimePickerComponent } from '../forms/generic-datetime-picker/generic-datetime-picker.component';
@@ -49,14 +48,13 @@ const routes: Routes = [{}];
     GenericDatePickerComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
-    AutocompleteCityComponent,
     SelectCountryComponent,
     SelectValueServiceFieldTypeComponent,
     SelectBillingLabelTypeComponent,
     GenericInputComponent,
     SelectMyJssCategoryComponent,
     SelectCivilityComponent,
-    AutocompleteCityTestComponent,
+    AutocompleteCityComponent
   ],
   exports: [
     AvatarComponent,
@@ -71,14 +69,13 @@ const routes: Routes = [{}];
     GenericSwiperComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
-    AutocompleteCityComponent,
     SelectCountryComponent,
     SelectMyJssCategoryComponent,
     SelectValueServiceFieldTypeComponent,
     SelectBillingLabelTypeComponent,
     OurClientsComponent,
     SelectCivilityComponent,
-    AutocompleteCityTestComponent,
+    AutocompleteCityComponent
   ]
 })
 export class MiscellaneousModule { }

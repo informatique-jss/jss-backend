@@ -21,7 +21,7 @@ export class CityService extends AppRestService<City> {
     params = params.set("page", page);
     params = params.set("size", pageSize);
 
-    return this.getList(params, "cities/search/name/country/postal-code");
+    return this.getPagedList(params, "cities/search/name/country/postal-code");
   }
 
   getCitiesByCountry(country: Country) {
