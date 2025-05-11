@@ -39,6 +39,7 @@ import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.GuichetUniqueDelegateService;
+import com.jss.osiris.modules.osiris.reporting.service.IndicatorService;
 
 @Service
 @ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
@@ -133,6 +134,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	IndexationMailService osirisMailService;
+
+	@Autowired
+	IndicatorService indicatorService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -475,6 +479,15 @@ public class OsirisScheduller {
 	private void updateNodeStatus() {
 		try {
 			nodeService.updateNodeStatus();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 60000, fixedDelayString = "${schedulling.indicator.compute}")
+	private void updateIndicatorsValues() {
+		try {
+			indicatorService.updateIndicatorsValues();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

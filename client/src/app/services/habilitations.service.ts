@@ -39,6 +39,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewIndicatorModule() {
+    return true;
+  }
+
   canViewTiersModule() {
     return true;
   }
