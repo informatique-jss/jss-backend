@@ -223,6 +223,8 @@ import { SelectFollowupComponent } from '../forms/select-followup/select-followu
 import { SelectFormaliteInfogreffeStatusComponent } from '../forms/select-formalite-infogreffe-status/select-formalite-infogreffe-status.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
+import { SelectIndicatorGroupComponent } from '../forms/select-indicator-group/select-indicator-group.component';
+import { SelectIndicatorComponent } from '../forms/select-indicator/select-indicator.component';
 import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-one/select-invoice-status-one.component';
 import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/select-invoice-status.component';
 import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
@@ -558,7 +560,9 @@ const routes: Routes = [
     SelectPrintLabelRecipientComponent,
     SelectEmployeeComponent,
     SelectNotificationTypesComponent,
-    NotificationListComponent
+    NotificationListComponent,
+    SelectIndicatorComponent,
+    SelectIndicatorGroupComponent,
   ],
   exports: [
     HistoryComponent,
@@ -803,7 +807,9 @@ const routes: Routes = [
     SelectCategoryComponent,
     SelectPrintLabelRecipientComponent,
     SelectEmployeeComponent,
-    SelectNotificationTypesComponent
+    SelectNotificationTypesComponent,
+    SelectIndicatorComponent,
+    SelectIndicatorGroupComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

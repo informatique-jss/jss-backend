@@ -10,6 +10,10 @@
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/reporting' )>=0}">
     <mat-icon>trending_up</mat-icon> <span>Reporting</span>
   </a>
+  <a mat-list-item routerLink="/indicator" *ngIf="canViewIndicatorModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/indicator' )>=0}">
+    <mat-icon>monitoring</mat-icon> <span>Indicateurs</span>
+  </a>
   <a mat-list-item routerLink="/tiers" *ngIf="canViewTiersModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/tiers' )>=0}">
     <mat-icon>group</mat-icon> <span>Tiers / Responsables</span>

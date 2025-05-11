@@ -617,5 +617,17 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.COMPUTE_INDICATOR) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.COMPUTE_INDICATOR);
+            batchSettings.setLabel("Calcul des indicateurs");
+            batchSettings.setFixedRate(60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
     }
 }

@@ -27,6 +27,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,6 +103,7 @@ import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderRepository;
+import com.jss.osiris.modules.osiris.reporting.service.IndicatorService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
@@ -1969,5 +1971,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         return completeAdditionnalInformationForCustomerOrders(
                 customerOrderRepository.searchCustomerOrders(commercialIds, statusIds));
+    }
+
+    @Autowired
+    IndicatorService indicatorService;
+
+    @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
+    public void test() {
+        indicatorService.computeIndicator(1);
     }
 }

@@ -128,6 +128,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("mail.imap.secret.id");
         isOk = isOk && checkProperty("mail.imap.tls.version");
         isOk = isOk && checkProperty("schedulling.mail.purge.indexation");
+        isOk = isOk && checkProperty("schedulling.indicator.compute");
 
         isOk = isOk && checkProperty("mail.imap.host");
         isOk = isOk && checkProperty("mail.imap.port");
