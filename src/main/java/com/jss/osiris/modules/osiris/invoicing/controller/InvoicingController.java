@@ -987,7 +987,7 @@ public class InvoicingController {
         validationHelper.validateDate(invoice.getDueDate(), false, "DueDate");
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "AccountingDocumentDate");
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "ManualAccountingDocumentDate");
-        validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(1),
+        validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(7),
                 "ManualAccountingDocumentDate");
         validationHelper.validateString(invoice.getManualAccountingDocumentNumber(), false, 150,
                 "ManualAccountingDocumentNumber");
