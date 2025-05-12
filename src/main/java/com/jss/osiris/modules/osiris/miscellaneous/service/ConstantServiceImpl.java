@@ -1176,6 +1176,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AccountingAccountClass getAccountingAccountClassTiers() throws OsirisException {
+        return this.getConstants().getAccountingAccountClassTiers();
+    }
+
+    @Override
     public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException {
         return this.getConstants().getServiceFamilyImmatriculationAlAndFormality();
     }

@@ -359,7 +359,8 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
                     Payment payment = paymentService.generateNewDirectDebitPayment(
                             completeTransfert.getTransfertAmount(), completeTransfert.getLabel(), completeTransfert);
-                    accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false);
+                    accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment, false,
+                            false);
 
                     paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment,
                             Arrays.asList(completeTransfert.getInvoices().get(0)), null, null, null, null,

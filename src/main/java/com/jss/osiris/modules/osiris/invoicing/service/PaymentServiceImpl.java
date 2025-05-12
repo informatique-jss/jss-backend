@@ -425,10 +425,10 @@ public class PaymentServiceImpl implements PaymentService {
                     addOrUpdatePayment(payment);
                     if (transaction.amount().floatValue() > 0)
                         accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(payment,
-                                false);
+                                false, true);
                     else
                         accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment,
-                                false);
+                                false, true);
                 }
                 Payment payment = paymentRepository.findByBankId(transaction.id());
                 if (payment != null && (payment.getIsCancelled() == null || payment.getIsCancelled() == false))
@@ -759,7 +759,7 @@ public class PaymentServiceImpl implements PaymentService {
                         constantService.getActiveDirectoryGroupFacturation());
             }
             accountingRecordGenerationService.generateAccountingRecordsForSaleOnCustomerOrderDeposit(
-                    correspondingCustomerOrder.get(i), newPayment);
+                    correspondingCustomerOrder.get(i), newPayment, false);
 
             remainingMoney = remainingMoney.subtract(effectivePayment);
 
@@ -993,7 +993,7 @@ public class PaymentServiceImpl implements PaymentService {
         cashPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountCaisse());
         addOrUpdatePayment(cashPayment);
-        accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(cashPayment, false);
+        accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(cashPayment, false, true);
         associateInboundPaymentAndInvoices(getPayment(cashPayment.getId()), Arrays.asList(invoice), null, false);
     }
 
@@ -1005,7 +1005,7 @@ public class PaymentServiceImpl implements PaymentService {
         checkPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
 
         addOrUpdatePayment(checkPayment);
-        accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(checkPayment, false);
+        accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(checkPayment, false, true);
         batchService.declareNewBatch(Batch.AUTOMATCH_PAYMENT, checkPayment.getId());
     }
 
@@ -1027,7 +1027,7 @@ public class PaymentServiceImpl implements PaymentService {
                         ? constantService.getAccountingAccountCaisse()
                         : constantService.getAccountingAccountBankJss());
         addOrUpdatePayment(payment);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false, true);
         return payment;
     }
 
@@ -1038,7 +1038,7 @@ public class PaymentServiceImpl implements PaymentService {
         cashPayment.setSourceAccountingAccount(constantService.getAccountingAccountCaisse());
         cashPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         addOrUpdatePayment(cashPayment);
-        accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(cashPayment, false);
+        accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(cashPayment, false, true);
         associateInboundPaymentAndCustomerOrders(getPayment(cashPayment.getId()), Arrays.asList(customerOrder),
                 new ArrayList<Invoice>(), null, cashPayment.getPaymentAmount(), false);
     }
@@ -1068,12 +1068,7 @@ public class PaymentServiceImpl implements PaymentService {
         newPayment.setOriginPayment(payment);
         newPayment.setPaymentAmount(paymentAmount);
 
-        if (accountingRecordGenerationService.getPaymentDateForAccounting(payment).getYear() == payment.getPaymentDate()
-                .getYear()) {
-            newPayment.setPaymentDate(payment.getPaymentDate());
-        } else {
-            newPayment.setPaymentDate(accountingRecordGenerationService.getPaymentDateForAccounting(payment));
-        }
+        newPayment.setPaymentDate(payment.getPaymentDate());
         newPayment.setPaymentType(payment.getPaymentType());
         newPayment.setLabel(payment.getLabel());
 
@@ -1216,9 +1211,11 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (payment.getPaymentAmount().compareTo(zeroValue) >= 0 || payment.getIsAppoint()) {
             if (invoice.getProvider() != null && invoice.getIsCreditNote()) {
-                accountingRecordGenerationService.generateAccountingRecordsForProviderInvoiceRefund(invoice, payment);
+                accountingRecordGenerationService.generateAccountingRecordsForProviderInvoiceRefund(invoice, payment,
+                        false);
             } else {
-                accountingRecordGenerationService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
+                accountingRecordGenerationService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment,
+                        false);
 
                 if (!isMovedFromCustomerOrder && invoice.getCustomerOrder() != null) {
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
@@ -1241,7 +1238,8 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             }
         } else {
-            accountingRecordGenerationService.generateAccountingRecordsForPurschaseOnInvoicePayment(invoice, payment);
+            accountingRecordGenerationService.generateAccountingRecordsForPurschaseOnInvoicePayment(invoice, payment,
+                    false);
         }
     }
 
@@ -1269,9 +1267,10 @@ public class PaymentServiceImpl implements PaymentService {
         addOrUpdatePayment(newPayment);
         if (newPayment.getPaymentAmount().compareTo(zeroValue) > 0)
             accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment,
-                    false);
+                    false, false);
         else
-            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(newPayment, false);
+            accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(newPayment, false,
+                    false);
         return newPayment;
     }
 
@@ -1319,7 +1318,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .divide(oneHundredValue);
 
         invoiceItem.setPreTaxPrice(
-                commission.multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue));
+                commission.divide(new BigDecimal(1.2)).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
+                        .divide(oneHundredValue));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         invoice.getInvoiceItems().add(invoiceItem);
         vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
@@ -1329,7 +1329,8 @@ public class PaymentServiceImpl implements PaymentService {
                 invoiceItem.getPreTaxPrice().add(invoiceItem.getVatPrice()).negate(),
                 constantService.getAccountingAccountBankCentralPay(),
                 constantService.getProviderCentralPay().getAccountingAccountProvider(), invoiceLabel);
-        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment, false);
+        accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(centralPayPayment, false,
+                true);
 
         associateOutboundPaymentAndInvoice(centralPayPayment, centralPayInvoice);
     }
@@ -1365,7 +1366,7 @@ public class PaymentServiceImpl implements PaymentService {
                 accountingAccountService.getWaitingAccountingAccount());
         newPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         addOrUpdatePayment(newPayment);
-        accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment, true);
+        accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment, true, false);
     }
 
     private Payment generateCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit,
@@ -1656,7 +1657,7 @@ public class PaymentServiceImpl implements PaymentService {
             newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment.setTargetAccountingAccount(accountingAccount);
             accountingRecordGenerationService
-                    .generateAccountingRecordOnIncomingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+                    .generateAccountingRecordOnIncomingPaymentOnAccountingAccount(newPayment);
             newPayment.setAccountingAccount(accountingAccount);
         } else {
             newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
@@ -1669,7 +1670,7 @@ public class PaymentServiceImpl implements PaymentService {
             newPayment.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment.setTargetAccountingAccount(accountingAccount);
             accountingRecordGenerationService
-                    .generateAccountingRecordOnOutgoingPaymentOnDepositCompetentAuthorityAccount(newPayment);
+                    .generateAccountingRecordOnOutgoingPaymentOnAccountingAccount(newPayment);
             newPayment.setAccountingAccount(accountingAccount);
         }
         addOrUpdatePayment(newPayment);
@@ -1692,7 +1693,8 @@ public class PaymentServiceImpl implements PaymentService {
                 newPayment1.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment1.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment1.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment1, true);
+            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment1, true,
+                    false);
 
             newPayment2 = generateNewPaymentFromPayment(payment, amount, false,
                     accountingAccountService.getWaitingAccountingAccount());
@@ -1703,7 +1705,8 @@ public class PaymentServiceImpl implements PaymentService {
                 newPayment2.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment2.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment2.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
-            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment2, true);
+            accountingRecordGenerationService.generateAccountingRecordOnIncomingPaymentCreation(newPayment2, true,
+                    false);
             addOrUpdatePayment(newPayment1);
             addOrUpdatePayment(newPayment2);
         } else {
@@ -1717,7 +1720,7 @@ public class PaymentServiceImpl implements PaymentService {
             newPayment1.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment1.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
             accountingRecordGenerationService
-                    .generateAccountingRecordOnOutgoingPaymentCreation(newPayment1, true);
+                    .generateAccountingRecordOnOutgoingPaymentCreation(newPayment1, true, false);
 
             newPayment2 = generateNewPaymentFromPayment(payment, amount.negate(), false,
                     accountingAccountService.getWaitingAccountingAccount());
@@ -1729,7 +1732,7 @@ public class PaymentServiceImpl implements PaymentService {
             newPayment2.setSourceAccountingAccount(constantService.getAccountingAccountBankJss());
             newPayment2.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
             accountingRecordGenerationService
-                    .generateAccountingRecordOnOutgoingPaymentCreation(newPayment2, true);
+                    .generateAccountingRecordOnOutgoingPaymentCreation(newPayment2, true, false);
             addOrUpdatePayment(newPayment1);
             addOrUpdatePayment(newPayment2);
         }

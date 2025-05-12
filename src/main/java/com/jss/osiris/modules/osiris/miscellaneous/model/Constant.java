@@ -907,6 +907,10 @@ public class Constant implements Serializable, IId {
 	private AccountingAccountClass accountingAccountClassProduct;
 
 	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_class_tiers")
+	private AccountingAccountClass accountingAccountClassTiers;
+
+	@ManyToOne
 	@JoinColumn(name = "id_service_family_immatriculation_al_and_formality")
 	private ServiceFamily serviceFamilyImmatriculationAlAndFormality;
 
@@ -2643,6 +2647,14 @@ public class Constant implements Serializable, IId {
 
 	public void setActiveDirectoryGroupInsertions(ActiveDirectoryGroup activeDirectoryGroupInsertions) {
 		this.activeDirectoryGroupInsertions = activeDirectoryGroupInsertions;
+	}
+
+	public AccountingAccountClass getAccountingAccountClassTiers() {
+		return accountingAccountClassTiers;
+	}
+
+	public void setAccountingAccountClassTiers(AccountingAccountClass accountingAccountClassTiers) {
+		this.accountingAccountClassTiers = accountingAccountClassTiers;
 	}
 
 }

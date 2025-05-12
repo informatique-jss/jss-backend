@@ -263,5 +263,6 @@ export interface Constant {
   categoryArticle: Category;
   categorySerie: Category;
   accountingAccountClassProduct: AccountingAccountClass;
+  accountingAccountClassTiers: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
 }

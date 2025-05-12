@@ -487,5 +487,7 @@ public interface ConstantService {
 
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException;
 
+    public AccountingAccountClass getAccountingAccountClassTiers() throws OsirisException;
+
     public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException;
 }

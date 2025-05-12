@@ -425,7 +425,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getIdRefund() == null)
       accountingRecordSearch.setIdRefund(0);
 
-    if (accountingRecordSearch.getTiersId() != 0 || accountingRecordSearch.getIdPayment() != 0) {
+    if (accountingRecordSearch.getIdPayment() != 0) {
       // See all if for a Tiers or a payment
       accountingRecordSearch.setStartDate(accountingRecordSearch.getStartDate().minusYears(2));
       accountingRecordSearch.setEndDate(accountingRecordSearch.getEndDate().plusYears(2));
@@ -448,7 +448,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingRecordSearch.getIdInvoice(),
           accountingRecordSearch.getIdRefund(),
           accountingRecordSearch.getIdBankTransfert(), fetchAll ? Integer.MAX_VALUE : 1000);
-    } else if (!getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
+    }
+    if (!getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME) || accountingRecordSearch.getIdPayment() != 0) {
 
       finalRecords.addAll(accountingRecordRepository.searchAccountingRecordsClosed(accountingAccountId, accountingClass,
@@ -492,6 +493,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingBalanceSearch.getIsFromAs400() == null)
       accountingBalanceSearch.setIsFromAs400(false);
 
+    if (accountingBalanceSearch.getDoNotDisplayZeroTiersAccounts() == null)
+      accountingBalanceSearch.setDoNotDisplayZeroTiersAccounts(false);
+
     if (getAccountingRecordTableName(accountingBalanceSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME))
       return accountingRecordRepository.searchAccountingBalanceCurrent(
@@ -500,6 +504,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
           accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
           activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+          accountingBalanceSearch.getDoNotDisplayZeroTiersAccounts(),
+          constantService.getAccountingAccountClassTiers().getId(),
           accountingBalanceSearch.getIsFromAs400());
 
     return accountingRecordRepository.searchAccountingBalanceClosed(
@@ -508,6 +514,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        accountingBalanceSearch.getDoNotDisplayZeroTiersAccounts(),
+        constantService.getAccountingAccountClassTiers().getId(),
         accountingBalanceSearch.getIsFromAs400());
   }
 
