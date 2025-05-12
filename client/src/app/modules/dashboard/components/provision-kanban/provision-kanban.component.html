@@ -123,7 +123,7 @@
           <span>Envoyer une demande de RIB à l'affaire</span>
         </button>
         <button mat-menu-item (click)="sendMissingAttachmentMail(selectedEntity.service)">
-          <span>Demander des pièces manquantes pour le service {{selectedEntity.service.customLabel}}</span>
+          <span>Demander des pièces manquantes pour le service {{selectedEntity.service.serviceLabelToDisplay}}</span>
         </button>
         <mat-divider></mat-divider>
         <button mat-menu-item

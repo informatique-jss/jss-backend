@@ -33,7 +33,7 @@
 <mat-expansion-panel *ngIf="service" [expanded]="isExpanded">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      Détails du service {{service.customLabel}}
+      Détails du service {{service.serviceLabelToDisplay}}
     </mat-panel-title>
     <mat-panel-description>
       <mat-icon *ngIf="service.hasMissingInformations" color="warn"
