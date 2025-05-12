@@ -17,14 +17,12 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
-import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
-import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.repository.MissingAttachmentQueryRepository;
@@ -251,34 +249,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
                             }
                         }
 
-                    // After 'break' (==if MissingAttachment Query is completed), then, for the
-                    // service, set all provisions, with status 'waiting for attachments', to
-                    // 'in progress' status
-                    if (missingAttachmentQuery.getService().getProvisions() != null
-                            && missingAttachmentQuery.getService().getProvisions().size() > 0)
-                        for (Provision provision : missingAttachmentQuery.getService().getProvisions()) {
-                            if (provision.getSimpleProvision() != null)
-                                if (provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
-                                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT))
-                                    provision.getSimpleProvision().setSimpleProvisionStatus(
-                                            simpleProvisionStatusService.getSimpleProvisionStatusByCode(
-                                                    SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS));
-
-                            if (provision.getFormalite() != null)
-                                if (provision.getFormalite().getFormaliteStatus().getCode()
-                                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT))
-                                    provision.getFormalite().setFormaliteStatus(
-                                            formaliteStatusService
-                                                    .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_IN_PROGRESS));
-
-                            if (provision.getAnnouncement() != null)
-                                if (provision.getAnnouncement().getAnnouncementStatus().getCode()
-                                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT))
-                                    provision.getAnnouncement().setAnnouncementStatus(
-                                            announcementStatusService.getAnnouncementStatusByCode(
-                                                    AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS));
-                        }
-
+                    // After 'break' add comment
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
                             "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
