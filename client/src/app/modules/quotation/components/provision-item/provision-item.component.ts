@@ -5,6 +5,7 @@ import { compareWithId } from 'src/app/libs/CompareHelper';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_FORMALITE, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { getDocument } from '../../../../libs/DocumentHelper';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
@@ -62,6 +63,7 @@ export class ProvisionItemComponent implements OnInit {
     protected provisionTypeService: ProvisionTypeService,
     protected provisionService: ProvisionService,
     private constantService: ConstantService,
+    private habilitationsService: HabilitationsService
   ) { }
 
   ngOnInit() {
@@ -83,6 +85,10 @@ export class ProvisionItemComponent implements OnInit {
   updateAssignedToForProvision(employee: Employee, provision: Provision) {
     this.provisionService.updateAssignedToForProvision(provision, employee).subscribe(response => {
     });
+  }
+
+  canEditProvisionType() {
+    return this.habilitationsService.canEditProvisionType();
   }
 
   getFormStatus(): boolean {
