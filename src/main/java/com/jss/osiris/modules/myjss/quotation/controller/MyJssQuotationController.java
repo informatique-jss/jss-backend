@@ -39,6 +39,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.quotation.controller.model.DashboardUserStatistics;
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsService;
+import com.jss.osiris.modules.myjss.quotation.service.QuotationDelegate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
@@ -198,6 +199,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	ServiceFieldTypeService serviceFieldTypeService;
+
+	@Autowired
+	QuotationDelegate quotationDelegate;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1332,6 +1336,16 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<Quotation>(quotationService.completeAdditionnalInformationForQuotation(
 				(Quotation) pricingHelper.completePricingOfIQuotation(quotation, isEmergency)), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/save-order")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<IQuotation> saveIQuoation(@RequestBody IQuotation quotation, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		return new ResponseEntity<IQuotation>(quotationDelegate.validateAndCreateQuotation(quotation),
+				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/user/save")
