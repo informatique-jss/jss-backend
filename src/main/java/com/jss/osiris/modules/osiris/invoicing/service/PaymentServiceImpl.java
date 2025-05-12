@@ -1316,9 +1316,9 @@ public class PaymentServiceImpl implements PaymentService {
                 : zeroValue)
                 .divide(oneHundredValue);
 
-        invoiceItem.setPreTaxPrice(
-                commission.divide(new BigDecimal(1.2)).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
-                        .divide(oneHundredValue));
+        invoiceItem.setPreTaxPrice(commission
+                .divide(new BigDecimal("1.2"), 10, RoundingMode.HALF_EVEN)
+                .setScale(2, RoundingMode.HALF_EVEN));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());
         invoice.getInvoiceItems().add(invoiceItem);
         vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
