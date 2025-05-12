@@ -306,25 +306,26 @@ public class PricingHelper {
                         (confrere.getShippingCosts() != null ? BigDecimal.valueOf(confrere.getShippingCosts())
                                 : zeroValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
-        } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()
+        } else if (billingItem.getBillingType().getIsDebour()
                 && !provision.getService().getServiceTypes().isEmpty()) {
-            for (ServiceType serviceType : provision.getService().getServiceTypes()) {
-                if (billingItem.getBillingType().getIsNonTaxable() == false
-                        && serviceType.getDefaultDeboursPrice() != null) {
-                    if (invoiceItem.getPreTaxPrice() == null)
-                        invoiceItem.setPreTaxPrice(serviceType.getDefaultDeboursPrice());
-                    else
-                        invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
-                                .add(serviceType.getDefaultDeboursPrice()));
-                } else if (billingItem.getBillingType().getIsNonTaxable() == true
-                        && serviceType.getDefaultDeboursPriceNonTaxable() != null) {
-                    if (invoiceItem.getPreTaxPrice() == null)
-                        invoiceItem.setPreTaxPrice(serviceType.getDefaultDeboursPriceNonTaxable());
-                    else
-                        invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
-                                .add(serviceType.getDefaultDeboursPriceNonTaxable()));
+            if (invoiceItem.getPreTaxPrice() == null || invoiceItem.getPreTaxPrice().equals(zeroValue))
+                for (ServiceType serviceType : provision.getService().getServiceTypes()) {
+                    if (billingItem.getBillingType().getIsNonTaxable() == false
+                            && serviceType.getDefaultDeboursPrice() != null) {
+                        if (invoiceItem.getPreTaxPrice() == null)
+                            invoiceItem.setPreTaxPrice(serviceType.getDefaultDeboursPrice());
+                        else
+                            invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                                    .add(serviceType.getDefaultDeboursPrice()));
+                    } else if (billingItem.getBillingType().getIsNonTaxable() == true
+                            && serviceType.getDefaultDeboursPriceNonTaxable() != null) {
+                        if (invoiceItem.getPreTaxPrice() == null)
+                            invoiceItem.setPreTaxPrice(serviceType.getDefaultDeboursPriceNonTaxable());
+                        else
+                            invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                                    .add(serviceType.getDefaultDeboursPriceNonTaxable()));
+                    }
                 }
-            }
         } else {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
         }

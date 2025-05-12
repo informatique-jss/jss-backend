@@ -8,4 +8,6 @@ export interface ServiceFamily {
   myJssIcon: string;
   comment: string;
   serviceFamilyGroup: ServiceFamilyGroup;
+  myJssOrder: number;
+  hideInMyJssMandatoryDocument: boolean;
 }

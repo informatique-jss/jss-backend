@@ -40,6 +40,7 @@ public class AssoServiceTypeDocument implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private TypeDocument typeDocument;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isMandatory;
 
 	public Integer getId() {

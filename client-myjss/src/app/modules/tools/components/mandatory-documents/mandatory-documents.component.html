@@ -63,9 +63,9 @@
   </ul>
   <ng-container *ngFor="let serviceType of filteredServiceTypesByFamily[selectedFamilyTab.id];">
     <ng-container *ngIf="serviceType">
-      <div class="card dark-blue-dropdown rounded-3 mt-3 pointer"
-        [ngClass]="{ 'expanded-card':  isExpanded(serviceType.id) }" (click)="toggleCard(serviceType)">
-        <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
+      <div class="card dark-blue-dropdown rounded-3 mt-3 " [ngClass]="{ 'expanded-card':  isExpanded(serviceType.id) }">
+        <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3 pointer"
+          (click)="toggleCard(serviceType)">
           <h5 class="card-title mb-1">{{ serviceType.customLabel }}</h5>
           <button type="button" class="btn btn-link rounded-circle custom-btn">
             <span class="circle-icon">
@@ -78,17 +78,33 @@
           <div class="row ps-4 pe-5 me-5 ms-2">
             <ng-container
               *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeDocuments && serviceType.assoServiceTypeDocuments.length>0">
-              <div class="col-4 g-2" *ngFor="let item of  serviceType.assoServiceTypeDocuments">
-                <li class="d-flex pb-2 mb-1">
-                  <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
-                </li>
-              </div>
+              <h6 *ngIf="hasMandatoryDocuments">Documents obligatoires</h6>
+              <ng-container *ngFor="let item of  serviceType.assoServiceTypeDocuments">
+                <div class="col-4 g-2" *ngIf="item.isMandatory">
+                  <li class="d-flex pb-2 mb-1">
+                    <span class="bg-primary mt-2 checkbox-custom"></span>
+                    <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
+                  </li>
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container
+              *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeDocuments && serviceType.assoServiceTypeDocuments.length>0">
+              <h6 *ngIf="hasNonMandatoryDocuments">Documents optionnels</h6>
+              <ng-container *ngFor="let item of  serviceType.assoServiceTypeDocuments">
+                <div class="col-4 g-2" *ngIf="!item.isMandatory">
+                  <li class="d-flex pb-2 mb-1">
+                    <span class="bg-primary mt-2 checkbox-custom"></span>
+                    <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
+                  </li>
+                </div>
+              </ng-container>
             </ng-container>
             <hr
               *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeDocuments && serviceType.assoServiceTypeDocuments.length>0 &&  serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0" />
             <ng-container
               *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeFieldTypes && serviceType.assoServiceTypeFieldTypes.length>0">
+              <h6>Informations complementaires</h6>
               <div class="col-4 g-2" *ngFor="let item of  serviceType.assoServiceTypeFieldTypes">
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>

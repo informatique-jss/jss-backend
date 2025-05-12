@@ -16,7 +16,7 @@ export class ServiceFamilyService extends AppRestService<ServiceFamily> {
     return this.getList(new HttpParams().set("idServiceFamilyGroup", idServiceFamilyGroup), "service-families/service-group");
   }
 
-  getServiceFamiliesExcludingFamilyGroupAnnouncement() {
-    return this.getList(new HttpParams(), "service-families/all");
+  getServiceFamiliesForMandatoryDocuments() {
+    return this.getList(new HttpParams(), "service-families/mandatory-documents");
   }
 }
