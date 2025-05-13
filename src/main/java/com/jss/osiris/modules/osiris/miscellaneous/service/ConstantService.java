@@ -504,6 +504,8 @@ public interface ConstantService {
 
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException;
 
+    public AccountingAccountClass getAccountingAccountClassTiers() throws OsirisException;
+
     public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException;
 
     public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() throws OsirisException;
@@ -511,4 +513,6 @@ public interface ConstantService {
     public String getStringMyJssDemoRequestMail() throws OsirisException;
 
     public String getStringMyJssWebinarRequestMail() throws OsirisException;
+
+    public String getStringMyJssContactFormRequestMail() throws OsirisException;
 }

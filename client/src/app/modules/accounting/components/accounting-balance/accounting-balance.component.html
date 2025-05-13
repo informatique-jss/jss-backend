@@ -21,10 +21,6 @@
             [form]="accountingBalanceForm" propertyName="accountingJournal">
           </select-accounting-journal>
         </td>
-        <td class="toggle-td">
-          <generic-toggle [(model)]="accountingBalanceSearch.isFromAs400" label="Depuis l'AS400 ?"
-            [form]="accountingBalanceForm" propertyName="isFromAs400"></generic-toggle>
-        </td>
         <td>
           <generic-datepicker [(model)]="accountingBalanceSearch.startDate" label="Date de début"
             [form]="accountingBalanceForm" propertyName="startDate" [isMandatory]="false"
@@ -49,6 +45,19 @@
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRecords()" class="add-button">
             <mat-icon>search</mat-icon>
           </button>
+        </td>
+      </tr>
+    </table>
+    <table class="full-width table-fixed-layout table-bilan">
+      <tr>
+        <td class="toggle-td">
+          <generic-toggle [(model)]="accountingBalanceSearch.doNotDisplayZeroTiersAccounts"
+            label="Cacher les comptes de Tiers soldés ?" [form]="accountingBalanceForm"
+            propertyName="doNotDisplayZeroTiersAccounts"></generic-toggle>
+        </td>
+        <td class="toggle-td">
+          <generic-toggle [(model)]="accountingBalanceSearch.isFromAs400" label="Depuis l'AS400 ?"
+            [form]="accountingBalanceForm" propertyName="isFromAs400"></generic-toggle>
         </td>
       </tr>
     </table>

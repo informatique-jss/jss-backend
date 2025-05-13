@@ -28,7 +28,8 @@ import jakarta.persistence.Transient;
 @Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true) })
 public class Post implements IId {
     @Id
-    @JsonView({ JacksonViews.OsirisListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class,
+            JacksonViews.MyJssListView.class })
     private Integer id;
 
     @Transient
@@ -83,7 +84,8 @@ public class Post implements IId {
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class })
     private String slug;
 
-    private boolean sticky;
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private Boolean isSticky;
 
     @Transient
     private Integer[] tags;
@@ -149,6 +151,7 @@ public class Post implements IId {
     private List<Post> relatedPosts;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    @IndexedField
     private Boolean isPremium;
 
     private Integer premiumPercentage;
@@ -251,14 +254,6 @@ public class Post implements IId {
 
     public void setSlug(String slug) {
         this.slug = slug;
-    }
-
-    public boolean isSticky() {
-        return sticky;
-    }
-
-    public void setSticky(boolean sticky) {
-        this.sticky = sticky;
     }
 
     public Integer[] getTags() {
@@ -451,6 +446,14 @@ public class Post implements IId {
 
     public void setMyjss_category(Integer[] myjss_category) {
         this.myjss_category = myjss_category;
+    }
+
+    public Boolean getIsSticky() {
+        return isSticky;
+    }
+
+    public void setIsSticky(Boolean isSticky) {
+        this.isSticky = isSticky;
     }
 
 }

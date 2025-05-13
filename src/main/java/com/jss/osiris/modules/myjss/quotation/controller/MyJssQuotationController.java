@@ -1207,14 +1207,14 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/service-families/all")
+	@GetMapping(inputEntryPoint + "/service-families/mandatory-documents")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<ServiceFamily>> getServiceFamiliesExcludingServiceFamilyGroupAnnouncement(
+	public ResponseEntity<List<ServiceFamily>> getServiceFamiliesForMandatoryDocuments(
 			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
 		return new ResponseEntity<List<ServiceFamily>>(
-				serviceFamilyService.getServiceFamiliesExcludingServiceFamilyGroupAnnouncement(),
+				serviceFamilyService.getServiceFamiliesForMandatoryDocuments(),
 				HttpStatus.OK);
 	}
 

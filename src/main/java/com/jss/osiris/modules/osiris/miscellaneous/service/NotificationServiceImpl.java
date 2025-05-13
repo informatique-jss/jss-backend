@@ -383,14 +383,27 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void notifyGuichetUniqueFormaliteStatus(Provision provision)
+    public void notifyGuichetUniqueFormaliteStatusValidated(Provision provision)
             throws OsirisException {
         CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
         if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, false, null, provision, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED, false, null, provision, null);
+            }
+        }
+    }
+
+    @Override
+    public void notifyGuichetUniqueFormaliteStatusRefused(Provision provision)
+            throws OsirisException {
+        CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
+        if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
+            if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                    || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
+                generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_REFUSED, false, null, provision, null);
             }
         }
     }
@@ -403,7 +416,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED, false, null, provision, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_SIGNED, false, null, provision, null);
             }
         }
     }

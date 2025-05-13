@@ -242,7 +242,10 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
-                        " group by aac.code, aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') order by aac.code, pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0')    "
+                        " group by aac.id, aac.code, aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0')  "
+                        + " having :doNotDisplayZeroTiersAccounts=false or aac.id<>:accountingAccountClassTiers or round(abs(sum(coalesce(credit_amount,0))-sum(coalesce(debit_amount,0))),1)<>0  "
+                        +
+                        " order by aac.code, pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0')    "
                         +
                         "")
         List<AccountingBalance> searchAccountingBalanceCurrent(
@@ -253,6 +256,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
                         @Param("canViewRestricted") boolean canViewRestricted,
+                        @Param("doNotDisplayZeroTiersAccounts") boolean doNotDisplayZeroTiersAccounts,
+                        @Param("accountingAccountClassTiers") Integer accountingAccountClassTiers,
                         @Param("isFromAs400") Boolean isFromAs400);
 
         @Query(nativeQuery = true, value = "" +
@@ -280,9 +285,11 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
                         + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
-                        " group by aac.code, aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0') order by aac.code, pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0')    "
+                        " group by aac.id, aac.code, aac.label,accounting.label,pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0')    "
+                        + " having :doNotDisplayZeroTiersAccounts=false or aac.id<>:accountingAccountClassTiers or round(abs(sum(coalesce(credit_amount,0))-sum(coalesce(debit_amount,0))),1)<>0  "
                         +
-                        "")
+                        " order by aac.code, pa.code,lpad(concat(accounting_account_sub_number,''),8-length(pa.code),'0')  "
+                        + "")
         List<AccountingBalance> searchAccountingBalanceClosed(
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("accountingJournalId") Integer accountingJournalId,
@@ -291,6 +298,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
                         @Param("canViewRestricted") boolean canViewRestricted,
+                        @Param("doNotDisplayZeroTiersAccounts") boolean doNotDisplayZeroTiersAccounts,
+                        @Param("accountingAccountClassTiers") Integer accountingAccountClassTiers,
                         @Param("isFromAs400") Boolean isFromAs400);
 
         @Query(nativeQuery = true, value = "select  sum(coalesce(record.credit_amount , 0)) as creditAmount,sum(coalesce(record.debit_amount , 0))  as debitAmount,"

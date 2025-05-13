@@ -15,5 +15,5 @@ public interface ServiceFamilyService {
 
     public List<ServiceFamily> getServiceFamiliesForFamilyGroup(ServiceFamilyGroup serviceFamilyGroup);
 
-    public List<ServiceFamily> getServiceFamiliesExcludingServiceFamilyGroupAnnouncement() throws OsirisException;
+    public List<ServiceFamily> getServiceFamiliesForMandatoryDocuments() throws OsirisException;
 }

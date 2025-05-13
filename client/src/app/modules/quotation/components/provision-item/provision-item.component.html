@@ -4,7 +4,7 @@
       <select-provision-family (selectionChange)="changeProvisionFamilyType();changeProvisionType();"
         [(model)]="provision.provisionFamilyType" label="Famille de service" [form]="provisionItemForm"
         propertyName="provisionFamilyType" [isMandatory]="true"
-        [isDisabled]="!editMode || ( provision.announcement!=undefined && provision.announcement.actuLegaleId!=undefined && provision.announcement.actuLegaleId>0)">
+        [isDisabled]="!editMode || ( provision.announcement!=undefined && provision.announcement.actuLegaleId!=undefined && provision.announcement.actuLegaleId>0 && !canEditProvisionType())">
       </select-provision-family>
     </td>
     <td *ngIf="provision.provisionFamilyType">

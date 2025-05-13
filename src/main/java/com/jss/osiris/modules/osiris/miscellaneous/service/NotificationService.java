@@ -30,7 +30,9 @@ public interface NotificationService {
         public void notifyAttachmentAddToCustomerorder(CustomerOrder order, Attachment attachment)
                         throws OsirisException;
 
-        public void notifyGuichetUniqueFormaliteStatus(Provision provision) throws OsirisException;
+        public void notifyGuichetUniqueFormaliteStatusValidated(Provision provision) throws OsirisException;
+
+        public void notifyGuichetUniqueFormaliteStatusRefused(Provision provision) throws OsirisException;
 
         public void notifyGuichetUniqueFormaliteSigned(Provision provision) throws OsirisException;
 

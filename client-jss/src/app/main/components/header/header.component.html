@@ -1,29 +1,34 @@
 <header class="header-area">
-  <div class="header-navbar-top py-1 bg-light d-none d-lg-block">
+  <div class="header-navbar-top py-1 d-none d-lg-block">
     <div class="container">
       <div class="d-flex justify-content-between align-items-center flex-wrap py-0">
         <div class="d-flex flex-wrap">
-          <a href="#" class="me-2">PUBLIER UNE ANNONCE LÉGALE <i class="fa fa-external-link-alt ms-1"></i></a>
-          <a href="#" class="middle-link me-2 px-2 ">DÉPOSER UNE FORMALITÉ <i
+          <a (click)="openNewAnnouncement($event)" class="me-2 pointer">PUBLIER UNE ANNONCE LÉGALE <i
               class="fa fa-external-link-alt ms-1"></i></a>
-          <a href="#">CONSULTER UNE ANNONCE LÉGALE <i class="fa fa-external-link-alt ms-1"></i></a>
+          <a (click)="openNewFormality($event)" class="middle-link me-2 px-2  pointer">DÉPOSER UNE FORMALITÉ <i
+              class="fa fa-external-link-alt ms-1"></i></a>
+          <a (click)="openSearchAnnouncement($event)" class=" pointer">CONSULTER UNE ANNONCE LÉGALE <i
+              class="fa fa-external-link-alt ms-1"></i></a>
         </div>
         <div class="d-flex align-items-center flex-wrap gap-2">
-          <a href="#">BLOG</a>
-          <a href="#">NEWSLETTER</a>
+          <a routerLink="kiosk">KIOSQUE</a>
+          <a routerLink="newsletter">NEWSLETTER</a>
           <ul class="list-inline mb-0 d-flex gap-1">
             <li class="list-inline-item">
-              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#">
+              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#"
+                (click)="openLinkedinJssPage()">
                 <i class="bi-linkedin"></i>
               </a>
             </li>
             <li class="list-inline-item">
-              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#">
+              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#"
+                (click)="openFacebookJssPage()">
                 <i class="bi-facebook"></i>
               </a>
             </li>
             <li class="list-inline-item">
-              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#">
+              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#"
+                (click)="openInstagramJssPage()">
                 <i class="fab fa-instagram"></i>
               </a>
             </li>
@@ -35,13 +40,14 @@
   <div class="header-navbar-middle d-none d-lg-block">
     <div class="container">
       <div class="navbar-brand-wrapper py-1 d-flex justify-content-between align-items-center">
-        <a class="btn btn-secondary" href="#">MyJSS<i class="fa fa-external-link-alt ms-1"></i></a>
+        <a class="btn btn-secondary pointer" (click)="openMyJss($event)">MyJSS<i
+            class="fa fa-external-link-alt ms-1"></i></a>
         <a class="navbar-brand ms-5 ps-3" href="index.html">
           <img class="lazyload" src="assets/images/homepage/logo.svg" alt="image">
         </a>
         <div>
-          <a class="btn btn-light me-2" href="#">Se connecter</a>
-          <a class="btn btn-yellow" href="#">S'abonner</a>
+          <a class="btn btn-light me-2 pointer" (click)="openSignIn($event)">Se connecter</a>
+          <a class="btn btn-yellow " routerLink="subscription">S'abonner</a>
         </div>
 
       </div>
@@ -73,25 +79,99 @@
                   class="me-1" />Premium</a></li>
           </ul>
         </div>
-        <div class="search-modal" data-bs-toggle="modal" data-bs-target="#search-modal"><a class="nav-link" href="#"> <i
+        <div class="search-modal"><a class="nav-link pointer" (click)="displaySearchModal()"> <i
               class="fas fa-search"></i></a>
         </div>
       </nav>
-      <div class="modal fade" id="search-modal" data-bs-backdrop="static">
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-body">
-              <form class="forms">
-                <div class="input-group">
-                  <span class="input-group-text"><i class="fas fa-search"></i></span>
-                  <input type="text" class="form-control" placeholder="Search Here">
+    </div>
+  </div>
+</header>
+
+
+<!-- Modal Search START -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <!-- Modal header -->
+      <div class="modal-header border-0 pt-sm-5 pe-sm-5">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row"
+          [ngClass]="{'align-items-center' : !indexedEntities || indexedEntities.length==0,'h-100' : !indexedEntities || indexedEntities.length==0}">
+          <div class="col-lg-5 mx-auto mb-5">
+            <h2 class="mb-4">Rechercher des articles du JSS</h2>
+            <!-- Search form START -->
+            <form class="position-relative w-100">
+              <div class="mb-2 input-group-lg mb-0 position-relative">
+                <!-- Search input -->
+                <input class="form-control mb-0 pe-6" type="text" name="search" placeholder="Que recherchez-vous ?"
+                  autocomplete='off' autocomplete="nope" [(ngModel)]="searchText" (keydown)="searchEntities()"
+                  [ngModelOptions]="{standalone: true}" autocorrect="off" autocapitalize="off" spellcheck="false">
+              </div>
+              <div *ngIf="searchInProgress" class="position-absolute top-50 translate-middle-y end-4 me-4"
+                style="z-index: 2;">
+                <div class="spinner-border spinner-border-sm text-secondary" role="status" aria-hidden="true"></div>
+              </div>
+              <!-- Search button -->
+              <button type="button" class="position-absolute end-0 top-0 btn h-100 border-0">
+                <i class="bi bi-search display-8"></i>
+              </button>
+            </form>
+            <!-- Search form END -->
+            <p class="small mb-0">ex : droit des société, tribunal d'instance, TUP </p>
+          </div>
+        </div>
+        <div class="row">
+          <div *ngIf="indexedEntities" class="col-lg-8 mx-auto">
+            <div *ngFor="let post of indexedEntities">
+              <article data-aos="fade-up" class="blog-style2 card my-3">
+                <div class="feature-image order-1 order-lg-0">
+                  <div class="image-frame image-hover-style-1">
+                    <a (click)="openPost(post.text.slug, $event)"> <img class="lazyload" *ngIf="post.text.media"
+                        [src]="post.text.media.urlLarge!=null ? post.text.media.urlLarge : post.text.media.urlFull"
+                        [alt]="post.text.media.alt_text" class="w-100"></a>
+                  </div>
                 </div>
-              </form>
+                <div data-aos="fade-in" class="card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
+                  <div class="order-0 order-lg-1">
+                    <div class="row align-items-center ms-0 mb-1"
+                      *ngIf="post.text.jssCategories && post.text.jssCategories.length>0">
+                      <a (click)="openCategoryPosts(post.text.jssCategories[0], $event)"
+                        class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.text.jssCategories[0].name}}</a>
+                    </div>
+                    <h4>
+                      <a class="card-text-truncate" (click)="openPost(post.text.slug, $event)"> <img
+                          *ngIf="post.text.isPremium" class="col-auto pe-1"
+                          src="/assets/images/premium-icon.svg">{{post.text.titleText}}</a>
+                    </h4>
+                    <div class="">
+                      <div [innerHTML]="post.text.excerptText | trustHtml" class="card-truncate-6-line">
+                      </div>
+                    </div>
+                    <div class="row align-items-center">
+                      <div class="col-lg-6">
+                        <div class="author-block">
+                          <ul class="avatar list-inline mb-0">
+                            <li class="list-inline-item align-items-center" *ngIf="post.text.author"><a
+                                class="fs-9"><img [src]="post.text.author.avatar_url_size_24"
+                                  [alt]="post.text.author.name" data-bs-toggle="tooltip" data-bs-placement="top"
+                                  [title]="post.text.author.name">
+                                {{post.text.author.name}}</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
+                          <span>Publié le {{post.text.date | date:'EEEE d MMMM'}}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</header>

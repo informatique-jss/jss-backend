@@ -7,6 +7,7 @@ import com.jss.osiris.libs.jackson.EmptyStringAsEmptyListDeserializer;
 
 public class AcfPost {
     private boolean premium;
+    private boolean sticky;
     private Integer premium_percentage;
 
     @JsonDeserialize(using = EmptyStringAsEmptyListDeserializer.class)
@@ -34,5 +35,13 @@ public class AcfPost {
 
     public void setAssociated_post(List<Integer> associated_post) {
         this.associated_post = associated_post;
+    }
+
+    public boolean isSticky() {
+        return sticky;
+    }
+
+    public void setSticky(boolean sticky) {
+        this.sticky = sticky;
     }
 }

@@ -14,7 +14,6 @@ export interface Post {
   slug: string;
   podcastUrl: string;
   videoUrl: string;
-  sticky: boolean;
   relatedPosts: Post[];
   mediaTimeLength: number;
   // Computed field

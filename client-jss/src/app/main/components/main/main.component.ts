@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MY_JSS_OFFERS_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
@@ -8,9 +9,9 @@ import { Post } from '../../model/Post';
 import { Serie } from '../../model/Serie';
 import { Tag } from '../../model/Tag';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
-import { JssCategoryService } from '../../services/jss.category.service';
 import { PostService } from '../../services/post.service';
 import { SerieService } from '../../services/serie.service';
+import { TagService } from '../../services/tag.service';
 
 declare var tns: any;
 
@@ -41,11 +42,11 @@ export class MainComponent implements OnInit {
 
   constructor(
     private postService: PostService,
-    private jssCategoryService: JssCategoryService,
     private serieService: SerieService,
     private appService: AppService,
     private communicationPreferenceService: CommunicationPreferencesService,
-    private constantService: ConstantService
+    private constantService: ConstantService,
+    private tagService: TagService
   ) { }
 
 
@@ -93,6 +94,10 @@ export class MainComponent implements OnInit {
       if (pagedPodcasts.content)
         this.podcasts = pagedPodcasts.content;
     })
+
+    this.tagService.getAllTendencyTags().subscribe(reponse => {
+      this.tagTendencies = reponse;
+    })
   }
 
   openPost(post: Post, event: any) {
@@ -100,23 +105,15 @@ export class MainComponent implements OnInit {
   }
 
   openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "author/" + author.slug, undefined);
+    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
   }
 
   openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "category/" + category.slug, undefined);
+    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
   }
 
   openPodcastPosts(event: any) {
     this.appService.openRoute(event, "podcasts", undefined);
-  }
-
-  openInterviewPosts(event: any) {
-    this.appService.openRoute(event, "interviews", undefined);
-  }
-
-  openSeriesPosts(event: any) {
-    this.appService.openRoute(event, "series", undefined);
   }
 
   openSeriePosts(serie: Serie, event: any) {
@@ -129,6 +126,10 @@ export class MainComponent implements OnInit {
 
   openPinnedPosts(event: any) {
     this.appService.openRoute(event, "pined/", undefined);
+  }
+
+  openMyJss(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_OFFERS_ROUTE);
   }
 
   registerEmail(mailToRegister: string) {

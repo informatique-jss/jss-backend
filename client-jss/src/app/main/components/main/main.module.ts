@@ -29,6 +29,7 @@ import { TagHubComponent } from '../tag-hub/tag-hub.component';
 import { MainComponent } from './main.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'post/category/:slug', component: PostCategoryHeaderComponent },
   { path: 'post/tag/:slug', component: PostTagHeaderComponent },
   { path: 'post/author/:slug', component: PostAuthorHeaderComponent },
@@ -42,6 +43,7 @@ const routes: Routes = [
   { path: 'podcasts', component: PodcastsComponent },
   { path: 'subscription', component: SubscriptionComponent },
   { path: 'kiosk', component: KioskComponent },
+  { path: 'newsletter', component: NewsletterComponent },
   { path: 'contribute', component: ContributeComponent },
 ];
 
