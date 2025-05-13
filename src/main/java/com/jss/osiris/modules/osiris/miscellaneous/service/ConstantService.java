@@ -513,4 +513,6 @@ public interface ConstantService {
     public String getStringMyJssDemoRequestMail() throws OsirisException;
 
     public String getStringMyJssWebinarRequestMail() throws OsirisException;
+
+    public String getStringMyJssContactFormRequestMail() throws OsirisException;
 }

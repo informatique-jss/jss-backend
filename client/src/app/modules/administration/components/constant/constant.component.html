@@ -1746,6 +1746,14 @@
                 [maxLength]="255"></generic-input>
             </td>
           </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.stringMyJssContactFormRequestMail"
+                label="Mail de redirection Jss - Demande de contact" [form]="constantForm"
+                propertyName="stringMyJssContactFormRequestMail" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="255"></generic-input>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>
