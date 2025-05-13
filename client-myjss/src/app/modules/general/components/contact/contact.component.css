@@ -1,3 +1,15 @@
 generic-input {
   border: none;
 }
+
+generic-textarea {
+  border: none;
+}
+
+.bg-card-green {
+  background-color: #4B6380;
+}
+
+.textarea generic-input input {
+  min-height: 200px;
+}

@@ -957,6 +957,7 @@ public class Constant implements Serializable, IId {
 
 	private String stringMyJssDemoRequestMail;
 	private String stringMyJssWebinarRequestMail;
+	private String stringMyJssContactFormRequestMail;
 
 	public Integer getId() {
 		return id;
@@ -2771,6 +2772,14 @@ public class Constant implements Serializable, IId {
 
 	public void setStringMyJssWebinarRequestMail(String stringMyJssWebinarRequestMail) {
 		this.stringMyJssWebinarRequestMail = stringMyJssWebinarRequestMail;
+	}
+
+	public String getStringMyJssContactFormRequestMail() {
+		return stringMyJssContactFormRequestMail;
+	}
+
+	public void setStringMyJssContactFormRequestMail(String stringMyJssContactFormRequestMail) {
+		this.stringMyJssContactFormRequestMail = stringMyJssContactFormRequestMail;
 	}
 
 	public AccountingAccountClass getAccountingAccountClassTiers() {
