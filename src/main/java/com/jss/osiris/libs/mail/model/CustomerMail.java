@@ -68,6 +68,8 @@ public class CustomerMail {
     public static String TEMPLATE_SEND_WEBINAR_SUBSCRIPTION = "send-webinar-subscription";
     public static String TEMPLATE_SEND_DEMO_CONFIRMATION = "send-demo-confirmation";
     public static String TEMPLATE_SEND_DEMO_REQUEST = "send-demo-request";
+    public static String TEMPLATE_SEND_CONTACT_CONFIRMATION = "send-contact-confirmation";
+    public static String TEMPLATE_SEND_CONTACT_REQUEST = "send-contact-request";
 
     @Id
     @SequenceGenerator(name = "customer_mail_sequence", sequenceName = "customer_mail_sequence", allocationSize = 1)
@@ -574,6 +576,22 @@ public class CustomerMail {
 
     public static String getTEMPLATE_SEND_DEMO_CONFIRMATION() {
         return TEMPLATE_SEND_DEMO_CONFIRMATION;
+    }
+    public static void setTEMPLATE_SEND_CONTACT_CONFIRMATION(
+            String tEMPLATE_SEND_CONTACT_CONFIRMATION) {
+                TEMPLATE_SEND_CONTACT_CONFIRMATION = tEMPLATE_SEND_CONTACT_CONFIRMATION;
+    }
+
+    public static String getTEMPLATE_SEND_CONTACT_CONFIRMATION() {
+        return TEMPLATE_SEND_CONTACT_CONFIRMATION;
+    }
+    public static void setTEMPLATE_SEND_CONTACT_REQUEST(
+            String tEMPLATE_SEND_CONTACT_REQUEST) {
+                TEMPLATE_SEND_CONTACT_REQUEST = tEMPLATE_SEND_CONTACT_REQUEST;
+    }
+
+    public static String getTEMPLATE_SEND_CONTACT_REQUEST() {
+        return TEMPLATE_SEND_CONTACT_REQUEST;
     }
 
     public String getCopyToMail() {

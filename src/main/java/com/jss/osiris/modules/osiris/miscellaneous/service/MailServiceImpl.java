@@ -43,6 +43,14 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
+    public Boolean sendContactFormMails(String mail, String firstName, String lastName, String message)
+            throws OsirisException {
+        mailHelper.sendConfirmationContactFormMyJss(mail);
+        mailHelper.sendContactFormNotificationMail(mail, firstName, lastName, message);
+        return true;
+    }
+
+    @Override
     public Mail getMail(Integer id) {
         Optional<Mail> mail = mailRepository.findById(id);
         if (mail.isPresent())

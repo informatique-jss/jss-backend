@@ -19,4 +19,7 @@ public interface MailService {
 
         public Boolean sendMyJssPricesMail(String mail, String firstName, String lastName, String phoneNumber)
                         throws OsirisException;
+
+        public Boolean sendContactFormMails(String mail, String firstName, String lastName, String message)
+                        throws OsirisException;
 }
