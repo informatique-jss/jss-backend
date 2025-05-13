@@ -243,8 +243,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             ActuLegaleAnnouncement actuLegaleAnnouncement = actuLegaleDelegate.publishAnnouncement(announcement,
                     affaireService.getAffaire(affaire));
 
-            if (actuLegaleAnnouncement == null || actuLegaleAnnouncement.getId() == null)
+            if (actuLegaleAnnouncement == null)
                 throw new OsirisException(null, "Impossible to publish announcement n°" + announcement.getId());
+
+            if (actuLegaleAnnouncement.getId() == null)
+                actuLegaleAnnouncement.setId(announcement.getId());
 
             announcement.setActuLegaleId(actuLegaleAnnouncement.getId());
             addOrUpdateAnnouncement(announcement);
