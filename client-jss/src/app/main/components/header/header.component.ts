@@ -83,6 +83,17 @@ export class HeaderComponent implements OnInit {
     this.appService.openMyJssRoute(event, MY_JSS_OFFERS_ROUTE);
   }
 
+  openLinkedinJssPage() {
+    this.appService.openLinkedinJssPage();
+  }
+
+  openInstagramJssPage() {
+    this.appService.openInstagramJssPage();
+  }
+
+  openFacebookJssPage() {
+    this.appService.openFacebookJssPage();
+  }
 
   searchEntities() {
     clearTimeout(this.debounce);

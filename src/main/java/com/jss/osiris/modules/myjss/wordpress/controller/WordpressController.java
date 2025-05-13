@@ -760,6 +760,11 @@ public class WordpressController {
 		return new ResponseEntity<List<Tag>>(tagService.getAllTagsBySerie(serie), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/tags/tendency")
+	public ResponseEntity<List<Tag>> getAllTendencyTags() throws OsirisException {
+		return new ResponseEntity<List<Tag>>(tagService.getAllTendencyTags(), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/tags/all/publishing-department")
 	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam Integer departmentId) {
 

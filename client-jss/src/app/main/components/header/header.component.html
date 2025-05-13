@@ -1,29 +1,34 @@
 <header class="header-area">
-  <div class="header-navbar-top py-1 bg-light d-none d-lg-block">
+  <div class="header-navbar-top py-1 d-none d-lg-block">
     <div class="container">
       <div class="d-flex justify-content-between align-items-center flex-wrap py-0">
         <div class="d-flex flex-wrap">
-          <a href="#" class="me-2">PUBLIER UNE ANNONCE LÉGALE <i class="fa fa-external-link-alt ms-1"></i></a>
-          <a href="#" class="middle-link me-2 px-2 ">DÉPOSER UNE FORMALITÉ <i
+          <a (click)="openNewAnnouncement($event)" class="me-2 pointer">PUBLIER UNE ANNONCE LÉGALE <i
               class="fa fa-external-link-alt ms-1"></i></a>
-          <a href="#">CONSULTER UNE ANNONCE LÉGALE <i class="fa fa-external-link-alt ms-1"></i></a>
+          <a (click)="openNewFormality($event)" class="middle-link me-2 px-2  pointer">DÉPOSER UNE FORMALITÉ <i
+              class="fa fa-external-link-alt ms-1"></i></a>
+          <a (click)="openSearchAnnouncement($event)" class=" pointer">CONSULTER UNE ANNONCE LÉGALE <i
+              class="fa fa-external-link-alt ms-1"></i></a>
         </div>
         <div class="d-flex align-items-center flex-wrap gap-2">
-          <a href="#">BLOG</a>
-          <a href="#">NEWSLETTER</a>
+          <a routerLink="kiosk">KIOSQUE</a>
+          <a routerLink="newsletter">NEWSLETTER</a>
           <ul class="list-inline mb-0 d-flex gap-1">
             <li class="list-inline-item">
-              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#">
+              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#"
+                (click)="openLinkedinJssPage()">
                 <i class="bi-linkedin"></i>
               </a>
             </li>
             <li class="list-inline-item">
-              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#">
+              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#"
+                (click)="openFacebookJssPage()">
                 <i class="bi-facebook"></i>
               </a>
             </li>
             <li class="list-inline-item">
-              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#">
+              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#"
+                (click)="openInstagramJssPage()">
                 <i class="fab fa-instagram"></i>
               </a>
             </li>
@@ -35,13 +40,14 @@
   <div class="header-navbar-middle d-none d-lg-block">
     <div class="container">
       <div class="navbar-brand-wrapper py-1 d-flex justify-content-between align-items-center">
-        <a class="btn btn-secondary" href="#">MyJSS<i class="fa fa-external-link-alt ms-1"></i></a>
+        <a class="btn btn-secondary pointer" (click)="openMyJss($event)">MyJSS<i
+            class="fa fa-external-link-alt ms-1"></i></a>
         <a class="navbar-brand ms-5 ps-3" href="index.html">
           <img class="lazyload" src="assets/images/homepage/logo.svg" alt="image">
         </a>
         <div>
-          <a class="btn btn-light me-2" href="#">Se connecter</a>
-          <a class="btn btn-yellow" href="#">S'abonner</a>
+          <a class="btn btn-light me-2 pointer" (click)="openSignIn($event)">Se connecter</a>
+          <a class="btn btn-yellow " routerLink="subscription">S'abonner</a>
         </div>
 
       </div>
@@ -73,7 +79,7 @@
                   class="me-1" />Premium</a></li>
           </ul>
         </div>
-        <div class="search-modal" data-bs-toggle="modal" data-bs-target="#search-modal"><a class="nav-link" href="#"> <i
+        <div class="search-modal" data-bs-toggle="modal" data-bs-target="#search-modal"><a class="nav-link"> <i
               class="fas fa-search"></i></a>
         </div>
       </nav>

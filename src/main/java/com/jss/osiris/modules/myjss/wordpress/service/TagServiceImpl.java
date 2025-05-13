@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
@@ -145,6 +146,24 @@ public class TagServiceImpl implements TagService {
             if (post.getPostTags() != null && !post.getPostTags().isEmpty())
                 tags.addAll(post.getPostTags());
         }
+        return tags;
+    }
+
+    @Override
+    public List<Tag> getAllTendencyTags() throws OsirisException {
+        List<Tag> tags = new ArrayList<Tag>();
+        List<Integer> tagsAdded = new ArrayList<Integer>();
+        List<Post> posts = postService.getJssCategoryPostTendency();
+        if (posts != null)
+            for (Post post : posts)
+                if (post.getPostTags() != null) {
+                    for (Tag tag : post.getPostTags()) {
+                        if (!tagsAdded.contains(tag.getId())) {
+                            tags.add(tag);
+                            tagsAdded.add(tag.getId());
+                        }
+                    }
+                }
         return tags;
     }
 }

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
@@ -28,5 +29,7 @@ public interface TagService {
         public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment);
 
         public List<Tag> getAllTagsByIdf();
+
+        public List<Tag> getAllTendencyTags() throws OsirisException;
 
 }

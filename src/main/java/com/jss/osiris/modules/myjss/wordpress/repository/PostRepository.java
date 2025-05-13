@@ -56,6 +56,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findJssCategoryPostMostSeen(Pageable pageable);
 
+        @Query("select p from Post p where p.isCancelled = false and size(p.jssCategories) > 0 and p.isSticky=true ")
+        Page<Post> findJssCategoryPostSticky(Pageable pageable);
+
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and :tag MEMBER OF p.postTags and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostTag(Pageable pageable, @Param("tag") Tag tag);
 

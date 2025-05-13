@@ -83,7 +83,8 @@ public class Post implements IId {
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class })
     private String slug;
 
-    private boolean sticky;
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private Boolean isSticky;
 
     @Transient
     private Integer[] tags;
@@ -251,14 +252,6 @@ public class Post implements IId {
 
     public void setSlug(String slug) {
         this.slug = slug;
-    }
-
-    public boolean isSticky() {
-        return sticky;
-    }
-
-    public void setSticky(boolean sticky) {
-        this.sticky = sticky;
     }
 
     public Integer[] getTags() {
@@ -451,6 +444,14 @@ public class Post implements IId {
 
     public void setMyjss_category(Integer[] myjss_category) {
         this.myjss_category = myjss_category;
+    }
+
+    public Boolean getIsSticky() {
+        return isSticky;
+    }
+
+    public void setIsSticky(Boolean isSticky) {
+        this.isSticky = isSticky;
     }
 
 }

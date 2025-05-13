@@ -182,7 +182,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getJssCategoryStickyPost(Pageable pageableRequest) throws OsirisException {
-        return postRepository.findJssCategoryPostMostSeen(pageableRequest);
+        return postRepository.findJssCategoryPostSticky(pageableRequest);
     }
 
     @Override
@@ -670,6 +670,7 @@ public class PostServiceImpl implements PostService {
         }
         if (post.getAcf() != null) {
             post.setIsPremium(post.getAcf().isPremium());
+            post.setIsSticky(post.getAcf().isSticky());
             post.setPremiumPercentage(post.getAcf().getPremium_percentage());
             if (post.getAcf().getAssociated_post() != null) {
                 List<Post> postList = new ArrayList<Post>();

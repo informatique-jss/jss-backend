@@ -33,7 +33,20 @@ export class AppService {
   }
 
   openMyJssRoute(event: any, route: string) {
+    console.log(environment.frontendMyJssUrl + route);
     window.open(environment.frontendMyJssUrl + route);
+  }
+
+  openLinkedinJssPage() {
+    window.open("https://www.linkedin.com/company/journal-special-des-societes/_blank");
+  }
+
+  openInstagramJssPage() {
+    window.open("https://www.instagram.com/journalspecialdessocietes/_blank");
+  }
+
+  openFacebookJssPage() {
+    window.open("https://www.facebook.com/Journal.Special.des.Societes/_blank");
   }
 
 }
