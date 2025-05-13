@@ -628,7 +628,7 @@ public class ServiceServiceImpl implements ServiceService {
     private String getServiceStatusLabel(Service service) {
         Integer currentPriority = -1;
         String currentStatus = "";
-        if (service.getProvisions() != null)
+        if (service.getProvisions() != null && service.getId() != null)
             for (Provision provision : service.getProvisions()) {
                 if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus()
                         .getServicePriority() > currentPriority) {

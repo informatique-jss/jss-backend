@@ -43,6 +43,7 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
     super.optionSelected(type);
     if (this.preFilterPostalCode == undefined && type.postalCode)
       this.preFilterPostalCode = type.postalCode;
+    this.onFormChange.next();
   }
 
 }

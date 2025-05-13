@@ -207,6 +207,9 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isSupplyFullBeCopy;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Boolean isDoNotGenerateAnnouncement;
+
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class }) // TODO : remove and use
@@ -638,5 +641,13 @@ public class Provision implements IId, IAttachment {
 
 	public void setInvoiceItemsGrouped(List<InvoiceItem> invoiceItemsGrouped) {
 		this.invoiceItemsGrouped = invoiceItemsGrouped;
+	}
+
+	public Boolean getIsDoNotGenerateAnnouncement() {
+		return isDoNotGenerateAnnouncement;
+	}
+
+	public void setIsDoNotGenerateAnnouncement(Boolean isDoNotGenerateAnnouncement) {
+		this.isDoNotGenerateAnnouncement = isDoNotGenerateAnnouncement;
 	}
 }

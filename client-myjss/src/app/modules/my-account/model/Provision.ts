@@ -12,5 +12,6 @@ export interface Provision {
   isRedactedByJss: boolean;
   // Only for front to display the announcements in the good order
   order: number;
-  provisionFamilyType: ProvisionFamilyType
+  provisionFamilyType: ProvisionFamilyType;
+  isDoNotGenerateAnnouncement: boolean;
 }

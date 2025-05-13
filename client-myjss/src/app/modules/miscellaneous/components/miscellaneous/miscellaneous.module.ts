@@ -18,6 +18,7 @@ import { RadioGroupQuotationTypeComponent } from '../forms/radio-group-quotation
 import { SelectBillingLabelTypeComponent } from '../forms/select-billing-label-type/select-billing-label-type.component';
 import { SelectCivilityComponent } from '../forms/select-civility/select-civility.component';
 import { SelectCountryComponent } from '../forms/select-country/select-country.component';
+import { SelectDepartmentComponent } from '../forms/select-department/select-department.component';
 import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
 import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
@@ -54,7 +55,8 @@ const routes: Routes = [{}];
     GenericInputComponent,
     SelectMyJssCategoryComponent,
     SelectCivilityComponent,
-    AutocompleteCityComponent
+    AutocompleteCityComponent,
+    SelectDepartmentComponent,
   ],
   exports: [
     AvatarComponent,
@@ -75,7 +77,8 @@ const routes: Routes = [{}];
     SelectBillingLabelTypeComponent,
     OurClientsComponent,
     SelectCivilityComponent,
-    AutocompleteCityComponent
+    AutocompleteCityComponent,
+    SelectDepartmentComponent
   ]
 })
 export class MiscellaneousModule { }

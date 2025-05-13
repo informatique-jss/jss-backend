@@ -65,6 +65,8 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
         inputEl.setAttribute('autocapitalize', 'off');
         inputEl.setAttribute('spellcheck', 'false');
         inputEl.setAttribute('autocomplete', 'nope');
+        if (this.isMandatory)
+          inputEl.required = true;
         inputEl.classList.add('custom-class-input');
       }
 
@@ -86,7 +88,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   override ngOnInit() {
     if (this.form != undefined) {
-      this.form.addControl(this.propertyName, this.formBuilder3.control({ value: this.model, disabled: this.isDisabled }));
+      this.form.addControl(this.propertyName, this.formBuilder3.control({ value: this.model, disabled: this.isDisabled, }));
       this.callOnNgInit();
     }
   }
@@ -111,6 +113,9 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
     }
   }
 
+  getFormStatus() {
+    return this.form?.status;
+  }
 
   optionSelected(type: T): void {
     this.model = type;

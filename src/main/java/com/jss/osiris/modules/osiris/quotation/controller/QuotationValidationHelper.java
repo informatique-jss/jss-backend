@@ -582,31 +582,36 @@ public class QuotationValidationHelper {
                                                         || announcement.getAnnouncementStatus().getCode().equals(
                                                                         AnnouncementStatus.ANNOUNCEMENT_DONE));
 
+                        if (!isCustomerOrder || ((CustomerOrder) quotation).getCustomerOrderStatus() == null
+                                        || ((CustomerOrder) quotation).getCustomerOrderStatus().getCode()
+                                                        .equals(CustomerOrderStatus.DRAFT))
+                                verifyAnnouncement = false;
+
                         validationHelper.validateDateMin(announcement.getPublicationDate(),
-                                        !isByPassMandatoryFields || verifyAnnouncement,
+                                        !isByPassMandatoryFields && verifyAnnouncement,
                                         publicationDateVerification,
                                         "Date de publication de l'annonce");
                         validationHelper.validateReferential(announcement.getDepartment(),
-                                        !isByPassMandatoryFields || verifyAnnouncement,
+                                        !isByPassMandatoryFields && verifyAnnouncement,
                                         "Department");
                         validationHelper.validateReferential(announcement.getConfrere(),
-                                        !isByPassMandatoryFields || verifyAnnouncement,
+                                        !isByPassMandatoryFields && verifyAnnouncement,
                                         "Confrere");
                         validationHelper.validateReferential(announcement.getNoticeTypeFamily(),
-                                        !isByPassMandatoryFields || verifyAnnouncement,
+                                        !isByPassMandatoryFields && verifyAnnouncement,
                                         "NoticeTypeFamily");
-                        if ((!isByPassMandatoryFields || verifyAnnouncement) && (announcement.getNoticeTypes() == null
+                        if ((!isByPassMandatoryFields && verifyAnnouncement) && (announcement.getNoticeTypes() == null
                                         || announcement.getNoticeTypes().size() == 0))
                                 throw new OsirisValidationException("NoticeTypes");
 
                         if (announcement.getNoticeTypes() != null)
                                 for (NoticeType noticeType : announcement.getNoticeTypes()) {
                                         validationHelper.validateReferential(noticeType,
-                                                        !isByPassMandatoryFields || verifyAnnouncement,
+                                                        !isByPassMandatoryFields && verifyAnnouncement,
                                                         "noticeType");
                                 }
                         validationHelper.validateString(announcement.getNotice(),
-                                        !isByPassMandatoryFields || verifyAnnouncement, "Notice");
+                                        !isByPassMandatoryFields && verifyAnnouncement, "Notice");
 
                         if (announcement.getAnnouncementStatus() != null && (announcement.getAnnouncementStatus()
                                         .getCode()

@@ -40,7 +40,7 @@ export class CheckoutComponent implements OnInit {
   isSendingLink: boolean = false;
   intervalId: any;
 
-  isIndividualTiers: boolean = false;
+  isNotIndividualTiers: boolean = true;
   isComputingPrice: boolean = false;
 
   documentTypeBilling = this.constantService.getDocumentTypeBilling();
@@ -224,7 +224,12 @@ export class CheckoutComponent implements OnInit {
 
       if (responsableForDocument && responsableForDocument.tiers && (!this.quotation.documents || this.quotation.documents.length == 0)) {
         // TODO : delete ? But then how does the documents are loaded in the page to display the block Renseignements administratifs / lib fact et adr
-        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeBilling(), responsableForDocument)))
+        let billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), responsableForDocument));
+        if (!billingDocument.billingLabelCountry)
+          billingDocument.billingLabelCountry = this.constantService.getCountryFrance();
+        if (!billingDocument.billingLabelCity)
+          billingDocument.billingLabelCity = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
+        this.quotation.documents.push(billingDocument)
         this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeDigital(), responsableForDocument)))
         this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypePaper(), responsableForDocument)))
       }
@@ -306,7 +311,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   setDocumentValue(document: Document) {
-    if (this.quotation && document.documentType === this.documentTypeBilling) {
+    if (this.quotation && document.documentType.code == this.documentTypeBilling.code) {
       if (this.currentUser) {
         if (this.quotation.isQuotation) {
           this.quotationService.setDocumentOnQuotation(this.quotation.id, document).subscribe(res => {
@@ -477,6 +482,6 @@ export class CheckoutComponent implements OnInit {
 
   toggleTiersIndividual() {
     if (this.quotation && this.quotation.responsable && this.quotation.responsable.tiers)
-      this.quotation.responsable.tiers.isIndividual = !this.quotation.responsable.tiers.isIndividual;
+      this.quotation.responsable.tiers.isIndividual = !this.isNotIndividualTiers;
   }
 }

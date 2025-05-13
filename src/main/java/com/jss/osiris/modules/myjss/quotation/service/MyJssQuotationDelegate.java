@@ -16,12 +16,16 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
@@ -57,6 +61,12 @@ public class MyJssQuotationDelegate {
     DocumentTypeService documentTypeService;
 
     @Autowired
+    CustomerOrderStatusService customerOrderStatusService;
+
+    @Autowired
+    QuotationStatusService quotationStatusService;
+
+    @Autowired
     MailService mailService;
 
     @Transactional(rollbackFor = Exception.class)
@@ -71,7 +81,6 @@ public class MyJssQuotationDelegate {
             else {
                 mailService.populateMailId(quotation.getResponsable().getMail());
                 populateTiersAndResponsable(quotation);
-                populateBooleansOfProvisions(quotation);
                 Boolean isTiersValid = tiersValidationHelper.validateTiers(quotation.getResponsable().getTiers());
 
                 if (!isTiersValid) {
@@ -86,14 +95,27 @@ public class MyJssQuotationDelegate {
         // TODO : check if need to reset tiers and resp bedore saving
         // customerorder/quotation
 
+        populateBooleansOfProvisions(quotation);
+
         // Validate Quotation or CustomerOrder
         quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null);
 
         // Save Quotation or CustomerOrder
-        if (!quotation.getIsQuotation())
+        if (!quotation.getIsQuotation()) {
+            ((Quotation) quotation)
+                    .setQuotationStatus(quotationStatusService.getQuotationStatusByCode(QuotationStatus.TO_VERIFY));
             quotation = customerOrderService.addOrUpdateCustomerOrder((CustomerOrder) quotation, false, false);
-        if (quotation.getIsQuotation())
+        }
+        if (quotation.getIsQuotation()) {
+            ((CustomerOrder) quotation).setCustomerOrderStatus(
+                    customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
             quotation = quotationService.addOrUpdateQuotation((Quotation) quotation);
+            try {
+                customerOrderService.addOrUpdateCustomerOrderStatusFromUser((CustomerOrder) quotation,
+                        CustomerOrderStatus.BEING_PROCESSED);
+            } catch (Exception e) {
+            }
+        }
 
         return quotation;
     }

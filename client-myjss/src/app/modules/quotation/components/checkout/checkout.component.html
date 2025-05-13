@@ -22,7 +22,7 @@
                   <div class="col-md-12 ">
                     <generic-input (onFormChange)="saveDraftQuotation()" class="white-form-control"
                       [(model)]="inputMail" label="" [form]="documentForm" propertyName="inputMail"
-                      [isMandatory]="false" [isDisabled]="false" type="mail" [isDisplayLabel]="false" [icon]="'mail'">
+                      [isMandatory]="false" [isDisabled]="false" type="email" [isDisplayLabel]="false" [icon]="'mail'">
                     </generic-input>
                   </div>
                   <div class="mt-3">
@@ -154,9 +154,8 @@
     <h6 class="card-header"><i class="ai-briefcase me-2"></i>Votre entreprise</h6>
     <div class="card-body pt-2">
       <div class="mb-3">
-        <generic-toggle [(model)]="quotation.responsable.tiers.isIndividual" label="Vous représentez une entreprise ?"
-          [isMandatory]="false" [form]="documentForm" propertyName="isIndividual"
-          (isIndividualTiers)="toggleTiersIndividual()">
+        <generic-toggle [(model)]="isNotIndividualTiers" label="Vous représentez une entreprise ?" [isMandatory]="false"
+          [form]="documentForm" propertyName="isIndividual" (onToggleChange)="toggleTiersIndividual()">
         </generic-toggle>
       </div>
       <ng-container *ngIf="!quotation.responsable.tiers.isIndividual">
@@ -186,12 +185,12 @@
           </generic-input>
           <div>
             <autocomplete-city [(model)]="quotation.responsable.tiers.city" [form]="documentForm"
-              [modelCountry]="quotation.responsable.tiers.country" label="Ville"
-              propertyName="autocompleteTiersCity"></autocomplete-city>
+              [modelCountry]="quotation.responsable.tiers.country" [isMandatory]="true" label="Ville"
+              propertyName="autocompleteTiersCity" (onFormChange)="prepareForPricingAndCompute()"></autocomplete-city>
           </div>
           <select-country class="col-md-4" [(model)]="quotation.responsable.tiers.country" label="Pays"
             [form]="documentForm" propertyName="tiersCountry" [isMandatory]="true" [isDisabled]="false"
-            (change)="prepareForPricingAndCompute()">
+            (onFormChange)="prepareForPricingAndCompute()">
           </select-country>
         </div>
         <div class="row g-3 mt-3">
@@ -216,7 +215,7 @@
 
           <generic-input (onFormChange)="saveDraftQuotation()" class="col mt-0" [(model)]="newMailTiers"
             label="Votre adresse mail" [form]="documentForm" propertyName="newMailTiers" [isMandatory]="false"
-            [isDisabled]="false" type="mail" [icon]="'mail'" (onEnter)="addMailTiers(quotation.responsable.tiers)">
+            [isDisabled]="false" type="email" [icon]="'mail'" (onEnter)="addMailTiers(quotation.responsable.tiers)">
           </generic-input>
           <ul class="list-group mt-1">
             <li class="list-group-item" *ngFor="let mail of quotation.responsable.tiers.mails">
@@ -277,7 +276,7 @@
         </generic-input>
         <div>
           <autocomplete-city [(model)]="quotation.responsable.city" [form]="documentForm"
-            [modelCountry]="quotation.responsable.country" label="Ville"
+            [modelCountry]="quotation.responsable.country" [isMandatory]="true" label="Ville"
             propertyName="autocompleteRespCity"></autocomplete-city>
         </div>
         <select-country class="col-md-4" [(model)]="quotation.responsable.country" label="Pays" [form]="documentForm"
@@ -306,7 +305,7 @@
 
         <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-0"
           [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail" [form]="documentForm"
-          propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="mail" [icon]="'mail'">
+          propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="email" [icon]="'mail'">
         </generic-input>
       </div>
     </div>
@@ -541,6 +540,7 @@
 </ng-template>
 
 <!-- Checkout summmary -->
+<!-- TODO : à rendre sticky au scoll -->
 <ng-template #checkoutSummary>
   <div class="col">
     <div class="row">
@@ -596,7 +596,7 @@
               <span *ngIf="!isComputingPrice" class="fw-semibold ms-2">{{totalPriceWithoutVat |
                 currency:'EUR'}}</span>
             </li>
-            <li class="d-flex justify-content-between mb-2">
+            <li class="d-flex justify-content-between mb-2" *ngIf="!isComputingPrice">
               TVA:<span class="fw-semibold ms-2">{{totalVatPrice | currency:'EUR'}}</span>
             </li>
           </ul>
