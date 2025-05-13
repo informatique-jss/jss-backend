@@ -1,6 +1,5 @@
 <div class="container">
-  <form class="needs-validation container position-relative z-2 pt-5 pb-lg-5 pb-md-4 pb-2" novalidate
-    onsubmit="makeOrder()">
+  <form class="needs-validation container position-relative z-2 pt-5 pb-lg-5 pb-md-4 pb-2" novalidate>
     <div class="row justify-content-between">
       <div class="col-lg-7">
         <!-- Connexion -->
@@ -21,9 +20,9 @@
                   <label class="col-md-12 col-form-label text-white" for="inputMail">Vous avez déjà un
                     compte ? Renseignez votre mail ci-dessous et ouvrez le lien reçu par mail.</label>
                   <div class="col-md-12 ">
-                    <generic-input class="white-form-control" [(model)]="inputMail" label="" [form]="documentForm"
-                      propertyName="inputMail" [isMandatory]="false" [isDisabled]="false" type="mail"
-                      [isDisplayLabel]="false" [icon]="'mail'">
+                    <generic-input (onFormChange)="saveDraftQuotation()" class="white-form-control"
+                      [(model)]="inputMail" label="" [form]="documentForm" propertyName="inputMail"
+                      [isMandatory]="false" [isDisabled]="false" type="mail" [isDisplayLabel]="false" [icon]="'mail'">
                     </generic-input>
                   </div>
                   <div class="mt-3">
@@ -76,9 +75,9 @@
                   </generic-toggle>
                 </div>
                 <div class="mb-3">
-                  <generic-input *ngIf="doc.isCommandNumberMandatory" [(model)]="doc.commandNumber"
-                    label="N° de commande" [form]="documentForm" propertyName="commandNumber" [isMandatory]="true"
-                    [isDisabled]="false" type="text">
+                  <generic-input (onFormChange)="saveDraftQuotation()" *ngIf="doc.isCommandNumberMandatory"
+                    [(model)]="doc.commandNumber" label="N° de commande" [form]="documentForm"
+                    propertyName="commandNumber" [isMandatory]="true" [isDisabled]="false" type="text">
                   </generic-input>
                 </div>
                 <div class="mb-3">
@@ -87,8 +86,9 @@
                   </generic-toggle>
                 </div>
                 <div class="mb-3" *ngIf="isExtRefMandatory">
-                  <generic-input [(model)]="doc.externalReference" label="N° de référence" [form]="documentForm"
-                    propertyName="externalReference" [isMandatory]="true" [isDisabled]="false" type="text">
+                  <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="doc.externalReference"
+                    label="N° de référence" [form]="documentForm" propertyName="externalReference" [isMandatory]="true"
+                    [isDisabled]="false" type="text">
                   </generic-input>
                 </div>
               </div>
@@ -161,25 +161,28 @@
       </div>
       <ng-container *ngIf="!quotation.responsable.tiers.isIndividual">
         <div class="mb-3">
-          <!-- <generic-input [(model)]="quotation.responsable.tiers.firstname" label="R.C.S de /!\ TODO /!\"
+          <!-- <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="quotation.responsable.tiers.firstname" label="R.C.S de /!\ TODO /!\"
             [form]="documentForm" propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false"
             type="text">
           </generic-input> -->
         </div>
         <div class="mb-3">
-          <generic-input [(model)]="quotation.responsable.tiers.denomination" label="Dénomination" [form]="documentForm"
-            propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false" type="text">
+          <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="quotation.responsable.tiers.denomination"
+            label="Dénomination" [form]="documentForm" propertyName="tiersFirstname" [isMandatory]="true"
+            [isDisabled]="false" type="text">
           </generic-input>
         </div>
         <div class="row mt-3">
-          <generic-input class="col" [(model)]="quotation.responsable.tiers.address" label="Adresse"
-            [form]="documentForm" propertyName="tiersAdress" [isMandatory]="true" [isDisabled]="false" type="text">
+          <generic-input (onFormChange)="saveDraftQuotation()" class="col"
+            [(model)]="quotation.responsable.tiers.address" label="Adresse" [form]="documentForm"
+            propertyName="tiersAdress" [isMandatory]="true" [isDisabled]="false" type="text">
           </generic-input>
         </div>
         <div class="row g-3 mt-3">
-          <generic-input class="col-md-4" [(model)]="quotation.responsable.tiers.postalCode" label="Code postal"
-            [form]="documentForm" propertyName="tiersPostalCode" [isMandatory]="true" [isDisabled]="false"
-            [maxLength]="10" (change)="computeQuotationPrice(false)">
+          <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
+            [(model)]="quotation.responsable.tiers.postalCode" label="Code postal" [form]="documentForm"
+            propertyName="tiersPostalCode" [isMandatory]="true" [isDisabled]="false" [maxLength]="10"
+            (change)="computeQuotationPrice(false)">
           </generic-input>
           <div>
             <autocomplete-city [(model)]="quotation.responsable.tiers.city" [form]="documentForm"
@@ -192,9 +195,10 @@
           </select-country>
         </div>
         <div class="row g-3 mt-3">
-          <generic-input class="col mt-0" [(model)]="newPhoneTiers" label="Téléphone(s) (entrer pour valider)"
-            [form]="documentForm" propertyName="newPhoneTiers" [isMandatory]="false" [isDisabled]="false"
-            [icon]="'phone'" [maxLength]="13" (onEnter)="addPhone(quotation.responsable, true)">
+          <generic-input (onFormChange)="saveDraftQuotation()" class="col mt-0" [(model)]="newPhoneTiers"
+            label="Téléphone(s) (entrer pour valider)" [form]="documentForm" propertyName="newPhoneTiers"
+            [isMandatory]="false" [isDisabled]="false" [icon]="'phone'" [maxLength]="13"
+            (onEnter)="addPhone(quotation.responsable, true)">
           </generic-input>
           <ul class="list-group mt-1">
             <li class="list-group-item" *ngFor="let phone of quotation.responsable.tiers.phones">
@@ -210,16 +214,16 @@
             </li>
           </ul>
 
-          <generic-input class="col mt-0" [(model)]="newMailTiers" label="Votre adresse mail" [form]="documentForm"
-            propertyName="newMailTiers" [isMandatory]="false" [isDisabled]="false" type="mail" [icon]="'mail'"
-            (onEnter)="addMailTiers(quotation.responsable.tiers)">
+          <generic-input (onFormChange)="saveDraftQuotation()" class="col mt-0" [(model)]="newMailTiers"
+            label="Votre adresse mail" [form]="documentForm" propertyName="newMailTiers" [isMandatory]="false"
+            [isDisabled]="false" type="mail" [icon]="'mail'" (onEnter)="addMailTiers(quotation.responsable.tiers)">
           </generic-input>
           <ul class="list-group mt-1">
             <li class="list-group-item" *ngFor="let mail of quotation.responsable.tiers.mails">
               <div class="d-flex flex-wrap w-100">
                 <div>
                   <button type="button" class="btn btn-icon btn-outline-primary btn-sm me-3" aria-label="Supprimer"
-                    (click)="deleteMailTiers(mail, quotation.responsable.tiers, true)">
+                    (click)="deleteMailTiers(mail, quotation.responsable.tiers)">
                     <i class="ai-cross"></i>
                   </button>
                 </div>
@@ -244,27 +248,31 @@
         </select-civility>
       </div>
       <div class="row g-3 mt-3">
-        <generic-input class="col-md-6" [(model)]="quotation.responsable.firstname" label="Prénom" [form]="documentForm"
-          propertyName="respFirstname" [isMandatory]="true" [isDisabled]="false" type="text">
+        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6"
+          [(model)]="quotation.responsable.firstname" label="Prénom" [form]="documentForm" propertyName="respFirstname"
+          [isMandatory]="true" [isDisabled]="false" type="text">
         </generic-input>
-        <generic-input class="col-md-6" [(model)]="quotation.responsable.lastname" label="Nom" [form]="documentForm"
-          propertyName="respLastname" [isMandatory]="true" [isDisabled]="false" type="text">
-        </generic-input>
-      </div>
-      <div class="row mt-3">
-        <generic-input class="col" [(model)]="quotation.responsable.address" label="Adresse" [form]="documentForm"
-          propertyName="respAddress" [isMandatory]="true" [isDisabled]="false" type="text">
-        </generic-input>
-      </div>
-      <div class="row mt-3">
-        <generic-input class="col" [(model)]="quotation.responsable.addressComplement" label="Complément d'adresse"
-          [form]="documentForm" propertyName="respAddressComplement" [isMandatory]="false" [isDisabled]="false"
+        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6" [(model)]="quotation.responsable.lastname"
+          label="Nom" [form]="documentForm" propertyName="respLastname" [isMandatory]="true" [isDisabled]="false"
           type="text">
         </generic-input>
       </div>
+      <div class="row mt-3">
+        <generic-input (onFormChange)="saveDraftQuotation()" class="col" [(model)]="quotation.responsable.address"
+          label="Adresse" [form]="documentForm" propertyName="respAddress" [isMandatory]="true" [isDisabled]="false"
+          type="text">
+        </generic-input>
+      </div>
+      <div class="row mt-3">
+        <generic-input (onFormChange)="saveDraftQuotation()" class="col"
+          [(model)]="quotation.responsable.addressComplement" label="Complément d'adresse" [form]="documentForm"
+          propertyName="respAddressComplement" [isMandatory]="false" [isDisabled]="false" type="text">
+        </generic-input>
+      </div>
       <div class="row g-3 mt-3">
-        <generic-input class="col-md-4" [(model)]="quotation.responsable.postalCode" label="Code postal"
-          [form]="documentForm" propertyName="respPostalCode" [isMandatory]="true" [isDisabled]="false" [maxLength]="10"
+        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
+          [(model)]="quotation.responsable.postalCode" label="Code postal" [form]="documentForm"
+          propertyName="respPostalCode" [isMandatory]="true" [isDisabled]="false" [maxLength]="10"
           (change)="computeQuotationPrice(false)">
         </generic-input>
         <div>
@@ -277,12 +285,13 @@
         </select-country>
       </div>
       <div class="row g-3 mt-3">
-        <generic-input class="col-md-6 mt-0" [(model)]="newPhoneResponsable" label="Téléphone(s) (entrer pour valider)"
-          [form]="documentForm" propertyName="newPhoneResponsable" [isMandatory]="false" [isDisabled]="false"
-          [icon]="'phone'" [maxLength]="13" (onEnter)="addPhone(quotation.responsable, false)">
+        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-0" [(model)]="newPhoneResponsable"
+          label="Téléphone(s) (entrer pour valider)" [form]="documentForm" propertyName="newPhoneResponsable"
+          [isMandatory]="false" [isDisabled]="false" [icon]="'phone'" [maxLength]="13"
+          (onEnter)="addPhone(quotation.responsable, false)">
         </generic-input>
         <ul class="list-group">
-          <li class="list-group-item" *ngFor="let phone of quotation.responsable.tiers.phones">
+          <li class="list-group-item" *ngFor="let phone of quotation.responsable.phones">
             <div class="d-flex flex-wrap w-100">
               <div>
                 <button type="button" class="btn btn-icon btn-outline-primary btn-sm me-3" aria-label="Supprimer"
@@ -295,9 +304,9 @@
           </li>
         </ul>
 
-        <generic-input class="col-md-6 mt-0" [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail"
-          [form]="documentForm" propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="mail"
-          [icon]="'mail'">
+        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-0"
+          [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail" [form]="documentForm"
+          propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="mail" [icon]="'mail'">
         </generic-input>
       </div>
     </div>
@@ -324,14 +333,14 @@
             *ngIf="document.billingLabelType && document.billingLabelType.code && document.billingLabelType.id == billingLabelTypeOther.id">
             <div class="row mb-3">
               <div class="col">
-                <generic-input [(model)]="document.billingLabel" label="Libellé" [form]="documentForm"
-                  propertyName="billingLabel" [maxLength]="200" [isMandatory]="true"
+                <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="document.billingLabel" label="Libellé"
+                  [form]="documentForm" propertyName="billingLabel" [maxLength]="200" [isMandatory]="true"
                   [isDisabled]="false"></generic-input>
               </div>
 
               <div class="col">
-                <generic-input [(model)]="document.billingAddress" label="Adresse" [form]="documentForm"
-                  propertyName="billingAddress" [isMandatory]="true" [isDisabled]="false"
+                <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="document.billingAddress" label="Adresse"
+                  [form]="documentForm" propertyName="billingAddress" [isMandatory]="true" [isDisabled]="false"
                   [maxLength]="200"></generic-input>
               </div>
 
@@ -339,9 +348,10 @@
 
             <div class="row mb-3">
               <div class="col-md-4">
-                <generic-input class="col-md-4" [(model)]="document.billingPostalCode" label="Code postal"
-                  [form]="documentForm" propertyName="docPostalCode" [isMandatory]="true" [isDisabled]="false"
-                  [maxLength]="10" (change)="computeQuotationPrice(false)">
+                <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
+                  [(model)]="document.billingPostalCode" label="Code postal" [form]="documentForm"
+                  propertyName="docPostalCode" [isMandatory]="true" [isDisabled]="false" [maxLength]="10"
+                  (change)="computeQuotationPrice(false)">
                 </generic-input>
               </div>
 
@@ -361,9 +371,9 @@
 
             <div class="row mb-3">
               <div class="col-md-4">
-                <generic-input [(model)]="document.cedexComplement" label="Complément CEDEX" [form]="documentForm"
-                  propertyName="billingCedexComplement" [isMandatory]="false" [isDisabled]="false"
-                  [maxLength]="20"></generic-input>
+                <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="document.cedexComplement"
+                  label="Complément CEDEX" [form]="documentForm" propertyName="billingCedexComplement"
+                  [isMandatory]="false" [isDisabled]="false" [maxLength]="20"></generic-input>
               </div>
             </div>
           </div>
@@ -399,10 +409,11 @@
             </div>
           </li>
         </ul>
-        <generic-input class="pb-4" *ngIf="document.addToAffaireMailList && document.isRecipientAffaire"
-          [(model)]="newMailBillingAffaire" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
-          propertyName="newMailBillingAffaireBilling" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
-          [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, true)">
+        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-4"
+          *ngIf="document.addToAffaireMailList && document.isRecipientAffaire" [(model)]="newMailBillingAffaire"
+          label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingAffaireBilling"
+          [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
+          (onEnter)="addMail(document, true)">
         </generic-input>
       </div>
 
@@ -429,10 +440,11 @@
             </div>
           </li>
         </ul>
-        <generic-input *ngIf="document.addToClientMailList && document.isRecipientClient"
-          [(model)]="newMailBillingClient" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
-          propertyName="newMailBillingClientBilling" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
-          [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, false)"></generic-input>
+        <generic-input (onFormChange)="saveDraftQuotation()"
+          *ngIf="document.addToClientMailList && document.isRecipientClient" [(model)]="newMailBillingClient"
+          label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingClientBilling"
+          [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
+          (onEnter)="addMail(document, false)"></generic-input>
       </div>
     </div>
   </div>
@@ -469,10 +481,11 @@
             </div>
           </li>
         </ul>
-        <generic-input class="pb-4" *ngIf="document.addToAffaireMailList && document.isRecipientAffaire"
-          [(model)]="newMailBillingAffaire" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
-          propertyName="newMailBillingAffaireDigital" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
-          [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, true)">
+        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-4"
+          *ngIf="document.addToAffaireMailList && document.isRecipientAffaire" [(model)]="newMailBillingAffaire"
+          label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingAffaireDigital"
+          [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
+          (onEnter)="addMail(document, true)">
         </generic-input>
       </div>
 
@@ -499,10 +512,11 @@
             </div>
           </li>
         </ul>
-        <generic-input *ngIf="document.addToClientMailList && document.isRecipientClient"
-          [(model)]="newMailBillingClient" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
-          propertyName="newMailBillingClientDigital" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
-          [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, false)"></generic-input>
+        <generic-input (onFormChange)="saveDraftQuotation()"
+          *ngIf="document.addToClientMailList && document.isRecipientClient" [(model)]="newMailBillingClient"
+          label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingClientDigital"
+          [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
+          (onEnter)="addMail(document, false)"></generic-input>
       </div>
     </div>
   </div>
@@ -606,6 +620,7 @@
           <label class="form-check-label" for="save-info">Je certifie que les pièces justificatives fournies sont
             conformes.
           </label>
+          <div class="invalid-feedback">Vous devez accepter avant de passer la commande.</div>
         </div>
         <div class="form-check mb-4 pe-2">
           <input class="form-check-input" type="checkbox" id="save-info2" [(ngModel)]="acceptTerms" name="acceptTerms"
@@ -613,14 +628,16 @@
           <label class="form-check-label" for="save-info2">En cochant cette case, je reconnais avoir pris
             connaissance et accepter les Conditions Générales de Vente (CGV) du site.
           </label>
+          <div class="invalid-feedback">Vous devez accepter avant de passer la commande.</div>
+
         </div>
         <div class="row gx-1 gy-3 justify-content-between">
           <div class="col-auto">
-            <button class="btn btn-lg btn-primary" (click)="saveOrder()">Enregistrer le
+            <button class="btn btn-lg btn-secondary" type="button" (click)="onSaveDraft()">Enregistrer le
               brouillon</button>
           </div>
           <div class="col-auto">
-            <button class="btn btn-lg btn-secondary" (click)="makeOrder()">Valider la
+            <button class="btn btn-lg btn-secondary" type="submit" (click)="onValidateOrder()">Valider la
               commande</button>
           </div>
         </div>

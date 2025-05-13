@@ -122,26 +122,34 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
+  onValidateOrder() {
+    if (this.isOrderPossible())
+      this.makeOrder();
+  }
+
+  onSaveDraft() {
+    if (this.isOrderPossible())
+      this.saveOrder();
+  }
+
   makeOrder() {
     // TODO
     this.saveOrder();
   }
 
   saveOrder() {
-    if (this.isOrderPossible())
-      if (!this.currentUser) {
-        if (this.quotation) {
-          this.quotationService.setCurrentDraftQuotation(this.quotation);
-          if (this.quotation.isQuotation)
-            this.quotationService.saveFinalQuotation(this.quotation as Quotation).subscribe();
-          else
-            this.orderService.saveFinalOrder(this.quotation as CustomerOrder).subscribe();
-        }
+    if (!this.currentUser) {
+      if (this.quotation) {
+        this.quotationService.setCurrentDraftQuotation(this.quotation);
+        if (this.quotation.isQuotation)
+          this.quotationService.saveFinalQuotation(this.quotation as Quotation).subscribe();
+        else
+          this.orderService.saveFinalOrder(this.quotation as CustomerOrder).subscribe();
       }
-      else {
-        // TODO
-      }
-
+    }
+    else {
+      // TODO
+    }
     // make payment
   }
 
@@ -381,10 +389,9 @@ export class CheckoutComponent implements OnInit {
         document.mailsClient.splice(document.mailsClient.indexOf(mail), 1);
   }
 
-  deleteMailTiers(mail: Mail, tiers: Tiers, isAffaire: boolean) {
+  deleteMailTiers(mail: Mail, tiers: Tiers) {
     if (tiers)
-      if (isAffaire)
-        tiers.mails.splice(tiers.mails.indexOf(mail), 1);
+      tiers.mails.splice(tiers.mails.indexOf(mail), 1);
   }
 
   deletePhone(phone: Phone, responsable: Responsable, isAffaire: boolean) {
