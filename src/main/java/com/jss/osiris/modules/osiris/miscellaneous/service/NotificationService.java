@@ -11,7 +11,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Service;
 
 public interface NotificationService {
         public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
-                        List<String> notificationTypes, Boolean onlyForNumber);
+                        List<String> notificationTypes, Boolean onlyForNumber, Boolean completeAdditionnalInformation);
 
         public Notification getNotification(Integer id);
 
@@ -29,7 +29,9 @@ public interface NotificationService {
         public void notifyAttachmentAddToCustomerorder(CustomerOrder order, Attachment attachment)
                         throws OsirisException;
 
-        public void notifyGuichetUniqueFormaliteStatus(Provision provision) throws OsirisException;
+        public void notifyGuichetUniqueFormaliteStatusValidated(Provision provision) throws OsirisException;
+
+        public void notifyGuichetUniqueFormaliteStatusRefused(Provision provision) throws OsirisException;
 
         public void notifyGuichetUniqueFormaliteSigned(Provision provision) throws OsirisException;
 

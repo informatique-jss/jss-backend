@@ -897,6 +897,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.accountingAccountClassProduct;
   }
 
+  getAccountingAccountClassTiers() {
+    return this.constant.accountingAccountClassTiers;
+  }
+
   getServiceFamilyImmatriculationAlAndFormality() {
     return this.constant.serviceFamilyImmatriculationAlAndFormality;
   }

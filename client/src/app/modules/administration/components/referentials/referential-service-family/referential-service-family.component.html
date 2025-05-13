@@ -50,6 +50,19 @@
           </tr>
           <tr>
             <td>
+              <generic-input [(model)]="selectedEntity.myJssOrder" label="Ordre d'affichage MyJSS" [form]="entityForm"
+                propertyName="myJssOrder" [isMandatory]="false" [isDisabled]="!editMode" type="number"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.hideInMyJssMandatoryDocument"
+                label="Cacher dans la liste des pièces obligatoires MyJSS" [form]="entityForm"
+                propertyName="hideInMyJssMandatoryDocument" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-service-family-group [(model)]="selectedEntity.serviceFamilyGroup"
                 label="Groupe de familles de service" [form]="entityForm" propertyName="serviceFamilyGroup"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-service-family-group>

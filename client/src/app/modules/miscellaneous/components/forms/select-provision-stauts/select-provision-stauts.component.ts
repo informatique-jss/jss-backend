@@ -85,4 +85,11 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
         this.types.push(...response);
       })
   }
+
+  compareWithCode(o1: IWorkflowElement<any>, o2: IWorkflowElement<any>) {
+    if (o1.code && o2.code)
+      return o1.code == o2.code;
+    return o1 == o2;
+  }
+
 }

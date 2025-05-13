@@ -43,12 +43,10 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
 
         if (serviceType.isPresent()) {
             serviceFinal = serviceType.get();
-            if (!serviceFinal.getAssoServiceTypeDocuments().isEmpty())
-                serviceFinal.getAssoServiceTypeDocuments()
-                        .removeIf(asso -> !asso.getIsMandatory().equals(isFetchOnlyMandatoryDocuments));
-            if (!serviceFinal.getAssoServiceTypeFieldTypes().isEmpty())
-                serviceFinal.getAssoServiceTypeFieldTypes()
-                        .removeIf(asso -> !asso.getIsMandatory().equals(isFetchOnlyMandatoryDocuments));
+            if (!serviceFinal.getAssoServiceTypeDocuments().isEmpty() && isFetchOnlyMandatoryDocuments)
+                serviceFinal.getAssoServiceTypeDocuments().removeIf(asso -> !asso.getIsMandatory());
+            if (!serviceFinal.getAssoServiceTypeFieldTypes().isEmpty() && isFetchOnlyMandatoryDocuments)
+                serviceFinal.getAssoServiceTypeFieldTypes().removeIf(asso -> !asso.getIsMandatory());
         }
         return serviceFinal;
     }

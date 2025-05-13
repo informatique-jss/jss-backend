@@ -24,6 +24,7 @@ import { ProvisionKanbanComponent } from '../provision-kanban/provision-kanban.c
 import { ProvisionSidePanelDetailsComponent } from '../provision-side-panel-details/provision-side-panel-details.component';
 import { QuotationKanbanComponent } from '../quotation-kanban/quotation-kanban.component';
 import { QuotationSidePanelDetailsComponent } from '../quotation-side-panel-details/quotation-side-panel-details.component';
+import { ServiceSidePanelDetailsComponent } from '../service-side-panel-details/service-side-panel-details.component';
 import { DashboardComponent } from './dashboard.component';
 
 const routes: Routes = [
@@ -63,7 +64,8 @@ const routes: Routes = [
     QuotationSidePanelDetailsComponent,
     ProvisionSidePanelDetailsComponent,
     QuotationKanbanComponent,
-    ProvisionKanbanComponent
+    ProvisionKanbanComponent,
+    ServiceSidePanelDetailsComponent
   ],
   providers: [
   ]

@@ -11,4 +11,5 @@ export interface AccountingBalanceSearch {
   startDate: Date | undefined;
   endDate: Date | undefined;
   isFromAs400: boolean;
+  doNotDisplayZeroTiersAccounts: boolean;
 }

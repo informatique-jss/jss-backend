@@ -29,8 +29,8 @@ export class ProvisionService extends AppRestService<Provision> {
     this.downloadGet(new HttpParams().set("idProvision", idProvision), "provision/generate/tracking-sheet", "Fiche de suivi générée", "Erreur lors du téléchargement");
   }
 
-  searchProvisions(formalisteIds: number[], statusIds: number[]) {
-    return this.getList(new HttpParams().set("formalisteIds", formalisteIds.join(",")).set("statusIds", statusIds.join(',')), 'provision/search');
+  searchProvisions(formalisteIds: number[], statusCodes: string[]) {
+    return this.getList(new HttpParams().set("formalisteIds", formalisteIds.join(",")).set("statusCodes", statusCodes.join(',')), 'provision/search');
   }
 
   getSingleProvision(idProvision: number) {

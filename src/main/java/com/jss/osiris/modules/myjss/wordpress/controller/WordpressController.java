@@ -623,7 +623,7 @@ public class WordpressController {
 		if (myJssCategory == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
-		Order order = new Order(Direction.DESC, "titleText");
+		Order order = new Order(Direction.DESC, "date");
 		Sort sort = Sort.by(Arrays.asList(order));
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size), sort);
 

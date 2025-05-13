@@ -15,6 +15,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([BETA_TESTEURS])
   }
 
+  canDisplayKanban() {
+    return this.loginService.hasGroup([BETA_TESTEURS])
+  }
+
   isAdministrator() {
     return this.loginService.hasGroup([ADMINISTRATEURS])
   }
@@ -184,6 +188,10 @@ export class HabilitationsService {
   }
 
   canModifyPaymentAssociation() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canEditProvisionType() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 

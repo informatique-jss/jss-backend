@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
@@ -44,6 +47,9 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     AttachmentService attachmentService;
+
+    @Autowired
+    AssoAffaireOrderService assoAffaireOrderService;
 
     @Override
     public Provision getProvision(Integer id) {
@@ -113,5 +119,21 @@ public class ProvisionServiceImpl implements ProvisionService {
                 status.stream().filter(s -> s instanceof FormaliteStatus).toList(),
                 status.stream().filter(s -> s instanceof DomiciliationStatus).toList(),
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateProvisionStatus(Provision provision, IWorkflowElement status)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        provision = getProvision(provision.getId());
+        if (status instanceof AnnouncementStatus && provision.getAnnouncement() != null)
+            provision.getAnnouncement().setAnnouncementStatus((AnnouncementStatus) status);
+        if (status instanceof SimpleProvisionStatus && provision.getSimpleProvision() != null)
+            provision.getSimpleProvision().setSimpleProvisionStatus((SimpleProvisionStatus) status);
+        if (status instanceof FormaliteStatus && provision.getFormalite() != null)
+            provision.getFormalite().setFormaliteStatus((FormaliteStatus) status);
+        if (status instanceof DomiciliationStatus && provision.getDomiciliation() != null)
+            provision.getDomiciliation().setDomiciliationStatus((DomiciliationStatus) status);
+        assoAffaireOrderService.addOrUpdateAssoAffaireOrder(provision.getService().getAssoAffaireOrder());
     }
 }

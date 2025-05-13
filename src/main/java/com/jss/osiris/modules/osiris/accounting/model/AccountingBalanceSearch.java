@@ -13,6 +13,7 @@ public class AccountingBalanceSearch {
   private LocalDateTime endDate;
 
   private Boolean isFromAs400;
+  private Boolean doNotDisplayZeroTiersAccounts;
 
   public Boolean getIsFromAs400() {
     return isFromAs400;
@@ -68,6 +69,14 @@ public class AccountingBalanceSearch {
 
   public void setAccountingJournal(AccountingJournal accountingJournal) {
     this.accountingJournal = accountingJournal;
+  }
+
+  public Boolean getDoNotDisplayZeroTiersAccounts() {
+    return doNotDisplayZeroTiersAccounts;
+  }
+
+  public void setDoNotDisplayZeroTiersAccounts(Boolean doNotDisplayZeroTiersAccounts) {
+    this.doNotDisplayZeroTiersAccounts = doNotDisplayZeroTiersAccounts;
   }
 
 }

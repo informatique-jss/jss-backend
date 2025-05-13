@@ -53,7 +53,7 @@ public interface ProvisionRepository extends QueryCacheCrudRepository<Provision,
 
         @Query("select p from Provision p left join p.announcement " +
                         " left join p.simpleProvision left join p.domiciliation left join p.formalite " +
-                        " join fetch p.service s join fetch s.assoAffaireOrder a join fetch a.affaire  join a.customerOrder co "
+                        " join fetch p.service s join fetch s.assoAffaireOrder a join fetch a.affaire  join fetch a.customerOrder co "
                         +
                         " where (p.announcement.announcementStatus in (:announcementStatus) or" +
                         " p.formalite.formaliteStatus in (:formaliteStatus) or " +

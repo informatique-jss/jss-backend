@@ -29,4 +29,5 @@ export interface IQuotation extends IAttachment, IDocument {
   lastStatusUpdate: Date;
   affairesList: string;
   servicesList: string;
+  isHasNotifications: boolean;
 }

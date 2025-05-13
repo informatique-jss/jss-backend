@@ -20,6 +20,7 @@ export class AttachmentsComponent implements OnInit {
   @Input() entity: IAttachment = {} as IAttachment;
   @Input() entityType: string = "";
   @Input() editMode: boolean = false;
+  @Input() forIntegration: boolean = false;
 
   displayedColumns: SortTableColumn<Attachment>[] = [];
   tableActions: SortTableAction<Attachment>[] = [] as Array<SortTableAction<Attachment>>;

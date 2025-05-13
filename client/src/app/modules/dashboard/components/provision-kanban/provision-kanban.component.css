@@ -225,3 +225,41 @@
 .status-wrapper {
   margin: 8px 0 16px;
 }
+
+
+
+.custom-panel {
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 14px;
+  }
+
+  .label {
+    font-weight: 500;
+    width: 45%;
+  }
+
+  .value {
+    color: #6b6b6b;
+  }
+
+  .td-label {
+    white-space: nowrap;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  mat-expansion-panel {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+  }
+
+  mat-expansion-panel-header {
+    font-weight: bold;
+  }
+}
