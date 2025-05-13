@@ -233,4 +233,23 @@ public class MyJssCrmController {
         mailService.sendMyJssDemoMails(mail, firstName, lastName, phoneNumber);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
+
+    @GetMapping(inputEntryPoint + "/subscribe/prices")
+    public ResponseEntity<Boolean> subscribePrices(@RequestParam String mail, @RequestParam String firstName,
+            @RequestParam String lastName, @RequestParam(required = false) String phoneNumber,
+            HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
+        if (!validationHelper.validateMail(mail))
+            throw new OsirisValidationException("mail");
+
+        if (phoneNumber != null
+                && !validationHelper.validateFrenchPhone(phoneNumber))
+            throw new OsirisValidationException("phone");
+
+        validationHelper.validateString(firstName, true, 50, "firstname");
+        validationHelper.validateString(lastName, true, 50, "lastname");
+
+        mailService.sendMyJssPricesMail(mail, firstName, lastName, phoneNumber);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
 }

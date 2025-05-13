@@ -17,5 +17,10 @@ export class MailService extends AppRestService<Boolean> {
       httpParams = httpParams.set("phoneNumber", phone);
     return this.get(httpParams, "subscribe/demo");
   }
-
+  subscribePrices(mail: string, firstName: string, lastName: string, phone: string) {
+    let httpParams = new HttpParams().set("mail", mail).set("firstName", firstName).set("lastName", lastName);
+    if (phone && phone.length > 0)
+      httpParams = httpParams.set("phoneNumber", phone);
+    return this.get(httpParams, "subscribe/prices");
+  }
 }

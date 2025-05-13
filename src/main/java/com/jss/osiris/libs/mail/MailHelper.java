@@ -740,6 +740,32 @@ public class MailHelper {
         customerMailService.addMailToQueue(mail);
     }
 
+    private void sendCustomerMailForMyJssMail(String mailAdress, String explaination, String replyMail, String template,
+            String subject)
+            throws OsirisException {
+        CustomerMail customerMail = new CustomerMail();
+        if (replyMail != null)
+            customerMail.setReplyToMail(replyMail);
+        if (subject != null)
+            customerMail.setSubject(subject);
+        if (template != null)
+            customerMail.setMailTemplate(template);
+        customerMail.setHeaderPicture("images/mails/quotation-validated.png");
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        Mail mail = new Mail();
+        if (mailAdress != null)
+            mail.setMail(mailAdress);
+        mail = mailService.populateMailId(mail);
+        mailComputeResult.setRecipientsMailTo(List.of(mail));
+        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
+        mailComputeResult.setIsSendToClient(false);
+        mailComputeResult.setIsSendToAffaire(false);
+        if (explaination != null)
+            customerMail.setExplaination(explaination);
+        customerMail.setMailComputeResult(mailComputeResult);
+        customerMailService.addMailToQueue(customerMail);
+    }
+
     public void sendConfirmationSubscriptionWebinarMyJss(WebinarParticipant webinarParticipant) throws OsirisException {
         CustomerMail mail = new CustomerMail();
         mail.setReplyToMail(constantService.getStringMyJssWebinarRequestMail());
@@ -793,6 +819,12 @@ public class MailHelper {
         customerMail.setMailComputeResult(mailComputeResult);
         customerMail.setExplaination(firstName + " " + lastName + " - " + mailAdress);
         customerMailService.addMailToQueue(customerMail);
+    }
+
+    public void sendCustomerPricesByMail(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssDemoRequestMail(), "JSS - Nos Tarifs",
+                "");
     }
 
     @Transactional(rollbackFor = Exception.class)
