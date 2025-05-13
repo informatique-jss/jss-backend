@@ -39,7 +39,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.quotation.controller.model.DashboardUserStatistics;
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsService;
-import com.jss.osiris.modules.myjss.quotation.service.QuotationDelegate;
+import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
@@ -201,7 +201,7 @@ public class MyJssQuotationController {
 	ServiceFieldTypeService serviceFieldTypeService;
 
 	@Autowired
-	QuotationDelegate quotationDelegate;
+	MyJssQuotationDelegate quotationDelegate;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1293,7 +1293,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/civilities")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<Civility>> getCivilities(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<Civility>>(civilityService.getCivilities(), HttpStatus.OK);
@@ -1338,13 +1338,25 @@ public class MyJssQuotationController {
 				(Quotation) pricingHelper.completePricingOfIQuotation(quotation, isEmergency)), HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/save-order")
+	@PostMapping(inputEntryPoint + "/quotation/save-order")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<IQuotation> saveIQuoation(@RequestBody IQuotation quotation, HttpServletRequest request)
+	public ResponseEntity<Quotation> saveQuotation(@RequestBody Quotation quotation, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
 
-		return new ResponseEntity<IQuotation>(quotationDelegate.validateAndCreateQuotation(quotation),
+		return new ResponseEntity<Quotation>((Quotation) quotationDelegate.validateAndCreateQuotation(quotation),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/order/save-order")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<CustomerOrder> saveCutomerOrder(@RequestBody CustomerOrder order,
+			HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		return new ResponseEntity<CustomerOrder>(
+				(CustomerOrder) quotationDelegate.validateAndCreateQuotation(order),
 				HttpStatus.OK);
 	}
 

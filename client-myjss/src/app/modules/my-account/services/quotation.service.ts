@@ -30,6 +30,10 @@ export class QuotationService extends AppRestService<Quotation> {
     return this.postItem(new HttpParams(), 'quotation/user/save', quotation);
   }
 
+  saveFinalQuotation(quotation: Quotation) {
+    return this.postItem(new HttpParams(), 'quotation/save-order', quotation);
+  }
+
   completePricingOfQuotation(quotation: Quotation, isEmergency: boolean) {
     return this.postItem(new HttpParams().set("isEmergency", isEmergency), 'quotation/pricing', quotation);
   }
@@ -67,5 +71,4 @@ export class QuotationService extends AppRestService<Quotation> {
       return JSON.parse(localStorage.getItem('current-draft-quotation')!) as Quotation;
     return undefined;
   }
-
 }

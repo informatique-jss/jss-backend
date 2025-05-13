@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
@@ -11,8 +11,6 @@ import { Document } from '../../../my-account/model/Document';
 import { Quotation } from '../../../my-account/model/Quotation';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
-import { ServiceService } from '../../../my-account/services/service.service';
-import { City } from '../../../profile/model/City';
 import { Mail } from '../../../profile/model/Mail';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
@@ -27,9 +25,6 @@ import { IQuotation } from '../../model/IQuotation';
   standalone: false
 })
 export class CheckoutComponent implements OnInit {
-
-
-  @ViewChild('orderButton') orderButton: ElementRef | undefined;
 
   quotation: IQuotation | undefined;
   currentUser: Responsable | undefined;
@@ -54,8 +49,7 @@ export class CheckoutComponent implements OnInit {
   billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
   isExtRefMandatory: boolean = false;
 
-  documentForm = this.formBuilder.group({
-  });
+  documentForm = this.formBuilder.group({});
 
   newMailBillingAffaire: string = "";
   newMailBillingClient: string = "";
@@ -78,8 +72,7 @@ export class CheckoutComponent implements OnInit {
     private orderService: CustomerOrderService,
     private formBuilder: FormBuilder,
     private appService: AppService,
-    private constantService: ConstantService,
-    private serviceService: ServiceService
+    private constantService: ConstantService
   ) { }
 
   ngOnInit() {
@@ -130,17 +123,38 @@ export class CheckoutComponent implements OnInit {
   }
 
   makeOrder() {
+    // TODO
     this.saveOrder();
-    if (!this.acceptDocs || !this.acceptTerms) {
-      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
-      return;
-    }
   }
 
   saveOrder() {
-    if (!this.currentUser)
-      if (this.quotation)
-        this.quotationService.setCurrentDraftQuotation(this.quotation);
+    if (this.isOrderPossible())
+      if (!this.currentUser) {
+        if (this.quotation) {
+          this.quotationService.setCurrentDraftQuotation(this.quotation);
+          if (this.quotation.isQuotation)
+            this.quotationService.saveFinalQuotation(this.quotation as Quotation).subscribe();
+          else
+            this.orderService.saveFinalOrder(this.quotation as CustomerOrder).subscribe();
+        }
+      }
+      else {
+        // TODO
+      }
+
+    // make payment
+  }
+
+  isOrderPossible() {
+    if (this.documentForm.invalid) {
+      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      return false;
+    }
+    if (!this.acceptDocs || !this.acceptTerms) {
+      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      return false;
+    }
+    return true;
   }
 
   saveDraftQuotation() {
@@ -200,19 +214,11 @@ export class CheckoutComponent implements OnInit {
         this.quotation.documents = [];
       let responsableForDocument = this.quotation.responsable && this.quotation.responsable.id ? this.quotation.responsable : this.constantService.getResponsableDummyCustomerFrance();
 
-      if (responsableForDocument && (!this.quotation.documents || this.quotation.documents.length == 0)) {
+      if (responsableForDocument && responsableForDocument.tiers && (!this.quotation.documents || this.quotation.documents.length == 0)) {
+        // TODO : delete ? But then how does the documents are loaded in the page to display the block Renseignements administratifs / lib fact et adr
         this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeBilling(), responsableForDocument)))
         this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeDigital(), responsableForDocument)))
         this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypePaper(), responsableForDocument)))
-      }
-
-      //TODO delete after test
-      for (let doc of this.quotation.documents) {
-        if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id
-          && doc.billingLabelType.id == this.constantService.getBillingLabelTypeOther().id) {
-          doc.billingPostalCode = "76230";
-          doc.billingLabelCity = { id: 106072 } as City;
-        }
       }
     }
   }
@@ -317,7 +323,7 @@ export class CheckoutComponent implements OnInit {
   deleteService(serviceIndex: number, assoIndex: number) {
     if (this.quotation) {
       if (this.currentUser) {
-        //TO implement
+        //TODO implement
         //  this.serviceService.deleteService(this.quotation.assoAffaireOrders[assoIndex].services[serviceIndex].id).suscribe(response=>{
         //  this.prepareForPricingAndCompute();
         //})

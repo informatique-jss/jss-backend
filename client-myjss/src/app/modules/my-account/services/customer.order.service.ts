@@ -37,6 +37,10 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.postItem(new HttpParams(), 'order/user/save', order);
   }
 
+  saveFinalOrder(order: CustomerOrder) {
+    return this.postItem(new HttpParams(), 'order/save-order', order);
+  }
+
   completePricingOfOrder(customerOrder: CustomerOrder, isEmergency: boolean) {
     return this.postItem(new HttpParams().set("isEmergency", isEmergency), 'order/pricing', customerOrder);
   }

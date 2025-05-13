@@ -1843,6 +1843,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(),
     // null));
 
+    // TODO : ajouter au tiers documentDunning, receiptDocument
     // Document documentDunning = new Document();
     // documentDunning.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
     // documentDunning.setIsRecipientAffaire(false);

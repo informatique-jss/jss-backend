@@ -80,6 +80,8 @@ public class WebSecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/order/emergency").permitAll()
 				.requestMatchers(HttpMethod.POST, "/myjss/quotation/order/document").permitAll()
 				.requestMatchers(HttpMethod.POST, "/myjss/quotation/quotation/document").permitAll()
+				.requestMatchers(HttpMethod.POST, "/myjss/quotation/order/save-order").permitAll()
+				.requestMatchers(HttpMethod.POST, "/myjss/quotation/quotation/save-order").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/crm/communication-preferences/**").permitAll()
 				.requestMatchers(HttpMethod.POST, "/myjss/crm/webinar/subscribe").permitAll()
 				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()

@@ -20,11 +20,13 @@ public class ProvisionFamilyType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "provision_family_type_sequence", sequenceName = "provision_family_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_family_type_sequence")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)

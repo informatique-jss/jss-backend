@@ -62,34 +62,27 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Document getBillingDocument(List<Document> documents) throws OsirisException {
-        if (documents != null && documents.size() > 0)
-            for (Document document : documents)
-                if (document.getDocumentType() != null && document.getDocumentType().getCode() != null
-                        && document.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId()))
-                    return document;
-        return null;
+        return getDocumentByDocumentType(documents, constantService.getDocumentTypeBilling());
+    }
+
+    @Override
+    public Document getDigitalDocument(List<Document> documents) throws OsirisException {
+        return getDocumentByDocumentType(documents, constantService.getDocumentTypeDigital());
+    }
+
+    @Override
+    public Document getPaperDocument(List<Document> documents) throws OsirisException {
+        return getDocumentByDocumentType(documents, constantService.getDocumentTypePaper());
     }
 
     @Override
     public Document getBillingClosureDocument(List<Document> documents) throws OsirisException {
-        if (documents != null && documents.size() > 0)
-            for (Document document : documents)
-                if (document.getDocumentType() != null && document.getDocumentType().getCode() != null
-                        && document.getDocumentType().getId()
-                                .equals(constantService.getDocumentTypeBillingClosure().getId()))
-                    return document;
-        return null;
+        return getDocumentByDocumentType(documents, constantService.getDocumentTypeBillingClosure());
     }
 
     @Override
     public Document getRefundDocument(List<Document> documents) throws OsirisException {
-        if (documents != null && documents.size() > 0)
-            for (Document document : documents)
-                if (document.getDocumentType() != null && document.getDocumentType().getCode() != null
-                        && document.getDocumentType().getId()
-                                .equals(constantService.getDocumentTypeRefund().getId()))
-                    return document;
-        return null;
+        return getDocumentByDocumentType(documents, constantService.getDocumentTypeRefund());
     }
 
     @Override

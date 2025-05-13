@@ -3,6 +3,7 @@ package com.jss.osiris.libs;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -14,6 +15,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
+@Service
 public class TiersValidationHelper {
 
     @Autowired
@@ -46,14 +48,20 @@ public class TiersValidationHelper {
                 throw new OsirisValidationException("IntercommunityVat");
         }
 
-        validationHelper.validateReferential(tiers.getTiersCategory(), true, "TiersCategory");
-        validationHelper.validateReferential(tiers.getSalesEmployee(), true, "SalesEmployee");
-        validationHelper.validateReferential(tiers.getDefaultCustomerOrderEmployee(), false,
+        // validationHelper.validateReferential(tiers.getTiersCategory(), true,
+        // "TiersCategory");
+        validationHelper.validateReferential(tiers.getSalesEmployee(), true,
+                "SalesEmployee");
+        validationHelper.validateReferential(tiers.getDefaultCustomerOrderEmployee(),
+                false,
                 "DefaultCustomerOrderEmployee");
-        validationHelper.validateReferential(tiers.getFormalisteEmployee(), false, "FormalisteEmployee");
-        validationHelper.validateReferential(tiers.getInsertionEmployee(), false, "InsertionEmployee");
+        validationHelper.validateReferential(tiers.getFormalisteEmployee(), false,
+                "FormalisteEmployee");
+        validationHelper.validateReferential(tiers.getInsertionEmployee(), false,
+                "InsertionEmployee");
         validationHelper.validateReferential(tiers.getLanguage(), true, "Language");
-        validationHelper.validateReferential(tiers.getDeliveryService(), true, "DeliveryService");
+        validationHelper.validateReferential(tiers.getDeliveryService(), true,
+                "DeliveryService");
 
         validationHelper.validateString(tiers.getAddress(), true, 100, "Address");
         validationHelper.validateReferential(tiers.getCountry(), true, "Country");
