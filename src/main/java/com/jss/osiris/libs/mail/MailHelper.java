@@ -751,7 +751,6 @@ public class MailHelper {
         if (template != null)
             customerMail.setMailTemplate(template);
         customerMail.setHeaderPicture("images/mails/quotation-validated.png");
-
         MailComputeResult mailComputeResult = new MailComputeResult();
         Mail mail = new Mail();
         if (mailAdress != null)
@@ -802,6 +801,12 @@ public class MailHelper {
                 constantService.getStringMyJssContactFormRequestMail(),
                 "Notification d'une prise d'information client",
                 CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST);
+    }
+
+    public void sendCustomerPricesByMail(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssDemoRequestMail(), "JSS - Nos Tarifs",
+                "");
     }
 
     @Transactional(rollbackFor = Exception.class)

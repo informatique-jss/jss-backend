@@ -36,6 +36,13 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
+    public Boolean sendMyJssPricesMail(String mail, String firstName, String lastName, String phoneNumber)
+            throws OsirisException {
+        mailHelper.sendCustomerPricesByMail(mail);
+        return true;
+    }
+
+    @Override
     public Boolean sendContactFormMails(String mail, String firstName, String lastName, String message)
             throws OsirisException {
         mailHelper.sendConfirmationContactFormMyJss(mail);
