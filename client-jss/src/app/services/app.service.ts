@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Toast } from '../libs/toast/Toast';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
 
+  toasts: Toast[] = [];
+  private toastSource = new BehaviorSubject<Toast[]>(this.toasts);
 
   constructor(
     private router: Router,
@@ -32,8 +36,19 @@ export class AppService {
     return;
   }
 
+  displayToast(message: string, isError: boolean, title: string, delayInMili: number) {
+    let newToast = { isError: isError, message: message, title: title } as Toast;
+    this.toasts.push(newToast);
+    this.toastSource.next(this.toasts);
+    if (this.toasts.indexOf(newToast) >= 0)
+      setTimeout(() => {
+        this.toasts.splice(this.toasts.indexOf(newToast), 1);
+        this.toastSource.next(this.toasts);
+      }
+        , delayInMili);
+  }
+
   openMyJssRoute(event: any, route: string) {
-    console.log(environment.frontendMyJssUrl + route);
     window.open(environment.frontendMyJssUrl + route);
   }
 

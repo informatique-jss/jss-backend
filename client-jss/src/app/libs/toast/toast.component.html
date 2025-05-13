@@ -1,0 +1,13 @@
+<div class="toast-container position-static ">
+  <div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true" *ngFor="let toast of toasts"
+    data-bs-autohide="true">
+    <div class="toast-header">
+      <div class="d-inline-block align-middle rounded-circle me-2" style="width: 1.25rem; height: 1.25rem;"
+        [ngClass]="{'bg-primary' : !toast.isError, 'bg-danger' :toast.isError}">
+      </div>
+      <h6 class="mb-0 me-auto">{{toast.title}}</h6>
+      <i type="button" class="ai-cross ms-2" data-bs-dismiss="toast" aria-label="Close"></i>
+    </div>
+    <div class="toast-body">{{toast.message}}</div>
+  </div>
+</div>

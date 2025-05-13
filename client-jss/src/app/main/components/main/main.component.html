@@ -341,7 +341,7 @@
                 </div>
               </div>
               <p>Infos locales, analyses et enquêtes : restez informé(e) sans limite.</p>
-              <div class="row align-items-center">
+              <div class="row align-items-center" routerLink="/subscription">
                 <div class="btn btn-yellow">S'abonner
                 </div>
               </div>
@@ -572,14 +572,6 @@
           <div class="col-md-12">
             <div class="section-title-block d-flex pb-3">
               <h3 class="section-widget-title">Les dossiers</h3>
-              <a (click)="openSeriesPosts($event)" class="text-uppercase section-title-link">
-                Voir tous
-                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
-                  </path>
-                </svg>
-              </a>
             </div>
           </div>
           <div *ngIf="!series || series.length == 0" class="pb-3">
@@ -658,7 +650,7 @@
     </div>
 
     <!-- Pinned posts -->
-    <div class="row p-0">
+    <div class="row p-0" *ngIf="!pinnedPosts ||  pinnedPosts.length>0">
       <div class="col-md-12">
         <div class="section-title-block d-flex pb-3">
           <h3 class="section-widget-title">La selection de la rédaction</h3>
@@ -672,7 +664,7 @@
           </a>
         </div>
       </div>
-      <div *ngIf="!pinnedPosts || pinnedPosts.length == 0" class="pb-3">
+      <div *ngIf="!pinnedPosts" class="pb-3">
         <div class="panel-loader">
           <div class="skeleton skeleton-header"></div>
           <div class="skeleton skeleton-line"></div>

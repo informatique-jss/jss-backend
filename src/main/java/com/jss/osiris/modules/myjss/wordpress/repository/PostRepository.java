@@ -75,7 +75,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p where p.isCancelled = false and size(p.departments) > 0 and size(p.jssCategories) > 0 ")
         Page<Post> findPostsIdf(Pageable pageable);
 
-        @Query("select p from Post p where p.isCancelled = false and size(p.jssCategories) > 0 and p.sticky = true")
+        @Query("select p from Post p where p.isCancelled = false and size(p.jssCategories) > 0 and p.isSticky = true")
         Page<Post> findJssCategoryStickyPost(Pageable pageable);
 
         @Query("select p from Post p where :categoryArticle MEMBER OF p.postCategories and size(p.jssCategories) > 0 and p.isCancelled = :isCancelled")

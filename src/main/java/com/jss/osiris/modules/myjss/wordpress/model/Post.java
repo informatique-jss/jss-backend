@@ -28,7 +28,8 @@ import jakarta.persistence.Transient;
 @Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true) })
 public class Post implements IId {
     @Id
-    @JsonView({ JacksonViews.OsirisListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class,
+            JacksonViews.MyJssListView.class })
     private Integer id;
 
     @Transient
@@ -150,6 +151,7 @@ public class Post implements IId {
     private List<Post> relatedPosts;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    @IndexedField
     private Boolean isPremium;
 
     private Integer premiumPercentage;

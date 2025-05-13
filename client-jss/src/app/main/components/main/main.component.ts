@@ -105,23 +105,15 @@ export class MainComponent implements OnInit {
   }
 
   openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "author/" + author.slug, undefined);
+    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
   }
 
   openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "category/" + category.slug, undefined);
+    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
   }
 
   openPodcastPosts(event: any) {
     this.appService.openRoute(event, "podcasts", undefined);
-  }
-
-  openInterviewPosts(event: any) {
-    this.appService.openRoute(event, "interviews", undefined);
-  }
-
-  openSeriesPosts(event: any) {
-    this.appService.openRoute(event, "series", undefined);
   }
 
   openSeriePosts(serie: Serie, event: any) {
