@@ -1237,4 +1237,9 @@ public class ConstantServiceImpl implements ConstantService {
     public String getStringMyJssDemoRequestMail() throws OsirisException {
         return this.getConstants().getStringMyJssDemoRequestMail();
     }
+
+    @Override
+    public String getStringMyJssContactFormRequestMail() throws OsirisException {
+        return this.getConstants().getStringMyJssContactFormRequestMail();
+    }
 }

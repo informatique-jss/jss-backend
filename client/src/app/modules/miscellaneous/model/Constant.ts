@@ -278,4 +278,5 @@ export interface Constant {
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
   stringMyJssDemoRequestMail: string;
   stringMyJssWebinarRequestMail: string;
+  stringMyJssContactFormRequestMail: string;
 }
