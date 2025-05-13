@@ -46,6 +46,10 @@ export class ContactComponent implements OnInit {
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande reçue", 3000);
         this.contactForm.reset();
+        this.firstName = "";
+        this.lastName = "";
+        this.mail = "";
+        this.message = "";
       }
     });
   }
