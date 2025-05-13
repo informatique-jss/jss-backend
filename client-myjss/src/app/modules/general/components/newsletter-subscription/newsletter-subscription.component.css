@@ -3,5 +3,5 @@ generic-input {
 }
 
 .input-group-border {
-  border-color: white;
+  border-color: var(--ar-primary);
 }
