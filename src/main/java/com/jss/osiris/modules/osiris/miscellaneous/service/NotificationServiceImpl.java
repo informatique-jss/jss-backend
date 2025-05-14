@@ -316,7 +316,8 @@ public class NotificationServiceImpl implements NotificationService {
                         && !employeeIdAlreadyNotified.contains(provision.getAssignedTo().getId())) {
                     if (provision.getAssignedTo() != null) {
                         employeeIdAlreadyNotified.add(provision.getAssignedTo().getId());
-                        if (provision.getAssignedTo().getId().equals(employeeService.getCurrentEmployee().getId()))
+                        if (employeeService.getCurrentEmployee() != null && provision.getAssignedTo().getId()
+                                .equals(employeeService.getCurrentEmployee().getId()))
                             return;
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
@@ -343,8 +344,9 @@ public class NotificationServiceImpl implements NotificationService {
                                         && !employeeIdAlreadyNotified.contains(provision.getAssignedTo().getId())) {
                                     if (provision.getAssignedTo() != null) {
                                         employeeIdAlreadyNotified.add(provision.getAssignedTo().getId());
-                                        if (provision.getAssignedTo().getId()
-                                                .equals(employeeService.getCurrentEmployee().getId()))
+                                        if (employeeService.getCurrentEmployee() != null
+                                                && provision.getAssignedTo().getId()
+                                                        .equals(employeeService.getCurrentEmployee().getId()))
                                             return;
 
                                         generateNewNotification(employeeService.getCurrentEmployee(),
