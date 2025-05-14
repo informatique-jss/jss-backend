@@ -15,7 +15,6 @@ import { WebinarParticipantService } from '../../services/webinar.participant.se
 export class WebinarsComponent implements OnInit {
   webinarParticipant: WebinarParticipant = { mail: {} as Mail } as WebinarParticipant;
   isConditionAccepted: boolean = false;
-  checkedOnce: boolean = false;
 
   constructor(private webinarParticipantService: WebinarParticipantService,
     private appService: AppService,
@@ -29,7 +28,6 @@ export class WebinarsComponent implements OnInit {
   webinarsForm = this.formBuilder.group({});
 
   subscribeWebinar(event: any): any {
-    this.checkedOnce = true;
     if (!this.webinarParticipant.firstname || !this.webinarParticipant.lastname || !this.webinarParticipant.mail.mail || !this.isConditionAccepted) {
       return;
     }
@@ -43,9 +41,7 @@ export class WebinarsComponent implements OnInit {
         this.webinarsForm.reset();
         this.isConditionAccepted = false;
         this.webinarParticipant = { mail: {} as Mail } as WebinarParticipant;
-        this.checkedOnce = false;
       }
     });
   }
-
 }
