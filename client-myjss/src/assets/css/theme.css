@@ -20381,6 +20381,15 @@ h1.secondary-heading,
   background-color: #CEB793 !important;
 }
 
+.bullet-point {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+  background-color: var(--ar-body-color) !important;
+}
+
 .background-opacity {
   background: #FFFFFF08;
 }
