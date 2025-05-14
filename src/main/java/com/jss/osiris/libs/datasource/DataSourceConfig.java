@@ -8,11 +8,9 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import org.springframework.session.jdbc.config.annotation.SpringSessionDataSource;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -21,8 +19,8 @@ import com.zaxxer.hikari.HikariDataSource;
  * Routing data source to switch between master and slave
  */
 
-@Configuration
-@EnableTransactionManagement
+// @Configuration
+// @EnableTransactionManagement
 public class DataSourceConfig {
 
     @Bean
