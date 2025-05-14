@@ -27,7 +27,7 @@
       </div>
 
       <div class="col-lg-8 col-xl-7 offset-xl-1">
-        <form class="row g-4">
+        <form class="needs-validation row g-4" novalidate>
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.firstname" label="Prénom*"
               placeholder="Prénom*" [form]="webinarsForm" propertyName="firstname" [isMandatory]="true"
@@ -50,11 +50,13 @@
               [isMandatory]="false" [isDisabled]="false" [maxLength]="250" type="text"></generic-input>
           </div>
           <div class="col-12">
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" name="agree" type="checkbox" id="agree" [(ngModel)]="isConditionAccepted">
-              <label class="form-check-label" for="agree">J’accepte d’être contacté.e par le Journal Spécial des
+            <div class="form-check mb-4">
+              <input class="form-check-input" type="checkbox" id="cgv" [(ngModel)]="isConditionAccepted"
+                name="isConditionAccepted" required>
+              <label class="form-check-label" for="cgv">J’accepte d’être contacté.e par le Journal Spécial des
                 Sociétés
-                à des fins d’information et de marketing conformément à la Politique de Confidentialité*</label>
+                à des fins d’information et de marketing conformément à la Politique de Confidentialité*
+              </label>
             </div>
           </div>
           <div class="col-sm-12 pt-2">
@@ -64,32 +66,7 @@
       </div>
     </div>
 
-    <div *ngIf="webinarParticipant">
-      <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-        *ngIf="checkedOnce && !webinarParticipant.firstname ">
-        <i class="ai-octagon-alert fs-xl"></i>
-        <div class="ps-2">Le prénom est obligatoire</div>
-      </div>
-      <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-        *ngIf="checkedOnce && !webinarParticipant.lastname ">
-        <i class="ai-octagon-alert fs-xl"></i>
-        <div class="ps-2">Le nom est obligatoire</div>
-      </div>
-      <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-        *ngIf="checkedOnce && (!webinarParticipant.mail.mail || !validateEmail(webinarParticipant.mail.mail) )">
-        <i class="ai-octagon-alert fs-xl"></i>
-        <div class="ps-2">Le mail est obligatoire</div>
-      </div>
-      <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert" *ngIf="checkedOnce && !isConditionAccepted">
-        <i class="ai-octagon-alert fs-xl"></i>
-        <div class="ps-2">L'acceptation des CGV est obligatoire</div>
-      </div>
-      <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-        *ngIf="checkedOnce && webinarParticipant.phoneNumber &&  !validateFrenchPhone(webinarParticipant.phoneNumber) && !validateInternationalPhone(webinarParticipant.phoneNumber)">
-        <i class="ai-octagon-alert fs-xl"></i>
-        <div class="ps-2">Le numéro de téléphone est incorrect</div>
-      </div>
-    </div>
+
   </section>
 </section>
 
