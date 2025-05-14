@@ -24,7 +24,6 @@ const routes: Routes = [
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'disclaimer', component: PrivacyPolicyComponent },
   { path: 'terms', component: PrivacyPolicyComponent },
-  { path: '**', component: NotFoundPageComponent },
 ];
 
 @NgModule({
