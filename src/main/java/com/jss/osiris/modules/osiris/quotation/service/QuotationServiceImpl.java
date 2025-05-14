@@ -722,12 +722,17 @@ public class QuotationServiceImpl implements QuotationService {
     public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations) {
         if (quotations != null && quotations.size() > 0) {
             List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
-                    false, false).stream().filter(n -> n.getQuotation() != null).toList();
+                    false, false);
+
+            if (notifications != null)
+                notifications = notifications.stream().filter(n -> n.getQuotation() != null).toList();
 
             for (Quotation quotation : quotations) {
                 completeAdditionnalInformationForQuotation(quotation);
-                notifications.stream().filter(n -> n.getQuotation().getId().equals(quotation.getId())).findFirst()
-                        .ifPresent(n -> quotation.setIsHasNotifications(true));
+                if (notifications != null)
+                    notifications.stream().filter(n -> n.getQuotation().getId().equals(quotation.getId()))
+                            .findFirst()
+                            .ifPresent(n -> quotation.setIsHasNotifications(true));
             }
         }
 
