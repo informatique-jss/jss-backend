@@ -298,7 +298,7 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/payment/cut")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ADMINISTRATEUR)
     public ResponseEntity<Payment> cutPayment(@RequestParam Integer paymentId, @RequestParam BigDecimal amount)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         validationHelper.validateBigDecimal(amount, true, "amount");
