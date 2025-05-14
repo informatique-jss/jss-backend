@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 
 @Component({
   selector: 'privacy-policy',
@@ -9,25 +9,24 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class PrivacyPolicyComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private activatedRoute: ActivatedRoute) { }
 
   tabs = [
-    { id: 'privacy', label: 'Politique de protection des données personnelles' },
-    { id: 'legal', label: 'Mentions légales' },
-    { id: 'cgu', label: 'CGU' },
+    { id: 'privacy-policy', label: 'Politique de protection des données personnelles' },
+    { id: 'disclaimer', label: 'Mentions légales' },
+    { id: 'terms', label: 'CGU' },
   ];
 
   selectedTab = this.tabs[0];
 
   ngOnInit() {
-    this.route.fragment.subscribe(fragment => {
-      const tab = this.tabs.find(t => t.id === fragment);
-      if (tab) {
-        this.selectedTab = tab;
-      } else {
-        this.selectedTab = this.tabs[0];
-      }
-    });
+    let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+    const tab = this.tabs.find(t => t.id === url[0].path);
+    if (tab) {
+      this.selectedTab = tab;
+    } else {
+      this.selectedTab = this.tabs[0];
+    }
   }
 
   selectTab(tab: any) {
