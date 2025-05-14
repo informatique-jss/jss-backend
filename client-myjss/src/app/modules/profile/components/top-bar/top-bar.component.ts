@@ -56,7 +56,7 @@ export class TopBarComponent implements OnInit {
   isDisplaySecondHeader() {
     let url: String = this.router.url;
     if (url)
-      if (url.indexOf("quotation") >= 0)
+      if (url.indexOf("quotation") >= 0 || url.indexOf("account") >= 0)
         return false;
 
     return !this.isNavbarCollapsed;

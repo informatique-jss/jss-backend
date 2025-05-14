@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
 import { ConstantService } from '../../../../libs/constant.service';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
+import { UserPreferenceService } from '../../../../libs/user.preference.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { UserScopeService } from '../../../profile/services/user.scope.service';
@@ -11,10 +12,10 @@ import { Document } from '../../model/Document';
 import { DocumentService } from '../../services/document.service';
 
 @Component({
-    selector: 'app-user-settings',
-    templateUrl: './user-settings.component.html',
-    styleUrls: ['./user-settings.component.css'],
-    standalone: false
+  selector: 'app-user-settings',
+  templateUrl: './user-settings.component.html',
+  styleUrls: ['./user-settings.component.css'],
+  standalone: false
 })
 export class UserSettingsComponent implements OnInit {
 
@@ -41,6 +42,7 @@ export class UserSettingsComponent implements OnInit {
     private documentService: DocumentService,
     private appService: AppService,
     private activatedRoute: ActivatedRoute,
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -59,7 +61,10 @@ export class UserSettingsComponent implements OnInit {
         if (this.userScope)
           for (let scope of this.userScope)
             if (!this.idResponsable) {
-              if (scope.id == response.id)
+              let bookmark = this.userPreferenceService.getUserSearchBookmark("settings-current-responsable");
+              if (bookmark != null && scope.id == parseInt(bookmark))
+                this.changeCurrentUser(scope);
+              else if (scope.id == response.id)
                 this.changeCurrentUser(scope);
             } else {
               if (scope.id == this.idResponsable)
@@ -74,6 +79,7 @@ export class UserSettingsComponent implements OnInit {
     this.currentUser = user;
     if (this.currentUser)
       this.documentService.getDocumentForResponsable(this.currentUser.id).subscribe(response => {
+        this.userPreferenceService.setUserSearchBookmark(user.id, "settings-current-responsable");
         if (response)
           this.documents = response;
 

@@ -538,8 +538,8 @@
               <!-- Message -->
               <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comment.employee">
                 <div class="d-flex align-items-end mb-2">
-                  <div class="message-box-end bg-primary text-white"><span class="break-line"
-                      [innerHTML]="comment.comment | trustHtml"></span></div>
+                  <div class="message-box-end bg-primary text-white break-line"
+                    [innerHTML]="comment.comment | trustHtml"> </div>
                   <div class="flex-shrink-0 ps-2 ms-1">
                     <avatar class="avatar-select" [user]="comment.employee" [size]="40" data-bs-toggle="tooltip"
                       data-bs-placement="right"
