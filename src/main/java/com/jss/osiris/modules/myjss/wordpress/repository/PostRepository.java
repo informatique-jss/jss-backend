@@ -96,10 +96,13 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         List<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b);
 
+        @Query("SELECT p FROM Post p WHERE :tag MEMBER OF p.postTags AND p.isCancelled = :b")
         Page<Post> findByPostTagsAndIsCancelled(Tag tag, boolean b, Pageable pageableRequest);
 
+        @Query("SELECT p FROM Post p WHERE p.fullAuthor =:author AND p.isCancelled = :b")
         Page<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, Pageable pageableRequest);
 
+        @Query("SELECT p FROM Post p WHERE :serie MEMBER OF p.postSerie AND p.isCancelled = :b")
         Page<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b, Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled = :isCancelled and size(p.jssCategories) > 0 and :publishingDepartment MEMBER OF p.departments ")
