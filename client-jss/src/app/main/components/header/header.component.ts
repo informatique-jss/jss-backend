@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Modal } from 'bootstrap';
 import { Subscription } from 'rxjs';
-import { MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_OFFERS_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { AppService } from '../../../services/app.service';
 import { IndexEntity } from '../../model/IndexEntity';
 import { JssCategory } from '../../model/JssCategory';
@@ -110,7 +110,7 @@ export class HeaderComponent implements OnInit {
   }
 
   openMyJss(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_OFFERS_ROUTE);
+    this.appService.openMyJssRoute(event, MY_JSS_HOME_ROUTE);
   }
 
   openLinkedinJssPage() {

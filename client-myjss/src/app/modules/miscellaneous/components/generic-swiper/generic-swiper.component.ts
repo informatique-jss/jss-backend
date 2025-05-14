@@ -97,7 +97,7 @@ export class GenericSwiperComponent implements OnInit {
     } else if (width >= this.mediumViewport && width < this.largeViewport) {
       return 2;
     } else {
-      return 3;
+      return this.slidesPerView;
     }
   }
 
