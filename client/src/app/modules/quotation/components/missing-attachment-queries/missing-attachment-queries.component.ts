@@ -8,6 +8,7 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { AppService } from 'src/app/services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
+import { Service } from '../../model/Service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { ServiceService } from '../../services/service.service';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
