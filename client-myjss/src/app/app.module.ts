@@ -10,6 +10,7 @@ import { HttpErrorInterceptor } from '../../httpErrorInterceptor.service';
 import { AppComponent } from './app.component';
 import { ToastComponent } from './libs/toast/toast.component';
 import { CompanyModule } from './modules/company/components/company/company.module';
+import { NotFoundPageComponent } from './modules/general/components/404/not.found.page.component';
 import { GeneralModule } from './modules/general/components/general/general.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from './modules/my-account/components/my-account/my-account.module';
@@ -25,6 +26,7 @@ registerLocaleData(localeFr, 'fr');
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', component: NotFoundPageComponent },
 ];
 
 @NgModule({
@@ -34,7 +36,6 @@ const routes: Routes = [
     TopBarComponent,
     ToastComponent,
     SearchComponent,
-
   ],
   exports: [],
   bootstrap: [AppComponent],

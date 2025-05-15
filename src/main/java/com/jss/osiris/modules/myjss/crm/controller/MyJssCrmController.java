@@ -21,7 +21,9 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
+import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
@@ -49,6 +51,9 @@ public class MyJssCrmController {
 
     @Autowired
     MailService mailService;
+
+    @Autowired
+    CandidacyService candidacyService;
 
     private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
     private final long rateLimit = 1000;
@@ -267,5 +272,19 @@ public class MyJssCrmController {
 
         mailService.sendContactFormMails(mail, firstName, lastName, message);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @PostMapping(inputEntryPoint + "/subscribe/candidacy")
+    public ResponseEntity<Candidacy> subscribeCandidacy(@RequestBody Candidacy candidacy,
+            HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
+        if (!validationHelper.validateMail(candidacy.getMail()))
+            throw new OsirisValidationException("mail");
+
+        validationHelper.validateString(candidacy.getSearchedJob(), false, 50, "searchedJob");
+        validationHelper.validateString(candidacy.getMessage(), true, 250, "message");
+
+        return new ResponseEntity<Candidacy>(candidacyService.addOrUpdateCandidacy(candidacy), HttpStatus.OK);
     }
 }

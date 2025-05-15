@@ -404,6 +404,15 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeApplicationCv"
+                label="Type de pièce-jointe - candidature CV" [form]="constantForm"
+                propertyName="attachmentTypeApplicationCv" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-country [(model)]="constant.countryFrance" [form]="constantForm" label="Pays - France"
                 propertyName="countryFrance" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>

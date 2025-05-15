@@ -23,23 +23,30 @@ public class UploadedFile implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "uploaded_file_sequence", sequenceName = "uploaded_file_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "uploaded_file_sequence")
+	@JsonView(JacksonViews.OsirisListView.class)
 	private Integer id;
 
+	@JsonView(JacksonViews.OsirisListView.class)
 	private String filename;
+
 	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.OsirisListView.class)
 	private String path;
 
 	private String checksum;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private LocalDateTime creationDate;
 
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private String createdBy;
 
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private Long size;
 
 	public Integer getId() {

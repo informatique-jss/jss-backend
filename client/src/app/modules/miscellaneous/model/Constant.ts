@@ -101,6 +101,7 @@ export interface Constant {
   attachmentTypeRefusInfogreffe: AttachmentType;
   attachmentTypeAutreInfogreffe: AttachmentType;
   attachmentTypeClientCommunication: AttachmentType;
+  attachmentTypeApplicationCv: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeDeboursNonTaxable: BillingType;

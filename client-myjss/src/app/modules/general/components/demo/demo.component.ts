@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AppService } from '../../../../libs/app.service';
-import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { MailService } from '../../services/mail.service';
 
 @Component({
@@ -17,10 +16,6 @@ export class DemoComponent implements OnInit {
   lastName: string = "";
   phoneNumber: string = "";
   mail: string = "";
-
-  validateEmail = validateEmail;
-  validateFrenchPhone = validateFrenchPhone;
-  validateInternationalPhone = validateInternationalPhone;
   demoForm = this.formBuilder.group({});
 
   constructor(private formBuilder: FormBuilder,

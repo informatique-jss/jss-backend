@@ -1,17 +1,14 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { jarallax } from 'jarallax';
 import { AppService } from '../../../../libs/app.service';
-import { MenuItem } from '../../../general/model/MenuItem';
 
 @Component({
-    selector: 'about-us',
-    templateUrl: './about-us.component.html',
-    styleUrls: ['./about-us.component.css'],
-    standalone: false
+  selector: 'about-us',
+  templateUrl: './about-us.component.html',
+  styleUrls: ['./about-us.component.css'],
+  standalone: false
 })
 export class AboutUsComponent implements OnInit {
-
-  companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
 
   @ViewChild('modalImage') modalImageRef!: ElementRef<HTMLImageElement>;
 

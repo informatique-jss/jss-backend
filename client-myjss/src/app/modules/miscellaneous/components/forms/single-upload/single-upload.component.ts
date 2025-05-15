@@ -26,7 +26,6 @@ export class SingleUploadComponent implements OnInit {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-
   MAX_SIZE_UPLOAD_FILES = MAX_SIZE_UPLOAD_FILES;
   MAX_SIZE_UPLOAD_FILES_IN_MO = formatBytes(MAX_SIZE_UPLOAD_FILES, 10);
 
@@ -42,6 +41,8 @@ export class SingleUploadComponent implements OnInit {
   @Input() attachmentType: AttachmentType | null = null;
   filename: string = "";
   @Input() typeDocument: TypeDocument | null = null;
+
+  formatBytes = formatBytes;
 
   constructor(private formBuilder: UntypedFormBuilder,
     private appService: AppService,

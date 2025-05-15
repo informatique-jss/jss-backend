@@ -44,8 +44,9 @@
             avec nous, postulez !
           </p>
           <div class="col-auto pb-4">
-            <button type="button" href="#" class="btn btn-light btn-secondary">Candidature spontanée <i
-                class="ai-arrow-right"></i></button>
+            <button type="button" class="btn btn-light btn-secondary" (click)="openApplicationModal()">
+              Candidature spontanée <i class="ai-arrow-right"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -53,6 +54,50 @@
   </div>
 </section>
 
+<!-- Modal for spontaneous Application -->
+<div class="modal fade" tabindex="-1" aria-labelledby="spontaneousApplicationModalLabel" aria-hidden="true"
+  #spontaneousApplicationModal>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header  d-flex flex-column">
+        <h5 id="spontaneousApplicationModalLabel">Formulaire de Candidature</h5>
+        <p>Pour nous faire parvenir votre candidature spontanée, remplissez ce formulaire et
+          téléchargez
+          votre CV.</p>
+      </div>
+      <div class="modal-body">
+        <form class="needs-validation row" novalidate>
+          <div class="col-12">
+            <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.mail" placeholder="E-mail*"
+              label="E-mail*" [form]="applicationForm" propertyName="mail" [isMandatory]="true" [isDisabled]="false"
+              [maxLength]="250" type="email"></generic-input>
+          </div>
+          <div class="col-12">
+            <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.searchedJob"
+              label="Poste recherché" placeholder="Poste recherché" [form]="applicationForm" propertyName="searchedJob"
+              [isMandatory]="false" [isDisabled]="false" [maxLength]="250" type="text"></generic-input>
+          </div>
+        </form>
+        <div class="col-12">
+          <generic-textarea class="form-control form-control-lg" [(model)]="newCandidacy.message" label="Message*"
+            [form]="applicationForm" propertyName="message" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"
+            [numberOfLines]="4"></generic-textarea>
+        </div>
+        <div class="mb-2 row">
+          <div class="col-12">
+            <single-upload [entity]="newCandidacy" [attachmentType]="attachmentTypeApplicationCv"
+              (endOfUpload)="refreshForm($event)" [entityType]="APPLICATION_CV_ENTITY_TYPE.entityType"
+              [isDirectUpload]="false"></single-upload>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="col-12 btn btn-light btn-secondary ms-2" (click)="sendApplication()">Envoyer ma
+          candidature</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="container py-5 my-5">
   <div class="row">

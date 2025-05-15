@@ -22,22 +22,22 @@
           </h2>
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="firstName" label="Prénom*"
-              placeholder="Prénom*" [form]="demoForm" propertyName="firstname" [isMandatory]="true" [isDisabled]="false"
-              [maxLength]="50" type="text"></generic-input>
+              placeholder="Prénom*" [form]="pricesForm" propertyName="firstname" [isMandatory]="true"
+              [isDisabled]="false" [maxLength]="50" type="text"></generic-input>
           </div>
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="lastName" placeholder="Nom*" label="Nom*"
-              [form]="demoForm" propertyName="lastname" [isMandatory]="true" [isDisabled]="false" [maxLength]="50"
+              [form]="pricesForm" propertyName="lastname" [isMandatory]="true" [isDisabled]="false" [maxLength]="50"
               type="text"></generic-input>
           </div>
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="mail" placeholder="E-mail professionnel*"
-              label="E-mail professionnel*" [form]="demoForm" propertyName="mail" [isMandatory]="true"
+              label="E-mail professionnel*" [form]="pricesForm" propertyName="mail" [isMandatory]="true"
               [isDisabled]="false" [maxLength]="250" type="email"></generic-input>
           </div>
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="phoneNumber" label="Téléphone"
-              placeholder="Numéro de téléphone" [form]="demoForm" propertyName="phoneNumber" [isMandatory]="false"
+              placeholder="Numéro de téléphone" [form]="pricesForm" propertyName="phoneNumber" [isMandatory]="false"
               [isDisabled]="false" [maxLength]="250" type="text"></generic-input>
           </div>
           <div class="col-12">

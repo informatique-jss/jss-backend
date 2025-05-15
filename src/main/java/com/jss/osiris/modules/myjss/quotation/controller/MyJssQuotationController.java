@@ -33,6 +33,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.quotation.controller.model.DashboardUserStatistics;
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsService;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
@@ -361,6 +362,17 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/attachment")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Attachment> getAttachmentById(@RequestParam Integer idAttachment)
+			throws OsirisValidationException {
+
+		if (idAttachment == null)
+			throw new OsirisValidationException("id");
+
+		return new ResponseEntity<Attachment>(attachmentService.getAttachment(idAttachment), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/affaire/attachments")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForAffaire(@RequestParam Integer idAffaire)
@@ -598,9 +610,9 @@ public class MyJssQuotationController {
 		boolean canUpload = true;
 		AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
 
-		if (assoServiceDocument == null) {
+		if (entityType.equals(AssoServiceDocument.class.getSimpleName()) && assoServiceDocument == null) {
 			canUpload = false;
-		} else {
+		} else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
 			if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null
 					&& !myJssQuotationValidationHelper
 							.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()))
@@ -625,7 +637,8 @@ public class MyJssQuotationController {
 		if (!canUpload)
 			return new ResponseEntity<List<Integer>>(new ArrayList<>(), HttpStatus.OK);
 
-		if (!entityType.equals(AssoServiceDocument.class.getSimpleName()))
+		if (!entityType.equals(AssoServiceDocument.class.getSimpleName())
+				&& !entityType.equals(Candidacy.class.getSimpleName()))
 			throw new OsirisValidationException("entityType");
 
 		List<Attachment> createdAttachments = attachmentService.addAttachment(file, idEntity, null, entityType,
