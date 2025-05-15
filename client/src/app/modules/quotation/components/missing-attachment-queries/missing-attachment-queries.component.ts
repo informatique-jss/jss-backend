@@ -7,7 +7,6 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { AppService } from 'src/app/services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
-import { Service } from '../../model/Service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 
@@ -19,7 +18,7 @@ import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-
 export class MissingAttachmentQueriesComponent implements OnInit {
 
   @Input() customerOrder: CustomerOrder | undefined;
-  queries: MissingAttachmentQuery[] = [];
+  queries: MissingAttachmentQuery[][] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -77,8 +76,8 @@ export class MissingAttachmentQueriesComponent implements OnInit {
             if (service) {
               this.missingAttachmentQueryService.getMissingAttachmentQueriesForService(service.id).subscribe(response => {
                 if (response) {
-                  this.queries = response;
-                  this.queries.sort(function (a: MissingAttachmentQuery, b: MissingAttachmentQuery) {
+                  this.queries[service.id] = response;
+                  this.queries[service.id].sort(function (a: MissingAttachmentQuery, b: MissingAttachmentQuery) {
                     return new Date(b.createdDateTime!).getTime() - new Date(a.createdDateTime!).getTime();
                   });
                 }
