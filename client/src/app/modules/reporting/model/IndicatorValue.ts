@@ -5,4 +5,10 @@ export interface IndicatorValue {
   employee: Employee;
   date: Date;
   value: number
+
+  isMinValueReached: boolean;
+  isMediumValueReached: boolean;
+  isMaxValueReached: boolean;
+  succededValue: number;
+  succededPercentage: number;
 }

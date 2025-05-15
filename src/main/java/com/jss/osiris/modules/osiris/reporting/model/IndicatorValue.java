@@ -20,7 +20,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_indicator", columnList = "id_indicator"),
+@Table(indexes = { @Index(name = "idx_indicator_value_indicator", columnList = "id_indicator"),
+		@Index(name = "idx_indicator_value_employee", columnList = "id_employee"),
 })
 public class IndicatorValue implements Serializable, IId {
 
@@ -41,6 +42,13 @@ public class IndicatorValue implements Serializable, IId {
 	private LocalDate date;
 
 	private BigDecimal value;
+
+	private Boolean isMinValueReached;
+	private Boolean isMediumValueReached;
+	private Boolean isMaxValueReached;
+
+	private BigDecimal succededValue;
+	private Float succededPercentage;
 
 	public Integer getId() {
 		return id;
@@ -80,6 +88,46 @@ public class IndicatorValue implements Serializable, IId {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	public Boolean getIsMinValueReached() {
+		return isMinValueReached;
+	}
+
+	public void setIsMinValueReached(Boolean isMinValueReached) {
+		this.isMinValueReached = isMinValueReached;
+	}
+
+	public Boolean getIsMediumValueReached() {
+		return isMediumValueReached;
+	}
+
+	public void setIsMediumValueReached(Boolean isMediumValueReached) {
+		this.isMediumValueReached = isMediumValueReached;
+	}
+
+	public Boolean getIsMaxValueReached() {
+		return isMaxValueReached;
+	}
+
+	public void setIsMaxValueReached(Boolean isMaxValueReached) {
+		this.isMaxValueReached = isMaxValueReached;
+	}
+
+	public BigDecimal getSuccededValue() {
+		return succededValue;
+	}
+
+	public void setSuccededValue(BigDecimal succededValue) {
+		this.succededValue = succededValue;
+	}
+
+	public Float getSuccededPercentage() {
+		return succededPercentage;
+	}
+
+	public void setSuccededPercentage(Float succededPercentage) {
+		this.succededPercentage = succededPercentage;
 	}
 
 }

@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,6 +43,10 @@ public class Indicator implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_indicator_group")
 	private IndicatorGroup indicatorGroup;
+
+	@OneToMany(mappedBy = "indicator", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "indicator" }, allowSetters = true)
+	private List<Kpi> kpis;
 
 	public Integer getId() {
 		return id;
@@ -96,6 +102,14 @@ public class Indicator implements Serializable, IId {
 
 	public void setIndicatorGroup(IndicatorGroup indicatorGroup) {
 		this.indicatorGroup = indicatorGroup;
+	}
+
+	public List<Kpi> getKpis() {
+		return kpis;
+	}
+
+	public void setKpis(List<Kpi> kpis) {
+		this.kpis = kpis;
 	}
 
 }
