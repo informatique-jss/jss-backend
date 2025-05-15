@@ -47,7 +47,16 @@ export class CandidacyComponent implements OnInit {
       },
       display: true
     } as SortTableAction<Candidacy>);
-
+    this.tableActions.push({
+      actionIcon: "download", actionName: "Télécharger le fichier", actionClick: (column: SortTableAction<Candidacy>, candidacy: Candidacy, event: any): void => {
+        const attachment = candidacy.attachments[0];
+        if (attachment) {
+          this.uploadAttachmentService.downloadAttachment(attachment);
+        } else {
+          this.appService.displayToast('Aucun fichier attaché à cette candidature', true, "Erreur de téléchargement", 3000);
+        }
+      }, display: true
+    } as SortTableAction<Candidacy>);
 
     this.candidacyService.getCandidacies().subscribe(response => {
       if (response)

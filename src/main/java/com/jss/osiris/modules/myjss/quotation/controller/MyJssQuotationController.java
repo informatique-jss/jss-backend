@@ -362,17 +362,6 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/attachment")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Attachment> getAttachmentById(@RequestParam Integer idAttachment)
-			throws OsirisValidationException {
-
-		if (idAttachment == null)
-			throw new OsirisValidationException("id");
-
-		return new ResponseEntity<Attachment>(attachmentService.getAttachment(idAttachment), HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/affaire/attachments")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForAffaire(@RequestParam Integer idAffaire)
