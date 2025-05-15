@@ -17,8 +17,8 @@
         </mat-accordion>
       </div>
       <div class="mat-accordion-container">
-        <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="queries" tableName="Demandes de PM"
-          [isSmallerHeight]="true"></sort-table>
+        <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="queries[service.id]"
+          tableName="Demandes de PM" [isSmallerHeight]="true"></sort-table>
       </div>
     </ng-container>
   </ng-container>
