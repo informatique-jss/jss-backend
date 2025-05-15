@@ -5,16 +5,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
-import { NotFoundPageComponent } from '../404/404.component';
+import { NotFoundPageComponent } from '../404/not.found.page.component';
 import { ContactComponent } from '../contact/contact.component';
 import { DemoComponent } from '../demo/demo.component';
-import { DisclaimerComponent } from '../disclaimer/disclaimer.component';
 import { HomepageComponent } from '../homepage/homepage.component';
 import { NewsletterSubscriptionComponent } from '../newsletter-subscription/newsletter-subscription.component';
 import { NewsletterComponent } from '../newsletter/newsletter.component';
 import { PricesComponent } from '../prices/prices.component';
 import { PrivacyPolicyComponent } from '../privacy-policy/privacy-policy.component';
-import { TermsComponent } from '../terms/terms.component';
 import { GeneralComponent } from './general.component';
 
 const routes: Routes = [
@@ -24,9 +22,8 @@ const routes: Routes = [
   { path: 'contact', component: ContactComponent },
   { path: 'newsletter', component: NewsletterSubscriptionComponent },
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
-  { path: 'disclaimer', component: DisclaimerComponent },
-  { path: 'terms', component: TermsComponent },
-  { path: '404', component: NotFoundPageComponent },
+  { path: 'disclaimer', component: PrivacyPolicyComponent },
+  { path: 'terms', component: PrivacyPolicyComponent },
 ];
 
 @NgModule({
@@ -47,8 +44,6 @@ const routes: Routes = [
     ContactComponent,
     NewsletterSubscriptionComponent,
     PrivacyPolicyComponent,
-    DisclaimerComponent,
-    TermsComponent,
     NotFoundPageComponent,
   ], exports: [
     NewsletterComponent

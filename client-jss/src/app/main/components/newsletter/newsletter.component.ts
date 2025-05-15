@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
@@ -8,12 +9,13 @@ import { CommunicationPreferencesService } from '../../services/communication.pr
   selector: 'newsletter',
   templateUrl: './newsletter.component.html',
   styleUrls: ['./newsletter.component.css'],
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   standalone: true
 })
 export class NewsletterComponent implements OnInit {
 
   mail: string = '';
+  isSent: boolean = false;
 
   constructor(
     private communicationPreferencesService: CommunicationPreferencesService,
@@ -27,15 +29,18 @@ export class NewsletterComponent implements OnInit {
   registerEmail(mailToRegister: string) {
     // Email verifications
     if (!mailToRegister) {
-      // this.appService.displayToast("Merci de renseigner une adresse e-mail.", true, "Une erreur s’est produite...", 3000);
+      this.appService.displayToast("Merci de renseigner une adresse e-mail.", true, "Une erreur s’est produite...", 3000);
       return;
     }
 
     if (!validateEmail(mailToRegister)) {
-      // this.appService.displayToast("Impossible de finaliser votre inscription. Vérifiez votre adresse e-mail et réessayez.", true, "Une erreur s’est produite...", 3000);
+      this.appService.displayToast("Impossible de finaliser votre inscription. Vérifiez votre adresse e-mail et réessayez.", true, "Une erreur s’est produite...", 3000);
       return;
     }
 
-    this.communicationPreferencesService.subscribeToNewspaperNewsletter(mailToRegister).subscribe();
+    this.communicationPreferencesService.subscribeToNewspaperNewsletter(mailToRegister).subscribe(res => {
+      this.mail = '';
+      this.isSent = true;
+    });
   }
 }

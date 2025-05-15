@@ -95,6 +95,11 @@
                 label="Fréquence de récurrence" [form]="entityForm" propertyName="recurringFrequency"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-customer-order-frequency>
             </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isMergeable"
+                label="Peut être fusionné à d'autres prestations fusionnables" [form]="entityForm"
+                propertyName="isMergeable" [isDisabled]="!editMode"></generic-toggle>
+            </td>
           </tr>
         </table>
         <table class="full-width" *ngIf="selectedEntity.billingTypes">

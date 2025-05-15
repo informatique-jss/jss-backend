@@ -12,7 +12,6 @@ import { MailService } from '../../services/mail.service';
 })
 export class DemoComponent implements OnInit {
   isConditionAccepted: boolean = false;
-  checkedOnce: boolean = false;
 
   firstName: string = "";
   lastName: string = "";
@@ -33,7 +32,6 @@ export class DemoComponent implements OnInit {
   }
 
   getDemoByMail(event: any) {
-    this.checkedOnce = true;
     if (!this.firstName || !this.lastName || !this.mail || !this.isConditionAccepted) {
       return;
     }
@@ -42,7 +40,6 @@ export class DemoComponent implements OnInit {
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande validée", 3000);
         this.demoForm.reset();
-        this.checkedOnce = false;
         this.firstName = "";
         this.lastName = "";
         this.phoneNumber = "";

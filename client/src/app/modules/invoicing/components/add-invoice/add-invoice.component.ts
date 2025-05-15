@@ -253,6 +253,9 @@ export class AddInvoiceComponent implements OnInit {
       if (this.invoice.dueDate)
         this.invoice.dueDate = new Date(this.invoice.dueDate.setHours(12));
 
+      if (this.invoice.manualAccountingDocumentDate)
+        this.invoice.manualAccountingDocumentDate = new Date(this.invoice.manualAccountingDocumentDate.setHours(12));
+
       if (this.idInvoiceForCreditNote) {
         this.invoiceService.saveCreditNote(this.invoice, this.idInvoiceForCreditNote).subscribe(response => {
           if (response)

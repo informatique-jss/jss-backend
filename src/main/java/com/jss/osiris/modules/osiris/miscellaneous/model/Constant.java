@@ -910,38 +910,42 @@ public class Constant implements Serializable, IId {
 	private Category categorySerie;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_category_exclusivity")
 	private Category categoryExclusivity;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_myjss_category_announcement")
 	private MyJssCategory myJssCategoryAnnouncement;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_myjss_category_formality")
 	private MyJssCategory myJssCategoryFormality;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_jss_category_homepage_first_highlighted")
 	private JssCategory jssCategoryHomepageFirstHighlighted;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_jss_category_homepage_second_highlighted")
 	private JssCategory jssCategoryHomepageSecondHighlighted;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_jss_category_homepage_third_highlighted")
 	private JssCategory jssCategoryHomepageThirdHighlighted;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class_product")
 	private AccountingAccountClass accountingAccountClassProduct;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_class_tiers")
+	private AccountingAccountClass accountingAccountClassTiers;
 
 	@ManyToOne
 	@JoinColumn(name = "id_service_family_immatriculation_al_and_formality")
@@ -953,6 +957,7 @@ public class Constant implements Serializable, IId {
 
 	private String stringMyJssDemoRequestMail;
 	private String stringMyJssWebinarRequestMail;
+	private String stringMyJssContactFormRequestMail;
 
 	public Integer getId() {
 		return id;
@@ -2767,6 +2772,22 @@ public class Constant implements Serializable, IId {
 
 	public void setStringMyJssWebinarRequestMail(String stringMyJssWebinarRequestMail) {
 		this.stringMyJssWebinarRequestMail = stringMyJssWebinarRequestMail;
+	}
+
+	public String getStringMyJssContactFormRequestMail() {
+		return stringMyJssContactFormRequestMail;
+	}
+
+	public void setStringMyJssContactFormRequestMail(String stringMyJssContactFormRequestMail) {
+		this.stringMyJssContactFormRequestMail = stringMyJssContactFormRequestMail;
+	}
+
+	public AccountingAccountClass getAccountingAccountClassTiers() {
+		return accountingAccountClassTiers;
+	}
+
+	public void setAccountingAccountClassTiers(AccountingAccountClass accountingAccountClassTiers) {
+		this.accountingAccountClassTiers = accountingAccountClassTiers;
 	}
 
 }

@@ -1214,6 +1214,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AccountingAccountClass getAccountingAccountClassTiers() throws OsirisException {
+        return this.getConstants().getAccountingAccountClassTiers();
+    }
+
+    @Override
     public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException {
         return this.getConstants().getServiceFamilyImmatriculationAlAndFormality();
     }
@@ -1231,5 +1236,10 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public String getStringMyJssDemoRequestMail() throws OsirisException {
         return this.getConstants().getStringMyJssDemoRequestMail();
+    }
+
+    @Override
+    public String getStringMyJssContactFormRequestMail() throws OsirisException {
+        return this.getConstants().getStringMyJssContactFormRequestMail();
     }
 }

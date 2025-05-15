@@ -143,7 +143,7 @@ public class AccountingController {
             validationHelper.validateDateMin(accountingRecord.getOperationDateTime().toLocalDate(), false,
                     constantService.getDateAccountingClosureForAccountant(), "ManualAccountingDocumentDate");
             validationHelper.validateDateMax(accountingRecord.getOperationDateTime().toLocalDate(), false,
-                    LocalDate.now().plusDays(1), "ManualAccountingDocumentDate");
+                    LocalDate.now().plusDays(7), "ManualAccountingDocumentDate");
 
             if (accountingRecord.getAccountingJournal().getId().equals(purchasesJournal.getId())
                     || accountingRecord.getAccountingJournal().getId().equals(salesJournal.getId())
@@ -397,6 +397,7 @@ public class AccountingController {
         }
 
         if (!as400Found && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING)
                 && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
             throw new OsirisValidationException("as400Found");
 

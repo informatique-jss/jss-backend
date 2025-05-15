@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Modal } from 'bootstrap';
 import { Subscription } from 'rxjs';
-import { MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_OFFERS_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { AppService } from '../../../services/app.service';
 import { IndexEntity } from '../../model/IndexEntity';
 import { JssCategory } from '../../model/JssCategory';
@@ -29,6 +30,8 @@ export class HeaderComponent implements OnInit {
   indexedEntities: IndexEntity[] | undefined;
   searchObservableRef: Subscription | undefined;
 
+  searchModalInstance: Modal | undefined;
+
   constructor(
     private router: Router,
     private departmentService: DepartmentService,
@@ -47,6 +50,32 @@ export class HeaderComponent implements OnInit {
     });
   }
 
+  displaySearchModal() {
+    const modalElement = document.getElementById('searchModal');
+    if (!this.searchModalInstance) {
+      if (modalElement) {
+        this.searchModalInstance = new Modal(modalElement, {
+          backdrop: 'static'
+        });
+      }
+    }
+    this.searchModalInstance!.show();
+    if (modalElement) {
+      const input = modalElement.querySelector('input[name="search"]') as HTMLInputElement;
+      if (input) {
+        input.focus();
+      }
+    }
+  }
+
+  hideSearchModal() {
+    if (this.searchModalInstance) {
+      this.searchModalInstance.hide();
+      this.indexedEntities = [];
+      this.searchText = "";
+    }
+  }
+
   public getCurrentRoute = () => {
     return this.router.url;
   }
@@ -61,6 +90,7 @@ export class HeaderComponent implements OnInit {
 
   openCategoryPosts(category: JssCategory, event: any) {
     this.appService.openRoute(event, "post/category/" + category.slug, undefined);
+    this.hideSearchModal();
   }
 
   openDepartment(department: PublishingDepartment, event: any) {
@@ -80,9 +110,20 @@ export class HeaderComponent implements OnInit {
   }
 
   openMyJss(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_OFFERS_ROUTE);
+    this.appService.openMyJssRoute(event, MY_JSS_HOME_ROUTE);
   }
 
+  openLinkedinJssPage() {
+    this.appService.openLinkedinJssPage();
+  }
+
+  openInstagramJssPage() {
+    this.appService.openInstagramJssPage();
+  }
+
+  openFacebookJssPage() {
+    this.appService.openFacebookJssPage();
+  }
 
   searchEntities() {
     clearTimeout(this.debounce);
@@ -117,6 +158,7 @@ export class HeaderComponent implements OnInit {
 
   openPost(slug: string, event: any) {
     this.appService.openRoute(event, "post/" + slug, undefined);
+    this.hideSearchModal();
   }
 
 }

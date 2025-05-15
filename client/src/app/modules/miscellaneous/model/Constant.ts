@@ -273,8 +273,10 @@ export interface Constant {
   jssCategoryHomepageSecondHighlighted: JssCategory;
   jssCategoryHomepageThirdHighlighted: JssCategory;
   accountingAccountClassProduct: AccountingAccountClass;
+  accountingAccountClassTiers: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
   stringMyJssDemoRequestMail: string;
   stringMyJssWebinarRequestMail: string;
+  stringMyJssContactFormRequestMail: string;
 }

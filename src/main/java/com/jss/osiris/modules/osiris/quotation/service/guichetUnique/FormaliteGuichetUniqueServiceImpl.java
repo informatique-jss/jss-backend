@@ -225,7 +225,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             if (!savedFormaliteGuichetUnique.getStatus().getCode()
                     .equals(apiFormaliteGuichetUnique.getStatus().getCode())) {
                 savedFormaliteGuichetUnique.setStatus(apiFormaliteGuichetUnique.getStatus());
-                savedFormaliteGuichetUnique.setIsAuthorizedToSign(false);
                 formalityHasNewStatus = true;
                 addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
             }
@@ -409,7 +408,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                                         .getLabel()
                                                 + ")");
 
-                        notificationService.notifyGuichetUniqueFormaliteStatus(formalite.getProvision().get(0));
+                        notificationService
+                                .notifyGuichetUniqueFormaliteStatusRefused(formalite.getProvision().get(0));
                         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                                 constantService.getActiveDirectoryGroupFormalites());
 
@@ -428,7 +428,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                                 .getCustomerOrder(),
                                         "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " validée");
 
-                        notificationService.notifyGuichetUniqueFormaliteStatus(formalite.getProvision().get(0));
+                        notificationService
+                                .notifyGuichetUniqueFormaliteStatusValidated(formalite.getProvision().get(0));
                         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                                 constantService.getActiveDirectoryGroupFormalites());
                     }

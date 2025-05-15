@@ -31,7 +31,7 @@ export class MandatoryDocumentsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.serviceFamilyService.getServiceFamiliesExcludingFamilyGroupAnnouncement().subscribe(response => {
+    this.serviceFamilyService.getServiceFamiliesForMandatoryDocuments().subscribe(response => {
       if (response) {
         this.serviceFamilies = response;
         this.selectedFamilyTab = this.serviceFamilies[0];
@@ -74,14 +74,25 @@ export class MandatoryDocumentsComponent implements OnInit {
     else if (serviceType.id)
       this.expandedCardIndex = serviceType.id;
 
-    if (this.expandedCardIndex >= 0 && serviceType.id && (!this.serviceTypesByFamily[this.selectedFamilyTab.id][serviceType.id].assoServiceTypeFieldTypes && !this.serviceTypesByFamily[this.selectedFamilyTab.id][serviceType.id].assoServiceTypeDocuments)) {
-      this.serviceTypeService.getServiceTypeWithIsMandatoryDocuments(serviceType, true).subscribe(response => {
+    let currentService = this.serviceTypesByFamily[this.selectedFamilyTab.id].find(s => s.id == serviceType.id);
+    if (currentService && this.expandedCardIndex >= 0 && serviceType.id && (!currentService.assoServiceTypeFieldTypes && !currentService.assoServiceTypeDocuments)) {
+      this.serviceTypeService.getServiceTypeWithIsMandatoryDocuments(serviceType, false).subscribe(response => {
         if (response && serviceType.id) {
-          this.serviceTypesByFamily[this.selectedFamilyTab.id][serviceType.id] = response;
+          response.assoServiceTypeDocuments.sort((a, b) => a.typeDocument.customLabel.localeCompare(b.typeDocument.customLabel));
+          response.assoServiceTypeFieldTypes.sort((a, b) => a.serviceFieldType.label.localeCompare(b.serviceFieldType.label));
+          this.serviceTypesByFamily[this.selectedFamilyTab.id][this.serviceTypesByFamily[this.selectedFamilyTab.id].findIndex(s => s.id == serviceType.id)] = response;
           this.applyFilterOnServiceTypes();
         }
       });
     }
+  }
+
+  hasMandatoryDocuments(service: ServiceType): boolean {
+    return service.assoServiceTypeDocuments && service.assoServiceTypeDocuments.filter(s => s.isMandatory).length > 0;
+  }
+
+  hasNonMandatoryDocuments(service: ServiceType): boolean {
+    return service.assoServiceTypeDocuments && service.assoServiceTypeDocuments.filter(s => !s.isMandatory).length > 0;
   }
 
   getPossibleFieldsValuesForSelect(field: ServiceFieldType): string {
@@ -93,11 +104,15 @@ export class MandatoryDocumentsComponent implements OnInit {
 
   applyFilterOnServiceTypes() {
     if (this.serviceFamilies)
-      for (let serviceFamily of this.serviceFamilies)
+      for (let serviceFamily of this.serviceFamilies) {
         if (this.searchText && this.searchText.length > 2)
           this.filteredServiceTypesByFamily[serviceFamily.id] = this.serviceTypesByFamily[serviceFamily.id].
             filter(serviceType => serviceType.customLabel.toLowerCase().includes(this.searchText.toLowerCase()));
         else this.filteredServiceTypesByFamily[serviceFamily.id] = this.serviceTypesByFamily[serviceFamily.id];
+
+        if (this.filteredServiceTypesByFamily[serviceFamily.id])
+          this.filteredServiceTypesByFamily[serviceFamily.id].sort((a: ServiceType, b: ServiceType) => { return a.customLabel.localeCompare(b.customLabel) })
+      }
   }
 
   clearSearch() {

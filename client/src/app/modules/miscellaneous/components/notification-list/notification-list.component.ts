@@ -48,7 +48,7 @@ export class NotificationListComponent implements OnInit {
     this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "N° de commande", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn<Notification>);
     this.displayedColumns.push({ id: "quotation", fieldName: "quotation.id", label: "N° de devis", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir le devis associé" } as SortTableColumn<Notification>);
     this.displayedColumns.push({ id: "affairesList", fieldName: "customerOrder.affairesList", label: "Affaire(s)" } as SortTableColumn<Notification>);
-    this.displayedColumns.push({ id: "service", fieldName: "service.serviceType.label", label: "Service" } as SortTableColumn<Notification>);
+    this.displayedColumns.push({ id: "service", fieldName: "service.serviceLabelToDisplay", label: "Service" } as SortTableColumn<Notification>);
     this.displayedColumns.push({ id: "provision", fieldName: "provision.provisionType.label", label: "Prestation", isShrinkColumn: true } as SortTableColumn<Notification>);
     this.displayedColumns.push({
       id: "tiers", fieldName: "tiers", label: "Tiers", actionIcon: "visibility", actionTooltip: "Voir le tiers associé", actionLinkFunction: this.getColumnLink, valueFonction: (element: Notification, column: SortTableColumn<Notification>) => {

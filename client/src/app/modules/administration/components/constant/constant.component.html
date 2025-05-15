@@ -1701,6 +1701,13 @@
           </tr>
           <tr>
             <td>
+              <select-accounting-account-class [(model)]="constant.accountingAccountClassTiers"
+                label="Classe comptable - Tiers" [form]="constantForm" propertyName="accountingAccountClassTiers"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-accounting-account-class>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-service-family [(model)]="constant.serviceFamilyImmatriculationAlAndFormality"
                 label="Famille de service - Immatriculation AL et Formalité" [form]="constantForm"
                 propertyName="serviceFamilyImmatriculationAlAndFormality" [isMandatory]="true"
@@ -1736,6 +1743,14 @@
               <generic-input [(model)]="constant.stringMyJssWebinarRequestMail"
                 label="Mail de redirection Jss - Inscription webinaire" [form]="constantForm"
                 propertyName="mailJssWebinarRequest" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="255"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.stringMyJssContactFormRequestMail"
+                label="Mail de redirection Jss - Demande de contact" [form]="constantForm"
+                propertyName="stringMyJssContactFormRequestMail" [isMandatory]="true" [isDisabled]="!editMode"
                 [maxLength]="255"></generic-input>
             </td>
           </tr>

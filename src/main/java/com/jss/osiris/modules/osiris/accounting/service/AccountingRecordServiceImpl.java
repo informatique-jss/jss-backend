@@ -47,6 +47,7 @@ import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepos
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
@@ -88,6 +89,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   PaymentService paymentService;
+
+  @Autowired
+  InvoiceService invoiceService;
 
   private String ACCOUNTING_RECORD_TABLE_NAME = "accounting_record";
   private String CLOSED_ACCOUNTING_RECORD_TABLE_NAME = "closed_accounting_record";
@@ -425,7 +429,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getIdRefund() == null)
       accountingRecordSearch.setIdRefund(0);
 
-    if (accountingRecordSearch.getTiersId() != 0 || accountingRecordSearch.getIdPayment() != 0) {
+    if (accountingRecordSearch.getIdPayment() != 0) {
       // See all if for a Tiers or a payment
       accountingRecordSearch.setStartDate(accountingRecordSearch.getStartDate().minusYears(2));
       accountingRecordSearch.setEndDate(accountingRecordSearch.getEndDate().plusYears(2));
@@ -448,7 +452,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingRecordSearch.getIdInvoice(),
           accountingRecordSearch.getIdRefund(),
           accountingRecordSearch.getIdBankTransfert(), fetchAll ? Integer.MAX_VALUE : 1000);
-    } else if (!getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
+    }
+    if (!getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME) || accountingRecordSearch.getIdPayment() != 0) {
 
       finalRecords.addAll(accountingRecordRepository.searchAccountingRecordsClosed(accountingAccountId, accountingClass,
@@ -492,6 +497,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingBalanceSearch.getIsFromAs400() == null)
       accountingBalanceSearch.setIsFromAs400(false);
 
+    if (accountingBalanceSearch.getDoNotDisplayZeroTiersAccounts() == null)
+      accountingBalanceSearch.setDoNotDisplayZeroTiersAccounts(false);
+
     if (getAccountingRecordTableName(accountingBalanceSearch.getStartDate().toLocalDate())
         .equals(this.ACCOUNTING_RECORD_TABLE_NAME))
       return accountingRecordRepository.searchAccountingBalanceCurrent(
@@ -500,6 +508,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
           accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
           activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+          accountingBalanceSearch.getDoNotDisplayZeroTiersAccounts(),
+          constantService.getAccountingAccountClassTiers().getId(),
           accountingBalanceSearch.getIsFromAs400());
 
     return accountingRecordRepository.searchAccountingBalanceClosed(
@@ -508,6 +518,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
         accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP),
+        accountingBalanceSearch.getDoNotDisplayZeroTiersAccounts(),
+        constantService.getAccountingAccountClassTiers().getId(),
         accountingBalanceSearch.getIsFromAs400());
   }
 
@@ -640,8 +652,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer lastAccountId = null;
     BigDecimal balance = new BigDecimal(0);
     ArrayList<AccountingRecord> fetchRecords = new ArrayList<AccountingRecord>();
-    Invoice invoiceToLetter = null;
-    Integer countInvoice = 0;
+    List<Invoice> invoicesToLetter = new ArrayList<Invoice>();
 
     for (AccountingRecord record : accountingRecords) {
       AccountingRecord fetchRecord = getAccountingRecord(record.getId());
@@ -662,11 +673,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       // check if there's one invoice or more in record lines, we need to set invoice
       // on record lines if there's only invoice selected before applying
       // checkInvoiceForLettrage()
-      if (record.getInvoice() != null) {
-        countInvoice++;
-        invoiceToLetter = record.getInvoice();
-      }
+      if (record.getInvoice() != null)
+        invoicesToLetter.add(record.getInvoice());
     }
+
     if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_EVEN).abs()
         .compareTo(new BigDecimal(1)) > 0)
       throw new OsirisValidationException("Balance not null");
@@ -682,14 +692,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     maxLetteringNumber++;
 
     for (AccountingRecord accountingRecord : fetchRecords) {
-      if (countInvoice == 1 && accountingRecord.getInvoice() == null)
-        accountingRecord.setInvoice(invoiceToLetter);
       accountingRecord.setLetteringDateTime(LocalDateTime.now());
       accountingRecord.setLetteringNumber(maxLetteringNumber);
       addOrUpdateAccountingRecord(accountingRecord, true);
     }
-    if (countInvoice == 1 && invoiceToLetter != null)
-      accountingRecordGenerationService.checkInvoiceForLettrage(invoiceToLetter);
+    if (invoicesToLetter != null)
+      for (Invoice invoiceToLetter : invoicesToLetter) {
+        invoiceToLetter.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+        invoiceService.addOrUpdateInvoice(invoiceToLetter);
+      }
     return true;
   }
 

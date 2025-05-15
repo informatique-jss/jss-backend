@@ -1,8 +1,12 @@
 export const MY_JSS_SUBSCRIBE_ROUTE = "order/new/subscribe";
-export const MY_JSS_NEW_ANNOUNCEMENT_ROUTE = "order/new/announcement";
-export const MY_JSS_NEW_FORMALITY_ROUTE = "order/new/formality";
-export const MY_JSS_PRODUCT_ROUTE = "offers";
-export const MY_JSS_OFFERS_ROUTE = "offers";
+export const MY_JSS_NEW_ANNOUNCEMENT_ROUTE = "quotation";
+export const MY_JSS_NEW_FORMALITY_ROUTE = "quotation";
+export const MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE = "services/announcement";
+export const MY_JSS_SERVICES_FORMALITY_ROUTE = "services/formality";
+export const MY_JSS_SERVICES_APOSITLLE_ROUTE = "services/apostille";
+export const MY_JSS_SERVICES_DOMICILIATION_ROUTE = "services/domiciliation";
+export const MY_JSS_SERVICES_DOCUMENT_ROUTE = "services/document";
+export const MY_JSS_HOME_ROUTE = "home";
 export const MY_JSS_WHO_ARE_WE_ROUTE = "who-are-we";
 export const MY_JSS_JOIN_US_ROUTE = "join-us";
 export const MY_JSS_PARTNERS_ROUTE = "partners";

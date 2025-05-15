@@ -5,7 +5,8 @@
         <p>{{subtitle}}</p>
         <h2 class="h1 pb-3 mb-lg-4 text-white">{{title}}</h2>
       </div>
-      <div class="col-auto ms-auto d-flex justify-content-end align-items-end">
+      <div class="col-auto ms-auto d-flex justify-content-end align-items-end"
+        *ngIf="items && items.length>slidesPerView">
         <div class="d-md-block d-none pb-3 mb-lg-4 ">
           <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle m-2" (click)="slidePrev()"
             aria-label="Previous slide">

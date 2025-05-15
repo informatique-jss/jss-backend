@@ -298,7 +298,7 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/payment/cut")
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ADMINISTRATEUR)
     public ResponseEntity<Payment> cutPayment(@RequestParam Integer paymentId, @RequestParam BigDecimal amount)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         validationHelper.validateBigDecimal(amount, true, "amount");
@@ -987,7 +987,7 @@ public class InvoicingController {
         validationHelper.validateDate(invoice.getDueDate(), false, "DueDate");
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "AccountingDocumentDate");
         validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "ManualAccountingDocumentDate");
-        validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(1),
+        validationHelper.validateDateMax(invoice.getManualAccountingDocumentDate(), false, LocalDate.now().plusDays(7),
                 "ManualAccountingDocumentDate");
         validationHelper.validateString(invoice.getManualAccountingDocumentNumber(), false, 150,
                 "ManualAccountingDocumentNumber");

@@ -15,7 +15,7 @@ export interface Post {
   slug: string;
   podcastUrl: string;
   videoUrl: string;
-  sticky: boolean;
+  isSticky: boolean;
   relatedPosts: Post[];
   mediaTimeLength: number;
 

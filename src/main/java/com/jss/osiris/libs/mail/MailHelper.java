@@ -740,59 +740,73 @@ public class MailHelper {
         customerMailService.addMailToQueue(mail);
     }
 
-    public void sendConfirmationSubscriptionWebinarMyJss(WebinarParticipant webinarParticipant) throws OsirisException {
-        CustomerMail mail = new CustomerMail();
-        mail.setReplyToMail(constantService.getStringMyJssWebinarRequestMail());
-        mail.setSubject("Confirmation d'inscription au webinaire");
-        mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_WEBINAR_SUBSCRIPTION);
-        mail.setHeaderPicture("images/mails/quotation-validated.png");
-        MailComputeResult mailComputeResult = new MailComputeResult();
-        mailComputeResult.setRecipientsMailTo(List.of(webinarParticipant.getMail()));
-        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
-        mailComputeResult.setIsSendToClient(false);
-        mailComputeResult.setIsSendToAffaire(false);
-        mail.setMailComputeResult(mailComputeResult);
-        customerMailService.addMailToQueue(mail);
-    }
-
-    public void sendConfirmationDemoMyJss(String mailAdress) throws OsirisException {
+    private void sendCustomerMailForMyJssMail(String mailAdress, String explaination, String replyMail, String template,
+            String subject)
+            throws OsirisException {
         CustomerMail customerMail = new CustomerMail();
-        customerMail.setReplyToMail(constantService.getStringMyJssDemoRequestMail());
-        customerMail.setSubject("Confirmation de votre demande de démo");
-        customerMail.setMailTemplate(CustomerMail.TEMPLATE_SEND_DEMO_CONFIRMATION);
+        if (replyMail != null)
+            customerMail.setReplyToMail(replyMail);
+        if (subject != null)
+            customerMail.setSubject(subject);
+        if (template != null)
+            customerMail.setMailTemplate(template);
         customerMail.setHeaderPicture("images/mails/quotation-validated.png");
         MailComputeResult mailComputeResult = new MailComputeResult();
-
         Mail mail = new Mail();
-        mail.setMail(mailAdress);
+        if (mailAdress != null)
+            mail.setMail(mailAdress);
         mail = mailService.populateMailId(mail);
         mailComputeResult.setRecipientsMailTo(List.of(mail));
         mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
         mailComputeResult.setIsSendToClient(false);
         mailComputeResult.setIsSendToAffaire(false);
+        if (explaination != null)
+            customerMail.setExplaination(explaination);
         customerMail.setMailComputeResult(mailComputeResult);
         customerMailService.addMailToQueue(customerMail);
+    }
+
+    public void sendConfirmationSubscriptionWebinarMyJss(WebinarParticipant webinarParticipant) throws OsirisException {
+        sendCustomerMailForMyJssMail(webinarParticipant.getMail().getMail(), null,
+                constantService.getStringMyJssWebinarRequestMail(), "Confirmation d'inscription au webinaire",
+                CustomerMail.TEMPLATE_SEND_WEBINAR_SUBSCRIPTION);
+    }
+
+    public void sendConfirmationDemoMyJss(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssDemoRequestMail(), "Confirmation de votre demande de démo",
+                CustomerMail.TEMPLATE_SEND_DEMO_CONFIRMATION);
+    }
+
+    public void sendConfirmationContactFormMyJss(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssContactFormRequestMail(),
+                "Confirmation de la réception de votre demande d'information",
+                CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
     }
 
     public void sendCustomerDemoRequestToCommercial(String mailAdress, String firstName, String lastName,
             String phoneNumber) throws OsirisException {
-        CustomerMail customerMail = new CustomerMail();
-        customerMail.setReplyToMail(constantService.getStringMyJssDemoRequestMail());
-        customerMail.setSubject("Notification de demande de démo client");
-        customerMail.setMailTemplate(CustomerMail.TEMPLATE_SEND_DEMO_REQUEST);
-        customerMail.setHeaderPicture("images/mails/quotation-validated.png");// TODO change for right picture
-        MailComputeResult mailComputeResult = new MailComputeResult();
+        String explaination = firstName + " " + lastName + " - " + mailAdress;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssDemoRequestMail(), explaination,
+                constantService.getStringMyJssDemoRequestMail(),
+                "Notification de demande de démo client",
+                CustomerMail.TEMPLATE_SEND_DEMO_REQUEST);
+    }
 
-        Mail mail = new Mail();
-        mail.setMail(constantService.getStringMyJssDemoRequestMail());
-        mail = mailService.populateMailId(mail);
-        mailComputeResult.setRecipientsMailTo(List.of(mail));
-        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
-        mailComputeResult.setIsSendToClient(false);
-        mailComputeResult.setIsSendToAffaire(false);
-        customerMail.setMailComputeResult(mailComputeResult);
-        customerMail.setExplaination(firstName + " " + lastName + " - " + mailAdress);
-        customerMailService.addMailToQueue(customerMail);
+    public void sendContactFormNotificationMail(String mailAdress, String firstName, String lastName,
+            String message) throws OsirisException {
+        String explaination = firstName + " " + lastName + " - " + mailAdress + " : " + message;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssContactFormRequestMail(), explaination,
+                constantService.getStringMyJssContactFormRequestMail(),
+                "Notification d'une prise d'information client",
+                CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST);
+    }
+
+    public void sendCustomerPricesByMail(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssDemoRequestMail(), "JSS - Nos Tarifs",
+                "");
     }
 
     @Transactional(rollbackFor = Exception.class)

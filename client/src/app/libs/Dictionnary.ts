@@ -133,7 +133,8 @@ export const Dictionnary = {
   "PROVISION_ADD_ATTACHMENT": "Nouveau document sur une prestation",
   "SERVICE_ADD_ATTACHMENT": "Nouveau document sur un service",
   "ORDER_ADD_ATTACHMENT": "Nouveau document sur une commande",
-  "PROVISION_GUICHET_UNIQUE_STATUS_MODIFIED": "Statut GU modifié",
+  "PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED": "Liasse GU validée",
+  "PROVISION_GUICHET_UNIQUE_STATUS_REFUSED": "Liasse GU rejetée",
   "PROVISION_GUICHET_UNIQUE_STATUS_SIGNED": "Liasse GU signée"
 };
 

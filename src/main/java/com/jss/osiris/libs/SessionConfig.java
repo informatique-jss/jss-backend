@@ -7,12 +7,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.session.web.http.HttpSessionIdResolver;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SessionConfig {
+
+    @Bean
+    public ForwardedHeaderFilter forwardedHeaderFilter() {
+        return new ForwardedHeaderFilter();
+    }
 
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {

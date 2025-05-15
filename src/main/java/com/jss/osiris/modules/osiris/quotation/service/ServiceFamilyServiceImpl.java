@@ -49,9 +49,7 @@ public class ServiceFamilyServiceImpl implements ServiceFamilyService {
     }
 
     @Override
-    public List<ServiceFamily> getServiceFamiliesExcludingServiceFamilyGroupAnnouncement() throws OsirisException {
-        ServiceFamilyGroup serviceFamilyGroupAnnouncement = constantService.getServiceFamilyGroupAnnouncement();
-        return serviceFamilyRepository.findServiceFamiliesExcludingServiceFamilyGroupAnnouncement(
-                serviceFamilyGroupAnnouncement);
+    public List<ServiceFamily> getServiceFamiliesForMandatoryDocuments() throws OsirisException {
+        return serviceFamilyRepository.findServiceFamiliesForMandatoryDocuments();
     }
 }

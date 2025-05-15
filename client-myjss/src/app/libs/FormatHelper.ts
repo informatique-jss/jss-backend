@@ -2,9 +2,27 @@ import { Mail } from "../modules/profile/model/Mail";
 import { Phone } from "../modules/profile/model/Phone";
 
 export function capitalizeName(name: string): string {
-  if (name)
-    return name.toLowerCase().replace(/\b(\w)/g, s => s.toUpperCase());
-  return "";
+  if (!name) return "";
+
+  const lowerCaseWords = new Set([
+    "de", "du", "des", "le", "la", "les", "l'", "d'", "au", "aux", "et"
+  ]);
+
+  return name
+    .toLocaleLowerCase("fr-FR")
+    .split(/(\s+|-)/)
+    .map((word, index, arr) => {
+      const trimmed = word.trim();
+      const isSeparator = /^\s+|-$/u.test(word);
+      if (isSeparator || trimmed === "") return word;
+
+      const isFirst = index === 0 || /^\s*[-]/.test(arr[index - 1]);
+
+      if (!isFirst && lowerCaseWords.has(trimmed)) return trimmed;
+
+      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+    })
+    .join("");
 }
 
 export function getListMails(mails: Mail[]) {

@@ -56,6 +56,10 @@ public class ServiceFamily implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "serviceFamily" }, allowSetters = true)
 	private List<ServiceType> services;
 
+	private Integer myJssOrder;
+
+	private Boolean hideInMyJssMandatoryDocument;
+
 	public Integer getId() {
 		return id;
 	}
@@ -118,6 +122,22 @@ public class ServiceFamily implements Serializable, IId {
 
 	public void setServices(List<ServiceType> services) {
 		this.services = services;
+	}
+
+	public Integer getMyJssOrder() {
+		return myJssOrder;
+	}
+
+	public void setMyJssOrder(Integer myJssOrder) {
+		this.myJssOrder = myJssOrder;
+	}
+
+	public Boolean getHideInMyJssMandatoryDocument() {
+		return hideInMyJssMandatoryDocument;
+	}
+
+	public void setHideInMyJssMandatoryDocument(Boolean hideInMyJssMandatoryDocument) {
+		this.hideInMyJssMandatoryDocument = hideInMyJssMandatoryDocument;
 	}
 
 }
