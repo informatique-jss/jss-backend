@@ -1,0 +1,54 @@
+@media (max-width: 767.98px) {
+  table.table thead {
+    display: none;
+  }
+
+  table.table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+  }
+
+  table.table tbody tr td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  table.table tbody tr td:last-child {
+    border-bottom: none;
+  }
+
+  table.table tbody tr td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    flex: 1;
+    text-align: left;
+    color: #555;
+  }
+
+  table.table tbody tr td {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  table.table tbody tr td::before {
+    min-width: 90px;
+    margin-right: 10px;
+  }
+}
+
+
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.card {
+  --ar-card-border-radius: 10px
+}
