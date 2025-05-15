@@ -1,4 +1,4 @@
-package com.jss.osiris.modules.targetPackage.model;
+package com.jss.osiris.modules.osiris.targetPackage.model;
 
 import java.io.Serializable;
 

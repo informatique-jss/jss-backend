@@ -8,12 +8,15 @@ import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { RouterModule, Routes } from '@angular/router';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
+import { IndicatorDetailedComponent } from '../indicator-detailed/indicator-detailed.component';
 import { IndicatorComponent } from '../indicator/indicator.component';
+import { MyIndicatorsComponent } from '../my-indicators/my-indicators.component';
 import { ReportingAddComponent } from '../reporting-add/reporting-add.component';
 import { ReportingListComponent } from '../reporting-list/reporting-list.component';
 import { ReportingComponent } from './reporting.component';
@@ -37,6 +40,7 @@ const routes: Routes = [
     MatTreeModule,
     MatCheckboxModule,
     MiscellaneousModule,
+    MatTabsModule,
     MatIconModule,
     MatRadioModule,
     NgxEchartsModule.forRoot({
@@ -47,7 +51,9 @@ const routes: Routes = [
   declarations: [ReportingComponent,
     ReportingListComponent,
     ReportingAddComponent,
-    IndicatorComponent
+    IndicatorDetailedComponent,
+    IndicatorComponent,
+    MyIndicatorsComponent
   ],
   exports: [ReportingComponent,
   ],
