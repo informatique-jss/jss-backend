@@ -47,6 +47,7 @@ import com.jss.osiris.modules.osiris.accounting.repository.AccountingRecordRepos
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
@@ -91,6 +92,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   PaymentService paymentService;
+
+  @Autowired
+  InvoiceService invoiceService;
 
   private String ACCOUNTING_RECORD_TABLE_NAME = "accounting_record";
   private String CLOSED_ACCOUNTING_RECORD_TABLE_NAME = "closed_accounting_record";
@@ -648,8 +652,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     Integer lastAccountId = null;
     BigDecimal balance = new BigDecimal(0);
     ArrayList<AccountingRecord> fetchRecords = new ArrayList<AccountingRecord>();
-    Invoice invoiceToLetter = null;
-    Integer countInvoice = 0;
+    List<Invoice> invoicesToLetter = new ArrayList<Invoice>();
 
     for (AccountingRecord record : accountingRecords) {
       AccountingRecord fetchRecord = getAccountingRecord(record.getId());
@@ -670,11 +673,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       // check if there's one invoice or more in record lines, we need to set invoice
       // on record lines if there's only invoice selected before applying
       // checkInvoiceForLettrage()
-      if (record.getInvoice() != null) {
-        countInvoice++;
-        invoiceToLetter = record.getInvoice();
-      }
+      if (record.getInvoice() != null)
+        invoicesToLetter.add(record.getInvoice());
     }
+
     if (balance.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_EVEN).abs()
         .compareTo(new BigDecimal(1)) > 0)
       throw new OsirisValidationException("Balance not null");
@@ -690,14 +692,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     maxLetteringNumber++;
 
     for (AccountingRecord accountingRecord : fetchRecords) {
-      if (countInvoice == 1 && accountingRecord.getInvoice() == null)
-        accountingRecord.setInvoice(invoiceToLetter);
       accountingRecord.setLetteringDateTime(LocalDateTime.now());
       accountingRecord.setLetteringNumber(maxLetteringNumber);
       addOrUpdateAccountingRecord(accountingRecord, true);
     }
-    if (countInvoice == 1 && invoiceToLetter != null)
-      accountingRecordGenerationService.checkInvoiceForLettrage(invoiceToLetter);
+    if (invoicesToLetter != null)
+      for (Invoice invoiceToLetter : invoicesToLetter) {
+        invoiceToLetter.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+        invoiceService.addOrUpdateInvoice(invoiceToLetter);
+      }
     return true;
   }
 

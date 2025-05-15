@@ -224,7 +224,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             if (!savedFormaliteGuichetUnique.getStatus().getCode()
                     .equals(apiFormaliteGuichetUnique.getStatus().getCode())) {
                 savedFormaliteGuichetUnique.setStatus(apiFormaliteGuichetUnique.getStatus());
-                savedFormaliteGuichetUnique.setIsAuthorizedToSign(false);
                 formalityHasNewStatus = true;
                 addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
             }

@@ -20,6 +20,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -71,6 +72,7 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
+	@OrderBy("id")
 	private List<Service> services;
 
 	public Affaire getAffaire() {
