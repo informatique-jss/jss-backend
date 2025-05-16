@@ -94,6 +94,8 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
 
                 setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
                                 FormaliteStatus.FORMALITE_AUTHORITY_TECHNICAL_BLOCKING);
+                setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS,
+                                FormaliteStatus.FORMALITE_AUTHORITY_TECHNICAL_BLOCKING);
 
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED,
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
