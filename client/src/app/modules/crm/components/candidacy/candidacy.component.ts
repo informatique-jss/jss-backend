@@ -4,7 +4,7 @@ import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
-import { AppService } from '../../../../../../../client-jss/src/app/services/app.service';
+import { AppService } from 'src/app/services/app.service';
 import { Candidacy } from '../../model/Candidacy';
 import { CandidacyService } from '../../services/candidacy.service';
 
@@ -42,7 +42,7 @@ export class CandidacyComponent implements OnInit {
         if (attachment) {
           this.uploadAttachmentService.previewAttachment(attachment);
         } else {
-          this.appService.displayToast('Aucun fichier attaché à cette candidature', true, "Erreur", 3000);
+          this.appService.displaySnackBar('Aucun fichier attaché à cette candidature', true, 3000);
         }
       },
       display: true
@@ -53,7 +53,7 @@ export class CandidacyComponent implements OnInit {
         if (attachment) {
           this.uploadAttachmentService.downloadAttachment(attachment);
         } else {
-          this.appService.displayToast('Aucun fichier attaché à cette candidature', true, "Erreur", 3000);
+          this.appService.displaySnackBar('Aucun fichier attaché à cette candidature', true, 3000);
         }
       }, display: true
     } as SortTableAction<Candidacy>);
