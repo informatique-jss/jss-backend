@@ -2,14 +2,13 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
 import { MenuItem } from '../../../general/model/MenuItem';
-import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
 
 @Component({
-    selector: 'app-quotation',
-    templateUrl: './quotation.component.html',
-    styleUrls: ['./quotation.component.css'],
-    standalone: false
+  selector: 'app-quotation',
+  templateUrl: './quotation.component.html',
+  styleUrls: ['./quotation.component.css'],
+  standalone: false
 })
 export class QuotationComponent implements OnInit {
   myJssQuotationItems: MenuItem[] = this.appService.getAllQuotationMenuItems();
@@ -21,7 +20,6 @@ export class QuotationComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router,
     private quotationService: QuotationService,
-    private orderService: CustomerOrderService
   ) { }
 
   ngOnInit() {

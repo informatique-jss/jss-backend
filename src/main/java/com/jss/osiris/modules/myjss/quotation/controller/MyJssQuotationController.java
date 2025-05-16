@@ -33,6 +33,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.quotation.controller.model.DashboardUserStatistics;
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsService;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
@@ -598,34 +599,41 @@ public class MyJssQuotationController {
 		boolean canUpload = true;
 		AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
 
-		if (assoServiceDocument == null) {
-			canUpload = false;
-		} else {
-			if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null
-					&& !myJssQuotationValidationHelper
-							.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()))
+		if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
+			if (assoServiceDocument == null) {
 				canUpload = false;
+			} else {
+				if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null
+						&& !myJssQuotationValidationHelper
+								.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()))
+					canUpload = false;
 
-			if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null) {
-				String quotationStatusCode = assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()
-						.getQuotationStatus().getCode();
-				if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
-						|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
-						|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+				if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null) {
+					String quotationStatusCode = assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()
+							.getQuotationStatus().getCode();
+					if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
+							|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
+							|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+						canUpload = false;
+				}
+
+				if (assoServiceDocument.getService().getAssoAffaireOrder()
+						.getCustomerOrder() != null
+						&& !myJssQuotationValidationHelper.canSeeQuotation(
+								assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder()))
 					canUpload = false;
 			}
-
-			if (assoServiceDocument.getService().getAssoAffaireOrder()
-					.getCustomerOrder() != null
-					&& !myJssQuotationValidationHelper.canSeeQuotation(
-							assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder()))
-				canUpload = false;
+		} else if (entityType.equals(Candidacy.class.getSimpleName())) {
+			canUpload = true;
+		} else {
+			canUpload = false;
 		}
 
 		if (!canUpload)
 			return new ResponseEntity<List<Integer>>(new ArrayList<>(), HttpStatus.OK);
 
-		if (!entityType.equals(AssoServiceDocument.class.getSimpleName()))
+		if (!entityType.equals(AssoServiceDocument.class.getSimpleName())
+				&& !entityType.equals(Candidacy.class.getSimpleName()))
 			throw new OsirisValidationException("entityType");
 
 		List<Attachment> createdAttachments = attachmentService.addAttachment(file, idEntity, null, entityType,

@@ -30,6 +30,8 @@ import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
+import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -139,6 +141,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     EmployeeService employeeService;
 
+    @Autowired
+    CandidacyService candidacyService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -242,6 +247,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (quotation == null)
                 return new ArrayList<Attachment>();
             attachment.setQuotation(quotation);
+        } else if (entityType.equals(Candidacy.class.getSimpleName())) {
+            Candidacy candidacy = candidacyService.getCandidacy(idEntity);
+            if (candidacy == null)
+                return new ArrayList<Attachment>();
+            attachment.setCandidacy(candidacy);
         } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
             TypeDocument typeDocumentAttachment = typeDocumentService.getTypeDocumentByCode(codeEntity);
             if (typeDocumentAttachment == null)
@@ -420,6 +430,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByTypeDocumentCode(codeEntity);
         } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
             attachments = attachmentRepository.findByMissingAttachmentQuery(idEntity);
+        } else if (entityType.equals(Candidacy.class.getSimpleName())) {
+            attachments = attachmentRepository.findByCandidacyId(idEntity);
         }
         return attachments;
     }

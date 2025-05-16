@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AppService } from '../../../../libs/app.service';
-import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { MailService } from '../../services/mail.service';
 
 @Component({
@@ -19,11 +18,7 @@ export class PricesComponent implements OnInit {
   lastName: string = "";
   phoneNumber: string = "";
   mail: string = "";
-
-  validateEmail = validateEmail;
-  validateFrenchPhone = validateFrenchPhone;
-  validateInternationalPhone = validateInternationalPhone;
-  demoForm = this.formBuilder.group({});
+  pricesForm = this.formBuilder.group({});
 
   constructor(private formBuilder: FormBuilder,
     private mailService: MailService,
@@ -42,7 +37,7 @@ export class PricesComponent implements OnInit {
     this.mailService.subscribePrices(this.mail, this.firstName, this.lastName, this.phoneNumber).subscribe(response => {
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail avec les tarifs.", false, "Demande validée", 3000);
-        this.demoForm.reset();
+        this.pricesForm.reset();
         this.checkedOnce = false;
         this.firstName = "";
         this.lastName = "";

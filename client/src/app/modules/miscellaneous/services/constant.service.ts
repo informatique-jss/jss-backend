@@ -217,6 +217,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.attachmentTypeClientCommunication;
   }
 
+  getAttachmentTypeApplicationCv() {
+    return this.constant.attachmentTypeApplicationCv;
+  }
+
   getCountryFrance() {
     return this.constant.countryFrance;
   }
@@ -536,6 +540,10 @@ export class ConstantService extends AppRestService<Constant> {
 
   getEmployeeInvoiceReminderResponsible() {
     return this.constant.employeeInvoiceReminderResponsible;
+  }
+
+  getEmployeeCandidacyResponsible() {
+    return this.constant.employeeCandidacyResponsible;
   }
 
   getTransfertFundsTypePhysique() {

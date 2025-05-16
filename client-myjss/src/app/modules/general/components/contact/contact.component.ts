@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { jarallax } from 'jarallax';
 import { AppService } from '../../../../libs/app.service';
-import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { MailService } from '../../services/mail.service';
 
 @Component({
@@ -26,9 +25,7 @@ export class ContactComponent implements OnInit {
 
   ngOnInit() {
   }
-  validateEmail = validateEmail;
-  validateFrenchPhone = validateFrenchPhone;
-  validateInternationalPhone = validateInternationalPhone;
+
   contactForm = this.formBuilder.group({});
 
   ngAfterViewInit(): void {

@@ -20,3 +20,7 @@ swiper-container {
 .card-wrapper {
   height: 350px;
 }
+
+generic-input, generic-textarea {
+  border: none;
+}

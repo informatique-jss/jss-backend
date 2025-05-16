@@ -14,6 +14,7 @@ import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureReceipt;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -69,7 +70,7 @@ public class Attachment implements Serializable, IId {
 	@SequenceGenerator(name = "attachment_sequence", sequenceName = "attachment_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attachment_sequence")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssDetailedView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -176,7 +177,7 @@ public class Attachment implements Serializable, IId {
 
 	@Column(length = 2000)
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
 	private String description;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
@@ -217,6 +218,12 @@ public class Attachment implements Serializable, IId {
 	private DocumentAssocieInfogreffe documentAssocieInfogreffe;
 
 	private LocalDate attachmentDate;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_candidacy")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+	private Candidacy candidacy;
 
 	public Integer getId() {
 		return id;
@@ -440,5 +447,13 @@ public class Attachment implements Serializable, IId {
 
 	public void setAttachmentDate(LocalDate attachmentDate) {
 		this.attachmentDate = attachmentDate;
+	}
+
+	public Candidacy getCandidacy() {
+		return candidacy;
+	}
+
+	public void setCandidacy(Candidacy candidacy) {
+		this.candidacy = candidacy;
 	}
 }

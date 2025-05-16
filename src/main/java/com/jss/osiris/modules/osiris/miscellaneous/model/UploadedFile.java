@@ -26,6 +26,7 @@ public class UploadedFile implements Serializable, IId {
 	private Integer id;
 
 	private String filename;
+
 	@Column(columnDefinition = "TEXT")
 	private String path;
 

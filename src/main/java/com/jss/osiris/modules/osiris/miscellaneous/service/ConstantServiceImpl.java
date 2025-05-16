@@ -344,6 +344,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeApplicationCv() throws OsirisException {
+        return getConstants().getAttachmentTypeApplicationCv();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
@@ -741,6 +746,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Employee getEmployeeInvoiceReminderResponsible() throws OsirisException {
         return getConstants().getEmployeeInvoiceReminderResponsible();
+    }
+
+    @Override
+    public Employee getEmployeeCandidacyResponsible() throws OsirisException {
+        return getConstants().getEmployeeCandidacyResponsible();
     }
 
     @Override

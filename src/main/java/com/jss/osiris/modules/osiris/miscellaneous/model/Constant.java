@@ -255,9 +255,15 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_Autre_infogreffe")
 	private AttachmentType attachmentTypeAutreInfogreffe;
+
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_client_communication")
 	private AttachmentType attachmentTypeClientCommunication;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_attachment_type_application_cv")
+	private AttachmentType attachmentTypeApplicationCv;
 
 	@ManyToOne
 	@JsonView(JacksonViews.MyJssDetailedView.class)
@@ -545,6 +551,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_employee_invoice_reminder_responsible")
 	private Employee employeeInvoiceReminderResponsible;
+
+	@ManyToOne
+	@JoinColumn(name = "id_employee_candidacy_responsible")
+	private Employee employeeCandidacyResponsible;
 
 	@ManyToOne
 	@JoinColumn(name = "id_transfert_funds_type_physique")
@@ -2788,6 +2798,22 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingAccountClassTiers(AccountingAccountClass accountingAccountClassTiers) {
 		this.accountingAccountClassTiers = accountingAccountClassTiers;
+	}
+
+	public AttachmentType getAttachmentTypeApplicationCv() {
+		return attachmentTypeApplicationCv;
+	}
+
+	public void setAttachmentTypeApplicationCv(AttachmentType attachmentTypeApplicationCv) {
+		this.attachmentTypeApplicationCv = attachmentTypeApplicationCv;
+	}
+
+	public Employee getEmployeeCandidacyResponsible() {
+		return employeeCandidacyResponsible;
+	}
+
+	public void setEmployeeCandidacyResponsible(Employee employeeCandidacyResponsible) {
+		this.employeeCandidacyResponsible = employeeCandidacyResponsible;
 	}
 
 }
