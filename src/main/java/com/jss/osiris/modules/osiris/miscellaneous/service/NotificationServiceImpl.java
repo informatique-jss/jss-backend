@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
@@ -21,10 +20,6 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
-import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
-import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
-import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 
 @org.springframework.stereotype.Service
 public class NotificationServiceImpl implements NotificationService {
@@ -34,24 +29,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     EmployeeService employeeService;
-
-    @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
-
-    @Autowired
-    QuotationService quotationService;
-
-    @Autowired
-    ConstantService constantService;
-
-    @Autowired
-    ProvisionService provisionService;
-
-    @Autowired
-    ServiceService serviceService;
-
-    @Autowired
-    FormaliteGuichetUniqueStatusService statusService;
 
     @Autowired
     CustomerOrderService customerOrderService;

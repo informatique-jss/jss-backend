@@ -168,8 +168,7 @@ public class Attachment implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_uploaded_file")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class,
-			JacksonViews.OsirisListView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private UploadedFile uploadedFile;
 
 	@Column(nullable = false)

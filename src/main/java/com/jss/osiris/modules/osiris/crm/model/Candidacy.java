@@ -22,8 +22,8 @@ public class Candidacy implements Serializable, IId {
 
 	@Id
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
-	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@SequenceGenerator(name = "candidacy_sequence", sequenceName = "candidacy_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "candidacy_sequence")
 	private Integer id;
 
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
