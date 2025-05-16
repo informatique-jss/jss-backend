@@ -12,11 +12,19 @@ export class HabilitationsService {
   }
 
   canDisplayNotifications() {
-    return this.loginService.hasGroup([BETA_TESTEURS])
+    return this.loginService.hasGroup([BETA_TESTEURS], false)
   }
 
   canDisplayKanban() {
-    return this.loginService.hasGroup([BETA_TESTEURS])
+    return this.loginService.hasGroup([BETA_TESTEURS], false)
+  }
+
+  canViewIndicatorModule() {
+    return this.loginService.hasGroup([BETA_TESTEURS], false)
+  }
+
+  canDisplayMyIndicatorsForEverybody() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
   }
 
   isAdministrator() {
@@ -26,6 +34,7 @@ export class HabilitationsService {
   canDisplayExtendentMonitoring() {
     return this.loginService.hasGroup([ADMINISTRATEURS])
   }
+
 
   canEditAllCustomerOrderComments() {
     return this.loginService.hasGroup([ADMINISTRATEURS])

@@ -60,6 +60,10 @@ export class SidenavListComponent implements OnInit {
     return this.habilitationService.canViewReportingModule();
   }
 
+  canViewIndicatorModule() {
+    return this.habilitationService.canViewIndicatorModule();
+  }
+
   canViewTiersModule() {
     return this.habilitationService.canViewTiersModule();
   }

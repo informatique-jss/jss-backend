@@ -1,0 +1,28 @@
+.dashboard-container {
+  height: 100%;
+}
+
+.drawer-container {
+  height: 100%;
+}
+
+.drawer {
+  width: 250px;
+  padding: 16px;
+  background: #f5f5f5;
+}
+
+.content {
+  padding: 24px;
+}
+
+.chart {
+  height: 400px;
+  margin-bottom: 32px;
+}
+
+.mode-selector {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 24px;
+}

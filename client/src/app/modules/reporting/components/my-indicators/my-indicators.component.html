@@ -1,0 +1,46 @@
+<div class="mat-elevation-z2 form-div">
+  <div *ngIf="canDisplayMyIndicatorsForEverybody">
+    <autocomplete-employee [(model)]="currentEmployee" [form]="formIndicator" propertyName="currentEmployee"
+      [isMandatory]="false" [isDisabled]="false" label="Employé sélectionné"
+      (onOptionSelected)="loadValues()"></autocomplete-employee>
+  </div>
+
+  <div class="dashboard-container" fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
+    <h2>Indicateurs Objectivés</h2>
+    <ng-container *ngFor="let item of values">
+      <mat-card class="indicator-card pointer" *ngIf="hasKpi(item)" appearance="outlined"
+        (click)="displayDetailedIndicator(item)">
+        <div class="indicator-title">{{ item.indicator.label }}</div>
+
+        <div class="indicator-value" [ngClass]="getValueClass(item)">
+          {{ item.value ? item.value : '' }}
+        </div>
+
+        <div class="indicator-date" [matTooltip]="'Mis à jour le '+formatDateHourFrance(item.indicator.lastUpdate)">
+          {{ item.date | date: 'd MMMM yyyy' }}
+        </div>
+
+        <div class="indicator-meta">
+          <span>{{getIndicatorMetas(item)}} </span>
+        </div>
+      </mat-card>
+    </ng-container>
+  </div>
+  <div class="dashboard-container" fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
+    <h2>Indicateurs meusurés</h2>
+    <ng-container *ngFor="let item of values">
+      <mat-card class="indicator-card pointer" *ngIf="!hasKpi(item)" appearance="outlined"
+        (click)="displayDetailedIndicator(item)">
+        <div class="indicator-title">{{ item.indicator.label }}</div>
+
+        <div class="indicator-value">
+          {{ item.value ? item.value : '' }}
+        </div>
+
+        <div class="indicator-date" [matTooltip]="'Mis à jour le '+formatDateHourFrance(item.indicator.lastUpdate)">
+          {{ item.date | date: 'd MMMM yyyy' }}
+        </div>
+      </mat-card>
+    </ng-container>
+  </div>
+</div>
