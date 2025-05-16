@@ -92,6 +92,7 @@ import { GenericDatepickerComponent } from '../forms/generic-datepicker/generic-
 import { GenericDatetimePickerComponent } from '../forms/generic-datetime-picker/generic-datetime-picker.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
+import { GenericToggleChoiceComponent } from '../forms/generic-toggle-choice/generic-toggle-choice.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
 import { AutocompleteCodeEEEPaysComponent } from '../forms/guichet-unique/autocomplete-code-eee-pays/autocomplete-code-eee-pays.component';
 import { AutocompleteCodeInseePaysNaissanceComponent } from '../forms/guichet-unique/autocomplete-code-insee-pays-naissance/autocomplete-code-insee-pays-naissance.component';
@@ -571,6 +572,7 @@ const routes: Routes = [
     SelectWebinarComponent,
     SelectIndicatorComponent,
     SelectIndicatorGroupComponent,
+    GenericToggleChoiceComponent
   ],
   exports: [
     HistoryComponent,
@@ -822,6 +824,7 @@ const routes: Routes = [
     SelectWebinarComponent,
     SelectIndicatorComponent,
     SelectIndicatorGroupComponent,
+    GenericToggleChoiceComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

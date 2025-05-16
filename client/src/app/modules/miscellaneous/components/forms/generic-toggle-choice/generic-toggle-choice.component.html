@@ -1,0 +1,8 @@
+<form [formGroup]="form!">
+  <mat-label ngClass="labelBeforeSlide" color="primary">{{displayLabel(firstValue)}}</mat-label>
+  <mat-slide-toggle color="primary" [formControlName]="propertyName">{{displayLabel(secondValue)}}
+  </mat-slide-toggle>
+  <div>
+    <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+  </div>
+</form>
