@@ -28,6 +28,7 @@ export const SERVICE_FIELD_TYPE_SELECT = "SERVICE_FIELD_TYPE_SELECT";
 export const MAX_SIZE_UPLOAD_FILES = 10485760;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
 export const ASSO_SERVICE_DOCUMENT_ENTITY_TYPE: EntityType = { entityType: 'AssoServiceDocument', tabName: 'Documents du service', entryPoint: 'quotation/service' };
+export const APPLICATION_CV_ENTITY_TYPE: EntityType = { entityType: 'Candidacy', tabName: 'Candidature CV', entryPoint: 'application/cv' };
 
 export const JSS_IBAN = "FR76 3000 4007 9900 0257 1438 960"
 export const JSS_BIC = "BNPAFRPPXXX"

@@ -1,0 +1,51 @@
+.dashboard-container {
+  padding: 1rem;
+}
+
+.indicator-card {
+  width: 220px;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.indicator-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.indicator-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  padding: 15px;
+  margin-bottom: 0.5rem;
+}
+
+.indicator-date {
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 0.25rem;
+}
+
+.indicator-meta {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.indicator-value.red {
+  color: #e53935;
+}
+
+.indicator-value.orange {
+  color: #fb8c00;
+}
+
+.indicator-value.yellow {
+  color: #fdd835;
+}
+
+.indicator-value.green {
+  color: #43a047;
+}

@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.miscellaneous.service;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -57,4 +58,6 @@ public interface NotificationService {
         public List<Notification> getNotificationsForTiers(Integer tiersId) throws OsirisException;
 
         public List<Notification> getNotificationsForResponsable(Integer responsableId) throws OsirisException;
+
+        public void notifyNewCandidacy(Candidacy candidacy) throws OsirisException;
 }

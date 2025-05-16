@@ -92,6 +92,7 @@ import { GenericDatepickerComponent } from '../forms/generic-datepicker/generic-
 import { GenericDatetimePickerComponent } from '../forms/generic-datetime-picker/generic-datetime-picker.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
+import { GenericToggleChoiceComponent } from '../forms/generic-toggle-choice/generic-toggle-choice.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
 import { AutocompleteCodeEEEPaysComponent } from '../forms/guichet-unique/autocomplete-code-eee-pays/autocomplete-code-eee-pays.component';
 import { AutocompleteCodeInseePaysNaissanceComponent } from '../forms/guichet-unique/autocomplete-code-insee-pays-naissance/autocomplete-code-insee-pays-naissance.component';
@@ -224,6 +225,8 @@ import { SelectFollowupComponent } from '../forms/select-followup/select-followu
 import { SelectFormaliteInfogreffeStatusComponent } from '../forms/select-formalite-infogreffe-status/select-formalite-infogreffe-status.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
+import { SelectIndicatorGroupComponent } from '../forms/select-indicator-group/select-indicator-group.component';
+import { SelectIndicatorComponent } from '../forms/select-indicator/select-indicator.component';
 import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-one/select-invoice-status-one.component';
 import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/select-invoice-status.component';
 import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
@@ -567,6 +570,9 @@ const routes: Routes = [
     SelectNotificationTypesComponent,
     NotificationListComponent,
     SelectWebinarComponent,
+    SelectIndicatorComponent,
+    SelectIndicatorGroupComponent,
+    GenericToggleChoiceComponent
   ],
   exports: [
     HistoryComponent,
@@ -816,6 +822,9 @@ const routes: Routes = [
     SelectEmployeeComponent,
     SelectNotificationTypesComponent,
     SelectWebinarComponent,
+    SelectIndicatorComponent,
+    SelectIndicatorGroupComponent,
+    GenericToggleChoiceComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

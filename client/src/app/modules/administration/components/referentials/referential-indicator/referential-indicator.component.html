@@ -1,0 +1,104 @@
+<div>
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
+      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Référentiel" [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>
+<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+  <form [formGroup]="entityForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr *ngIf="selectedEntity.id">
+            <td>
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.label" label="Libellé" [maxLength]="240" [form]="entityForm"
+                propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-indicator-group [(model)]="selectedEntity.indicatorGroup" label="Groupe d'indicateurs"
+                [form]="entityForm" propertyName="indicatorGroup" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-indicator-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="selectedEntity.sqlText" label="Requête SQL" [form]="entityForm"
+                propertyName="sqlText" [isMandatory]="true" [isDisabled]="!editMode"
+                [numberOfLines]="10"></generic-textarea>
+            </td>
+          </tr>
+        </table>
+        <h2>KPIs associés</h2>
+        <table class="full-width">
+          <ng-container *ngFor="let kpi of selectedEntity.kpis;let index = index">
+            <tr style="padding-top:20px">
+              <td colspan="2">
+                <autocomplete-employee [(model)]="kpi.employee" [form]="entityForm" [propertyName]="'employee'+index"
+                  [isMandatory]="true" [isDisabled]="!editMode" label="Collaborateur"></autocomplete-employee>
+              </td>
+              <td colspan="2">
+                <generic-datepicker [(model)]="kpi.applicationDate" label="Date d'application" [form]="entityForm"
+                  [propertyName]="'applicationDate'+index" [isMandatory]="true"
+                  [isDisabled]="!editMode"></generic-datepicker>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="kpi.minValue" label="Valeur min à atteindre" [form]="entityForm"
+                  [propertyName]="'minValue'+index" [isMandatory]="false" [isDisabled]="!editMode"
+                  type="number"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="kpi.mediumValue" label="Valeur intermédiaire à atteindre" [form]="entityForm"
+                  [propertyName]="'mediumValue'+index" [isMandatory]="false" [isDisabled]="!editMode"
+                  type="number"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="kpi.maxValue" label="Valeur max à atteindre" [form]="entityForm"
+                  [propertyName]="'maxValue'+index" [isMandatory]="true" [isDisabled]="!editMode"
+                  type="number"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="kpi.baseValue" label="Valeur de référence" [form]="entityForm"
+                  [propertyName]="'baseValue'+index" [isMandatory]="false" [isDisabled]="!editMode"
+                  type="number"></generic-input>
+              </td>
+            </tr>
+            <tr *ngIf="editMode">
+              <td colspan="2">
+                <select-employee [(model)]="employeesToCopy" label="Copier sur les employés suivants"
+                  [form]="entityForm" [propertyName]="'employeesToCopy'+index" [isMandatory]="false"></select-employee>
+              </td>
+              <td colspan="2">
+                <button (click)="copyOnOtherEmployees(index)" mat-raised-button color="accent">Copier sur les autres
+                  collaborateurs </button>
+              </td>
+            </tr>
+          </ng-container>
+        </table>
+        <button (click)="addKpi()" mat-raised-button color="accent">Ajouter un KPI</button>
+      </fieldset>
+    </div>
+  </form>
+</div>

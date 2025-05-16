@@ -24,10 +24,12 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.model.CommentSearch;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.model.Webinar;
+import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
 import com.jss.osiris.modules.osiris.crm.service.CommentService;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.crm.service.WebinarService;
@@ -52,6 +54,9 @@ public class CrmController {
 
         @Autowired
         WebinarParticipantService webinarParticipantService;
+
+        @Autowired
+        CandidacyService candidacyService;
 
         @JsonView(JacksonViews.MyJssDetailedView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
@@ -284,5 +289,13 @@ public class CrmController {
 
                 return new ResponseEntity<WebinarParticipant>(
                                 webinarParticipantService.deleteWebinarParticipant(webinarParticipant), HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/candidacies")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<List<Candidacy>> getCandidacies() {
+                return new ResponseEntity<List<Candidacy>>(
+                                candidacyService.getCandidacies(),
+                                HttpStatus.OK);
         }
 }

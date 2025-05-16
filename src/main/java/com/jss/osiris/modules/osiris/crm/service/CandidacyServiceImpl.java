@@ -1,0 +1,64 @@
+package com.jss.osiris.modules.osiris.crm.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.commons.collections4.IterableUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
+import com.jss.osiris.modules.osiris.crm.repository.CandidacyRepository;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
+
+@Service
+public class CandidacyServiceImpl implements CandidacyService {
+
+    @Autowired
+    CandidacyRepository candidacyRepository;
+
+    @Autowired
+    NotificationService notificationService;
+
+    @Autowired
+    MailService mailService;
+
+    @Autowired
+    MailHelper mailHelper;
+
+    @Override
+    public List<Candidacy> getCandidacies() {
+        return IterableUtils.toList(candidacyRepository.findAll());
+    }
+
+    @Override
+    public Candidacy getCandidacy(Integer id) {
+        Optional<Candidacy> candidacy = candidacyRepository.findById(id);
+        if (candidacy.isPresent())
+            return candidacy.get();
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Candidacy addOrUpdateCandidacy(
+            Candidacy candidacy) throws OsirisException {
+        Candidacy existingCandidacy = null;
+
+        mailService.populateMailId(candidacy.getMail());
+
+        existingCandidacy = candidacyRepository.findByMail(candidacy.getMail());
+        if (existingCandidacy != null)
+            candidacy.setId(existingCandidacy.getId());
+        candidacy = candidacyRepository.save(candidacy);
+
+        mailHelper.sendConfirmationCandidacyMyJss(candidacy);
+        notificationService.notifyNewCandidacy(candidacy);
+
+        return candidacy;
+    }
+}

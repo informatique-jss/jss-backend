@@ -1,3 +1,475 @@
-<p>
-  privacy-policy works!
-</p>
+<section class="pt-5 mt-5 container">
+  <nav aria-label="breadcrumb">
+    <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
+      <li class="breadcrumb-item">
+        <span *ngIf="selectedTab">{{ selectedTab.label }}</span>
+      </li>
+    </ol>
+  </nav>
+
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" *ngFor="let tab of tabs">
+      <a class="nav-link" [class.active]="selectedTab.id === tab.id" (click)="selectTab(tab)">
+        <i class="fi-home me-2"></i>
+        {{ tab.label }}
+      </a>
+    </li>
+  </ul>
+</section>
+
+<section class="container pb-5">
+  <div class="tab-content mt-4">
+    <div class="tab-pane fade show active" *ngIf="selectedTab.id === 'privacy-policy'">
+      <div class="row">
+        <aside class="col-3 me-5">
+          <h4 class="pt-3 pt-lg-1 mb-4">Sommaire</h4>
+          <ul class="list-unstyled mb-lg-5 mb-4">
+            <li class="border-bottom">
+              <span class="h6 mb-0">
+                <p>1. Introduction à la Gestion des Données Personnelles</p>
+              </span>
+            </li>
+            <li class="border-bottom">
+              <span class="h6 mb-0">
+                <p> 2. Types de Données Collectées</p>
+              </span>
+            </li>
+            <li class="border-bottom ">
+              <span class="h6 mb-0">
+                <p>3. Finalités de la Collecte des Données</p>
+              </span>
+            </li>
+            <li class="border-bottom ">
+              <span class="h6 mb-0">
+                <p>4. Partage des Données avec des Tiers</p>
+              </span>
+            </li>
+            <li class="border-bottom ">
+              <span class="h6 mb-0">
+                <p>5. Vos Droits concernant vos Données Personnelles</p>
+              </span>
+            </li>
+            <li class="border-bottom ">
+              <span class="h6 mb-0">
+                <p>6. Sécurité des Données Personnelles</p>
+              </span>
+            </li>
+            <li class="border-bottom">
+              <span class="h6 mb-0">
+                <p>7. Conservation des Données</p>
+              </span>
+            </li>
+            <li class="border-bottom">
+              <span class="h6 mb-0">
+                <p>8. Modification de la Politique</p>
+              </span>
+            </li>
+          </ul>
+        </aside>
+
+        <div class="col-8">
+          <h1 class="mb-5">Politique de confidentialité</h1>
+          <h3>1. Introduction à la Gestion des Données Personnelles</h3>
+          <p>
+            Nous prenons très au sérieux la protection de vos données personnelles et nous nous engageons à respecter
+            toutes les réglementations en vigueur. Cette politique de confidentialité vous informe
+            sur
+            la manière dont nous collectons, utilisons, stockons et protégeons vos informations personnelles. Elle a
+            pour
+            objectif de vous garantir une transparence totale sur la gestion de vos données et vos droits en tant
+            qu'utilisateur.
+          </p>
+
+          <h3>2. Types de Données Collectées</h3>
+          <p>Nous collectons divers types d'informations lorsque vous interagissez avec nos services :
+          </p>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Informations identifiables personnellement : telles que
+              votre nom, adresse e-mail, numéro de téléphone,
+              adresse postale.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Données d’utilisation : telles que les informations sur votre appareil, votre adresse IP, votre activité
+              sur
+              notre site web, ainsi que des informations liées aux interactions avec nos services.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Cookies et technologies similaires : Nous utilisons des cookies pour améliorer l’expérience utilisateur
+              et
+              analyser le comportement sur notre site.</p>
+          </li>
+          <p>
+            Ces informations sont collectées à des fins spécifiques que nous expliquons ci-dessous.
+          </p>
+
+          <h3>3. Finalités de la Collecte des Données</h3>
+          <p>Nous collectons vos données personnelles dans plusieurs contextes, notamment :
+          </p>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Fourniture des services : Pour gérer et améliorer l'expérience utilisateur, notamment la personnalisation
+              des services et la gestion de vos demandes.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Communication : Pour vous envoyer des informations relatives à vos demandes, à nos produits ou services,
+              ou pour vous informer de mises à jour importantes.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Amélioration continue : Pour analyser et améliorer la qualité de nos services en étudiant les habitudes
+              et comportements des utilisateurs.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Conformité légale : Nous pouvons être amenés à traiter vos données afin de respecter nos obligations
+              légales ou contractuelles</p>
+          </li>
+
+          <h3>4. Partage des Données avec des Tiers</h3>
+          <p>Nous nous engageons à ne pas vendre ni échanger vos données personnelles. Cependant, nous pouvons partager
+            vos informations dans les cas suivants :
+          </p>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Avec nos prestataires de services : Nous faisons appel à des tiers pour faciliter nos services, tels que
+              l’hébergement, l’analyse des données ou le marketing, mais uniquement dans la mesure nécessaire pour leur
+              fourniture.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Si la loi l'exige : En cas de demande légale, comme dans le cadre d'une procédure judiciaire, nous
+              pourrions être amenés à divulguer vos informations.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Transfert dans le cadre d'une fusion ou acquisition : Si notre entreprise est impliquée dans une fusion,
+              acquisition ou cession d'actifs, vos données personnelles peuvent être transférées dans le cadre de cette
+              opération.</p>
+          </li>
+
+          <h3>5. Vos Droits concernant vos Données Personnelles</h3>
+          <p>Conformément aux législations applicables, vous disposez de plusieurs droits concernant vos données
+            personnelles :
+          </p>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Droit d’accès : Vous avez le droit de demander une copie des données personnelles que nous détenons à
+              votre sujet.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Droit de rectification : Vous pouvez demander la correction de toute information inexacte ou incomplète.
+            </p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Droit à l’effacement : Vous pouvez demander l’effacement de vos données personnelles sous certaines
+              conditions.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Droit d’opposition et de limitation : Vous pouvez vous opposer à certains traitements de vos données ou
+              demander leur limitation.</p>
+          </li>
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 bullet-point"></span>
+            <p>Droit à la portabilité : Vous avez le droit de recevoir vos données dans un format structuré et
+              lisible, ou de les transférer à un autre responsable du traiteme</p>
+          </li>
+          <p>Pour exercer ces droits, vous pouvez nous contacter via les informations de contact présentes dans cette
+            politique.</p>
+          <br>
+          <h3>6. Sécurité des Données Personnelles</h3>
+          <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour garantir la sécurité et
+            la confidentialité de vos données personnelles. Ces mesures incluent, sans s’y limiter, le cryptage,
+            l'authentification et la surveillance continue des systèmes. Nous avons également mis en place des
+            procédures pour détecter et prévenir toute violation de données.
+          </p>
+          <br>
+          <h3>7. Conservation des Données</h3>
+          <p>Nous conservons vos données personnelles uniquement pendant la durée nécessaire pour atteindre les
+            finalités pour lesquelles elles ont été collectées, à moins que la loi n'exige une période de conservation
+            plus longue. Les critères de conservation varient selon la nature des données et les obligations légales et
+            contractuelles applicables.
+          </p>
+          <br>
+          <h3>8. Modification de la Politique</h3>
+          <p>Nous pouvons mettre à jour cette politique de temps à autre, notamment pour refléter les évolutions
+            législatives ou les modifications de nos pratiques en matière de protection des données. Toute mise à jour
+            sera publiée sur cette page et entrera en vigueur dès sa publication. Nous vous encourageons à consulter
+            régulièrement cette page pour être informé des changements.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade show active" *ngIf="selectedTab.id === 'disclaimer'">
+      <div class="row">
+        <aside class="col-lg-3 mb-4 mb-lg-0 me-5">
+          <div>
+            <h4 class="pt-3 pt-lg-1 mb-4">Sommaire</h4>
+            <ul class="list-unstyled">
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>1. Editeur et hébergeur</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p> 2. License d'usage privé</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>3. Déclaration auprès de la CNIL</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>4. Droit d'accès et de rectification</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>5. Confidentialité des données</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>6. Liens</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>7. Votre responsabilité d'utilisateur</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>8. Inscription</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>9. Paiement</p>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <div class="col-lg-8">
+          <h1 class="mb-5">Mentions légales</h1>
+          <h3>1. Editeur et hébergeur</h3>
+          <p>
+            SOCIETE DE PUBLICATIONS ET DE PUBLICITE POUR LES SOCIETES - SPPS
+            SAS au capital de 216 000 €   552 074 627 RCS PARIS
+            8 rue Saint Augustin 75002 PARIS
+            Tél : 01 47 03 10 10
+
+            qui est détenue par
+            FINANCIERE DU MESNIL
+            8 rue Saint Augustin 75002 PARIS
+            RCS Paris B 402 283 212 Siret 40228321200023
+
+            La Directrice de la publication est Myriam de Montis.
+            Le Directeur de la rédaction est Cyrille de Montis.
+            La Secrétaire Générale de la rédaction est Cécile Leseur.
+
+            Ce site est reconnu en tant que service de presse en ligne dans la catégorie « Presse professionnelle » .
+            Son numéro de CPPAP est le 1124 X 93537.
+
+            N° ISSN : 3039-9742
+
+            Le contenu de ce site est protégé par le Code de la propriété intellectuelle et la convention de Berne.
+            Toute reproduction, autre que pour l'usage privé du visiteur du site, en vue notamment d'une diffusion
+            publique par n'importe quel moyen, est strictement interdite sans l'autorisation écrite du webmaster de ce
+            site.
+          </p>
+
+          <h3>2. License d'usage privé</h3>
+          <p>En se connectant au site jss.fr, et de ce seul fait, l'utilisateur reconnaît accepter de SPPS, éditrice du
+            site, une licence dont il s'engage à respecter les termes énoncés ci-après : L'utilisateur du site s'engage
+            à respecter les règles du Code de la propriété intellectuelle de tous les contenus proposés sur le site,
+            c'est-à-dire à ne pas reproduire, résumer, modifier, altérer ou rediffuser, sans autorisation expresse
+            préalable de l'éditeur, quelques parties du site (par exemple mais non exclusivement textes, illustrations,
+            logos, marques, icônes, applications ou logiciels), pour un usage autre que strictement privé, excluant
+            toute reproduction, rediffusion ou mise en réseau, sous quelque forme que ce soit, à des fins
+            professionnelles ou de diffusion en nombre. Ce droit d'usage privé sur les contenus du site est personnel et
+            non transmissible. Il est bien entendu que l'abonné, l'acheteur et l'utilisateur d'une publication, d'un
+            article ou d’une annonce sur support papier ou numérique, n'acquièrent qu'un droit d'usage de cette
+            publication, de cette annonce ou de cet article. Toute autre utilisation, par conséquent non autorisée,
+            constitue une contrefaçon sanctionnée pénalement.
+          </p>
+          <br>
+          <h3>3. Déclaration auprès de la CNIL</h3>
+          <p>Le site a fait l'objet d'une déclaration des traitements de données personnelles mis en œuvre dans le cadre
+            d'un site Internet auprès de la Commission Nationale de l'Informatique et des Libertés, en application des
+            articles 15 et 16 de la loi 78-17 du 6 janvier 1978 relative à l'informatique, aux fichiers et aux libertés
+            et de la délibération n°2005-112 du 7 juin 2005, portant création d’une norme simplifiée concernant les
+            traitements automatisés de données à caractère personnel relatifs à la gestion des fichiers de clients et de
+            prospects et portant abrogation des normes simplifiées 11, 17 et 25.
+          </p>
+          <h3>4. Droit d'accès et de rectification</h3>
+          <p>MyJSS ne saurait être tenu responsable en cas d'indisponibilité temporaire des services, ni des
+            conséquences liées à l'utilisation des informations fournies par la plateforme.
+          </p>
+          <h3>5. Confidentialité des données</h3>
+          <p>Les informations liées aux achats effectués sur le site ainsi que toutes les informations personnelles que
+            vous saisissez sur le site sont traitées en toute confidentialité et nous nous engageons à ne pas les
+            transmettre ou les céder à des tiers.
+          </p>
+          <h3>6. Liens</h3>
+          <p>Les informations liées aux achats effectués sur le site ainsi que toutes les informations personnelles que
+            vous saisissez sur le site sont traitées en toute confidentialité et nous nous engageons à ne pas les
+            transmettre ou les céder à des tiers.
+          </p>
+          <h3>7. Votre responsabilité d'utilisateur</h3>
+          <p>L’utilisateur reconnaît qu’il a vérifié que le site ne pouvait lui transmettre aucun virus. SPPS n’est pas
+            responsable de la présence de virus sur le site. SPPS n’est pas non plus responsable de l’absence ou de
+            l’inexactitude de certaines informations.L’utilisateur reconnaît qu’il utilise sous sa seule responsabilité
+            les informations et renseignements diffusés sur le site. SPPS ne garantit pas l’exactitude de ces
+            informations et renseignements, qui sont donnés à titre purement indicatif.Le site est disponible 24 h /
+            24, sauf en cas de difficultés techniques internes ou externes et en cas de force majeure. Son
+            fonctionnement pourra être interrompu pour les besoins de la maintenance.
+          </p>
+          <h3>8. Inscription</h3>
+          <p>L’accès à votre compte peut s’effectuer par saisie de votre identifiant et mot de passe associé, dont vous
+            assurez seul la confidentialité.
+            L’utilisation du site suivant votre inscription est valable pour une durée indéterminée. Nous nous réservons
+            la possibilité d’y mettre fin à tout moment, par courrier électronique. En cas de non respect des
+            obligations inhérentes à votre responsabilité ci-avant, l’accès à votre espace personnel peut être,
+            immédiatement et sans préavis, temporairement ou définitivement suspendu au moyen de la désactivation de
+            votre compte et ce, sans préjudice de nos autres droits.
+          </p>
+          <h3>9. Paiment</h3>
+          <p>Le paiement en ligne s'effectue via Central
+            pay <a class="text-gray" href="https://customer.centralpay.net/home/687a7202-d59d-499e-b8db-5068a9ef8033">
+              https://customer.centralpay.net/home/687a7202-d59d-499e-b8db-5068a9ef8033</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade show active" *ngIf="selectedTab.id === 'terms'">
+      <div class="row">
+        <aside class="col-lg-3 mb-4 mb-lg-0 me-5">
+          <div>
+            <h4 class="pt-3 pt-lg-1 mb-4">Sommaire</h4>
+            <ul class="list-unstyled">
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>1. Objet</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p> 2. Acceptation des CGU</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>3. Accès au service</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>4. Responsabilité de l'utilisateur</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>5. Responsabilité de MyJSS</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>6. Protection des Données Personnelles</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>7. Propriété intellectuelle</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>8. Modification des CGU</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>9. Loi applicable et juridiction compétente</p>
+                </span>
+              </li>
+              <li class="border-bottom">
+                <span class="h6 mb-0">
+                  <p>10. Contact</p>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <div class="col-lg-8">
+          <h1 class="mb-5">Conditions générales d'utilisation</h1>
+          <h3>1. Objet</h3>
+          <p class="pb-2">
+            Les présentes Conditions Générales d'Utilisation (CGU) ont pour objet de définir les modalités et conditions
+            d'utilisation du site MyJSS ainsi que les droits et obligations des utilisateurs.
+          </p>
+          <h3>2. Acceptation des CGU</h3>
+          <p class="pb-2">L'utilisation du site MyJSS implique l'acceptation pleine et entière des présentes CGU. Si
+            l'utilisateur
+            n'accepte pas ces conditions, il est invité à ne pas utiliser les services de MyJSS.
+          </p>
+          <h3>3. Accès au service</h3>
+          <p class="pb-2">MyJSS est accessible à tout utilisateur disposant d'un accès à Internet. Certains services
+            peuvent
+            nécessiter la création d'un compte personnel.
+          </p>
+
+          <h3>4. Responsabilité de l'utilisateur</h3>
+          <p class="pb-2">L'utilisateur s'engage à fournir des informations exactes lors de son inscription et à ne pas
+            utiliser le
+            site à des fins frauduleuses ou illégales.
+          </p>
+          <h3>5. Responsabilité de MyJSS</h3>
+          <p class="pb-2">MyJSS met tout en œuvre pour assurer l'exactitude et la mise à jour des informations présentes
+            sur son
+            site. Toutefois, MyJSS ne saurait être tenu responsable des erreurs, omissions ou interruptions de service.
+          </p>
+          <h3>6. Protection des Données Personnelles</h3>
+          <p class="pb-2">Les informations personnelles collectées par MyJSS sont traitées conformément à notre
+            politique de
+            confidentialité et conformément au RGPD.
+          </p>
+          <h3>7. Propriété intellectuelle</h3>
+          <p lass="pb-2">Tous les contenus présents sur MyJSS (textes, images, logos, etc.) sont protégés par le droit
+            de la
+            propriété intellectuelle et ne peuvent être reproduits sans autorisation préalable.
+          </p>
+          <h3>8. Modification des CGU</h3>
+          <p class="pb-2">MyJSS se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront
+            informés des
+            modifications via le site.
+          </p>
+          <h3>9. Loi applicable et juridiction compétente</h3>
+          <p class="pb-2">Les présentes CGU sont soumises au droit français. En cas de litige, les tribunaux compétents
+            seront ceux
+            de Paris.
+          </p>
+          <h3>10. Contact</h3>
+          <p class="pb-2">Pour toute question relative aux CGU, vous pouvez nous contacter à l'adresse suivante :
+            contact&#64;myjss.com
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

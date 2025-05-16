@@ -15,7 +15,6 @@ import { WebinarParticipantService } from '../../services/webinar.participant.se
 export class WebinarsComponent implements OnInit {
   webinarParticipant: WebinarParticipant = { mail: {} as Mail } as WebinarParticipant;
   isConditionAccepted: boolean = false;
-  checkedOnce: boolean = false;
 
   constructor(private webinarParticipantService: WebinarParticipantService,
     private appService: AppService,
@@ -29,23 +28,20 @@ export class WebinarsComponent implements OnInit {
   webinarsForm = this.formBuilder.group({});
 
   subscribeWebinar(event: any): any {
-    this.checkedOnce = true;
-    if (!this.webinarParticipant.firstname || !this.webinarParticipant.lastname || !this.webinarParticipant.mail.mail || !this.isConditionAccepted) {
-      return;
+    if (!this.webinarParticipant.firstname || !this.webinarParticipant.lastname || !this.webinarParticipant.mail.mail) {
+      this.appService.displayToast("Merci de remplir les champs obligatoires", true, "Une erreur s’est produite...", 3000);
     }
     if (!this.isConditionAccepted) {
-      this.appService.displayToast("Merci d'accepter les conditions.", true, "Une erreur s’est produite...", 3000);
+      this.appService.displayToast("Merci d'accepter les conditions", true, "Une erreur s’est produite...", 3000);
       return;
     }
     this.webinarParticipantService.subscribeWebinar(this.webinarParticipant).subscribe(response => {
       if (response) {
-        this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Inscription validée", 3000);
+        this.appService.displayToast("Vous allez recevoir un mail de confirmation", false, "Inscription validée", 3000);
         this.webinarsForm.reset();
         this.isConditionAccepted = false;
         this.webinarParticipant = { mail: {} as Mail } as WebinarParticipant;
-        this.checkedOnce = false;
       }
     });
   }
-
 }

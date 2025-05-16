@@ -29,7 +29,7 @@
           <generic-toggle [(model)]="commentSearch.isDeleted" label="Commentaire supprimé ?" [form]="commentSearchForm"
             propertyName="isDeleted" [isMandatory]="false" [isDisabled]="false"></generic-toggle>
         </td>
-        <td>
+        <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchComments(0)" class="add-button">
             <mat-icon>search</mat-icon>
           </button>

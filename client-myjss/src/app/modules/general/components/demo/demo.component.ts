@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AppService } from '../../../../libs/app.service';
-import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { MailService } from '../../services/mail.service';
 
 @Component({
@@ -12,16 +11,11 @@ import { MailService } from '../../services/mail.service';
 })
 export class DemoComponent implements OnInit {
   isConditionAccepted: boolean = false;
-  checkedOnce: boolean = false;
 
   firstName: string = "";
   lastName: string = "";
   phoneNumber: string = "";
   mail: string = "";
-
-  validateEmail = validateEmail;
-  validateFrenchPhone = validateFrenchPhone;
-  validateInternationalPhone = validateInternationalPhone;
   demoForm = this.formBuilder.group({});
 
   constructor(private formBuilder: FormBuilder,
@@ -33,8 +27,11 @@ export class DemoComponent implements OnInit {
   }
 
   getDemoByMail(event: any) {
-    this.checkedOnce = true;
-    if (!this.firstName || !this.lastName || !this.mail || !this.isConditionAccepted) {
+    if (!this.firstName || !this.lastName || !this.mail) {
+      this.appService.displayToast("Merci de remplir les champs obligatoires", true, "Une erreur s’est produite...", 3000);
+    }
+    if (!this.isConditionAccepted) {
+      this.appService.displayToast("Merci d'accepter les conditions", true, "Une erreur s’est produite...", 3000);
       return;
     }
 
@@ -42,7 +39,6 @@ export class DemoComponent implements OnInit {
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande validée", 3000);
         this.demoForm.reset();
-        this.checkedOnce = false;
         this.firstName = "";
         this.lastName = "";
         this.phoneNumber = "";

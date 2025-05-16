@@ -93,6 +93,8 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   ACTIVE_DIRECTORY_GROUP_REFERENTIAL = "Groupes Active Directory";
   PAPER_SET_TYPE_REFERENTIAL = "Types d'action documentaire";
   SERVICE_FIELD_TYPE_REFERENTIAL = "Types de champs de service";
+  INDICATOR_REFERENTIAL = "Indicateurs";
+  INDICATOR_GROUP_REFERENTIAL = "Groupe d'indicateurs";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -169,6 +171,8 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.SERVICE_FAMILY_REFERENTIAL);
     this.referentials.push(this.SERVICE_FAMILY_GROUP_REFERENTIAL);
     this.referentials.push(this.SERVICE_FIELD_TYPE_REFERENTIAL);
+    this.referentials.push(this.INDICATOR_REFERENTIAL);
+    this.referentials.push(this.INDICATOR_GROUP_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

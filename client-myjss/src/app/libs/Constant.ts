@@ -1,3 +1,4 @@
+import { AttachmentType } from "../modules/my-account/model/AttachmentType";
 import { BillingLabelType } from "../modules/my-account/model/BillingLabelType";
 import { DocumentType } from "../modules/my-account/model/DocumentType";
 import { PaymentType } from "../modules/my-account/model/PaymentType";
@@ -27,4 +28,5 @@ export interface Constant {
   myJssCategoryFormality: MyJssCategory;
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
   categoryExclusivity: Category;
+  attachmentTypeApplicationCv: AttachmentType;
 }

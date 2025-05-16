@@ -20250,7 +20250,7 @@ img-comparison-slider:focus {
 
 .bg-yellow-custom {
   background-color: rgba(243, 227, 202) !important;
-  background: url('/assets/images/background1.svg') no-repeat left center,
+  background: url('/assets/images/background.svg') no-repeat left center,
     url('/assets/images/background2.svg') no-repeat right center;
   background-size: cover, cover;
   background-position: left center, right center;
@@ -20263,7 +20263,7 @@ img-comparison-slider:focus {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('/assets/images/background1.svg') no-repeat left center,
+  background: url('/assets/images/background.svg') no-repeat left center,
     url('/assets/images/background2.svg') no-repeat right center;
   background-size: cover, cover;
   background-position: left center, right center;
@@ -20383,6 +20383,15 @@ h1.secondary-heading,
   margin-right: 10px;
   flex-shrink: 0;
   background-color: #CEB793 !important;
+}
+
+.bullet-point {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+  background-color: var(--ar-body-color) !important;
 }
 
 .background-opacity {

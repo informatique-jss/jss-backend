@@ -1,5 +1,4 @@
 import { Provider } from '@angular/core';
-import { JssCategory } from '../../../../../../client-jss/src/app/main/model/JssCategory';
 import { AccountingAccount } from '../../accounting/model/AccountingAccount';
 import { AccountingAccountClass } from '../../accounting/model/AccountingAccountClass';
 import { AccountingJournal } from "../../accounting/model/AccountingJournal";
@@ -44,6 +43,7 @@ import { CustomerOrderOrigin } from './CustomerOrderOrigin';
 import { DeliveryService } from './DeliveryService';
 import { Department } from "./Department";
 import { DocumentType } from "./DocumentType";
+import { JssCategory } from './JssCategory';
 import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
 import { MyJssCategory } from './MyJssCategory';
@@ -101,6 +101,7 @@ export interface Constant {
   attachmentTypeRefusInfogreffe: AttachmentType;
   attachmentTypeAutreInfogreffe: AttachmentType;
   attachmentTypeClientCommunication: AttachmentType;
+  attachmentTypeApplicationCv: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeDeboursNonTaxable: BillingType;
@@ -177,6 +178,7 @@ export interface Constant {
   employeeMailResponsible: Employee;
   employeeInvoiceReminderResponsible: Employee;
   employeeSalesDirector: Employee;
+  employeeCandidacyResponsible: Employee;
   transfertFundsTypePhysique: TransfertFundsType;
   transfertFundsTypeMoral: TransfertFundsType;
   transfertFundsTypeBail: TransfertFundsType;

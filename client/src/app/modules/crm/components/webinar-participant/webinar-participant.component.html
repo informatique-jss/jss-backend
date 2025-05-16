@@ -2,8 +2,10 @@
   <div class=" full-width">
     <table class="full-width table-fixed-layout table-bilan">
       <tr>
-        <select-webinar [(model)]="selectedWebinar" label="Webinaire" [form]="webinarParticipantForm"
-          propertyName="webinar" [isMandatory]="true" [isDisabled]=false></select-webinar>
+        <td>
+          <select-webinar [(model)]="selectedWebinar" label="Webinaire" [form]="webinarParticipantForm"
+            propertyName="webinar" [isMandatory]="true" [isDisabled]=false></select-webinar>
+        </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchWebinarParticipants()"
             class="add-button">

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -36,5 +37,8 @@ public interface NotificationRepository extends QueryCacheCrudRepository<Notific
 
         List<Notification> findByEmployeeAndNotificationTypeAndCustomerOrder(Employee toEmployee,
                         String notificationType, CustomerOrder customerOrder);
+
+        List<Notification> findByEmployeeAndNotificationTypeAndCandidacy(Employee toEmployee,
+                        String notificationType, Candidacy candidacy);
 
 }

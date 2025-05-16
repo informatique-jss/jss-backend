@@ -47,6 +47,18 @@ export function formatDateForSortTable<T>(element: T, column: SortTableColumn<T>
   return "";
 }
 
+export function formatDateHourFrance(dateInput: Date) {
+  const date = new Date(dateInput);
+
+  const day = padTo2Digits(date.getDate());
+  const month = padTo2Digits(date.getMonth() + 1);
+  const year = date.getFullYear();
+  const hours = padTo2Digits(date.getHours());
+  const minutes = padTo2Digits(date.getMinutes());
+
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
 export function formatDateFrance(date: Date) {
   if (!(date instanceof Date))
     date = new Date(date);

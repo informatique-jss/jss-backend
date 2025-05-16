@@ -48,7 +48,7 @@ export class NotificationListComponent implements OnInit {
     this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "N° de commande", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn<Notification>);
     this.displayedColumns.push({ id: "quotation", fieldName: "quotation.id", label: "N° de devis", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir le devis associé" } as SortTableColumn<Notification>);
     this.displayedColumns.push({ id: "affairesList", fieldName: "customerOrder.affairesList", label: "Affaire(s)" } as SortTableColumn<Notification>);
-    this.displayedColumns.push({ id: "service", fieldName: "service.serviceType.label", label: "Service" } as SortTableColumn<Notification>);
+    this.displayedColumns.push({ id: "service", fieldName: "service.serviceLabelToDisplay", label: "Service" } as SortTableColumn<Notification>);
     this.displayedColumns.push({ id: "provision", fieldName: "provision.provisionType.label", label: "Prestation", isShrinkColumn: true } as SortTableColumn<Notification>);
     this.displayedColumns.push({
       id: "tiers", fieldName: "tiers", label: "Tiers", actionIcon: "visibility", actionTooltip: "Voir le tiers associé", actionLinkFunction: this.getColumnLink, valueFonction: (element: Notification, column: SortTableColumn<Notification>) => {
@@ -113,13 +113,19 @@ export class NotificationListComponent implements OnInit {
 
     this.tableAction.push({
       actionIcon: "delete", actionName: "Supprimer", actionClick: (column: SortTableAction<Notification>, element: Notification, event: any) => {
-        this.delete(element, false);
+        this.delete(element, false, false);
       }, display: true,
     } as SortTableAction<Notification>);
 
     this.tableAction.push({
-      actionIcon: "delete", actionName: "Supprimer tout", actionClick: (column: SortTableAction<Notification>, element: Notification, event: any) => {
-        this.delete(element, true);
+      actionIcon: "delete", actionName: "Supprimer toutes les lues", actionClick: (column: SortTableAction<Notification>, element: Notification, event: any) => {
+        this.delete(element, true, true);
+      }, display: true,
+    } as SortTableAction<Notification>);
+
+    this.tableAction.push({
+      actionIcon: "delete", actionName: "Supprimer toutes les non lues", actionClick: (column: SortTableAction<Notification>, element: Notification, event: any) => {
+        this.delete(element, true, false);
       }, display: true,
     } as SortTableAction<Notification>);
 
@@ -204,34 +210,41 @@ export class NotificationListComponent implements OnInit {
     combineLatest(promises).subscribe(response => this.refresh());
   }
 
-  delete(notification: Notification, isAll: boolean) {
-    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-      maxWidth: "400px",
-      data: {
-        title: "Supprimer " + (isAll ? "toutes les" : "la") + " notification" + (isAll ? "s" : ""),
-        content: "Êtes-vous sûr de vouloir supprimer " + (isAll ? "toutes les" : "cette") + " notification" + (isAll ? "s" : "") + " ?",
-        closeActionText: "Annuler",
-        validationActionText: "Confirmer"
-      }
-    });
+  delete(notification: Notification, isAll: boolean, isRead: boolean) {
+    if (!isAll) {
+      this.notificationService.deleteNotification(notification).subscribe(reponse => {
+        this.refresh();
+      })
+    } else {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Supprimer " + (isAll ? "toutes les" : "la") + " notification" + (isAll ? "s" : ""),
+          content: "Êtes-vous sûr de vouloir supprimer " + (isAll ? "toutes les" : "cette") + " notification" + (isAll ? "s" : "") + (isRead ? ' lues' : ' non lues') + " ?",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
+        }
+      });
 
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult) {
-        if (isAll)
-          return this.deleteAll();
-        this.notificationService.deleteNotification(notification).subscribe(reponse => {
-          this.refresh();
-        })
-      }
-    });
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult) {
+          if (isAll)
+            return this.deleteAll(isRead);
+          this.notificationService.deleteNotification(notification).subscribe(reponse => {
+            this.refresh();
+          })
+        }
+      });
+    }
   }
 
 
-  deleteAll() {
+  deleteAll(isRead: boolean) {
     let promises = [];
     if (this.notifications)
       for (let notification of this.notifications) {
-        promises.push(this.notificationService.deleteNotification(notification));
+        if (isRead && notification.isRead || !isRead && !notification.isRead)
+          promises.push(this.notificationService.deleteNotification(notification));
       }
     combineLatest(promises).subscribe(response => this.refresh());
   }

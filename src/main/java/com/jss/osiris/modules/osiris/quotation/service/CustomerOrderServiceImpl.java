@@ -1560,13 +1560,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException {
         if (customerOrders != null && customerOrders.size() > 0) {
             List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
-                    false, false).stream().filter(n -> n.getCustomerOrder() != null).toList();
+                    false, false);
+
+            if (notifications != null)
+                notifications = notifications.stream().filter(n -> n.getCustomerOrder() != null).toList();
 
             for (CustomerOrder customerOrder : customerOrders) {
                 completeAdditionnalInformationForCustomerOrder(customerOrder);
-                notifications.stream().filter(n -> n.getCustomerOrder().getId().equals(customerOrder.getId()))
-                        .findFirst()
-                        .ifPresent(n -> customerOrder.setIsHasNotifications(true));
+                if (notifications != null)
+                    notifications.stream().filter(n -> n.getCustomerOrder().getId().equals(customerOrder.getId()))
+                            .findFirst()
+                            .ifPresent(n -> customerOrder.setIsHasNotifications(true));
             }
         }
 

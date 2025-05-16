@@ -7,6 +7,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
+import { CandidacyComponent } from '../candidacy/candidacy.component';
 import { CommunicationPreferenceComponent } from '../communication-preference/communication-preference.component';
 import { MyjssCommentManagementComponent } from '../myjss-comment-management/myjss-comment-management.component';
 import { WebinarParticipantComponent } from '../webinar-participant/webinar-participant.component';
@@ -24,6 +25,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     MiscellaneousModule,
+    MatButtonModule,
     MatTableModule,
     MatTabsModule,
     MatIconModule,
@@ -33,7 +35,8 @@ const routes: Routes = [
     CrmComponent,
     CommunicationPreferenceComponent,
     MyjssCommentManagementComponent,
-    WebinarParticipantComponent
+    WebinarParticipantComponent,
+    CandidacyComponent
   ],
   exports: [
     CommunicationPreferenceComponent,

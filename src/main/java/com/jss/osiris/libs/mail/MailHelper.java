@@ -39,6 +39,7 @@ import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
@@ -740,8 +741,8 @@ public class MailHelper {
         customerMailService.addMailToQueue(mail);
     }
 
-    private void sendCustomerMailForMyJssMail(String mailAdress, String explaination, String replyMail, String template,
-            String subject)
+    private void sendCustomerMailForMyJssMail(String mailAdress, String explaination, String replyMail, String subject,
+            String template)
             throws OsirisException {
         CustomerMail customerMail = new CustomerMail();
         if (replyMail != null)
@@ -763,6 +764,7 @@ public class MailHelper {
         if (explaination != null)
             customerMail.setExplaination(explaination);
         customerMail.setMailComputeResult(mailComputeResult);
+        customerMail.setSendToMe(false);
         customerMailService.addMailToQueue(customerMail);
     }
 
@@ -772,10 +774,22 @@ public class MailHelper {
                 CustomerMail.TEMPLATE_SEND_WEBINAR_SUBSCRIPTION);
     }
 
+    public void sendConfirmationCandidacyMyJss(Candidacy candidacy) throws OsirisException {
+        sendCustomerMailForMyJssMail(candidacy.getMail().getMail(), null,
+                constantService.getEmployeeCandidacyResponsible().getMail(), "Confirmation de candidature",
+                CustomerMail.TEMPLATE_SEND_CANDIDACY_CONFIRMATION);
+    }
+
     public void sendConfirmationDemoMyJss(String mailAdress) throws OsirisException {
         sendCustomerMailForMyJssMail(mailAdress, null,
                 constantService.getStringMyJssDemoRequestMail(), "Confirmation de votre demande de démo",
                 CustomerMail.TEMPLATE_SEND_DEMO_CONFIRMATION);
+    }
+
+    public void sendConfirmationPricesMyJss(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssContactFormRequestMail(), "Confirmation de votre demande de tarifs",
+                CustomerMail.TEMPLATE_SEND_PRICES_CONFIRMATION);
     }
 
     public void sendConfirmationContactFormMyJss(String mailAdress) throws OsirisException {
@@ -803,10 +817,13 @@ public class MailHelper {
                 CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST);
     }
 
-    public void sendCustomerPricesByMail(String mailAdress) throws OsirisException {
-        sendCustomerMailForMyJssMail(mailAdress, null,
-                constantService.getStringMyJssDemoRequestMail(), "JSS - Nos Tarifs",
-                "");
+    public void sendCustomerPricesRequestToCommercial(String mailAdress, String firstName, String lastName,
+            String phoneNumber) throws OsirisException {
+        String explaination = firstName + " " + lastName + " - " + mailAdress;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssDemoRequestMail(), explaination,
+                constantService.getStringMyJssDemoRequestMail(),
+                "Notification de demande de tarif",
+                CustomerMail.TEMPLATE_SEND_PRICES_REQUEST);
     }
 
     @Transactional(rollbackFor = Exception.class)

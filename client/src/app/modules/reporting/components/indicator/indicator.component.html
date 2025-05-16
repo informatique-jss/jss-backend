@@ -1,0 +1,14 @@
+<div>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
+    <mat-tab label="Mes indicateurs">
+      <ng-template matTabContent>
+        <my-indicators></my-indicators>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Indicateurs">
+      <ng-template matTabContent>
+        <indicator-detailed [idIndicator]="idIndicator" [idEmployee]="idEmployee"></indicator-detailed>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

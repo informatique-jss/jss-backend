@@ -52,4 +52,8 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
         List<Attachment> findByMissingAttachmentQuery(
                         @Param("idMissingAttachmentQuery") Integer idMissingAttachmentQuery);
 
+        @Query(value = "select a.* from attachment a where id_candidacy =:idCandidacy", nativeQuery = true)
+        List<Attachment> findByCandidacyId(
+                        @Param("idCandidacy") Integer idCandidacy);
+
 }
