@@ -144,8 +144,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
         formalites.addAll(getFormalitiesByDate(createdAfter, updatedAfter));
-        // formalites.addAll(getAnnualAccountsByDate(createdAfter, updatedAfter));
-        // formalites.addAll(getActeDepositsByDate(createdAfter, updatedAfter));
+        formalites.addAll(getAnnualAccountsByDate(createdAfter, updatedAfter));
+        formalites.addAll(getActeDepositsByDate(createdAfter, updatedAfter));
         return formalites;
     }
 
