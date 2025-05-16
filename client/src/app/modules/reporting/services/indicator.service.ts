@@ -6,7 +6,7 @@ import { Indicator } from '../../reporting/model/Indicator';
 @Injectable({
   providedIn: 'root'
 })
-export class IndicatorService extends AppRestService<Indicator>{
+export class IndicatorService extends AppRestService<Indicator> {
 
   constructor(http: HttpClient) {
     super(http, "indicator");
@@ -15,8 +15,12 @@ export class IndicatorService extends AppRestService<Indicator>{
   getIndicators() {
     return this.getList(new HttpParams(), "indicators");
   }
-  
-   addOrUpdateIndicator(indicator: Indicator) {
+
+  getIndicator(id: number) {
+    return this.getById("indicator", id);
+  }
+
+  addOrUpdateIndicator(indicator: Indicator) {
     return this.addOrUpdate(new HttpParams(), "indicator", indicator, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

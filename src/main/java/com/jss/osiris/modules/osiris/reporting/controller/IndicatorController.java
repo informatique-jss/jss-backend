@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.reporting.model.Indicator;
 import com.jss.osiris.modules.osiris.reporting.model.IndicatorGroup;
 import com.jss.osiris.modules.osiris.reporting.model.IndicatorValue;
@@ -38,6 +42,9 @@ public class IndicatorController {
 	@Autowired
 	IndicatorGroupService indicatorGroupService;
 
+	@Autowired
+	EmployeeService employeeService;
+
 	@GetMapping(inputEntryPoint + "/indicator-groups")
 	public ResponseEntity<List<IndicatorGroup>> getIndicatorGroups() {
 		return new ResponseEntity<List<IndicatorGroup>>(indicatorGroupService.getIndicatorGroups(), HttpStatus.OK);
@@ -56,8 +63,15 @@ public class IndicatorController {
 	}
 
 	@GetMapping(inputEntryPoint + "/indicators")
+	@JsonView(JacksonViews.OsirisListView.class)
 	public ResponseEntity<List<Indicator>> getIndicators() {
 		return new ResponseEntity<List<Indicator>>(indicatorService.getIndicators(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/indicator")
+	@JsonView(JacksonViews.OsirisListView.class)
+	public ResponseEntity<Indicator> getIndicator(@RequestParam Integer id) {
+		return new ResponseEntity<Indicator>(indicatorService.getIndicator(id), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/indicator")
@@ -73,6 +87,7 @@ public class IndicatorController {
 	}
 
 	@GetMapping(inputEntryPoint + "/indicator/values")
+	@JsonView(JacksonViews.OsirisListView.class)
 	public ResponseEntity<List<IndicatorValue>> getIndicatorValuesForIndicator(@RequestParam Integer idindicator)
 			throws OsirisValidationException {
 
@@ -80,6 +95,19 @@ public class IndicatorController {
 		if (indicator == null)
 			throw new OsirisValidationException("indicator");
 		return new ResponseEntity<List<IndicatorValue>>(indicatorValueService.getIndicatorValuesForIndicator(indicator),
+				HttpStatus.OK);
+	}
+
+	@JsonView(JacksonViews.OsirisDetailedView.class)
+	@GetMapping(inputEntryPoint + "/indicator/values/employee")
+	public ResponseEntity<List<IndicatorValue>> getIndicatorValuesForEmployee(@RequestParam Integer idEmployee)
+			throws OsirisValidationException {
+
+		Employee employee = employeeService.getEmployee(idEmployee);
+		if (employee == null)
+			throw new OsirisValidationException("employee");
+		return new ResponseEntity<List<IndicatorValue>>(
+				indicatorValueService.getLatestIndicatorValuesForEmployee(employee),
 				HttpStatus.OK);
 	}
 }

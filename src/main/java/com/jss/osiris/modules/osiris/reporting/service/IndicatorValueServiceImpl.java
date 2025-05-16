@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.reporting.model.Indicator;
 import com.jss.osiris.modules.osiris.reporting.model.IndicatorValue;
 import com.jss.osiris.modules.osiris.reporting.repository.IndicatorValueRepository;
@@ -43,5 +44,10 @@ public class IndicatorValueServiceImpl implements IndicatorValueService {
     @Override
     public List<IndicatorValue> getIndicatorValuesForIndicator(Indicator indicator) {
         return indicatorValueRepository.findByIndicator(indicator);
+    }
+
+    @Override
+    public List<IndicatorValue> getLatestIndicatorValuesForEmployee(Employee employee) {
+        return indicatorValueRepository.findLatestIndicatorValuesForEmployee(employee);
     }
 }

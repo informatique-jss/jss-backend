@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 
@@ -21,6 +23,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_indicator_value_indicator", columnList = "id_indicator"),
+		@Index(name = "idx_indicator_value_indicator_employee", columnList = "id_indicator, id_employee"),
 		@Index(name = "idx_indicator_value_employee", columnList = "id_employee"),
 })
 public class IndicatorValue implements Serializable, IId {
@@ -28,26 +31,39 @@ public class IndicatorValue implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "indicator_value_sequence", sequenceName = "indicator_value_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "indicator_value_sequence")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_indicator")
-	@JsonIgnore
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonIgnoreProperties(value = { "values" }, allowSetters = true)
 	private Indicator indicator;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Employee employee;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDate date;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private BigDecimal value;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isMinValueReached;
+
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isMediumValueReached;
+
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isMaxValueReached;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private BigDecimal succededValue;
+
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Float succededPercentage;
 
 	public Integer getId() {

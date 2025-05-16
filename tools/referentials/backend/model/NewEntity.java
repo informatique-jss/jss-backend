@@ -14,8 +14,8 @@ import jakarta.persistence.Id;
 public class NewEntity implements Serializable, IId {
 
 	@Id
-	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@SequenceGenerator(name = "", sequenceName = "", allocationSize = 1) TOCOMPLETE
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "")
 	private Integer id;
 
 	@Column(nullable = false)

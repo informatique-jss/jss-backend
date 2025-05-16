@@ -28,10 +28,12 @@ export class ReferentialIndicatorComponent extends GenericReferentialComponent<I
       if (this.selectedEntity.kpis)
         for (let kpi of this.selectedEntity.kpis)
           if (kpi.applicationDate) {
+            kpi.applicationDate = new Date(kpi.applicationDate);
             kpi.applicationDate = new Date(kpi.applicationDate.setHours(12));
           }
     return this.indicatorService.addOrUpdateIndicator(this.selectedEntity!);
   }
+
   getGetObservable(): Observable<Indicator[]> {
     return this.indicatorService.getIndicators();
   }
@@ -48,5 +50,16 @@ export class ReferentialIndicatorComponent extends GenericReferentialComponent<I
   addKpi() {
     if (this.selectedEntity)
       this.selectedEntity.kpis.push({} as Kpi);
+  }
+
+  override selectEntity(selectedEntity: Indicator) {
+    super.selectEntity(selectedEntity);
+    if (this.selectedEntity) {
+      if (this.selectedEntity.kpis)
+        this.selectedEntity.kpis.sort((a: Kpi, b: Kpi) => {
+          if (new Date(a.applicationDate).getTime() == new Date(b.applicationDate).getTime()) return 0;
+          return new Date(a.applicationDate).getTime() > new Date(b.applicationDate).getTime() ? -1 : 1;
+        });
+    }
   }
 }

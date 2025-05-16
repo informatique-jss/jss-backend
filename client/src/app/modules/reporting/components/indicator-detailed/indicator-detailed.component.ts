@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EChartsOption, SeriesOption } from 'echarts';
@@ -14,6 +14,8 @@ import { Employee } from '../../../profile/model/Employee';
 import { EmployeeNode } from '../../model/EmployeeNode';
 import { Indicator } from '../../model/Indicator';
 import { IndicatorValue } from '../../model/IndicatorValue';
+import { Kpi } from '../../model/Kpi';
+import { IndicatorService } from '../../services/indicator.service';
 import { IndicatorValueService } from '../../services/indicator.value.service';
 
 @Component({
@@ -22,6 +24,10 @@ import { IndicatorValueService } from '../../services/indicator.value.service';
   styleUrls: ['./indicator-detailed.component.css']
 })
 export class IndicatorDetailedComponent implements OnInit {
+
+  @Input() idIndicator: number | undefined;
+  @Input() idEmployee: number | undefined;
+
 
   indicatorValues: IndicatorValue[] | undefined;
   allEmployees: Employee[] = [];
@@ -42,6 +48,7 @@ export class IndicatorDetailedComponent implements OnInit {
     private appService: AppService,
     private indicatorValueService: IndicatorValueService,
     private employeeService: EmployeeService,
+    private indicatorService: IndicatorService,
     private activeDirectoryGroupService: ActiveDirectoryGroupService,
     private formBuilder: FormBuilder
   ) { }
@@ -57,35 +64,85 @@ export class IndicatorDetailedComponent implements OnInit {
 
     this.employeeService.getEmployees().subscribe(response => {
       this.allEmployees = response;
+      if (this.idEmployee) {
+        for (let employee of this.allEmployees) {
+          if (employee.id == this.idEmployee)
+            this.selectedEmployeeIds.add(employee.id);
+        }
+        if (this.idIndicator) {
+          this.indicatorService.getIndicator(this.idIndicator).subscribe(response => {
+            this.selectedIndicator = response;
+            this.refreshIndicator(true);
+          });
+
+        }
+      }
     })
 
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "employee", fieldName: "employee", label: "Collaborateur", displayAsEmployee: true } as SortTableColumn<IndicatorValue>);
     this.displayedColumns.push({ id: "value", fieldName: "value", label: "Mesure" } as SortTableColumn<IndicatorValue>);
     this.displayedColumns.push({ id: "date", fieldName: "date", label: "Date de mesure", valueFonction: formatDateForSortTable } as SortTableColumn<IndicatorValue>);
+    this.displayedColumns.push({ id: "minValue", fieldName: "minValue", label: "Valeur minimale", valueFonction: (element: IndicatorValue, column: SortTableColumn<IndicatorValue>) => { return this.getAllValuesForIndicatorValue(element).minValue } } as SortTableColumn<IndicatorValue>);
+    this.displayedColumns.push({ id: "baseValue", fieldName: "baseValue", label: "Base de calcul", valueFonction: (element: IndicatorValue, column: SortTableColumn<IndicatorValue>) => { return this.getAllValuesForIndicatorValue(element).baseValue } } as SortTableColumn<IndicatorValue>);
+    this.displayedColumns.push({ id: "maxValue", fieldName: "maxValue", label: "Valeur maximale", valueFonction: (element: IndicatorValue, column: SortTableColumn<IndicatorValue>) => { return this.getAllValuesForIndicatorValue(element).maxValue } } as SortTableColumn<IndicatorValue>);
+    this.displayedColumns.push({ id: "mediumValue", fieldName: "mediumValue", label: "Valeur mediane", valueFonction: (element: IndicatorValue, column: SortTableColumn<IndicatorValue>) => { return this.getAllValuesForIndicatorValue(element).mediumValue } } as SortTableColumn<IndicatorValue>);
+    this.displayedColumns.push({ id: "succededValue", fieldName: "succededValue", label: "Valeur atteinte" } as SortTableColumn<IndicatorValue>);
+    this.displayedColumns.push({ id: "succededPercentage", fieldName: "succededPercentage", label: "% atteint", valueFonction: (element: IndicatorValue, column: SortTableColumn<IndicatorValue>) => { return element.succededPercentage ? Math.round(element.succededPercentage * 100) + '' : '' } } as SortTableColumn<IndicatorValue>);
 
+  }
+
+  getAllValuesForIndicatorValue(indicatorValue: IndicatorValue): Kpi {
+    let kpi = this.getKpiForEmployeeAndDate(indicatorValue.employee.id, indicatorValue.date);
+    if (kpi)
+      return kpi;
+    return { baseValue: 0, maxValue: 0, minValue: 0, mediumValue: 0 } as Kpi;
+  }
+
+  getKpiForEmployeeAndDate(employeeId: number, date: Date): Kpi | undefined {
+    const targetTime = (new Date(date)).getTime();
+
+    return this.selectedIndicator!.kpis
+      .filter(k => k.employee.id === employeeId && new Date(k.applicationDate).getTime() <= targetTime)
+      .sort((a, b) => new Date(b.applicationDate).getTime() - new Date(a.applicationDate).getTime())
+    [0];
   }
 
   ngOnChanges(): void {
     this.updateData();
   }
 
-  refreshIndicator() {
+  onEmployeeChange(): void {
+    this.currentColors = undefined;
+    this.updateData();
+  }
+
+
+  refreshIndicator(isRefreshData: boolean = false) {
     if (this.selectedIndicator)
       this.indicatorValueService.getIndicatorValues(this.selectedIndicator.id!).subscribe(response => {
         if (response) {
           this.indicatorValues = response;
           this.employees = this.allEmployees.filter(e => e.isActive && this.indicatorValues!.map(emp => emp.employee && emp.employee.id ? emp.employee.id : 0).indexOf(e.id) >= 0);
           this.dataSource.data = this.buildEmployeeTree(this.employees);
+          if (isRefreshData)
+            this.updateData();
         }
       })
   }
 
+  /**
+   * Echart management
+   */
+
   updateData(): void {
+    if (!this.indicatorValues)
+      return;
+
     const selected = new Set(this.selectedEmployeeIds);
     const showAll = selected.has(-1);
 
-    this.filteredValues = this.indicatorValues!.filter(v => showAll || v.employee && selected.has(v.employee.id));
+    this.filteredValues = this.indicatorValues.filter(v => showAll || v.employee && selected.has(v.employee.id));
 
     const grouped: Record<number, IndicatorValue[]> = this.filteredValues.reduce((acc, val) => {
       const id = val.employee.id;
@@ -103,10 +160,10 @@ export class IndicatorDetailedComponent implements OnInit {
       let data: [string, number][] = [];
 
       if (this.mode === 'cumulative') {
-        // On regroupe par année
+        // Group by year
         const byYear: Record<string, IndicatorValue[]> = {};
         for (const v of sortedValues) {
-          const year = new Date(v.date).getFullYear(); // "2024" par ex.
+          const year = new Date(v.date).getFullYear();
           if (!byYear[year]) byYear[year] = [];
           byYear[year].push(v);
         }
@@ -121,7 +178,7 @@ export class IndicatorDetailedComponent implements OnInit {
               sum += v.value;
             });
 
-            // On ajoute uniquement la dernière date de l'année avec la somme cumulée
+            // Add cumulative data on last year date
             const lastDate = new Date(yearValues[yearValues.length - 1].date).getFullYear() + '';
             data.push([lastDate, sum]);
           });
@@ -138,12 +195,16 @@ export class IndicatorDetailedComponent implements OnInit {
       };
     });
 
+    const isSingleEmployee = this.selectedEmployeeIds.size === 1;
+    const kpiSeries = isSingleEmployee && this.mode == 'monthly' ? this.generateKpiSeries(this.selectedIndicator!.kpis.filter(k => k.employee.id === [... this.selectedEmployeeIds][0])) : [];
+    const safeKpiSeries = Array.isArray(kpiSeries) ? kpiSeries : kpiSeries ? [kpiSeries] : [];
+
     this.chartOptions = {
       color: this.currentColors ? this.currentColors : this.generateColors(series.length),
       tooltip: {
         trigger: 'axis',
         formatter: function (params: any) {
-          // Tri décroissant par valeur
+          // Sort legend by value desc
           const sorted = [...params].sort((a, b) => b.data[1] - a.data[1]);
           const dateLabel = sorted[0].axisValueLabel;
           const lines = sorted.map(p => `${p.marker} ${p.seriesName}: ${p.data[1]}`);
@@ -153,7 +214,7 @@ export class IndicatorDetailedComponent implements OnInit {
       xAxis: { type: 'category' },
       yAxis: { type: 'value' },
       legend: { data: series.map(s => s.name as string) },
-      series,
+      series: [...series, ...safeKpiSeries],
       toolbox: {
         feature: {
           saveAsImage: {
@@ -205,11 +266,66 @@ export class IndicatorDetailedComponent implements OnInit {
     return colors;
   }
 
+  generateKpiSeries(kpis: Kpi[]): EChartsOption['series'] | undefined {
+    const sorted = [...kpis].sort((a, b) => new Date(a.applicationDate).getTime() - new Date(b.applicationDate).getTime());
 
-  onEmployeeChange(): void {
-    this.currentColors = undefined;
-    this.updateData();
+    const kpiSeries = ['minValue', 'mediumValue', 'maxValue', 'baseValue'].map(key => {
+      const colorMap = {
+        minValue: 'orange',
+        mediumValue: 'gold',
+        maxValue: 'green',
+        baseValue: 'gray'
+      };
+
+      const data: [string, number][] = [];
+
+      for (let i = 0; i < sorted.length; i++) {
+        const kpi = sorted[i];
+        const value = kpi[key as keyof Kpi];
+        const date = formatDateFrance(new Date(kpi.applicationDate));
+
+        data.push([date, value as number]);
+
+        // Repeat value until next date
+        const nextDate = sorted[i + 1]?.applicationDate;
+        if (nextDate) {
+          const repeatDate = new Date(nextDate);
+          repeatDate.setDate(repeatDate.getDate() - 1);
+          const repeatDateStr = formatDateFrance(repeatDate);
+          data.push([repeatDateStr, value as number]);
+        }
+      }
+
+      let name = '';
+      if (key == 'minValue')
+        name = 'Valeur minimale';
+      if (key == 'mediumValue')
+        name = 'Valeur mediane';
+      if (key == 'maxValue')
+        name = 'Valeur maximale';
+      if (key == 'baseValue')
+        name = 'Base de calcul';
+
+      return {
+        name: name,
+        type: 'line',
+        step: 'end',
+        showSymbol: false,
+        smooth: false,
+        lineStyle: {
+          width: 2,
+          color: colorMap[key as keyof typeof colorMap]
+        },
+        data
+      };
+    }) as SeriesOption[];
+
+    return kpiSeries;
   }
+
+  /**
+   * Tree management
+   */
 
   buildEmployeeTree(employees: Employee[]): EmployeeNode[] {
     const root: Record<string, EmployeeNode> = {};

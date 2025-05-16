@@ -2,9 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
@@ -24,6 +28,7 @@ import { ReportingComponent } from './reporting.component';
 const routes: Routes = [
   { path: 'reporting/list', component: ReportingListComponent },
   { path: 'indicator', component: IndicatorComponent },
+  { path: 'indicator/detailed/:idIndicator/:idEmployee', component: IndicatorComponent },
   { path: 'reporting/add/:id/:cloning', component: ReportingAddComponent },
 ];
 
@@ -42,6 +47,10 @@ const routes: Routes = [
     MiscellaneousModule,
     MatTabsModule,
     MatIconModule,
+    MatCardModule,
+    MatChipsModule,
+    MatDividerModule,
+    MatProgressBarModule,
     MatRadioModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts'),
@@ -59,4 +68,3 @@ const routes: Routes = [
   ],
 })
 export class ReportingModule { }
-
