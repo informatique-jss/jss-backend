@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.repository.CandidacyRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
@@ -25,6 +26,9 @@ public class CandidacyServiceImpl implements CandidacyService {
 
     @Autowired
     MailService mailService;
+
+    @Autowired
+    MailHelper mailHelper;
 
     @Override
     public List<Candidacy> getCandidacies() {
@@ -52,6 +56,7 @@ public class CandidacyServiceImpl implements CandidacyService {
             candidacy.setId(existingCandidacy.getId());
         candidacy = candidacyRepository.save(candidacy);
 
+        mailHelper.sendConfirmationCandidacyMyJss(candidacy);
         notificationService.notifyNewCandidacy(candidacy);
 
         return candidacy;

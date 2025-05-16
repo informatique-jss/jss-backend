@@ -19,6 +19,7 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
@@ -26,7 +27,6 @@ import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
-import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
@@ -50,7 +50,7 @@ public class MyJssCrmController {
     WebinarParticipantService webinarParticipantService;
 
     @Autowired
-    MailService mailService;
+    MailHelper mailHelper;
 
     @Autowired
     CandidacyService candidacyService;
@@ -235,7 +235,8 @@ public class MyJssCrmController {
         validationHelper.validateString(firstName, true, 50, "firstname");
         validationHelper.validateString(lastName, true, 50, "lastname");
 
-        mailService.sendMyJssDemoMails(mail, firstName, lastName, phoneNumber);
+        mailHelper.sendConfirmationDemoMyJss(mail);
+        mailHelper.sendCustomerDemoRequestToCommercial(mail, firstName, lastName, phoneNumber);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
@@ -254,7 +255,8 @@ public class MyJssCrmController {
         validationHelper.validateString(firstName, true, 50, "firstname");
         validationHelper.validateString(lastName, true, 50, "lastname");
 
-        mailService.sendMyJssPricesMail(mail, firstName, lastName, phoneNumber);
+        mailHelper.sendConfirmationPricesMyJss(mail);
+        mailHelper.sendCustomerPricesRequestToCommercial(mail, firstName, lastName, phoneNumber);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
@@ -270,7 +272,8 @@ public class MyJssCrmController {
         validationHelper.validateString(lastName, true, 50, "lastname");
         validationHelper.validateString(message, true, 250, "message");
 
-        mailService.sendContactFormMails(mail, firstName, lastName, message);
+        mailHelper.sendConfirmationContactFormMyJss(mail);
+        mailHelper.sendContactFormNotificationMail(mail, firstName, lastName, message);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 

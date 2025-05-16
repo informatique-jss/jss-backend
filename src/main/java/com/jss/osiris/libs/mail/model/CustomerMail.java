@@ -67,9 +67,12 @@ public class CustomerMail {
     public static String TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = "send-competent-authority-reminder";
     public static String TEMPLATE_SEND_WEBINAR_SUBSCRIPTION = "send-webinar-subscription";
     public static String TEMPLATE_SEND_DEMO_CONFIRMATION = "send-demo-confirmation";
+    public static String TEMPLATE_SEND_PRICES_CONFIRMATION = "send-prices-confirmation";
     public static String TEMPLATE_SEND_DEMO_REQUEST = "send-demo-request";
     public static String TEMPLATE_SEND_CONTACT_CONFIRMATION = "send-contact-confirmation";
     public static String TEMPLATE_SEND_CONTACT_REQUEST = "send-contact-request";
+    public static String TEMPLATE_SEND_PRICES_REQUEST = "send-prices-request";
+    public static String TEMPLATE_SEND_CANDIDACY_CONFIRMATION = "send-candidacy-confirmation";
 
     @Id
     @SequenceGenerator(name = "customer_mail_sequence", sequenceName = "customer_mail_sequence", allocationSize = 1)
@@ -577,17 +580,19 @@ public class CustomerMail {
     public static String getTEMPLATE_SEND_DEMO_CONFIRMATION() {
         return TEMPLATE_SEND_DEMO_CONFIRMATION;
     }
+
     public static void setTEMPLATE_SEND_CONTACT_CONFIRMATION(
             String tEMPLATE_SEND_CONTACT_CONFIRMATION) {
-                TEMPLATE_SEND_CONTACT_CONFIRMATION = tEMPLATE_SEND_CONTACT_CONFIRMATION;
+        TEMPLATE_SEND_CONTACT_CONFIRMATION = tEMPLATE_SEND_CONTACT_CONFIRMATION;
     }
 
     public static String getTEMPLATE_SEND_CONTACT_CONFIRMATION() {
         return TEMPLATE_SEND_CONTACT_CONFIRMATION;
     }
+
     public static void setTEMPLATE_SEND_CONTACT_REQUEST(
             String tEMPLATE_SEND_CONTACT_REQUEST) {
-                TEMPLATE_SEND_CONTACT_REQUEST = tEMPLATE_SEND_CONTACT_REQUEST;
+        TEMPLATE_SEND_CONTACT_REQUEST = tEMPLATE_SEND_CONTACT_REQUEST;
     }
 
     public static String getTEMPLATE_SEND_CONTACT_REQUEST() {

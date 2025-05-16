@@ -13,7 +13,7 @@ export class CandidacyService extends AppRestService<Candidacy> {
   }
 
   addOrUpdateCandidacy(candidacy: Candidacy) {
-    return this.addOrUpdate(new HttpParams(), "subscribe/candidacy", candidacy, "Enregistré", "Erreur lors de l'enregistrement");
+    return this.addOrUpdate(new HttpParams(), "subscribe/candidacy", candidacy);
   }
 
 }

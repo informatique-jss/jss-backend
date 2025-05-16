@@ -27,7 +27,11 @@ export class DemoComponent implements OnInit {
   }
 
   getDemoByMail(event: any) {
-    if (!this.firstName || !this.lastName || !this.mail || !this.isConditionAccepted) {
+    if (!this.firstName || !this.lastName || !this.mail) {
+      this.appService.displayToast("Merci de remplir les champs obligatoires", true, "Une erreur s’est produite...", 3000);
+    }
+    if (!this.isConditionAccepted) {
+      this.appService.displayToast("Merci d'accepter les conditions", true, "Une erreur s’est produite...", 3000);
       return;
     }
 

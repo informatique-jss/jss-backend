@@ -66,10 +66,11 @@ export class JoinUsComponent implements OnInit {
     }
     this.candidacyService.addOrUpdateCandidacy(this.newCandidacy).subscribe(response => {
       if (response) {
-        this.newCandidacy = response;
         if (this.singleUploadComponent && this.singleUploadComponent.files && this.singleUploadComponent.files.length > 0) {
           this.singleUploadComponent.entity = response;
           this.singleUploadComponent.uploadFiles();
+        } else {
+          this.refreshForm(true);
         }
       }
     });
@@ -77,7 +78,10 @@ export class JoinUsComponent implements OnInit {
 
   refreshForm(last: any) {
     if (last) {
+      this.newCandidacy = { mail: {} as Mail } as Candidacy;
       this.applicationForm.reset();
+      if (this.singleUploadComponent)
+        this.singleUploadComponent.files = [];
       this.closeApplicationModal();
       this.appService.displayToast("Nous vous contacterons dans les plus brefs délais.", false, "Candidature envoyée", 3000);
     }

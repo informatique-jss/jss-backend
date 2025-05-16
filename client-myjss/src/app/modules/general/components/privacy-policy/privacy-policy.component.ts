@@ -12,7 +12,7 @@ export class PrivacyPolicyComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute) { }
 
   tabs = [
-    { id: 'privacy-policy', label: 'Politique de protection des données personnelles' },
+    { id: 'privacy-policy', label: 'Politique de confidentialité' },
     { id: 'disclaimer', label: 'Mentions légales' },
     { id: 'terms', label: 'CGU' },
   ];
