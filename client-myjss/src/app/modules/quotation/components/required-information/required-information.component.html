@@ -164,15 +164,13 @@
             <div class="quotation-container">
               <h6><i class="ai-circle-info me-2"></i>Information</h6>
               <div class="row form-switch justify-content-start p-0">
-                <!-- TODO -->
                 <div class="col-md-5">
-                  <label class="col-form-label" for="announcementPublicationDate">Publication
-                    souhaitée</label>
+                  <label class="col-form-label" for="announcementPublicationDate">Publication souhaitée</label>
                   <div class="col">
-                    <!-- <input class="form-control" type="text" placeholder="Publier l'annonce au JSS"
-                      [ngModel]="announcementNoticeFamily?.label" (ngModelChange)="announcementNoticeFamily = $event"
-                      id="announcementNoticeFamily" type="select"> -->
-                    <!-- TODO : faire un generic select qui prend une liste de string à afficher et stocker dans le boolean isDoNotGenerateAnnouncement-->
+                    <select-string [types]="selectionRedaction" label="Publier l'annonce au JSS ?" [isMandatory]="false"
+                      [form]="informationForm" [propertyName]="'selectionRedaction'+provision.order"
+                      (selectionChange)="changeDoNotGenerateAnnouncement($event, provision)">
+                    </select-string>
                   </div>
                 </div>
                 <div class="col-md-3">
@@ -231,30 +229,18 @@
 
                   <!-- Rubrique -->
                   <div class="mb-3" *ngIf="noticeTypeFamilies">
-                    <!-- <label for="announcementNoticeFamily" class="form-label">Rubrique de publication</label>
-                    <select class="form-control" id="announcementNoticeFamily" required
-                      [(ngModel)]="announcementNoticeFamily">
-                      <option [ngValue]="noticeTypeFamily" *ngFor="let noticeTypeFamily of noticeTypeFamilies">
-                        {{ noticeTypeFamily.label }}
-                      </option>
-                    </select> -->
-                    <!-- TODO : faire le select et mettre dans provision.announcement.noticeFamily -->
+                    <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
+                      label="Rubrique de publication" [form]="informationForm"
+                      [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="true"
+                      [isDisabled]="false"></select-notice-type-family>
                   </div>
 
                   <!-- Sous-rubrique -->
                   <div class="mb-3" *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
-                    <!-- <label for="announcementNoticeType" class="form-label">Sous-rubrique de publication</label>
-                    <select class="form-control" id="announcementNoticeType" required
-                      [(ngModel)]="announcementNoticeType">
-                      <ng-container *ngFor="let noticeType of noticeTypes">
-                        <option [ngValue]="noticeType"
-                          *ngIf="noticeType.noticeTypeFamily.id == announcementNoticeFamily.id">
-                          {{ noticeType.label }}
-                        </option>
-                      </ng-container>
-                    </select> -->
-                    <!-- TODO : faire un multiple select et mettre dans provision.announcement.noticeTypes -->
-
+                    <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
+                      label="Sous-rubrique(s) de publication" [form]="informationForm"
+                      [propertyName]="'noticeTypes'+provision.order" [isMandatory]="true"
+                      [isDisabled]="false"></select-multiple-notice-type>
                   </div>
                 </div>
 

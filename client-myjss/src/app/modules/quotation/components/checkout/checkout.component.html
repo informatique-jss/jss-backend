@@ -141,9 +141,13 @@
       </div>
 
       <!-- Order summary -->
-      <div class="d-none d-lg-block start-57 background-right position-fixed top-0 h-100">
+      <div class="col-lg-5">
+        <div class="sticky-top">
+          <div class="d-none d-lg-block start-57 background-right position-fixed top-0 h-100">
+          </div>
+          <ng-container [ngTemplateOutlet]="checkoutSummary"></ng-container>
+        </div>
       </div>
-      <ng-container [ngTemplateOutlet]="checkoutSummary"></ng-container>
     </div>
   </form>
 </div>
@@ -542,104 +546,102 @@
 <!-- Checkout summmary -->
 <!-- TODO : à rendre sticky au scoll -->
 <ng-template #checkoutSummary>
-  <div class="col">
-    <div class="row">
-      <div class="col-12 px-0">
-        <div class="card shadow px-4 ms-lg-5 pt-1" *ngIf="quotation">
-          <!-- Items -->
-          <div *ngFor="let asso of quotation.assoAffaireOrders; let assoIndex = index">
-            <div *ngFor="let service of asso.services; let serviceIndex = index" class="row">
+  <div class="row">
+    <div class="col-12 px-0">
+      <div class="card shadow px-4 ms-lg-5 pt-1" *ngIf="quotation">
+        <!-- Items -->
+        <div *ngFor="let asso of quotation.assoAffaireOrders; let assoIndex = index">
+          <div *ngFor="let service of asso.services; let serviceIndex = index" class="row">
 
-              <div class="d-sm-flex align-items-center border-top py-4">
-                <div class="w-100 pt-1">
-                  <div class="d-flex">
-                    <div class="me-3">
-                      <h3 class="h5 mb-2 text-blue">{{service.serviceLabelToDisplay}}
-                      </h3>
-                      <p class="card-text small">
-                        <strong>{{service.assoServiceDocuments.length}}</strong>
-                        documents nécessaires
-                        <br>
-                        <strong> {{asso.affaire.denomination}} - {{asso.affaire.address}} -
-                          {{asso.affaire.postalCode}}</strong>
-                      </p>
+            <div class="d-sm-flex align-items-center border-top py-4">
+              <div class="w-100 pt-1">
+                <div class="d-flex">
+                  <div class="me-3">
+                    <h3 class="h5 mb-2 text-blue">{{service.serviceLabelToDisplay}}
+                    </h3>
+                    <p class="card-text small">
+                      <strong>{{service.assoServiceDocuments.length}}</strong>
+                      documents nécessaires
+                      <br>
+                      <strong> {{asso.affaire.denomination}} - {{asso.affaire.address}} -
+                        {{asso.affaire.postalCode}}</strong>
+                    </p>
 
-                    </div>
-                    <div class="text-end ms-auto">
-                      <div class="fs-6 mb-2">{{service.serviceTotalPrice |
-                        currency:'EUR'}}</div>
-                    </div>
                   </div>
-                  <div class="nav justify-content-end mt-n5 mt-sm-n3">
-                    <a class="nav-link fs-xl p-2" (click)="deleteService(serviceIndex, assoIndex)">
-                      <i class="ai-trash"></i>
-                    </a>
+                  <div class="text-end ms-auto">
+                    <div class="fs-6 mb-2">{{service.serviceTotalPrice |
+                      currency:'EUR'}}</div>
                   </div>
                 </div>
+                <div class="nav justify-content-end mt-n5 mt-sm-n3">
+                  <a class="nav-link fs-xl p-2" (click)="deleteService(serviceIndex, assoIndex)">
+                    <i class="ai-trash"></i>
+                  </a>
+                </div>
               </div>
-              <hr>
             </div>
+            <hr>
           </div>
+        </div>
 
-          <div class="border-top pt-4 mb-3">
-            <div class="input-group input-group-sm border-dashed" style="max-width: 310px;">
-              <input class="form-control text-uppercase" type="text" placeholder="Code de réduction">
-              <button class="btn btn-secondary" type="button" (click)="applyCoupon()">Appliquer</button>
-            </div>
+        <div class="border-top pt-4 mb-3">
+          <div class="input-group input-group-sm border-dashed" style="max-width: 310px;">
+            <input class="form-control text-uppercase" type="text" placeholder="Code de réduction">
+            <button class="btn btn-secondary" type="button" (click)="applyCoupon()">Appliquer</button>
           </div>
-          <ul class="list-unstyled pt-3 mb-0">
-            <li class="d-flex justify-content-between mb-2">
-              Sous-total:
-              <div *ngIf="isComputingPrice" class="spinner-border spinner-border-sm" role="status">
-                <span class="visually-hidden"></span>
-              </div>
-              <span *ngIf="!isComputingPrice" class="fw-semibold ms-2">{{totalPriceWithoutVat |
-                currency:'EUR'}}</span>
-            </li>
-            <li class="d-flex justify-content-between mb-2" *ngIf="!isComputingPrice">
-              TVA:<span class="fw-semibold ms-2">{{totalVatPrice | currency:'EUR'}}</span>
-            </li>
-          </ul>
-          <hr>
-          <div class="d-flex align-items-center justify-content-between border-top fs-xl pb-4">
-            Total:
-            <div *ngIf="isComputingPrice" class="spinner-border" role="status">
+        </div>
+        <ul class="list-unstyled pt-3 mb-0">
+          <li class="d-flex justify-content-between mb-2">
+            Sous-total:
+            <div *ngIf="isComputingPrice" class="spinner-border spinner-border-sm" role="status">
               <span class="visually-hidden"></span>
             </div>
-            <span *ngIf="!isComputingPrice" class="fs-3 fw-semibold text-dark ms-2">{{totalPrice |
+            <span *ngIf="!isComputingPrice" class="fw-semibold ms-2">{{totalPriceWithoutVat |
               currency:'EUR'}}</span>
+          </li>
+          <li class="d-flex justify-content-between mb-2" *ngIf="!isComputingPrice">
+            TVA:<span class="fw-semibold ms-2">{{totalVatPrice | currency:'EUR'}}</span>
+          </li>
+        </ul>
+        <hr>
+        <div class="d-flex align-items-center justify-content-between border-top fs-xl pb-4">
+          Total:
+          <div *ngIf="isComputingPrice" class="spinner-border" role="status">
+            <span class="visually-hidden"></span>
           </div>
+          <span *ngIf="!isComputingPrice" class="fs-3 fw-semibold text-dark ms-2">{{totalPrice |
+            currency:'EUR'}}</span>
         </div>
       </div>
     </div>
-    <div class="row pt-5">
-      <div class="col-12 ms-lg-5 pe-lg-5 px-0">
-        <div class="form-check mb-4">
-          <input class="form-check-input" type="checkbox" id="save-info" [(ngModel)]="acceptDocs" name="acceptDocs"
-            required>
-          <label class="form-check-label" for="save-info">Je certifie que les pièces justificatives fournies sont
-            conformes.
-          </label>
-          <div class="invalid-feedback">Vous devez accepter avant de passer la commande.</div>
-        </div>
-        <div class="form-check mb-4 pe-2">
-          <input class="form-check-input" type="checkbox" id="save-info2" [(ngModel)]="acceptTerms" name="acceptTerms"
-            required>
-          <label class="form-check-label" for="save-info2">En cochant cette case, je reconnais avoir pris
-            connaissance et accepter les Conditions Générales de Vente (CGV) du site.
-          </label>
-          <div class="invalid-feedback">Vous devez accepter avant de passer la commande.</div>
+  </div>
+  <div class="row pt-5" #triggerSticky>
+    <div class="col-12 ms-lg-5 pe-lg-5 px-0">
+      <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" id="save-info" [(ngModel)]="acceptDocs" name="acceptDocs"
+          required>
+        <label class="form-check-label" for="save-info">Je certifie que les pièces justificatives fournies sont
+          conformes.
+        </label>
+        <div class="invalid-feedback">Vous devez accepter avant de passer la commande.</div>
+      </div>
+      <div class="form-check mb-4 pe-2">
+        <input class="form-check-input" type="checkbox" id="save-info2" [(ngModel)]="acceptTerms" name="acceptTerms"
+          required>
+        <label class="form-check-label" for="save-info2">En cochant cette case, je reconnais avoir pris
+          connaissance et accepter les Conditions Générales de Vente (CGV) du site.
+        </label>
+        <div class="invalid-feedback">Vous devez accepter avant de passer la commande.</div>
 
+      </div>
+      <div class="row gx-1 gy-3 justify-content-between">
+        <div class="col-auto">
+          <button class="btn btn-lg btn-secondary" type="button" (click)="onSaveDraft()">Enregistrer le
+            brouillon</button>
         </div>
-        <div class="row gx-1 gy-3 justify-content-between">
-          <div class="col-auto">
-            <button class="btn btn-lg btn-secondary" type="button" (click)="onSaveDraft()">Enregistrer le
-              brouillon</button>
-          </div>
-          <div class="col-auto">
-            <button class="btn btn-lg btn-secondary" type="submit" (click)="onValidateOrder()">Valider la
-              commande</button>
-          </div>
+        <div class="col-auto">
+          <button class="btn btn-lg btn-secondary" type="submit" (click)="onValidateOrder()">Valider la
+            commande</button>
         </div>
       </div>
     </div>

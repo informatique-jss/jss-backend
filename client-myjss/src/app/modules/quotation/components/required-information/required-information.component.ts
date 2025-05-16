@@ -55,6 +55,9 @@ export class RequiredInformationComponent implements OnInit {
 
   minDatePublication: Date = new Date();
 
+  isDoNotGenerateAnnouncement: boolean = true;
+  // TODO : change values of inputs
+  selectionRedaction: string[] = ["Publier au JSS", "b", "c"];
   isFetchingPrincing: boolean = false;
 
   checkedOnce = false;
@@ -304,5 +307,14 @@ export class RequiredInformationComponent implements OnInit {
   confirmGoBack() {
     this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
     this.appService.openRoute(undefined, "quotation", undefined);
+  }
+
+  changeDoNotGenerateAnnouncement(selection: string, provision: Provision) {
+    // TODO : use constant for equality? 
+    if (selection != "Publier au JSS")
+      provision.isDoNotGenerateAnnouncement = false;
+    else {
+      provision.isDoNotGenerateAnnouncement = true;
+    }
   }
 }

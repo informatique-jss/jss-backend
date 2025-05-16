@@ -146,8 +146,7 @@ export class CheckoutComponent implements OnInit {
         else
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder).subscribe();
       }
-    }
-    else {
+    } else {
       // TODO
     }
     // make payment
@@ -223,7 +222,6 @@ export class CheckoutComponent implements OnInit {
       let responsableForDocument = this.quotation.responsable && this.quotation.responsable.id ? this.quotation.responsable : this.constantService.getResponsableDummyCustomerFrance();
 
       if (responsableForDocument && responsableForDocument.tiers && (!this.quotation.documents || this.quotation.documents.length == 0)) {
-        // TODO : delete ? But then how does the documents are loaded in the page to display the block Renseignements administratifs / lib fact et adr
         let billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), responsableForDocument));
         if (!billingDocument.billingLabelCountry)
           billingDocument.billingLabelCountry = this.constantService.getCountryFrance();
