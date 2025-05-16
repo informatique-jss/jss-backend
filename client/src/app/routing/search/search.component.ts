@@ -219,8 +219,8 @@ export class SearchComponent implements OnInit {
     let out = [];
     if (entity.text.services && entity.text.customerOrder) {
       for (let service of entity.text.services) {
-        if (service.serviceType)
-          out.push(service.serviceType.label);
+        if (service.serviceLabelToDisplay)
+          out.push(service.serviceLabelToDisplay);
         for (let provision of service.provisions)
           out.push((provision.assignedTo ? provision.assignedTo.firstname + " " + provision.assignedTo.lastname : "")
             + (provision.simpleProvision && provision.simpleProvision.simpleProvisionStatus ? " - " + provision.simpleProvision.simpleProvisionStatus.label : "")

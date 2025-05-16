@@ -1,26 +1,28 @@
-<div class="d-flex align-items-center mb-4">
-  <h1 class="h2 mb-0">Relevé de compte</h1>
-  <div class="ms-auto">
-    <div class="btn-group dropdown" style="margin-right: 10px;">
+<div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center mb-4">
+  <h1 class="h2 mb-3 mb-sm-0">Relevé de compte</h1>
+
+  <div class="d-flex flex-column flex-sm-row ms-sm-auto gap-2">
+    <div class="btn-group dropdown">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
         <i class="ai-filter me-2"></i>
         Filtrer
       </button>
       <div class="dropdown-menu my-1">
-        <label class=" dropdown-item" *ngFor="let scope of userScope">
+        <label class="dropdown-item" *ngFor="let scope of userScope">
           <input class="form-check-input me-2" type="checkbox"
             [(ngModel)]="userScopeSelected[scope.responsableViewed.id]" (change)="changeFilter()">
           {{scope.responsableViewed.firstname+ ' '+scope.responsableViewed.lastname}}
         </label>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" style="cursor: pointer;" (click)="selectAll(); $event.stopPropagation()">Selectionner
+        <a class="dropdown-item" style="cursor: pointer;" (click)="selectAll(); $event.stopPropagation()">Sélectionner
           tout</a>
         <a class="dropdown-item" style="cursor: pointer;"
-          (click)="unselectAll(); $event.stopPropagation()">Déselectionner tout</a>
+          (click)="unselectAll(); $event.stopPropagation()">Désélectionner tout</a>
       </div>
     </div>
-    <div class="btn-group dropdown " style="margin-right: 10px;">
+
+    <div class="btn-group dropdown">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
         <i class="ai-bar-chart-3 me-2"></i>
@@ -46,7 +48,8 @@
         </a>
       </div>
     </div>
-    <div class="btn-group dropdown" style="margin-right: 10px;">
+
+    <div class="btn-group dropdown">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
         <i class="ai-menu me-2"></i>
@@ -61,6 +64,7 @@
     </div>
   </div>
 </div>
+
 <div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
   <div class="card-body pb-4">
 
@@ -82,46 +86,132 @@
     </div>
 
     <div class="table-responsive" *ngIf="!isFirstLoading">
-      <table class="table table-hover" *ngIf="currentSort=='createdDateAsc' && receiptValues && receiptValues.length>0">
+
+      <div *ngIf="currentSort=='createdDateAsc' && receiptValues && receiptValues.length>0">
+        <div *ngFor="let receiptValue of receiptValues" class="card mb-3 shadow-sm">
+          <div class="card-body p-3">
+            <div class="d-flex justify-content-between mb-2 flex-wrap">
+              <div><strong>Date :</strong> {{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</div>
+              <div><strong>Responsable :</strong> {{capitalizeName(getResponsableLabel(receiptValue))}}</div>
+              <div><strong>Service :</strong> {{receiptValue.serviceLists}}</div>
+            </div>
+
+            <div class="mb-3">
+              <strong>Affaire : </strong>
+              <span>{{capitalizeName(receiptValue.affaireLists)}}</span>
+            </div>
+            <div class="mb-3">
+              <strong>Description : </strong>
+              <span [innerHTML]="receiptValue.eventDescription | trustHtml"></span>
+            </div>
+
+            <div class="d-flex justify-content-start border-top pt-2" style="gap: 2rem; min-width: 200px;">
+              <div style="flex: 1 1 100px;">
+                <strong>Débit</strong><br>
+                <span class="text-danger">{{receiptValue.debitAmount | currency:'EUR'}}</span>
+              </div>
+              <div style="flex: 1 1 100px;">
+                <strong>Crédit</strong><br>
+                <span class="text-success">{{receiptValue.creditAmount | currency:'EUR'}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 p-3 border-top d-flex justify-content-end" style="gap: 3rem; min-width: 200px;">
+          <div>
+            <strong>Solde total Débit</strong><br>
+            <span class="text-danger" *ngIf="getTotalSolde(undefined,undefined) < 0">{{
+              (getTotalSolde(undefined,undefined) * -1) | currency:'EUR' }}</span>
+          </div>
+          <div>
+            <strong>Solde total Crédit</strong><br>
+            <span class="text-success" *ngIf="getTotalSolde(undefined,undefined) > 0">{{
+              getTotalSolde(undefined,undefined) | currency:'EUR' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!--table class="table table-hover table-fixed"
+        *ngIf="currentSort=='createdDateAsc' && receiptValues && receiptValues.length>0">
         <thead>
           <tr>
             <th scope="col">Date</th>
             <th scope="col">Responsable</th>
-            <th scope="col">Affaire</th>
             <th scope="col">Description</th>
             <th scope="col">Service</th>
-            <th scope="col" style="width: 20%;">Crédit</th>
-            <th scope="col" style="width: 20%;">Débit</th>
+            <th scope="col">Crédit</th>
+            <th scope="col">Débit</th>
           </tr>
         </thead>
         <tbody>
           <ng-container *ngFor="let receiptValue of receiptValues">
             <tr *ngIf="receiptValue.eventDateTime">
-              <td>{{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</td>
-              <td>{{capitalizeName(getResponsableLabel(receiptValue))}} </td>
-              <td>{{capitalizeName(receiptValue.affaireLists)}} </td>
-              <td><span [innerHTML]="receiptValue.eventDescription | trustHtml" class="announce-container"></span>
-              </td>
-              <td>{{receiptValue.serviceLists}}</td>
-              <td>{{receiptValue.creditAmount | currency:'EUR'}}</td>
-              <td>{{receiptValue.debitAmount | currency:'EUR'}}</td>
+              <td data-label="Date">{{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</td>
+              <td data-label="Responsable">{{capitalizeName(getResponsableLabel(receiptValue))}}</td>
+              <td data-label="Description">{{capitalizeName(receiptValue.affaireLists)}} - <span
+                  [innerHTML]="receiptValue.eventDescription | trustHtml"></span></td>
+              <td data-label="Service">{{receiptValue.serviceLists}}</td>
+              <td data-label="Crédit">{{receiptValue.creditAmount | currency:'EUR'}}</td>
+              <td data-label="Débit">{{receiptValue.debitAmount | currency:'EUR'}}</td>
+            </tr>
+            <tr colspan="5">
+
             </tr>
           </ng-container>
           <tr>
-            <td colspan="7">&nbsp;</td>
+            <td colspan="5">&nbsp;</td>
           </tr>
           <tr>
-            <td colspan="5">Solde total</td>
-            <td><span *ngIf="getTotalSolde()>0">{{getTotalSolde() | currency:'EUR'}}</span></td>
-            <td><span *ngIf="getTotalSolde()<0">{{getTotalSolde() | currency:'EUR'}}</span></td>
+            <td colspan="3">Solde total</td>
+            <td><span *ngIf="getTotalSolde(undefined,undefined)>0">{{getTotalSolde(undefined,undefined) | currency:'EUR'}}</span></td>
+            <td><span *ngIf="getTotalSolde(undefined,undefined)<0">{{getTotalSolde(undefined,undefined) | currency:'EUR'}}</span></td>
           </tr>
         </tbody>
-      </table>
+      </table-->
 
       <ng-container *ngIf="currentSort=='byAffaire'">
         <ng-container *ngFor="let affaire of allAffaires ; let index = index">
-          <h4 class="h6 mb-2 mt-6">{{capitalizeName(affaire)}}</h4>
-          <table class="table table-hover">
+          <h4 class="h6 mb-2 mt-6 pt-3">{{capitalizeName(affaire)}}</h4>
+          <ng-container *ngFor="let receiptValue of receiptValues;">
+            <div *ngIf="receiptValue.eventDateTime && receiptValue.affaireLists == affaire" class="card mb-3 shadow-sm">
+              <div class="card-body p-3">
+                <div class="d-flex justify-content-between mb-2 flex-wrap">
+                  <div><strong>Date :</strong> {{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</div>
+                  <div><strong>Responsable :</strong> {{capitalizeName(getResponsableLabel(receiptValue))}}</div>
+                  <div><strong>Service :</strong> {{receiptValue.serviceLists}}</div>
+                </div>
+
+                <div class="mb-3">
+                  <strong>Description : </strong>
+                  <span [innerHTML]="receiptValue.eventDescription | trustHtml"></span>
+                </div>
+
+                <div class="d-flex justify-content-start border-top pt-2" style="gap: 2rem; min-width: 200px;">
+                  <div style="flex: 1 1 100px;">
+                    <strong>Débit</strong><br>
+                    <span class="text-danger">{{receiptValue.debitAmount | currency:'EUR'}}</span>
+                  </div>
+                  <div style="flex: 1 1 100px;">
+                    <strong>Crédit</strong><br>
+                    <span class="text-success">{{receiptValue.creditAmount | currency:'EUR'}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <div class="mt-4 p-3 border-top d-flex justify-content-end" style="gap: 3rem; min-width: 200px;">
+            <div>
+              <strong>Solde total Débit</strong><br>
+              <span class="text-danger" *ngIf="getTotalSolde(affaire,undefined) < 0">{{
+                (getTotalSolde(affaire,undefined) * -1) | currency:'EUR' }}</span>
+            </div>
+            <div>
+              <strong>Solde total Crédit</strong><br>
+              <span class="text-success" *ngIf="getTotalSolde(affaire,undefined) > 0">{{
+                getTotalSolde(affaire,undefined) | currency:'EUR' }}</span>
+            </div>
+          </div>
+          <!--table class="table table-hover table-fixed">
             <thead>
               <tr>
                 <th scope="col">Date</th>
@@ -135,13 +225,13 @@
             <tbody *ngIf="receiptValues">
               <ng-container *ngFor="let receiptValue of receiptValues;">
                 <tr *ngIf="receiptValue.eventDateTime && receiptValue.affaireLists == affaire">
-                  <td>{{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</td>
-                  <td>{{capitalizeName(getResponsableLabel(receiptValue))}} </td>
-                  <td><span [innerHTML]="receiptValue.eventDescription | trustHtml" class="announce-container"></span>
+                  <td data-label="Date">{{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</td>
+                  <td data-label="Responsable">{{capitalizeName(getResponsableLabel(receiptValue))}}</td>
+                  <td data-label="Description"><span [innerHTML]="receiptValue.eventDescription | trustHtml"></span>
                   </td>
-                  <td>{{receiptValue.serviceLists}}</td>
-                  <td>{{receiptValue.creditAmount | currency:'EUR'}}</td>
-                  <td>{{receiptValue.debitAmount | currency:'EUR'}}</td>
+                  <td data-label="Service">{{receiptValue.serviceLists}}</td>
+                  <td data-label="Crédit">{{receiptValue.creditAmount | currency:'EUR'}}</td>
+                  <td data-label="Débit">{{receiptValue.debitAmount | currency:'EUR'}}</td>
                 </tr>
               </ng-container>
               <ng-container *ngIf="allAffaires&&  index == allAffaires.length-1">
@@ -150,19 +240,62 @@
                 </tr>
                 <tr>
                   <td colspan="4">Solde total</td>
-                  <td><span *ngIf="getTotalSolde()>0">{{getTotalSolde() | currency:'EUR'}}</span></td>
-                  <td><span *ngIf="getTotalSolde()<0">{{getTotalSolde() | currency:'EUR'}}</span></td>
+                  <td><span *ngIf="getTotalSolde(undefined,undefined)>0">{{getTotalSolde(undefined,undefined) | currency:'EUR'}}</span></td>
+                  <td><span *ngIf="getTotalSolde(undefined,undefined)<0">{{getTotalSolde(undefined,undefined) | currency:'EUR'}}</span></td>
                 </tr>
               </ng-container>
             </tbody>
-          </table>
+          </table-->
         </ng-container>
       </ng-container>
 
       <ng-container *ngIf="currentSort=='byResponsable'">
         <ng-container *ngFor="let responsable of allResponsables ; let index = index">
           <h4 class="h6 mb-2 mt-6">{{capitalizeName(responsable.firstname+' '+responsable.lastname)}}</h4>
-          <table class="table table-hover">
+          <ng-container *ngFor="let receiptValue of receiptValues;">
+            <div *ngIf="receiptValue.eventDateTime && receiptValue.responsable.id == responsable.id"
+              class="card mb-3 shadow-sm">
+              <div class="card-body p-3">
+                <div class="d-flex justify-content-between mb-2 flex-wrap">
+                  <div><strong>Date :</strong> {{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</div>
+                  <div><strong>Service :</strong> {{receiptValue.serviceLists}}</div>
+                </div>
+
+                <div class="mb-3">
+                  <strong>Affaire : </strong>
+                  <span>{{capitalizeName(receiptValue.affaireLists)}}</span>
+                </div>
+                <div class="mb-3">
+                  <strong>Description : </strong>
+                  <span [innerHTML]="receiptValue.eventDescription | trustHtml"></span>
+                </div>
+
+                <div class="d-flex justify-content-start border-top pt-2" style="gap: 2rem; min-width: 200px;">
+                  <div style="flex: 1 1 100px;">
+                    <strong>Débit</strong><br>
+                    <span class="text-danger">{{receiptValue.debitAmount | currency:'EUR'}}</span>
+                  </div>
+                  <div style="flex: 1 1 100px;">
+                    <strong>Crédit</strong><br>
+                    <span class="text-success">{{receiptValue.creditAmount | currency:'EUR'}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <div class="mt-4 p-3 border-top d-flex justify-content-end" style="gap: 3rem; min-width: 200px;">
+            <div>
+              <strong>Solde total Débit</strong><br>
+              <span class="text-danger" *ngIf="getTotalSolde(undefined,responsable) < 0">{{
+                (getTotalSolde(undefined,responsable) * -1) | currency:'EUR' }}</span>
+            </div>
+            <div>
+              <strong>Solde total Crédit</strong><br>
+              <span class="text-success" *ngIf="getTotalSolde(undefined,responsable) > 0">{{
+                getTotalSolde(undefined,responsable) | currency:'EUR' }}</span>
+            </div>
+          </div>
+          <!--table class="table table-hover table-fixed">
             <thead>
               <tr>
                 <th scope="col">Date</th>
@@ -176,13 +309,13 @@
             <tbody>
               <ng-container *ngFor="let receiptValue of receiptValues">
                 <tr *ngIf="receiptValue.eventDateTime && receiptValue.responsable.id == responsable.id">
-                  <td>{{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</td>
-                  <td>{{capitalizeName(receiptValue.affaireLists)}} </td>
-                  <td><span [innerHTML]="receiptValue.eventDescription | trustHtml" class="announce-container"></span>
+                  <td data-label="Date">{{receiptValue.eventDateTime | date:'dd/MM/yyyy'}}</td>
+                  <td data-label="Affaire">{{capitalizeName(receiptValue.affaireLists)}}</td>
+                  <td data-label="Description"><span [innerHTML]="receiptValue.eventDescription | trustHtml"></span>
                   </td>
-                  <td>{{receiptValue.serviceLists}}</td>
-                  <td>{{receiptValue.creditAmount | currency:'EUR'}}</td>
-                  <td>{{receiptValue.debitAmount | currency:'EUR'}}</td>
+                  <td data-label="Service">{{receiptValue.serviceLists}}</td>
+                  <td data-label="Crédit">{{receiptValue.creditAmount | currency:'EUR'}}</td>
+                  <td data-label="Débit">{{receiptValue.debitAmount | currency:'EUR'}}</td>
                 </tr>
               </ng-container>
               <ng-container *ngIf="allResponsables &&  index == allResponsables.length-1">
@@ -191,12 +324,12 @@
                 </tr>
                 <tr>
                   <td colspan="4">Solde total</td>
-                  <td><span *ngIf="getTotalSolde()>0">{{getTotalSolde() | currency:'EUR'}}</span></td>
-                  <td><span *ngIf="getTotalSolde()<0">{{getTotalSolde() | currency:'EUR'}}</span></td>
+                  <td><span *ngIf="getTotalSolde(undefined,responsable)>0">{{getTotalSolde(undefined,responsable) | currency:'EUR'}}</span></td>
+                  <td><span *ngIf="getTotalSolde(undefined,responsable)<0">{{getTotalSolde(undefined,responsable) | currency:'EUR'}}</span></td>
                 </tr>
               </ng-container>
             </tbody>
-          </table>
+          </table-->
         </ng-container>
       </ng-container>
     </div>

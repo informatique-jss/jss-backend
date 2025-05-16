@@ -10,10 +10,10 @@ import { BillingClosureReceiptValue } from '../../model/BillingClosureReceiptVal
 import { BillingClosureService } from '../../services/billing.closure.service';
 
 @Component({
-    selector: 'app-billing-closure',
-    templateUrl: './billing-closure.component.html',
-    styleUrls: ['./billing-closure.component.css'],
-    standalone: false
+  selector: 'app-billing-closure',
+  templateUrl: './billing-closure.component.html',
+  styleUrls: ['./billing-closure.component.css'],
+  standalone: false
 })
 export class BillingClosureComponent implements OnInit {
 
@@ -56,11 +56,14 @@ export class BillingClosureComponent implements OnInit {
         }
       }
 
+      if (promises.length == 0)
+        this.isFirstLoading = false;
+
       combineLatest(promises).subscribe(response => {
         this.receiptValues = [];
         if (response)
           for (let billingClosureValues of response)
-            this.receiptValues.push(...billingClosureValues);
+            this.receiptValues.push(...billingClosureValues.filter(b => b.eventDateTime));
 
         this.allAffaires = [];
         this.allResponsables = [];
@@ -155,14 +158,16 @@ export class BillingClosureComponent implements OnInit {
     this.currentSort = sortType;
   }
 
-  getTotalSolde() {
+  getTotalSolde(affaire: string | undefined, responsable: Responsable | undefined) {
     let solde = 0;
     if (this.receiptValues)
-      for (let value of this.receiptValues)
-        if (value.creditAmount)
-          solde += value.creditAmount;
-        else
-          solde -= value.debitAmount;
+      for (let value of this.receiptValues) {
+        if (!affaire && !responsable || affaire && affaire == value.affaireLists || responsable && value.responsable.id == responsable.id)
+          if (value.creditAmount)
+            solde += value.creditAmount;
+          else
+            solde -= value.debitAmount;
+      }
     return solde;
   }
 

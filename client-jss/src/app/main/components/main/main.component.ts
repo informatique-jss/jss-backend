@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MY_JSS_OFFERS_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_HOME_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
@@ -129,7 +129,7 @@ export class MainComponent implements OnInit {
   }
 
   openMyJss(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_OFFERS_ROUTE);
+    this.appService.openMyJssRoute(event, MY_JSS_HOME_ROUTE);
   }
 
   registerEmail(mailToRegister: string) {

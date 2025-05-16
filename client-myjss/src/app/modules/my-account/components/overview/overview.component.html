@@ -81,9 +81,9 @@
         <div class="col-md-8 mb-4 mb-md-0">
           <table class="table mb-0">
             <tbody>
-              <tr>
+              <tr *ngIf="currentUser.phones && currentUser.phones.length>0">
                 <td class="border-0 text-body-secondary py-1 px-0"><i class="ai-phone me-1"></i>Téléphone</td>
-                <td class="border-0 text-dark fw-medium py-1 ps-3">{{currentUser.salesEmployee}}
+                <td class="border-0 text-dark fw-medium py-1 ps-3">{{currentUser.phones.join(" / ")}}
                 </td>
               </tr>
               <tr>

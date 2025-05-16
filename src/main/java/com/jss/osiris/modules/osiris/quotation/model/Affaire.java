@@ -42,7 +42,7 @@ public class Affaire implements IId, IAttachment {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class, JacksonViews.MyJssListView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -53,7 +53,7 @@ public class Affaire implements IId, IAttachment {
 	@Column(length = 150)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class, JacksonViews.MyJssListView.class })
 	private String denomination;
 
 	@Column(length = 150)
@@ -67,13 +67,13 @@ public class Affaire implements IId, IAttachment {
 	@Column(length = 50)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class, JacksonViews.MyJssListView.class })
 	private String firstname;
 
 	@Column(length = 50)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class, JacksonViews.MyJssListView.class })
 	private String lastname;
 
 	@Column(length = 9)
@@ -83,7 +83,7 @@ public class Affaire implements IId, IAttachment {
 
 	@Column(length = 14)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private String siret;
 
 	@Column(length = 10)
@@ -104,9 +104,9 @@ public class Affaire implements IId, IAttachment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-
 	private City city;
 
 	@ManyToOne(fetch = FetchType.LAZY)

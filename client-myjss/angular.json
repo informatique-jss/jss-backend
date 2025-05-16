@@ -44,11 +44,6 @@
             ],
             "scripts": [
               {
-                "input": "src/assets/vendor/cleave.js/dist/cleave.min.js",
-                "inject": true,
-                "bundleName": "cleave.min.js"
-              },
-              {
                 "input": "src/assets/js/theme-switcher.js",
                 "inject": true,
                 "bundleName": "theme-switcher.js"

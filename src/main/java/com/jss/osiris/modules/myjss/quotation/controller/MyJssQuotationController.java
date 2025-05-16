@@ -278,7 +278,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/order/asso")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForCustomerOrder(
 			@RequestParam Integer idCustomerOrder)
 			throws OsirisException {
@@ -292,7 +292,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation/asso")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<AssoAffaireOrder>> getAssoAffaireOrderForQuotation(
 			@RequestParam Integer idQuotation)
 			throws OsirisException {

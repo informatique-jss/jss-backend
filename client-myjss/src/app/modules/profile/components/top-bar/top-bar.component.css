@@ -1,34 +1,41 @@
 .navbar {
-    padding: 0px;
+  padding: 0px;
 }
 
 .lead-text-menu {
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0px;
-    color: rgb(255, 255, 255);
-    margin-bottom: 20px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0px;
+  color: rgb(255, 255, 255);
+  margin-bottom: 20px;
 }
 
 .navbar-toogler-light {
-    color: var(--ar-secondary);
+  color: var(--ar-secondary);
 }
 
 .navbar-toggler-icon-light, .navbar-toggler-icon-light::before, .navbar-toggler-icon-light::after {
-    background-color: var(--ar-secondary);
+  background-color: var(--ar-secondary);
 }
 
 .jss-navbar-light {
-    background-color: var(--ar-primary);
-    --ar-nav-link-color: var(--ar-secondary) !important;
-    --ar-nav-link-hover-color: var(--ar-primary);
-    color: var(--ar-secondary) !important;
+  --ar-primary: #ffffff !important;
+  --ar-secondary: #1c2d41 !important;
+  --ar-tertiary: #f3e3ca !important;
+  background-color: var(--ar-primary);
+  --ar-nav-link-color: var(--ar-secondary) !important;
+  --ar-nav-link-hover-color: var(--ar-primary);
+  color: var(--ar-secondary) !important;
 }
 
 .jss-navbar-light .nav-link,
 .jss-navbar-light .dropdown-item,
 .jss-navbar-light .fs-xs,
 .jss-navbar-light .fs-sm {
-    color: var(--ar-secondary) !important;
+  color: var(--ar-secondary) !important;
+}
+
+.user-account {
+  text-decoration: unset !important;
 }

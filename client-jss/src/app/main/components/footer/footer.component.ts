@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MY_JSS_CGV_ROUTE, MY_JSS_CONFIDENTIALITY_ROUTE, MY_JSS_JOIN_US_ROUTE, MY_JSS_LEGAL_MENTIONS_ROUTE, MY_JSS_PARTNERS_ROUTE, MY_JSS_PRODUCT_ROUTE, MY_JSS_SUBSCRIBE_ROUTE, MY_JSS_WHO_ARE_WE_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_CGV_ROUTE, MY_JSS_CONFIDENTIALITY_ROUTE, MY_JSS_JOIN_US_ROUTE, MY_JSS_LEGAL_MENTIONS_ROUTE, MY_JSS_PARTNERS_ROUTE, MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE, MY_JSS_SERVICES_APOSITLLE_ROUTE, MY_JSS_SERVICES_DOCUMENT_ROUTE, MY_JSS_SERVICES_DOMICILIATION_ROUTE, MY_JSS_SERVICES_FORMALITY_ROUTE, MY_JSS_SUBSCRIBE_ROUTE, MY_JSS_WHO_ARE_WE_ROUTE } from '../../../libs/Constants';
 import { AppService } from '../../../services/app.service';
 import { JssCategory } from '../../model/JssCategory';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
@@ -7,10 +7,10 @@ import { DepartmentService } from '../../services/department.service';
 import { JssCategoryService } from '../../services/jss.category.service';
 
 @Component({
-    selector: 'footer-page',
-    templateUrl: './footer.component.html',
-    styleUrls: ['./footer.component.css'],
-    standalone: false
+  selector: 'footer-page',
+  templateUrl: './footer.component.html',
+  styleUrls: ['./footer.component.css'],
+  standalone: false
 })
 export class FooterComponent implements OnInit {
 
@@ -66,8 +66,24 @@ export class FooterComponent implements OnInit {
     this.appService.openMyJssRoute(event, MY_JSS_CONFIDENTIALITY_ROUTE);
   }
 
-  openProduct(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_PRODUCT_ROUTE);
+  openProductAnnounce(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE);
+  }
+
+  openProductFormality(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_SERVICES_FORMALITY_ROUTE);
+  }
+
+  openProductApositlle(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_SERVICES_APOSITLLE_ROUTE);
+  }
+
+  openProductDomiciliation(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_SERVICES_DOMICILIATION_ROUTE);
+  }
+
+  openProductDocument(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_SERVICES_DOCUMENT_ROUTE);
   }
 
   openWhoAreWe(event: any) {

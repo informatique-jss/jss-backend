@@ -149,7 +149,7 @@
                         <strong><span th:if="${service.serviceLabelToDisplay!=null}"
                                 th:text="${service.serviceLabelToDisplay}"></span></strong>
                         <strong><span th:if="${service.serviceLabelToDisplay==null}"
-                                th:text="${service.serviceTypes[0].label}"></span></strong>
+                                th:text="${service.serviceLabelToDisplay}"></span></strong>
                     </td>
                 </tr>
                 <th:block th:each="invoiceItem : ${service.provisions[0].invoiceItemsGrouped}"
