@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { formatDateHourFrance } from 'src/app/libs/FormatHelper';
 import { Indicator } from 'src/app/modules/reporting/model/Indicator';
 import { IndicatorGroup } from 'src/app/modules/reporting/model/IndicatorGroup';
 import { IndicatorGroupService } from 'src/app/modules/reporting/services/indicator-group.service';
 import { IndicatorService } from 'src/app/modules/reporting/services/indicator.service';
 import { AppService } from 'src/app/services/app.service';
-import { formatDateHourFrance } from '../../../../../../../../client-myjss/src/app/libs/FormatHelper';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({

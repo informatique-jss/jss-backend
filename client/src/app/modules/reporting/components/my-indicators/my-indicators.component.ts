@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { formatDateHourFrance } from 'src/app/libs/FormatHelper';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AppService } from 'src/app/services/app.service';
-import { formatDateHourFrance } from '../../../../../../../client-myjss/src/app/libs/FormatHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { IndicatorValue } from '../../model/IndicatorValue';
 import { Kpi } from '../../model/Kpi';
