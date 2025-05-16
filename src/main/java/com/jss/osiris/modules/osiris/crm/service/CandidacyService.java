@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.crm.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 
 public interface CandidacyService {
@@ -9,5 +10,5 @@ public interface CandidacyService {
 
     public Candidacy getCandidacy(Integer id);
 
-    public Candidacy addOrUpdateCandidacy(Candidacy candidacy);
+    public Candidacy addOrUpdateCandidacy(Candidacy candidacy) throws OsirisException;
 }

@@ -1058,6 +1058,13 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-employee [(model)]="constant.employeeCandidacyResponsible" [form]="constantForm"
+                propertyName="employeeCandidacyResponsible" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Employé Responsable des recrutements"></autocomplete-employee>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <radio-group-transfert-funds [(model)]="constant.transfertFundsTypeBail" [form]="constantForm"
                 [isDisabled]="!editMode" propertyName="transfertFundsTypeBail"
                 label="Type de transfert de fonds - bail">

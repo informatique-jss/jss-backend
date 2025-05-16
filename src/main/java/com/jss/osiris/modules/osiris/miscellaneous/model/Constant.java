@@ -553,6 +553,10 @@ public class Constant implements Serializable, IId {
 	private Employee employeeInvoiceReminderResponsible;
 
 	@ManyToOne
+	@JoinColumn(name = "id_employee_candidacy_responsible")
+	private Employee employeeCandidacyResponsible;
+
+	@ManyToOne
 	@JoinColumn(name = "id_transfert_funds_type_physique")
 	private TransfertFundsType transfertFundsTypePhysique;
 
@@ -2802,6 +2806,14 @@ public class Constant implements Serializable, IId {
 
 	public void setAttachmentTypeApplicationCv(AttachmentType attachmentTypeApplicationCv) {
 		this.attachmentTypeApplicationCv = attachmentTypeApplicationCv;
+	}
+
+	public Employee getEmployeeCandidacyResponsible() {
+		return employeeCandidacyResponsible;
+	}
+
+	public void setEmployeeCandidacyResponsible(Employee employeeCandidacyResponsible) {
+		this.employeeCandidacyResponsible = employeeCandidacyResponsible;
 	}
 
 }

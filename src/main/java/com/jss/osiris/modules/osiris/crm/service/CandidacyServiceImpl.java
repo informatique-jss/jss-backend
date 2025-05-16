@@ -8,14 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.repository.CandidacyRepository;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 
 @Service
 public class CandidacyServiceImpl implements CandidacyService {
 
     @Autowired
     CandidacyRepository candidacyRepository;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Override
     public List<Candidacy> getCandidacies() {
@@ -33,7 +38,16 @@ public class CandidacyServiceImpl implements CandidacyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Candidacy addOrUpdateCandidacy(
-            Candidacy candidacy) {
-        return candidacyRepository.save(candidacy);
+            Candidacy candidacy) throws OsirisException {
+        Candidacy existingCandidacy = null;
+
+        existingCandidacy = candidacyRepository.findByMail(candidacy.getMail());
+        if (existingCandidacy != null)
+            candidacy.setId(existingCandidacy.getId());
+        candidacy = candidacyRepository.save(candidacy);
+
+        if (existingCandidacy == null)
+            notificationService.notifyNewCandidacy(candidacy);
+        return candidacy;
     }
 }

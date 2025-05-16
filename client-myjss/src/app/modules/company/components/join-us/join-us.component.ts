@@ -60,6 +60,7 @@ export class JoinUsComponent implements OnInit {
   }
 
   openImageModal(imageUrl: string): void {
+    this.applicationForm.reset();
     if (this.modalImageRef) {
       this.modalImageRef.nativeElement.src = imageUrl;
     }

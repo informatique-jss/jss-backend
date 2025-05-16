@@ -178,6 +178,7 @@ export interface Constant {
   employeeMailResponsible: Employee;
   employeeInvoiceReminderResponsible: Employee;
   employeeSalesDirector: Employee;
+  employeeCandidacyResponsible: Employee;
   transfertFundsTypePhysique: TransfertFundsType;
   transfertFundsTypeMoral: TransfertFundsType;
   transfertFundsTypeBail: TransfertFundsType;

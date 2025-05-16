@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.miscellaneous.repository.NotificationRepository;
@@ -32,6 +33,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     CustomerOrderService customerOrderService;
+
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
@@ -121,7 +125,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private void generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
-            boolean showPopup, Service service, Provision provision, CustomerOrder customerOrder) {
+            boolean showPopup, Service service, Provision provision, CustomerOrder customerOrder, Candidacy candidacy) {
 
         List<Notification> existingNotification = null;
         if (service != null)
@@ -136,6 +140,9 @@ public class NotificationServiceImpl implements NotificationService {
             existingNotification = notificationRepository
                     .findByEmployeeAndNotificationTypeAndCustomerOrder(toEmployee, notificationType, customerOrder);
 
+        else if (candidacy != null)
+            existingNotification = notificationRepository.findByEmployeeAndNotificationTypeAndCandidacy(toEmployee,
+                    notificationType, candidacy);
         else
             return;
 
@@ -153,6 +160,7 @@ public class NotificationServiceImpl implements NotificationService {
                 notification.setProvision(provision);
                 notification.setService(service);
                 notification.setNotificationType(notificationType);
+                notification.setCandidacy(candidacy);
             } else {
                 notification.setUpdatedBy(fromEmployee);
                 notification.setUpdatedDateTime(LocalDateTime.now());
@@ -275,7 +283,7 @@ public class NotificationServiceImpl implements NotificationService {
                         return;
 
                     generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                            Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null);
+                            Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null, null);
                 }
             }
         }
@@ -297,7 +305,7 @@ public class NotificationServiceImpl implements NotificationService {
                             return;
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                                Notification.SERVICE_ADD_ATTACHMENT, false, service, null, null);
+                                Notification.SERVICE_ADD_ATTACHMENT, false, service, null, null, null);
                     }
                 }
             }
@@ -326,7 +334,7 @@ public class NotificationServiceImpl implements NotificationService {
 
                                         generateNewNotification(employeeService.getCurrentEmployee(),
                                                 provision.getAssignedTo(),
-                                                Notification.ORDER_ADD_ATTACHMENT, false, null, null, order);
+                                                Notification.ORDER_ADD_ATTACHMENT, false, null, null, order, null);
                                     }
                                 }
                             }
@@ -366,7 +374,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED, false, null, provision, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED, false, null, provision, null, null);
             }
         }
     }
@@ -379,7 +387,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_REFUSED, false, null, provision, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_REFUSED, false, null, provision, null, null);
             }
         }
     }
@@ -392,9 +400,15 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_SIGNED, false, null, provision, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_SIGNED, false, null, provision, null, null);
             }
         }
+    }
+
+    @Override
+    public void notifyNewCandidacy(Candidacy candidacy) throws OsirisException {
+        generateNewNotification(null, constantService.getEmployeeCandidacyResponsible(),
+                Notification.NEW_CANDIDACY_RECEIVED, false, null, null, null, candidacy);
     }
 
     public Notification cloneNotification(Notification original) {

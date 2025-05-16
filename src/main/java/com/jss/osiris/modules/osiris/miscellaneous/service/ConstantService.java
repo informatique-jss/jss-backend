@@ -322,6 +322,8 @@ public interface ConstantService {
 
     public Employee getEmployeeInvoiceReminderResponsible() throws OsirisException;
 
+    public Employee getEmployeeCandidacyResponsible() throws OsirisException;
+
     public TransfertFundsType getTransfertFundsTypePhysique() throws OsirisException;
 
     public TransfertFundsType getTransfertFundsTypeMoral() throws OsirisException;
