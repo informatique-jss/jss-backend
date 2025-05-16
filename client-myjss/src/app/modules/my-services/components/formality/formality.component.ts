@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { jarallax } from 'jarallax';
-import { AppService } from '../../../libs/app.service';
-import { ConstantService } from '../../../libs/constant.service';
-import { Post } from '../../tools/model/Post';
-import { PostService } from '../../tools/services/post.service';
+import { AppService } from '../../../../libs/app.service';
+import { ConstantService } from '../../../../libs/constant.service';
+import { Post } from '../../../tools/model/Post';
+import { PostService } from '../../../tools/services/post.service';
 
 @Component({
   selector: 'formality',

@@ -14,7 +14,6 @@ import { CandidacyService } from '../../services/candidacy.service';
   styleUrls: ['./candidacy.component.css']
 })
 export class CandidacyComponent implements OnInit {
-  //TODO Add notification when new candidacy is received + Use Api ?
   displayedColumnsCandidacies: SortTableColumn<Candidacy>[] = [];
   tableActionWebinarParticipant: SortTableAction<Candidacy>[] = [];
   candidacies: Candidacy[] = [];
@@ -32,7 +31,8 @@ export class CandidacyComponent implements OnInit {
 
     this.displayedColumnsCandidacies.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<Candidacy>);
     this.displayedColumnsCandidacies.push({ id: "searchedJob", fieldName: "searchedJob", label: "Poste recherché" } as SortTableColumn<Candidacy>);
-    this.displayedColumnsCandidacies.push({ id: "mail", fieldName: "mail", label: "Mail" } as SortTableColumn<Candidacy>);
+    this.displayedColumnsCandidacies.push({ id: "message", fieldName: "message", label: "Message", isShrinkColumn: true } as SortTableColumn<Candidacy>);
+    this.displayedColumnsCandidacies.push({ id: "mail", fieldName: "mail.mail", label: "Mail" } as SortTableColumn<Candidacy>);
 
     this.tableActions.push({
       actionIcon: "visibility",
@@ -42,18 +42,18 @@ export class CandidacyComponent implements OnInit {
         if (attachment) {
           this.uploadAttachmentService.previewAttachment(attachment);
         } else {
-          this.appService.displayToast('Aucun fichier attaché à cette candidature', true, "Erreur de téléchargement", 3000);
+          this.appService.displayToast('Aucun fichier attaché à cette candidature', true, "Erreur", 3000);
         }
       },
       display: true
     } as SortTableAction<Candidacy>);
     this.tableActions.push({
-      actionIcon: "download", actionName: "Télécharger le fichier", actionClick: (column: SortTableAction<Candidacy>, candidacy: Candidacy, event: any): void => {
+      actionIcon: "download", actionName: "Télécharger le CV", actionClick: (column: SortTableAction<Candidacy>, candidacy: Candidacy, event: any): void => {
         const attachment = candidacy.attachments[0];
         if (attachment) {
           this.uploadAttachmentService.downloadAttachment(attachment);
         } else {
-          this.appService.displayToast('Aucun fichier attaché à cette candidature', true, "Erreur de téléchargement", 3000);
+          this.appService.displayToast('Aucun fichier attaché à cette candidature', true, "Erreur", 3000);
         }
       }, display: true
     } as SortTableAction<Candidacy>);

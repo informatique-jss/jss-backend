@@ -8,12 +8,16 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
@@ -21,18 +25,21 @@ import jakarta.persistence.SequenceGenerator;
 public class Candidacy implements Serializable, IId {
 
 	@Id
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class })
 	@SequenceGenerator(name = "candidacy_sequence", sequenceName = "candidacy_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "candidacy_sequence")
 	private Integer id;
 
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
-	private String mail;
+	@JsonView({ JacksonViews.OsirisListView.class })
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_mail")
+	private Mail mail;
 
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private String searchedJob;
 
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class })
+	@Column(columnDefinition = "TEXT")
 	private String message;
 
 	@OneToMany(mappedBy = "candidacy", fetch = FetchType.LAZY)
@@ -46,14 +53,6 @@ public class Candidacy implements Serializable, IId {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public String getMail() {
-		return mail;
-	}
-
-	public void setMail(String mail) {
-		this.mail = mail;
 	}
 
 	public String getSearchedJob() {
@@ -78,6 +77,14 @@ public class Candidacy implements Serializable, IId {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public Mail getMail() {
+		return mail;
+	}
+
+	public void setMail(Mail mail) {
+		this.mail = mail;
 	}
 
 }

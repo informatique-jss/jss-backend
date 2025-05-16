@@ -6,9 +6,8 @@ import { AppService } from '../../../../libs/app.service';
 import { ConstantService } from '../../../../libs/constant.service';
 import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { AttachmentType } from '../../../my-account/model/AttachmentType';
-import { IAttachment } from '../../../my-account/model/IAttachment';
-import { AttachmentService } from '../../../my-account/services/attachment.service';
 import { Candidacy } from '../../../profile/model/Candidacy';
+import { Mail } from '../../../profile/model/Mail';
 import { CandidacyService } from '../../services/candidacy.service';
 
 @Component({
@@ -32,20 +31,15 @@ export class JoinUsComponent implements OnInit {
   @ViewChild('spontaneousApplicationModal') spontaneousApplicationModal!: ElementRef<HTMLElement>;
   @ViewChild(SingleUploadComponent) singleUploadComponent: SingleUploadComponent | undefined;
 
-  mail: string = "";
-  searchedJob: string = "";
-  message: string = "";
   APPLICATION_CV_ENTITY_TYPE = APPLICATION_CV_ENTITY_TYPE;
   attachmentTypeApplicationCv: AttachmentType = this.constantService.getAttachmentTypeApplicationCv();
-  newCandidacy: Candidacy = {} as Candidacy;
-  cvFile: IAttachment = {} as IAttachment;
+  newCandidacy: Candidacy = { mail: {} as Mail } as Candidacy;
   modalInstance: any;
 
   constructor(private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private candidacyService: CandidacyService,
     private appService: AppService,
-    private attachmentService: AttachmentService,
   ) { }
 
   ngOnInit() {
@@ -67,7 +61,7 @@ export class JoinUsComponent implements OnInit {
   }
 
   sendApplication() {
-    if (!this.newCandidacy.mail || !this.cvFile || !this.newCandidacy.message) {
+    if (!this.newCandidacy.mail || !this.newCandidacy.message) {
       return;
     }
     this.candidacyService.addOrUpdateCandidacy(this.newCandidacy).subscribe(response => {

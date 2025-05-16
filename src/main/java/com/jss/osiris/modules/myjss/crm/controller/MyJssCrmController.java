@@ -283,7 +283,7 @@ public class MyJssCrmController {
             throw new OsirisValidationException("mail");
 
         validationHelper.validateString(candidacy.getSearchedJob(), false, 50, "searchedJob");
-        validationHelper.validateString(candidacy.getMessage(), true, 250, "message");
+        validationHelper.validateString(candidacy.getMessage(), true, "message");
 
         return new ResponseEntity<Candidacy>(candidacyService.addOrUpdateCandidacy(candidacy), HttpStatus.OK);
     }

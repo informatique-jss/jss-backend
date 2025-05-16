@@ -1,19 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { jarallax } from 'jarallax';
-import { AppService } from '../../../libs/app.service';
-import { Post } from '../../tools/model/Post';
-import { PostService } from '../../tools/services/post.service';
+import { AppService } from '../../../../libs/app.service';
+import { Post } from '../../../tools/model/Post';
+import { PostService } from '../../../tools/services/post.service';
 
 @Component({
-  selector: 'domiciliation',
-  templateUrl: './domiciliation.component.html',
-  styleUrls: ['./domiciliation.component.css'],
+  selector: 'apostille',
+  templateUrl: './apostille.component.html',
+  styleUrls: ['./apostille.component.css'],
   standalone: false
 })
-export class DomiciliationComponent implements OnInit {
-
+export class ApostilleComponent implements OnInit {
   tendencyPosts: Post[] = [];
-
   constructor(private appService: AppService,
     private postService: PostService,
   ) { }
@@ -25,6 +23,7 @@ export class DomiciliationComponent implements OnInit {
       }
     });
   }
+
   ngAfterViewInit(): void {
     jarallax(document.querySelectorAll('.jarallax'), {
       speed: 0.5
@@ -35,16 +34,16 @@ export class DomiciliationComponent implements OnInit {
     this.appService.openRoute(event, "post/" + slug, undefined);
   }
 
+  openAnnouncements(event: any) {
+    this.appService.openRoute(event, "/services/announcement", undefined);
+  }
+
   openFormality(event: any) {
     this.appService.openRoute(event, "/services/formality", undefined);
   }
 
-  openApostille(event: any) {
-    this.appService.openRoute(event, "/services/apostille", undefined);
-  }
-
-  openAnnouncements(event: any) {
-    this.appService.openRoute(event, "/services/announcement", undefined);
+  openDomiciliation(event: any) {
+    this.appService.openRoute(event, "/services/domiciliation", undefined);
   }
 
   openDocument(event: any) {

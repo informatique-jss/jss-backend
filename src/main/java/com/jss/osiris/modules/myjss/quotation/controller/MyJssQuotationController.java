@@ -599,28 +599,34 @@ public class MyJssQuotationController {
 		boolean canUpload = true;
 		AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
 
-		if (entityType.equals(AssoServiceDocument.class.getSimpleName()) && assoServiceDocument == null) {
-			canUpload = false;
-		} else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
-			if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null
-					&& !myJssQuotationValidationHelper
-							.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()))
+		if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
+			if (assoServiceDocument == null) {
 				canUpload = false;
+			} else {
+				if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null
+						&& !myJssQuotationValidationHelper
+								.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()))
+					canUpload = false;
 
-			if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null) {
-				String quotationStatusCode = assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()
-						.getQuotationStatus().getCode();
-				if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
-						|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
-						|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+				if (assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null) {
+					String quotationStatusCode = assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()
+							.getQuotationStatus().getCode();
+					if (quotationStatusCode.equals(QuotationStatus.ABANDONED)
+							|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
+							|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+						canUpload = false;
+				}
+
+				if (assoServiceDocument.getService().getAssoAffaireOrder()
+						.getCustomerOrder() != null
+						&& !myJssQuotationValidationHelper.canSeeQuotation(
+								assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder()))
 					canUpload = false;
 			}
-
-			if (assoServiceDocument.getService().getAssoAffaireOrder()
-					.getCustomerOrder() != null
-					&& !myJssQuotationValidationHelper.canSeeQuotation(
-							assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder()))
-				canUpload = false;
+		} else if (entityType.equals(Candidacy.class.getSimpleName())) {
+			canUpload = true;
+		} else {
+			canUpload = false;
 		}
 
 		if (!canUpload)

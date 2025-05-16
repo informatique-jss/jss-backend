@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.repository.CandidacyRepository;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 
 @Service
@@ -21,6 +22,9 @@ public class CandidacyServiceImpl implements CandidacyService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    MailService mailService;
 
     @Override
     public List<Candidacy> getCandidacies() {
@@ -41,13 +45,15 @@ public class CandidacyServiceImpl implements CandidacyService {
             Candidacy candidacy) throws OsirisException {
         Candidacy existingCandidacy = null;
 
+        mailService.populateMailId(candidacy.getMail());
+
         existingCandidacy = candidacyRepository.findByMail(candidacy.getMail());
         if (existingCandidacy != null)
             candidacy.setId(existingCandidacy.getId());
         candidacy = candidacyRepository.save(candidacy);
 
-        if (existingCandidacy == null)
-            notificationService.notifyNewCandidacy(candidacy);
+        notificationService.notifyNewCandidacy(candidacy);
+
         return candidacy;
     }
 }

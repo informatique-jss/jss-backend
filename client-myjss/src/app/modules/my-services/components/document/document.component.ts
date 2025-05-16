@@ -1,21 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { jarallax } from 'jarallax';
-import { AppService } from '../../../libs/app.service';
-import { Post } from '../../tools/model/Post';
-import { PostService } from '../../tools/services/post.service';
+import { AppService } from '../../../../libs/app.service';
+import { Post } from '../../../tools/model/Post';
+import { PostService } from '../../../tools/services/post.service';
 
 @Component({
-  selector: 'apostille',
-  templateUrl: './apostille.component.html',
-  styleUrls: ['./apostille.component.css'],
+  selector: 'document',
+  templateUrl: './document.component.html',
+  styleUrls: ['./document.component.css'],
   standalone: false
 })
-export class ApostilleComponent implements OnInit {
+export class DocumentComponent implements OnInit {
+
   tendencyPosts: Post[] = [];
+
   constructor(private appService: AppService,
     private postService: PostService,
-  ) { }
-
+  ) {
+  }
   ngOnInit() {
     this.postService.getTendencyPosts().subscribe(response => {
       if (response && response.length > 0) {
@@ -42,11 +44,11 @@ export class ApostilleComponent implements OnInit {
     this.appService.openRoute(event, "/services/formality", undefined);
   }
 
-  openDomiciliation(event: any) {
-    this.appService.openRoute(event, "/services/domiciliation", undefined);
+  openApostille(event: any) {
+    this.appService.openRoute(event, "/services/apostille", undefined);
   }
 
-  openDocument(event: any) {
-    this.appService.openRoute(event, "/services/document", undefined);
+  openDomiciliation(event: any) {
+    this.appService.openRoute(event, "/services/domiciliation", undefined);
   }
 }

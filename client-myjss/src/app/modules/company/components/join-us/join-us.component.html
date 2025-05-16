@@ -68,7 +68,7 @@
       <div class="modal-body">
         <form class="needs-validation row" novalidate>
           <div class="col-12">
-            <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.mail" placeholder="E-mail*"
+            <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.mail.mail" placeholder="E-mail*"
               label="E-mail*" [form]="applicationForm" propertyName="mail" [isMandatory]="true" [isDisabled]="false"
               [maxLength]="250" type="email"></generic-input>
           </div>
@@ -80,7 +80,7 @@
         </form>
         <div class="col-12">
           <generic-textarea class="form-control form-control-lg" [(model)]="newCandidacy.message" label="Message*"
-            [form]="applicationForm" propertyName="message" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"
+            [form]="applicationForm" propertyName="message" [isMandatory]="true" [isDisabled]="false"
             [numberOfLines]="4"></generic-textarea>
         </div>
         <div class="mb-2 row">

@@ -14,7 +14,7 @@ import { NotFoundPageComponent } from './modules/general/components/404/not.foun
 import { GeneralModule } from './modules/general/components/general/general.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyAccountModule } from './modules/my-account/components/my-account/my-account.module';
-import { MyJssServicesModule } from './modules/my-services/myjss-services/myjss-services.module';
+import { MyJssServicesModule } from './modules/my-services/components/myjss-services/myjss-services.module';
 import { FooterComponent } from './modules/profile/components/footer/footer.component';
 import { SearchComponent } from './modules/profile/components/search/search.component';
 import { TopBarComponent } from './modules/profile/components/top-bar/top-bar.component';

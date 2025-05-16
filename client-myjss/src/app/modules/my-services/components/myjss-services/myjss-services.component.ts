@@ -1,13 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { AppService } from '../../../libs/app.service';
-import { MenuItem } from '../../general/model/MenuItem';
+import { AppService } from '../../../../libs/app.service';
+import { MenuItem } from '../../../general/model/MenuItem';
 
 @Component({
-    selector: 'jss-services',
-    templateUrl: './myjss-services.component.html',
-    styleUrls: ['./myjss-services.component.css'],
-    standalone: false
+  selector: 'jss-services',
+  templateUrl: './myjss-services.component.html',
+  styleUrls: ['./myjss-services.component.css'],
+  standalone: false
 })
 export class MyJssServicesComponent implements OnInit {
   myJssServicesItems: MenuItem[] = this.appService.getAllServicesMenuItems();

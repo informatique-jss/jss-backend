@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MiscellaneousModule } from '../../miscellaneous/components/miscellaneous/miscellaneous.module';
-import { MyAccountModule } from "../../my-account/components/my-account/my-account.module";
+import { MiscellaneousModule } from '../../../miscellaneous/components/miscellaneous/miscellaneous.module';
+import { MyAccountModule } from "../../../my-account/components/my-account/my-account.module";
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { ApostilleComponent } from '../apostille/apostille.component';
 import { DescriptionMyAccountComponent } from '../description-my-account/description-my-account.component';
