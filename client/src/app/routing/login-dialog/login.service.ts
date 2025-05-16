@@ -49,7 +49,7 @@ export class LoginService extends AppRestService<User> {
     return this.getList(new HttpParams(), "login/roles");
   }
 
-  public hasGroup(searchRoles: string[]): boolean {
+  public hasGroup(searchRoles: string[], includeAdmin: boolean = true): boolean {
     let roleJson = localStorage.getItem('roles');
     let roles = null;
     if (roleJson != null) {
@@ -61,7 +61,7 @@ export class LoginService extends AppRestService<User> {
       if (roles) {
         for (let role of roles) {
           for (let searchRole of searchRoles) {
-            if (role == searchRole || role == ADMINISTRATEURS)
+            if (role == searchRole || includeAdmin && role == ADMINISTRATEURS)
               return true;
           }
         }

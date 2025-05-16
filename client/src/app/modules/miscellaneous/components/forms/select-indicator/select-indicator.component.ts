@@ -5,6 +5,7 @@ import { IndicatorGroup } from 'src/app/modules/reporting/model/IndicatorGroup';
 import { IndicatorGroupService } from 'src/app/modules/reporting/services/indicator-group.service';
 import { IndicatorService } from 'src/app/modules/reporting/services/indicator.service';
 import { AppService } from 'src/app/services/app.service';
+import { formatDateHourFrance } from '../../../../../../../../client-myjss/src/app/libs/FormatHelper';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -34,4 +35,14 @@ export class SelectIndicatorComponent extends GenericSelectComponent<Indicator> 
       })
     })
   }
+
+  override displayLabel(object: Indicator): string {
+    let label = object.label;
+    if (object.lastUpdate)
+      label += " (mis à jour le " + formatDateHourFrance(object.lastUpdate) + ")";
+    return label;
+  }
 }
+
+
+

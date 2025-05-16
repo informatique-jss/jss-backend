@@ -16,4 +16,8 @@ export class IndicatorValueService extends AppRestService<IndicatorValue> {
     return this.getList(new HttpParams().set("idindicator", indicatorId), "indicator/values");
   }
 
+  getIndicatorValuesForEmployee(idEmployee: number) {
+    return this.getList(new HttpParams().set("idEmployee", idEmployee), "indicator/values/employee");
+  }
+
 }

@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.CascadeType;
@@ -25,27 +27,35 @@ public class Indicator implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "indicator_sequence", sequenceName = "indicator_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "indicator_sequence")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String label;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String code;
 
 	@Column(columnDefinition = "TEXT")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String sqlText;
 
 	@OneToMany(mappedBy = "indicator", fetch = FetchType.LAZY)
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<IndicatorValue> values;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime lastUpdate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_indicator_group")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private IndicatorGroup indicatorGroup;
 
 	@OneToMany(mappedBy = "indicator", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "indicator" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Kpi> kpis;
 
 	public Integer getId() {

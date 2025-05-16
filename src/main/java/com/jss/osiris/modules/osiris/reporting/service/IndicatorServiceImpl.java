@@ -137,7 +137,7 @@ public class IndicatorServiceImpl implements IndicatorService {
                                 .setSuccededPercentage(indicatorValue.getSuccededValue().subtract(kpi.getMaxValue())
                                         .divide(kpi.getMaxValue(), 10, RoundingMode.HALF_EVEN)
                                         .setScale(2, RoundingMode.HALF_EVEN)
-                                        .floatValue());
+                                        .floatValue() + 1);
                     }
                 }
 
