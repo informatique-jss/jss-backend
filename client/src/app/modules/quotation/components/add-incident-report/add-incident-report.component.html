@@ -1,0 +1,149 @@
+<div class="mat-elevation-z2 form-div" *ngIf="incident">
+  <form [formGroup]="incidentForm">
+    <div class="full-width">
+      <fieldset class="fieldset-no-border">
+        <table class="full-width">
+          <tr>
+            <td>
+              <select-incident-responsibility *ngIf="incident.id" [(model)]="incident.incidentResponsibility"
+                label="Responsabilité" [form]="incidentForm" propertyName="incidentResponsibility" [isMandatory]="false"
+                [isDisabled]="!canUpdateIncidentResponsibility()"></select-incident-responsibility>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-employee *ngIf="incident.id" [(model)]="incident.assignedTo" [form]="incidentForm"
+                propertyName="assignedTo" [isMandatory]="false" [isDisabled]="false"
+                label="Assigné à"></autocomplete-employee>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-employee *ngIf="incident.id" [(model)]="incident.initiatedBy" [form]="incidentForm"
+                propertyName="initiatedBy" [isMandatory]="false" [isDisabled]="!canUpdateIncidentResponsibility()"
+                label="Initié par"></autocomplete-employee>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="incident.title" label="Titre" [form]="incidentForm" propertyName="title"
+                [isMandatory]="true" [isDisabled]="false" [maxLength]="200"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-provision *ngIf="asso" [(model)]="incident.provision" [form]="incidentForm"
+                propertyName="provision" [isMandatory]="false" label="Prestation impliquée" [isMandatory]="true"
+                [types]="getProvisionForCustomerOrder()"></select-provision>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="incident.startDate" label="Date de début de l'incident"
+                [form]="incidentForm" propertyName="startDate" [isMandatory]="false"
+                [isDisabled]="false"></generic-datepicker>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="incident.endDate" label="Date de fin de l'incident" [form]="incidentForm"
+                propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.description" label="Description de l'incident" [form]="incidentForm"
+                propertyName="description" [isMandatory]="false" [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.customerImpact" label="Quel a été l'impact pour le client ?"
+                [form]="incidentForm" propertyName="customerImpact" [isMandatory]="false"
+                [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.jssImpact" label="Quel a été l'impact pour le JSS ?"
+                [form]="incidentForm" propertyName="jssImpact" [isMandatory]="false"
+                [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.detectionDescription" label="Comment a été détecté l'incident ?"
+                [form]="incidentForm" propertyName="detectionDescription" [isMandatory]="false"
+                [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.internalCommunicationDescription"
+                label="Comment avons-nous communiqué en interne sur l'incident ?" [form]="incidentForm"
+                propertyName="internalCommunicationDescription" [isMandatory]="false"
+                [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.externalCommunicationDescription"
+                label="Comment avons-nous communiqué en externe sur l'incident ?" [form]="incidentForm"
+                propertyName="externalCommunicationDescription" [isMandatory]="false"
+                [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.externalCommunicationDescription"
+                label="Quelle analyse faites-vous des causes de l'incident ?" [form]="incidentForm"
+                propertyName="externalCommunicationDescription" [isMandatory]="false"
+                [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.remedialActions"
+                label="Quelles actions correctives ont été mennées ?" [form]="incidentForm"
+                propertyName="remedialActions" [isMandatory]="false" [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.preventiveActionsProposal"
+                label="Quelles actions préventives proposez-vous ?" [form]="incidentForm"
+                propertyName="preventiveActionsProposal" [isMandatory]="false" [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="incident.costEstimation"
+                label="Quelle est l'estimation du coût de l'incident ? (en €)" [form]="incidentForm"
+                propertyName="propertyName" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.managementComments" label="Commentaires (à remplir par le manager)"
+                [form]="incidentForm" propertyName="managementComments" [isMandatory]="false"
+                [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="incident.preventiveActions"
+                label="Actions préventives menées (à remplir par le manager)" [form]="incidentForm"
+                propertyName="preventiveActions" [isMandatory]="false" [isDisabled]="false"></generic-textarea>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+  <div class="incident-button-row">
+    <button mat-raised-button color="primary" (click)="saveIncident()">Enregistrer</button>
+    <button mat-raised-button color="primary"
+      *ngIf="incident.incidentReportStatus && incident.incidentReportStatus.code==INCIDENT_REPORT_TO_COMPLETE"
+      (click)="markAsCompleted()">Marquer comme complété</button>
+  </div>
+</div>

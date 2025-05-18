@@ -13,15 +13,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
+import com.jss.osiris.modules.osiris.reporting.model.IncidentReportStatus;
+import com.jss.osiris.modules.osiris.reporting.model.IncidentResponsibility;
 import com.jss.osiris.modules.osiris.reporting.model.UserReporting;
 import com.jss.osiris.modules.osiris.reporting.service.AnnouncementReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.CustomerOrderReportingService;
+import com.jss.osiris.modules.osiris.reporting.service.IncidentReportService;
+import com.jss.osiris.modules.osiris.reporting.service.IncidentReportStatusService;
+import com.jss.osiris.modules.osiris.reporting.service.IncidentResponsibilityService;
 import com.jss.osiris.modules.osiris.reporting.service.ProvisionProductionReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.ProvisionReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.QuotationReportingService;
@@ -74,6 +87,38 @@ public class ReportingController {
 
 	@Autowired
 	ActiveDirectoryHelper activeDirectoryHelper;
+
+	@Autowired
+	IncidentReportService incidentReportService;
+
+	@Autowired
+	IncidentReportStatusService incidentReportStatusService;
+
+	@Autowired
+	IncidentResponsibilityService incidentResponsibilityService;
+
+	@Autowired
+	CustomerOrderService customerOrderService;
+
+	@GetMapping(inputEntryPoint + "/incident-responsibilities")
+	public ResponseEntity<List<IncidentResponsibility>> getIncidentResponsibilities() {
+		return new ResponseEntity<List<IncidentResponsibility>>(
+				incidentResponsibilityService.getIncidentResponsibilities(), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/incident-responsibility")
+	public ResponseEntity<IncidentResponsibility> addOrUpdateIncidentResponsibility(
+			@RequestBody IncidentResponsibility incidentResponsibilities)
+			throws OsirisValidationException, OsirisException {
+		if (incidentResponsibilities.getId() != null)
+			validationHelper.validateReferential(incidentResponsibilities, true, "incidentResponsibilities");
+		validationHelper.validateString(incidentResponsibilities.getCode(), true, "code");
+		validationHelper.validateString(incidentResponsibilities.getLabel(), true, "label");
+
+		return new ResponseEntity<IncidentResponsibility>(
+				incidentResponsibilityService.addOrUpdateIncidentResponsibility(incidentResponsibilities),
+				HttpStatus.OK);
+	}
 
 	@GetMapping(inputEntryPoint + "/quotation")
 	public ResponseEntity<ArrayList<HashMap<String, String>>> getQuotationReporting(
@@ -253,6 +298,79 @@ public class ReportingController {
 					HttpStatus.OK);
 
 		return new ResponseEntity<>(null, HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/incident-report")
+	public ResponseEntity<IncidentReport> addOrUpdateIncidentReport(
+			@RequestBody IncidentReport incidentReports) throws OsirisValidationException, OsirisException {
+		if (incidentReports.getId() != null)
+			validationHelper.validateReferential(incidentReports, true, "incidentReports");
+		validationHelper.validateReferential(incidentReports.getIncidentReportStatus(), false, "incidentReportStatus");
+		validationHelper.validateReferential(incidentReports.getIncidentResponsibility(), false,
+				"incidentResponsibility");
+		validationHelper.validateReferential(incidentReports.getAssignedTo(), false, "assignedTo");
+		validationHelper.validateReferential(incidentReports.getInitiatedBy(), false, "initiatedBy");
+		validationHelper.validateString(incidentReports.getTitle(), true, 200, "title");
+		validationHelper.validateDate(incidentReports.getStartDate(), false, "startDate");
+		validationHelper.validateDate(incidentReports.getEndDate(), false, "endDate");
+		incidentReports.setCustomerOrder((CustomerOrder) validationHelper
+				.validateReferential(incidentReports.getCustomerOrder(), true, "customerOrder"));
+		incidentReports.setProvision(
+				(Provision) validationHelper.validateReferential(incidentReports.getProvision(), true, "provision"));
+
+		return new ResponseEntity<IncidentReport>(incidentReportService.addOrUpdateIncidentReport(incidentReports),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/incident-report-status-list")
+	public ResponseEntity<List<IncidentReportStatus>> getIncidentReportStatusList() {
+		return new ResponseEntity<List<IncidentReportStatus>>(incidentReportStatusService.getIncidentReportStatusList(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/incident-report/order")
+	@JsonView(JacksonViews.OsirisListView.class)
+	public ResponseEntity<List<IncidentReport>> getIncidentReportsForCustomerOrder(
+			@RequestParam Integer idCustomerOrder)
+			throws OsirisValidationException {
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+		if (customerOrder == null)
+			throw new OsirisValidationException("indicator");
+		return new ResponseEntity<List<IncidentReport>>(
+				incidentReportService.getIncidentReportsForCustomerOrder(customerOrder),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/incident-report/search")
+	@JsonView(JacksonViews.OsirisListView.class)
+	public ResponseEntity<List<IncidentReport>> searchIncidentReport(
+			@RequestParam(required = false) List<Integer> employeeIds,
+			@RequestParam(required = false) List<Integer> statusIds)
+			throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+		List<Employee> employees = new ArrayList<Employee>();
+		if (employeeIds != null)
+			for (Integer id : employeeIds) {
+				Employee employee = employeeService.getEmployee(id);
+				if (employee == null)
+					throw new OsirisValidationException("employeeIds");
+				else
+					employees.add(employee);
+			}
+
+		List<IncidentReportStatus> status = new ArrayList<IncidentReportStatus>();
+		if (statusIds != null)
+			for (Integer id : statusIds) {
+				IncidentReportStatus statu = incidentReportStatusService.getIncidentReportStatus(id);
+				if (statu == null)
+					throw new OsirisValidationException("statusIds");
+				else
+					status.add(statu);
+			}
+
+		return new ResponseEntity<List<IncidentReport>>(
+				incidentReportService.searchIncidentReport(employees, status),
+				HttpStatus.OK);
 	}
 
 }

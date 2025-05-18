@@ -25,6 +25,7 @@ import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
+import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 
 @org.springframework.stereotype.Service
 public class NotificationServiceImpl implements NotificationService {
@@ -302,6 +303,12 @@ public class NotificationServiceImpl implements NotificationService {
                 }
             }
         }
+    }
+
+    @Override
+    public void notifyIncidentReportAsked(IncidentReport incident) throws OsirisException {
+        generateNewNotification(incident.getInitiatedBy(), incident.getAssignedTo(), Notification.INCIDENT_REPORT_ASKED,
+                false, null, incident.getProvision(), null);
     }
 
     @Override

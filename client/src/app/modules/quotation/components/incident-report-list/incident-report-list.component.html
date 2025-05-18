@@ -1,0 +1,9 @@
+<div>
+  <div class="table-container-scroll mat-elevation-z2">
+    <sort-table [columns]="displayedColumns" [values]="incidents" tableName="CRI" [noMaxHeight]="true"
+      [noPaddingBottom]="true" (onRowClick)="selectEntity($event)" [idRowSelected]="idRowSelected">
+    </sort-table>
+  </div>
+</div>
+<add-incident-report *ngIf="selectedIncident" [incident]="selectedIncident"
+  [customerOrder]="customerOrder"></add-incident-report>

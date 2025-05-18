@@ -8,6 +8,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 
 public interface NotificationService {
         public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
@@ -56,4 +57,6 @@ public interface NotificationService {
         public List<Notification> getNotificationsForTiers(Integer tiersId);
 
         public List<Notification> getNotificationsForResponsable(Integer responsableId);
+
+        public void notifyIncidentReportAsked(IncidentReport incident) throws OsirisException;
 }

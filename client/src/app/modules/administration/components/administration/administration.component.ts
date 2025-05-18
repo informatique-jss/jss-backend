@@ -96,6 +96,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   INDICATOR_REFERENTIAL = "Indicateurs";
   INDICATOR_GROUP_REFERENTIAL = "Groupe d'indicateurs";
   INVOICING_BLOCAKGE_REFERENTIAL = "Type de blocage de facturation";
+  INCIDENT_RESPONSIBILITY_REFERENTIAL = "Type de responsable du CRI";
 
 
   constructor(private appService: AppService,
@@ -176,6 +177,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.INDICATOR_REFERENTIAL);
     this.referentials.push(this.INDICATOR_GROUP_REFERENTIAL);
     this.referentials.push(this.INVOICING_BLOCAKGE_REFERENTIAL);
+    this.referentials.push(this.INCIDENT_RESPONSIBILITY_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(
