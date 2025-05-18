@@ -227,9 +227,14 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
     if (!this.possibleEntityStatus)
       return;
 
-    this.orderService.modifyInvoicingBlockage(order.id, targetStatus as InvoicingBlockage).subscribe(response => {
-      this.fetchEntityAndOpenPanel(order, true, false);
-    });
+    if (targetStatus.code == this.defaultInvoicingBlockage.code)
+      this.orderService.modifyInvoicingBlockage(order.id, undefined).subscribe(response => {
+        this.fetchEntityAndOpenPanel(order, true, false);
+      });
+    else
+      this.orderService.modifyInvoicingBlockage(order.id, targetStatus as InvoicingBlockage).subscribe(response => {
+        this.fetchEntityAndOpenPanel(order, true, false);
+      });
   }
 
 

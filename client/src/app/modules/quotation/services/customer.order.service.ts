@@ -81,7 +81,7 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.get(params, "customer-order/assign/invoicing", employee ? ("Facturation assignée à " + employee.firstname + " " + employee.lastname) : '');
   }
 
-  modifyInvoicingBlockage(customerOrderId: number, invoicingBlockage: InvoicingBlockage) {
+  modifyInvoicingBlockage(customerOrderId: number, invoicingBlockage: InvoicingBlockage | undefined) {
     let params = new HttpParams().set("customerOrderId", customerOrderId);
     if (invoicingBlockage)
       params = params.set("invoicingBlockageId", invoicingBlockage.id);
