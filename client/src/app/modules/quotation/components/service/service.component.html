@@ -1,6 +1,6 @@
 <ng-container *ngIf="service">
   <table class="full-width">
-    <tr *ngIf="service.serviceType.id ==otherServiceType.id">
+    <tr *ngIf="service.serviceType && service.serviceType.id ==otherServiceType.id">
       <td>
         <generic-input [(model)]="service.customLabel" label="Libellé du service" [form]="serviceForm"
           propertyName="customLabel" [isMandatory]="false" [maxLength]="250"></generic-input>

@@ -53,6 +53,7 @@ import { PersonnePhysiqueComponent } from '../guichet-unique/personne-physique/p
 import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { MissingAttachmentQueriesComponent } from '../missing-attachment-queries/missing-attachment-queries.component';
+import { OrderSidePanelDetailsComponent } from '../order-side-panel-details/order-side-panel-details.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { OrderingListTaggedComponent } from '../ordering-list-tagged/ordering-list-tagged.component';
@@ -65,10 +66,12 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { ProvisionListComponent } from '../provision-list/provision-list.component';
 import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
 import { ProvisionPaymentComponent } from '../provision-payment/provision-payment.component';
+import { ProvisionSidePanelDetailsComponent } from '../provision-side-panel-details/provision-side-panel-details.component';
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { QuotationSidePanelDetailsComponent } from '../quotation-side-panel-details/quotation-side-panel-details.component';
 import { RecurringChildOrderingListComponent } from '../recurring-child-ordering-list/recurring-child-ordering-list.component';
 import { RecurringOrderingListComponent } from '../recurring-ordering-list/recurring-ordering-list.component';
 import { RecurringParentOrderingListComponent } from '../recurring-parent-ordering-list/recurring-parent-ordering-list.component';
@@ -81,6 +84,7 @@ import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-t
 import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
 import { SelectServiceDialogComponent } from '../select-service-dialog/select-service-dialog.component';
 import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
+import { ServiceSidePanelDetailsComponent } from '../service-side-panel-details/service-side-panel-details.component';
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
@@ -190,6 +194,10 @@ const routes: Routes = [
     FormaliteAssociateDialog,
     InfogreffeStatusComponent,
     SelectMultiServiceTypeDialogComponent,
+    QuotationSidePanelDetailsComponent,
+    ProvisionSidePanelDetailsComponent,
+    OrderSidePanelDetailsComponent,
+    ServiceSidePanelDetailsComponent
   ],
   exports: [
     OrderingListComponent,
@@ -206,6 +214,10 @@ const routes: Routes = [
     CustomerOrderCommentComponent,
     MissingAttachmentQueriesComponent,
     AddAffaireComponent,
+    QuotationSidePanelDetailsComponent,
+    ProvisionSidePanelDetailsComponent,
+    OrderSidePanelDetailsComponent,
+    ServiceSidePanelDetailsComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

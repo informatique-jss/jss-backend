@@ -153,7 +153,7 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
         const existing = grouped.get(key)!;
         const existingEntities = existing.entities ?? [];
 
-        // Dédoublonner selon une clé, ici par id
+        // Remove duplicate, by id
         const mergedEntities = [...existingEntities, ...currentEntities];
         const uniqueEntities = new Map<number | string, typeof mergedEntities[0]>();
         for (const e of mergedEntities) {

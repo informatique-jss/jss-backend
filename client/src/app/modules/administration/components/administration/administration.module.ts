@@ -63,6 +63,7 @@ import { ReferentialGiftComponent } from '../referentials/referential-gift/refer
 import { ReferentialIndicatorGroupComponent } from '../referentials/referential-indicator-group/referential-indicator-group.component';
 import { ReferentialIndicatorComponent } from '../referentials/referential-indicator/referential-indicator.component';
 import { ReferentialInvoiceStatusComponent } from '../referentials/referential-invoice-status/referential-invoice-status.component';
+import { ReferentialInvoicingBlockageComponent } from '../referentials/referential-invoicing-blockage/referential-invoicing-blockage.component';
 import { ReferentialJournalTypeComponent } from '../referentials/referential-journal-type/referential-journal-type.component';
 import { ReferentialLanguageComponent } from '../referentials/referential-language/referential-language.component';
 import { ReferentialLegalFormComponent } from '../referentials/referential-legal-form/referential-legal-form.component';
@@ -208,6 +209,7 @@ const routes: Routes = [
     ReferentialServiceFieldTypeComponent,
     ReferentialIndicatorGroupComponent,
     ReferentialIndicatorComponent,
+    ReferentialInvoicingBlockageComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

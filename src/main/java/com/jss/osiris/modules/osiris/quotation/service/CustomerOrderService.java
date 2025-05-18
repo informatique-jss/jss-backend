@@ -10,6 +10,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -20,6 +21,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.InvoicingStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
@@ -151,6 +153,18 @@ public interface CustomerOrderService {
         public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder);
 
         public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
-                        List<CustomerOrderStatus> status);
+                        List<CustomerOrderStatus> status, List<Employee> invoicingEmployees);
+
+        public void assignInvoicingEmployee(CustomerOrder customerOrder, Employee employee)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
+        public void modifyInvoicingBlockage(CustomerOrder customerOrder, InvoicingBlockage invoicingBlockage)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
+        public CustomerOrder assignNewCustomerOrderToBilled();
+
+        public InvoicingStatistics getInvoicingStatistics();
 
 }

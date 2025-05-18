@@ -76,3 +76,7 @@ table {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.table-fixed-layout {
+  table-layout: fixed;
+}

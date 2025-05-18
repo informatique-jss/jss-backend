@@ -7,6 +7,7 @@ import { formatDate, formatDateForSortTable, formatDateTimeForSortTable, formatE
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
+import { InvoicingBlockage } from 'src/app/modules/invoicing/model/InvoicingBlockage';
 import { Payment } from 'src/app/modules/invoicing/model/Payment';
 import { InvoiceSearchResultService } from 'src/app/modules/invoicing/services/invoice.search.result.service';
 import { PaymentDetailsDialogService } from 'src/app/modules/invoicing/services/payment.details.dialog.service';
@@ -14,6 +15,8 @@ import { PaymentService } from 'src/app/modules/invoicing/services/payment.servi
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { Employee } from 'src/app/modules/profile/model/Employee';
+import { CUSTOMER_ORDER_STATUS_TO_BILLED } from '../../../../libs/Constants';
 import { AppService } from '../../../../services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
@@ -23,6 +26,7 @@ import { InvoiceItem } from '../../model/InvoiceItem';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { Service } from '../../model/Service';
 import { VatBase } from '../../model/VatBase';
+import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { ServiceService } from '../../services/service.service';
 import { QuotationComponent } from '../quotation/quotation.component';
@@ -55,6 +59,9 @@ export class InvoiceManagementComponent implements OnInit {
   getAffaireListArrayForIQuotation = getAffaireListArrayForIQuotation;
   formatDate = formatDate;
 
+  CUSTOMER_ORDER_STATUS_TO_BILLED = CUSTOMER_ORDER_STATUS_TO_BILLED;
+  CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
+
   invoiceStatusCancelled = this.constantService.getInvoiceStatusCancelled();
 
   constructor(private formBuilder: FormBuilder,
@@ -66,7 +73,8 @@ export class InvoiceManagementComponent implements OnInit {
     protected invoiceSearchResultService: InvoiceSearchResultService,
     private habilitationsService: HabilitationsService,
     private paymentService: PaymentService,
-    private serviceService: ServiceService
+    private serviceService: ServiceService,
+    private customerOrderService: CustomerOrderService
   ) { }
 
   getServiceLabel(service: Service) {
@@ -220,5 +228,13 @@ export class InvoiceManagementComponent implements OnInit {
     this.paymentService.movePaymentToWaitingAccount(payment).subscribe((res) => {
       this.appService.openRoute(null, '/order/' + this.quotation.id, null);
     });
+  }
+
+  assignInvoicingEmployee(employee: Employee) {
+    this.customerOrderService.assignInvoicingEmployee(this.quotation.id, employee).subscribe();
+  }
+
+  modifyInvoicingBlockage(invoicingBlockage: InvoicingBlockage) {
+    this.customerOrderService.modifyInvoicingBlockage(this.quotation.id, invoicingBlockage).subscribe();
   }
 }

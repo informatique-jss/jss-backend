@@ -227,6 +227,7 @@ import { SelectIndicatorGroupComponent } from '../forms/select-indicator-group/s
 import { SelectIndicatorComponent } from '../forms/select-indicator/select-indicator.component';
 import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-one/select-invoice-status-one.component';
 import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/select-invoice-status.component';
+import { SelectInvoicingBlockageComponent } from '../forms/select-invoicing-blockage/select-invoicing-blockage.component';
 import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
@@ -563,6 +564,7 @@ const routes: Routes = [
     NotificationListComponent,
     SelectIndicatorComponent,
     SelectIndicatorGroupComponent,
+    SelectInvoicingBlockageComponent,
   ],
   exports: [
     HistoryComponent,
@@ -810,6 +812,7 @@ const routes: Routes = [
     SelectNotificationTypesComponent,
     SelectIndicatorComponent,
     SelectIndicatorGroupComponent,
+    SelectInvoicingBlockageComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

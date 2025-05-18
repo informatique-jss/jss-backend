@@ -15,6 +15,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
@@ -244,6 +245,16 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@Transient
 	@JsonView({ JacksonViews.OsirisListView.class })
 	public Boolean isHasNotifications;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_invoicing_employee")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	public Employee invoicingEmployee;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_invoicing_blockage")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	public InvoicingBlockage invoicingBlockage;
 
 	public Integer getId() {
 		return id;
@@ -563,6 +574,23 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setIsHasNotifications(Boolean isHasNotifications) {
 		this.isHasNotifications = isHasNotifications;
+	}
+
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	public Employee getInvoicingEmployee() {
+		return invoicingEmployee;
+	}
+
+	public void setInvoicingEmployee(Employee invoicingEmployee) {
+		this.invoicingEmployee = invoicingEmployee;
+	}
+
+	public InvoicingBlockage getInvoicingBlockage() {
+		return invoicingBlockage;
+	}
+
+	public void setInvoicingBlockage(InvoicingBlockage invoicingBlockage) {
+		this.invoicingBlockage = invoicingBlockage;
 	}
 
 }

@@ -17,45 +17,26 @@
       *ngIf="providerInvoicesColumns && providerInvoicesColumns.length>0 ">
     </sort-table>
   </div>
-  <table class="mat-table mat-mdc-table mdc-data-table__table full-width  mat-elevation-z8 table description-table  ">
-    <thead>
-      <tr class="mat-mdc-header-row mdc-data-table__header-row ">
-        <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Affaire(s)</th>
-        <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Payeur</th>
-        <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Donneur d'ordre</th>
-      </tr>
-    </thead>
-    <tr class="mat-mdc-row mdc-data-table__row ">
-      <td class="mat-mdc-cell mdc-data-table__cell  td-info">
-        <p>{{getAffaireListFromIQuotation(quotation)}}</p>
-      </td>
-      <td class="mat-mdc-cell mdc-data-table__cell  td-info">
-        <ng-container *ngIf="invoiceLabelResult">
-          <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabel}">
-            {{invoiceLabelResult.billingLabel?invoiceLabelResult.billingLabel:"Libellé inconnu"}}</p>
-          <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelAddress}">
-            {{invoiceLabelResult.billingLabelAddress?invoiceLabelResult.billingLabelAddress:"Adresse"}}</p>
-          <p
-            [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelPostalCode || !invoiceLabelResult.billingLabelCity || !invoiceLabelResult.billingLabelCountry}">
-            {{invoiceLabelResult.billingLabelPostalCode?invoiceLabelResult.billingLabelPostalCode:"Code
-            postal inconnu"}}
-            {{invoiceLabelResult.billingLabelCity?invoiceLabelResult.billingLabelCity.label:"Ville inconnue"}}
-            {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
-            inconnu"}}
-          </p>
-          <p *ngIf="invoiceLabelResult.billingLabelIntercommunityVat">N° de TVA :
-            {{invoiceLabelResult.billingLabelIntercommunityVat}}</p>
-        </ng-container>
-      </td>
-      <td class="mat-mdc-cell mdc-data-table__cell  td-info" *ngIf="quotation.responsable">
-        <p>{{getCustomerOrderNameForIQuotation(quotation)}}</p>
-        <p>{{quotation.responsable.address}}</p>
-        <p>{{quotation.responsable.postalCode}}
-          {{quotation.responsable.city?quotation.responsable.city.label:""}}{{quotation.responsable.country?quotation.responsable.country.label:""}}
-        </p>
-      </td>
-    </tr>
-  </table>
+  <div
+    *ngIf="instanceOfCustomerOrderFn(quotation) && (quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED ||quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED ) ">
+    <div class=" full-width">
+      <table class="full-width table-fixed-layout">
+        <tr>
+          <td>
+            <autocomplete-employee [(model)]="quotation.invoicingEmployee" [form]="invoiceManagementForm"
+              propertyName="invoicingEmployee" [isMandatory]="false" [isDisabled]="false"
+              label="Responsable de la facturation"
+              (onOptionSelected)="assignInvoicingEmployee($event)"></autocomplete-employee>
+          </td>
+          <td>
+            <select-invoicing-blockage [(model)]="quotation.invoicingBlockage" label="Type de blocage de la facturation"
+              [form]="invoiceManagementForm" propertyName="invoicingBlockage" [isMandatory]="false"
+              (selectionChange)="modifyInvoicingBlockage($event)" [isDisabled]="false"></select-invoicing-blockage>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
   <fieldset [disabled]="editMode==false" class="fieldset-no-border">
     <form [formGroup]="invoiceManagementForm">
       <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire ">

@@ -195,7 +195,15 @@ public interface CustomerOrderRepository
         @Query("select c from CustomerOrder c join c.responsable r  join fetch c.assoAffaireOrders a join fetch a.affaire af "
                         +
                         "  where (0 in :commercials or r.salesEmployee.id in :commercials) " +
+                        " and (0 in :invoicingEmployees or   c.invoicingEmployee.id in :invoicingEmployees)  "
+                        +
+                        " and (1 not in :invoicingEmployees or  c.invoicingEmployee is not null)  "
+                        +
                         "    and (0 in :status or  c.customerOrderStatus.id in :status) order by c.createdDate desc ")
         List<CustomerOrder> searchCustomerOrders(List<Integer> commercials,
-                        List<Integer> status);
+                        List<Integer> status, List<Integer> invoicingEmployees);
+
+        @Query("select c from CustomerOrder c where invoicingEmployee is null and c.customerOrderStatus=:customerOrderStatusToBilled ")
+        List<CustomerOrder> findNewCustomerOrderToBilled(CustomerOrderStatus customerOrderStatusToBilled,
+                        Pageable pageableRequest);
 }
