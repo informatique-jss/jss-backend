@@ -60,6 +60,7 @@ import { ReferentialDocumentTypeComponent } from '../referentials/referential-do
 import { ReferentialDomiciliationContractTypeComponent } from '../referentials/referential-domiciliation-contract-type/referential-domiciliation-contract-type.componentt';
 import { ReferentialFundTypeComponent } from '../referentials/referential-fund-type/referential-fund-type.component';
 import { ReferentialGiftComponent } from '../referentials/referential-gift/referential-gift.component';
+import { ReferentialIncidentResponsibilityComponent } from '../referentials/referential-incident-responsibility/referential-incident-responsibility.component';
 import { ReferentialIndicatorGroupComponent } from '../referentials/referential-indicator-group/referential-indicator-group.component';
 import { ReferentialIndicatorComponent } from '../referentials/referential-indicator/referential-indicator.component';
 import { ReferentialInvoiceStatusComponent } from '../referentials/referential-invoice-status/referential-invoice-status.component';
@@ -209,7 +210,8 @@ const routes: Routes = [
     ReferentialServiceFieldTypeComponent,
     ReferentialIndicatorGroupComponent,
     ReferentialIndicatorComponent,
-    ReferentialInvoicingBlockageComponent
+    ReferentialInvoicingBlockageComponent,
+    ReferentialIncidentResponsibilityComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

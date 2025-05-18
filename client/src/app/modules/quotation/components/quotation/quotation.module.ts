@@ -32,6 +32,7 @@ import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guiche
 import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
+import { AddIncidentReportComponent } from '../add-incident-report/add-incident-report.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
@@ -50,6 +51,7 @@ import { EntrepriseComponent } from '../guichet-unique/entreprise/entreprise.com
 import { IdentiteComponent } from '../guichet-unique/identite/identite.component';
 import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
 import { PersonnePhysiqueComponent } from '../guichet-unique/personne-physique/personne-physique.component';
+import { IncidentReportListComponent } from '../incident-report-list/incident-report-list.component';
 import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { MissingAttachmentQueriesComponent } from '../missing-attachment-queries/missing-attachment-queries.component';
@@ -195,7 +197,9 @@ const routes: Routes = [
     QuotationSidePanelDetailsComponent,
     ProvisionSidePanelDetailsComponent,
     OrderSidePanelDetailsComponent,
-    ServiceSidePanelDetailsComponent
+    ServiceSidePanelDetailsComponent,
+    IncidentReportListComponent,
+    AddIncidentReportComponent
   ],
   exports: [
     OrderingListComponent,
@@ -215,7 +219,8 @@ const routes: Routes = [
     QuotationSidePanelDetailsComponent,
     ProvisionSidePanelDetailsComponent,
     OrderSidePanelDetailsComponent,
-    ServiceSidePanelDetailsComponent
+    ServiceSidePanelDetailsComponent,
+    AddIncidentReportComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

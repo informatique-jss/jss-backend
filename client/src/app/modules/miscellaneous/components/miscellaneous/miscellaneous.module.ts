@@ -225,6 +225,8 @@ import { SelectFollowupComponent } from '../forms/select-followup/select-followu
 import { SelectFormaliteInfogreffeStatusComponent } from '../forms/select-formalite-infogreffe-status/select-formalite-infogreffe-status.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
+import { SelectIncidentReportStatusComponent } from '../forms/select-incident-report-status/select-incident-report-status.component';
+import { SelectIncidentResponsibilityComponent } from '../forms/select-incident-responsibility/select-incident-responsibility.component';
 import { SelectIndicatorGroupComponent } from '../forms/select-indicator-group/select-indicator-group.component';
 import { SelectIndicatorComponent } from '../forms/select-indicator/select-indicator.component';
 import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-one/select-invoice-status-one.component';
@@ -575,6 +577,8 @@ const routes: Routes = [
     SelectIndicatorGroupComponent,
     GenericToggleChoiceComponent,
     SelectInvoicingBlockageComponent,
+    SelectIncidentResponsibilityComponent,
+    SelectIncidentReportStatusComponent,
   ],
   exports: [
     HistoryComponent,
@@ -828,6 +832,8 @@ const routes: Routes = [
     SelectIndicatorGroupComponent,
     GenericToggleChoiceComponent,
     SelectInvoicingBlockageComponent,
+    SelectIncidentResponsibilityComponent,
+    SelectIncidentReportStatusComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

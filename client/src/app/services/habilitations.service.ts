@@ -40,6 +40,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ADMINISTRATEURS])
   }
 
+  canUpdateIncidentResponsibility() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canViewDashboardModule() {
     return true;
   }

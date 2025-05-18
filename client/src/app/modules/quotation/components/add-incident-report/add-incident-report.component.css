@@ -1,0 +1,23 @@
+.table-container-scroll {
+  max-height: 215px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.incident-button-row button,
+.incident-button-row a {
+  margin-right: 8px;
+}
+
+.incident-button-row {
+  text-align: center;
+  padding: 20px;
+}

@@ -25,6 +25,8 @@ export class SelectProvisionComponent extends GenericSelectComponent<Provision> 
   }
 
   getPreviewActionLinkFunction(entity: Provision): string[] | undefined {
-    return ['/provision/', + entity.service.assoAffaireOrder.affaire.id + "/" + entity.id + ""];
+    if (entity && entity.service && entity.service.assoAffaireOrder)
+      return ['/provision/', + entity.service.assoAffaireOrder.affaire.id + "/" + entity.id + ""];
+    return undefined;
   }
 }

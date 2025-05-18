@@ -14,6 +14,8 @@ import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowE
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
+import { IncidentReport } from 'src/app/modules/reporting/model/IncidentReport';
+import { IncidentReportService } from 'src/app/modules/reporting/services/incident.report.service';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
@@ -79,6 +81,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
   CUSTOMER_ORDER_STATUS_ABANDONED = CUSTOMER_ORDER_STATUS_ABANDONED;
 
+  incidentList: IncidentReport[] | undefined;
+  askForNewCri: boolean = false;
+
   billingLabelTypeAffaire: BillingLabelType = this.constantService.getBillingLabelTypeCodeAffaire();
 
   instanceOfCustomerOrderFn = instanceOfCustomerOrder;
@@ -135,6 +140,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private serviceService: ServiceService,
     private habilitationService: HabilitationsService,
     private notificationService: NotificationService,
+    private incidentReportService: IncidentReportService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -185,6 +191,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                   this.selectedTabIndexAsso = i;
               }
           }
+
+          this.incidentReportService.getIncidentReportsForCustomerOrder(this.quotation.id).subscribe(response => this.incidentList = response);
         })
         this.getInvoices();
       }
@@ -1080,6 +1088,19 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             if (service.missingAttachmentQueries && service.missingAttachmentQueries.length > 0)
               return true;
     return false;
+  }
+
+  hasOneCri() {
+    return this.incidentList && this.incidentList.length > 0;
+  }
+
+  isAskNewCri() {
+    return this.askForNewCri;
+  }
+
+  askForNewCriFn() {
+    this.askForNewCri = true;
+    this.selectedTabIndex = 5;
   }
 
   addNewNotification() {

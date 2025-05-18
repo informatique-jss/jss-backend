@@ -1,0 +1,181 @@
+<div class=" form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <mat-icon color="accent" class="pointer" [matMenuTriggerFor]="menu">settings</mat-icon>
+        </td>
+        <td>
+          <generic-input [(model)]="filterText" label="Rechercher" [form]="kanbanForm" propertyName="filterText"
+            [isMandatory]="false" [isDisabled]="false" (onFormChange)="startFilter(true)"
+            [displayClearField]="true"></generic-input>
+        </td>
+        <td>
+          <select-incident-report-status [(model)]="statusSelected" label="Statut" [form]="kanbanForm"
+            propertyName="statusSelected" [isMandatory]="false" [isDisabled]="false"></select-incident-report-status>
+        </td>
+        <td>
+          <select-employee [(model)]="employeesSelected" label="Collaborateur" [form]="kanbanForm"
+            propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false"
+            (onFormChange)="startFilter()"></select-employee>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="startFilter()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<div class="kanban-container top-container">
+  <div *ngFor="let status of statusSelected" class="kanban-column">
+    <h3 style="margin: 0px; text-align: center;"><span [matBadge]="status.id?getNumberOfEntitiesByStatus(status):0"
+        [matBadgeHidden]="!status.id ||getNumberOfEntitiesByStatus(status)==0" matBadgePosition="after"
+        matBadgeSize="small">{{ status.label }}</span></h3>
+  </div>
+</div>
+<ng-container *ngFor="let swimlane of swimlanes">
+  <div class="swimlane" *ngIf="swimlane.totalItems>0">
+    <h3 style="margin: 0px;">
+    </h3>
+    <div class="swimlane-header" (click)="swimlane.isCollapsed=!swimlane.isCollapsed">
+      <span>{{ swimlane.label }} ({{swimlane.totalItems}} incident{{swimlane.totalItems>1?'s':''}})</span>
+      <mat-icon [class.rotated]="!swimlane.isCollapsed">expand_more</mat-icon>
+    </div>
+    <div class="kanban-container" *ngIf="!swimlane.isCollapsed">
+      <div *ngFor="let status of swimlane.status" class="kanban-column">
+        <div cdkDropList [cdkDropListData]="status.entities" class="task-list"
+          [id]="'list-'+statusId.indexOf(status.label+'-' + swimlane.id + '')"
+          [cdkDropListConnectedTo]="getConnectedDropLists(swimlane)" [ngClass]="{
+           'drop-valid': isValidDropTarget(status.label!),
+           'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.label!)
+         }" (cdkDropListDropped)="drop($event)">
+          <div *ngFor="let incident of status.entities" cdkDrag class="task-card"
+            (cdkDragStarted)="onDragStarted(status.id!,incident)" (cdkDragEnded)="onDragEnded()"
+            (click)="fetchEntityAndOpenPanel(incident)">
+            <div class="card-content">
+              <strong>{{incident.title}} </strong>
+              <p> </p>
+            </div>
+            <div class="card-footer">
+              <div class="card-ticket">
+
+                <br /> <span *ngIf="incident.startDate">le {{formatDateFrance(incident.startDate)}}</span>
+              </div>
+              <div class="card-avatar" *ngIf="incident.assignedTo">
+                <avatar class="avatar-select" [employee]="incident.assignedTo" [size]="20">
+                </avatar>
+              </div>
+            </div>
+            <ng-template cdkDragPreview>
+              <div class="task-card drag-preview">
+                <div class="card-content">
+                  <strong>{{incident.title}} </strong>
+                  <p> </p>
+                </div>
+                <div class="card-footer">
+                  <div class="card-ticket">
+
+                    <br /> <span *ngIf="incident.startDate">le {{formatDateFrance(incident.startDate)}}</span>
+                  </div>
+                  <div class="card-avatar" *ngIf="incident.assignedTo">
+                    <avatar class="avatar-select" [employee]="incident.assignedTo" [size]="20">
+                    </avatar>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<mat-menu #menu="matMenu" style="max-width: 100%;">
+  <div mat-menu-item>
+    <span>Regrouper par : </span>
+  </div>
+  <div mat-menu-item *ngFor="let swimlaneType of swimlaneTypes"
+    (click)="selectedSwimlaneType=swimlaneType;startFilter(true)" class="pointer">
+    <mat-icon
+      *ngIf="selectedSwimlaneType && swimlaneType.fieldName==selectedSwimlaneType.fieldName">check</mat-icon>{{swimlaneType.label}}
+  </div>
+  <mat-divider></mat-divider>
+  <div mat-menu-item class="pointer" (click)="expandAll()">Déplier tout </div>
+  <div mat-menu-item class="pointer" (click)="collapseAll()">Replier tout </div>
+</mat-menu>
+
+<div class="side-panel" *ngIf="panelOpen">
+  <div *ngIf="!selectedEntity">
+    <div class="panel-loader">
+      <div class="skeleton skeleton-header"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line short"></div>
+      <div class="skeleton skeleton-block"></div>
+    </div>
+  </div>
+  <div *ngIf="selectedEntity">
+    <div class="panel-header">
+      <span class="task-id pointer"
+        (click)="openOrder($event, selectedEntity.customerOrder)">{{selectedEntity.customerOrder.id}} <mat-icon
+          color="accent" class="small-mat-icon">open_in_new</mat-icon></span>
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngIf="selectedEntity && !isDisplayOrderLevel "
+          (click)="fetchCustomerOrderAndOpenPanel(selectedEntity)">
+          <span>Voir la commande</span>
+        </button>
+        <button mat-menu-item *ngIf="selectedEntity && isDisplayOrderLevel "
+          (click)="fetchEntityAndOpenPanel(selectedEntity)">
+          <span>Voir l'incident</span>
+        </button>
+      </mat-menu>
+      <button mat-icon-button (click)="panelOpen = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <h2 class="panel-title">{{selectedEntity.title}}</h2>
+
+    <div class="status-wrapper">
+      <button mat-raised-button color="accent"
+        [matMenuTriggerFor]="statusMenu">{{selectedEntity.incidentReportStatus.label}}
+        <mat-icon>expand_more</mat-icon></button>
+      <mat-menu #statusMenu="matMenu">
+        <ng-container *ngIf="getCompleteStatus(selectedEntity.incidentReportStatus)">
+          <button mat-menu-item (click)="displayIncidentWorkflowDialog()">
+            <span>Voir le workflow</span>
+          </button>
+          <button disabled mat-menu-item *ngIf="getCompleteStatus(selectedEntity.incidentReportStatus)!.successors">
+            <span>Passer à</span>
+          </button>
+          <button mat-menu-item
+            *ngFor="let status of getCompleteStatus(selectedEntity.incidentReportStatus)!.successors"
+            (click)="changeInvoicingBlockageStatus(selectedEntity,status)">
+            <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+          </button>
+          <button disabled mat-menu-item
+            *ngIf="selectedEntity.incidentReportStatus.predecessors && getCompleteStatus(selectedEntity.incidentReportStatus)!.predecessors.length>0">
+            <span>Revenir à</span>
+          </button>
+          <button mat-menu-item
+            *ngFor="let status of getCompleteStatus(selectedEntity.incidentReportStatus)!.predecessors"
+            (click)="changeInvoicingBlockageStatus(selectedEntity, status)">
+            <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+          </button>
+        </ng-container>
+      </mat-menu>
+    </div>
+
+    <order-side-panel-details [selectedEntity]="customerOrderFetched"
+      [possibleEntityStatus]="possibleEntityStatusCustomerOrder!" *ngIf="isDisplayOrderLevel && customerOrderFetched"
+      (triggerRefreshEntity)="fetchCustomerOrderAndOpenPanel(this.selectedEntity!, false, false)"></order-side-panel-details>
+
+    <add-incident-report *ngIf="!isDisplayOrderLevel && selectedEntity" [incident]="selectedEntity"
+      [customerOrder]="selectedEntity.customerOrder"></add-incident-report>
+  </div>

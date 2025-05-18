@@ -60,7 +60,7 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
   kanbanForm = this.formBuilder.group({});
 
   ngOnInit() {
-    this.appService.changeHeaderTitle("Tableau de bord");
+    this.appService.changeHeaderTitle("Tableau de bord Facturation");
 
     this.swimlaneTypes.push({ fieldName: "invoicingEmployee.id", label: "Responsable de la facturation", valueFonction: ((order: CustomerOrder) => (order.invoicingEmployee ? (order.invoicingEmployee.firstname + ' ' + order.invoicingEmployee.lastname) : '')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "responsable.id", label: "Responsable", valueFonction: (order: CustomerOrder) => { return this.getResponsableLabelIQuotation(order) }, fieldValueFunction: undefined });
