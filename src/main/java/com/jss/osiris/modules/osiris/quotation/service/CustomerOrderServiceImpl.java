@@ -53,6 +53,7 @@ import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -84,6 +85,7 @@ import com.jss.osiris.modules.osiris.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.InvoicingStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
@@ -221,6 +223,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     MyJssProfileController myJssProfileController;
 
+    private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
+        return customerOrderRepository.save(customerOrder);
+    }
+
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
@@ -316,12 +322,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
         if (oneNewProvision)
-            customerOrder = customerOrderRepository.save(customerOrder);
+            customerOrder = simpleAddOrUpdate(customerOrder);
 
         if (computePrice)
             pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 
-        customerOrder = customerOrderRepository.save(customerOrder);
+        customerOrder = simpleAddOrUpdate(customerOrder);
 
         // Generate first comment
         // TODO : generate it when go from draft to in progress
@@ -350,7 +356,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setRecurringStartDate(customerOrder.getRecurringPeriodStartDate());
             customerOrder.setRecurringEndDate(customerOrder.getRecurringPeriodStartDate()
                     .plusMonths(customerOrder.getCustomerOrderFrequency().getMonthNumber()).minusDays(1));
-            customerOrderRepository.save(customerOrder);
+            simpleAddOrUpdate(customerOrder);
         }
 
         batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
@@ -535,6 +541,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     false);
             mailHelper.sendCustomerOrderAttachmentOnFinalisationToCustomer(getCustomerOrder(customerOrder.getId()),
                     false);
+
+            if (customerOrder.getInvoicingEmployee() == null)
+                customerOrder.setInvoicingEmployee(employeeService.getCurrentEmployee());
         }
 
         // Target : going back to TO BILLED
@@ -1870,7 +1879,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
-            List<CustomerOrderStatus> status) {
+            List<CustomerOrderStatus> status, List<Employee> invoicingEmployees) {
 
         List<Integer> commercialIds = (commercials != null && commercials.size() > 0)
                 ? commercials.stream().map(Employee::getId).collect(Collectors.toList())
@@ -1880,7 +1889,72 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 ? status.stream().map(CustomerOrderStatus::getId).collect(Collectors.toList())
                 : Arrays.asList(0);
 
+        List<Integer> invoicingEmployeesIds;
+        if (invoicingEmployees == null)
+            invoicingEmployeesIds = Arrays.asList(0);
+        else {
+            statusIds = Arrays
+                    .asList(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED)
+                            .getId());
+            invoicingEmployeesIds = (invoicingEmployees != null && invoicingEmployees.size() > 0)
+                    ? invoicingEmployees.stream().map(Employee::getId).collect(Collectors.toList())
+                    : Arrays.asList(0, 1);
+        }
+
         return completeAdditionnalInformationForCustomerOrders(
-                customerOrderRepository.searchCustomerOrders(commercialIds, statusIds));
+                customerOrderRepository.searchCustomerOrders(commercialIds, statusIds, invoicingEmployeesIds));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void assignInvoicingEmployee(CustomerOrder customerOrder, Employee employee)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        customerOrder.setInvoicingEmployee(employee);
+        simpleAddOrUpdate(customerOrder);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void modifyInvoicingBlockage(CustomerOrder customerOrder, InvoicingBlockage invoicingBlockage)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        customerOrder.setInvoicingBlockage(invoicingBlockage);
+        simpleAddOrUpdate(customerOrder);
+    }
+
+    @Override
+    public InvoicingStatistics getInvoicingStatistics() {
+        List<CustomerOrder> customerOrders = searchCustomerOrders(null, Arrays.asList(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED)), null);
+        InvoicingStatistics stats = new InvoicingStatistics();
+        stats.setOrderAssigned(0);
+        stats.setOrderBlocked(0);
+        stats.setOrderToInvoiced(0);
+
+        if (customerOrders != null && customerOrders.size() > 0) {
+            stats.setOrderToInvoiced(customerOrders.size());
+            stats.setOrderAssigned(
+                    Math.toIntExact(customerOrders.stream().filter(c -> c.getInvoicingEmployee() != null).count()));
+            stats.setOrderAssigned(
+                    Math.toIntExact(customerOrders.stream().filter(c -> c.getInvoicingBlockage() != null).count()));
+        }
+        return stats;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public CustomerOrder assignNewCustomerOrderToBilled() {
+        Order order = new Order(Direction.DESC, "lastStatusUpdate");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(0, 1, sort);
+        List<CustomerOrder> customerOrders = customerOrderRepository.findNewCustomerOrderToBilled(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED),
+                pageableRequest);
+
+        if (customerOrders != null && customerOrders.size() > 0 && employeeService.getCurrentEmployee() != null) {
+            customerOrders.get(0).setInvoicingEmployee(employeeService.getCurrentEmployee());
+            return simpleAddOrUpdate(customerOrders.get(0));
+        } else {
+            return null;
+        }
     }
 }

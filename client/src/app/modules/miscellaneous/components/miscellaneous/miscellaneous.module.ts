@@ -229,6 +229,7 @@ import { SelectIndicatorGroupComponent } from '../forms/select-indicator-group/s
 import { SelectIndicatorComponent } from '../forms/select-indicator/select-indicator.component';
 import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-one/select-invoice-status-one.component';
 import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/select-invoice-status.component';
+import { SelectInvoicingBlockageComponent } from '../forms/select-invoicing-blockage/select-invoicing-blockage.component';
 import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
 import { SelectJssCategoryComponent } from '../forms/select-jss-category/select-jss-category.component';
@@ -572,7 +573,8 @@ const routes: Routes = [
     SelectWebinarComponent,
     SelectIndicatorComponent,
     SelectIndicatorGroupComponent,
-    GenericToggleChoiceComponent
+    GenericToggleChoiceComponent,
+    SelectInvoicingBlockageComponent,
   ],
   exports: [
     HistoryComponent,
@@ -824,7 +826,8 @@ const routes: Routes = [
     SelectWebinarComponent,
     SelectIndicatorComponent,
     SelectIndicatorGroupComponent,
-    GenericToggleChoiceComponent
+    GenericToggleChoiceComponent,
+    SelectInvoicingBlockageComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

@@ -18,7 +18,7 @@ import { AssoAffaireOrderService } from 'src/app/modules/quotation/services/asso
 import { ServiceService } from 'src/app/modules/quotation/services/service.service';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
-import { Notification } from '../../../../modules/miscellaneous/model/Notification';
+import { Notification } from '../../../miscellaneous/model/Notification';
 
 @Component({
   selector: 'service-side-panel-details',

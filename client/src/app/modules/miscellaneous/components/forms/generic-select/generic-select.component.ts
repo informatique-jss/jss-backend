@@ -28,9 +28,13 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
     if (this.form)
       this.form.get(this.propertyName)?.valueChanges.subscribe(
         (newValue) => {
-          this.selectionChange.emit(this.model);
+          // this.selectionChange.emit(this.model);
         }
       );
+  }
+
+  changeSelection(event: T) {
+    this.selectionChange.emit(event);
   }
 
   abstract initTypes(): void;

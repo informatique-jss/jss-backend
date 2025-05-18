@@ -19,7 +19,7 @@ import { ServiceService } from 'src/app/modules/quotation/services/service.servi
 import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
-import { Notification } from '../../../../modules/miscellaneous/model/Notification';
+import { Notification } from '../../../miscellaneous/model/Notification';
 
 
 @Component({

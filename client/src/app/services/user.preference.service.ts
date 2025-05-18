@@ -64,6 +64,8 @@ export class UserPreferenceService {
   setUserSearchBookmark(search: any, searchName: string) {
     if (search && searchName)
       localStorage.setItem('search-' + searchName, JSON.stringify(search));
+    else
+      this.deleteOnSearchPreference('search-' + searchName);
   }
 
   getUserSearchBookmark(searchName: string): any {
@@ -85,6 +87,15 @@ export class UserPreferenceService {
         if (key && key.indexOf('search-') == 0)
           localStorage.removeItem(key);
   }
+
+  deleteOnSearchPreference(keyToDelete: string) {
+    let allItems = localStorage as any;
+    if (allItems)
+      for (let key in allItems)
+        if (key && keyToDelete == key)
+          localStorage.removeItem(key);
+  }
+
 
   // User tab selection index display
   setUserTabsSelectionIndex(tabsName: string, index: number) {

@@ -46,6 +46,22 @@
           </div>
         </div>
       </div>
+      <div class="field-row" *ngIf="selectedEntity && selectedEntity.invoicingEmployee">
+        <div class="label">Responsable de la facturation</div>
+        <div class="value">
+          <div style="display: flex;" (click)="displayInTeams(selectedEntity.invoicingEmployee)" class="pointer">
+            <avatar class="avatar-select" [employee]="selectedEntity.invoicingEmployee" [size]="14">
+            </avatar> {{selectedEntity.invoicingEmployee.firstname}}
+            {{selectedEntity.invoicingEmployee.lastname}}
+          </div>
+        </div>
+      </div>
+      <div class="field-row" *ngIf="selectedEntity && selectedEntity.invoicingBlockage">
+        <div class="label">Cause du blocage de la facturation</div>
+        <div class="value">
+          {{selectedEntity.invoicingBlockage.label}}
+        </div>
+      </div>
       <div class="field-row" *ngIf="selectedEntity.responsable && selectedEntity.responsable.tiers "
         (click)="openTiers($event,selectedEntity)">
         <div class="label">Tiers</div>

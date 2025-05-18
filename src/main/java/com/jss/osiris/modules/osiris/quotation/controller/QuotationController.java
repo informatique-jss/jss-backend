@@ -38,7 +38,9 @@ import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoicingBlockageService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
@@ -395,6 +397,9 @@ public class QuotationController {
 
   @Autowired
   FormaliteInfogreffeService formaliteInfogreffeService;
+
+  @Autowired
+  InvoicingBlockageService invoicingBlockageService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -2658,7 +2663,27 @@ public class QuotationController {
           status.add(statu);
       }
 
-    return new ResponseEntity<List<CustomerOrder>>(customerOrderService.searchCustomerOrders(commercials, status),
+    return new ResponseEntity<List<CustomerOrder>>(customerOrderService.searchCustomerOrders(commercials, status, null),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/search/invoicing")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrder>> searchCustomerOrderForInvoicing(
+      @RequestParam(required = false) List<Integer> employeeIds)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    List<Employee> employees = new ArrayList<Employee>();
+    if (employeeIds != null)
+      for (Integer id : employeeIds) {
+        Employee employee = employeeService.getEmployee(id);
+        if (employee == null)
+          throw new OsirisValidationException("employeeIds");
+        else
+          employees.add(employee);
+      }
+
+    return new ResponseEntity<List<CustomerOrder>>(customerOrderService.searchCustomerOrders(null, null, employees),
         HttpStatus.OK);
   }
 
@@ -2840,5 +2865,52 @@ public class QuotationController {
     provisionService.updateProvisionStatus(provision, status);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/assign/invoicing")
+  public ResponseEntity<Boolean> assignInvoicingEmployee(@RequestParam Integer customerOrderId,
+      @RequestParam(required = false) Integer employeeId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    Employee employee = null;
+    if (employeeId != null) {
+      employee = employeeService.getEmployee(employeeId);
+      if (employee == null)
+        throw new OsirisValidationException("employee");
+    }
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderService.assignInvoicingEmployee(customerOrder, employee);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/change/invoicing-blockage")
+  public ResponseEntity<Boolean> modifyInvoicingBlockage(@RequestParam Integer customerOrderId,
+      @RequestParam(required = false) Integer invoicingBlockageId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    InvoicingBlockage invoicingBlockage = null;
+    if (invoicingBlockageId != null) {
+      invoicingBlockage = invoicingBlockageService.getInvoicingBlockage(invoicingBlockageId);
+      if (invoicingBlockage == null)
+        throw new OsirisValidationException("invoicingBlockage");
+    }
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderService.modifyInvoicingBlockage(customerOrder, invoicingBlockage);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/assign/invoicing/auto")
+  public ResponseEntity<CustomerOrder> assignNewCustomerOrderToBilled() {
+    return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToBilled(), HttpStatus.OK);
   }
 }

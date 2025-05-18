@@ -95,6 +95,8 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   SERVICE_FIELD_TYPE_REFERENTIAL = "Types de champs de service";
   INDICATOR_REFERENTIAL = "Indicateurs";
   INDICATOR_GROUP_REFERENTIAL = "Groupe d'indicateurs";
+  INVOICING_BLOCAKGE_REFERENTIAL = "Type de blocage de facturation";
+
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -173,6 +175,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.SERVICE_FIELD_TYPE_REFERENTIAL);
     this.referentials.push(this.INDICATOR_REFERENTIAL);
     this.referentials.push(this.INDICATOR_GROUP_REFERENTIAL);
+    this.referentials.push(this.INVOICING_BLOCAKGE_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

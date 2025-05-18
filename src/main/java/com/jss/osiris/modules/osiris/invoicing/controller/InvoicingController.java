@@ -48,6 +48,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.OutboundCheckSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.OutboundCheckSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -64,6 +65,7 @@ import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceStatusService;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoicingBlockageService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.invoicing.service.RefundService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -71,6 +73,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.InvoicingStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
@@ -1120,6 +1123,33 @@ public class InvoicingController {
             throw new OsirisValidationException("paymentSearch");
 
         return new ResponseEntity<List<Payment>>(paymentService.getMatchingOfxPayments(paymentSearch),
+                HttpStatus.OK);
+    }
+
+    @Autowired
+    InvoicingBlockageService invoicingBlockageService;
+
+    @GetMapping(inputEntryPoint + "/invoicing-blockages")
+    public ResponseEntity<List<InvoicingBlockage>> getInvoicingBlockages() {
+        return new ResponseEntity<List<InvoicingBlockage>>(invoicingBlockageService.getInvoicingBlockages(),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/invoicing-blockage")
+    public ResponseEntity<InvoicingBlockage> addOrUpdateInvoicingBlockage(
+            @RequestBody InvoicingBlockage invoicingBlockages) throws OsirisValidationException, OsirisException {
+        if (invoicingBlockages.getId() != null)
+            validationHelper.validateReferential(invoicingBlockages, true, "invoicingBlockages");
+        validationHelper.validateString(invoicingBlockages.getCode(), true, "code");
+        validationHelper.validateString(invoicingBlockages.getLabel(), true, "label");
+
+        return new ResponseEntity<InvoicingBlockage>(
+                invoicingBlockageService.addOrUpdateInvoicingBlockage(invoicingBlockages), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/invoicing/statistics")
+    public ResponseEntity<InvoicingStatistics> getInvoicingStatistics() {
+        return new ResponseEntity<InvoicingStatistics>(customerOrderService.getInvoicingStatistics(),
                 HttpStatus.OK);
     }
 }
