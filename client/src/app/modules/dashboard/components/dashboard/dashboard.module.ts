@@ -18,13 +18,9 @@ import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { QuotationModule } from 'src/app/modules/quotation/components/quotation/quotation.module';
 import { OrderKabanComponent } from '../order-kaban/order-kaban.component';
-import { OrderSidePanelDetailsComponent } from '../order-side-panel-details/order-side-panel-details.component';
 import { ProvisionBoardComponent } from '../provision-board/provision-board.component';
 import { ProvisionKanbanComponent } from '../provision-kanban/provision-kanban.component';
-import { ProvisionSidePanelDetailsComponent } from '../provision-side-panel-details/provision-side-panel-details.component';
 import { QuotationKanbanComponent } from '../quotation-kanban/quotation-kanban.component';
-import { QuotationSidePanelDetailsComponent } from '../quotation-side-panel-details/quotation-side-panel-details.component';
-import { ServiceSidePanelDetailsComponent } from '../service-side-panel-details/service-side-panel-details.component';
 import { DashboardComponent } from './dashboard.component';
 
 const routes: Routes = [
@@ -60,12 +56,10 @@ const routes: Routes = [
     DashboardComponent,
     ProvisionBoardComponent,
     OrderKabanComponent,
-    OrderSidePanelDetailsComponent,
-    QuotationSidePanelDetailsComponent,
-    ProvisionSidePanelDetailsComponent,
     QuotationKanbanComponent,
     ProvisionKanbanComponent,
-    ServiceSidePanelDetailsComponent
+  ],
+  exports: [
   ],
   providers: [
   ]

@@ -13,14 +13,15 @@ import { AssoAffaireOrderService } from 'src/app/modules/quotation/services/asso
 import { CUSTOMER_ORDER_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
-import { Notification } from '../../../../modules/miscellaneous/model/Notification';
-import { AssoAffaireOrder } from '../../../quotation/model/AssoAffaireOrder';
-import { AffaireService } from '../../../quotation/services/affaire.service';
+import { Notification } from '../../../miscellaneous/model/Notification';
+import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
+import { AffaireService } from '../../services/affaire.service';
 
 @Component({
   selector: 'order-side-panel-details',
   templateUrl: './order-side-panel-details.component.html',
-  styleUrls: ['./order-side-panel-details.component.css']
+  styleUrls: ['./order-side-panel-details.component.css'],
+  standalone: false
 })
 export class OrderSidePanelDetailsComponent implements OnInit {
 

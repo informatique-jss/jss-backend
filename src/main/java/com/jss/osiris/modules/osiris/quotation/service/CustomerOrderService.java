@@ -10,6 +10,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
@@ -21,6 +22,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.InvoicingStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
@@ -153,12 +155,24 @@ public interface CustomerOrderService {
                         throws OsirisException;
 
         public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
-                        List<CustomerOrderStatus> status) throws OsirisException;
+                        List<CustomerOrderStatus> status, List<Employee> invoicingEmployees) throws OsirisException;
 
         public Boolean setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public Boolean setDocumentOnOrder(CustomerOrder customerOrder, Document document)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
+
+        public void assignInvoicingEmployee(CustomerOrder customerOrder, Employee employee)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
+        public void modifyInvoicingBlockage(CustomerOrder customerOrder, InvoicingBlockage invoicingBlockage)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
+        public CustomerOrder assignNewCustomerOrderToBilled();
+
+        public InvoicingStatistics getInvoicingStatistics() throws OsirisException;
 
 }

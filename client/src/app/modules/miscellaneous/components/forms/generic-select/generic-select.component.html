@@ -2,7 +2,7 @@
   <mat-label>{{label}}</mat-label>
   <mat-select [formControlName]="propertyName" color="accent"
     [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)" [compareWith]="compareWithId">
-    <mat-option *ngFor="let type of types" [value]="type">
+    <mat-option *ngFor="let type of types" [value]="type" (click)="changeSelection(type)">
       {{displayLabel(type)}}
     </mat-option>
   </mat-select>

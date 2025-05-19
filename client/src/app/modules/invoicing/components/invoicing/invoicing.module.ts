@@ -1,4 +1,5 @@
 
+import { DragDropModule } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -34,6 +35,7 @@ import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.comp
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
+import { KanbanInvoicingComponent } from "../kanban-invoicing/kanban-invoicing.component";
 import { OfxMatchingComponent } from "../ofx-matching/ofx-matching.component";
 import { OutboundCheckListComponent } from "../outbound-check-list/outbound-check-list.component";
 import { ReceiptReconciliationEditDialogComponent } from "../receipt-reconciliation-edit-dialog/receipt-reconciliation-edit-dialog.component";
@@ -78,7 +80,8 @@ const routes: Routes = [
     MatRadioModule,
     MatBadgeModule,
     MatTableModule,
-    MatTableExporterModule
+    DragDropModule,
+    MatTableExporterModule,
   ],
   declarations: [InvoiceComponent,
     InvoiceListComponent,
@@ -97,7 +100,8 @@ const routes: Routes = [
     OutboundCheckListComponent,
     BankBalanceComponent,
     EditAmountInvoiceItemDialogComponent,
-    OfxMatchingComponent
+    OfxMatchingComponent,
+    KanbanInvoicingComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

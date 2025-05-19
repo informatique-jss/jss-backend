@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { InvoicingBlockage } from '../../invoicing/model/InvoicingBlockage';
 import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { Employee } from '../../profile/model/Employee';
 import { Announcement } from '../model/Announcement';
@@ -14,6 +15,7 @@ import { Quotation } from '../model/Quotation';
   providedIn: 'root'
 })
 export class CustomerOrderService extends AppRestService<IQuotation> {
+
   constructor(http: HttpClient) {
     super(http, "quotation");
   }
@@ -72,13 +74,36 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.get(new HttpParams().set("customerOrderId", quotation.id), "customer-order/invoicing/reinit", "Facturation réinitialisée");
   }
 
+  assignInvoicingEmployee(customerOrderId: number, employee: Employee) {
+    let params = new HttpParams().set("customerOrderId", customerOrderId);
+    if (employee)
+      params = params.set("employeeId", employee.id);
+    return this.get(params, "customer-order/assign/invoicing", employee ? ("Facturation assignée à " + employee.firstname + " " + employee.lastname) : '');
+  }
+
+  modifyInvoicingBlockage(customerOrderId: number, invoicingBlockage: InvoicingBlockage | undefined) {
+    let params = new HttpParams().set("customerOrderId", customerOrderId);
+    if (invoicingBlockage)
+      params = params.set("invoicingBlockageId", invoicingBlockage.id);
+    return this.get(params, "customer-order/change/invoicing-blockage", invoicingBlockage ? ("Blocage de la facturation pour cause de " + invoicingBlockage.label) : '');
+  }
+
   searchCustomerOrder(commercialsIds: number[], statusIds: number[]) {
     return this.getList(new HttpParams().set("commercialIds", commercialsIds.join(",")).set("statusIds", statusIds.join(',')), 'customer-order/search') as Observable<CustomerOrder[]>;
+  }
+
+  searchCustomerOrderForInvoicing(employeeIds: number[]) {
+    let params = new HttpParams();
+    if (employeeIds)
+      params = params.set("employeeIds", employeeIds.join(","));
+    return this.getList(params, 'customer-order/search/invoicing') as Observable<CustomerOrder[]>;
   }
 
   getSingleCustomerOrder(idCustomerOrder: number) {
     return this.getById("customer-order/single", idCustomerOrder);
   }
 
-
+  assignNewCustomerOrderToBilled() {
+    return this.get(new HttpParams(), "customer-order/assign/invoicing/auto");
+  }
 }

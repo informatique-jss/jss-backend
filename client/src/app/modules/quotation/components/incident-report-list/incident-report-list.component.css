@@ -1,0 +1,13 @@
+.table-container-scroll {
+  max-height: 215px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+td {
+  padding-right: 8px;
+}

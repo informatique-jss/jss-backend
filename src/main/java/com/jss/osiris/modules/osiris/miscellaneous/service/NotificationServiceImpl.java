@@ -21,6 +21,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 
 @org.springframework.stereotype.Service
 public class NotificationServiceImpl implements NotificationService {
@@ -288,6 +289,12 @@ public class NotificationServiceImpl implements NotificationService {
                 }
             }
         }
+    }
+
+    @Override
+    public void notifyIncidentReportAsked(IncidentReport incident) throws OsirisException {
+        generateNewNotification(incident.getInitiatedBy(), incident.getAssignedTo(), Notification.INCIDENT_REPORT_ASKED,
+                false, null, incident.getProvision(), null, null);
     }
 
     @Override

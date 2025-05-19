@@ -279,6 +279,11 @@
             [entityType]="getEntityType().entityType">
           </attachments>
         </mat-tab>
+        <mat-tab label="CRI"
+          *ngIf="quotation && instanceOfCustomerOrderFn(quotation) && (hasOneCri() || isAskNewCri())">
+          <incident-report-list [customerOrder]="quotation" [askForNewCri]="askForNewCri">
+          </incident-report-list>
+        </mat-tab>
         <mat-tab label="Pièces manquantes" *ngIf="quotation && instanceOfCustomerOrderFn(quotation) && hasOnePm()">
           <missing-attachment-queries [customerOrder]="quotation">
           </missing-attachment-queries>
@@ -347,9 +352,9 @@
   <mat-icon>autorenew</mat-icon>
 </button>
 
-<button matTooltip="Recevoir un mail" mat-fab color="accent" class="fourth-fab-button mail-menu"
+<button matTooltip="Actions" mat-fab color="accent" class="fourth-fab-button mail-menu"
   *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id" [matMenuTriggerFor]="menuMail">
-  <mat-icon>mail</mat-icon>
+  <mat-icon>more_horiz</mat-icon>
   <mat-menu #menuMail="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
     <button mat-menu-item (click)="generateCustomerOrderCreationConfirmationToCustomer()">
       <span>Recevoir le mail de confirmation de la commande</span>
@@ -359,6 +364,9 @@
     </button>
     <button mat-menu-item (click)="generateMailingLabel()">
       <span>Imprimer une étiquette/lettre postale</span>
+    </button>
+    <button mat-menu-item (click)="askForNewCriFn()">
+      <span>Demander un compte rendu d'incident</span>
     </button>
   </mat-menu>
 </button>

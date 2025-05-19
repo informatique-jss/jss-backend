@@ -39,6 +39,7 @@ import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.GuichetUniqueDelegateService;
+import com.jss.osiris.modules.osiris.reporting.service.IncidentReportStatusService;
 import com.jss.osiris.modules.osiris.reporting.service.IndicatorService;
 
 @Service
@@ -137,6 +138,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	IndicatorService indicatorService;
+
+	@Autowired
+	IncidentReportStatusService incidentReportStatusService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -452,6 +456,8 @@ public class OsirisScheduller {
 			simpleProvisionStatusService.updateStatusReferential();
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
+			incidentReportStatusService.updateStatusReferential();
+
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
