@@ -13,8 +13,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     request = request.clone({
-      withCredentials: true
+      withCredentials: true,
+      headers: request.headers.set("domain", "myjss")
     });
+
 
     return next.handle(request).pipe(
       tap(data => {

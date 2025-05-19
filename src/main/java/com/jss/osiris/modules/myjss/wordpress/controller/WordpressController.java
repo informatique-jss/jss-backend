@@ -255,6 +255,28 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/myjss/pinned")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> getMyJssPinnedPosts(@RequestParam Integer myJssCategoryId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+
+		if (myJssCategory == null)
+			throw new OsirisValidationException("myJssCategory");
+
+		return new ResponseEntity<Page<Post>>(
+				postService.getMyJssCategoryStickyPost(pageableRequest, myJssCategory),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/slug")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Post> getPostBySlug(@RequestParam String slug, HttpServletRequest request)

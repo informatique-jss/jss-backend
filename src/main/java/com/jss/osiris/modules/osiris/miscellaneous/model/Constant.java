@@ -936,6 +936,21 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_myjss_category_domiciliation")
+	private MyJssCategory myJssCategoryDomiciliation;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_myjss_category_apostille")
+	private MyJssCategory myJssCategoryApostille;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_myjss_category_document")
+	private MyJssCategory myJssCategoryDocument;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_jss_category_homepage_first_highlighted")
 	private JssCategory jssCategoryHomepageFirstHighlighted;
 
@@ -2814,6 +2829,30 @@ public class Constant implements Serializable, IId {
 
 	public void setEmployeeCandidacyResponsible(Employee employeeCandidacyResponsible) {
 		this.employeeCandidacyResponsible = employeeCandidacyResponsible;
+	}
+
+	public MyJssCategory getMyJssCategoryApostille() {
+		return myJssCategoryApostille;
+	}
+
+	public void setMyJssCategoryApostille(MyJssCategory myJssCategoryApostille) {
+		this.myJssCategoryApostille = myJssCategoryApostille;
+	}
+
+	public MyJssCategory getMyJssCategoryDocument() {
+		return myJssCategoryDocument;
+	}
+
+	public void setMyJssCategoryDocument(MyJssCategory myJssCategoryDocument) {
+		this.myJssCategoryDocument = myJssCategoryDocument;
+	}
+
+	public MyJssCategory getMyJssCategoryDomiciliation() {
+		return myJssCategoryDomiciliation;
+	}
+
+	public void setMyJssCategoryDomiciliation(MyJssCategory myJssCategoryDomiciliation) {
+		this.myJssCategoryDomiciliation = myJssCategoryDomiciliation;
 	}
 
 }

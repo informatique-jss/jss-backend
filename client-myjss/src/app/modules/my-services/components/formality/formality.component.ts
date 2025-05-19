@@ -22,13 +22,13 @@ export class FormalityComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.postService.getTopPostByMyJssCategory(0, this.myJssCategoryFormality).subscribe(posts => {
+    this.postService.getPinnedPostByMyJssCategory(0, this.myJssCategoryFormality).subscribe(posts => {
       if (posts && posts.content)
         this.carouselFormalityPosts.push(...posts.content);
     });
-    this.postService.getTendencyPosts().subscribe(response => {
-      if (response && response.length > 0) {
-        this.tendencyPosts = response;
+    this.postService.getTopPostByMyJssCategory(0, this.constantService.getMyJssCategoryFormality()).subscribe(response => {
+      if (response && response.content && response.content.length > 0) {
+        this.tendencyPosts = response.content;
       }
     });
   }

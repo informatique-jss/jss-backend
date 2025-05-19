@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -186,15 +187,21 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getMyJssCategoryStickyPost(Pageable pageableRequest, MyJssCategory myJssCategory)
+            throws OsirisException {
+        return postRepository.findMyJssCategoryStickyPost(myJssCategory, pageableRequest);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException {
         post.setIsCancelled(false);
         if (post.getTitle() != null)
-            post.setTitleText(post.getTitle().getRendered());
+            post.setTitleText(StringEscapeUtils.unescapeHtml4(post.getTitle().getRendered()));
         if (post.getExcerpt() != null)
-            post.setExcerptText(post.getExcerpt().getRendered());
+            post.setExcerptText(StringEscapeUtils.unescapeHtml4(post.getExcerpt().getRendered()));
         if (post.getContent() != null)
-            post.setContentText(post.getContent().getRendered());
+            post.setContentText(StringEscapeUtils.unescapeHtml4(post.getContent().getRendered()));
 
         modifyPodcastUrls(post);
         modifyVideoUrls(post);

@@ -500,6 +500,12 @@ public interface ConstantService {
 
     public MyJssCategory getMyJssCategoryFormality() throws OsirisException;
 
+    public MyJssCategory getMyJssCategoryDomiciliation() throws OsirisException;
+
+    public MyJssCategory getMyJssCategoryApostille() throws OsirisException;
+
+    public MyJssCategory getMyJssCategoryDocument() throws OsirisException;
+
     public JssCategory getJssCategoryHomepageFirstHighlighted() throws OsirisException;
 
     public JssCategory getJssCategoryHomepageSecondHighlighted() throws OsirisException;

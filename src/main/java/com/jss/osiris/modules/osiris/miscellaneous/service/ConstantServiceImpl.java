@@ -1204,6 +1204,21 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public MyJssCategory getMyJssCategoryDomiciliation() throws OsirisException {
+        return this.getConstants().getMyJssCategoryDomiciliation();
+    }
+
+    @Override
+    public MyJssCategory getMyJssCategoryApostille() throws OsirisException {
+        return this.getConstants().getMyJssCategoryApostille();
+    }
+
+    @Override
+    public MyJssCategory getMyJssCategoryDocument() throws OsirisException {
+        return this.getConstants().getMyJssCategoryDocument();
+    }
+
+    @Override
     public JssCategory getJssCategoryHomepageFirstHighlighted() throws OsirisException {
         return this.getConstants().getJssCategoryHomepageFirstHighlighted();
     }

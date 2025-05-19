@@ -271,6 +271,9 @@ export interface Constant {
   categoryExclusivity: Category;
   myJssCategoryAnnouncement: MyJssCategory;
   myJssCategoryFormality: MyJssCategory;
+  myJssCategoryDomiciliation: MyJssCategory;
+  myJssCategoryApostille: MyJssCategory;
+  myJssCategoryDocument: MyJssCategory;
   jssCategoryHomepageFirstHighlighted: JssCategory;
   jssCategoryHomepageSecondHighlighted: JssCategory;
   jssCategoryHomepageThirdHighlighted: JssCategory;

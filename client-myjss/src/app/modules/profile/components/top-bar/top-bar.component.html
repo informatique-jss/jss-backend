@@ -5,7 +5,7 @@
       <!-- Mobile menu toggler (Hamburger) -->
       <div class="col-4 d-flex justify-content-start">
         <button class="navbar-toggler" id="navToggler" type="button" data-bs-toggle="collapse"
-          data-bs-target="#navbarCollapse" aria-controls="navbarNav" aria-expanded="false"
+          data-bs-target="#navbarCollapse" #navbarCollapseRef aria-controls="navbarNav" aria-expanded="false"
           aria-label="Toggle navigation">
           <span class="text-body h6"></span>
           <span class="navbar-toggler-icon" [ngClass]="{'navbar-toggler-icon-light': isForQuotationNavbar}"></span>
@@ -123,7 +123,6 @@
           </ul>
         </div>
         <hr>
-        <main-footer [isInNavbar]="true" class="mx-0"></main-footer>
       </nav>
     </div>
 

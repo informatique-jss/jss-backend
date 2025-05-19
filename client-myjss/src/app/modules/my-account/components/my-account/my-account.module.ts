@@ -52,6 +52,7 @@ const routes: Routes = [
       { path: 'appointment ', component: AppointmentComponent },
     ]
   },
+  { path: 'account/signin/:from', component: SignInComponent },
   { path: 'account/signin', component: SignInComponent },
   { path: 'account/signout', component: SignOutComponent },
   { path: 'profile/login', component: OverviewComponent },

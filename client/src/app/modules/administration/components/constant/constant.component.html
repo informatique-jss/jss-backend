@@ -1682,6 +1682,28 @@
             </td>
           </tr>
           <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryDomiciliation"
+                label="Catégorie MyJss - Domicialiation" [form]="constantForm" propertyName="myJssCategoryDomiciliation"
+                [isMandatory]="false" [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryApostille" label="Catégorie MyJss - Apostilles"
+                [form]="constantForm" propertyName="myJssCategoryApostille" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryDocument"
+                label="Catégorie MyJss - Fourniture de documents" [form]="constantForm"
+                propertyName="myJssCategoryDocument" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
           <tr>
             <td>
               <select-jss-category [(model)]="constant.jssCategoryHomepageFirstHighlighted"

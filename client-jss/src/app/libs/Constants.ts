@@ -13,4 +13,4 @@ export const MY_JSS_PARTNERS_ROUTE = "partners";
 export const MY_JSS_LEGAL_MENTIONS_ROUTE = "legal-mentions";
 export const MY_JSS_CGV_ROUTE = "cgv";
 export const MY_JSS_CONFIDENTIALITY_ROUTE = "confidentiality";
-export const MY_JSS_SIGN_IN_ROUTE = "account/signin";
+export const MY_JSS_SIGN_IN_ROUTE = "account/signin/jss";

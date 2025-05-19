@@ -82,6 +82,9 @@ public interface PostService {
 
         public Page<Post> getJssCategoryStickyPost(Pageable pageableRequest) throws OsirisException;
 
+        public Page<Post> getMyJssCategoryStickyPost(Pageable pageableRequest, MyJssCategory myJssCategory)
+                        throws OsirisException;
+
         public Page<Post> getTopPostByDepartment(Pageable pageableRequest, PublishingDepartment department)
                         throws OsirisException;
 
