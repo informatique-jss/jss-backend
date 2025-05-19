@@ -204,31 +204,30 @@
             (onEnter)="addPhone(quotation.responsable, true)">
           </generic-input>
           <ul class="list-group mt-1">
-            <li class="list-group-item" *ngFor="let phone of quotation.responsable.tiers.phones">
+            <li class="list-group-item py-0" *ngFor="let phone of quotation.responsable.tiers.phones">
               <div class="d-flex flex-wrap w-100">
                 <div>
-                  <button type="button" class="btn btn-icon btn-outline-primary btn-sm me-3" aria-label="Supprimer"
-                    (click)="deletePhone(phone, quotation.responsable, true)">
-                    <i class="ai-cross"></i>
-                  </button>
+                  <a class="nav-link fs-xl p-2" (click)="deletePhone(phone, quotation.responsable, true)">
+                    <i class="ai-trash"></i>
+                  </a>
                 </div>
                 <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
               </div>
             </li>
           </ul>
 
-          <generic-input (onFormChange)="saveDraftQuotation()" class="col mt-0" [(model)]="newMailTiers"
-            label="Votre adresse mail" [form]="documentForm" propertyName="newMailTiers" [isMandatory]="false"
-            [isDisabled]="false" type="email" [icon]="'mail'" (onEnter)="addMailTiers(quotation.responsable.tiers)">
+          <generic-input (onFormChange)="saveDraftQuotation()" class="col mt-3" [(model)]="newMailTiers"
+            label="Adresse(s) mail(s) (entrer pour valider)" [form]="documentForm" propertyName="newMailTiers"
+            [isMandatory]="false" [isDisabled]="false" type="email" [icon]="'mail'"
+            (onEnter)="addMailTiers(quotation.responsable.tiers)">
           </generic-input>
           <ul class="list-group mt-1">
-            <li class="list-group-item" *ngFor="let mail of quotation.responsable.tiers.mails">
+            <li class="list-group-item py-0" *ngFor="let mail of quotation.responsable.tiers.mails">
               <div class="d-flex flex-wrap w-100">
                 <div>
-                  <button type="button" class="btn btn-icon btn-outline-primary btn-sm me-3" aria-label="Supprimer"
-                    (click)="deleteMailTiers(mail, quotation.responsable.tiers)">
-                    <i class="ai-cross"></i>
-                  </button>
+                  <a class="nav-link fs-xl p-2" (click)="deleteMailTiers(mail, quotation.responsable.tiers)">
+                    <i class="ai-trash"></i>
+                  </a>
                 </div>
                 <div class="mt-auto mb-auto">{{mail.mail}}</div>
               </div>
@@ -294,20 +293,19 @@
           (onEnter)="addPhone(quotation.responsable, false)">
         </generic-input>
         <ul class="list-group">
-          <li class="list-group-item" *ngFor="let phone of quotation.responsable.phones">
+          <li class="list-group-item py-0" *ngFor="let phone of quotation.responsable.phones">
             <div class="d-flex flex-wrap w-100">
               <div>
-                <button type="button" class="btn btn-icon btn-outline-primary btn-sm me-3" aria-label="Supprimer"
-                  (click)="deletePhone(phone, quotation.responsable, true)">
-                  <i class="ai-cross"></i>
-                </button>
+                <a class="nav-link fs-xl p-2" (click)="deletePhone(phone, quotation.responsable, true)">
+                  <i class="ai-trash"></i>
+                </a>
               </div>
               <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
             </div>
           </li>
         </ul>
 
-        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-0"
+        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-3"
           [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail" [form]="documentForm"
           propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="email" [icon]="'mail'">
         </generic-input>
@@ -392,62 +390,60 @@
         label="L'envoyer à l'affaire" [form]="documentForm" propertyName="isRecipientAffaireBilling"
         [isMandatory]="false">
       </generic-toggle>
-      <div class="row ps-4 pb-2">
+      <div class="row ps-4 pb-3">
         <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire" [(model)]="document.addToAffaireMailList"
           label="Ajouter des adresses mails en copie de l'affaire" [form]="documentForm"
           propertyName="addToAffaireMailListBilling" [isMandatory]="false">
         </generic-toggle>
 
-        <ul class="list-group mt-1 mb-3"
-          *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
-          <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
-            <div class="d-flex flex-wrap w-100">
-              <div>
-                <button type="button" class="btn btn-icon btn-outline-primary btn-sm me-3" title="Supprimer"
-                  (click)="deleteMail(mail, document, true)">
-                  <i class="ai-cross"></i>
-                </button>
-              </div>
-              <div class="mt-auto mb-auto">{{mail.mail}}</div>
-            </div>
-          </li>
-        </ul>
-        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-4"
+        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-0 pt-2"
           *ngIf="document.addToAffaireMailList && document.isRecipientAffaire" [(model)]="newMailBillingAffaire"
           label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingAffaireBilling"
           [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
           (onEnter)="addMail(document, true)">
         </generic-input>
-      </div>
-
-      <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer" [form]="documentForm"
-        propertyName="isRecipientClientBilling" [isMandatory]="false">
-      </generic-toggle>
-      <div class="row ps-4 pb-2">
-        <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
-          label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
-          propertyName="addToClientMailListBilling" [isMandatory]="false">
-        </generic-toggle>
-
         <ul class="list-group mt-1 mb-3"
-          *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
-          <li class="list-group-item" *ngFor="let mail of document.mailsClient">
+          *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
+          <li class="list-group-item py-0" *ngFor="let mail of document.mailsAffaire">
             <div class="d-flex flex-wrap w-100">
               <div>
-                <button type="button" class="btn btn-icon btn-outline-primary btn-sm me-3" title="Supprimer"
-                  (click)="deleteMail(mail, document, false)">
-                  <i class="ai-cross"></i>
-                </button>
+                <a class="nav-link fs-xl p-2" (click)="deleteMail(mail, document, true)">
+                  <i class="ai-trash"></i>
+                </a>
               </div>
               <div class="mt-auto mb-auto">{{mail.mail}}</div>
             </div>
           </li>
         </ul>
-        <generic-input (onFormChange)="saveDraftQuotation()"
+      </div>
+
+      <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer" [form]="documentForm"
+        propertyName="isRecipientClientBilling" [isMandatory]="false">
+      </generic-toggle>
+      <div class="row ps-4 pb-3">
+        <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
+          label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
+          propertyName="addToClientMailListBilling" [isMandatory]="false">
+        </generic-toggle>
+
+        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-3 pt-2"
           *ngIf="document.addToClientMailList && document.isRecipientClient" [(model)]="newMailBillingClient"
           label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingClientBilling"
           [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
           (onEnter)="addMail(document, false)"></generic-input>
+        <ul class="list-group mt-1 mb-3"
+          *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
+          <li class="list-group-item py-0" *ngFor="let mail of document.mailsClient">
+            <div class="d-flex flex-wrap w-100">
+              <div>
+                <a class="nav-link fs-xl p-2" (click)="deleteMail(mail, document, false)">
+                  <i class="ai-trash"></i>
+                </a>
+              </div>
+              <div class="mt-auto mb-auto">{{mail.mail}}</div>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -464,62 +460,60 @@
       <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à l'affaire" [form]="documentForm"
         propertyName="isRecipientAffaireDigital" [isMandatory]="false">
       </generic-toggle>
-      <div class="row ps-4 pb-2">
+      <div class="row ps-4 pb-3">
         <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire" [(model)]="document.addToAffaireMailList"
           [isMandatory]="false" label="Ajouter des adresses mails en copie de l'affaire" [form]="documentForm"
           propertyName="addToAffaireMailListDigital">
         </generic-toggle>
 
-        <ul class="list-group mt-1 mb-3"
-          *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
-          <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
-            <div class="d-flex flex-wrap w-100">
-              <div>
-                <button type="button" class="btn btn-icon btn-outline-primary btn-sm me-3" title="Supprimer"
-                  (click)="deleteMail(mail, document, true)">
-                  <i class="ai-cross"></i>
-                </button>
-              </div>
-              <div class="mt-auto mb-auto">{{mail.mail}}</div>
-            </div>
-          </li>
-        </ul>
-        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-4"
+        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-3 pt-2"
           *ngIf="document.addToAffaireMailList && document.isRecipientAffaire" [(model)]="newMailBillingAffaire"
           label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingAffaireDigital"
           [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
           (onEnter)="addMail(document, true)">
         </generic-input>
-      </div>
-
-      <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer" [form]="documentForm"
-        propertyName="isRecipientClientDigital" [isMandatory]="false">
-      </generic-toggle>
-      <div class="row ps-4 pb-2">
-        <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
-          label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
-          propertyName="addToClientMailListDigital" [isMandatory]="false">
-        </generic-toggle>
-
         <ul class="list-group mt-1 mb-3"
-          *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
-          <li class="list-group-item" *ngFor="let mail of document.mailsClient">
+          *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
+          <li class="list-group-item py-0" *ngFor="let mail of document.mailsAffaire">
             <div class="d-flex flex-wrap w-100">
               <div>
-                <button type="button" class="btn btn-icon btn-outline-primary btn-sm me-3" title="Supprimer"
-                  (click)="deleteMail(mail, document, false)">
-                  <i class="ai-cross"></i>
-                </button>
+                <a class="nav-link fs-xl p-2" (click)="deleteMail(mail, document, true)">
+                  <i class="ai-trash"></i>
+                </a>
               </div>
               <div class="mt-auto mb-auto">{{mail.mail}}</div>
             </div>
           </li>
         </ul>
-        <generic-input (onFormChange)="saveDraftQuotation()"
+      </div>
+
+      <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer" [form]="documentForm"
+        propertyName="isRecipientClientDigital" [isMandatory]="false">
+      </generic-toggle>
+      <div class="row ps-4 pb-3">
+        <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
+          label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
+          propertyName="addToClientMailListDigital" [isMandatory]="false">
+        </generic-toggle>
+
+        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-0 pt-2"
           *ngIf="document.addToClientMailList && document.isRecipientClient" [(model)]="newMailBillingClient"
           label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingClientDigital"
           [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
           (onEnter)="addMail(document, false)"></generic-input>
+        <ul class="list-group mt-1 mb-3"
+          *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
+          <li class="list-group-item py-0" *ngFor="let mail of document.mailsClient">
+            <div class="d-flex flex-wrap w-100 py-0">
+              <div>
+                <a class="nav-link fs-xl p-2" (click)="deleteMail(mail, document, false)">
+                  <i class="ai-trash"></i>
+                </a>
+              </div>
+              <div class="mt-auto mb-auto">{{mail.mail}}</div>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
