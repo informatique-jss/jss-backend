@@ -5,8 +5,9 @@
 
   <section class="quotation-container">
     <h6><i class="ai-wallet pe-2"></i>Type de demande</h6>
+    <!-- TODO : use the onFormChange instead of the change. Could not manage to make it work for now -->
     <radio-group-quotation-type [(model)]="selectedQuotationType" [form]="idenficationForm" [isDisabled]="!quotation.id"
-      propertyName="quotationType"></radio-group-quotation-type>
+      propertyName="quotationType" (change)="changeQuotationType()"></radio-group-quotation-type>
   </section>
 
   <section *ngIf="!currentDraftStep" class="quotation-container">

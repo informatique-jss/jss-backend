@@ -103,6 +103,18 @@ export class IdentificationComponent implements OnInit {
     this.addAffaire();
   }
 
+  changeQuotationType() {
+    if (this.quotation) {
+      if (this.selectedQuotationType.id == quotation.id)
+        this.quotation.isQuotation = true;
+      else {
+        this.quotation.isQuotation = false;
+      }
+    }
+
+  }
+
+
   refreshIsRegisteredAffaire() {
     if (this.quotation)
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++)

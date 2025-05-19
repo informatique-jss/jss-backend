@@ -37,6 +37,7 @@ export class RequiredInformationComponent implements OnInit {
 
   @ViewChild('confirmBackModal') confirmBackModal!: ElementRef<HTMLDivElement>;
 
+  CONFIER_ANNONCE_AU_JSS: string = "Confier l'annonce légale au JSS";
 
   selectedAssoIndex: number | null = null;
   selectedServiceIndex: number | null = null;
@@ -56,8 +57,8 @@ export class RequiredInformationComponent implements OnInit {
   minDatePublication: Date = new Date();
 
   isDoNotGenerateAnnouncement: boolean = true;
-  // TODO : change values of inputs
-  selectionRedaction: string[] = ["Publier au JSS", "b", "c"];
+  selectionRedaction: string[] = [this.CONFIER_ANNONCE_AU_JSS, "Je m'occupe de la publication de l'annonce légale"];
+  selectedRedaction: string[][] = [];
   isFetchingPrincing: boolean = false;
 
   checkedOnce = false;
@@ -135,6 +136,10 @@ export class RequiredInformationComponent implements OnInit {
               for (let provision of serv.provisions) {
                 if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
                   provision.order = ++i;
+                  if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
+                    this.selectedRedaction[asso.services.indexOf(serv)] = [];
+                  }
+                  this.selectedRedaction[asso.services.indexOf(serv)][serv.provisions.indexOf(provision)] = this.CONFIER_ANNONCE_AU_JSS;
                   if (!provision.announcement) {
                     provision.announcement = {} as Announcement;
                     provision.isRedactedByJss = true;
@@ -273,14 +278,9 @@ export class RequiredInformationComponent implements OnInit {
     }
 
     else {
-      if (!this.currentUser && this.quotation) {
-        if (this.quotation.isQuotation) {
-          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-          this.appService.openRoute(undefined, "quotation", undefined);
-        } else {
-          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-          this.appService.openRoute(undefined, "quotation", undefined);
-        }
+      if (this.quotation) {
+        this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+        this.appService.openRoute(undefined, "quotation", undefined);
       }
     }
   }
@@ -310,10 +310,12 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   changeDoNotGenerateAnnouncement(selection: string, provision: Provision) {
-    // TODO : use constant for equality? 
-    if (selection != "Publier au JSS")
+    provision.isDoNotGenerateAnnouncement = true;
+    if (selection != this.CONFIER_ANNONCE_AU_JSS) {
+      this.isDoNotGenerateAnnouncement = false;
       provision.isDoNotGenerateAnnouncement = false;
-    else {
+    } else {
+      this.isDoNotGenerateAnnouncement = true;
       provision.isDoNotGenerateAnnouncement = true;
     }
   }

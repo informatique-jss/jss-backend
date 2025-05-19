@@ -92,7 +92,7 @@ public class MyJssQuotationDelegate {
             }
         }
 
-        // TODO : check if need to reset tiers and resp bedore saving
+        // TODO : check if need to reset tiers and resp before saving
         // customerorder/quotation
 
         populateBooleansOfProvisions(quotation);
@@ -102,13 +102,13 @@ public class MyJssQuotationDelegate {
 
         // Save Quotation or CustomerOrder
         if (!quotation.getIsQuotation()) {
-            ((Quotation) quotation)
-                    .setQuotationStatus(quotationStatusService.getQuotationStatusByCode(QuotationStatus.TO_VERIFY));
+            ((CustomerOrder) quotation).setCustomerOrderStatus(
+                    customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
             quotation = customerOrderService.addOrUpdateCustomerOrder((CustomerOrder) quotation, false, false);
         }
         if (quotation.getIsQuotation()) {
-            ((CustomerOrder) quotation).setCustomerOrderStatus(
-                    customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
+            ((Quotation) quotation)
+                    .setQuotationStatus(quotationStatusService.getQuotationStatusByCode(QuotationStatus.TO_VERIFY));
             quotation = quotationService.addOrUpdateQuotation((Quotation) quotation);
             try {
                 customerOrderService.addOrUpdateCustomerOrderStatusFromUser((CustomerOrder) quotation,

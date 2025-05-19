@@ -42,10 +42,11 @@
         </div>
 
         <!-- Quick message -->
-        <div class="row">
+        <div class="row"
+          *ngIf="quotation && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0]">
           <div class="card form-check form-switch mb-4 py-4 ">
             <h2 class="pb-3">Gagnez du temps dans vos démarches !</h2>
-            <div *ngIf="quotation">
+            <div>
               <generic-toggle [(model)]="quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency"
                 [isMandatory]="false" label="Traiter cette commande en urgence" [form]="documentForm"
                 propertyName="isEmergency" (change)="setEmergencyOption()">
@@ -142,8 +143,8 @@
 
       <!-- Order summary -->
       <div class="col-lg-5">
-        <div class="sticky-top">
-          <div class="d-none d-lg-block start-57 background-right position-fixed top-0 h-100">
+        <div>
+          <div class="d-none d-lg-block start-57 background-right h-100">
           </div>
           <ng-container [ngTemplateOutlet]="checkoutSummary"></ng-container>
         </div>
@@ -630,12 +631,12 @@
       </div>
       <div class="row gx-1 gy-3 justify-content-between">
         <div class="col-auto">
-          <button class="btn btn-lg btn-secondary" type="button" (click)="onSaveDraft()">Enregistrer le
+          <button class="btn btn-md btn-outline-secondary" type="button" (click)="onSaveDraft()">Enregistrer le
             brouillon</button>
         </div>
         <div class="col-auto">
-          <button class="btn btn-lg btn-secondary" type="submit" (click)="onValidateOrder()">Valider la
-            commande</button>
+          <button class="btn btn-md btn-secondary" type="submit" (click)="onValidateOrder()">
+            {{quotation?.isQuotation ? 'Envoyer la demande de devis' : 'Valider la commande'}}</button>
         </div>
       </div>
     </div>

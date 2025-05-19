@@ -190,7 +190,7 @@
   --ar-border-style: solid;
   --ar-border-color: #FFFFFF1F;
   --ar-border-color-translucent: rgba(0, 0, 0, 0.1);
-  --ar-border-radius: 1rem;
+  --ar-border-radius: 8px;
   --ar-border-radius-sm: calc(var(--ar-border-radius) * 0.75);
   --ar-border-radius-lg: calc(var(--ar-border-radius) * 1.125);
   --ar-border-radius-xl: calc(var(--ar-border-radius) * 1.5);

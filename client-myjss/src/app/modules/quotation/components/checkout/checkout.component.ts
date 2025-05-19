@@ -133,7 +133,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   makeOrder() {
-    // TODO
     this.saveOrder();
   }
 

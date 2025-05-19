@@ -83,6 +83,9 @@
 
           <div class="pb-3">
             <div class="row g-3 align-items-start">
+              <span
+                *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes.length ==0">Aucune
+                information à remplir pour ce service, vous pouvez cliquer sur le bouton étape suivante.</span>
               <ng-container
                 *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
 
@@ -141,11 +144,12 @@
         </div>
         <div *ngIf="currentUser">
           <div
-            *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index"
-            class="quotation-container mb-4">
-            <quotation-file-uploader [entity]="assoServiceDocument"
-              (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
-              (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
+            *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
+            <div *ngIf="assoServiceDocument.isMandatory" class="quotation-container mb-4">
+              <quotation-file-uploader [entity]="assoServiceDocument"
+                (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
+                (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
+            </div>
           </div>
         </div>
       </div>
@@ -169,11 +173,12 @@
                   <div class="col">
                     <select-string [types]="selectionRedaction" label="Publier l'annonce au JSS ?" [isMandatory]="false"
                       [form]="informationForm" [propertyName]="'selectionRedaction'+provision.order"
+                      [(model)]="selectedRedaction[selectedServiceIndex][index]"
                       (selectionChange)="changeDoNotGenerateAnnouncement($event, provision)">
                     </select-string>
                   </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3" *ngIf="isDoNotGenerateAnnouncement">
                   <label class="col col-form-label" for="announcementPublicationDate">Date de publication
                     souhaitée*</label>
                   <div class="col">
@@ -187,7 +192,7 @@
             </div>
 
             <!-- announcement form : Option -->
-            <div class="quotation-container mb-2">
+            <div *ngIf="isDoNotGenerateAnnouncement" class="quotation-container mb-2">
               <h6><i class="ai-grid me-2"></i>Option</h6>
               <div class="d-flex flex-wrap gap-4 align-items-center">
 
@@ -207,7 +212,7 @@
 
 
             <!-- announcement form : text area -->
-            <div *ngIf="!provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss"
+            <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss"
               class="quotation-container mb-5">
 
               <div class="row">
@@ -236,6 +241,7 @@
                   </div>
 
                   <!-- Sous-rubrique -->
+                  <!-- TODO : do not work -->
                   <div class="mb-3" *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
                     <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
                       label="Sous-rubrique(s) de publication" [form]="informationForm"

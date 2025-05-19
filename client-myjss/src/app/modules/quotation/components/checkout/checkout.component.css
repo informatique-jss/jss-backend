@@ -49,3 +49,7 @@ hr {
 :host ::ng-deep generic-input.white-form-control i {
     color: var(--ar-gray-300);
 }
+
+.btn-outline-secondary {
+    background-color: var(--ar-light);
+}

@@ -19,4 +19,9 @@ export class SelectStringComponent extends GenericSelectComponent<string> implem
   override initTypes(): void {
     this.types = this.types;
   }
+
+  override compareWithId = (o1: any, o2: any) => {
+    return o1 == o2;
+  }
+
 }

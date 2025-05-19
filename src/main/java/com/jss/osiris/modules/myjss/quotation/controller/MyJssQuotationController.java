@@ -435,8 +435,13 @@ public class MyJssQuotationController {
 		if (attachment == null)
 			throw new OsirisValidationException("service");
 
-		if (attachment.getQuotation() != null
-				&& myJssQuotationValidationHelper.canSeeQuotation(attachment.getQuotation())) {
+		if ((attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation() != null
+				&& myJssQuotationValidationHelper.canSeeQuotation(
+						attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation()))
+				|| (attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getCustomerOrder() != null
+						&& myJssQuotationValidationHelper.canSeeQuotation(attachment.getAssoServiceDocument()
+								.getService().getAssoAffaireOrder().getCustomerOrder()))) {
+
 			attachmentService.definitivelyDeleteAttachment(attachment);
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
