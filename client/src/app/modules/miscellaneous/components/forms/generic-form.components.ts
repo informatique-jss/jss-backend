@@ -1,6 +1,5 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from "@angular/core";
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { Observable } from "rxjs";
 import { AppService } from '../../../../services/app.service';
 
 @Directive()
@@ -50,7 +49,7 @@ export abstract class GenericFormComponent implements OnInit {
   /**
    * Fired when input is modified by user
    */
-  @Output() onFormChange: EventEmitter<void> = new EventEmitter();
+  @Output() onFormChange: EventEmitter<any> = new EventEmitter();
   /**
  * Fired when input blur
  */

@@ -5,7 +5,7 @@
         <td>
           <select-competent-authority-type [(model)]="selectedCompetentAuthorityType" label="Type d'autorité"
             [form]="entityForm2" propertyName="selectedCompetentAuthorityType" [isMandatory]="false"
-            (selectionChange)="fetchCompetentAuthorities()" [isDisabled]="false"></select-competent-authority-type>
+            (onFormChange)="fetchCompetentAuthorities()" [isDisabled]="false"></select-competent-authority-type>
         </td>
         <td *ngIf="selectedCompetentAuthorityType">
           <mat-form-field class="full-width">
