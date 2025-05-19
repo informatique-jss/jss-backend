@@ -78,15 +78,7 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
 
 
       // Retrieve bookmark
-      let bookmarkpossibleEntityStatusIds = this.userPreferenceService.getUserSearchBookmark("kanban-invoicing-status") as number[];
-      if (bookmarkpossibleEntityStatusIds) {
-        for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
-          for (let orderStatu of this.possibleEntityStatus!)
-            if (bookmarkpossibleEntityStatusId == orderStatu.id)
-              this.statusSelected.push(orderStatu);
-      } else {
-        this.statusSelected = [... this.possibleEntityStatus];
-      }
+      this.statusSelected = [... this.possibleEntityStatus];
 
       let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-invoicing-employee") as Employee[];
       if (bookmarkOrderEmployees && bookmarkOrderEmployees.length > 0)
@@ -152,7 +144,6 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
   }
 
   saveUserPreferencesOnApplyFilter() {
-    this.userPreferenceService.setUserSearchBookmark(this.statusSelected.map(status => status.id), "kanban-invoicing-status");
     this.userPreferenceService.setUserSearchBookmark((this.employeesSelected != undefined && this.employeesSelected.length > 0) ? this.employeesSelected : null, "kanban-invoicing-employee");
     this.userPreferenceService.setUserSearchBookmark(this.selectedSwimlaneType, "kanban-invoicing-swimline-type");
   }

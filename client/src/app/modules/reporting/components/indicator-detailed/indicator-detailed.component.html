@@ -2,7 +2,7 @@
   <div>
     <select-indicator [(model)]="selectedIndicator" label="Indicateur" [form]="indicatorForm"
       propertyName="selectedIndicator" [isMandatory]="false" [isDisabled]="false"
-      (selectionChange)="refreshIndicator()"></select-indicator>
+      (onFormChange)="refreshIndicator()"></select-indicator>
   </div>
 </div>
 <div class="dashboard-container mat-elevation-z4" *ngIf="selectedIndicator">

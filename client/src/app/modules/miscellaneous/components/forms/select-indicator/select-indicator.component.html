@@ -3,9 +3,11 @@
   <mat-select [formControlName]="propertyName"
     [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)" [compareWith]="compareWithId">
     <mat-optgroup [label]="indicatorGroup.label" [disabled]="isDisabled" *ngFor="let indicatorGroup of indicatorGroups">
-      <mat-option *ngFor="let type of types" [value]="type">
-        {{displayLabel(type)}}
-      </mat-option>
+      <ng-container *ngFor="let type of types">
+        <mat-option [value]="type" *ngIf="type.indicatorGroup.id==indicatorGroup.id">
+          {{displayLabel(type)}}
+        </mat-option>
+      </ng-container>
     </mat-optgroup>
   </mat-select>
   <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"

@@ -99,7 +99,11 @@ public class IndicatorServiceImpl implements IndicatorService {
             for (Map<String, Object> result : results) {
                 Integer employeeId = (Integer) result.get("id_employee");
                 LocalDate date = ((Timestamp) result.get("date")).toLocalDateTime().toLocalDate();
-                BigDecimal value = new BigDecimal((Long) result.get("value"));
+                BigDecimal value = null;
+                if (result.get("value") instanceof BigDecimal)
+                    value = (BigDecimal) result.get("value");
+                else
+                    value = new BigDecimal((Long) result.get("value"));
 
                 Employee employee = null;
                 if (employeeId != null)
