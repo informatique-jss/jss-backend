@@ -72,6 +72,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -225,6 +226,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    QuotationValidationHelper quotationValidationHelper;
 
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
@@ -1785,6 +1789,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         order.setCustomerOrderStatus(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
+        quotationValidationHelper.completeIQuotationDocuments(order, true);
         return addOrUpdateCustomerOrder(order, true, false);
     }
 
@@ -1944,13 +1949,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean setDocumentOnOrder(CustomerOrder customerOrder, Document document)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        if (customerOrder.getDocuments() != null && customerOrder.getDocuments().size() > 0) {
-            documentService.addOrUpdateDocument(document);
-            customerOrder = getCustomerOrder(customerOrder.getId());
-            pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
-            return true;
-        }
-        return false;
+        if (customerOrder.getDocuments() == null)
+            customerOrder.setDocuments(new ArrayList<Document>());
+
+        document.setCustomerOrder(customerOrder);
+        documentService.addOrUpdateDocument(document);
+
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+        return true;
     }
 
     public void modifyInvoicingBlockage(CustomerOrder customerOrder, InvoicingBlockage invoicingBlockage)

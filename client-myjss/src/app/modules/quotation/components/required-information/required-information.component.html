@@ -19,7 +19,7 @@
           <div class="row align-items-center" *ngIf="asso.services">
             <!-- Pill buttons -->
             <a *ngFor="let service of asso.services;let indexService = index"
-              (click)="selectServiceIndex(indexService, index!, $event)"
+              (click)="selectServiceIndex(indexService, index!)"
               [ngClass]="{'btn-secondary': index == selectedAssoIndex && indexService == selectedServiceIndex, 'btn-outline-primary': index != selectedAssoIndex || indexService != selectedServiceIndex}"
               class="btn btn-secondary rounded-pill mt-2 ms-1 mt-md-3 ms-md-3 col-auto pill">
               {{service.serviceLabelToDisplay}}
@@ -219,7 +219,7 @@
                 <div class="col-md-3">
 
                   <!-- Toggle relecture -->
-                  <div class="form-check form-switch d-flex align-items-center mb-4">
+                  <div class="form-check  d-flex align-items-center mb-4" style="padding-left: 0px;">
                     <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
                       [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
                       [isDisabled]="false"></generic-toggle>
@@ -245,6 +245,7 @@
                   <div class="mb-3" *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
                     <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
                       label="Sous-rubrique(s) de publication" [form]="informationForm"
+                      [noticeTypeFamily]="provision.announcement.noticeTypeFamily"
                       [propertyName]="'noticeTypes'+provision.order" [isMandatory]="true"
                       [isDisabled]="false"></select-multiple-notice-type>
                   </div>

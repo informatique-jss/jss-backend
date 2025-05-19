@@ -47,7 +47,6 @@ export class ServicesSelectionComponent implements OnInit {
       this.currentUser = response;
       this.initIQuotation();
     })
-    this.initIQuotation();
   }
 
   initIQuotation() {

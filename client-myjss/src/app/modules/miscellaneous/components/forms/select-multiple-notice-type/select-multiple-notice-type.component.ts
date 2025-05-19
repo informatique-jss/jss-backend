@@ -7,13 +7,14 @@ import { GenericMultipleSelectComponent } from '../generic-select/generic-multip
 
 @Component({
   selector: 'select-multiple-notice-type',
-  templateUrl: '../generic-select/generic-select.component.html',
+  templateUrl: '../generic-select/generic-multiple-select.component.html',
   styleUrls: ['../generic-select/generic-select.component.css'],
   standalone: false
 })
 export class SelectMultipleNoticeTypeComponent extends GenericMultipleSelectComponent<NoticeTypeFamily> implements OnInit {
 
   @Input() types: NoticeType[] = [] as Array<NoticeType>;
+  @Input() noticeTypeFamily: NoticeTypeFamily | undefined;
 
   constructor(private formBuild: UntypedFormBuilder,
     private noticeTypeService: NoticeTypeService) {
@@ -22,7 +23,10 @@ export class SelectMultipleNoticeTypeComponent extends GenericMultipleSelectComp
 
   initTypes(): void {
     this.noticeTypeService.getNoticeTypes().subscribe(response => {
-      this.types = response;
+      if (this.noticeTypeFamily)
+        this.types = response.filter(t => t.noticeTypeFamily.id == this.noticeTypeFamily!.id);
+      else
+        this.types = response;
     })
   }
 }

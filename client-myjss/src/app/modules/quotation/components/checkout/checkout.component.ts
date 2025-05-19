@@ -372,7 +372,7 @@ export class CheckoutComponent implements OnInit {
 
   logCurrentUser(response: Responsable) {
     this.currentUser = response;
-    if (this.quotation) {
+    if (this.quotation && !this.quotation.id) {
       this.quotation.responsable = undefined;
       this.quotation.documents = [];
       this.initEmptyDocuments();

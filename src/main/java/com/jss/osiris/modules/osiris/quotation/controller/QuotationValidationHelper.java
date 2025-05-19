@@ -223,58 +223,7 @@ public class QuotationValidationHelper {
                         throw new OsirisClientMessageException(
                                         "Il n'est pas possible d'utiliser un responsable inactif !");
 
-                // Generate missing documents
-                Document billingDocument = documentService
-                                .getBillingDocument(quotation.getResponsable().getDocuments());
-                if (documentService.getBillingDocument(quotation.getDocuments()) == null && billingDocument != null) {
-                        billingDocument = documentService.cloneOrMergeDocument(billingDocument, null);
-                        billingDocument.setTiers(null);
-                        billingDocument.setResponsable(null);
-                        billingDocument.setConfrere(null);
-                        if (isCustomerOrder)
-                                billingDocument.setCustomerOrder((CustomerOrder) quotation);
-                        else
-                                billingDocument.setQuotation((Quotation) quotation);
-                        if (quotation.getDocuments() == null)
-                                quotation.setDocuments(new ArrayList<Document>());
-                        quotation.getDocuments().add(billingDocument);
-                }
-
-                Document digitalDocument = documentService.getDocumentByDocumentType(
-                                quotation.getResponsable().getDocuments(),
-                                constantService.getDocumentTypeDigital());
-                if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
-                                constantService.getDocumentTypeDigital()) == null && digitalDocument != null) {
-                        digitalDocument = documentService.cloneOrMergeDocument(digitalDocument, null);
-                        digitalDocument.setTiers(null);
-                        digitalDocument.setResponsable(null);
-                        digitalDocument.setConfrere(null);
-                        if (isCustomerOrder)
-                                digitalDocument.setCustomerOrder((CustomerOrder) quotation);
-                        else
-                                digitalDocument.setQuotation((Quotation) quotation);
-                        if (quotation.getDocuments() == null)
-                                quotation.setDocuments(new ArrayList<Document>());
-                        quotation.getDocuments().add(digitalDocument);
-                }
-
-                Document paperDocument = documentService.getDocumentByDocumentType(
-                                quotation.getResponsable().getDocuments(),
-                                constantService.getDocumentTypePaper());
-                if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
-                                constantService.getDocumentTypePaper()) == null && paperDocument != null) {
-                        paperDocument = documentService.cloneOrMergeDocument(paperDocument, null);
-                        paperDocument.setTiers(null);
-                        paperDocument.setResponsable(null);
-                        paperDocument.setConfrere(null);
-                        if (isCustomerOrder)
-                                paperDocument.setCustomerOrder((CustomerOrder) quotation);
-                        else
-                                paperDocument.setQuotation((Quotation) quotation);
-                        if (quotation.getDocuments() == null)
-                                quotation.setDocuments(new ArrayList<Document>());
-                        quotation.getDocuments().add(paperDocument);
-                }
+                completeIQuotationDocuments(quotation, isCustomerOrder);
 
                 // Do not check anything from website with no provision, a human will correct if
                 // after
@@ -368,7 +317,7 @@ public class QuotationValidationHelper {
                 }
 
                 if (quotation.getAssoAffaireOrders().size() > 1) {
-                        billingDocument = documentService.getBillingDocument(quotation.getDocuments());
+                        Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
                         // If recipient affaire and no override, we can't determine what affaire to use
                         if (billingDocument != null && billingDocument.getIsRecipientAffaire()
                                         && (billingDocument.getMailsAffaire() == null
@@ -663,5 +612,60 @@ public class QuotationValidationHelper {
                                         "WaitedCompetentAuthority");
                 }
 
+        }
+
+        public void completeIQuotationDocuments(IQuotation quotation, boolean isCustomerOrder) throws OsirisException {
+                // Generate missing documents
+                Document billingDocument = documentService
+                                .getBillingDocument(quotation.getResponsable().getDocuments());
+                if (documentService.getBillingDocument(quotation.getDocuments()) == null && billingDocument != null) {
+                        billingDocument = documentService.cloneOrMergeDocument(billingDocument, null);
+                        billingDocument.setTiers(null);
+                        billingDocument.setResponsable(null);
+                        billingDocument.setConfrere(null);
+                        if (isCustomerOrder)
+                                billingDocument.setCustomerOrder((CustomerOrder) quotation);
+                        else
+                                billingDocument.setQuotation((Quotation) quotation);
+                        if (quotation.getDocuments() == null)
+                                quotation.setDocuments(new ArrayList<Document>());
+                        quotation.getDocuments().add(billingDocument);
+                }
+
+                Document digitalDocument = documentService.getDocumentByDocumentType(
+                                quotation.getResponsable().getDocuments(),
+                                constantService.getDocumentTypeDigital());
+                if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
+                                constantService.getDocumentTypeDigital()) == null && digitalDocument != null) {
+                        digitalDocument = documentService.cloneOrMergeDocument(digitalDocument, null);
+                        digitalDocument.setTiers(null);
+                        digitalDocument.setResponsable(null);
+                        digitalDocument.setConfrere(null);
+                        if (isCustomerOrder)
+                                digitalDocument.setCustomerOrder((CustomerOrder) quotation);
+                        else
+                                digitalDocument.setQuotation((Quotation) quotation);
+                        if (quotation.getDocuments() == null)
+                                quotation.setDocuments(new ArrayList<Document>());
+                        quotation.getDocuments().add(digitalDocument);
+                }
+
+                Document paperDocument = documentService.getDocumentByDocumentType(
+                                quotation.getResponsable().getDocuments(),
+                                constantService.getDocumentTypePaper());
+                if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
+                                constantService.getDocumentTypePaper()) == null && paperDocument != null) {
+                        paperDocument = documentService.cloneOrMergeDocument(paperDocument, null);
+                        paperDocument.setTiers(null);
+                        paperDocument.setResponsable(null);
+                        paperDocument.setConfrere(null);
+                        if (isCustomerOrder)
+                                paperDocument.setCustomerOrder((CustomerOrder) quotation);
+                        else
+                                paperDocument.setQuotation((Quotation) quotation);
+                        if (quotation.getDocuments() == null)
+                                quotation.setDocuments(new ArrayList<Document>());
+                        quotation.getDocuments().add(paperDocument);
+                }
         }
 }

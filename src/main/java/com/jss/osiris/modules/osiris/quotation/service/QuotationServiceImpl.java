@@ -49,6 +49,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -146,6 +147,9 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     UserScopeService userScopeService;
+
+    @Autowired
+    QuotationValidationHelper quotationValidationHelper;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -750,6 +754,7 @@ public class QuotationServiceImpl implements QuotationService {
         quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         quotation.setQuotationStatus(
                 quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
+        quotationValidationHelper.completeIQuotationDocuments(quotation, false);
         return addOrUpdateQuotationFromUser(quotation);
 
     }
@@ -852,12 +857,14 @@ public class QuotationServiceImpl implements QuotationService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean setDocumentOnOrder(Quotation quotation, Document document)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        if (quotation.getDocuments() != null && quotation.getDocuments().size() > 0) {
-            documentService.addOrUpdateDocument(document);
-            quotation = getQuotation(quotation.getId());
-            pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
-            return true;
-        }
-        return false;
+        if (quotation.getDocuments() == null)
+            quotation.setDocuments(new ArrayList<Document>());
+
+        document.setQuotation(quotation);
+        documentService.addOrUpdateDocument(document);
+
+        quotation = getQuotation(quotation.getId());
+        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+        return true;
     }
 }

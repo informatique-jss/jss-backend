@@ -103,7 +103,9 @@ public class ServiceServiceImpl implements ServiceService {
         AssoAffaireOrder assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(assoAffaireOrderId);
 
         if (assoAffaireOrder != null) {
-            for (Service service : generateServiceInstanceFromMultiServiceTypes(services, affaire, customLabel)) {
+            List<Service> servicesGenerated = generateServiceInstanceFromMultiServiceTypes(services, affaire,
+                    customLabel);
+            for (Service service : servicesGenerated) {
                 service.setAssoAffaireOrder(assoAffaireOrder);
                 addOrUpdateService(service);
                 linkNewServiceWithAsso(service);

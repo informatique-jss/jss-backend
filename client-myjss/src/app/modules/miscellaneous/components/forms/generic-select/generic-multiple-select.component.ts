@@ -29,8 +29,14 @@ export abstract class GenericMultipleSelectComponent<T> extends GenericFormCompo
 
   callOnNgInit(): void {
     this.initTypes();
-    if (this.types)
+    if (this.types) {
       this.types.sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)));
+
+      const control = this.form?.get(this.propertyName);
+      if (control && (control.value === null || control.value === undefined) && this.types.length > 0) {
+        control.setValue(this.types[0], { emitEvent: false }); // do not emit change event at loading
+      }
+    }
 
     if (this.form)
       this.form.get(this.propertyName)?.valueChanges.subscribe(

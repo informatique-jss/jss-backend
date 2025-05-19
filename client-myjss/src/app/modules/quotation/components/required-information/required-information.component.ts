@@ -180,8 +180,8 @@ export class RequiredInformationComponent implements OnInit {
     this.selectedAssoIndex = assoIndex;
   }
 
-  selectServiceIndex(newServiceIndex: number, newAssoIndex: number, event: any): void {
-    if (this.selectedAssoIndex !== null && this.selectedServiceIndex !== null && this.quotation) {
+  selectServiceIndex(newServiceIndex: number, newAssoIndex: number): void {
+    if (this.currentUser && this.selectedAssoIndex !== null && this.selectedServiceIndex !== null && this.quotation) {
       if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]) {
         this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe();
       }
@@ -190,8 +190,10 @@ export class RequiredInformationComponent implements OnInit {
     this.selectedAssoIndex = null;
     this.selectedServiceIndex = null;
 
-    this.selectedAssoIndex = newAssoIndex;
-    this.selectedServiceIndex = newServiceIndex;
+    setTimeout(() => {
+      this.selectedAssoIndex = newAssoIndex;
+      this.selectedServiceIndex = newServiceIndex;
+    }, 0);
   }
 
 
@@ -269,33 +271,35 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   private moveToNextService() {
-    if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! + 1])
-      this.selectedServiceIndex!++;
-
-    else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! + 1]) {
-      this.selectedAssoIndex!++;
-      this.selectedServiceIndex = 0;
-    }
-
-    else {
-      if (this.quotation) {
-        this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-        this.appService.openRoute(undefined, "quotation", undefined);
+    if (this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined)
+      if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! + 1]) {
+        this.selectedServiceIndex = this.selectedServiceIndex + 1;
+        this.selectServiceIndex(this.selectedServiceIndex, this.selectedAssoIndex!);
+      } else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! + 1]) {
+        this.selectedAssoIndex = this.selectedAssoIndex + 1;
+        this.selectedServiceIndex = 0;
+        this.selectServiceIndex(this.selectedServiceIndex!, this.selectedAssoIndex!);
+      } else {
+        if (this.quotation) {
+          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+          this.appService.openRoute(undefined, "quotation", undefined);
+        }
       }
-    }
   }
 
   moveToPreviousService() {
-    if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! - 1])
-      this.selectedServiceIndex!--;
-
-    else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! - 1]) {
-      this.selectedAssoIndex!--;
-      this.selectedServiceIndex = this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services.length - 1;
-    }
-    else {
-      this.goBackQuotationModale();
-    }
+    if (this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined)
+      if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! - 1]) {
+        this.selectedServiceIndex = this.selectedServiceIndex - 1;
+        this.selectServiceIndex(this.selectedServiceIndex, this.selectedAssoIndex!);
+      } else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! - 1]) {
+        this.selectedAssoIndex = this.selectedAssoIndex - 1;
+        this.selectedServiceIndex = this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services.length - 1;
+        this.selectServiceIndex(this.selectedServiceIndex!, this.selectedAssoIndex!);
+      }
+      else {
+        this.goBackQuotationModale();
+      }
   }
 
   goBackQuotationModale() {

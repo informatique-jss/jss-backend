@@ -65,10 +65,10 @@
         </div>
 
         <!-- Renseignement administratif -->
-        <div class="row">
+        <div class="row" *ngIf="quotation">
           <div class="card mb-4">
             <h6 class="card-header"><i class="ai-note me-2"></i>Renseignements administratifs</h6>
-            <div *ngFor="let doc of quotation?.documents">
+            <div *ngFor="let doc of quotation.documents">
               <div class="card-body pt-2" *ngIf="doc.documentType.code == documentTypeBilling.code">
                 <div class="mb-3">
                   <generic-toggle [(model)]="doc.isCommandNumberMandatory" label="J'ai un numéro de commande"
@@ -327,7 +327,7 @@
       <select-billing-label-type [(model)]="document.billingLabelType" label="Adressage"
         *ngIf="document.billingLabelType" [form]="documentForm"
         [propertyName]="'billingLabelType'+document.billingLabelType.code" [isMandatory]="true" [isDisabled]="false"
-        (selectionChange)="setDocumentValue(document)">
+        (change)="setDocumentValue(document)">
       </select-billing-label-type>
       <div class="pt-4">
         <form [formGroup]="documentForm">
