@@ -40,11 +40,8 @@ const routes: Routes = [{}];
     ReactiveFormsModule,
     GenericSwiperComponent,
     OurClientsComponent,
-<<<<<<< HEAD
     GenericTestimonialComponent
-=======
     AutocompleteLibModule
->>>>>>> feature/MY-66
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
@@ -62,15 +59,12 @@ const routes: Routes = [{}];
     SelectBillingLabelTypeComponent,
     GenericInputComponent,
     SelectMyJssCategoryComponent,
-<<<<<<< HEAD
-=======
     SelectCivilityComponent,
     AutocompleteCityComponent,
     SelectDepartmentComponent,
     SelectNoticeTypeFamilyComponent,
     SelectMultipleNoticeTypeComponent,
     SelectStringComponent
->>>>>>> feature/MY-66
   ],
   exports: [
     AvatarComponent,
@@ -90,16 +84,13 @@ const routes: Routes = [{}];
     SelectValueServiceFieldTypeComponent,
     SelectBillingLabelTypeComponent,
     OurClientsComponent,
-<<<<<<< HEAD
-    GenericTestimonialComponent
-=======
+    GenericTestimonialComponent,
     SelectCivilityComponent,
     AutocompleteCityComponent,
     SelectDepartmentComponent,
     SelectNoticeTypeFamilyComponent,
     SelectMultipleNoticeTypeComponent,
     SelectStringComponent
->>>>>>> feature/MY-66
   ]
 })
 export class MiscellaneousModule { }
