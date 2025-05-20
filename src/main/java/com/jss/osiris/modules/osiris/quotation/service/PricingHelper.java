@@ -833,105 +833,16 @@ public class PricingHelper {
         vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
     }
 
-    // public UserCustomerOrder completePricingOfUserCustomerOrder(UserCustomerOrder
-    // order)
-    // throws OsirisClientMessageException, OsirisValidationException,
-    // OsirisException {
-    // CustomerOrder customerOrder = new CustomerOrder();
-    // Responsable user = employeeService.getCurrentMyJssUser();
-    // ProvisionScreenType provisionScreenTypeAnnouncement =
-    // constantService.getProvisionScreenTypeAnnouncement();
-    // if (user == null)
-    // user = constantService.getResponsableDummyCustomerFrance();
-
-    // customerOrder.setResponsable(user);
-    // customerOrder.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
-    // customerOrder.getAssoAffaireOrders().add(new AssoAffaireOrder());
-    // customerOrder.getAssoAffaireOrders().get(0).setAffaire(order.getServiceTypes().get(0).getAffaire());
-
-    // if (user.getTiers() != null && user.getTiers().getSpecialOffers() != null)
-    // customerOrder.setSpecialOffers(user.getTiers().getSpecialOffers());
-
-    // List<InvoiceItem> invoiceItemsToConsider = new ArrayList<InvoiceItem>();
-
-    // for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
-    // serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
-    // Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
-    // Arrays.asList(serviceTypeChosen.getService()),
-    // serviceTypeChosen.getAffaire());
-
-    // if (order.getIsEmergency() != null && order.getIsEmergency() &&
-    // service.getProvisions() != null
-    // && service.getProvisions().size() > 0
-    // && order.getServiceTypes().indexOf(serviceTypeChosen) == 0)
-    // service.getProvisions().get(0).setIsEmergency(true);
-
-    // if (service != null && service.getProvisions() != null)
-    // for (Provision provision : service.getProvisions()) {
-    // // map announcement
-    // if (provision.getProvisionType().getProvisionScreenType().getId()
-    // .equals(provisionScreenTypeAnnouncement.getId())) {
-    // provision.setAnnouncement(new Announcement());
-    // if (serviceTypeChosen.getAnnouncementProofReading() != null
-    // && serviceTypeChosen.getAnnouncementProofReading())
-    // provision.getAnnouncement().setIsProofReadingDocument(true);
-
-    // if (serviceTypeChosen.getAnnouncementNoticeType() != null)
-    // provision.getAnnouncement()
-    // .setNoticeTypes(Arrays.asList(serviceTypeChosen.getAnnouncementNoticeType()));
-
-    // if (serviceTypeChosen.getAnnouncementNoticeFamily() != null)
-    // provision.getAnnouncement()
-    // .setNoticeTypeFamily(serviceTypeChosen.getAnnouncementNoticeFamily());
-
-    // if (serviceTypeChosen.getAnnouncementNotice() != null
-    // && (serviceTypeChosen.getAnnouncementRedactedByJss() == null
-    // || serviceTypeChosen.getAnnouncementRedactedByJss()))
-    // provision.getAnnouncement().setNotice(serviceTypeChosen.getAnnouncementNotice());
-    // ;
-
-    // if (serviceTypeChosen.getAnnouncementPublicationDate() != null)
-    // provision.getAnnouncement()
-    // .setPublicationDate(serviceTypeChosen.getAnnouncementPublicationDate());
-
-    // if (serviceTypeChosen.getAnnouncementRedactedByJss() != null
-    // && serviceTypeChosen.getAnnouncementRedactedByJss())
-    // provision.setIsRedactedByJss(true);
-    // }
-
-    // setInvoiceItemsForProvision(provision, customerOrder, false);
-    // invoiceItemsToConsider.addAll(provision.getInvoiceItems());
-    // }
-    // serviceTypeChosen.setDiscountedAmount(assoAffaireOrderService.getServicePrice(service,
-    // true, false));
-    // serviceTypeChosen.setPreTaxPrice(assoAffaireOrderService.getServicePrice(service,
-    // false, false));
-    // }
-
-    // BigDecimal discountTotal = new BigDecimal(0);
-    // BigDecimal preTaxPriceTotal = new BigDecimal(0);
-    // BigDecimal vatTotal = new BigDecimal(0);
-    // if (invoiceItemsToConsider != null)
-    // for (InvoiceItem invoiceItem : invoiceItemsToConsider) {
-    // if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
-    // preTaxPriceTotal = preTaxPriceTotal
-    // .add(invoiceItem.getPreTaxPriceReinvoiced());
-    // } else if (invoiceItem.getPreTaxPrice() != null) {
-    // preTaxPriceTotal = preTaxPriceTotal.add(invoiceItem.getPreTaxPrice());
-    // }
-
-    // if (invoiceItem.getVatPrice() != null) {
-    // vatTotal = vatTotal.add(invoiceItem.getVatPrice());
-    // }
-    // if (invoiceItem.getDiscountAmount() != null) {
-    // discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
-    // }
-    // }
-
-    // order.setPreTaxPrice(preTaxPriceTotal.subtract(discountTotal));
-    // order.setTotalPrice(preTaxPriceTotal.add(vatTotal).subtract(discountTotal));
-    // order.setVatPrice(vatTotal);
-
-    // return order;
-    // }
+    public IQuotation completePricingOfIQuotation(IQuotation quotation, Boolean isEmergency)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
+                && quotation.getAssoAffaireOrders().get(0).getServices() != null
+                && quotation.getAssoAffaireOrders().get(0).getServices().size() > 0
+                && quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions() != null
+                && quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().size() > 0) {
+            quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0)
+                    .setIsEmergency(isEmergency);
+        }
+        return getAndSetInvoiceItemsForQuotation(quotation, false);
+    }
 }

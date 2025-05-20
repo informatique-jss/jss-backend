@@ -90,6 +90,7 @@ public class Announcement implements IId, IDocument {
 	private Boolean isHeaderFree;
 
 	@Column(nullable = false)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isProofReadingDocument;
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "announcement", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -135,6 +136,9 @@ public class Announcement implements IId, IDocument {
 	@Transient
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String affaireSiren;
+
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Boolean isReReadByJss;
 
 	public Integer getId() {
 		return id;
@@ -415,6 +419,14 @@ public class Announcement implements IId, IDocument {
 
 	public void setAffaireSiren(String affaireSiren) {
 		this.affaireSiren = affaireSiren;
+	}
+
+	public Boolean getIsReReadByJss() {
+		return isReReadByJss;
+	}
+
+	public void setIsReReadByJss(Boolean isReReadByJss) {
+		this.isReReadByJss = isReReadByJss;
 	}
 
 }

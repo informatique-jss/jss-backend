@@ -112,7 +112,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	@JsonIgnoreProperties(value = { "assoSpecialOfferBillingTypes" }, allowSetters = true)
 	private List<SpecialOffer> specialOffers;
 
@@ -139,18 +140,21 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JoinColumn(name = "id_abandon_reason")
 	private QuotationAbandonReason abandonReason;
 
-	@Column(columnDefinition = "TEXT") // TODO : delete when new website
+	@Column(columnDefinition = "TEXT")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private String description;
 
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
-	@JsonView({ JacksonViews.OsirisDetailedView.class }) // TODO : remove and use lazy loading for attachments
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.MyJssDetailedView.class }) // TODO : remove and use
+																								// lazy loading for
+																								// attachments
 	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	@IndexedField
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Document> documents;
 
 	@OneToMany(targetEntity = PaperSet.class, mappedBy = "customerOrder", cascade = CascadeType.REMOVE)
@@ -159,6 +163,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
 	@ManyToMany(mappedBy = "customerOrders")

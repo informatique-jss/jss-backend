@@ -24,6 +24,10 @@ public interface DocumentService {
      */
     public Document getBillingDocument(List<Document> documents) throws OsirisException;
 
+    public Document getDigitalDocument(List<Document> documents) throws OsirisException;
+
+    public Document getPaperDocument(List<Document> documents) throws OsirisException;
+
     public Document getDocumentByDocumentType(List<Document> documents, DocumentType documentType)
             throws OsirisException;
 

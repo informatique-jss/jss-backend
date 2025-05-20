@@ -31,6 +31,7 @@ public class ProvisionType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "provision_type_sequence", sequenceName = "provision_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_type_sequence")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 255)

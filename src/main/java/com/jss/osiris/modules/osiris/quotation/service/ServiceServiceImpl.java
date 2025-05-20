@@ -1,7 +1,9 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -22,11 +25,14 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
+import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.osiris.quotation.repository.ServiceRepository;
 
@@ -63,6 +69,9 @@ public class ServiceServiceImpl implements ServiceService {
     @Autowired
     ProvisionService provisionService;
 
+    @Autowired
+    FormaliteStatusService formaliteStatusService;
+
     @Override
     public Service getService(Integer id) {
         Optional<Service> service = serviceRepository.findById(id);
@@ -94,7 +103,9 @@ public class ServiceServiceImpl implements ServiceService {
         AssoAffaireOrder assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(assoAffaireOrderId);
 
         if (assoAffaireOrder != null) {
-            for (Service service : generateServiceInstanceFromMultiServiceTypes(services, affaire, customLabel)) {
+            List<Service> servicesGenerated = generateServiceInstanceFromMultiServiceTypes(services, affaire,
+                    customLabel);
+            for (Service service : servicesGenerated) {
                 service.setAssoAffaireOrder(assoAffaireOrder);
                 addOrUpdateService(service);
                 linkNewServiceWithAsso(service);
@@ -502,4 +513,185 @@ public class ServiceServiceImpl implements ServiceService {
         return attachments;
     }
 
+    @Override
+    public List<Service> populateTransientField(List<Service> services) throws OsirisException {
+        if (services != null)
+            for (Service service : services) {
+                // TODO bouger dans ServiceServiceImpl ce bout là
+                service.setHasMissingInformations(false);
+                if (isServiceHasMissingInformations(service)) {
+                    service.setHasMissingInformations(true);
+
+                    service.getMissingAttachmentQueries().sort(new Comparator<MissingAttachmentQuery>() {
+
+                        @Override
+                        public int compare(MissingAttachmentQuery o1, MissingAttachmentQuery o2) {
+                            if (o1 != null && o2 == null)
+                                return 1;
+                            if (o1 == null && o2 != null)
+                                return -1;
+                            if (o1 == null && o2 == null)
+                                return 0;
+                            if (o1 != null && o2 != null)
+                                return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
+                            return 0;
+                        }
+                    });
+                    service.setLastMissingAttachmentQueryDateTime(
+                            service.getMissingAttachmentQueries().get(0).getCreatedDateTime()); // TODO : quand
+                                                                                                // les alertes
+                                                                                                // de mails
+                                                                                                // affaire + rib
+                                                                                                // affaire
+                                                                                                // seront
+                                                                                                // intégrées,
+                                                                                                // mettre cette
+                                                                                                // date à la
+                                                                                                // date de
+                                                                                                // création de
+                                                                                                // la commande
+                }
+                service.setServiceStatus(getServiceStatusLabel(service));
+                setServicePrice(service, true, true);
+                if (service.getServiceTotalPrice().compareTo(new BigDecimal(0)) <= 0f)
+                    service.setServiceTotalPrice(null);
+                removeDisabledAttachments(service);
+                removePublicationFlagAssoServiceDocument(service);
+
+                if (service.getProvisions() != null)
+                    for (Provision provision : service.getProvisions())
+                        if (provision.getAnnouncement() != null
+                                && provision.getAnnouncement().getConfrere() != null)
+                            service.setConfrereLabel(
+                                    "publié par " + provision.getAnnouncement().getConfrere().getLabel());
+            }
+        return services;
+    }
+
+    private void removeDisabledAttachments(Service service) {
+        if (service != null && service.getAssoServiceDocuments() != null)
+            for (AssoServiceDocument asso : service.getAssoServiceDocuments()) {
+                List<Attachment> attachmentsToRemove = new ArrayList<Attachment>();
+                if (asso.getAttachments() != null) {
+                    for (Attachment attachment : asso.getAttachments()) {
+                        if (attachment.getIsDisabled() != null && attachment.getIsDisabled())
+                            attachmentsToRemove.add(attachment);
+                    }
+                    if (attachmentsToRemove.size() > 0) {
+                        asso.getAttachments().removeAll(attachmentsToRemove);
+                    }
+                }
+            }
+    }
+
+    private void removePublicationFlagAssoServiceDocument(Service service) throws OsirisException {
+        // When published in the same service, do not ask for publication flag, JSS will
+        // provide it
+        if (service != null && service.getProvisions() != null) {
+            boolean asAnnouncement = false;
+            for (Provision provision : service.getProvisions()) {
+                if (provision.getAnnouncement() != null)
+                    asAnnouncement = true;
+                break;
+            }
+
+            if (asAnnouncement && service.getAssoServiceDocuments() != null) {
+                for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
+                    if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
+                            && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
+                                    .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
+                        assoServiceDocument.setIsMandatory(false);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isServiceHasMissingInformations(Service service) {
+        if (service.getMissingAttachmentQueries() != null
+                && service.getMissingAttachmentQueries().size() > 0) {
+            if (service.getProvisions() != null)
+                for (Provision provision : service.getProvisions()) {
+                    if (provision.getSimpleProvision() != null
+                            && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
+                                    .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
+                            ||
+                            provision.getFormalite() != null
+                                    && provision.getFormalite().getFormaliteStatus().getCode()
+                                            .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT)) {
+                        return true;
+                    }
+                }
+        }
+        return false;
+    }
+
+    private String getServiceStatusLabel(Service service) {
+        Integer currentPriority = -1;
+        String currentStatus = "";
+        if (service.getProvisions() != null && service.getId() != null)
+            for (Provision provision : service.getProvisions()) {
+                if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus()
+                        .getServicePriority() > currentPriority) {
+                    currentPriority = provision.getAnnouncement().getAnnouncementStatus().getServicePriority();
+                    currentStatus = provision.getAnnouncement().getAnnouncementStatus().getLabel();
+                } else if (provision.getSimpleProvision() != null && provision.getSimpleProvision()
+                        .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
+                    currentPriority = provision.getSimpleProvision().getSimpleProvisionStatus()
+                            .getServicePriority();
+                    currentStatus = provision.getSimpleProvision().getSimpleProvisionStatus().getLabel();
+                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus()
+                        .getServicePriority() > currentPriority) {
+                    currentPriority = provision.getFormalite().getFormaliteStatus().getServicePriority();
+                    currentStatus = provision.getFormalite().getFormaliteStatus().getLabel();
+                    if (provision.getFormalite().getFormaliteStatus().getCode()
+                            .equals(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED))
+                        currentStatus = formaliteStatusService
+                                .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
+                                .getLabel();
+                } else if (provision.getDomiciliation() != null
+                        && provision.getDomiciliation().getDomiciliationStatus()
+                                .getServicePriority() > currentPriority) {
+                    currentPriority = provision.getDomiciliation().getDomiciliationStatus().getServicePriority();
+                    currentStatus = provision.getDomiciliation().getDomiciliationStatus().getLabel();
+                }
+            }
+        return currentStatus;
+    }
+
+    private void setServicePrice(Service service, boolean withDiscount, boolean withVat) {
+        BigDecimal totalPrice = new BigDecimal(0);
+        BigDecimal preTaxPrice = new BigDecimal(0);
+        BigDecimal vatPrice = new BigDecimal(0);
+        BigDecimal discountAmount = new BigDecimal(0);
+        if (service.getProvisions() != null)
+            for (Provision provision : service.getProvisions()) {
+                if (provision.getInvoiceItems() != null) {
+                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                        if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
+                            totalPrice = totalPrice.add(invoiceItem.getPreTaxPriceReinvoiced());
+                            preTaxPrice = preTaxPrice.add(invoiceItem.getPreTaxPriceReinvoiced());
+                        } else if (invoiceItem.getPreTaxPrice() != null) {
+                            totalPrice = totalPrice.add(invoiceItem.getPreTaxPrice());
+                            preTaxPrice = preTaxPrice.add(invoiceItem.getPreTaxPrice());
+                        }
+
+                        if (withDiscount && invoiceItem.getDiscountAmount() != null) {
+                            totalPrice = totalPrice.subtract(invoiceItem.getDiscountAmount());
+                            discountAmount = discountAmount.add(invoiceItem.getDiscountAmount());
+                        }
+                        if (withVat && invoiceItem.getVatPrice() != null) {
+                            totalPrice = totalPrice.add(invoiceItem.getVatPrice());
+                            vatPrice = vatPrice.add(invoiceItem.getVatPrice());
+                        }
+                    }
+                }
+            }
+
+        service.setServiceTotalPrice(totalPrice);
+        service.setServicePreTaxPrice(preTaxPrice);
+        service.setServiceVatPrice(vatPrice);
+        service.setServiceDiscountAmount(discountAmount);
+    }
 }

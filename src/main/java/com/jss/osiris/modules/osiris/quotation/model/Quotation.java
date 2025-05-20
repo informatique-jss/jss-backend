@@ -93,7 +93,7 @@ public class Quotation implements IQuotation {
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime lastStatusUpdate;
 
-	@Column(columnDefinition = "TEXT") // TODO : delete when new website
+	@Column(columnDefinition = "TEXT")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private String description;
 
@@ -104,11 +104,12 @@ public class Quotation implements IQuotation {
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<Document> documents;
 
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
 	@Column(length = 40)

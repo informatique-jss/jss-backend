@@ -1,17 +1,17 @@
 .select-wrapper {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .select-wrapper select {
-    padding-right: 30px;
+  padding-right: 30px;
 }
 
 .select-wrapper i.chevron {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--ar-secondary);
+  position: absolute;
+  right: 21px;
+  top: 65%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--ar-secondary);
 }

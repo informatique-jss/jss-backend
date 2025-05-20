@@ -29,6 +29,7 @@ const routes: Routes = [
     MatTableModule,
     MatTabsModule,
     MatIconModule,
+    MatButtonModule
   ],
   declarations: [
     CrmComponent,

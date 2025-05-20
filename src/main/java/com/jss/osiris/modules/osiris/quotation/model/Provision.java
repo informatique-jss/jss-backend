@@ -64,7 +64,8 @@ public class Provision implements IId, IAttachment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_family_type")
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssDetailedView.class })
 	private ProvisionFamilyType provisionFamilyType;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -188,6 +189,7 @@ public class Provision implements IId, IAttachment {
 	private Boolean isDocumentScanning;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isEmergency;
 
 	@Column(nullable = false)
@@ -204,6 +206,9 @@ public class Provision implements IId, IAttachment {
 
 	@Column(nullable = false)
 	private Boolean isSupplyFullBeCopy;
+
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Boolean isDoNotGenerateAnnouncement;
 
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
@@ -636,5 +641,13 @@ public class Provision implements IId, IAttachment {
 
 	public void setInvoiceItemsGrouped(List<InvoiceItem> invoiceItemsGrouped) {
 		this.invoiceItemsGrouped = invoiceItemsGrouped;
+	}
+
+	public Boolean getIsDoNotGenerateAnnouncement() {
+		return isDoNotGenerateAnnouncement;
+	}
+
+	public void setIsDoNotGenerateAnnouncement(Boolean isDoNotGenerateAnnouncement) {
+		this.isDoNotGenerateAnnouncement = isDoNotGenerateAnnouncement;
 	}
 }

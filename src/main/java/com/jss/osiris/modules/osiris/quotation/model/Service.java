@@ -100,7 +100,22 @@ public class Service implements Serializable, IId {
 	@Transient
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisDetailedView.class })
-	private BigDecimal servicePrice;
+	private BigDecimal serviceTotalPrice;
+
+	@Transient
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
+	private BigDecimal servicePreTaxPrice;
+
+	@Transient
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
+	private BigDecimal serviceVatPrice;
+
+	@Transient
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
+	private BigDecimal serviceDiscountAmount;
 
 	@Transient
 	@JsonView(JacksonViews.MyJssDetailedView.class)
@@ -186,12 +201,12 @@ public class Service implements Serializable, IId {
 		this.serviceStatus = serviceStatus;
 	}
 
-	public BigDecimal getServicePrice() {
-		return servicePrice;
+	public BigDecimal getServiceTotalPrice() {
+		return serviceTotalPrice;
 	}
 
-	public void setServicePrice(BigDecimal servicePrice) {
-		this.servicePrice = servicePrice;
+	public void setServiceTotalPrice(BigDecimal servicePrice) {
+		this.serviceTotalPrice = servicePrice;
 	}
 
 	public String getConfrereLabel() {
@@ -232,6 +247,30 @@ public class Service implements Serializable, IId {
 
 	public void setServiceTypes(List<ServiceType> serviceTypes) {
 		this.serviceTypes = serviceTypes;
+	}
+
+	public BigDecimal getServicePreTaxPrice() {
+		return servicePreTaxPrice;
+	}
+
+	public void setServicePreTaxPrice(BigDecimal servicePreTaxPrice) {
+		this.servicePreTaxPrice = servicePreTaxPrice;
+	}
+
+	public BigDecimal getServiceVatPrice() {
+		return serviceVatPrice;
+	}
+
+	public void setServiceVatPrice(BigDecimal serviceVatPrice) {
+		this.serviceVatPrice = serviceVatPrice;
+	}
+
+	public BigDecimal getServiceDiscountAmount() {
+		return serviceDiscountAmount;
+	}
+
+	public void setServiceDiscountAmount(BigDecimal serviceDiscountAmount) {
+		this.serviceDiscountAmount = serviceDiscountAmount;
 	}
 
 }

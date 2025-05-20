@@ -19,11 +19,11 @@
           <div class="row align-items-center" *ngIf="asso.services">
             <!-- Pill buttons -->
             <a *ngFor="let service of asso.services;let indexService = index"
-              (click)="selectServiceIndex(indexService, selectedAssoIndex!, $event)"
-              [ngClass]="{'btn-secondary': selectedAssoIndex == selectedAssoIndex && indexService == selectedServiceIndex, 'btn-outline-primary': selectedAssoIndex != selectedAssoIndex || indexService != selectedServiceIndex}"
+              (click)="selectServiceIndex(indexService, index!)"
+              [ngClass]="{'btn-secondary': index == selectedAssoIndex && indexService == selectedServiceIndex, 'btn-outline-primary': index != selectedAssoIndex || indexService != selectedServiceIndex}"
               class="btn btn-secondary rounded-pill mt-2 ms-1 mt-md-3 ms-md-3 col-auto pill">
               {{service.serviceLabelToDisplay}}
-              <i *ngIf="selectedAssoIndex == selectedAssoIndex && indexService == selectedServiceIndex"
+              <i *ngIf="index == selectedAssoIndex && indexService == selectedServiceIndex"
                 class="ai-circle-arrow-right ms-2"></i>
             </a>
           </div>
@@ -50,10 +50,10 @@
         {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceLabelToDisplay }}
       </a>
     </div>
-    <ul class="nav nav-tabs" role="tablist"
-      *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex] && quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
-      <li class="nav-item "
-        *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes || quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
+    <ul class="nav nav-tabs" role="tablist" *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex] &&
+       quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
+      <li class="nav-item" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
         <a href="#documents" class="nav-link active quotation-tabs" data-bs-toggle="tab" role="tab">
           Documents
         </a>
@@ -83,6 +83,9 @@
 
           <div class="pb-3">
             <div class="row g-3 align-items-start">
+              <span
+                *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes.length ==0">Aucune
+                information à remplir pour ce service, vous pouvez cliquer sur le bouton étape suivante.</span>
               <ng-container
                 *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
 
@@ -141,11 +144,12 @@
         </div>
         <div *ngIf="currentUser">
           <div
-            *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index"
-            class="quotation-container mb-4">
-            <quotation-file-uploader [entity]="assoServiceDocument"
-              (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
-              (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
+            *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
+            <div *ngIf="assoServiceDocument.isMandatory" class="quotation-container mb-4">
+              <quotation-file-uploader [entity]="assoServiceDocument"
+                (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
+                (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
+            </div>
           </div>
         </div>
       </div>
@@ -154,162 +158,134 @@
     <!-- Tabs content Annonce légale-->
     <div *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
       <div class="tab-content">
-        <div
-          *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index"
-          [id]="'announcement' + index" class="tab-pane fade" role="tabpanel">
+        <ng-container
+          *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index">
+          <div
+            *ngIf="provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT && provision.announcement"
+            [id]="'announcement' + index" class="tab-pane fade" role="tabpanel">
 
-          <!-- announcement form : Information -->
-          <div class="quotation-container">
-            <h6><i class="ai-circle-info me-2"></i>Information</h6>
-            <div class="row form-switch justify-content-start p-0">
-              <!-- TODO -->
-              <div class="col-md-5">
-                <label class="col-form-label" for="announcementPublicationDate">Publication
-                  souhaitée</label>
-                <div class="col">
-                  <input class="form-control" type="text" placeholder="Publier l'annonce au JSS"
-                    [ngModel]="announcementNoticeFamily?.label" (ngModelChange)="announcementNoticeFamily = $event"
-                    id="announcementNoticeFamily" type="select">
+            <!-- announcement form : Information -->
+            <div class="quotation-container">
+              <h6><i class="ai-circle-info me-2"></i>Information</h6>
+              <div class="row form-switch justify-content-start p-0">
+                <div class="col-md-5">
+                  <label class="col-form-label" for="announcementPublicationDate">Publication souhaitée</label>
+                  <div class="col">
+                    <select-string [types]="selectionRedaction" label="Publier l'annonce au JSS ?" [isMandatory]="false"
+                      [form]="informationForm" [propertyName]="'selectionRedaction'+provision.order"
+                      [(model)]="selectedRedaction[selectedServiceIndex][index]"
+                      (selectionChange)="changeDoNotGenerateAnnouncement($event, provision)">
+                    </select-string>
+                  </div>
+                </div>
+                <div class="col-md-3" *ngIf="isDoNotGenerateAnnouncement">
+                  <label class="col col-form-label" for="announcementPublicationDate">Date de publication
+                    souhaitée*</label>
+                  <div class="col">
+                    <generic-date-picker [(model)]="provision.announcement.publicationDate"
+                      label="Date de publication souhaitée" [form]="informationForm"
+                      [propertyName]="'publicationDate'+provision.order" [isMandatory]="true" [isDisabled]="false"
+                      [minDate]="minDatePublication"></generic-date-picker>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-3">
-                <label class="col col-form-label" for="announcementPublicationDate">Date de publication
-                  souhaitée*</label>
-                <div class="col">
-                  <input class="form-control" type="text" placeholder="Date de publication souhaitée"
-                    [ngModel]="announcementPublicationDate | date:'yyyy-MM-dd'"
-                    (ngModelChange)="announcementPublicationDate = $event" id="announcementPublicationDate" type="date"
-                    [min]="minDatePublication">
+            </div>
+
+            <!-- announcement form : Option -->
+            <div *ngIf="isDoNotGenerateAnnouncement" class="quotation-container mb-2">
+              <h6><i class="ai-grid me-2"></i>Option</h6>
+              <div class="d-flex flex-wrap gap-4 align-items-center">
+
+                <div class="form-check form-switch d-flex m-0 pe-md-5 pe-2 right-border">
+                  <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
+                    [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order"
+                    [isDisabled]="false"></generic-toggle>
+                </div>
+
+                <div class="form-check form-switch d-flex ms-md-4 m-0" *ngIf="provision.isRedactedByJss">
+                  <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
+                    label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
+                    [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- announcement form : text area -->
+            <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss"
+              class="quotation-container mb-5">
+
+              <div class="row">
+                <div class="col-md-3">
+
+                  <!-- Toggle relecture -->
+                  <div class="form-check  d-flex align-items-center mb-4" style="padding-left: 0px;">
+                    <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
+                      [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
+                      [isDisabled]="false"></generic-toggle>
+                  </div>
+
+                  <!-- Département -->
+                  <div class="mb-3" *ngIf="departments">
+                    <select-department [(model)]="provision.announcement.department" label="Département de publication"
+                      [form]="informationForm" [propertyName]="'department'+provision.order" [isMandatory]="true"
+                      [isDisabled]="false"></select-department>
+                  </div>
+
+                  <!-- Rubrique -->
+                  <div class="mb-3" *ngIf="noticeTypeFamilies">
+                    <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
+                      label="Rubrique de publication" [form]="informationForm"
+                      [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="true"
+                      [isDisabled]="false"></select-notice-type-family>
+                  </div>
+
+                  <!-- Sous-rubrique -->
+                  <!-- TODO : do not work -->
+                  <div class="mb-3" *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
+                    <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
+                      label="Sous-rubrique(s) de publication" [form]="informationForm"
+                      [noticeTypeFamily]="provision.announcement.noticeTypeFamily"
+                      [propertyName]="'noticeTypes'+provision.order" [isMandatory]="true"
+                      [isDisabled]="false"></select-multiple-notice-type>
+                  </div>
+                </div>
+
+                <div class="col-md-9">
+                  <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
+                  <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
+                    [data]="announcementNoticeInit" (change)="onNoticeChange($event, provision)">
+                  </ckeditor>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- announcement form : Option -->
-          <div class="quotation-container mb-2">
-            <h6><i class="ai-grid me-2"></i>Option</h6>
-            <div class="d-flex flex-wrap gap-4 align-items-center">
-
-              <div class="form-check form-switch d-flex m-0 pe-md-5 pe-2 right-border">
-                <input type="checkbox" class="form-check-input" id="announcementRedactedByJss"
-                  [(ngModel)]="announcementRedactedByJss">
-                <label class="form-check-label ms-2 mb-0" for="announcementRedactedByJss">
-                  Confier la rédaction au JSS
-                </label>
-              </div>
-
-              <div class="form-check form-switch d-flex ms-md-4 m-0" *ngIf="announcementRedactedByJss">
-                <input type="checkbox" class="form-check-input" id="announcementProofReading"
-                  [(ngModel)]="announcementProofReading">
-                <label class="form-check-label ms-2 mb-0" for="announcementProofReading">
-                  Recevoir une épreuve de relecture avant publication
-                </label>
-              </div>
-            </div>
-          </div>
-
-
-          <!-- announcement form : text area -->
-          <div *ngIf="!announcementRedactedByJss" class="quotation-container mb-5">
-
-            <div class="row">
-              <div class="col-md-3">
-
-                <!-- Toggle relecture -->
-                <div class="form-check form-switch d-flex align-items-center mb-4">
-                  <input type="checkbox" class="form-check-input" id="announcementProofReading"
-                    [(ngModel)]="announcementProofReading">
-                  <label class="form-check-label ms-2 mb-0" for="announcementProofReading">
-                    Relecture par JSS
-                  </label>
-                </div>
-
-                <!-- Département -->
-                <div class="mb-3" *ngIf="departments">
-                  <label for="announcementDepartment" class="form-label">Département de publication</label>
-                  <select class="form-control" id="announcementDepartment" required
-                    [(ngModel)]="announcementDepartment">
-                    <option [ngValue]="department" *ngFor="let department of departments">
-                      {{ department.code }} - {{ department.label }}
-                    </option>
-                  </select>
-
-                  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-                    *ngIf="checkedOnce && !announcementRedactedByJss && !announcementDepartment">
-                    <i class="ai-octagon-alert fs-xl"></i>
-                    <div class="ps-2">Le département est obligatoire</div>
-                  </div>
-                </div>
-
-                <!-- Rubrique -->
-                <div class="mb-3" *ngIf="noticeTypeFamilies">
-                  <label for="announcementNoticeFamily" class="form-label">Rubrique de publication</label>
-                  <select class="form-control" id="announcementNoticeFamily" required
-                    [(ngModel)]="announcementNoticeFamily">
-                    <option [ngValue]="noticeTypeFamily" *ngFor="let noticeTypeFamily of noticeTypeFamilies">
-                      {{ noticeTypeFamily.label }}
-                    </option>
-                  </select>
-
-                  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-                    *ngIf="checkedOnce && !announcementRedactedByJss && !announcementNoticeFamily">
-                    <i class="ai-octagon-alert fs-xl"></i>
-                    <div class="ps-2">La rubrique est obligatoire</div>
-                  </div>
-                </div>
-
-                <!-- Sous-rubrique -->
-                <div class="mb-3" *ngIf="announcementNoticeFamily && noticeTypes">
-                  <label for="announcementNoticeType" class="form-label">Sous-rubrique de publication</label>
-                  <select class="form-control" id="announcementNoticeType" required
-                    [(ngModel)]="announcementNoticeType">
-                    <ng-container *ngFor="let noticeType of noticeTypes">
-                      <option [ngValue]="noticeType"
-                        *ngIf="noticeType.noticeTypeFamily.id == announcementNoticeFamily.id">
-                        {{ noticeType.label }}
-                      </option>
-                    </ng-container>
-                  </select>
-
-                  <div class="alert alert-danger d-flex mb-0 mb-2 w-100" role="alert"
-                    *ngIf="checkedOnce && !announcementRedactedByJss && !announcementNoticeType">
-                    <i class="ai-octagon-alert fs-xl"></i>
-                    <div class="ps-2">La sous-rubrique est obligatoire</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-9">
-                <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
-                <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
-                  [data]="announcementNoticeInit" (change)="onNoticeChange($event)">
-                </ckeditor>
-              </div>
-            </div>
-          </div>
-        </div>
+        </ng-container>
       </div>
     </div>
   </section>
 
   <div
     class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-3">
-    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center" data-bs-toggle="modal"
-      data-bs-target="#confirmBackModal">
-      <i class=" ai-arrow-left"></i>
+    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
+      (click)="moveToPreviousService()">
+      <i class="ai-arrow-left"></i>
       <span class="d-none d-sm-inline ms-2">Étape précédente</span>
     </button>
 
     <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center" *ngIf="canSaveQuotation()"
       (click)="saveFieldsValue()">
-      <span class="d-none d-sm-inline me-2">Étape suivante</span>
+      <span class="spinner-grow spinner-grow-sm me-2" *ngIf="isFetchingPrincing"></span><span
+        class="d-sm-inline me-2">Étape
+        suivante</span>
       <i class="ai-arrow-right"></i>
     </button>
   </div>
 </div>
 
 <!-- Modal de confirmation -->
-<div class="modal fade" id="confirmBackModal" tabindex="-1" aria-labelledby="confirmBackModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmBackModal" #confirmBackModal tabindex="-1" aria-labelledby="confirmBackModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -321,7 +297,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button type="button" class="btn btn-danger ms-2" (click)="goBackQuotation()"
+        <button type="button" class="btn btn-danger ms-2" (click)="confirmGoBack()"
           data-bs-dismiss="modal">Confirmer</button>
       </div>
     </div>

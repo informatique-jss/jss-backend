@@ -103,7 +103,6 @@ public class Responsable implements IAttachment, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-
 	private String lastname;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -154,6 +153,7 @@ public class Responsable implements IAttachment, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Country country;
 
 	@Column(length = 40)
@@ -188,6 +188,7 @@ public class Responsable implements IAttachment, IId {
 	@OneToMany(mappedBy = "responsable", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "mailsCCResponsableClient", "mailsCCResponsableAffaire",
 			"responsable" }, allowSetters = true)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Document> documents;
 
 	@OneToMany(mappedBy = "responsable")

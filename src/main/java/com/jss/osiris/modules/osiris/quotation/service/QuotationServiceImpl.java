@@ -43,11 +43,13 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CustomerOrderOriginService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -64,6 +66,7 @@ import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymen
 import com.jss.osiris.modules.osiris.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -122,7 +125,19 @@ public class QuotationServiceImpl implements QuotationService {
     CustomerOrderOriginService customerOrderOriginService;
 
     @Autowired
+    ServiceService serviceService;
+
+    @Autowired
     BatchService batchService;
+
+    @Autowired
+    ProvisionService provisionService;
+
+    @Autowired
+    DocumentService documentService;
+
+    @Autowired
+    TiersService tiersService;
 
     @Autowired
     GeneratePdfDelegate generatePdfDelegate;
@@ -132,6 +147,9 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     UserScopeService userScopeService;
+
+    @Autowired
+    QuotationValidationHelper quotationValidationHelper;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -736,11 +754,13 @@ public class QuotationServiceImpl implements QuotationService {
         quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         quotation.setQuotationStatus(
                 quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
+        quotationValidationHelper.completeIQuotationDocuments(quotation, false);
         return addOrUpdateQuotationFromUser(quotation);
 
     }
 
-    public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations) {
+    public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations)
+            throws OsirisException {
         if (quotations != null && quotations.size() > 0) {
             List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
                     false, false);
@@ -761,11 +781,12 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public Quotation completeAdditionnalInformationForQuotation(Quotation quotation) {
+    public Quotation completeAdditionnalInformationForQuotation(Quotation quotation) throws OsirisException {
         List<String> affaireLabels = new ArrayList<String>();
         List<String> serviceLabels = new ArrayList<String>();
         quotation.setHasMissingInformations(false);
-        if (quotation.getAssoAffaireOrders() != null)
+        if (quotation.getAssoAffaireOrders() != null) {
+            assoAffaireOrderService.populateTransientField(quotation.getAssoAffaireOrders());
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
                 if (affaireDenomination == null || affaireDenomination.length() == 0)
@@ -783,11 +804,12 @@ public class QuotationServiceImpl implements QuotationService {
 
                 if (assoAffaireOrder.getServices() != null)
                     for (Service service : assoAffaireOrder.getServices()) {
-                        if (assoAffaireOrderService.isServiceHasMissingInformations(service)) {
+                        if (serviceService.isServiceHasMissingInformations(service)) {
                             quotation.setHasMissingInformations(true);
                         }
                     }
             }
+        }
 
         if (affaireLabels.size() > 0)
             quotation.setAffairesList(String.join(" / ", affaireLabels));
@@ -797,7 +819,7 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     public List<Quotation> searchQuotation(List<Employee> commercials,
-            List<QuotationStatus> status) {
+            List<QuotationStatus> status) throws OsirisException {
 
         List<Integer> commercialIds = (commercials != null && commercials.size() > 0)
                 ? commercials.stream().map(Employee::getId).collect(Collectors.toList())
@@ -809,5 +831,40 @@ public class QuotationServiceImpl implements QuotationService {
 
         return completeAdditionnalInformationForQuotations(
                 quotationRepository.searchQuotation(commercialIds, statusIds));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean setEmergencyOnQuotation(Quotation quotation, Boolean isEnabled)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
+                && quotation.getAssoAffaireOrders().get(0).getServices() != null
+                && quotation.getAssoAffaireOrders().get(0).getServices().size() > 0
+                && quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions() != null
+                && quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().size() > 0) {
+            quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0)
+                    .setIsEmergency(isEnabled);
+            provisionService.addOrUpdateProvision(
+                    quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0));
+            quotation = getQuotation(quotation.getId());
+            pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean setDocumentOnOrder(Quotation quotation, Document document)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (quotation.getDocuments() == null)
+            quotation.setDocuments(new ArrayList<Document>());
+
+        document.setQuotation(quotation);
+        documentService.addOrUpdateDocument(document);
+
+        quotation = getQuotation(quotation.getId());
+        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+        return true;
     }
 }

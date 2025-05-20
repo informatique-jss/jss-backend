@@ -55,7 +55,9 @@ export class IdentificationComponent implements OnInit {
     private appService: AppService
   ) { }
 
-  idenficationForm = this.formBuilder.group({});
+  idenficationForm = this.formBuilder.group({
+    quotationType: []
+  });
 
   ngOnInit() {
     this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => this.familyGroupService = response);
@@ -100,6 +102,18 @@ export class IdentificationComponent implements OnInit {
     this.quotation.assoAffaireOrders = [];
     this.addAffaire();
   }
+
+  changeQuotationType() {
+    if (this.quotation) {
+      if (this.selectedQuotationType.id == quotation.id)
+        this.quotation.isQuotation = true;
+      else {
+        this.quotation.isQuotation = false;
+      }
+    }
+
+  }
+
 
   refreshIsRegisteredAffaire() {
     if (this.quotation)

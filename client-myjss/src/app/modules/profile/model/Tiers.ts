@@ -18,4 +18,5 @@ export interface Tiers {
   specialOffers: SpecialOffer[];
   firstname: string;
   lastname: string;
+  isIndividual: boolean;
 }

@@ -70,7 +70,9 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
     return undefined;
   }
 
-  onEnterTrigger(event: any) {
-    this.onEnter.next(event);
+  onEnterTrigger(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.onEnter.emit();
   }
 }

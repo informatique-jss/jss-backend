@@ -1,10 +1,19 @@
 <div class="position-relative ">
-  <div [formGroup]="form!">
+  <div [formGroup]="form!" class="needs-validation">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
       class="form-label">{{label}}</label>
-    <select class="form-control form-control ps-5" [id]="'fl-text'+uniqueId" [formControlName]="propertyName"
-      [required]="isMandatory" (blur)="blurForm()">
-      <option *ngFor="let type of filteredTypes" [value]="type">{{displayLabel(type)}}</option>
-    </select>
+    <div>
+      <ng-autocomplete [data]="filteredTypes" [searchKeyword]="'label'" [placeholder]="label" [attr.name]="propertyName"
+        [initialValue]="selectedItem" (selected)='optionSelected($event)' (inputChanged)='onChangeSearch($event)'
+        [itemTemplate]="itemTemplate" [notFoundTemplate]="notFoundTemplate" [minQueryLength]="expectedMinLengthInput"
+        [debounceTime]="200" (scrolledToEnd)="fetchNextPage()" #autoComp [historyIdentifier]="propertyName"
+        historyHeading="Choix récents" [isLoading]="isLoading" [disabled]="isDisabled"></ng-autocomplete>
+    </div>
+    <ng-template #itemTemplate let-item>
+      <a [innerHTML]="item.label"></a>
+    </ng-template>
+    <ng-template #notFoundTemplate let-notFound>
+      <div innerHTML="Aucun résultat trouvé"></div>
+    </ng-template>
   </div>
 </div>

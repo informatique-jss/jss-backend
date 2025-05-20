@@ -1148,7 +1148,7 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/invoicing/statistics")
-    public ResponseEntity<InvoicingStatistics> getInvoicingStatistics() {
+    public ResponseEntity<InvoicingStatistics> getInvoicingStatistics() throws OsirisException {
         return new ResponseEntity<InvoicingStatistics>(customerOrderService.getInvoicingStatistics(),
                 HttpStatus.OK);
     }

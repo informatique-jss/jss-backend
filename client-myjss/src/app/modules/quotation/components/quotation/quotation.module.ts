@@ -37,6 +37,7 @@ const routes: Routes = [
     ServicesSelectionComponent,
     RequiredInformationComponent,
     QuotationFileUploaderComponent,
+    CheckoutComponent
   ]
 })
 export class QuotationModule { }

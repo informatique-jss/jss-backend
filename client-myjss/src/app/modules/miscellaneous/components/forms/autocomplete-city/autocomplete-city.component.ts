@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { PagedContent } from '../../../../../../../../client/src/app/services/model/PagedContent';
 import { ConstantService } from '../../../../../libs/constant.service';
 import { City } from '../../../../profile/model/City';
 import { Country } from '../../../../profile/model/Country';
@@ -9,38 +10,40 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 
 @Component({
   selector: 'autocomplete-city',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './../generic-autocomplete/generic-autocomplete.component.html',
+  styleUrls: ['./../generic-autocomplete/generic-autocomplete.component.css'],
   standalone: false
 })
-export class AutocompleteCityComponent extends GenericAutocompleteComponent<City, City> implements OnInit, OnChanges {
+export class AutocompleteCityComponent extends GenericAutocompleteComponent<City, City> implements OnInit {
 
   /**
-   * The model of country property.
-   * If undefined, cities are searched worldwide
-   */
+* The model of country property.
+* If undefined, cities are searched worldwide
+*/
   @Input() modelCountry: Country | undefined;
 
   /**
    * Bind a model here to prefilter cities with a given postal code
    * On model change, city search is triggered
    */
-  @Input() preFilterPostalCode: string = "";
+  @Input() preFilterPostalCode: string = '';
 
   constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private constantService: ConstantService) {
     super(formBuild)
   }
 
-  searchEntities(value: string): Observable<City[]> {
-    if (this.modelCountry)
-      return this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(this.modelCountry, this.preFilterPostalCode);
-    return this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(this.constantService.getCountryFrance(), this.preFilterPostalCode);
+  searchEntities(value: string): Observable<PagedContent<City>> {
+    if (!this.modelCountry)
+      this.modelCountry = this.constantService.getCountryFrance();
+
+    return this.cityService.getCitiesFilteredByNameAndCountryAndPostalCode(value, this.modelCountry, this.preFilterPostalCode ? this.preFilterPostalCode : '', this.page, this.pageSize);
   }
 
-  override ngOnChanges(changes: SimpleChanges) {
-    super.ngOnChanges(changes);
-    if (changes && changes['preFilterPostalCode'] && this.preFilterPostalCode && this.preFilterPostalCode.length > 2 && !this.model)
-      this.searchEntities("").subscribe(response => this.filteredTypes = response);
+  override optionSelected(type: City): void {
+    super.optionSelected(type);
+    if (this.preFilterPostalCode == undefined && type.postalCode)
+      this.preFilterPostalCode = type.postalCode;
+    this.onFormChange.next();
   }
+
 }

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { Routes } from '@angular/router';
+import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
@@ -14,8 +15,14 @@ import { GenericTextareaComponent } from '../forms/generic-textarea/generic-text
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
 import { RadioGroupAffaireTypeComponent } from '../forms/radio-group-affaire-type/radio-group-affaire-type.component';
 import { RadioGroupQuotationTypeComponent } from '../forms/radio-group-quotation-type/radio-group-quotation-type.component';
+import { SelectBillingLabelTypeComponent } from '../forms/select-billing-label-type/select-billing-label-type.component';
+import { SelectCivilityComponent } from '../forms/select-civility/select-civility.component';
 import { SelectCountryComponent } from '../forms/select-country/select-country.component';
+import { SelectDepartmentComponent } from '../forms/select-department/select-department.component';
+import { SelectMultipleNoticeTypeComponent } from '../forms/select-multiple-notice-type/select-multiple-notice-type.component';
 import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
+import { SelectNoticeTypeFamilyComponent } from '../forms/select-notice-type-family/select-notice-type-family.component';
+import { SelectStringComponent } from '../forms/select-string/select-string.component';
 import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
 import { GenericSwiperComponent } from '../generic-swiper/generic-swiper.component';
@@ -33,7 +40,11 @@ const routes: Routes = [{}];
     ReactiveFormsModule,
     GenericSwiperComponent,
     OurClientsComponent,
+<<<<<<< HEAD
     GenericTestimonialComponent
+=======
+    AutocompleteLibModule
+>>>>>>> feature/MY-66
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
@@ -46,11 +57,20 @@ const routes: Routes = [{}];
     GenericDatePickerComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
-    AutocompleteCityComponent,
     SelectCountryComponent,
     SelectValueServiceFieldTypeComponent,
+    SelectBillingLabelTypeComponent,
     GenericInputComponent,
     SelectMyJssCategoryComponent,
+<<<<<<< HEAD
+=======
+    SelectCivilityComponent,
+    AutocompleteCityComponent,
+    SelectDepartmentComponent,
+    SelectNoticeTypeFamilyComponent,
+    SelectMultipleNoticeTypeComponent,
+    SelectStringComponent
+>>>>>>> feature/MY-66
   ],
   exports: [
     AvatarComponent,
@@ -65,12 +85,21 @@ const routes: Routes = [{}];
     GenericSwiperComponent,
     RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
-    AutocompleteCityComponent,
     SelectCountryComponent,
     SelectMyJssCategoryComponent,
     SelectValueServiceFieldTypeComponent,
+    SelectBillingLabelTypeComponent,
     OurClientsComponent,
+<<<<<<< HEAD
     GenericTestimonialComponent
+=======
+    SelectCivilityComponent,
+    AutocompleteCityComponent,
+    SelectDepartmentComponent,
+    SelectNoticeTypeFamilyComponent,
+    SelectMultipleNoticeTypeComponent,
+    SelectStringComponent
+>>>>>>> feature/MY-66
   ]
 })
 export class MiscellaneousModule { }

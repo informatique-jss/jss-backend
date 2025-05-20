@@ -1,145 +1,353 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
 import { ConstantService } from '../../../../libs/constant.service';
-import { validateEmail, validateFrenchPhone, validateInternationalPhone, validateSiret } from '../../../../libs/CustomFormsValidatorsHelper';
-import { capitalizeName } from '../../../../libs/FormatHelper';
-import { initTooltips } from '../../../my-account/components/orders/orders.component';
+import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
+import { getDocument } from '../../../../libs/DocumentHelper';
+import { copyObject } from '../../../../libs/GenericHelper';
+import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
-import { DocumentType } from '../../../my-account/model/DocumentType';
-import { AffaireService } from '../../../my-account/services/affaire.service';
-import { DocumentService } from '../../../my-account/services/document.service';
-import { City } from '../../../profile/model/City';
-import { Civility } from '../../../profile/model/Civility';
-import { Country } from '../../../profile/model/Country';
+import { Quotation } from '../../../my-account/model/Quotation';
+import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
+import { QuotationService } from '../../../my-account/services/quotation.service';
 import { Mail } from '../../../profile/model/Mail';
+import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
+import { Tiers } from '../../../profile/model/Tiers';
 import { LoginService } from '../../../profile/services/login.service';
-import { ServiceTypeChosen } from '../../model/ServiceTypeChosen';
-// import { UserCustomerOrder } from '../../model/UserCustomerOrder';
-import { CityService } from '../../services/city.service';
-import { CivilityService } from '../../services/civility.service';
-import { CountryService } from '../../services/country.service';
-// import { UserCustomerOrderService } from '../../services/user.customer.service';
-// import { TYPE_CHOSEN_ORDER, TYPE_CHOSEN_QUOTATION } from '../choose-type/choose-type.component';
+import { IQuotation } from '../../model/IQuotation';
 
 @Component({
   selector: 'checkout',
   templateUrl: './checkout.component.html',
-  styleUrls: ['./checkout.component.css']
+  styleUrls: ['./checkout.component.css'],
+  standalone: false
 })
 export class CheckoutComponent implements OnInit {
 
-  @Input() serviceTypesSelected: ServiceTypeChosen[] | undefined;
-  @Input() typeChosen: string | undefined;
-  @Output() onRemoveServiceChoosen = new EventEmitter<ServiceTypeChosen>();
-  @Output() onEditServiceChoosen = new EventEmitter<ServiceTypeChosen>();
-  @Output() onAddServiceChoosen = new EventEmitter<Boolean>();
-  @ViewChild('topAlert') topAlert: ElementRef | undefined;
-
+  quotation: IQuotation | undefined;
   currentUser: Responsable | undefined;
+  totalPrice: number = 0;
+  totalPriceWithoutVat: number = 0;
+  totalVatPrice: number = 0;
 
-  // userCustomerOrder: UserCustomerOrder = { "customerIsIndividual": false } as UserCustomerOrder;
+  isMobile: boolean = false;
+  isCartOpen: boolean = false;
+
+  inputMail: string = "";
+  isLinkSent: boolean = false;
+  isSendingLink: boolean = false;
+  intervalId: any;
+
+  isNotIndividualTiers: boolean = true;
+  isComputingPrice: boolean = false;
 
   documentTypeBilling = this.constantService.getDocumentTypeBilling();
   documentTypeDigital = this.constantService.getDocumentTypeDigital();
   documentTypePaper = this.constantService.getDocumentTypePaper();
-  billingLabelTypeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
-  billingLabelTypeCustomer = this.constantService.getBillingLabelTypeCustomer();
   billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
+  isExtRefMandatory: boolean = false;
+
+  documentForm = this.formBuilder.group({});
 
   newMailBillingAffaire: string = "";
   newMailBillingClient: string = "";
 
   newMailDigitalAffaire: string = "";
   newMailDigitalClient: string = "";
-  siretSearched: string = "";
 
-  defineCustomDocuments: boolean = false;
-  validateCgv: boolean = false;
-  isSavingOrder: boolean = false;
-  isSavingDraft: boolean = false;
-  checkedOnce: boolean = false;
+  newPhoneTiers: string = "";
+  newMailTiers: string = "";
+  newPhoneResponsable: string = "";
 
-  isMoralPerson: boolean = true;
+  acceptDocs: boolean = false;
+  acceptTerms: boolean = false;
 
-  debounce: any;
-  loadingCustomerSiret: boolean = false;
-
-  countries: Country[] | undefined;
-  foundCities: City[] | undefined;
-  civilities: Civility[] | undefined;
-  countryFrance: Country = this.constantService.getCountryFrance();
-
-  inputMail: string = "";
-  intervalId: any;
-  isLinkSent: boolean = false;
-  isSendingLink: boolean = false;
+  quotationPriceObservableRef: Subscription | undefined;
 
   constructor(
     private loginService: LoginService,
-    private constantService: ConstantService,
-    private documentService: DocumentService,
+    private quotationService: QuotationService,
+    private orderService: CustomerOrderService,
     private formBuilder: FormBuilder,
-    // private userCustomerOrderService: UserCustomerOrderService,
     private appService: AppService,
-    private affaireService: AffaireService,
-    private countryService: CountryService,
-    private cityService: CityService,
-    private civilityService: CivilityService
+    private constantService: ConstantService
   ) { }
 
-  capitalizeName = capitalizeName;
-  validateEmail = validateEmail;
-  validateFrenchPhone = validateFrenchPhone;
-  validateInternationalPhone = validateInternationalPhone;
-  documentForm = this.formBuilder.group({});
-
   ngOnInit() {
-    initTooltips();
+    this.loginService.getCurrentUser().subscribe(response => {
+      this.currentUser = response;
+      this.initIQuotation();
+    })
     this.loginService.getCurrentUser(false, true).subscribe(response => {
       if (!response) {
-        this.intervalId = setInterval(() => this.checkUserConnected(), 2000);
-        this.defineCustomDocuments = true;
-        this.civilityService.getCivilities().subscribe(response => this.civilities = response);
-        this.countryService.getCountries().subscribe(response => {
-          setTimeout(() => window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-          }), 100);
-          this.countries = response;
-          if (this.countries)
-            for (let country of this.countries)
-              if (country.id == this.countryFrance.id) {
-                // this.userCustomerOrder.customerCountry = country;
-                break;
-              }
-        });
-
-        // this.userCustomerOrder.billingDocument = { isRecipientClient: true } as Document;
-        // this.userCustomerOrder.digitalDocument = { isRecipientClient: true } as Document;
-        // this.userCustomerOrder.paperDocument = { isRecipientClient: true } as Document;
-        // this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeCustomer;
-
-        // this.computePrices();
+        this.intervalId = setInterval(() => this.checkUserConnected(), 2000000);
       } else {
         this.logCurrentUser(response);
       }
     })
+    this.initIQuotation();
   }
 
   ngOnDestroy() {
-    clearInterval(this.intervalId);
+    if (this.quotationPriceObservableRef)
+      this.quotationPriceObservableRef.unsubscribe();
   }
 
-  checkUserConnected() {
-    this.loginService.getCurrentUser(true, true).subscribe(response => {
-      if (response) {
-        clearInterval(this.intervalId);
-        this.logCurrentUser(response);
+  /**
+   * Init and save quotation
+   */
+
+  initIQuotation() {
+    if (this.currentUser) {
+      if (this.quotationService.getCurrentDraftQuotationId()) {
+        this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
+          this.quotation = response;
+          this.prepareForPricingAndCompute(true);
+        });
+      } else if (this.orderService.getCurrentDraftOrderId()) {
+        this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
+          this.quotation = response;
+          this.prepareForPricingAndCompute(true);
+        });
       }
-    });
+    } else {
+      if (this.quotationService.getCurrentDraftQuotation()) {
+        this.quotation = this.quotationService.getCurrentDraftQuotation()!;
+      } else if (this.orderService.getCurrentDraftOrder()) {
+        this.quotation = this.orderService.getCurrentDraftOrder()!;
+      }
+      this.prepareForPricingAndCompute();
+    }
   }
+
+  onValidateOrder() {
+    if (this.isOrderPossible())
+      this.makeOrder();
+  }
+
+  onSaveDraft() {
+    if (this.isOrderPossible())
+      this.saveOrder();
+  }
+
+  makeOrder() {
+    this.saveOrder();
+  }
+
+  saveOrder() {
+    if (!this.currentUser) {
+      if (this.quotation) {
+        this.quotationService.setCurrentDraftQuotation(this.quotation);
+        if (this.quotation.isQuotation)
+          this.quotationService.saveFinalQuotation(this.quotation as Quotation).subscribe();
+        else
+          this.orderService.saveFinalOrder(this.quotation as CustomerOrder).subscribe();
+      }
+    } else {
+      // TODO
+    }
+    // make payment
+  }
+
+  isOrderPossible() {
+    if (this.documentForm.invalid) {
+      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      return false;
+    }
+    if (!this.acceptDocs || !this.acceptTerms) {
+      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      return false;
+    }
+    return true;
+  }
+
+  saveDraftQuotation() {
+    if (this.quotation) {
+      if (!this.currentUser)
+        if (this.quotation.isQuotation)
+          this.quotationService.setCurrentDraftQuotation(this.quotation);
+        else
+          this.orderService.setCurrentDraftOrder(this.quotation);
+    }
+  }
+
+  /**
+   * Price events management
+   */
+
+  prepareForPricingAndCompute(isFromInit = false) {
+    this.isComputingPrice = true;
+    this.populateEmptyResponsable();
+    this.initEmptyDocuments();
+    this.computeQuotationPrice(isFromInit);
+  }
+
+  finalizePricingAnswer() {
+    this.computeTotalPrices();
+    this.saveDraftQuotation();
+    this.isComputingPrice = false;
+  }
+
+  populateEmptyResponsable() {
+    if (this.quotation) {
+      if (!this.quotation.responsable)
+        this.quotation.responsable = { tiers: {} as Tiers, mail: {} as Mail } as Responsable;
+
+      if (this.quotation.responsable) {
+        if (!this.quotation.responsable.country) {
+          this.quotation.responsable.country = this.constantService.getResponsableDummyCustomerFrance().country;
+        }
+        if (this.quotation.responsable.tiers) {
+          if (!this.quotation.responsable.tiers.country) {
+            this.quotation.responsable.tiers.country = this.constantService.getResponsableDummyCustomerFrance().tiers.country;
+          }
+          if (!this.quotation.responsable.tiers.city) {
+            this.quotation.responsable.tiers.city = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
+          }
+        }
+      }
+    }
+  }
+
+  initEmptyDocuments() {
+    if (this.quotation) {
+      if (!this.quotation.responsable)
+        return;
+
+      if (!this.quotation.documents || this.quotation.documents.length == 0)
+        this.quotation.documents = [];
+      let responsableForDocument = this.quotation.responsable && this.quotation.responsable.id ? this.quotation.responsable : this.constantService.getResponsableDummyCustomerFrance();
+
+      if (responsableForDocument && responsableForDocument.tiers && (!this.quotation.documents || this.quotation.documents.length == 0)) {
+        let billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), responsableForDocument));
+        if (!billingDocument.billingLabelCountry)
+          billingDocument.billingLabelCountry = this.constantService.getCountryFrance();
+        if (!billingDocument.billingLabelCity)
+          billingDocument.billingLabelCity = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
+        this.quotation.documents.push(billingDocument)
+        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeDigital(), responsableForDocument)))
+        this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypePaper(), responsableForDocument)))
+      }
+    }
+  }
+
+  computeQuotationPrice(isFromInit: boolean) {
+    if (this.quotationPriceObservableRef) {
+      this.quotationPriceObservableRef.unsubscribe();
+      this.quotationPriceObservableRef = undefined;
+    }
+
+    if (this.quotation) {
+      if (this.currentUser) {
+        if (!isFromInit) {
+          if (this.quotationService.getCurrentDraftQuotationId()) {
+            this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
+              this.quotation = response;
+              this.finalizePricingAnswer();
+            });
+          } else if (this.orderService.getCurrentDraftOrderId()) {
+            this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
+              this.quotation = response;
+              this.finalizePricingAnswer();
+            });
+          }
+        } else {
+          this.finalizePricingAnswer();
+        }
+      } else {
+        if (this.quotation.isQuotation) {
+          this.quotationPriceObservableRef = this.quotationService.completePricingOfQuotation(
+            this.quotation as Quotation, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+              this.quotation!.assoAffaireOrders = res.assoAffaireOrders;
+              this.finalizePricingAnswer();
+            });
+        } else {
+          this.quotationPriceObservableRef = this.orderService.completePricingOfOrder(
+            this.quotation as CustomerOrder, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+              this.quotation!.assoAffaireOrders = res.assoAffaireOrders;
+              this.finalizePricingAnswer();
+            });
+        }
+      }
+    }
+  }
+
+  computeTotalPrices() {
+    if (this.quotation) {
+      this.totalPriceWithoutVat = 0;
+      this.totalVatPrice = 0;
+      this.totalPrice = 0;
+      for (let asso of this.quotation.assoAffaireOrders)
+        for (let service of asso.services) {
+          this.totalPriceWithoutVat += service.servicePreTaxPrice;
+          this.totalVatPrice += service.serviceVatPrice;
+          this.totalPrice += service.serviceTotalPrice;
+        }
+    }
+  }
+
+  setEmergencyOption() {
+    if (this.quotation) {
+      if (this.currentUser) {
+        if (this.quotation.isQuotation) {
+          this.quotationService.setEmergencyOnQuotation(this.quotation.id, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+            this.prepareForPricingAndCompute();
+          });
+        } else {
+          this.orderService.setEmergencyOnOrder(this.quotation.id, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+            this.prepareForPricingAndCompute();
+          });
+        }
+      } else {
+        this.saveDraftQuotation();
+        this.prepareForPricingAndCompute();
+      }
+    }
+  }
+
+  setDocumentValue(document: Document) {
+    if (this.quotation && document.documentType.code == this.documentTypeBilling.code) {
+      if (this.currentUser) {
+        if (this.quotation.isQuotation) {
+          this.quotationService.setDocumentOnQuotation(this.quotation.id, document).subscribe(res => {
+            this.prepareForPricingAndCompute();
+          });
+        } else {
+          this.orderService.setDocumentOnOrder(this.quotation.id, document).subscribe(res => {
+            this.prepareForPricingAndCompute();
+          });
+        }
+      } else {
+        this.saveDraftQuotation();
+        this.prepareForPricingAndCompute();
+      }
+    }
+  }
+
+  applyCoupon() {
+    this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
+  }
+
+  deleteService(serviceIndex: number, assoIndex: number) {
+    if (this.quotation) {
+      if (this.currentUser) {
+        //TODO implement
+        //  this.serviceService.deleteService(this.quotation.assoAffaireOrders[assoIndex].services[serviceIndex].id).suscribe(response=>{
+        //  this.prepareForPricingAndCompute();
+        //})
+      } else {
+        this.quotation.assoAffaireOrders[assoIndex].services.splice(serviceIndex, 1);
+        this.saveDraftQuotation();
+        this.prepareForPricingAndCompute();
+      }
+    }
+  }
+
+  /**
+   * Log user management
+   */
 
   sendConnectionLink() {
     if (validateEmail(this.inputMail)) {
@@ -153,181 +361,27 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
+  checkUserConnected() {
+    this.loginService.getCurrentUser(true, true).subscribe(response => {
+      if (response) {
+        clearInterval(this.intervalId);
+        this.logCurrentUser(response);
+      }
+    });
+  }
+
   logCurrentUser(response: Responsable) {
     this.currentUser = response;
-    this.defineCustomDocuments = false;
-    this.documentService.getDocumentForResponsable(this.currentUser.id).subscribe(response => {
-      setTimeout(() => window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      }), 100);
-
-      // this.userCustomerOrder.billingDocument = this.getDocument(this.documentTypeBilling, response);
-
-      // if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeAffaire.id)
-      //   this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeAffaire;
-      // if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeCustomer.id)
-      //   this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeCustomer;
-      // if (this.userCustomerOrder.billingDocument.billingLabelType.id == this.billingLabelTypeOther.id)
-      //   this.userCustomerOrder.billingDocument.billingLabelType = this.billingLabelTypeOther;
-
-      // this.userCustomerOrder.digitalDocument = this.getDocument(this.documentTypeDigital, response);
-      // this.userCustomerOrder.paperDocument = this.getDocument(this.documentTypePaper, response);
-
-      // this.computePrices();
-    })
-  }
-
-  isAnOrder() {
-    return true;
-    // return this.typeChosen && this.typeChosen == TYPE_CHOSEN_ORDER;
-  }
-
-  isAQuotation() {
-    // return this.typeChosen && this.typeChosen == TYPE_CHOSEN_QUOTATION;
-  }
-
-  removeService(service: ServiceTypeChosen) {
-    this.onRemoveServiceChoosen.next(service);
-  }
-
-  editService(service: ServiceTypeChosen) {
-    this.onEditServiceChoosen.next(service);
-  }
-
-  addService() {
-    this.onAddServiceChoosen.next(true);
-  }
-
-  // computePrices() {
-  //   if (this.userCustomerOrder) {
-  //     this.userCustomerOrder.preTaxPrice = undefined;
-  //     this.userCustomerOrder.vatPrice = undefined;
-  //     this.userCustomerOrder.totalPrice = undefined;
-  //     if (this.userCustomerOrder && this.userCustomerOrder.serviceTypes)
-  //       for (let service of this.userCustomerOrder.serviceTypes) {
-  //         service.preTaxPrice = undefined;
-  //         service.discountedAmount = undefined;
-  //       }
-
-  //     if (this.serviceTypesSelected) {
-  //       this.userCustomerOrder.serviceTypes = this.serviceTypesSelected;
-  //       if (this.userCustomerOrder.serviceTypes) {
-  //         this.userCustomerOrderService.completePricingOfUserCustomerOrder(this.userCustomerOrder).subscribe(response => {
-  //           if (response) {
-  //             this.userCustomerOrder.preTaxPrice = response.preTaxPrice;
-  //             this.userCustomerOrder.totalPrice = response.totalPrice;
-  //             this.userCustomerOrder.vatPrice = response.vatPrice;
-  //             if (this.userCustomerOrder.serviceTypes && response.serviceTypes)
-  //               for (let serviceClient of this.userCustomerOrder.serviceTypes) {
-  //                 for (let serviceServer of response.serviceTypes) {
-  //                   if (serviceClient.temporaryId == serviceServer.temporaryId) {
-  //                     serviceClient.discountedAmount = serviceServer.discountedAmount;
-  //                     serviceClient.preTaxPrice = serviceServer.preTaxPrice;
-  //                   }
-  //                 }
-  //               }
-  //           }
-  //         })
-  //       }
-  //     }
-  //   }
-  // }
-
-  // validateCustomerOrder() {
-  //   this.userCustomerOrder.isCustomerOrder = true;
-  //   this.userCustomerOrder.isDraft = false;
-  //   this.isSavingOrder = true;
-  //   this.saveOrder();
-  // }
-
-  // validateQuotation() {
-  //   this.userCustomerOrder.isCustomerOrder = false;
-  //   this.userCustomerOrder.isDraft = false;
-  //   this.isSavingOrder = true;
-  //   this.saveOrder();
-  // }
-
-  // validateCustomerOrderDraft() {
-  //   this.userCustomerOrder.isCustomerOrder = true;
-  //   this.userCustomerOrder.isDraft = true;
-  //   this.isSavingDraft = true;
-  //   this.saveOrder();
-  // }
-
-  // validateQuotationDraft() {
-  //   this.userCustomerOrder.isCustomerOrder = false;
-  //   this.userCustomerOrder.isDraft = true;
-  //   this.isSavingDraft = true;
-  //   this.saveOrder();
-  // }
-
-  saveOrder() {
-    if (!this.validateCgv) {
-      this.appService.displayToast("La validation des CGV est obligatoire", true, "Validation", 10000);
-      this.isSavingDraft = false;
-      this.isSavingOrder = false;
-      return;
+    if (this.quotation && !this.quotation.id) {
+      this.quotation.responsable = undefined;
+      this.quotation.documents = [];
+      this.initEmptyDocuments();
     }
-
-    if (!this.currentUser) {
-      let hasError = false;
-      // if (this.isMoralPerson && !this.userCustomerOrder.customerDenomination)
-      //   hasError = true;
-      // if (!this.userCustomerOrder.customerAddress)
-      //   hasError = true;
-      // if (!this.userCustomerOrder.customerCity)
-      //   hasError = true;
-      // if (!this.userCustomerOrder.customerCountry)
-      //   hasError = true;
-      // if (!this.userCustomerOrder.responsableCivility)
-      //   hasError = true;
-      // if (!this.userCustomerOrder.responsableFirstname)
-      //   hasError = true;
-      // if (!this.userCustomerOrder.responsableLastname)
-      //   hasError = true;
-      // if (!this.userCustomerOrder.responsableMail || !validateEmail(this.userCustomerOrder.responsableMail))
-      //   hasError = true;
-      // if (this.userCustomerOrder.responsablePhone && !validateFrenchPhone(this.userCustomerOrder.responsablePhone) && !validateInternationalPhone(this.userCustomerOrder.responsablePhone))
-      //   hasError = true;
-      // if (this.userCustomerOrder.customerCountry.id == this.countryFrance.id && !this.userCustomerOrder.customerPostalCode)
-      //   hasError = true;
-
-      if (hasError) {
-        this.checkedOnce = true;
-        this.isSavingDraft = false;
-        this.isSavingOrder = false;
-        if (this.topAlert)
-          setTimeout(this.topAlert.nativeElement.scrollIntoView({ behavior: 'smooth', block: "center" }), 100);
-        return;
-      }
-    }
-
-    // this.userCustomerOrder.customerIsIndividual = !this.isMoralPerson;
-    // this.userCustomerOrderService.saveOrder(this.userCustomerOrder).subscribe(response => {
-    //   // If not logged, the creation of the order will create account and log user
-    //   if (!this.currentUser)
-    //     this.loginService.logUser(0, "");
-    //   this.isSavingDraft = false;
-    //   this.isSavingOrder = false;
-    //   if (this.userCustomerOrder.isCustomerOrder)
-    //     this.appService.openRoute(undefined, "account/orders/details/" + response.orderId, undefined);
-    //   if (!this.userCustomerOrder.isCustomerOrder)
-    //     this.appService.openRoute(undefined, "account/quotations/details/" + response.orderId, undefined);
-    // })
   }
 
-
-  getDocument(documentType: DocumentType, documents: Document[]) {
-    // Document currently exists
-    if (documents && documents.length > 0) {
-      for (let document of documents)
-        if (document.documentType.id == documentType.id) {
-          return document;
-        }
-    }
-    return { isRecipientClient: true, isRecipientAffaire: false, addToAffaireMailList: false, addToClientMailList: false } as Document;
-  }
+  /**
+   * Forms function
+   */
 
   deleteMail(mail: Mail, document: Document, isAffaire: boolean) {
     if (document)
@@ -335,6 +389,19 @@ export class CheckoutComponent implements OnInit {
         document.mailsAffaire.splice(document.mailsAffaire.indexOf(mail), 1);
       else
         document.mailsClient.splice(document.mailsClient.indexOf(mail), 1);
+  }
+
+  deleteMailTiers(mail: Mail, tiers: Tiers) {
+    if (tiers)
+      tiers.mails.splice(tiers.mails.indexOf(mail), 1);
+  }
+
+  deletePhone(phone: Phone, responsable: Responsable, isAffaire: boolean) {
+    if (responsable)
+      if (!isAffaire)
+        responsable.phones.splice(responsable.phones.indexOf(phone), 1);
+      else
+        responsable.tiers.phones.splice(responsable.tiers.phones.indexOf(phone), 1);
   }
 
   addMail(document: Document, isAffaire: boolean) {
@@ -353,6 +420,41 @@ export class CheckoutComponent implements OnInit {
           document.mailsClient = [];
         document.mailsClient.push(mail);
         this.newMailBillingClient = "";
+      }
+  }
+
+  addPhone(responsable: Responsable, isAffaire: boolean) {
+    if (responsable)
+      if (isAffaire) {
+        if (this.newPhoneTiers && (validateFrenchPhone(this.newPhoneTiers) || validateInternationalPhone(this.newPhoneTiers))) {
+          let phone = {} as Phone;
+          phone.phoneNumber = this.newPhoneTiers;
+          if (!responsable.tiers.phones)
+            responsable.tiers.phones = [];
+          responsable.tiers.phones.push(phone);
+          this.newPhoneTiers = "";
+        }
+      } else {
+        if (this.newPhoneResponsable && (validateFrenchPhone(this.newPhoneResponsable) || validateInternationalPhone(this.newPhoneResponsable))) {
+          let phone = {} as Phone;
+          phone.phoneNumber = this.newPhoneResponsable;
+          if (!responsable.phones)
+            responsable.phones = [];
+          responsable.phones.push(phone);
+          this.newPhoneResponsable = "";
+        }
+      }
+  }
+
+  addMailTiers(tiers: Tiers) {
+    if (tiers)
+      if (this.newMailTiers && (validateEmail(this.newMailTiers))) {
+        let mail = {} as Mail;
+        mail.mail = this.newMailTiers;
+        if (!tiers.mails)
+          tiers.mails = [];
+        tiers.mails.push(mail);
+        this.newMailTiers = "";
       }
   }
 
@@ -375,61 +477,8 @@ export class CheckoutComponent implements OnInit {
       }
   }
 
-
-  searchSiret() {
-    clearTimeout(this.debounce);
-    this.debounce = setTimeout(() => {
-      this.effectiveSearchSiret();
-    }, 500);
+  toggleTiersIndividual() {
+    if (this.quotation && this.quotation.responsable && this.quotation.responsable.tiers)
+      this.quotation.responsable.tiers.isIndividual = !this.isNotIndividualTiers;
   }
-
-  effectiveSearchSiret() {
-    if (this.siretSearched && validateSiret(this.siretSearched)) {
-      this.loadingCustomerSiret = true;
-      this.affaireService.getAffaireBySiret(this.siretSearched).subscribe(response => {
-        this.loadingCustomerSiret = false;
-        if (response && response.length == 1) {
-          let affaire = response[0];
-          // this.userCustomerOrder.customerSiret = affaire.siret;
-          // this.userCustomerOrder.customerCity = affaire.city;
-          // this.userCustomerOrder.customerDenomination = affaire.denomination;
-          // this.userCustomerOrder.customerPostalCode = affaire.postalCode;
-          // this.userCustomerOrder.customerAddress = affaire.address;
-          // this.userCustomerOrder.siret = affaire.siret;
-          if (this.countries)
-            for (let country of this.countries)
-              if (country.id == affaire.country.id) {
-                // this.userCustomerOrder.customerCountry = country;
-                break;
-              }
-        }
-      })
-    }
-  }
-
-  fetchCities() {
-    clearTimeout(this.debounce);
-    this.debounce = setTimeout(() => {
-      this.effectiveFetchCities();
-    }, 500);
-  }
-
-  effectiveFetchCities() {
-    this.foundCities = undefined;
-    // if (this.userCustomerOrder)
-    //   if (this.userCustomerOrder.customerCountry && this.userCustomerOrder.customerCountry.id) {
-    //     if (this.userCustomerOrder.customerCountry.id != this.countryFrance.id) {
-    //       this.cityService.getCitiesByCountry(this.userCustomerOrder.customerCountry).subscribe(response => {
-    //         this.foundCities = response;
-    //       })
-    //     } else if (this.userCustomerOrder.customerPostalCode && this.userCustomerOrder.customerPostalCode.length > 4) {
-    //       this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(this.userCustomerOrder.customerCountry, this.userCustomerOrder.customerPostalCode).subscribe(response => {
-    //         this.foundCities = response;
-    //         if (this.foundCities && this.foundCities.length == 1)
-    //           this.userCustomerOrder.customerCity = this.foundCities[0];
-    //       })
-    //     }
-    // }
-  }
-
 }
