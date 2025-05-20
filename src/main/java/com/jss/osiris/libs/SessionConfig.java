@@ -43,13 +43,15 @@ public class SessionConfig {
             }
 
             private CookieHttpSessionIdResolver buildResolver(HttpServletRequest request) {
-                String cookieName = getCookieNameForHost(request.getHeader("domain"));
+                String domainHeader = request.getHeader("domain");
+                String cookieName = getCookieNameForHost(domainHeader);
 
                 DefaultCookieSerializer serializer = new DefaultCookieSerializer();
                 serializer.setCookieName(cookieName);
 
-                // Optionnel : scoper au sous-domaine courant
-                // serializer.setDomainName(getDomainForHost(request.getHeader("Host")));
+                if ("jss".equalsIgnoreCase(domainHeader) || "myjss".equalsIgnoreCase(domainHeader)) {
+                    serializer.setDomainName("jss.fr"); // .jss.fr = valable pour jss.fr et *.jss.fr
+                }
 
                 CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
                 resolver.setCookieSerializer(serializer);
@@ -60,8 +62,8 @@ public class SessionConfig {
                 if (host != null) {
                     if (host.contains("osiris") || host.contains("4200")) {
                         return "OSIRIS";
-                    } else if (host.contains("myjss") || host.contains("4202")) {
-                        return "MYJSS";
+                    } else if (host.contains("jss") || host.contains("4202")) {
+                        return "JSS";
                     }
                 }
                 return "DEFAULTSESSION";
