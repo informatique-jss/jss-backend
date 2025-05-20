@@ -50,7 +50,7 @@
               <td>
                 <select-notice-family [(model)]="announcement.noticeTypeFamily" label="Rubrique"
                   [form]="announcementForm" propertyName="noticeTypeFamily" [isMandatory]="false"
-                  (selectionChange)="clearNoticeTypeField()" [isDisabled]="!editMode">
+                  (onFormChange)="clearNoticeTypeField()" [isDisabled]="!editMode">
                 </select-notice-family>
               </td>
               <td *ngIf="announcement.noticeTypeFamily">

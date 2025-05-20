@@ -3,14 +3,14 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { IncidentReportStatusService } from 'src/app/modules/reporting/services/incident.report.status.service';
 import { AppService } from 'src/app/services/app.service';
 import { IncidentReportStatus } from '../../../../reporting/model/IncidentReportStatus';
-import { GenericSelectComponent } from '../generic-select/generic-select.component';
+import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
   selector: 'select-incident-report-status',
-  templateUrl: './../generic-select/generic-select.component.html',
+  templateUrl: './../generic-select/generic-multiple-select.component.html',
   styleUrls: ['./../generic-select/generic-select.component.css']
 })
-export class SelectIncidentReportStatusComponent extends GenericSelectComponent<IncidentReportStatus> implements OnInit {
+export class SelectIncidentReportStatusComponent extends GenericMultipleSelectComponent<IncidentReportStatus> implements OnInit {
 
   @Input() types: IncidentReportStatus[] = [] as Array<IncidentReportStatus>;
 

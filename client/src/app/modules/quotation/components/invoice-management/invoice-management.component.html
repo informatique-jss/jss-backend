@@ -31,7 +31,7 @@
           <td>
             <select-invoicing-blockage [(model)]="quotation.invoicingBlockage" label="Type de blocage de la facturation"
               [form]="invoiceManagementForm" propertyName="invoicingBlockage" [isMandatory]="false"
-              (selectionChange)="modifyInvoicingBlockage($event)" [isDisabled]="false"></select-invoicing-blockage>
+              (onFormChange)="modifyInvoicingBlockage($event)" [isDisabled]="false"></select-invoicing-blockage>
           </td>
         </tr>
       </table>

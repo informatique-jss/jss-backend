@@ -64,8 +64,10 @@ export class UserSettingsComponent implements OnInit {
               let bookmark = this.userPreferenceService.getUserSearchBookmark("settings-current-responsable");
               if (bookmark != null && scope.id == parseInt(bookmark))
                 this.changeCurrentUser(scope);
-              else if (scope.id == response.id)
+              else {
                 this.changeCurrentUser(scope);
+                break;
+              }
             } else {
               if (scope.id == this.idResponsable)
                 this.changeCurrentUser(scope);

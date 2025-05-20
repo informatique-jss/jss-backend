@@ -80,6 +80,10 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(new HttpParams().set("page", page).set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null"), "posts/top/myjss-category");
   }
 
+  getPinnedPostByMyJssCategory(page: number, myJssCategory: MyJssCategory) {
+    return this.getPagedList(new HttpParams().set("page", page).set("myJssCategoryId", myJssCategory.id!), "posts/myjss/pinned");
+  }
+
   getTopPostByTag(page: number, tag: Tag) {
     return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
   }

@@ -43,7 +43,7 @@ public class SessionConfig {
             }
 
             private CookieHttpSessionIdResolver buildResolver(HttpServletRequest request) {
-                String cookieName = getCookieNameForHost(request.getHeader("Host"));
+                String cookieName = getCookieNameForHost(request.getHeader("domain"));
 
                 DefaultCookieSerializer serializer = new DefaultCookieSerializer();
                 serializer.setCookieName(cookieName);
@@ -60,7 +60,7 @@ public class SessionConfig {
                 if (host != null) {
                     if (host.contains("osiris") || host.contains("4200")) {
                         return "OSIRIS";
-                    } else if (host.contains("my") || host.contains("4202")) {
+                    } else if (host.contains("myjss") || host.contains("4202")) {
                         return "MYJSS";
                     }
                 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppService } from '../../../../libs/app.service';
 import { capitalizeName } from '../../../../libs/FormatHelper';
@@ -7,6 +7,8 @@ import { initTooltips } from '../../../my-account/components/orders/orders.compo
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
 import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'top-bar',
@@ -17,6 +19,7 @@ import { LoginService } from '../../services/login.service';
 export class TopBarComponent implements OnInit {
 
   @Input() isForQuotationNavbar: boolean = false;
+  @ViewChild('navbarCollapseRef', { static: false }) navbarCollapse!: ElementRef;
 
   logoJss: string = '/assets/images/white-logo-myjss.svg';
   logoJssDark: string = '/assets/images/dark-logo-myjss.svg';
@@ -39,6 +42,7 @@ export class TopBarComponent implements OnInit {
   constructor(private loginService: LoginService,
     private appService: AppService,
     private router: Router,
+    private eRef: ElementRef
   ) { }
 
   capitalizeName = capitalizeName;
@@ -86,6 +90,18 @@ export class TopBarComponent implements OnInit {
 
   navbarUncollapsed() {
     this.isNavbarCollapsed = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleClickOutside(event: MouseEvent): void {
+    const targetElement = event.target as HTMLElement;
+    if (
+      this.navbarCollapse &&
+      this.navbarCollapse.nativeElement.getAttribute('aria-expanded') == 'true' &&
+      !this.eRef.nativeElement.contains(targetElement)
+    ) {
+      this.navbarCollapse.nativeElement.click();
+    }
   }
 
 }

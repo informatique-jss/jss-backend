@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { MenuItem } from '../modules/general/model/MenuItem';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../modules/my-account/model/AccountMenuItem';
 import { ResponsableService } from '../modules/profile/services/responsable.service';
@@ -51,6 +52,10 @@ export class AppService {
         sameWindowEndFonction();
     }
     return;
+  }
+
+  openJssRoute(event: any, route: string) {
+    window.open(environment.frontendJssUrl + route);
   }
 
   openLinkedinJssPage() {

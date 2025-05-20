@@ -22,13 +22,13 @@ export class AnnouncementComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.postService.getTendencyPosts().subscribe(response => {
-      if (response && response.length > 0) {
-        this.tendencyPosts = response;
+    this.postService.getTopPostByMyJssCategory(0, this.constantService.getMyJssCategoryAnnouncement()).subscribe(response => {
+      if (response && response.content && response.content.length > 0) {
+        this.tendencyPosts = response.content;
       }
     });
 
-    this.postService.getTopPostByMyJssCategory(0, this.myJssCategoryAnnouncement).subscribe(posts => {
+    this.postService.getPinnedPostByMyJssCategory(0, this.myJssCategoryAnnouncement).subscribe(posts => {
       if (posts && posts.content)
         this.carouselAnnouncementPosts = posts.content;
     });

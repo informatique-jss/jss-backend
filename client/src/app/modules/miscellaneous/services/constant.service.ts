@@ -889,6 +889,18 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.myJssCategoryFormality;
   }
 
+  getMyJssCategoryDomiciliation() {
+    return this.constant.myJssCategoryDomiciliation;
+  }
+
+  getMyJssCategoryApostille() {
+    return this.constant.myJssCategoryApostille;
+  }
+
+  getMyJssCategoryDocument() {
+    return this.constant.myJssCategoryDocument;
+  }
+
   getJssCategoryHomepageFirstHighlighted() {
     return this.constant.jssCategoryHomepageFirstHighlighted;
   }

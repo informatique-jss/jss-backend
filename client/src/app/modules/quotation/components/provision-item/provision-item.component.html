@@ -1,14 +1,14 @@
 <table class="full-width" [formGroup]="provisionItemForm" *ngIf="provision">
   <tr>
     <td>
-      <select-provision-family (selectionChange)="changeProvisionFamilyType();changeProvisionType();"
+      <select-provision-family (onFormChange)="changeProvisionFamilyType();changeProvisionType();"
         [(model)]="provision.provisionFamilyType" label="Famille de service" [form]="provisionItemForm"
         propertyName="provisionFamilyType" [isMandatory]="true"
         [isDisabled]="!editMode || ( provision.announcement!=undefined && provision.announcement.actuLegaleId!=undefined && provision.announcement.actuLegaleId>0 && !canEditProvisionType())">
       </select-provision-family>
     </td>
     <td *ngIf="provision.provisionFamilyType">
-      <select-provision-type (selectionChange)="changeProvisionType()" [(model)]="provision.provisionType"
+      <select-provision-type (onFormChange)="changeProvisionType()" [(model)]="provision.provisionType"
         label="Prestation" [form]="provisionItemForm" propertyName="provisionType" [isMandatory]="true"
         [isDisabled]="!editMode || ( provision.announcement!=undefined && provision.announcement.actuLegaleId!=undefined && provision.announcement.actuLegaleId>0)"
         [filteredProvisionFamilyType]="provision.provisionFamilyType"></select-provision-type>

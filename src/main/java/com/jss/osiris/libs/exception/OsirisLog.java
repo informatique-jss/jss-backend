@@ -3,6 +3,7 @@ package com.jss.osiris.libs.exception;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -21,6 +22,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_osiris_log_read", columnList = "is_read") })
+@DoNotAudit
 public class OsirisLog implements Serializable, IId {
 
     public static String OSRIS_LOG = "OSRIS_LOG";

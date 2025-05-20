@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 
@@ -26,6 +27,7 @@ import jakarta.persistence.Table;
 		@Index(name = "idx_indicator_value_indicator_employee", columnList = "id_indicator, id_employee"),
 		@Index(name = "idx_indicator_value_employee", columnList = "id_employee"),
 })
+@DoNotAudit
 public class IndicatorValue implements Serializable, IId {
 
 	@Id

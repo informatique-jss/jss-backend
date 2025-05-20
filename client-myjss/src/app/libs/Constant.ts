@@ -26,6 +26,9 @@ export interface Constant {
   responsableDummyCustomerFrance: Responsable;
   myJssCategoryAnnouncement: MyJssCategory;
   myJssCategoryFormality: MyJssCategory;
+  myJssCategoryDomiciliation: MyJssCategory;
+  myJssCategoryApostille: MyJssCategory;
+  myJssCategoryDocument: MyJssCategory;
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
   categoryExclusivity: Category;
   attachmentTypeApplicationCv: AttachmentType;

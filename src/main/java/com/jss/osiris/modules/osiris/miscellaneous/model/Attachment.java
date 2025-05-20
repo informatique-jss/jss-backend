@@ -69,7 +69,7 @@ public class Attachment implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "attachment_sequence", sequenceName = "attachment_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attachment_sequence")
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssDetailedView.class,
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
 			JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
 	private Integer id;
 
