@@ -60,8 +60,6 @@ public class SearchServiceImpl implements SearchService {
             entities = indexEntityRepository.searchForEntities(search, maxNumberOfResults);
         if (entities == null || entities.size() == 0)
             entities = indexEntityRepository.searchForContainsSimilarEntities(search, maxNumberOfResults);
-        if (entities == null || entities.size() == 0)
-            entities = indexEntityRepository.searchForDeepSimilarEntities(search, maxNumberOfResults);
         return entities;
     }
 
@@ -77,8 +75,6 @@ public class SearchServiceImpl implements SearchService {
             entities = indexEntityRepository.searchForEntities(search, entityType, maxNumberOfResults);
         if (entities == null || entities.size() == 0 && !onlyExactMatch)
             entities = indexEntityRepository.searchForContainsSimilarEntities(search, entityType, maxNumberOfResults);
-        if (entities == null || entities.size() == 0 && !onlyExactMatch)
-            entities = indexEntityRepository.searchForDeepSimilarEntities(search, entityType, maxNumberOfResults);
         return entities;
     }
 
