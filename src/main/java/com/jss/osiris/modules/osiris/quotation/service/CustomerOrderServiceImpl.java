@@ -1934,7 +1934,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             stats.setOrderToInvoiced(customerOrders.size());
             stats.setOrderAssigned(
                     Math.toIntExact(customerOrders.stream().filter(c -> c.getInvoicingEmployee() != null).count()));
-            stats.setOrderAssigned(
+            stats.setOrderBlocked(
                     Math.toIntExact(customerOrders.stream().filter(c -> c.getInvoicingBlockage() != null).count()));
         }
         return stats;
