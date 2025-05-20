@@ -40,7 +40,7 @@ const routes: Routes = [{}];
     ReactiveFormsModule,
     GenericSwiperComponent,
     OurClientsComponent,
-    GenericTestimonialComponent
+    GenericTestimonialComponent,
     AutocompleteLibModule
   ],
   declarations: [MiscellaneousComponent,
