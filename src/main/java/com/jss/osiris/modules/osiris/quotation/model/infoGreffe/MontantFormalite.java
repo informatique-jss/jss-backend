@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.DoNotAudit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
+@DoNotAudit
 public class MontantFormalite {
     @Id
     @SequenceGenerator(name = "montant_formalite_infogreffe_sequence", sequenceName = "montant_formalite_infogreffe_sequence", allocationSize = 1)
