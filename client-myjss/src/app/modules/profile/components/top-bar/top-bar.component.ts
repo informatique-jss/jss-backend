@@ -29,6 +29,7 @@ export class TopBarComponent implements OnInit {
 
   currentUser: Responsable | undefined;
 
+  actualUrl: string = this.router.url;
   services: MenuItem[] = this.appService.getAllServicesMenuItems();
   companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
   tools: MenuItem[] = this.appService.getAllToolsMenuItems();
