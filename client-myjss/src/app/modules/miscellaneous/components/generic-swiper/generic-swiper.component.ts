@@ -25,12 +25,15 @@ export class GenericSwiperComponent implements OnInit {
 
   mediumViewport: number = 768;
   largeViewport: number = 992;
+  maxHeight: number = 0;
+  slideWidth: number = 0;
 
   @ViewChild('genericSwiper') genericSwiper!: ElementRef<SwiperContainer>;
   @Input() items: any[] = [];
   @Input() subtitle: string = '';
   @Input() title: string = '';
-  @Input() slidesPerView: number = 3;
+  @Input() slidesPerView: number = 3; // If using firstFixedImg, please keep slides per view to 3
+  @Input() firstFixedImg: string | undefined;
   @ContentChild(TemplateRef) templateRefFirstItem!: TemplateRef<any>; // Take the content of the personalised HTML
   @ContentChild(TemplateRef) templateRef!: TemplateRef<any>; // Take the content of the personalised HTML
 
@@ -48,9 +51,9 @@ export class GenericSwiperComponent implements OnInit {
       speed: "500",
       slidesPerView: this.getSlidesPerView(),
       loop: "true",
-      injectStyles: [`
+      injectStyles: this.firstFixedImg && window.innerWidth > this.largeViewport ? [`
           .swiper-pagination-bullet {
-            text-align: center;
+            text-align: start;
             line-height: 20px;
             font-size: 12px;
             opacity: 1;
@@ -62,7 +65,24 @@ export class GenericSwiperComponent implements OnInit {
             color: #fff;
             background:rgb(255, 255, 255);
           }
-          `],
+
+          .swiper-pagination-horizontal {
+            margin-left: -16.8%;
+          }
+          `] : [`
+          .swiper-pagination-bullet {
+            text-align: start;
+            line-height: 20px;
+            font-size: 12px;
+            opacity: 1;
+            background: rgba(255, 255, 255, 0);
+            border: white solid 1px;
+          }
+
+          .swiper-pagination-bullet-active {
+            color: #fff;
+            background:rgb(255, 255, 255);
+          }`],
       pagination: {
         clickable: true,
       },
@@ -113,26 +133,28 @@ export class GenericSwiperComponent implements OnInit {
     if (!swiperEl) return;
 
     const slides = swiperEl.querySelectorAll('swiper-slide');
-    let maxHeight = 0;
 
     slides.forEach((slide: HTMLElement) => {
       // Reset the height to properly calculate the new value
       slide.style.height = 'auto';
     });
 
+    // We search for the slide with the maxHeight
     slides.forEach((slide: HTMLElement) => {
       const slideHeight = slide.scrollHeight;
-      if (slideHeight > maxHeight) {
-        maxHeight = slideHeight;
+      if (slideHeight > this.maxHeight) {
+        this.maxHeight = slideHeight;
       }
     });
 
-    swiperEl.style.height = `${maxHeight}px`;
+    // Set slide width (same width for all slides)
+    this.slideWidth = slides[0].scrollWidth;
+
+    swiperEl.style.height = `${this.maxHeight}px`;
 
     slides.forEach((slide: HTMLElement) => {
-      slide.style.height = `${maxHeight}px`;
+      slide.style.height = `${this.maxHeight}px`;
     });
-
   }
 
   slideNext(): void {

@@ -87,7 +87,7 @@ export class FormaliteComponent implements OnInit {
     this.tableAction.push({
       actionIcon: 'approval', actionName: "Autoriser à Signer/payer ?", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
         if (instanceOfFormaliteGuichetUnique(element) && this.editMode && this.formalite && this.formalite.formalitesGuichetUnique)
-          if (element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING || element.status.code == GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING)
+          if (element.isAuthorizedToSign == false)
             for (let formalite of this.formalite.formalitesGuichetUnique)
               if (formalite.id == element.id) {
                 formalite.isAuthorizedToSign = true;

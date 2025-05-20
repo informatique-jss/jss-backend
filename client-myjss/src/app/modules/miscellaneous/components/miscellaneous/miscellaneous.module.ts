@@ -26,6 +26,7 @@ import { SelectStringComponent } from '../forms/select-string/select-string.comp
 import { SelectValueServiceFieldTypeComponent } from '../forms/select-value-service-field-type/select-value-service-field-type.component';
 import { SingleUploadComponent } from '../forms/single-upload/single-upload.component';
 import { GenericSwiperComponent } from '../generic-swiper/generic-swiper.component';
+import { GenericTestimonialComponent } from '../generic-testimonial/generic-testimonial.component';
 import { OurClientsComponent } from '../our-clients/our-clients.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
@@ -39,7 +40,8 @@ const routes: Routes = [{}];
     ReactiveFormsModule,
     GenericSwiperComponent,
     OurClientsComponent,
-    AutocompleteLibModule
+    AutocompleteLibModule,
+    GenericTestimonialComponent
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
@@ -87,7 +89,8 @@ const routes: Routes = [{}];
     SelectDepartmentComponent,
     SelectNoticeTypeFamilyComponent,
     SelectMultipleNoticeTypeComponent,
-    SelectStringComponent
+    SelectStringComponent,
+    GenericTestimonialComponent
   ]
 })
 export class MiscellaneousModule { }
