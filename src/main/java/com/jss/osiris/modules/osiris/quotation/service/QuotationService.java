@@ -88,7 +88,7 @@ public interface QuotationService {
 
         public List<Quotation> findQuotationByResponsable(Responsable responsable);
 
-        public Quotation saveQuotationFromMyJss(Quotation order, HttpServletRequest request)
+        public Quotation saveQuotationFromMyJss(Quotation order, Boolean isValidation, HttpServletRequest request)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders)

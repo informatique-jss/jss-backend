@@ -11,6 +11,7 @@ import { Document } from '../../../my-account/model/Document';
 import { Quotation } from '../../../my-account/model/Quotation';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
+import { ServiceService } from '../../../my-account/services/service.service';
 import { Mail } from '../../../profile/model/Mail';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
@@ -64,6 +65,8 @@ export class CheckoutComponent implements OnInit {
   acceptDocs: boolean = false;
   acceptTerms: boolean = false;
 
+  isSavingQuotation: boolean = false;
+
   quotationPriceObservableRef: Subscription | undefined;
 
   constructor(
@@ -72,7 +75,8 @@ export class CheckoutComponent implements OnInit {
     private orderService: CustomerOrderService,
     private formBuilder: FormBuilder,
     private appService: AppService,
-    private constantService: ConstantService
+    private constantService: ConstantService,
+    private serviceService: ServiceService
   ) { }
 
   ngOnInit() {
@@ -122,34 +126,54 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  onValidateOrder() {
+  onValidateOrder(isDraft: boolean) {
     if (this.isOrderPossible())
-      this.makeOrder();
+      this.saveOrder(isDraft);
   }
 
-  onSaveDraft() {
-    if (this.isOrderPossible())
-      this.saveOrder();
-  }
+  saveOrder(isDraft: boolean) {
+    if (!this.quotation)
+      return;
 
-  makeOrder() {
-    this.saveOrder();
-  }
-
-  saveOrder() {
+    this.isSavingQuotation = true;
     if (!this.currentUser) {
       if (this.quotation) {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
         if (this.quotation.isQuotation)
-          this.quotationService.saveFinalQuotation(this.quotation as Quotation).subscribe();
+          this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
+            if (response && response.id) {
+              this.cleanStorageData();
+              this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+            }
+          });
         else
-          this.orderService.saveFinalOrder(this.quotation as CustomerOrder).subscribe();
+          this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
+            if (response && response.id) {
+              this.cleanStorageData();
+              this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+            }
+          });
+        this.isSavingQuotation = false;
       }
     } else {
-      // TODO
+      if (this.quotation.isQuotation)
+        this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
+          if (response && response.id) {
+            this.cleanStorageData();
+            this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+          }
+        })
+      else
+        this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
+          if (response && response.id) {
+            this.cleanStorageData();
+            this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+          }
+        })
     }
-    // make payment
   }
+
+  cleanStorageData = this.quotationService.cleanStorageData;
 
   isOrderPossible() {
     if (this.documentForm.invalid) {
@@ -207,7 +231,21 @@ export class CheckoutComponent implements OnInit {
             this.quotation.responsable.tiers.city = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
           }
         }
+        this.completeBillingDocument();
+
       }
+    }
+  }
+
+  completeBillingDocument() {
+    if (this.quotation && this.quotation.documents) {
+      let billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.quotation);
+      if (billingDocument && billingDocument.billingLabelType.id == this.constantService.getBillingLabelTypeOther().id)
+        if (!billingDocument.billingLabelCountry)
+          billingDocument.billingLabelCountry = this.constantService.getResponsableDummyCustomerFrance().tiers.country;
+      if (!billingDocument.billingLabelCity)
+        billingDocument.billingLabelCity = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
+
     }
   }
 
@@ -257,19 +295,20 @@ export class CheckoutComponent implements OnInit {
           this.finalizePricingAnswer();
         }
       } else {
-        if (this.quotation.isQuotation) {
-          this.quotationPriceObservableRef = this.quotationService.completePricingOfQuotation(
-            this.quotation as Quotation, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
-              this.quotation!.assoAffaireOrders = res.assoAffaireOrders;
-              this.finalizePricingAnswer();
-            });
-        } else {
-          this.quotationPriceObservableRef = this.orderService.completePricingOfOrder(
-            this.quotation as CustomerOrder, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
-              this.quotation!.assoAffaireOrders = res.assoAffaireOrders;
-              this.finalizePricingAnswer();
-            });
-        }
+        if (this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0].services && this.quotation.assoAffaireOrders[0].services[0].provisions)
+          if (this.quotation.isQuotation) {
+            this.quotationPriceObservableRef = this.quotationService.completePricingOfQuotation(
+              this.quotation as Quotation, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+                this.quotation!.assoAffaireOrders = res.assoAffaireOrders;
+                this.finalizePricingAnswer();
+              });
+          } else {
+            this.quotationPriceObservableRef = this.orderService.completePricingOfOrder(
+              this.quotation as CustomerOrder, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
+                this.quotation!.assoAffaireOrders = res.assoAffaireOrders;
+                this.finalizePricingAnswer();
+              });
+          }
       }
     }
   }
@@ -309,6 +348,7 @@ export class CheckoutComponent implements OnInit {
 
   setDocumentValue(document: Document) {
     if (this.quotation && document.documentType.code == this.documentTypeBilling.code) {
+      this.completeBillingDocument();
       if (this.currentUser) {
         if (this.quotation.isQuotation) {
           this.quotationService.setDocumentOnQuotation(this.quotation.id, document).subscribe(res => {
@@ -333,10 +373,9 @@ export class CheckoutComponent implements OnInit {
   deleteService(serviceIndex: number, assoIndex: number) {
     if (this.quotation) {
       if (this.currentUser) {
-        //TODO implement
-        //  this.serviceService.deleteService(this.quotation.assoAffaireOrders[assoIndex].services[serviceIndex].id).suscribe(response=>{
-        //  this.prepareForPricingAndCompute();
-        //})
+        this.serviceService.deleteService(this.quotation.assoAffaireOrders[assoIndex].services[serviceIndex]).subscribe(response => {
+          this.prepareForPricingAndCompute();
+        })
       } else {
         this.quotation.assoAffaireOrders[assoIndex].services.splice(serviceIndex, 1);
         this.saveDraftQuotation();

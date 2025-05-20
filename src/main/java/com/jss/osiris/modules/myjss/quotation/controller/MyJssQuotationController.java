@@ -449,6 +449,25 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/service/delete")
+	public ResponseEntity<Boolean> deleteService(@RequestParam Integer idService)
+			throws OsirisValidationException {
+
+		Service service = serviceService.getService(idService);
+		if (service == null)
+			throw new OsirisValidationException("service");
+
+		if ((service.getAssoAffaireOrder().getQuotation() != null
+				&& myJssQuotationValidationHelper.canSeeQuotation(service.getAssoAffaireOrder().getQuotation()))
+				|| (service.getAssoAffaireOrder().getCustomerOrder() != null && myJssQuotationValidationHelper
+						.canSeeQuotation(service.getAssoAffaireOrder().getCustomerOrder()))) {
+			serviceService.deleteServiceFromUser(service);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/affaire/attachments")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForAffaire(@RequestParam Integer idAffaire)
@@ -1157,7 +1176,7 @@ public class MyJssQuotationController {
 			}
 		}
 
-		serviceService.addOrUpdateService(serviceFetched);
+		serviceService.addOrUpdateServiceFromUser(serviceFetched);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
@@ -1353,29 +1372,33 @@ public class MyJssQuotationController {
 
 	@PostMapping(inputEntryPoint + "/quotation/save-order")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Quotation> saveQuotation(@RequestBody Quotation quotation, HttpServletRequest request)
+	public ResponseEntity<Quotation> saveQuotation(@RequestBody Quotation quotation, @RequestParam Boolean isValidation,
+			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
 
-		return new ResponseEntity<Quotation>((Quotation) quotationDelegate.validateAndCreateQuotation(quotation),
+		return new ResponseEntity<Quotation>(
+				(Quotation) quotationDelegate.validateAndCreateQuotation(quotation, isValidation),
 				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/save-order")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<CustomerOrder> saveCutomerOrder(@RequestBody CustomerOrder order,
+			@RequestParam Boolean isValidation,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
 
 		return new ResponseEntity<CustomerOrder>(
-				(CustomerOrder) quotationDelegate.validateAndCreateQuotation(order),
+				(CustomerOrder) quotationDelegate.validateAndCreateQuotation(order, isValidation),
 				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<CustomerOrder> saveCustomerOrderFromMyJss(@RequestBody CustomerOrder order,
+			@RequestParam Boolean isValidation,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
@@ -1394,13 +1417,15 @@ public class MyJssQuotationController {
 			}
 		}
 
-		return new ResponseEntity<CustomerOrder>(customerOrderService.saveCustomerOrderFromMyJss(order, request),
+		return new ResponseEntity<CustomerOrder>(
+				customerOrderService.saveCustomerOrderFromMyJss(order, isValidation, request),
 				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Quotation> saveQuotationFromMyJss(@RequestBody Quotation order,
+			@RequestParam Boolean isValidation,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
@@ -1418,7 +1443,7 @@ public class MyJssQuotationController {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
 		}
-		return new ResponseEntity<Quotation>(quotationService.saveQuotationFromMyJss(order, request),
+		return new ResponseEntity<Quotation>(quotationService.saveQuotationFromMyJss(order, isValidation, request),
 				HttpStatus.OK);
 	}
 

@@ -33,6 +33,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
+import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -150,6 +151,9 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     QuotationValidationHelper quotationValidationHelper;
+
+    @Autowired
+    MyJssQuotationDelegate myJssQuotationDelegate;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -748,14 +752,20 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Quotation saveQuotationFromMyJss(Quotation quotation, HttpServletRequest request)
+    public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         quotation.setResponsable(employeeService.getCurrentMyJssUser());
         quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         quotation.setQuotationStatus(
                 quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
         quotationValidationHelper.completeIQuotationDocuments(quotation, false);
-        return addOrUpdateQuotationFromUser(quotation);
+        myJssQuotationDelegate.populateBooleansOfProvisions(quotation);
+        quotation = addOrUpdateQuotationFromUser(quotation);
+
+        if (isValidation != null && isValidation)
+            addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
+
+        return quotation;
 
     }
 

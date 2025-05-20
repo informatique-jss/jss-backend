@@ -35,11 +35,7 @@
               "src/assets/css/bootstrap-icons.css"
             ],
             "scripts": [
-              {
-                "input": "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
-                "inject": true,
-                "bundleName": "bootstrap.bundle.min.js"
-              }
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
           },
           "configurations": {

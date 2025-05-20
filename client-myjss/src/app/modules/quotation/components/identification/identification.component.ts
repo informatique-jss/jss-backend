@@ -197,7 +197,7 @@ export class IdentificationComponent implements OnInit {
       if (this.currentUser) {
         if (this.selectedQuotationType.id == quotation.id) {
           this.quotation.isQuotation = true;
-          this.quotationService.saveQuotation(this.quotation).subscribe(response => {
+          this.quotationService.saveQuotation(this.quotation, false).subscribe(response => {
             this.quotation = response;
             this.quotationService.setCurrentDraftQuotationId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
@@ -205,7 +205,7 @@ export class IdentificationComponent implements OnInit {
           })
         } else if (this.selectedQuotationType.id == order.id) {
           this.quotation.isQuotation = false;
-          this.orderService.saveOrder(this.quotation).subscribe(response => {
+          this.orderService.saveOrder(this.quotation, false).subscribe(response => {
             this.quotation = response;
             this.orderService.setCurrentDraftOrderId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);

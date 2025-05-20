@@ -98,6 +98,7 @@ public class Document implements Serializable, IId {
 	@Column(nullable = false)
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isRecipientAffaire;
+
 	@Column(length = 200)
 	private String affaireAddress;
 	@Column(length = 200)
@@ -157,15 +158,19 @@ public class Document implements Serializable, IId {
 	private BillingClosureRecipientType billingClosureRecipientType;
 
 	@Column(length = 200)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String billingLabel;
 
 	@Column(length = 200)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String billingAddress;
 
 	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String billingPostalCode;
 
 	@Column(length = 20)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String cedexComplement;
 
 	@IndexedField
@@ -174,10 +179,12 @@ public class Document implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_city")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private City billingLabelCity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_country")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Country billingLabelCountry;
 
 	private Boolean billingLabelIsIndividual;

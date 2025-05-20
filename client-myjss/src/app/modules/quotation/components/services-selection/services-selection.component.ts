@@ -28,6 +28,7 @@ export class ServicesSelectionComponent implements OnInit {
   quotation: IQuotation | undefined;
   currentUser: Responsable | undefined;
   applyToAllAffaires: boolean = false;
+  isSavingQuotation: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -42,11 +43,13 @@ export class ServicesSelectionComponent implements OnInit {
   servicesForm = this.formBuilder.group({});
 
 
-  ngOnInit() {
-    this.loginService.getCurrentUser().subscribe(response => {
+  async ngOnInit() {
+    await this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
       this.initIQuotation();
     })
+    if (!this.currentUser)
+      this.initIQuotation();
   }
 
   initIQuotation() {
@@ -146,6 +149,7 @@ export class ServicesSelectionComponent implements OnInit {
 
   saveQuotation() {
     if (this.quotation) {
+      this.isSavingQuotation = true;
       if (!this.currentUser) {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
@@ -163,6 +167,7 @@ export class ServicesSelectionComponent implements OnInit {
           }
 
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
+          this.isSavingQuotation = false;
           this.appService.openRoute(undefined, "quotation", undefined);
         });
       } else {
@@ -172,6 +177,7 @@ export class ServicesSelectionComponent implements OnInit {
         }
         combineLatest(promises).subscribe(response => {
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
+          this.isSavingQuotation = false;
           this.appService.openRoute(undefined, "quotation", undefined);
         });
       }

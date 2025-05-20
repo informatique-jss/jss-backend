@@ -54,8 +54,8 @@ export class AppService {
     return;
   }
 
-  openJssRoute(event: any, route: string) {
-    window.open(environment.frontendJssUrl + route);
+  openJssRoute(event: any, route: string, inNewWindows = true) {
+    window.open(environment.frontendJssUrl + route, inNewWindows ? "_blank" : "_self");
   }
 
   openLinkedinJssPage() {

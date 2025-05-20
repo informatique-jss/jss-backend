@@ -72,6 +72,9 @@ public class ServiceServiceImpl implements ServiceService {
     @Autowired
     FormaliteStatusService formaliteStatusService;
 
+    @Autowired
+    PricingHelper pricingHelper;
+
     @Override
     public Service getService(Integer id) {
         Optional<Service> service = serviceRepository.findById(id);
@@ -82,6 +85,17 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public Service addOrUpdateServiceFromUser(Service service) throws OsirisException {
+        addOrUpdateService(service);
+
+        if (service.getAssoAffaireOrder() != null && service.getAssoAffaireOrder().getCustomerOrder() != null)
+            pricingHelper.getAndSetInvoiceItemsForQuotation(service.getAssoAffaireOrder().getCustomerOrder(), true);
+        else if (service.getAssoAffaireOrder() != null && service.getAssoAffaireOrder().getQuotation() != null)
+            pricingHelper.getAndSetInvoiceItemsForQuotation(service.getAssoAffaireOrder().getQuotation(), true);
+        return service;
+    }
+
+    @Override
     public Service addOrUpdateService(Service service) throws OsirisException {
         computeServiceLabel(service);
         if (service.getCustomLabel() != null && service.getCustomLabel().trim().length() == 0)
@@ -94,6 +108,7 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean addOrUpdateServices(List<ServiceType> services, Integer affaireId, Integer assoAffaireOrderId,
             String customLabel)
             throws OsirisException {
@@ -107,7 +122,7 @@ public class ServiceServiceImpl implements ServiceService {
                     customLabel);
             for (Service service : servicesGenerated) {
                 service.setAssoAffaireOrder(assoAffaireOrder);
-                addOrUpdateService(service);
+                addOrUpdateServiceFromUser(service);
                 linkNewServiceWithAsso(service);
             }
         }
@@ -115,19 +130,17 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     private void linkNewServiceWithAsso(Service newService) {
-        for (Service service : newService.getAssoAffaireOrder().getServices()) {
-            for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
-                assoServiceDocument.setService(newService);
-                assoServiceDocumentService.addOrUpdateAssoServiceDocument(assoServiceDocument);
-            }
-            for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
-                assoServiceFieldType.setService(newService);
-                assoServiceFieldTypeService.addOrUpdateServiceFieldType(assoServiceFieldType);
-            }
-            for (Provision provision : service.getProvisions()) {
-                provision.setService(newService);
-                provisionService.addOrUpdateProvision(provision);
-            }
+        for (AssoServiceDocument assoServiceDocument : newService.getAssoServiceDocuments()) {
+            assoServiceDocument.setService(newService);
+            assoServiceDocumentService.addOrUpdateAssoServiceDocument(assoServiceDocument);
+        }
+        for (AssoServiceFieldType assoServiceFieldType : newService.getAssoServiceFieldTypes()) {
+            assoServiceFieldType.setService(newService);
+            assoServiceFieldTypeService.addOrUpdateServiceFieldType(assoServiceFieldType);
+        }
+        for (Provision provision : newService.getProvisions()) {
+            provision.setService(newService);
+            provisionService.addOrUpdateProvision(provision);
         }
     }
 
@@ -393,7 +406,6 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-
     public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) throws OsirisException {
         service = getService(service.getId());
 

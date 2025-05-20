@@ -40,7 +40,8 @@
         </div>
         <!-- User signed in state. Account dropdown on screens > 576px -->
         <div class="dropdown nav " *ngIf="currentUser && currentUser.id">
-          <a class="d-flex align-items-center p-0 user-account" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="d-flex align-items-center p-0 user-account  dropdown-toggle" data-bs-toggle="dropdown"
+            aria-expanded="false">
             <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
             <div class="ps-2 d-none d-md-block">
               <div class="fs-xs lh-1 opacity-60">Bonjour,</div>
@@ -62,7 +63,7 @@
             <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
               bord</h6>
             <ng-container *ngFor="let item of myAccountItems">
-              <a class="dropdown-item" [routerLink]="item.route" *ngIf="item.mainItem==MAIN_ITEM_ACCOUNT">
+              <a class="dropdown-item" [routerLink]="item.route" *ngIf="item.mainItem==MAIN_ITEM_DASHBOARD">
                 <i class="fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
                 {{item.label}}
               </a>

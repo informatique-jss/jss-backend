@@ -30,3 +30,12 @@
 .header-area {
   background-color: white;
 }
+
+.custom-drop {
+  background-color: #1C2D41;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #CCE1FA;
+  color: #1C2D41;
+}
