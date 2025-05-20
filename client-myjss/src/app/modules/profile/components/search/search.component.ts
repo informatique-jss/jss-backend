@@ -12,10 +12,10 @@ export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName:
 
 
 @Component({
-    selector: 'search',
-    templateUrl: './search.component.html',
-    styleUrls: ['./search.component.css'],
-    standalone: false
+  selector: 'search',
+  templateUrl: './search.component.html',
+  styleUrls: ['./search.component.css'],
+  standalone: false
 })
 export class SearchComponent implements OnInit {
 
@@ -62,7 +62,7 @@ export class SearchComponent implements OnInit {
       this.searchObservableRef.unsubscribe();
 
     this.searchInProgress = true;
-    if (this.searchText && this.searchText.length > 2)
+    if (this.searchText && this.searchText.length > 2) {
       this.searchObservableRef = this.indexEntityService.globalSearchForEntity(this.searchText).subscribe(response => {
         this.entities = [];
         for (let foundEntity of response) {
@@ -73,6 +73,9 @@ export class SearchComponent implements OnInit {
         }
         this.searchInProgress = false;
       })
+    } else {
+      this.searchInProgress = false;
+    }
   }
 
   openCustomerOrder(event: any, orderId: number) {
