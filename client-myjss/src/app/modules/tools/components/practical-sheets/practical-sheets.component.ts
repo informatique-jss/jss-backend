@@ -1,9 +1,11 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
+import { Tag } from '../../model/Tag';
 import { MyJssCategoryService } from '../../services/myjss.category.service';
 import { PostService } from '../../services/post.service';
 
@@ -22,7 +24,6 @@ export class PracticalSheetsComponent implements OnInit {
   searchObservableRef: Subscription | undefined;
   searchText: string = "";
   selectedMyJssCategory: MyJssCategory | undefined;
-  selectTest: string = "";
   searchResults: Post[] = [];
 
   secondSearchObservableRef: Subscription | undefined;
@@ -42,11 +43,14 @@ export class PracticalSheetsComponent implements OnInit {
   mostSeenPosts: Post[] = [];
   page: number = 0;
 
+  @ViewChild('searchInput') searchInput: ElementRef | undefined;
+
   constructor(
     private formBuilder: FormBuilder,
     private postService: PostService,
     private appService: AppService,
-    private myJssCategoryService: MyJssCategoryService
+    private myJssCategoryService: MyJssCategoryService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -70,6 +74,11 @@ export class PracticalSheetsComponent implements OnInit {
         );
       }
     });
+
+    let slug = this.activatedRoute.snapshot.params['slug'];
+    if (slug)
+      this.searchText = slug;
+
     this.getTopPosts();
     this.getTendencyPosts();
     this.getMostSeenPosts();
@@ -185,6 +194,12 @@ export class PracticalSheetsComponent implements OnInit {
     return text.replace(regex, `<span style="background-color: yellow;">$1</span>`);
   }
 
+  openTagSearch(tag: Tag, event: any) {
+    if (tag.slug && this.searchInput) {
+      this.searchInput.nativeElement.scrollIntoView({ behavior: 'smooth', block: "center" })
+      this.searchText = tag.slug;
+    }
+  }
 
   /**************** posts carousel ***********************/
   getTopPosts() {

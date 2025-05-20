@@ -5,7 +5,7 @@
       <h1 class="secondary-heading mt-2 mb-5">Les fiches pratiques de MyJSS</h1>
       <h3 class="secondary-heading my-5">Quelles informations recherchez-vous ?</h3>
     </div>
-    <div class="w-100 justify-content-between my-3">
+    <div class="w-100 justify-content-between my-3" #searchInput>
       <div class="col-12">
         <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
           <div class="col">
@@ -95,7 +95,8 @@
               <div class="d-flex align-items-center mb-4 mt-n1">
                 <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
                 <span class="fs-xs opacity-20 mx-3">|</span>
-                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
+                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
+                  (click)="openTagSearch(post.postTags[0], $event)">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
                 <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
@@ -154,7 +155,8 @@
             <div class="d-flex align-items-center mb-4 mt-n1">
               <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
               <span class="fs-xs opacity-20 mx-3">|</span>
-              <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
+              <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
+                (click)="openTagSearch(post.postTags[0], $event)">{{post.postTags[0].name}}</a>
             </div>
             <h3 class="h4 card-title card-title-truncate">
               <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
@@ -214,7 +216,8 @@
               <div class="d-flex align-items-center mb-4 mt-n1">
                 <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
                 <span class="fs-xs opacity-20 mx-3">|</span>
-                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
+                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
+                  (click)="openTagSearch(post.postTags[0], $event)">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
                 <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>

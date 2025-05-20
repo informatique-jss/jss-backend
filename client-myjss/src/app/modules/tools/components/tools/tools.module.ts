@@ -15,6 +15,7 @@ const routes: Routes = [
   {
     path: 'tools', component: ToolsComponent,
     children: [
+      { path: 'practical-sheets/:slug', component: PracticalSheetsComponent },
       { path: 'practical-sheets', component: PracticalSheetsComponent },
       { path: 'mandatory-documents', component: MandatoryDocumentsComponent },
       { path: 'webinars', component: WebinarsComponent },
