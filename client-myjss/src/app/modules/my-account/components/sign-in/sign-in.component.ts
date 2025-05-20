@@ -32,7 +32,7 @@ export class SignInComponent implements OnInit {
       this.loginService.sendConnectionLink(this.inputMail).subscribe(response => {
         let from = this.activatedRoute.snapshot.params['from'];
         if (from && from == 'jss')
-          this.appService.openJssRoute(undefined, "");
+          this.appService.openJssRoute(undefined, "", false);
         else
           this.appService.openRoute(undefined, '/', undefined);
       })

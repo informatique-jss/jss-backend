@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +75,14 @@ public class CityServiceImpl implements CityService {
     public List<City> getCitiesByCountryAndPostalCode(Integer countryId, String postalCode) {
         Country country = countryService.getCountry(countryId);
         return cityRepository.findByCountryAndPostalCode(country, postalCode);
+    }
+
+    @Override
+    public Page<City> getCitiesByLabelAndCountryAndPostalCode(String label, Integer countryId, String postalCode,
+            Pageable pageable) {
+        Country country = countryService.getCountry(countryId);
+        return cityRepository.findByLabelContainingIgnoreCaseAndCountryAndPostalCodeContainingIgnoreCase(label, country,
+                postalCode, pageable);
     }
 
     @Override

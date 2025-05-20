@@ -11,7 +11,10 @@ export interface Service extends IAttachment {
   assoServiceFieldTypes: AssoServiceFieldType[];
   hasMissingInformations: boolean;
   serviceStatus: string;
-  servicePrice: number;
+  serviceTotalPrice: number;
+  servicePreTaxPrice: number;
+  serviceVatPrice: number;
+  serviceDiscountAmount: number;
   confrereLabel: string;
   lastMissingAttachmentQueryDateTime: Date;
   provisions: Provision[];

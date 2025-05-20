@@ -15,6 +15,8 @@ export class QuotationComponent implements OnInit {
 
   selectedTab: MenuItem | null = null;
 
+  maxAccessibleStepIndex: number | null = parseInt(this.quotationService.getCurrentDraftQuotationStep() != null ? this.quotationService.getCurrentDraftQuotationStep()! : "0");
+
   constructor(
     private appService: AppService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -49,6 +51,23 @@ export class QuotationComponent implements OnInit {
     }
     return false;
   }
+
+  isStepAccessible(item: MenuItem): boolean {
+    const index = this.myJssQuotationItems.findIndex(i => i === item);
+    if (this.quotationService.getCurrentDraftQuotationStep() != null) {
+      let currentStep = this.quotationService.getCurrentDraftQuotationStep()!;
+      return index <= this.myJssQuotationItems.map(e => e.route).indexOf(currentStep);
+    }
+    return false;
+  }
+
+  goToStep(item: MenuItem) {
+    if (this.isStepAccessible(item)) {
+      this.quotationService.setCurrentDraftQuotationStep(item);
+      this.appService.openRoute(undefined, item.route, undefined);
+    }
+  }
+
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();

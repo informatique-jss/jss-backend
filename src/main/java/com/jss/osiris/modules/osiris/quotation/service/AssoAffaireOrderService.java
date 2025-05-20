@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResul
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
-import com.jss.osiris.modules.osiris.quotation.model.Service;
 
 public interface AssoAffaireOrderService {
         public List<AssoAffaireOrder> getAssoAffaireOrders();
@@ -44,10 +42,8 @@ public interface AssoAffaireOrderService {
         public List<AssoAffaireOrder> getAssoAffaireOrderForCustomerOrder(CustomerOrder customerOrder)
                         throws OsirisException;
 
-        public boolean isServiceHasMissingInformations(Service service);
-
         public List<AssoAffaireOrder> getAssoAffaireOrderForQuotation(Quotation quotation) throws OsirisException;
 
-        public BigDecimal getServicePrice(Service service, boolean withDiscount, boolean withVat);
-
+        public List<AssoAffaireOrder> populateTransientField(List<AssoAffaireOrder> assoAffaireOrders)
+                        throws OsirisException;
 }

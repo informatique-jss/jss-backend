@@ -18,10 +18,10 @@ import { MailComputeResultService } from '../../services/mail.compute.result.ser
 declare var bootstrap: any;
 
 @Component({
-    selector: 'app-orders',
-    templateUrl: './orders.component.html',
-    styleUrls: ['./orders.component.css'],
-    standalone: false
+  selector: 'app-orders',
+  templateUrl: './orders.component.html',
+  styleUrls: ['./orders.component.css'],
+  standalone: false
 })
 export class OrdersComponent implements OnInit {
 

@@ -51,7 +51,8 @@ public class AssoServiceDocument implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Attachment> attachments;
 
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Boolean isMandatory;
 
 	@Column(columnDefinition = "TEXT")

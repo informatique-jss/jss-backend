@@ -6,6 +6,7 @@ import { TimeFormatPipe } from '../../../libs/TimeFormatPipe';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { AuthorHubComponent } from '../author-hub/author-hub.component';
+import { AvatarComponent } from '../avatar/avatar.component';
 import { CategoryHubComponent } from '../category-hub/category-hub.component';
 import { ContributeComponent } from '../contribute/contribute.component';
 import { DepartmentHubComponent } from '../department-hub/department-hub.component';
@@ -79,7 +80,8 @@ const routes: Routes = [
     PodcastsComponent,
     SubscriptionComponent,
     KioskComponent,
-    ContributeComponent
+    ContributeComponent,
+    AvatarComponent
   ],
   exports: [
     HeaderComponent,

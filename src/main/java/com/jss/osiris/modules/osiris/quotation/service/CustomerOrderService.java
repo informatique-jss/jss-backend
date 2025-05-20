@@ -12,6 +12,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -131,9 +132,9 @@ public interface CustomerOrderService {
                         OsirisValidationException, OsirisDuplicateException;
 
         public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
-                        String sortBy);
+                        String sortBy) throws OsirisException;
 
-        public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire);
+        public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException;
 
         public List<Payment> getApplicablePaymentsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
@@ -144,15 +145,24 @@ public interface CustomerOrderService {
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
                         List<Responsable> responsables);
 
-        public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, HttpServletRequest request)
+        public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
+                        HttpServletRequest request)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
-        public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders);
+        public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
+                        throws OsirisException;
 
-        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder);
+        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+                        throws OsirisException;
 
         public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
-                        List<CustomerOrderStatus> status, List<Employee> invoicingEmployees);
+                        List<CustomerOrderStatus> status, List<Employee> invoicingEmployees) throws OsirisException;
+
+        public Boolean setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
+
+        public Boolean setDocumentOnOrder(CustomerOrder customerOrder, Document document)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public void assignInvoicingEmployee(CustomerOrder customerOrder, Employee employee)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
@@ -164,6 +174,6 @@ public interface CustomerOrderService {
 
         public CustomerOrder assignNewCustomerOrderToBilled();
 
-        public InvoicingStatistics getInvoicingStatistics();
+        public InvoicingStatistics getInvoicingStatistics() throws OsirisException;
 
 }

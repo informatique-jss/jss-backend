@@ -77,26 +77,24 @@
         </div>
         <!-- Stacked checkboxes -->
         <div class="d-flex flex-column flex-md-row flex-wrap">
-          <ng-container *ngFor="let service of selectedServiceFamily.services">
+          <ng-container *ngFor="let service of selectedServiceFamily.services ; let indexService  =index">
             <div class="form-check service-item m-1"
               *ngIf="service.customLabel.toLocaleLowerCase().indexOf(searchtext.toLocaleLowerCase())>=0 && selectedAssoIndex!=null">
-              <input class="form-check-input" type="checkbox" id="ex-check-1"
+              <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
                 (click)="removeServiceFromCurrentAffaire(service)" *ngIf="getServiceIndexInCurrentAffaire(service)>=0"
                 checked>
-              <input class="form-check-input" type="checkbox" id="ex-check-1"
+              <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
                 (click)="addServiceToCurrentAffaire(service)" *ngIf="getServiceIndexInCurrentAffaire(service)<0">
-              <label class="form-check-label" for="ex-check-1">{{service.customLabel }}</label>
+              <label class="form-check-label" [for]="'ex-check-'+indexService">{{service.customLabel }}</label>
             </div>
           </ng-container>
         </div>
       </div>
       <div class="text-end">
-        <button type="button" class="btn btn-outline-primary rounded-1  mt-5 ms-auto"
+        <button type="button" class="btn btn-outline-primary rounded-1 mt-5 ms-auto"
           [ngClass]="{'btn-secondary' : applyToAllAffaires}" (click)="applyToAllAffaires=!applyToAllAffaires"
-          *ngIf="quotation && quotation.assoAffaireOrders.length>1"><i class="ai-check ms-2"
-            *ngIf="applyToAllAffaires"></i> Appliquer mes choix
-          à
-          toutes les affaires</button>
+          *ngIf="quotation && quotation.assoAffaireOrders.length>1"><i class="ai-check me-2"
+            *ngIf="applyToAllAffaires"></i> Appliquer mes choix à toutes les affaires</button>
       </div>
     </div>
   </section>
@@ -131,6 +129,8 @@
 
     <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center" *ngIf="canSaveQuotation()"
       (click)="saveQuotation()">
+      <span class="spinner-grow spinner-grow-sm me-2  text-body-secondary" role="status" aria-hidden="true"
+        *ngIf="isSavingQuotation"></span>
       <span class="d-none d-sm-inline me-2">Étape suivante</span>
       <i class="ai-arrow-right"></i>
     </button>

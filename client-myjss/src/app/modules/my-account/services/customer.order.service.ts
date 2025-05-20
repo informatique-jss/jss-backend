@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from '../../../libs/appRest.service';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { CustomerOrder } from '../model/CustomerOrder';
+import { Document } from '../model/Document';
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +33,24 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.get(new HttpParams().set("idQuotation", idQuotation), 'quotation/order');
   }
 
-  saveOrder(order: IQuotation) {
-    return this.postItem(new HttpParams(), 'order/user/save', order);
+  saveOrder(order: IQuotation, isValidation: boolean) {
+    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/user/save', order);
+  }
+
+  saveFinalOrder(order: CustomerOrder, isValidation: boolean) {
+    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/save-order', order);
+  }
+
+  completePricingOfOrder(customerOrder: CustomerOrder, isEmergency: boolean) {
+    return this.postItem(new HttpParams().set("isEmergency", isEmergency), 'order/pricing', customerOrder);
+  }
+
+  setEmergencyOnOrder(orderId: number, isEmergency: boolean) {
+    return this.get(new HttpParams().set("orderId", orderId).set("isEmergency", isEmergency), 'order/emergency');
+  }
+
+  setDocumentOnOrder(orderId: number, document: Document) {
+    return this.postItem(new HttpParams().set("orderId", orderId), 'order/document', document);
   }
 
   getCurrentDraftOrderId() {

@@ -28,6 +28,7 @@ export class ServicesSelectionComponent implements OnInit {
   quotation: IQuotation | undefined;
   currentUser: Responsable | undefined;
   applyToAllAffaires: boolean = false;
+  isSavingQuotation: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -42,12 +43,13 @@ export class ServicesSelectionComponent implements OnInit {
   servicesForm = this.formBuilder.group({});
 
 
-  ngOnInit() {
-    this.loginService.getCurrentUser().subscribe(response => {
+  async ngOnInit() {
+    await this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
       this.initIQuotation();
     })
-    this.initIQuotation();
+    if (!this.currentUser)
+      this.initIQuotation();
   }
 
   initIQuotation() {
@@ -81,6 +83,13 @@ export class ServicesSelectionComponent implements OnInit {
         this.serviceFamilies = response;
         this.selectedServiceFamily = this.serviceFamilies[0];
       });
+
+    if (this.quotation && this.quotation.assoAffaireOrders) {
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+        if (this.selectedServiceTypes[i] == null)
+          this.selectedServiceTypes[i] = [];
+      }
+    }
   }
 
   selectCard(affaireId: number) {
@@ -92,36 +101,55 @@ export class ServicesSelectionComponent implements OnInit {
   }
 
   addServiceToCurrentAffaire(service: ServiceType) {
-    if (this.selectedAssoIndex) {
-      if (!this.selectedServiceTypes[this.selectedAssoIndex])
-        this.selectedServiceTypes[this.selectedAssoIndex] = [];
-      this.selectedServiceTypes[this.selectedAssoIndex].push(service);
+    if (this.applyToAllAffaires) {
+      if (this.quotation && this.quotation.assoAffaireOrders) {
+        for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+          this.selectedServiceTypes[i].push(service);
+        }
+      }
+    } else {
+      if (this.selectedAssoIndex != null && this.selectedAssoIndex >= 0) {
+        if (!this.selectedServiceTypes[this.selectedAssoIndex])
+          this.selectedServiceTypes[this.selectedAssoIndex] = [];
+        this.selectedServiceTypes[this.selectedAssoIndex].push(service);
+      }
     }
   }
 
   removeServiceFromCurrentAffaire(service: ServiceType) {
-    if (this.selectedAssoIndex) {
-      if (this.selectedServiceTypes[this.selectedAssoIndex] && this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) >= 0)
-        this.selectedServiceTypes[this.selectedAssoIndex].splice(this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service), 1);
+    if (this.applyToAllAffaires) {
+      if (this.quotation && this.quotation.assoAffaireOrders) {
+        for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+          if (this.selectedServiceTypes[i] && this.selectedServiceTypes[i].indexOf(service) >= 0)
+            this.selectedServiceTypes[i].splice(this.selectedServiceTypes[i].indexOf(service), 1);
+        }
+      }
+    } else {
+      if (this.selectedAssoIndex != null && this.selectedAssoIndex >= 0) {
+        if (this.selectedServiceTypes[this.selectedAssoIndex] && this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) >= 0)
+          this.selectedServiceTypes[this.selectedAssoIndex].splice(this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service), 1);
+      }
     }
   }
 
   getServiceIndexInCurrentAffaire(service: ServiceType): number {
-    if (this.quotation && this.selectedAssoIndex != null)
-      return this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service);
+    if (this.quotation && this.selectedAssoIndex != null && this.selectedServiceTypes.length > 0)
+      if (this.selectedServiceTypes[this.selectedAssoIndex] != null)
+        return this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service);
     return -1;
   }
 
   canSaveQuotation() {
-    if (this.quotation)
-      for (let asso of this.quotation.assoAffaireOrders)
-        if (!asso.services || asso.services.length == 0)
+    if (this.quotation && this.quotation.assoAffaireOrders)
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++)
+        if (!this.selectedServiceTypes[i] || this.selectedServiceTypes[i].length < 1)
           return false;
     return true;
   }
 
   saveQuotation() {
     if (this.quotation) {
+      this.isSavingQuotation = true;
       if (!this.currentUser) {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
@@ -137,6 +165,10 @@ export class ServicesSelectionComponent implements OnInit {
           } else {
             this.orderService.setCurrentDraftOrder(this.quotation!);
           }
+
+          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
+          this.isSavingQuotation = false;
+          this.appService.openRoute(undefined, "quotation", undefined);
         });
       } else {
         let promises = [];
@@ -145,6 +177,7 @@ export class ServicesSelectionComponent implements OnInit {
         }
         combineLatest(promises).subscribe(response => {
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
+          this.isSavingQuotation = false;
           this.appService.openRoute(undefined, "quotation", undefined);
         });
       }

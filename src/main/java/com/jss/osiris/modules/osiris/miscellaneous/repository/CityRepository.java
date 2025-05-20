@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.miscellaneous.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +24,9 @@ public interface CityRepository extends QueryCacheCrudRepository<City, Integer> 
     List<City> findByLabelContainingIgnoreCase(String label);
 
     List<City> findByCountryAndPostalCode(Country country, String postalCode);
+
+    Page<City> findByLabelContainingIgnoreCaseAndCountryAndPostalCodeContainingIgnoreCase(String label, Country country,
+            String postalCode, Pageable pageable);
 
     List<City> findByCountry(Country country);
 }

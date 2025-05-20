@@ -1,11 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { AppService } from '../../../../libs/app.service';
+import { ConstantService } from '../../../../libs/constant.service';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { Affaire } from '../../../my-account/model/Affaire';
+import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
+import { Provision } from '../../../my-account/model/Provision';
 import { Service } from '../../../my-account/model/Service';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -32,22 +35,18 @@ import { NoticeTypeService } from '../../services/notice.type.service';
 })
 export class RequiredInformationComponent implements OnInit {
 
+  @ViewChild('confirmBackModal') confirmBackModal!: ElementRef<HTMLDivElement>;
 
-  selectedAssoIndex: number | null = null;
-  selectedServiceIndex: number | null = null;
+  CONFIER_ANNONCE_AU_JSS: string = "Confier l'annonce légale au JSS";
+
+  selectedAssoIndex: number | null = 0;
+  selectedServiceIndex: number | null = 0;
   selectedService: Service | null = null;
   currentUser: Responsable | undefined;
   quotation: IQuotation | undefined;
 
   affaire: Affaire = { isIndividual: false } as Affaire;
 
-  announcementPublicationDate: Date = new Date();
-  announcementRedactedByJss: Boolean = true;
-  announcementProofReading: Boolean | undefined;
-  announcementNoticeFamily: NoticeTypeFamily | undefined;
-  announcementNoticeType: NoticeType | undefined;
-  announcementDepartment: Department | undefined;
-  announcementNotice: string | undefined;
   announcementNoticeInit: string = "";
 
   noticeTypes: NoticeType[] | undefined;
@@ -56,6 +55,11 @@ export class RequiredInformationComponent implements OnInit {
   civilities: Civility[] | undefined;
 
   minDatePublication: Date = new Date();
+
+  isDoNotGenerateAnnouncement: boolean = true;
+  selectionRedaction: string[] = [this.CONFIER_ANNONCE_AU_JSS, "Je m'occupe de la publication de l'annonce légale"];
+  selectedRedaction: string[][] = [];
+  isSaving: boolean = false;
 
   checkedOnce = false;
 
@@ -82,6 +86,7 @@ export class RequiredInformationComponent implements OnInit {
     private noticeTypeService: NoticeTypeService,
     private departmentService: DepartmentService,
     private civilityService: CivilityService,
+    private constantService: ConstantService,
   ) { }
 
   informationForm = this.formBuilder.group({});
@@ -93,8 +98,6 @@ export class RequiredInformationComponent implements OnInit {
     })
     this.initIQuotation();
     this.fetchAnnouncementReferentials();
-
-
   }
 
   initIQuotation() {
@@ -131,8 +134,17 @@ export class RequiredInformationComponent implements OnInit {
             if (serv.provisions && serv.provisions.length > 0) {
               let i = 0;
               for (let provision of serv.provisions) {
-                if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT)
+                if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
                   provision.order = ++i;
+                  if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
+                    this.selectedRedaction[asso.services.indexOf(serv)] = [];
+                  }
+                  this.selectedRedaction[asso.services.indexOf(serv)][serv.provisions.indexOf(provision)] = this.CONFIER_ANNONCE_AU_JSS;
+                  if (!provision.announcement) {
+                    provision.announcement = {} as Announcement;
+                    provision.isRedactedByJss = true;
+                  }
+                }
               }
             }
           }
@@ -156,11 +168,6 @@ export class RequiredInformationComponent implements OnInit {
     if (!this.departments)
       this.departmentService.getDepartments().subscribe(response => {
         this.departments = response.sort((a: Department, b: Department) => a.code.localeCompare(b.code));
-        if (this.departments && this.affaire && this.affaire.city && this.affaire.city.department)
-          for (let department of this.departments)
-            if (department.id == this.affaire.city.department.id) {
-              this.announcementDepartment = department;
-            }
       });
   }
 
@@ -170,20 +177,8 @@ export class RequiredInformationComponent implements OnInit {
     if ((event.target as HTMLElement).closest('.pill')) {
       return;
     }
-    this.selectedAssoIndex = assoIndex;
+    this.moveToService(0, assoIndex);
   }
-
-  selectServiceIndex(newServiceIndex: number, newAssoIndex: number, event: any): void {
-    if (this.selectedAssoIndex !== null && this.selectedServiceIndex !== null && this.quotation) {
-      if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]) {
-        this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe();
-      }
-    }
-
-    this.selectedAssoIndex = newAssoIndex;
-    this.selectedServiceIndex = newServiceIndex;
-  }
-
 
   config = {
     toolbar: ['undo', 'redo', '|', 'fontFamily', 'fontSize', 'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
@@ -203,8 +198,9 @@ export class RequiredInformationComponent implements OnInit {
     }
   } as any;
 
-  onNoticeChange(event: ChangeEvent) {
-    this.announcementNotice = event.editor.getData();
+  onNoticeChange(event: ChangeEvent, provision: Provision) {
+    if (provision && provision.announcement)
+      provision.announcement.notice = event.editor.getData();
   }
 
   onIsCompleteChange(event: boolean, selectedAssoIndex: number, selectedServiceIndex: number, assoServiceDocumentIndex: number, assoServiceDocument: AssoServiceDocument) {
@@ -225,7 +221,6 @@ export class RequiredInformationComponent implements OnInit {
         this.quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments[assoServiceDocumentIndex] = response;
       }
     });
-
   }
 
   canSaveQuotation() {
@@ -236,43 +231,81 @@ export class RequiredInformationComponent implements OnInit {
     return true;
   }
 
-  saveQuotation() {
-    if (this.quotation) {
-      if (!this.currentUser) {
+  saveFieldsValue() {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
+      if (this.currentUser) {
+        this.isSaving = true;
+        this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe(response => {
+          this.isSaving = false;
+        });
+
+      } else {
         if (this.quotation.isQuotation) {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
         } else {
           this.orderService.setCurrentDraftOrder(this.quotation);
         }
       }
+    }
+  }
+
+  moveToService(newServiceIndex: number, newAssoIndex: number) {
+    if (!this.quotation)
+      return;
+
+    // move backward
+    if (newServiceIndex < 0) {
+      newAssoIndex = newAssoIndex - 1;
+    }
+
+    if (newAssoIndex < 0) {
+      this.saveFieldsValue();
+      this.goBackQuotationModale();
+      return;
+    }
+
+    // move forward
+    if (newServiceIndex >= this.quotation.assoAffaireOrders[newAssoIndex].services.length) {
+      newAssoIndex = newAssoIndex + 1;
+      newServiceIndex = 0;
+    }
+
+    if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
+      this.saveFieldsValue();
       this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
       this.appService.openRoute(undefined, "quotation", undefined);
+      return;
     }
+
+    this.saveFieldsValue();
+    this.selectedAssoIndex = null;
+    this.selectedServiceIndex = null;
+
+    setTimeout(() => {
+      this.selectedAssoIndex = newAssoIndex;
+      this.selectedServiceIndex = newServiceIndex;
+    }, 0);
   }
 
-  saveFieldsValue() {
-    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
-      this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe(response => {
-        if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! + 1])
-          this.selectedServiceIndex!++;
-
-        else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! + 1])
-          this.selectedAssoIndex!++;
-
-        else {
-          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-          this.appService.openRoute(undefined, "quotation", undefined);
-        }
-      });
-
-    } else if (this.quotation) {
-      this.selectedAssoIndex = 0;
-      this.selectedServiceIndex = 0;
-    }
+  goBackQuotationModale() {
+    const modalElement = this.confirmBackModal.nativeElement;
+    const modal = new (window as any).bootstrap.Modal(modalElement);
+    modal.show();
   }
 
-  goBackQuotation() {
+  confirmGoBack() {
     this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
     this.appService.openRoute(undefined, "quotation", undefined);
+  }
+
+  changeDoNotGenerateAnnouncement(selection: string, provision: Provision) {
+    provision.isDoNotGenerateAnnouncement = true;
+    if (selection != this.CONFIER_ANNONCE_AU_JSS) {
+      this.isDoNotGenerateAnnouncement = false;
+      provision.isDoNotGenerateAnnouncement = false;
+    } else {
+      this.isDoNotGenerateAnnouncement = true;
+      provision.isDoNotGenerateAnnouncement = true;
+    }
   }
 }

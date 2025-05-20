@@ -18,6 +18,7 @@ export abstract class AppRestService<T> {
 
   successfulToken: HttpContextToken<string> = new HttpContextToken<string>(() => "");
   errorToken: HttpContextToken<string> = new HttpContextToken<string>(() => "");
+  doNotRedirectOnNonAuthenticatedToken: HttpContextToken<string> = new HttpContextToken<string>(() => "");
 
   /**
    * Use it carrefully ! Cache is clientside and is cleared only at each website refresh.
@@ -81,9 +82,9 @@ export abstract class AppRestService<T> {
     return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<T>;
   }
 
-  get(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<T> {
+  get(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = "", doNotRedirectOnNonAuthenticated: boolean = false): Observable<T> {
     let context: HttpContext = new HttpContext();
-    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage).set(this.doNotRedirectOnNonAuthenticatedToken, doNotRedirectOnNonAuthenticated + "");
     return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<T>;
   }
 

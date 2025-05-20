@@ -13,12 +13,15 @@ export class CityService extends AppRestService<City> {
     super(http, "quotation");
   }
 
-  getCitiesFilteredByCountryAndNameAndPostalCode(country: Country, postalCode: string) {
+  getCitiesFilteredByNameAndCountryAndPostalCode(name: string, country: Country, postalCode: string, page: number, pageSize: number) {
     let params = new HttpParams();
+    params = params.set("name", name!);
     params = params.set("countryId", country.id!);
     params = params.set("postalCode", postalCode);
+    params = params.set("page", page);
+    params = params.set("size", pageSize);
 
-    return this.getList(params, "cities/search/country/postal-code");
+    return this.getPagedList(params, "cities/search/name/country/postal-code");
   }
 
   getCitiesByCountry(country: Country) {

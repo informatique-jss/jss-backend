@@ -1,0 +1,55 @@
+.image-height {
+    height: 245px;
+    width: 245px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+}
+
+.card:hover {
+    /* override quotation-component just for the page */
+    opacity: 1;
+}
+
+.cart-panel {
+    background-color: white;
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+/* Only for mobile */
+button.btn-icon {
+    z-index: 1100;
+}
+
+.btn-close {
+    color: var(--ar-secondary);
+    z-index: 1110;
+}
+
+.background-right {
+    z-index: -1;
+    background-color: var(--ar-gray-200);
+}
+
+hr {
+    color: var(--ar-gray-500);
+}
+
+:host ::ng-deep generic-input.white-form-control .form-control {
+    color: var(--ar-gray-300);
+}
+
+:host ::ng-deep generic-input.white-form-control .form-control:focus {
+    color: var(--ar-gray-200);
+}
+
+:host ::ng-deep generic-input.white-form-control i {
+    color: var(--ar-gray-300);
+}
+
+.btn-outline-secondary {
+    background-color: var(--ar-light);
+}

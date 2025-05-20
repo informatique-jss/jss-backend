@@ -36,7 +36,4 @@ export abstract class GenericRadioGroupComponent<T> extends GenericFormComponent
 
   abstract initTypes(): void;
 
-  getPreviewActionLinkFunction(entity: T): string[] | undefined {
-    return undefined;
-  }
 }

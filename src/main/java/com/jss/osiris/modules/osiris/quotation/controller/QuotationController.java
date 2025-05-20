@@ -50,7 +50,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CivilityService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
@@ -283,9 +282,6 @@ public class QuotationController {
 
   @Autowired
   CustomerOrderService customerOrderService;
-
-  @Autowired
-  ConstantService constantService;
 
   @Autowired
   AssoAffaireOrderService assoAffaireOrderService;

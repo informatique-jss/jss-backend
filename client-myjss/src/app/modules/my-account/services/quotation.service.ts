@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from '../../../libs/appRest.service';
 import { MenuItem } from '../../general/model/MenuItem';
 import { IQuotation } from '../../quotation/model/IQuotation';
+import { Document } from '../model/Document';
 import { Quotation } from '../model/Quotation';
 
 @Injectable({
@@ -25,8 +26,24 @@ export class QuotationService extends AppRestService<Quotation> {
     return this.get(new HttpParams().set("idCustomerOrder", idCustomerOrder), 'order/quotation');
   }
 
-  saveQuotation(quotation: IQuotation) {
-    return this.postItem(new HttpParams(), 'quotation/user/save', quotation);
+  saveQuotation(quotation: IQuotation, isValidation: boolean) {
+    return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/user/save', quotation);
+  }
+
+  saveFinalQuotation(quotation: Quotation, isValidation: boolean) {
+    return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/save-order', quotation);
+  }
+
+  completePricingOfQuotation(quotation: Quotation, isEmergency: boolean) {
+    return this.postItem(new HttpParams().set("isEmergency", isEmergency), 'quotation/pricing', quotation);
+  }
+
+  setEmergencyOnQuotation(quotationId: number, isEmergency: boolean) {
+    return this.get(new HttpParams().set("quotationId", quotationId).set("isEmergency", isEmergency), 'quotation/emergency');
+  }
+
+  setDocumentOnQuotation(quotationId: number, document: Document) {
+    return this.postItem(new HttpParams().set("orderId", quotationId), 'quotation/document', document);
   }
 
   getCurrentDraftQuotationId() {
@@ -55,4 +72,19 @@ export class QuotationService extends AppRestService<Quotation> {
     return undefined;
   }
 
+  cleanStorageData() {
+    let allItems = localStorage as any;
+    if (allItems)
+      for (let key in allItems)
+        if (key && key.indexOf('current-draft-quotation-id') >= 0)
+          localStorage.removeItem(key);
+        else if (key && key.indexOf('current-draft-quotation') >= 0)
+          localStorage.removeItem(key);
+        else if (key && key.indexOf('current-draft-quotation-step-route') >= 0)
+          localStorage.removeItem(key);
+        else if (key && key.indexOf('current-draft-order-id') >= 0)
+          localStorage.removeItem(key);
+        else if (key && key.indexOf('current-draft-order') >= 0)
+          localStorage.removeItem(key);
+  }
 }

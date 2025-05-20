@@ -7,11 +7,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +39,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.quotation.controller.model.DashboardUserStatistics;
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsService;
+import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -89,7 +96,9 @@ import com.jss.osiris.modules.osiris.quotation.service.ServiceFieldTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
+import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.service.BillingLabelTypeService;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -137,6 +146,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	DocumentService documentService;
+
+	@Autowired
+	BillingLabelTypeService billingLabelTypeService;
 
 	@Autowired
 	ConstantService constantService;
@@ -189,6 +201,9 @@ public class MyJssQuotationController {
 	@Autowired
 	ServiceFieldTypeService serviceFieldTypeService;
 
+	@Autowired
+	MyJssQuotationDelegate quotationDelegate;
+
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
 	private LocalDateTime lastFloodFlush = LocalDateTime.now();
@@ -218,7 +233,7 @@ public class MyJssQuotationController {
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUser(
 			@RequestBody List<String> customerOrderStatus, @RequestParam Integer page, @RequestParam String sortBy)
-			throws OsirisClientMessageException {
+			throws OsirisException {
 		if (customerOrderStatus == null || customerOrderStatus.size() == 0)
 			return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
 
@@ -237,7 +252,7 @@ public class MyJssQuotationController {
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUserAndAffaire(@RequestParam Integer idAffaire,
 			HttpServletRequest request)
-			throws OsirisClientMessageException {
+			throws OsirisException {
 		detectFlood(request);
 		if (idAffaire == null)
 			return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
@@ -308,25 +323,92 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/order")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<CustomerOrder> getCustomerOrder(@RequestParam Integer customerOrderId)
-			throws OsirisClientMessageException {
+			throws OsirisException {
 
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
 		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
 			return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
 
-		return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+		return new ResponseEntity<CustomerOrder>(
+				customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrder), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/order/emergency")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> setEmergencyOnOrder(@RequestParam Integer orderId,
+			@RequestParam Boolean isEmergency, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+
+		detectFlood(request);
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(orderId);
+
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		return new ResponseEntity<Boolean>(customerOrderService.setEmergencyOnOrder(customerOrder, isEmergency),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/order/document")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> setDocumentOnOrder(@RequestParam Integer orderId,
+			@RequestBody Document document, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(orderId);
+
+		document = quotationValidationHelper.validateDocument(document);
+
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		return new ResponseEntity<Boolean>(customerOrderService.setDocumentOnOrder(customerOrder, document),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/quotation/emergency")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> setEmergencyOnQuotation(@RequestParam Integer quotationId,
+			@RequestParam Boolean isEmergency, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		Quotation quotation = quotationService.getQuotation(quotationId);
+
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		return new ResponseEntity<Boolean>(quotationService.setEmergencyOnQuotation(quotation, isEmergency),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/quotation/document")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> setDocumentOnQuotation(@RequestParam Integer quotationId,
+			@RequestBody Document document, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		Quotation quotation = quotationService.getQuotation(quotationId);
+
+		document = quotationValidationHelper.validateDocument(document);
+
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		return new ResponseEntity<Boolean>(quotationService.setDocumentOnOrder(quotation, document),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/quotation")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Quotation> getQuotation(@RequestParam Integer quotationId)
-			throws OsirisClientMessageException {
+			throws OsirisException {
 
 		Quotation quotation = quotationService.getQuotation(quotationId);
 		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
 			return new ResponseEntity<Quotation>(new Quotation(), HttpStatus.OK);
 
-		return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+		return new ResponseEntity<Quotation>(quotationService.completeAdditionnalInformationForQuotation(quotation),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/service/provision/attachments")
@@ -353,9 +435,33 @@ public class MyJssQuotationController {
 		if (attachment == null)
 			throw new OsirisValidationException("service");
 
-		if (attachment.getQuotation() != null
-				&& myJssQuotationValidationHelper.canSeeQuotation(attachment.getQuotation())) {
+		if ((attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation() != null
+				&& myJssQuotationValidationHelper.canSeeQuotation(
+						attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation()))
+				|| (attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getCustomerOrder() != null
+						&& myJssQuotationValidationHelper.canSeeQuotation(attachment.getAssoServiceDocument()
+								.getService().getAssoAffaireOrder().getCustomerOrder()))) {
+
 			attachmentService.definitivelyDeleteAttachment(attachment);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/service/delete")
+	public ResponseEntity<Boolean> deleteService(@RequestParam Integer idService)
+			throws OsirisValidationException {
+
+		Service service = serviceService.getService(idService);
+		if (service == null)
+			throw new OsirisValidationException("service");
+
+		if ((service.getAssoAffaireOrder().getQuotation() != null
+				&& myJssQuotationValidationHelper.canSeeQuotation(service.getAssoAffaireOrder().getQuotation()))
+				|| (service.getAssoAffaireOrder().getCustomerOrder() != null && myJssQuotationValidationHelper
+						.canSeeQuotation(service.getAssoAffaireOrder().getCustomerOrder()))) {
+			serviceService.deleteServiceFromUser(service);
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
 
@@ -365,7 +471,7 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/affaire/attachments")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForAffaire(@RequestParam Integer idAffaire)
-			throws OsirisClientMessageException {
+			throws OsirisException {
 
 		if (idAffaire == null)
 			return new ResponseEntity<List<Attachment>>(new ArrayList<Attachment>(), HttpStatus.OK);
@@ -754,6 +860,13 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/billing-label-types")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<BillingLabelType>> getBillingLabels() {
+		return new ResponseEntity<List<BillingLabelType>>(billingLabelTypeService.getBillingLabelTypes(),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/quotation/documents")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<Document>> getDocumentForQuotation(@RequestParam Integer idQuotation)
@@ -1063,7 +1176,7 @@ public class MyJssQuotationController {
 			}
 		}
 
-		serviceService.addOrUpdateService(serviceFetched);
+		serviceService.addOrUpdateServiceFromUser(serviceFetched);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
@@ -1173,16 +1286,22 @@ public class MyJssQuotationController {
 		return new ResponseEntity<List<Country>>(countryService.getCountries(), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/cities/search/country/postal-code")
+	@GetMapping(inputEntryPoint + "/cities/search/name/country/postal-code")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<City>> getCitiesByCountryAndPostalCode(@RequestParam Integer countryId,
-			@RequestParam String postalCode, HttpServletRequest request) {
+	public ResponseEntity<Page<City>> getCitiesByNameAndCountryAndPostalCode(@RequestParam String name,
+			@RequestParam Integer countryId, @RequestParam String postalCode, @RequestParam Integer page,
+			@RequestParam Integer size, HttpServletRequest request) {
 		detectFlood(request);
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.ASC, "label"));
+
 		Country country = countryService.getCountry(countryId);
 		if (country == null)
-			return new ResponseEntity<List<City>>(new ArrayList<City>(), HttpStatus.OK);
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
-		return new ResponseEntity<List<City>>(cityService.getCitiesByCountryAndPostalCode(countryId, postalCode),
+		return new ResponseEntity<Page<City>>(
+				cityService.getCitiesByLabelAndCountryAndPostalCode(name, countryId, postalCode, pageable),
 				HttpStatus.OK);
 	}
 
@@ -1206,7 +1325,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/civilities")
-	@JsonView(JacksonViews.MyJssListView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<Civility>> getCivilities(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<Civility>>(civilityService.getCivilities(), HttpStatus.OK);
@@ -1227,49 +1346,59 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
-	// @PostMapping(inputEntryPoint + "/order/user/pricing")
-	// @JsonView(JacksonViews.MyJssView.class)
-	// public ResponseEntity<UserCustomerOrder>
-	// completePricingOfUserCustomerOrder(@RequestBody UserCustomerOrder order,
-	// HttpServletRequest request)
-	// throws OsirisValidationException, OsirisException {
-	// detectFlood(request);
-	// if (order.getBillingDocument() == null || order.getServiceTypes() == null
-	// || order.getServiceTypes().size() == 0)
-	// return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(),
-	// HttpStatus.OK);
+	@PostMapping(inputEntryPoint + "/order/pricing")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<CustomerOrder> completePricingOfOrder(@RequestBody CustomerOrder customerOrder,
+			@RequestParam Boolean isEmergency, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
 
-	// for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
-	// if (serviceTypeChosen.getAffaire().getId() == null &&
-	// (serviceTypeChosen.getAffaire().getCity() == null
-	// || serviceTypeChosen.getAffaire().getCountry() == null)) {
-	// return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(),
-	// HttpStatus.OK);
-	// }
+		return new ResponseEntity<CustomerOrder>(
+				customerOrderService.completeAdditionnalInformationForCustomerOrder(
+						(CustomerOrder) pricingHelper.completePricingOfIQuotation(customerOrder, isEmergency)),
+				HttpStatus.OK);
+	}
 
-	// if (serviceTypeChosen.getService() == null)
-	// return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(),
-	// HttpStatus.OK);
-	// }
+	@PostMapping(inputEntryPoint + "/quotation/pricing")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Quotation> completePricingOfQuotation(@RequestBody Quotation quotation,
+			@RequestParam Boolean isEmergency, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
 
-	// if (order.getDummyResponsable() != null) {
-	// validationHelper.validateReferential(order.getDummyResponsable(), true,
-	// "dummyReponsable");
+		return new ResponseEntity<Quotation>(quotationService.completeAdditionnalInformationForQuotation(
+				(Quotation) pricingHelper.completePricingOfIQuotation(quotation, isEmergency)), HttpStatus.OK);
+	}
 
-	// if (!order.getDummyResponsable().getId()
-	// .equals(constantService.getResponsableDummyCustomerFrance().getId()))
-	// return new ResponseEntity<UserCustomerOrder>(new UserCustomerOrder(),
-	// HttpStatus.OK);
-	// }
+	@PostMapping(inputEntryPoint + "/quotation/save-order")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Quotation> saveQuotation(@RequestBody Quotation quotation, @RequestParam Boolean isValidation,
+			HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
 
-	// return new
-	// ResponseEntity<UserCustomerOrder>(pricingHelper.completePricingOfUserCustomerOrder(order),
-	// HttpStatus.OK);
-	// }
+		return new ResponseEntity<Quotation>(
+				(Quotation) quotationDelegate.validateAndCreateQuotation(quotation, isValidation),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/order/save-order")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<CustomerOrder> saveCutomerOrder(@RequestBody CustomerOrder order,
+			@RequestParam Boolean isValidation,
+			HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		return new ResponseEntity<CustomerOrder>(
+				(CustomerOrder) quotationDelegate.validateAndCreateQuotation(order, isValidation),
+				HttpStatus.OK);
+	}
 
 	@PostMapping(inputEntryPoint + "/order/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<CustomerOrder> saveCustomerOrderFromMyJss(@RequestBody CustomerOrder order,
+			@RequestParam Boolean isValidation,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
@@ -1288,13 +1417,15 @@ public class MyJssQuotationController {
 			}
 		}
 
-		return new ResponseEntity<CustomerOrder>(customerOrderService.saveCustomerOrderFromMyJss(order, request),
+		return new ResponseEntity<CustomerOrder>(
+				customerOrderService.saveCustomerOrderFromMyJss(order, isValidation, request),
 				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Quotation> saveQuotationFromMyJss(@RequestBody Quotation order,
+			@RequestParam Boolean isValidation,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
@@ -1312,7 +1443,7 @@ public class MyJssQuotationController {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
 		}
-		return new ResponseEntity<Quotation>(quotationService.saveQuotationFromMyJss(order, request),
+		return new ResponseEntity<Quotation>(quotationService.saveQuotationFromMyJss(order, isValidation, request),
 				HttpStatus.OK);
 	}
 

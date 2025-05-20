@@ -13,7 +13,8 @@ import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 
 public interface NotificationService {
         public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
-                        List<String> notificationTypes, Boolean onlyForNumber, Boolean completeAdditionnalInformation);
+                        List<String> notificationTypes, Boolean onlyForNumber, Boolean completeAdditionnalInformation)
+                        throws OsirisException;
 
         public Notification getNotification(Integer id);
 
@@ -43,21 +44,21 @@ public interface NotificationService {
 
         public List<String> getAllNotificationTypes();
 
-        public List<Notification> getNotificationsForCustomerOrder(Integer customerOrderId);
+        public List<Notification> getNotificationsForCustomerOrder(Integer customerOrderId) throws OsirisException;
 
-        public List<Notification> getNotificationsForQuotation(Integer quotationId);
+        public List<Notification> getNotificationsForQuotation(Integer quotationId) throws OsirisException;
 
-        public List<Notification> getNotificationsForProvision(Integer provisionId);
+        public List<Notification> getNotificationsForProvision(Integer provisionId) throws OsirisException;
 
-        public List<Notification> getNotificationsForInvoice(Integer invoiceId);
+        public List<Notification> getNotificationsForInvoice(Integer invoiceId) throws OsirisException;
 
-        public List<Notification> getNotificationsForService(Integer serviceId);
+        public List<Notification> getNotificationsForService(Integer serviceId) throws OsirisException;
 
-        public List<Notification> getNotificationsForAffaire(Integer affaireId);
+        public List<Notification> getNotificationsForAffaire(Integer affaireId) throws OsirisException;
 
-        public List<Notification> getNotificationsForTiers(Integer tiersId);
+        public List<Notification> getNotificationsForTiers(Integer tiersId) throws OsirisException;
 
-        public List<Notification> getNotificationsForResponsable(Integer responsableId);
+        public List<Notification> getNotificationsForResponsable(Integer responsableId) throws OsirisException;
 
         public void notifyNewCandidacy(Candidacy candidacy) throws OsirisException;
 

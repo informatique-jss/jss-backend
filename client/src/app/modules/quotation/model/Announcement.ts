@@ -21,6 +21,7 @@ export interface Announcement extends IDocument {
   isAnnouncementAlreadySentToConfrere: boolean;
   isAnnouncementErratumAlreadySentToConfrere: boolean;
   firstClientReviewSentMailDateTime: Date | null;
+  isReReadByJss: boolean;
   announcementStatus: AnnouncementStatus;
   actuLegaleId: number;
   confrere: Confrere;

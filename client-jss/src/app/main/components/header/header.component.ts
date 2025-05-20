@@ -3,13 +3,18 @@ import { Router } from '@angular/router';
 import { Modal } from 'bootstrap';
 import { Subscription } from 'rxjs';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
+import { capitalizeName } from '../../../libs/FormatHelper';
 import { AppService } from '../../../services/app.service';
+import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 import { IndexEntity } from '../../model/IndexEntity';
 import { JssCategory } from '../../model/JssCategory';
+import { MenuItem } from '../../model/MenuItem';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
+import { Responsable } from '../../model/Responsable';
 import { DepartmentService } from '../../services/department.service';
 import { IndexEntityService } from '../../services/index.entity.service';
 import { JssCategoryService } from '../../services/jss.category.service';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'main-header',
@@ -32,15 +37,38 @@ export class HeaderComponent implements OnInit {
 
   searchModalInstance: Modal | undefined;
 
+  currentUser: Responsable | undefined;
+
+  capitalizeName = capitalizeName;
+
+  myAccountItems: AccountMenuItem[] = this.appService.getAllAccountMenuItems();
+  MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
+  MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
+
   constructor(
     private router: Router,
     private departmentService: DepartmentService,
     private jssCategoryService: JssCategoryService,
     private appService: AppService,
-    private indexEntityService: IndexEntityService
+    private indexEntityService: IndexEntityService,
+    private loginService: LoginService
   ) { }
 
+  dropdownOpen = false;
+
+  toggleDropdown(event: Event): void {
+    event.preventDefault();
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  handleItemClick(item: any): void {
+    this.dropdownOpen = false;
+    this.openMyJssRoute(item);
+  }
   ngOnInit() {
+    this.loginService.getCurrentUser().subscribe(response => {
+      this.currentUser = response;
+    })
     this.departmentService.getAvailablePublishingDepartments().subscribe(departments => {
       this.departments = departments
     });
@@ -48,6 +76,10 @@ export class HeaderComponent implements OnInit {
       this.categories = categories
       this.categoriesByOrder = this.categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
     });
+  }
+
+  openMyJssRoute(item: MenuItem) {
+    this.appService.openMyJssRoute(undefined, item.route, false);
   }
 
   displaySearchModal() {
@@ -85,7 +117,7 @@ export class HeaderComponent implements OnInit {
   }
 
   openSignIn(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE);
+    this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
   }
 
   openCategoryPosts(category: JssCategory, event: any) {

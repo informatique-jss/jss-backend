@@ -55,7 +55,9 @@ export class IdentificationComponent implements OnInit {
     private appService: AppService
   ) { }
 
-  idenficationForm = this.formBuilder.group({});
+  idenficationForm = this.formBuilder.group({
+    quotationType: []
+  });
 
   ngOnInit() {
     this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => this.familyGroupService = response);
@@ -100,6 +102,18 @@ export class IdentificationComponent implements OnInit {
     this.quotation.assoAffaireOrders = [];
     this.addAffaire();
   }
+
+  changeQuotationType() {
+    if (this.quotation) {
+      if (this.selectedQuotationType.id == quotation.id)
+        this.quotation.isQuotation = true;
+      else {
+        this.quotation.isQuotation = false;
+      }
+    }
+
+  }
+
 
   refreshIsRegisteredAffaire() {
     if (this.quotation)
@@ -183,7 +197,7 @@ export class IdentificationComponent implements OnInit {
       if (this.currentUser) {
         if (this.selectedQuotationType.id == quotation.id) {
           this.quotation.isQuotation = true;
-          this.quotationService.saveQuotation(this.quotation).subscribe(response => {
+          this.quotationService.saveQuotation(this.quotation, false).subscribe(response => {
             this.quotation = response;
             this.quotationService.setCurrentDraftQuotationId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
@@ -191,7 +205,7 @@ export class IdentificationComponent implements OnInit {
           })
         } else if (this.selectedQuotationType.id == order.id) {
           this.quotation.isQuotation = false;
-          this.orderService.saveOrder(this.quotation).subscribe(response => {
+          this.orderService.saveOrder(this.quotation, false).subscribe(response => {
             this.quotation = response;
             this.orderService.setCurrentDraftOrderId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);

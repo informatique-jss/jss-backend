@@ -897,6 +897,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_responsable_dummy_customer_france")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Responsable responsableDummyCustomerFrance;
 
 	@ManyToOne

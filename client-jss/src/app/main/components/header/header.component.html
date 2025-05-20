@@ -46,8 +46,45 @@
           <img class="lazyload" src="assets/images/homepage/logo.svg" alt="image">
         </a>
         <div>
-          <a class="btn btn-light me-2 pointer" (click)="openSignIn($event)">Se connecter</a>
-          <a class="btn btn-yellow " routerLink="subscription">S'abonner</a>
+          <a class="btn btn-light me-2 pointer" *ngIf="!currentUser" (click)="openSignIn($event)">Se connecter</a>
+          <a class="btn btn-yellow " *ngIf="!currentUser" routerLink="subscription">S'abonner</a>
+          <!-- User signed in state. Account dropdown on screens > 576px -->
+          <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }" *ngIf="currentUser && currentUser.id">
+            <a href="#" role="button" class="d-flex align-items-center p-0 user-account dropdown-toggle"
+              (click)="toggleDropdown($event)" [attr.aria-expanded]="dropdownOpen">
+
+              <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
+
+              <div class="ps-2 d-none d-md-block">
+                <div class="fs-xs lh-1 opacity-60">Bonjour,</div>
+                <div class="fs-sm">{{ capitalizeName(currentUser.firstname + ' ' + currentUser.lastname) }}</div>
+              </div>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-end my-1 custom-drop" [ngClass]="{ show: dropdownOpen }">
+              <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte</h6>
+              <ng-container *ngFor="let item of myAccountItems">
+                <a class="dropdown-item pointer" (click)="openMyJssRoute(item)"
+                  *ngIf="item.mainItem==MAIN_ITEM_ACCOUNT">
+                  <i class=" fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
+                  {{item.label}}
+                </a>
+              </ng-container>
+              <div class="dropdown-divider"></div>
+              <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
+                bord</h6>
+              <ng-container *ngFor="let item of myAccountItems">
+                <a class="dropdown-item" (click)="openMyJssRoute(item)" *ngIf="item.mainItem==MAIN_ITEM_DASHBOARD">
+                  <i class="fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
+                  {{item.label}}
+                </a>
+              </ng-container>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item btn-outline-light" [routerLink]="'/account/signout'">
+                Se déconnecter
+              </a>
+            </div>
+          </div>
         </div>
 
       </div>

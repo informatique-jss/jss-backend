@@ -1,11 +1,13 @@
-import { Directive, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
+import { PagedContent } from '../../../model/PagedContent';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
 export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComponent implements OnInit {
+
+  @ViewChild('autoComp', { read: ElementRef }) autoCompEl!: ElementRef;
 
   /**
    * Fired when an option is selected in the autocomplete list.
@@ -27,17 +29,19 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   @ViewChild('inputField') input: ElementRef | undefined;
 
-  expectedMinLengthInput: number = 2;
+  expectedMinLengthInput: number = 3;
 
-  filteredTypes: T[] | undefined;
-
-  doNotOpenTwice: boolean = false;
+  filteredTypes: T[] = [];
 
   isLoading: boolean = false;
 
-
   @Input() fieldToCheckAgainstForValidation: string = "id";
 
+  searchValue: string = '';
+  page: number = 0;
+  pageSize: number = 10;
+
+  selectedItem: T | undefined;
   constructor(private formBuilder3: UntypedFormBuilder) {
     super(formBuilder3);
   }
@@ -45,51 +49,98 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   callOnNgInit(): void {
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const clearButton = this.autoCompEl.nativeElement.querySelector('i[aria-label="Close"]');
+      if (clearButton) {
+        clearButton.addEventListener('click', () => {
+          this.clearField();
+        });
+      }
+
+      const inputEl = this.autoCompEl?.nativeElement?.querySelector('input');
+      if (inputEl) {
+        inputEl.setAttribute('autocomplete', 'off');
+        inputEl.setAttribute('autocorrect', 'off');
+        inputEl.setAttribute('autocapitalize', 'off');
+        inputEl.setAttribute('spellcheck', 'false');
+        inputEl.setAttribute('autocomplete', 'nope');
+        if (this.isMandatory)
+          inputEl.required = true;
+        inputEl.classList.add('custom-class-input');
+      }
+
+    }, 0);
+  }
+
+  override ngOnChanges(changes: SimpleChanges): void {
+    if (changes['model'] && !this.selectedItem) {
+      const newValue = changes['model'].currentValue;
+      const matchedItem = this.filteredTypes.find(item => (item as any).id === newValue.id);
+      if (matchedItem) {
+        this.selectedItem = matchedItem;
+      } else {
+        this.filteredTypes.push(newValue);
+        this.selectedItem = newValue;
+      }
+    }
+  }
+
   override ngOnInit() {
     if (this.form != undefined) {
-      this.form.addControl(this.propertyName, this.formBuilder3.control({ value: '', disabled: this.isDisabled }));
-      this.form.addValidators(this.checkField());
-      this.form.addValidators(this.checkAutocompleteField());
-      this.form.get(this.propertyName)?.valueChanges.pipe(
-        filter(res => {
-          if (!this.model && res != undefined && res !== null && res.length >= this.expectedMinLengthInput) {
-            this.isLoading = true;
-            return true;
-          }
-          return false;
-        }),
-        debounceTime(100),
-        tap((value) => {
-          this.filteredTypes = [];
-          this.modelChange.emit(this.model);
-        }),
-        switchMap(value => this.searchEntities(value)
-        )
-      ).subscribe(response => {
-        this.filteredTypes = this.mapResponse(response);
-
-        if (this.filteredTypes)
-          this.filteredTypes.sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)));
-
-        this.isLoading = false;
-      });
-      this.form.get(this.propertyName)?.setValue(this.model);
+      this.form.addControl(this.propertyName, this.formBuilder3.control({ value: this.model, disabled: this.isDisabled, }));
       this.callOnNgInit();
     }
   }
 
-  abstract searchEntities(value: string): Observable<U[]>;
+  abstract searchEntities(value: string): Observable<PagedContent<U>>;
 
   mapResponse(response: U[]): T[] {
     return (response as unknown) as Array<T>;
   }
 
+  onChangeSearch(newVal: string) {
+    this.searchValue = newVal;
+    this.selectedItem = undefined;
+    this.page = 0;
+    this.filteredTypes = [];
+    if (this.form) {
+      this.isLoading = true;
+      this.searchEntities(newVal).subscribe(response => {
+        this.filteredTypes = this.mapResponse(response.content);
+        this.isLoading = false;
+      })
+    }
+  }
+
+  getFormStatus() {
+    return this.form?.status;
+  }
+
   optionSelected(type: T): void {
     this.model = type;
-    this.doNotOpenTwice = true;
     this.modelChange.emit(this.model);
     this.onOptionSelected.emit(type);
     this.form?.updateValueAndValidity();
+    setTimeout(() => {
+      const clearButton = this.autoCompEl.nativeElement.querySelector('i[aria-label="Close"]');
+      if (clearButton) {
+        clearButton.addEventListener('click', () => {
+          this.clearField();
+        });
+      }
+    }, 0);
+  }
+
+  fetchNextPage() {
+    if (this.form) {
+      this.isLoading = true;
+      this.page++;
+      this.searchEntities(this.searchValue).subscribe(response => {
+        this.filteredTypes = this.filteredTypes.concat(this.mapResponse(response.content));
+        this.isLoading = false;
+      })
+    }
   }
 
   checkAutocompleteField(): ValidatorFn {
@@ -110,8 +161,10 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   }
 
   clearField(): void {
+    this.searchValue = '';
+    this.selectedItem = undefined;
+    this.page = 0;
     this.model = undefined;
-    this.doNotOpenTwice = false;
     this.modelChange.emit(this.model);
     this.onOptionSelected.emit(undefined);
     if (this.input)

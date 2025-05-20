@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +45,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
-import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
@@ -700,175 +698,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         return populateTransientField(assoAffaireOrderRepository.findByQuotationOrderByAffaire(quotation));
     }
 
-    private List<AssoAffaireOrder> populateTransientField(List<AssoAffaireOrder> assoAffaireOrders)
+    @Override
+    public List<AssoAffaireOrder> populateTransientField(List<AssoAffaireOrder> assoAffaireOrders)
             throws OsirisException {
         if (assoAffaireOrders != null && assoAffaireOrders.size() > 0)
             for (AssoAffaireOrder assoAffaireOrder : assoAffaireOrders) {
                 if (assoAffaireOrder.getServices() != null)
-                    for (Service service : assoAffaireOrder.getServices()) {
-                        service.setHasMissingInformations(false);
-                        if (isServiceHasMissingInformations(service)) {
-                            service.setHasMissingInformations(true);
-
-                            service.getMissingAttachmentQueries().sort(new Comparator<MissingAttachmentQuery>() {
-
-                                @Override
-                                public int compare(MissingAttachmentQuery o1, MissingAttachmentQuery o2) {
-                                    if (o1 != null && o2 == null)
-                                        return 1;
-                                    if (o1 == null && o2 != null)
-                                        return -1;
-                                    if (o1 == null && o2 == null)
-                                        return 0;
-                                    if (o1 != null && o2 != null)
-                                        return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
-                                    return 0;
-                                }
-                            });
-                            service.setLastMissingAttachmentQueryDateTime(
-                                    service.getMissingAttachmentQueries().get(0).getCreatedDateTime()); // TODO : quand
-                                                                                                        // les alertes
-                                                                                                        // de mails
-                                                                                                        // affaire + rib
-                                                                                                        // affaire
-                                                                                                        // seront
-                                                                                                        // intégrées,
-                                                                                                        // mettre cette
-                                                                                                        // date à la
-                                                                                                        // date de
-                                                                                                        // création de
-                                                                                                        // la commande
-                        }
-                        service.setServiceStatus(getServiceStatusLabel(service));
-                        service.setServicePrice(getServicePrice(service, true, true));
-                        if (service.getServicePrice().compareTo(new BigDecimal(0)) <= 0f)
-                            service.setServicePrice(null);
-                        removeDisabledAttachments(service);
-                        removePublicationFlagAssoServiceDocument(service);
-
-                        if (service.getProvisions() != null)
-                            for (Provision provision : service.getProvisions())
-                                if (provision.getAnnouncement() != null
-                                        && provision.getAnnouncement().getConfrere() != null)
-                                    service.setConfrereLabel(
-                                            "publié par " + provision.getAnnouncement().getConfrere().getLabel());
-                    }
+                    serviceService.populateTransientField(assoAffaireOrder.getServices());
             }
-
         return assoAffaireOrders;
-    }
-
-    private void removeDisabledAttachments(Service service) {
-        if (service != null && service.getAssoServiceDocuments() != null)
-            for (AssoServiceDocument asso : service.getAssoServiceDocuments()) {
-                List<Attachment> attachmentsToRemove = new ArrayList<Attachment>();
-                if (asso.getAttachments() != null) {
-                    for (Attachment attachment : asso.getAttachments()) {
-                        if (attachment.getIsDisabled() != null && attachment.getIsDisabled())
-                            attachmentsToRemove.add(attachment);
-                    }
-                    if (attachmentsToRemove.size() > 0) {
-                        asso.getAttachments().removeAll(attachmentsToRemove);
-                    }
-                }
-            }
-    }
-
-    private void removePublicationFlagAssoServiceDocument(Service service) throws OsirisException {
-        // When published in the same service, do not ask for publication flag, JSS will
-        // provide it
-        if (service != null && service.getProvisions() != null) {
-            boolean asAnnouncement = false;
-            for (Provision provision : service.getProvisions()) {
-                if (provision.getAnnouncement() != null)
-                    asAnnouncement = true;
-                break;
-            }
-
-            if (asAnnouncement && service.getAssoServiceDocuments() != null) {
-                for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
-                    if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
-                            && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
-                                    .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
-                        assoServiceDocument.setIsMandatory(false);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean isServiceHasMissingInformations(Service service) {
-        if (service.getMissingAttachmentQueries() != null
-                && service.getMissingAttachmentQueries().size() > 0) {
-            if (service.getProvisions() != null)
-                for (Provision provision : service.getProvisions()) {
-                    if (provision.getSimpleProvision() != null
-                            && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
-                                    .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
-                            ||
-                            provision.getFormalite() != null
-                                    && provision.getFormalite().getFormaliteStatus().getCode()
-                                            .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT)) {
-                        return true;
-                    }
-                }
-        }
-        return false;
-    }
-
-    private String getServiceStatusLabel(Service service) {
-        Integer currentPriority = -1;
-        String currentStatus = "";
-        if (service.getProvisions() != null)
-            for (Provision provision : service.getProvisions()) {
-                if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus()
-                        .getServicePriority() > currentPriority) {
-                    currentPriority = provision.getAnnouncement().getAnnouncementStatus().getServicePriority();
-                    currentStatus = provision.getAnnouncement().getAnnouncementStatus().getLabel();
-                } else if (provision.getSimpleProvision() != null && provision.getSimpleProvision()
-                        .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
-                    currentPriority = provision.getSimpleProvision().getSimpleProvisionStatus()
-                            .getServicePriority();
-                    currentStatus = provision.getSimpleProvision().getSimpleProvisionStatus().getLabel();
-                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus()
-                        .getServicePriority() > currentPriority) {
-                    currentPriority = provision.getFormalite().getFormaliteStatus().getServicePriority();
-                    currentStatus = provision.getFormalite().getFormaliteStatus().getLabel();
-                    if (provision.getFormalite().getFormaliteStatus().getCode()
-                            .equals(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED))
-                        currentStatus = formaliteStatusService
-                                .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
-                                .getLabel();
-                } else if (provision.getDomiciliation() != null
-                        && provision.getDomiciliation().getDomiciliationStatus()
-                                .getServicePriority() > currentPriority) {
-                    currentPriority = provision.getDomiciliation().getDomiciliationStatus().getServicePriority();
-                    currentStatus = provision.getDomiciliation().getDomiciliationStatus().getLabel();
-                }
-            }
-        return currentStatus;
-    }
-
-    @Override
-    public BigDecimal getServicePrice(Service service, boolean withDiscount, boolean withVat) {
-        BigDecimal totalPrice = new BigDecimal(0);
-        if (service.getProvisions() != null)
-            for (Provision provision : service.getProvisions()) {
-                if (provision.getInvoiceItems() != null) {
-                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        if (invoiceItem.getPreTaxPriceReinvoiced() != null)
-                            totalPrice = totalPrice.add(invoiceItem.getPreTaxPriceReinvoiced());
-                        else if (invoiceItem.getPreTaxPrice() != null)
-                            totalPrice = totalPrice.add(invoiceItem.getPreTaxPrice());
-
-                        if (withDiscount && invoiceItem.getDiscountAmount() != null)
-                            totalPrice = totalPrice.subtract(invoiceItem.getDiscountAmount());
-                        if (withVat && invoiceItem.getVatPrice() != null)
-                            totalPrice = totalPrice.add(invoiceItem.getVatPrice());
-                    }
-                }
-            }
-        return totalPrice;
     }
 }

@@ -50,6 +50,7 @@ import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
+import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
@@ -72,6 +73,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -222,6 +224,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     MyJssProfileController myJssProfileController;
+
+    @Autowired
+    ProvisionService provisionService;
+
+    @Autowired
+    QuotationValidationHelper quotationValidationHelper;
+
+    @Autowired
+    MyJssQuotationDelegate myJssQuotationDelegate;
 
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
@@ -1504,7 +1515,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
-            String sortBy) {
+            String sortBy) throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
         boolean displayPayed = false;
 
@@ -1548,7 +1559,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return null;
     }
 
-    public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) {
+    public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException {
         List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
         CustomerOrderStatus statusAbandonned = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
@@ -1562,7 +1573,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders) {
+    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
+            throws OsirisException {
         if (customerOrders != null && customerOrders.size() > 0) {
             List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
                     false, false);
@@ -1583,11 +1595,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder) {
+    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+            throws OsirisException {
         List<String> affaireLabels = new ArrayList<String>();
         List<String> serviceLabels = new ArrayList<String>();
         customerOrder.setHasMissingInformations(false);
-        if (customerOrder.getAssoAffaireOrders() != null)
+        if (customerOrder.getAssoAffaireOrders() != null) {
+            assoAffaireOrderService.populateTransientField(customerOrder.getAssoAffaireOrders());
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
                 if (affaireDenomination == null || affaireDenomination.length() == 0)
@@ -1601,15 +1615,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         String serviceLabel = service.getServiceLabelToDisplay();
                         if (serviceLabels.indexOf(serviceLabel) < 0)
                             serviceLabels.add(serviceLabel);
+
                     }
 
                 if (assoAffaireOrder.getServices() != null)
                     for (Service service : assoAffaireOrder.getServices()) {
-                        if (assoAffaireOrderService.isServiceHasMissingInformations(service)) {
+                        if (serviceService.isServiceHasMissingInformations(service)) {
                             customerOrder.setHasMissingInformations(true);
                         }
                     }
             }
+        }
 
         if (affaireLabels.size() > 0)
             customerOrder.setAffairesList(String.join(" / ", affaireLabels));
@@ -1771,106 +1787,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, HttpServletRequest request)
+    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
+            HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         order.setResponsable(employeeService.getCurrentMyJssUser());
         order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         order.setCustomerOrderStatus(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
-        return addOrUpdateCustomerOrder(order, true, false);
+        quotationValidationHelper.completeIQuotationDocuments(order, true);
+        myJssQuotationDelegate.populateBooleansOfProvisions(order);
+        order = addOrUpdateCustomerOrder(order, true, false);
+
+        if (isValidation != null && isValidation)
+            addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
+        return order;
     }
-
-    // private Responsable
-    // generateTiersAndResponsableFromUserCustomerOrder(CustomerOrder
-    // userCustomerOrder)
-    // throws OsirisException {
-    // Responsable responsable = new Responsable();
-    // responsable.setIsActive(true);
-    // responsable.setIsBouclette(true);
-    // responsable.setCivility(userCustomerOrder.getResponsableCivility());
-    // responsable.setFirstname(userCustomerOrder.getResponsableFirstname());
-    // responsable.setLastname(userCustomerOrder.getResponsableLastname());
-    // Mail mail = new Mail();
-    // mail.setMail(userCustomerOrder.getResponsableMail());
-    // responsable.setMail(mail);
-    // responsable.setTiersType(constantService.getTiersTypeClient());
-    // responsable.setSalesEmployee(constantService.getEmployeeSalesDirector());
-    // if (userCustomerOrder.getResponsablePhone() != null) {
-    // Phone phone = new Phone();
-    // phone.setPhoneNumber(userCustomerOrder.getResponsablePhone());
-    // responsable.setPhones(new ArrayList<Phone>());
-    // responsable.getPhones().add(phone);
-    // }
-
-    // userCustomerOrder.getBillingDocument().setDocumentType(constantService.getDocumentTypeBilling());
-    // userCustomerOrder.getDigitalDocument().setDocumentType(constantService.getDocumentTypeDigital());
-    // userCustomerOrder.getPaperDocument().setDocumentType(constantService.getDocumentTypePaper());
-
-    // responsable.setDocuments(new ArrayList<Document>());
-    // responsable.getDocuments()
-    // .add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(),
-    // null));
-    // responsable.getDocuments()
-    // .add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(),
-    // null));
-    // responsable.getDocuments()
-    // .add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(),
-    // null));
-
-    // Tiers tiers = new Tiers();
-    // tiers.setIsNewTiers(true);
-    // if (userCustomerOrder.getCustomerIsIndividual() != null &&
-    // userCustomerOrder.getCustomerIsIndividual()) {
-    // tiers.setIsIndividual(true);
-    // tiers.setFirstname(responsable.getFirstname());
-    // tiers.setLastname(responsable.getLastname());
-    // } else {
-    // tiers.setIsIndividual(false);
-    // tiers.setDenomination(userCustomerOrder.getCustomerDenomination());
-    // }
-    // tiers.setTiersType(constantService.getTiersTypeClient());
-    // tiers.setSalesEmployee(constantService.getEmployeeSalesDirector());
-    // tiers.setAddress(userCustomerOrder.getCustomerAddress());
-    // tiers.setCity(userCustomerOrder.getCustomerCity());
-    // tiers.setCountry(userCustomerOrder.getCustomerCountry());
-    // tiers.setSiret(userCustomerOrder.getSiret());
-    // tiers.setPostalCode(userCustomerOrder.getCustomerPostalCode());
-    // tiers.setIsSepaMandateReceived(false);
-    // tiers.setLanguage(constantService.getLanguageFrench());
-
-    // tiers.setPaymentType(constantService.getPaymentTypeCB());
-
-    // tiers.setDocuments(new ArrayList<Document>());
-    // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(),
-    // null));
-    // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(),
-    // null));
-    // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(),
-    // null));
-
-    // Document documentDunning = new Document();
-    // documentDunning.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
-    // documentDunning.setIsRecipientAffaire(false);
-    // documentDunning.setIsRecipientClient(false);
-    // documentDunning.setDocumentType(constantService.getDocumentTypeDunning());
-    // tiers.setIsProvisionalPaymentMandatory(true);
-    // tiers.getDocuments().add(documentDunning);
-
-    // Document receiptDocument = new Document();
-    // receiptDocument.setBillingClosureRecipientType(constantService.getBillingClosureRecipientTypeClient());
-    // receiptDocument.setIsRecipientAffaire(false);
-    // receiptDocument.setIsRecipientClient(false);
-    // receiptDocument.setDocumentType(constantService.getDocumentTypeBillingClosure());
-    // receiptDocument.setBillingClosureType(constantService.getBillingClosureTypeAffaire());
-    // tiers.getDocuments().add(receiptDocument);
-
-    // tiers.setResponsables(new ArrayList<Responsable>());
-    // responsable.setTiers(tiers);
-    // tiers.getResponsables().add(responsable);
-
-    // tiersService.addOrUpdateTiers(tiers);
-    // return responsableService.getResponsable(responsable.getId());
-    // }
 
     @Override
     public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable) {
@@ -1879,7 +1810,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
-            List<CustomerOrderStatus> status, List<Employee> invoicingEmployees) {
+            List<CustomerOrderStatus> status, List<Employee> invoicingEmployees) throws OsirisException {
 
         List<Integer> commercialIds = (commercials != null && commercials.size() > 0)
                 ? commercials.stream().map(Employee::getId).collect(Collectors.toList())
@@ -1906,6 +1837,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    public Boolean setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0
+                && customerOrder.getAssoAffaireOrders().get(0).getServices() != null
+                && customerOrder.getAssoAffaireOrders().get(0).getServices().size() > 0
+                && customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions() != null
+                && customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().size() > 0) {
+            customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0)
+                    .setIsEmergency(isEnabled);
+            provisionService.addOrUpdateProvision(
+                    customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0));
+            customerOrder = getCustomerOrder(customerOrder.getId());
+            pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+            return true;
+        }
+        return false;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void assignInvoicingEmployee(CustomerOrder customerOrder, Employee employee)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
@@ -1915,6 +1864,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public Boolean setDocumentOnOrder(CustomerOrder customerOrder, Document document)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (customerOrder.getDocuments() == null)
+            customerOrder.setDocuments(new ArrayList<Document>());
+
+        document.setCustomerOrder(customerOrder);
+        documentService.addOrUpdateDocument(document);
+
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        return true;
+    }
+
     public void modifyInvoicingBlockage(CustomerOrder customerOrder, InvoicingBlockage invoicingBlockage)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
         customerOrder.setInvoicingBlockage(invoicingBlockage);
@@ -1922,7 +1883,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public InvoicingStatistics getInvoicingStatistics() {
+    public InvoicingStatistics getInvoicingStatistics() throws OsirisException {
         List<CustomerOrder> customerOrders = searchCustomerOrders(null, Arrays.asList(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED)), null);
         InvoicingStatistics stats = new InvoicingStatistics();

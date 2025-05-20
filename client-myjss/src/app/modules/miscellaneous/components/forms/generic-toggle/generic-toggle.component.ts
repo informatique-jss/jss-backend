@@ -4,10 +4,10 @@ import { AppService } from '../../../../../libs/app.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
-    selector: 'generic-toggle',
-    templateUrl: './generic-toggle.component.html',
-    styleUrls: ['./generic-toggle.component.css'],
-    standalone: false
+  selector: 'generic-toggle',
+  templateUrl: './generic-toggle.component.html',
+  styleUrls: ['./generic-toggle.component.css'],
+  standalone: false
 })
 export class GenericToggleComponent extends GenericFormComponent implements OnInit {
 
@@ -49,9 +49,11 @@ export class GenericToggleComponent extends GenericFormComponent implements OnIn
 
   override ngOnChanges(changes: SimpleChanges): void {
     super.ngOnChanges(changes);
-    if (this.form && (this.model == null || this.model == undefined)) {
-      this.model = false;
-      this.modelChange.emit(this.model);
+    if (this.form) {
+      if (changes['model']) {
+        this.form.get(this.propertyName)?.setValue(this.model);
+        this.modelChange.emit(this.model);
+      }
     }
   }
 }
