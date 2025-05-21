@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { TimeFormatPipe } from '../../../libs/TimeFormatPipe';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AnnouncementComponent } from '../announcement/announcement.component';
+import { AudioPlayerComponent } from '../audio-player/audio-player.component';
 import { AuthorHubComponent } from '../author-hub/author-hub.component';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { CategoryHubComponent } from '../category-hub/category-hub.component';
@@ -81,7 +82,8 @@ const routes: Routes = [
     SubscriptionComponent,
     KioskComponent,
     ContributeComponent,
-    AvatarComponent
+    AvatarComponent,
+    AudioPlayerComponent
   ],
   exports: [
     HeaderComponent,

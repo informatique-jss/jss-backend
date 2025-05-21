@@ -1,0 +1,58 @@
+<!-- Audio Player Bar -->
+<div class="position-fixed bottom-0 w-100 border-top shadow-sm py-1 px-3 bg-secondary text-white"
+  style="z-index: 1050;">
+  <div class="container px-3 d-flex flex-column flex-md-row align-items-center justify-content-between">
+
+    <!-- Left Column: Image + Titre -->
+    <div class="d-flex align-items-center col mb-2 mb-md-0">
+      <img src="/assets/images/homepage/raide-comme-la-justice.png" alt="Podcast Cover" class="me-3"
+        style="width: 48px; height: 48px; object-fit: cover;">
+      <div class="text-truncate">
+        <div class="fw-bold small">{{ audioService.currentTrack?.title || 'Aucun podcast' }}</div>
+        <div *ngIf="audioService.currentTrack" class="text-muted small"
+          [innerHTML]="audioService.currentTrack.subtitle | trustHtml"></div>
+      </div>
+    </div>
+
+    <!-- Middle Column: Contrôles -->
+    <div class="d-flex col align-items-center justify-content-center mb-2 mb-md-0">
+      <a class="btn text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+        style="width: 48px; height: 48px;" (click)="backward15Secs()">
+        <div class="position-relative"><i class="bi-arrow-counterclockwise fs-2"></i>
+          <span class="position-absolute top-50 start-50 translate-middle fs-9">15</span>
+        </div>
+      </a>
+      <a class="col-auto btn-light rounded-circle btn-circle-md fs-4 me-2" (click)="togglePlayPause()"><i
+          [ngClass]="audioService.isPlaying ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+
+      <a class="btn text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+        style="width: 48px; height: 48px;" (click)="forward15Secs()">
+        <div class="position-relative"><i class="bi-arrow-clockwise fs-2"></i>
+          <span class="position-absolute top-50 start-50 translate-middle fs-9">15</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Right Column: Progression + Volume -->
+    <div class="d-flex col align-items-center justify-content-end position-relative">
+      <small class="text-muted me-1">{{ audioService.currentTime | date:'mm:ss' }}</small>
+      <input type="range" class="form-range me-1" style="width: 180px;" min="0" max="100" step="0.01"
+        [value]="audioService.progress" (input)="onSeek($event)" />
+      <small class="text-muted">{{ audioService.duration | date:'mm:ss' }}</small>
+
+      <!-- Volume Dropdown Custom (manual) -->
+      <div class="dropdown dropup ms-2" (mouseenter)="toggleVolumeDropdown($event)"
+        (mouseleave)="toggleVolumeDropdown($event)" [ngClass]="{ show: volumeDropdownOpen }">
+        <div href="#" role="button" class="d-flex align-items-center justify-content-center"
+          [attr.aria-expanded]="volumeDropdownOpen">
+          <i class="bi-volume-up-fill fs-5 m-0"></i>
+        </div>
+
+        <div class="dropdown-menu p-2" [ngClass]="{ show: volumeDropdownOpen }">
+          <input type="range" class="vertical-range m-0" style="min-width: auto;max-width: auto;" min="0" max="1"
+            step="0.01" [value]="audioService.volume" (input)="onVolumeChange($event)" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

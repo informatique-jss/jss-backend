@@ -1,0 +1,15 @@
+.dropdown-menu {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+    margin-left: -10px;
+}
+
+.vertical-range {
+    writing-mode: bt-lr;
+    /* vertical orientation */
+    -webkit-appearance: slider-vertical;
+    width: 6px;
+    height: 100px;
+    padding: 0;
+}

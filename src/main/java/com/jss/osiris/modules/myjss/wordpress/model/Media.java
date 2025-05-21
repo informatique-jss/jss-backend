@@ -56,6 +56,8 @@ public class Media {
     @IndexedField
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String urlThumbnail;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer length;
 
     @ManyToOne(fetch = FetchType.LAZY)
