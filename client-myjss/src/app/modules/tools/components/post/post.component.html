@@ -91,9 +91,10 @@
 
       <!-- Tags -->
       <div class="d-flex flex-wrap pb-5 pt-3 pt-md-4 pt-xl-5 mt-xl-n2" *ngIf="post.postTags && post.postTags.length>0">
-        <h3 class="h6 py-1 mb-0 me-4">Relevant tags:</h3>
+        <h3 class="h6 py-1 mb-0 me-4">Tags associés :</h3>
         <div *ngFor="let tag of post.postTags">
-          <a class="nav-link fs-sm py-1 px-0 me-3" style="cursor: pointer;" (click)="openTagPosts(tag, $event)">
+          <a class="nav-link fs-sm py-1 px-0 me-3" style="cursor: pointer;"
+            [routerLink]="'/tools/practical-sheets/'+tag.slug">
             <span class="text-primary">#</span>{{tag.name}}
           </a>
         </div>
@@ -299,7 +300,8 @@
           <!-- Relevant tags -->
           <h4 class="pt-3 pt-lg-1 mb-4" *ngIf="post.postTags && post.postTags[0]">Tags associés :</h4>
           <div class="d-flex flex-wrap mt-n3 ms-n3 mb-lg-5 mb-4 pb-3 pb-lg-0">
-            <span *ngFor="let tag of post.postTags" class="badge border text-nav fs-sm mt-3 ms-3">{{tag.name}}</span>
+            <span *ngFor="let tag of post.postTags" class="badge border text-nav fs-sm mt-3 ms-3"
+              style="cursor: pointer;" [routerLink]="'/tools/practical-sheets/'+tag.slug">{{tag.name}}</span>
           </div>
         </div>
       </div>
