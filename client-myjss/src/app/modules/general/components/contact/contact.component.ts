@@ -39,6 +39,10 @@ export class ContactComponent implements OnInit {
     if (!this.firstName || !this.lastName || !this.mail || !this.message) {
       return;
     }
+    if (!this.isConditionAccepted) {
+      this.appService.displayToast("Merci d'accepter les conditions", true, "Une erreur s’est produite...", 3000);
+      return;
+    }
 
     this.mailService.subscribeContactForm(this.mail, this.firstName, this.lastName, this.message).subscribe(response => {
       if (response) {
