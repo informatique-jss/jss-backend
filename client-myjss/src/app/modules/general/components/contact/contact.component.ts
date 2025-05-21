@@ -17,6 +17,7 @@ export class ContactComponent implements OnInit {
   mail: string = "";
   message: string = "";
   emailJss = "contact@jss.fr";
+  isConditionAccepted: boolean = false;
 
   constructor(
     private appService: AppService,
@@ -47,6 +48,7 @@ export class ContactComponent implements OnInit {
         this.lastName = "";
         this.mail = "";
         this.message = "";
+        this.isConditionAccepted = false;
       }
     });
   }
