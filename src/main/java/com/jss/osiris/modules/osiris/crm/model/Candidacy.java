@@ -47,6 +47,7 @@ public class Candidacy implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "candidacy" }, allowSetters = true)
 	private List<Attachment> attachments;
 
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private Boolean isTreated;
 
 	public Integer getId() {

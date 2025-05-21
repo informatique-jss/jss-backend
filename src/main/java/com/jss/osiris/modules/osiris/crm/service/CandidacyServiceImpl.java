@@ -73,7 +73,7 @@ public class CandidacyServiceImpl implements CandidacyService {
     @Transactional(rollbackFor = Exception.class)
     public void markCandidacyAsUnTreated(Candidacy candidacy) throws OsirisException {
         candidacy = getCandidacy(candidacy.getId());
-        candidacy.setIsTreated(true);
+        candidacy.setIsTreated(false);
         addOrUpdateCandidacy(candidacy);
     }
 
@@ -81,7 +81,7 @@ public class CandidacyServiceImpl implements CandidacyService {
     @Transactional(rollbackFor = Exception.class)
     public void markCandidacyAsTreated(Candidacy candidacy) throws OsirisException {
         candidacy = getCandidacy(candidacy.getId());
-        candidacy.setIsTreated(false);
+        candidacy.setIsTreated(true);
         addOrUpdateCandidacy(candidacy);
     }
 }

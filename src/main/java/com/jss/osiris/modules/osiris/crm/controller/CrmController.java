@@ -319,7 +319,7 @@ public class CrmController {
                 if (candidacy == null)
                         throw new OsirisValidationException("candidacy");
 
-                candidacyService.markCandidacyAsUnTreated(candidacy);
+                candidacyService.markCandidacyAsTreated(candidacy);
                 return new ResponseEntity<Boolean>(true, HttpStatus.OK);
         }
 }
