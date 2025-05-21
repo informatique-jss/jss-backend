@@ -1,0 +1,50 @@
+<div class="position-relative ">
+  <div [formGroup]="form!" class="needs-validation">
+    <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
+      class="form-label">{{label}}</label>
+
+    <div class="row d-flex align-items-center p-0 g-0">
+      <i class="ai-search text-dark fs-4 custom-search-icon ms-2 col-auto "></i>
+      <ng-autocomplete [data]="filteredTypes" [searchKeyword]="'titleText'" [customFilter]="filterResultPosts"
+        [placeholder]="label" [attr.name]="propertyName" [initialValue]="selectedItem"
+        (selected)='optionSelected($event)' (inputChanged)='onChangeSearch($event)' [itemTemplate]="itemTemplate"
+        [notFoundTemplate]="notFoundTemplate" [minQueryLength]="expectedMinLengthInput" [debounceTime]="200"
+        (scrolledToEnd)="fetchNextPage()" #autoComp [historyIdentifier]="propertyName" historyHeading="Choix récents"
+        [isLoading]="isLoading" [disabled]="isDisabled" class="col">
+      </ng-autocomplete>
+
+      <div class="custom-input-group align-items-center col-3 justify-content-end ps-0">
+        <select-myjss-category class="cursor-pointer ps-0" [(model)]=" myJssCategory"
+          [additionnalType]="additionalCategory!" [form]="autocompletePostForm" propertyName="selectedMyJssCategory"
+          [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
+      </div>
+    </div>
+
+    <ng-template #itemTemplate let-item>
+      <div class="overflow-x-hidden">
+        <div class="d-flex align-items-center text-truncate mb-1">
+          <a class="h5 text-dark text-truncate-1 me-2 flex-shrink-1" *ngIf="item"
+            [innerHTML]="item.titleText | trustHtml"></a>
+          <ng-container *ngIf="item && item.postTags">
+            <span class="badge bg-primary fs-xs flex-shrink-0 text-nowrap" style="margin-top: -15px;margin-right: 3px;"
+              *ngFor="let tag of item.postTags.slice(0,3)">
+              {{ tag.name }}
+            </span>
+          </ng-container>
+        </div>
+        <div class=" row">
+          <div class="col">
+            <p class="text-truncate-1 text-dark mb-0 mx-3" *ngIf="item">
+              <span [innerHTML]="highlightText(item.excerptText) | trustHtml"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #notFoundTemplate let-notFound>
+      <div innerHTML="Aucun résultat trouvé">
+      </div>
+    </ng-template>
+  </div>
+</div>

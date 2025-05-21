@@ -1,9 +1,9 @@
 <div class="full-width row" [formGroup]="form!">
-  <div class="select-wrapper">
+  <div class="select-wrapper pe-0">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length > 0"
       class="form-label">{{label}}</label>
-    <select class="form-control " [formControlName]="propertyName" [id]="'fl-text'+uniqueId" [required]="isMandatory"
-      [compareWith]="compareWithId" (blur)="blurForm()" [disabled]="isDisabled">
+    <select class="form-control select-custom" [formControlName]="propertyName" [id]="'fl-text'+uniqueId"
+      [required]="isMandatory" [compareWith]="compareWithId" (blur)="blurForm()" [disabled]="isDisabled">
       <option *ngFor="let type of types" [ngValue]="type">
         {{ displayLabel(type) }}
       </option>

@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { Routes } from '@angular/router';
 import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
+import { AutocompletePostComponent } from '../autocomplete-post/autocomplete-post.component';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { DoubleButtonsComponent } from '../double-buttons/double-buttons.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
@@ -64,12 +65,11 @@ const routes: Routes = [{}];
     SelectDepartmentComponent,
     SelectNoticeTypeFamilyComponent,
     SelectMultipleNoticeTypeComponent,
+    SelectStringComponent,
+    AutocompletePostComponent,
     SelectStringComponent
   ],
   exports: [
-    AvatarComponent,
-    GenericInputComponent,
-    SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
     DoubleButtonsComponent,
@@ -90,6 +90,7 @@ const routes: Routes = [{}];
     SelectNoticeTypeFamilyComponent,
     SelectMultipleNoticeTypeComponent,
     SelectStringComponent,
+    AutocompletePostComponent,
     GenericTestimonialComponent
   ]
 })

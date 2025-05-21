@@ -9,7 +9,6 @@ import { Mail } from '../../../profile/model/Mail';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Comment } from '../../model/Comment';
 import { Post } from '../../model/Post';
-import { Tag } from '../../model/Tag';
 import { CommentService } from '../../services/comment.service';
 import { PostService } from '../../services/post.service';
 
@@ -80,10 +79,6 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   openPost(post: Post, event: any) {
     this.appService.openRoute(event, "post/" + post.slug, undefined);
-  }
-
-  openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "tag/" + tag.slug, undefined);
   }
 
   shareOnFacebook() {

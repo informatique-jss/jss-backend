@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
 import { MyJssCategory } from '../../model/MyJssCategory';
@@ -22,7 +23,6 @@ export class PracticalSheetsComponent implements OnInit {
   searchObservableRef: Subscription | undefined;
   searchText: string = "";
   selectedMyJssCategory: MyJssCategory | undefined;
-  selectTest: string = "";
   searchResults: Post[] = [];
 
   secondSearchObservableRef: Subscription | undefined;
@@ -42,11 +42,14 @@ export class PracticalSheetsComponent implements OnInit {
   mostSeenPosts: Post[] = [];
   page: number = 0;
 
+  @ViewChild('searchInput') searchInput: ElementRef | undefined;
+
   constructor(
     private formBuilder: FormBuilder,
     private postService: PostService,
     private appService: AppService,
-    private myJssCategoryService: MyJssCategoryService
+    private myJssCategoryService: MyJssCategoryService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -70,6 +73,11 @@ export class PracticalSheetsComponent implements OnInit {
         );
       }
     });
+
+    let slug = this.activatedRoute.snapshot.params['slug'];
+    if (slug)
+      this.openTagSearch(slug, null);
+
     this.getTopPosts();
     this.getTendencyPosts();
     this.getMostSeenPosts();
@@ -142,11 +150,6 @@ export class PracticalSheetsComponent implements OnInit {
     })
   }
 
-  clearSearch() {
-    this.searchText = '';
-    this.searchResults = [];
-  }
-
   clearSecondSearch() {
     this.secondSearchText = '';
     this.secondSearchResults = [];
@@ -176,15 +179,12 @@ export class PracticalSheetsComponent implements OnInit {
     }
   }
 
-  highlightText(text: string): string {
-    if (!this.searchText) {
-      return text;
+  openTagSearch(tagSlug: string, event: any) {
+    if (tagSlug && this.searchInput) {
+      this.searchInput.nativeElement.scrollIntoView({ behavior: 'smooth', block: "center" })
+      this.searchText = tagSlug;
     }
-
-    const regex = new RegExp(`(${this.searchText})`, 'gi');
-    return text.replace(regex, `<span style="background-color: yellow;">$1</span>`);
   }
-
 
   /**************** posts carousel ***********************/
   getTopPosts() {
