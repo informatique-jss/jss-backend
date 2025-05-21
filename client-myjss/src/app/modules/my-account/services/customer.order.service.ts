@@ -33,12 +33,12 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.get(new HttpParams().set("idQuotation", idQuotation), 'quotation/order');
   }
 
-  saveOrder(order: IQuotation) {
-    return this.postItem(new HttpParams(), 'order/user/save', order);
+  saveOrder(order: IQuotation, isValidation: boolean) {
+    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/user/save', order);
   }
 
-  saveFinalOrder(order: CustomerOrder) {
-    return this.postItem(new HttpParams(), 'order/save-order', order);
+  saveFinalOrder(order: CustomerOrder, isValidation: boolean) {
+    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/save-order', order);
   }
 
   completePricingOfOrder(customerOrder: CustomerOrder, isEmergency: boolean) {

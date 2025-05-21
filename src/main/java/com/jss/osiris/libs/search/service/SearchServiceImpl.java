@@ -166,11 +166,15 @@ public class SearchServiceImpl implements SearchService {
                     List<CustomerOrder> customerOrders = customerOrderService
                             .searchOrdersForCurrentUserAndAffaire(affaireService.getAffaire(indexEntity.getEntityId()));
                     if (customerOrders != null && customerOrders.size() > 0)
-                        authorizedEntities.add(indexEntity);
+                        for (CustomerOrder customerOrder : customerOrders) {
+                            if (myJssQuotationValidationHelper.canSeeQuotation(customerOrder)) {
+                                authorizedEntities.add(indexEntity);
+                            }
+                        }
                 }
             }
         }
 
-        return entities;
+        return authorizedEntities;
     }
 }

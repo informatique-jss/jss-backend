@@ -26,4 +26,8 @@ export class ServiceService extends AppRestService<Service> {
   getServiceForServiceTypeAndAffaire(services: ServiceType[], affaire: Affaire) {
     return this.getList(new HttpParams().set("idAffaire", affaire.id).set("serviceTypeIds", services.map(s => s.id).join(",")), "service-types/provisions");
   }
+
+  deleteService(service: Service) {
+    return this.get(new HttpParams().set("idService", service.id), "service/delete");
+  }
 }

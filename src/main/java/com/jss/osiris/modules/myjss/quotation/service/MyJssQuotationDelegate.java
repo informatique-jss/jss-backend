@@ -70,7 +70,7 @@ public class MyJssQuotationDelegate {
     MailService mailService;
 
     @Transactional(rollbackFor = Exception.class)
-    public IQuotation validateAndCreateQuotation(IQuotation quotation) throws OsirisException {
+    public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation) throws OsirisException {
 
         Responsable responsable = null;
         if (quotation.getResponsable() != null && quotation.getResponsable().getMail() != null) {
@@ -105,16 +105,17 @@ public class MyJssQuotationDelegate {
             ((CustomerOrder) quotation).setCustomerOrderStatus(
                     customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
             quotation = customerOrderService.addOrUpdateCustomerOrder((CustomerOrder) quotation, false, false);
+            if (isValidation)
+                quotation = customerOrderService.addOrUpdateCustomerOrderStatus((CustomerOrder) quotation,
+                        CustomerOrderStatus.BEING_PROCESSED, true);
         }
         if (quotation.getIsQuotation()) {
             ((Quotation) quotation)
                     .setQuotationStatus(quotationStatusService.getQuotationStatusByCode(QuotationStatus.TO_VERIFY));
             quotation = quotationService.addOrUpdateQuotation((Quotation) quotation);
-            try {
-                customerOrderService.addOrUpdateCustomerOrderStatusFromUser((CustomerOrder) quotation,
-                        CustomerOrderStatus.BEING_PROCESSED);
-            } catch (Exception e) {
-            }
+            if (isValidation)
+                quotation = quotationService.addOrUpdateQuotationStatus((Quotation) quotation,
+                        QuotationStatus.TO_VERIFY);
         }
 
         return quotation;
@@ -183,44 +184,47 @@ public class MyJssQuotationDelegate {
         quotation.getResponsable().getTiers().getResponsables().add(quotation.getResponsable());
     }
 
-    private void populateBooleansOfProvisions(IQuotation quotation) throws OsirisException {
-        for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-            for (Service service : asso.getServices())
-                for (Provision provision : service.getProvisions()) {
-                    provision.setIsApplicationFees(false);
-                    provision.setIsBaloNormalization(false);
-                    provision.setIsBaloPackage(false);
-                    provision.setIsBaloPublicationFlag(false);
-                    provision.setIsBankCheque(false);
-                    provision.setIsBilan(false);
-                    provision.setIsBodaccFollowup(false);
-                    provision.setIsBodaccFollowupAndRedaction(false);
-                    provision.setIsBusinnessNantissementRedaction(false);
-                    provision.setIsChronopostFees(false);
-                    provision.setIsComplexeFile(false);
-                    provision.setIsCorrespondenceFees(false);
-                    provision.setIsDisbursement(false);
-                    provision.setIsDocumentScanning(false);
-                    provision.setIsFeasibilityStudy(false);
-                    provision.setIsFormalityAdditionalDeclaration(false);
-                    provision.setIsLogo(false);
-                    provision.setIsNantissementDeposit(false);
-                    provision.setIsPublicationFlag(false);
-                    provision.setIsPublicationPaper(false);
-                    provision.setIsPublicationReceipt(false);
-                    provision.setIsRegisterInitials(false);
-                    provision.setIsRegisterPurchase(false);
-                    provision.setIsRegisterShippingCosts(false);
-                    provision.setIsRneUpdate(false);
-                    provision.setIsSellerPrivilegeRedaction(false);
-                    provision.setIsSocialShareNantissementRedaction(false);
-                    provision.setIsSupplyFullBeCopy(false);
-                    provision.setIsTreatmentMultipleModiciation(false);
-                    provision.setIsVacationMultipleModification(false);
-                    provision.setIsVacationUpdateBeneficialOwners(false);
-                    // TODO : delete after modif in front
-                    provision.setIsRedactedByJss(false);
-                }
+    public void populateBooleansOfProvisions(IQuotation quotation) throws OsirisException {
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                if (asso.getServices() != null)
+                    for (Service service : asso.getServices())
+                        if (service.getProvisions() != null)
+                            for (Provision provision : service.getProvisions()) {
+                                provision.setIsApplicationFees(false);
+                                provision.setIsBaloNormalization(false);
+                                provision.setIsBaloPackage(false);
+                                provision.setIsBaloPublicationFlag(false);
+                                provision.setIsBankCheque(false);
+                                provision.setIsBilan(false);
+                                provision.setIsBodaccFollowup(false);
+                                provision.setIsBodaccFollowupAndRedaction(false);
+                                provision.setIsBusinnessNantissementRedaction(false);
+                                provision.setIsChronopostFees(false);
+                                provision.setIsComplexeFile(false);
+                                provision.setIsCorrespondenceFees(false);
+                                provision.setIsDisbursement(false);
+                                provision.setIsDocumentScanning(false);
+                                provision.setIsFeasibilityStudy(false);
+                                provision.setIsFormalityAdditionalDeclaration(false);
+                                provision.setIsLogo(false);
+                                provision.setIsNantissementDeposit(false);
+                                provision.setIsPublicationFlag(false);
+                                provision.setIsPublicationPaper(false);
+                                provision.setIsPublicationReceipt(false);
+                                provision.setIsRegisterInitials(false);
+                                provision.setIsRegisterPurchase(false);
+                                provision.setIsRegisterShippingCosts(false);
+                                provision.setIsRneUpdate(false);
+                                provision.setIsSellerPrivilegeRedaction(false);
+                                provision.setIsSocialShareNantissementRedaction(false);
+                                provision.setIsSupplyFullBeCopy(false);
+                                provision.setIsTreatmentMultipleModiciation(false);
+                                provision.setIsVacationMultipleModification(false);
+                                provision.setIsVacationUpdateBeneficialOwners(false);
+                                // TODO : delete after modif in front
+                                provision.setIsRedactedByJss(false);
+                            }
 
     }
 

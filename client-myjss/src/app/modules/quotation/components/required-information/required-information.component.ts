@@ -39,8 +39,8 @@ export class RequiredInformationComponent implements OnInit {
 
   CONFIER_ANNONCE_AU_JSS: string = "Confier l'annonce légale au JSS";
 
-  selectedAssoIndex: number | null = null;
-  selectedServiceIndex: number | null = null;
+  selectedAssoIndex: number | null = 0;
+  selectedServiceIndex: number | null = 0;
   selectedService: Service | null = null;
   currentUser: Responsable | undefined;
   quotation: IQuotation | undefined;
@@ -59,7 +59,7 @@ export class RequiredInformationComponent implements OnInit {
   isDoNotGenerateAnnouncement: boolean = true;
   selectionRedaction: string[] = [this.CONFIER_ANNONCE_AU_JSS, "Je m'occupe de la publication de l'annonce légale"];
   selectedRedaction: string[][] = [];
-  isFetchingPrincing: boolean = false;
+  isSaving: boolean = false;
 
   checkedOnce = false;
 
@@ -177,25 +177,8 @@ export class RequiredInformationComponent implements OnInit {
     if ((event.target as HTMLElement).closest('.pill')) {
       return;
     }
-    this.selectedAssoIndex = assoIndex;
+    this.moveToService(0, assoIndex);
   }
-
-  selectServiceIndex(newServiceIndex: number, newAssoIndex: number): void {
-    if (this.currentUser && this.selectedAssoIndex !== null && this.selectedServiceIndex !== null && this.quotation) {
-      if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]) {
-        this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe();
-      }
-    }
-
-    this.selectedAssoIndex = null;
-    this.selectedServiceIndex = null;
-
-    setTimeout(() => {
-      this.selectedAssoIndex = newAssoIndex;
-      this.selectedServiceIndex = newServiceIndex;
-    }, 0);
-  }
-
 
   config = {
     toolbar: ['undo', 'redo', '|', 'fontFamily', 'fontSize', 'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
@@ -238,7 +221,6 @@ export class RequiredInformationComponent implements OnInit {
         this.quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments[assoServiceDocumentIndex] = response;
       }
     });
-
   }
 
   canSaveQuotation() {
@@ -252,8 +234,9 @@ export class RequiredInformationComponent implements OnInit {
   saveFieldsValue() {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
       if (this.currentUser) {
+        this.isSaving = true;
         this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe(response => {
-          this.moveToNextService();
+          this.isSaving = false;
         });
 
       } else {
@@ -262,44 +245,46 @@ export class RequiredInformationComponent implements OnInit {
         } else {
           this.orderService.setCurrentDraftOrder(this.quotation);
         }
-        this.moveToNextService();
       }
-    } else if (this.quotation) {
-      this.selectedAssoIndex = 0;
-      this.selectedServiceIndex = 0;
     }
   }
 
-  private moveToNextService() {
-    if (this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined)
-      if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! + 1]) {
-        this.selectedServiceIndex = this.selectedServiceIndex + 1;
-        this.selectServiceIndex(this.selectedServiceIndex, this.selectedAssoIndex!);
-      } else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! + 1]) {
-        this.selectedAssoIndex = this.selectedAssoIndex + 1;
-        this.selectedServiceIndex = 0;
-        this.selectServiceIndex(this.selectedServiceIndex!, this.selectedAssoIndex!);
-      } else {
-        if (this.quotation) {
-          this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-          this.appService.openRoute(undefined, "quotation", undefined);
-        }
-      }
-  }
+  moveToService(newServiceIndex: number, newAssoIndex: number) {
+    if (!this.quotation)
+      return;
 
-  moveToPreviousService() {
-    if (this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined)
-      if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services[this.selectedServiceIndex! - 1]) {
-        this.selectedServiceIndex = this.selectedServiceIndex - 1;
-        this.selectServiceIndex(this.selectedServiceIndex, this.selectedAssoIndex!);
-      } else if (this.quotation!.assoAffaireOrders[this.selectedAssoIndex! - 1]) {
-        this.selectedAssoIndex = this.selectedAssoIndex - 1;
-        this.selectedServiceIndex = this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].services.length - 1;
-        this.selectServiceIndex(this.selectedServiceIndex!, this.selectedAssoIndex!);
-      }
-      else {
-        this.goBackQuotationModale();
-      }
+    // move backward
+    if (newServiceIndex < 0) {
+      newAssoIndex = newAssoIndex - 1;
+    }
+
+    if (newAssoIndex < 0) {
+      this.saveFieldsValue();
+      this.goBackQuotationModale();
+      return;
+    }
+
+    // move forward
+    if (newServiceIndex >= this.quotation.assoAffaireOrders[newAssoIndex].services.length) {
+      newAssoIndex = newAssoIndex + 1;
+      newServiceIndex = 0;
+    }
+
+    if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
+      this.saveFieldsValue();
+      this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+      this.appService.openRoute(undefined, "quotation", undefined);
+      return;
+    }
+
+    this.saveFieldsValue();
+    this.selectedAssoIndex = null;
+    this.selectedServiceIndex = null;
+
+    setTimeout(() => {
+      this.selectedAssoIndex = newAssoIndex;
+      this.selectedServiceIndex = newServiceIndex;
+    }, 0);
   }
 
   goBackQuotationModale() {

@@ -50,6 +50,7 @@ import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
+import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
@@ -229,6 +230,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     QuotationValidationHelper quotationValidationHelper;
+
+    @Autowired
+    MyJssQuotationDelegate myJssQuotationDelegate;
 
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
@@ -1783,108 +1787,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, HttpServletRequest request)
+    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
+            HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         order.setResponsable(employeeService.getCurrentMyJssUser());
         order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         order.setCustomerOrderStatus(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
         quotationValidationHelper.completeIQuotationDocuments(order, true);
-        return addOrUpdateCustomerOrder(order, true, false);
+        myJssQuotationDelegate.populateBooleansOfProvisions(order);
+        order = addOrUpdateCustomerOrder(order, true, false);
+
+        if (isValidation != null && isValidation)
+            addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
+        return order;
     }
-
-    // private Responsable
-    // generateTiersAndResponsableFromUserCustomerOrder(CustomerOrder
-    // userCustomerOrder)
-    // throws OsirisException {
-    // Responsable responsable = new Responsable();
-    // responsable.setIsActive(true);
-    // responsable.setIsBouclette(true);
-    // responsable.setCivility(userCustomerOrder.getResponsableCivility());
-    // responsable.setFirstname(userCustomerOrder.getResponsableFirstname());
-    // responsable.setLastname(userCustomerOrder.getResponsableLastname());
-    // Mail mail = new Mail();
-    // mail.setMail(userCustomerOrder.getResponsableMail());
-    // responsable.setMail(mail);
-    // responsable.setTiersType(constantService.getTiersTypeClient());
-    // responsable.setSalesEmployee(constantService.getEmployeeSalesDirector());
-    // if (userCustomerOrder.getResponsablePhone() != null) {
-    // Phone phone = new Phone();
-    // phone.setPhoneNumber(userCustomerOrder.getResponsablePhone());
-    // responsable.setPhones(new ArrayList<Phone>());
-    // responsable.getPhones().add(phone);
-    // }
-
-    // userCustomerOrder.getBillingDocument().setDocumentType(constantService.getDocumentTypeBilling());
-    // userCustomerOrder.getDigitalDocument().setDocumentType(constantService.getDocumentTypeDigital());
-    // userCustomerOrder.getPaperDocument().setDocumentType(constantService.getDocumentTypePaper());
-
-    // responsable.setDocuments(new ArrayList<Document>());
-    // responsable.getDocuments()
-    // .add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(),
-    // null));
-    // responsable.getDocuments()
-    // .add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(),
-    // null));
-    // responsable.getDocuments()
-    // .add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(),
-    // null));
-
-    // Tiers tiers = new Tiers();
-    // tiers.setIsNewTiers(true);
-    // if (userCustomerOrder.getCustomerIsIndividual() != null &&
-    // userCustomerOrder.getCustomerIsIndividual()) {
-    // tiers.setIsIndividual(true);
-    // tiers.setFirstname(responsable.getFirstname());
-    // tiers.setLastname(responsable.getLastname());
-    // } else {
-    // tiers.setIsIndividual(false);
-    // tiers.setDenomination(userCustomerOrder.getCustomerDenomination());
-    // }
-    // tiers.setTiersType(constantService.getTiersTypeClient());
-    // tiers.setSalesEmployee(constantService.getEmployeeSalesDirector());
-    // tiers.setAddress(userCustomerOrder.getCustomerAddress());
-    // tiers.setCity(userCustomerOrder.getCustomerCity());
-    // tiers.setCountry(userCustomerOrder.getCustomerCountry());
-    // tiers.setSiret(userCustomerOrder.getSiret());
-    // tiers.setPostalCode(userCustomerOrder.getCustomerPostalCode());
-    // tiers.setIsSepaMandateReceived(false);
-    // tiers.setLanguage(constantService.getLanguageFrench());
-
-    // tiers.setPaymentType(constantService.getPaymentTypeCB());
-
-    // tiers.setDocuments(new ArrayList<Document>());
-    // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(),
-    // null));
-    // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(),
-    // null));
-    // tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(),
-    // null));
-
-    // TODO : ajouter au tiers documentDunning, receiptDocument
-    // Document documentDunning = new Document();
-    // documentDunning.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
-    // documentDunning.setIsRecipientAffaire(false);
-    // documentDunning.setIsRecipientClient(false);
-    // documentDunning.setDocumentType(constantService.getDocumentTypeDunning());
-    // tiers.setIsProvisionalPaymentMandatory(true);
-    // tiers.getDocuments().add(documentDunning);
-
-    // Document receiptDocument = new Document();
-    // receiptDocument.setBillingClosureRecipientType(constantService.getBillingClosureRecipientTypeClient());
-    // receiptDocument.setIsRecipientAffaire(false);
-    // receiptDocument.setIsRecipientClient(false);
-    // receiptDocument.setDocumentType(constantService.getDocumentTypeBillingClosure());
-    // receiptDocument.setBillingClosureType(constantService.getBillingClosureTypeAffaire());
-    // tiers.getDocuments().add(receiptDocument);
-
-    // tiers.setResponsables(new ArrayList<Responsable>());
-    // responsable.setTiers(tiers);
-    // tiers.getResponsables().add(responsable);
-
-    // tiersService.addOrUpdateTiers(tiers);
-    // return responsableService.getResponsable(responsable.getId());
-    // }
 
     @Override
     public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable) {
@@ -1956,7 +1873,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         documentService.addOrUpdateDocument(document);
 
         customerOrder = getCustomerOrder(customerOrder.getId());
-        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
         return true;
     }
 

@@ -61,6 +61,13 @@ export class QuotationComponent implements OnInit {
     return false;
   }
 
+  goToStep(item: MenuItem) {
+    if (this.isStepAccessible(item)) {
+      this.quotationService.setCurrentDraftQuotationStep(item);
+      this.appService.openRoute(undefined, item.route, undefined);
+    }
+  }
+
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();

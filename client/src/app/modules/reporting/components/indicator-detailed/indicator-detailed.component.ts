@@ -284,17 +284,22 @@ export class IndicatorDetailedComponent implements OnInit {
         const value = kpi[key as keyof Kpi];
         const date = formatDateFrance(new Date(kpi.applicationDate));
 
-        data.push([date, value as number]);
+        if (value) {
+          data.push([date, value as number]);
 
-        // Repeat value until next date
-        const nextDate = sorted[i + 1]?.applicationDate;
-        if (nextDate) {
-          const repeatDate = new Date(nextDate);
-          repeatDate.setDate(repeatDate.getDate() - 1);
-          const repeatDateStr = formatDateFrance(repeatDate);
-          data.push([repeatDateStr, value as number]);
+          // Repeat value until next date
+          const nextDate = sorted[i + 1]?.applicationDate;
+          if (nextDate) {
+            const repeatDate = new Date(nextDate);
+            repeatDate.setDate(repeatDate.getDate() - 1);
+            const repeatDateStr = formatDateFrance(repeatDate);
+            data.push([repeatDateStr, value as number]);
+          }
         }
       }
+
+      // repeat the last one with current date
+      data.push([formatDateFrance(new Date()), sorted[sorted.length - 1][key as keyof Kpi] as number]);
 
       let name = '';
       if (key == 'minValue')
@@ -320,7 +325,7 @@ export class IndicatorDetailedComponent implements OnInit {
       };
     }) as SeriesOption[];
 
-    return kpiSeries;
+    return kpiSeries.filter(s => (s.data as [string, number][]).length > 0);
   }
 
   /**

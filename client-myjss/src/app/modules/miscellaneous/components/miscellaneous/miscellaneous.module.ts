@@ -41,8 +41,8 @@ const routes: Routes = [{}];
     ReactiveFormsModule,
     GenericSwiperComponent,
     OurClientsComponent,
-    GenericTestimonialComponent,
-    AutocompleteLibModule
+    AutocompleteLibModule,
+    GenericTestimonialComponent
   ],
   declarations: [MiscellaneousComponent,
     AvatarComponent,
@@ -67,11 +67,9 @@ const routes: Routes = [{}];
     SelectMultipleNoticeTypeComponent,
     SelectStringComponent,
     AutocompletePostComponent,
+    SelectStringComponent
   ],
   exports: [
-    AvatarComponent,
-    GenericInputComponent,
-    SingleUploadComponent,
     TrustHtmlPipe,
     GenericTextareaComponent,
     DoubleButtonsComponent,
@@ -86,14 +84,14 @@ const routes: Routes = [{}];
     SelectValueServiceFieldTypeComponent,
     SelectBillingLabelTypeComponent,
     OurClientsComponent,
-    GenericTestimonialComponent,
     SelectCivilityComponent,
     AutocompleteCityComponent,
     SelectDepartmentComponent,
     SelectNoticeTypeFamilyComponent,
     SelectMultipleNoticeTypeComponent,
     SelectStringComponent,
-    AutocompletePostComponent
+    AutocompletePostComponent,
+    GenericTestimonialComponent
   ]
 })
 export class MiscellaneousModule { }

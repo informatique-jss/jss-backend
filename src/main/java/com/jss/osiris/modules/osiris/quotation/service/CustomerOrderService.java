@@ -145,7 +145,8 @@ public interface CustomerOrderService {
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
                         List<Responsable> responsables);
 
-        public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, HttpServletRequest request)
+        public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
+                        HttpServletRequest request)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)

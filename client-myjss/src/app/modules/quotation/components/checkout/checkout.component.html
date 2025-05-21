@@ -43,7 +43,7 @@
 
         <!-- Quick message -->
         <div class="row"
-          *ngIf="quotation && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0]">
+          *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0]">
           <div class="card form-check form-switch mb-4 py-4 ">
             <h2 class="pb-3">Gagnez du temps dans vos démarches !</h2>
             <div>
@@ -319,9 +319,7 @@
 <ng-template #billingDocumentForm let-document='document'>
   <div class="tab-pane fade show active" [id]="documentTypeBilling.code" role="tabpanel">
     <div class="d-flex align-items-center pb-1 mb-2">
-      <h3 class="fs-base fw-normal text-body text-uppercase pb-2 pb-sm-3">
-        <span class=" ms-1">&#x2022; Libellé de la facture</span>
-      </h3>
+      <h3 class="h6 mb-0 me-3 mt-3 text-blue">Libellé de la facture</h3>
     </div>
     <div class="form-check mb-3">
       <select-billing-label-type [(model)]="document.billingLabelType" label="Adressage"
@@ -580,7 +578,7 @@
         </div>
 
         <div class="border-top pt-4 mb-3">
-          <div class="input-group input-group-sm border-dashed" style="max-width: 310px;">
+          <div class="input-group input-group-sm border-dashed">
             <input class="form-control text-uppercase" type="text" placeholder="Code de réduction">
             <button class="btn btn-secondary" type="button" (click)="applyCoupon()">Appliquer</button>
           </div>
@@ -618,7 +616,6 @@
         <label class="form-check-label" for="save-info">Je certifie que les pièces justificatives fournies sont
           conformes.
         </label>
-        <div class="invalid-feedback">Vous devez accepter avant de passer la commande.</div>
       </div>
       <div class="form-check mb-4 pe-2">
         <input class="form-check-input" type="checkbox" id="save-info2" [(ngModel)]="acceptTerms" name="acceptTerms"
@@ -626,16 +623,18 @@
         <label class="form-check-label" for="save-info2">En cochant cette case, je reconnais avoir pris
           connaissance et accepter les Conditions Générales de Vente (CGV) du site.
         </label>
-        <div class="invalid-feedback">Vous devez accepter avant de passer la commande.</div>
-
       </div>
       <div class="row gx-1 gy-3 justify-content-between">
         <div class="col-auto">
-          <button class="btn btn-md btn-outline-secondary" type="button" (click)="onSaveDraft()">Enregistrer le
+          <button class="btn btn-md btn-outline-secondary" type="button" (click)="onValidateOrder(true)"><span
+              class="spinner-grow spinner-grow-sm me-2  text-body-secondary" role="status" aria-hidden="true"
+              *ngIf="isSavingQuotation|| isComputingPrice"></span>Enregistrer le
             brouillon</button>
         </div>
         <div class="col-auto">
-          <button class="btn btn-md btn-secondary" type="submit" (click)="onValidateOrder()">
+          <button class="btn btn-md btn-secondary" type="submit" (click)="onValidateOrder(false)">
+            <span class="spinner-grow spinner-grow-sm me-2  text-body-secondary" role="status" aria-hidden="true"
+              *ngIf="isSavingQuotation ||isComputingPrice"></span>
             {{quotation?.isQuotation ? 'Envoyer la demande de devis' : 'Valider la commande'}}</button>
         </div>
       </div>
