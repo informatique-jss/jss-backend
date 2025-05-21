@@ -6,8 +6,8 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 
 @Component({
   selector: 'select-myjss-category',
-  templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css'],
+  templateUrl: './select-myjss-category.component.html',
+  styleUrls: ['./select-myjss-category.component.css'],
   standalone: false
 })
 export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCategory> implements OnInit {
