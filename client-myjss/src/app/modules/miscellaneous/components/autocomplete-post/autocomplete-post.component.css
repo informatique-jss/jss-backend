@@ -1,0 +1,27 @@
+.custom-search-icon {
+  position: absolute;
+  z-index: 1000;
+}
+
+::ng-deep .select-custom {
+  border: 0px none var(--ar-gray-100) !important;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  color: var(--ar-gray-600)
+}
+
+::ng-deep .select-custom:focus {
+  color: var(--ar-gray-600)
+}
+
+.custom-input-group {
+  border-width: 1px 1px 1px 0px !important;
+  border-style: solid !important;
+  border-color: var(--ar-gray-500) !important;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.overflow-x-hidden {
+  overflow-x: hidden !important;
+}

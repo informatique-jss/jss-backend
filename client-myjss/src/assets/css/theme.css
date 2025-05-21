@@ -20436,3 +20436,12 @@ ng-autocomplete .autocomplete-container b {
   padding: 0 2px;
   border-radius: 2px;
 }
+
+.left-rounded-1 {
+  border-top-left-radius: var(--ar-border-radius-sm) !important;
+  border-bottom-left-radius: var(--ar-border-radius-sm) !important;
+}
+
+.border-input {
+  border: var(--ar-border-width) var(--ar-border-style) var(--ar-gray-500) !important;
+}

@@ -52,7 +52,7 @@ export class PostService extends AppRestService<Post> {
     return this.getList(httpParams, "posts/first-myjss-category");
   }
 
-  searchPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory, page: number, size: number) {
+  searchPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory | undefined, page: number, size: number) {
     let httpParams = new HttpParams();
     if (searchText)
       httpParams = httpParams.set("searchText", searchText);

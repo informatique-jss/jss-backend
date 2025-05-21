@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
-import { Tag } from '../../model/Tag';
 import { MyJssCategoryService } from '../../services/myjss.category.service';
 import { PostService } from '../../services/post.service';
 
@@ -77,7 +76,7 @@ export class PracticalSheetsComponent implements OnInit {
 
     let slug = this.activatedRoute.snapshot.params['slug'];
     if (slug)
-      this.searchText = slug;
+      this.openTagSearch(slug, null);
 
     this.getTopPosts();
     this.getTendencyPosts();
@@ -151,11 +150,6 @@ export class PracticalSheetsComponent implements OnInit {
     })
   }
 
-  clearSearch() {
-    this.searchText = '';
-    this.searchResults = [];
-  }
-
   clearSecondSearch() {
     this.secondSearchText = '';
     this.secondSearchResults = [];
@@ -185,19 +179,10 @@ export class PracticalSheetsComponent implements OnInit {
     }
   }
 
-  highlightText(text: string): string {
-    if (!this.searchText) {
-      return text;
-    }
-
-    const regex = new RegExp(`(${this.searchText})`, 'gi');
-    return text.replace(regex, `<span style="background-color: yellow;">$1</span>`);
-  }
-
-  openTagSearch(tag: Tag, event: any) {
-    if (tag.slug && this.searchInput) {
+  openTagSearch(tagSlug: string, event: any) {
+    if (tagSlug && this.searchInput) {
       this.searchInput.nativeElement.scrollIntoView({ behavior: 'smooth', block: "center" })
-      this.searchText = tag.slug;
+      this.searchText = tagSlug;
     }
   }
 

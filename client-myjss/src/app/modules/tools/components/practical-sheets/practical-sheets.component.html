@@ -5,53 +5,14 @@
       <h1 class="secondary-heading mt-2 mb-5">Les fiches pratiques de MyJSS</h1>
       <h3 class="secondary-heading my-5">Quelles informations recherchez-vous ?</h3>
     </div>
-    <div class="w-100 justify-content-between my-3" #searchInput>
-      <div class="col-12">
-        <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
-          <div class="col">
-            <div class="row align-items-center">
-              <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher"
-                [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false"
-                [isDisplayLabel]="false" (onFormChange)="searchForPosts()" class="btn-search col"
-                [icon]="'search'"></generic-input>
 
-              <div *ngIf="isLoading" class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
-                <span class="visually-hidden">chargement...</span>
-              </div>
-
-              <button *ngIf="searchText" class="btn btn-search col-1" (click)="clearSearch()">
-                <i class="ai ai-cross-alt"></i>
-              </button>
-            </div>
-          </div>
-          <div class="select-box col-3 justify-content-end">
-            <select-myjss-category class="cursor-pointer ps-0" [additionnalType]="this.myJssCategories[0]"
-              [(model)]="selectedMyJssCategory" [form]="practicalSheetsForm" propertyName="selectedMyJssCategory"
-              [isMandatory]="false" [isDisabled]="false" (onFormChange)="searchForPosts()"></select-myjss-category>
-          </div>
-        </div>
+    <div class="row w-100 my-3 p-0" #searchInput>
+      <div class="col">
+        <autocomplete-post [myJssCategory]=" selectedMyJssCategory" [(model)]="searchText" label="Rechercher"
+          [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false"
+          [isDisplayLabel]="false" (onFormChange)="searchForPosts()"></autocomplete-post>
       </div>
     </div>
-
-    <section *ngIf="searchResults && searchResults.length > 0" class="container-custom" #searchResultsSection>
-      <div class="border-0 rounded-3 custom-dropdown">
-        <ul class="list-group mt-2 search-result ">
-          <li class="list-group-item py-2" *ngFor="let post of searchResults">
-            <div class="row">
-              <div class="col-12">
-                <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
-                  <h6 class="fw-bold secondary-heading" [innerHTML]="highlightText(post.titleText) | trustHtml"></h6>
-                </a>
-                <a (click)="openPost(post.slug, $event)" class="btn-link stretched-link text-reset">
-                  <p class="text-truncate"><span [innerHTML]="highlightText(post.excerptText) | trustHtml"
-                      style="white-space: nowrap;"></span></p>
-                </a>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </section>
   </div>
 </section>
 
@@ -59,7 +20,6 @@
 <section class="background-opacity">
   <div class="container overflow-hidden">
     <div *ngIf="!tendencyPosts || tendencyPosts.length == 0" class="row">
-      <!-- Loading placeholders  -->
       <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
         <div class="position-relative placeholder-wave">
           <div class="card-img-top placeholder ratio ratio-16x9"></div>
@@ -96,7 +56,7 @@
                 <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
                 <span class="fs-xs opacity-20 mx-3">|</span>
                 <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
-                  (click)="openTagSearch(post.postTags[0], $event)">{{post.postTags[0].name}}</a>
+                  (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
                 <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
@@ -120,7 +80,6 @@
 
 <section class="container overflow-hidden">
   <div *ngIf="!topPosts || topPosts.length==0" class="row">
-    <!-- Loading placeholders  -->
     <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
       <div class="position-relative placeholder-wave">
         <div class="card-img-top placeholder ratio ratio-16x9"></div>
@@ -156,7 +115,7 @@
               <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
               <span class="fs-xs opacity-20 mx-3">|</span>
               <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
-                (click)="openTagSearch(post.postTags[0], $event)">{{post.postTags[0].name}}</a>
+                (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
             </div>
             <h3 class="h4 card-title card-title-truncate">
               <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
@@ -180,7 +139,6 @@
 <section class="background-opacity">
   <div class="container overflow-hidden ">
     <div *ngIf="!mostSeenPosts || mostSeenPosts.length==0" class="row">
-      <!-- Loading placeholders  -->
       <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
         <div class="position-relative placeholder-wave">
           <div class="card-img-top placeholder ratio ratio-16x9"></div>
@@ -217,7 +175,7 @@
                 <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
                 <span class="fs-xs opacity-20 mx-3">|</span>
                 <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
-                  (click)="openTagSearch(post.postTags[0], $event)">{{post.postTags[0].name}}</a>
+                  (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
                 <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>

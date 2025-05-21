@@ -31,7 +31,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   expectedMinLengthInput: number = 3;
 
-  filteredTypes: T[] = [];
+  @ViewChild('filteredTypes') filteredTypes: T[] = [];
 
   isLoading: boolean = false;
 
