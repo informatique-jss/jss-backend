@@ -12,7 +12,6 @@ import { MailService } from '../../services/mail.service';
 export class PricesComponent implements OnInit {
 
   isConditionAccepted: boolean = false;
-  checkedOnce: boolean = false;
 
   firstName: string = "";
   lastName: string = "";
@@ -29,16 +28,20 @@ export class PricesComponent implements OnInit {
   }
 
   getPricesByMail(event: any) {
-    this.checkedOnce = true;
-    if (!this.firstName || !this.lastName || !this.mail || !this.isConditionAccepted) {
+    if (!this.firstName || !this.lastName || !this.mail) {
       return;
     }
+
+    if (!this.isConditionAccepted) {
+      this.appService.displayToast("Merci d'accepter les conditions", true, "Une erreur s’est produite...", 3000);
+      return;
+    }
+
 
     this.mailService.subscribePrices(this.mail, this.firstName, this.lastName, this.phoneNumber).subscribe(response => {
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail avec les tarifs.", false, "Demande validée", 3000);
         this.pricesForm.reset();
-        this.checkedOnce = false;
         this.firstName = "";
         this.lastName = "";
         this.phoneNumber = "";
