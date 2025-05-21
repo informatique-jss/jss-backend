@@ -49,9 +49,11 @@ public class SessionConfig {
                 DefaultCookieSerializer serializer = new DefaultCookieSerializer();
                 serializer.setCookieName(cookieName);
 
-                if ("jss".equalsIgnoreCase(domainHeader) || "myjss".equalsIgnoreCase(domainHeader)) {
-                    serializer.setDomainName("jss.fr"); // .jss.fr = valable pour jss.fr et *.jss.fr
-                }
+                // if ("jss".equalsIgnoreCase(domainHeader) ||
+                // "myjss".equalsIgnoreCase(domainHeader)) {
+                // serializer.setDomainName("jss.fr"); // .jss.fr = valable pour jss.fr et
+                // *.jss.fr
+                // }
 
                 CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
                 resolver.setCookieSerializer(serializer);

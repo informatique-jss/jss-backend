@@ -36,13 +36,11 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
     if (!this.modelCountry)
       this.modelCountry = this.constantService.getCountryFrance();
 
-    return this.cityService.getCitiesFilteredByNameAndCountryAndPostalCode(value, this.modelCountry, this.preFilterPostalCode ? this.preFilterPostalCode : '', this.page, this.pageSize);
+    return this.cityService.getCitiesFilteredByNameAndCountryAndPostalCode(value, this.modelCountry, '', this.page, this.pageSize);
   }
 
   override optionSelected(type: City): void {
     super.optionSelected(type);
-    if (this.preFilterPostalCode == undefined && type.postalCode)
-      this.preFilterPostalCode = type.postalCode;
     this.onFormChange.next();
   }
 

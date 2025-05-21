@@ -155,6 +155,9 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     MyJssQuotationDelegate myJssQuotationDelegate;
 
+    @Autowired
+    AffaireService affaireService;
+
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
@@ -754,6 +757,11 @@ public class QuotationServiceImpl implements QuotationService {
     @Transactional(rollbackFor = Exception.class)
     public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
+                    affaireService.addOrUpdateAffaire(asso.getAffaire());
+
         quotation.setResponsable(employeeService.getCurrentMyJssUser());
         quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         quotation.setQuotationStatus(

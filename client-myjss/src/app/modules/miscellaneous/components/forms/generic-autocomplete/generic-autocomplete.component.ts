@@ -76,12 +76,15 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   override ngOnChanges(changes: SimpleChanges): void {
     if (changes['model'] && !this.selectedItem) {
       const newValue = changes['model'].currentValue;
-      const matchedItem = this.filteredTypes.find(item => (item as any).id === newValue.id);
-      if (matchedItem) {
-        this.selectedItem = matchedItem;
-      } else {
-        this.filteredTypes.push(newValue);
-        this.selectedItem = newValue;
+      this.selectedItem = newValue;
+      if (this.filteredTypes && this.filteredTypes[0]) {
+        const matchedItem = this.filteredTypes.find(item => (item as any).id === newValue.id);
+        if (matchedItem) {
+          this.selectedItem = matchedItem;
+        } else {
+          this.filteredTypes.push(newValue);
+          this.selectedItem = newValue;
+        }
       }
     }
   }

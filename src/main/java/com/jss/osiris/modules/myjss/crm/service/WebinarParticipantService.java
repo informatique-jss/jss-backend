@@ -16,4 +16,6 @@ public interface WebinarParticipantService {
     public List<WebinarParticipant> getWebinarParticipants(Webinar webinar);
 
     public WebinarParticipant deleteWebinarParticipant(WebinarParticipant webinarParticipant);
+
+    public void subscribeToWebinarReplay(String mail) throws OsirisException;
 }

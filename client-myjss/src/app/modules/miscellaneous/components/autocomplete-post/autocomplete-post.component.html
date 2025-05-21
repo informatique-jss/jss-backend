@@ -14,9 +14,9 @@
       </ng-autocomplete>
 
       <div class="custom-input-group align-items-center col-3 justify-content-end ps-0">
-        <select-myjss-category class="cursor-pointer ps-0" [(model)]=" myJssCategory"
-          [additionnalType]="additionalCategory!" [form]="autocompletePostForm" propertyName="selectedMyJssCategory"
-          [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
+        <select-myjss-category class="cursor-pointer ps-0" [(model)]="myJssCategory"
+          (onFormChange)="changeMyJssCategory()" [additionnalType]="additionalCategory!" [form]="autocompletePostForm"
+          propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
       </div>
     </div>
 

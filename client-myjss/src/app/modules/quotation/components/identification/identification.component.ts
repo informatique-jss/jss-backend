@@ -14,6 +14,7 @@ import { AffaireType, individual, notIndividual } from '../../model/AffaireType'
 import { IQuotation } from '../../model/IQuotation';
 import { order, quotation, QuotationType } from '../../model/QuotationType';
 import { ServiceFamilyGroup } from '../../model/ServiceFamilyGroup';
+import { CityService } from '../../services/city.service';
 import { ServiceFamilyGroupService } from '../../services/service.family.group.service';
 
 @Component({
@@ -52,7 +53,8 @@ export class IdentificationComponent implements OnInit {
     private quotationService: QuotationService,
     private orderService: CustomerOrderService,
     private loginService: LoginService,
-    private appService: AppService
+    private appService: AppService,
+    private cityService: CityService
   ) { }
 
   idenficationForm = this.formBuilder.group({
@@ -225,4 +227,12 @@ export class IdentificationComponent implements OnInit {
       }
   }
 
+  findCity(indexAsso: number) {
+    if (this.quotation && this.quotation.assoAffaireOrders[indexAsso].affaire.postalCode) {
+      this.cityService.getCitiesByPostalCode(this.quotation.assoAffaireOrders[indexAsso].affaire.postalCode).subscribe(response => {
+        if (response && response.length == 1)
+          this.quotation.assoAffaireOrders[indexAsso].affaire.city = response[0];
+      })
+    }
+  }
 }

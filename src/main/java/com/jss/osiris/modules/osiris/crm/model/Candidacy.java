@@ -47,6 +47,8 @@ public class Candidacy implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "candidacy" }, allowSetters = true)
 	private List<Attachment> attachments;
 
+	private Boolean isTreated;
+
 	public Integer getId() {
 		return id;
 	}
@@ -85,6 +87,14 @@ public class Candidacy implements Serializable, IId {
 
 	public void setMail(Mail mail) {
 		this.mail = mail;
+	}
+
+	public Boolean getIsTreated() {
+		return isTreated;
+	}
+
+	public void setIsTreated(Boolean isTreated) {
+		this.isTreated = isTreated;
 	}
 
 }

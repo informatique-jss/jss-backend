@@ -293,9 +293,33 @@ public class CrmController {
 
         @GetMapping(inputEntryPoint + "/candidacies")
         @JsonView(JacksonViews.OsirisListView.class)
-        public ResponseEntity<List<Candidacy>> getCandidacies() {
+        public ResponseEntity<List<Candidacy>> getCandidacies(@RequestParam Boolean isDisplayTreated) {
                 return new ResponseEntity<List<Candidacy>>(
-                                candidacyService.getCandidacies(),
+                                candidacyService.getCandidacies(isDisplayTreated),
                                 HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/candidacy/untreated")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<Boolean> markCandidacyAsUnTreated(@RequestParam Integer idCandidacy)
+                        throws OsirisException {
+                Candidacy candidacy = candidacyService.getCandidacy(idCandidacy);
+                if (candidacy == null)
+                        throw new OsirisValidationException("candidacy");
+
+                candidacyService.markCandidacyAsUnTreated(candidacy);
+                return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/candidacy/treated")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<Boolean> markCandidacyAsTreated(@RequestParam Integer idCandidacy)
+                        throws OsirisException {
+                Candidacy candidacy = candidacyService.getCandidacy(idCandidacy);
+                if (candidacy == null)
+                        throw new OsirisValidationException("candidacy");
+
+                candidacyService.markCandidacyAsUnTreated(candidacy);
+                return new ResponseEntity<Boolean>(true, HttpStatus.OK);
         }
 }

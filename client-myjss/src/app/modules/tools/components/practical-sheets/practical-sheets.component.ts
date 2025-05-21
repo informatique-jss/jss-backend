@@ -78,7 +78,7 @@ export class PracticalSheetsComponent implements OnInit {
     if (slug)
       this.openTagSearch(slug, null);
 
-    this.getTopPosts();
+    this.getTopPosts(undefined);
     this.getTendencyPosts();
     this.getMostSeenPosts();
   }
@@ -187,12 +187,25 @@ export class PracticalSheetsComponent implements OnInit {
   }
 
   /**************** posts carousel ***********************/
-  getTopPosts() {
-    this.postService.getTopPosts(this.page).subscribe(response => {
-      if (response && response.length > 0) {
-        this.topPosts.push(...response);
-      }
-    });
+  getTopPosts(category: MyJssCategory | undefined, doNotOverriteSelectedCategory: boolean = false) {
+    if (category) {
+      this.selectedMyJssCategory = category;
+      this.postService.getTopPostByMyJssCategory(this.page, this.selectedMyJssCategory).subscribe(response => {
+        if (response && response.content.length > 0) {
+          this.topPosts = response.content;
+        } else {
+          this.getTopPosts(undefined, true);
+        }
+      });
+    } else {
+      if (!doNotOverriteSelectedCategory)
+        this.selectedMyJssCategory = this.allMyJssCategories;
+      this.postService.getTopPosts(this.page).subscribe(response => {
+        if (response) {
+          this.topPosts = response;
+        }
+      });
+    }
   }
 
   getTendencyPosts() {

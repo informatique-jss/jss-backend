@@ -20423,6 +20423,7 @@ textarea::selection {
   border: var(--ar-border-width) solid var(--ar-gray-700) !important;
   border-radius: var(--ar-border-radius) !important;
   transition: border-color 0.15s ease-in-out !important;
+  height: 47px !important;
 }
 
 .autocomplete-container {

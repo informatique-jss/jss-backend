@@ -12,8 +12,16 @@ export class CandidacyService extends AppRestService<Candidacy> {
     super(http, "crm");
   }
 
-  getCandidacies() {
-    return this.getList(new HttpParams(), "candidacies");
+  getCandidacies(isDisplayTreated: boolean) {
+    return this.getList(new HttpParams().set("isDisplayTreated", isDisplayTreated), "candidacies");
+  }
+
+  markCandidacyAsTreated(candidacy: Candidacy) {
+    return this.get(new HttpParams().set("idCandidacy", candidacy.id), "candidacy/treated")
+  }
+
+  markCandidacyAsUnTreated(candidacy: Candidacy) {
+    return this.get(new HttpParams().set("idCandidacy", candidacy.id), "candidacy/untreated")
   }
 
 }

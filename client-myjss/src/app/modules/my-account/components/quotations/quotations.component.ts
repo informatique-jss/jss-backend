@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
@@ -18,10 +19,10 @@ import { getCustomerOrderBillingMailList } from '../orders/orders.component';
 declare var bootstrap: any;
 
 @Component({
-    selector: 'app-quotations',
-    templateUrl: './quotations.component.html',
-    styleUrls: ['./quotations.component.css'],
-    standalone: false
+  selector: 'app-quotations',
+  templateUrl: './quotations.component.html',
+  styleUrls: ['./quotations.component.css'],
+  standalone: false
 })
 export class QuotationsComponent implements OnInit {
 
@@ -51,6 +52,8 @@ export class QuotationsComponent implements OnInit {
 
   QUOTATION_STATUS_REFUSED_BY_CUSTOMER = QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
+
+  currentSearchRef: Subscription | undefined;
 
   constructor(
     private quotationService: QuotationService,
@@ -100,11 +103,14 @@ export class QuotationsComponent implements OnInit {
     if (this.currentPage == 0)
       this.isFirstLoading = true;
 
-    this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+    if (this.currentSearchRef)
+      this.currentSearchRef.unsubscribe();
+
+    this.currentSearchRef = this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
       this.quotations.push(...response);
       this.isFirstLoading = false;
       this.initTooltips();
-      if (response.length < 51)
+      if (response.length < 50)
         this.hideSeeMore = true;
     })
   }

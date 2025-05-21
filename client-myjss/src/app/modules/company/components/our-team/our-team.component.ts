@@ -13,14 +13,14 @@ export class OurTeamComponent implements OnInit {
 
   departments: any[] = [
     { name: 'Direction', key: 'direction' },
-    { name: 'RH', key: 'rh' },
-    { name: 'Commercial', key: 'commercial' },
     { name: 'Annonces', key: 'annonces' },
     { name: 'Formalités', key: 'formalites' },
+    { name: 'Commercial', key: 'commercial' },
     { name: 'Marketing', key: 'marketing' },
     { name: 'Rédaction', key: 'redaction' },
     { name: 'Comptabilité', key: 'comptabilite' },
-    { name: 'Informatique', key: 'informatique' }
+    { name: 'Informatique', key: 'informatique' },
+    { name: 'RH', key: 'rh' }
   ];
 
   selectedTab: any = this.departments[0];
@@ -33,11 +33,9 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Alex", lastname: "G.", title: "Directeur de la Production", photo: "alex_directeur_de_la_production.jpg" },
     ],
     rh: [
-      { firstname: "Myriam", lastname: "de M.", title: "Directrice des RH", photo: "myriam_directrice_des_rh.jpg" },
       { firstname: "Yllia", lastname: "V.", title: "Gestionnaire RH", photo: "yllia_gestionnaire_rh.jpg" }
     ],
     commercial: [
-      { firstname: "Myriam", lastname: "D.", title: "Directrice commerciale", photo: "myriam_directrice_commerciale.jpg" },
       { firstname: "Martine", lastname: "S.", title: "Directrice commerciale", photo: "martine_directrice_commerciale.jpg" },
       { firstname: "Bruno", lastname: "V.", title: "Chargé de clientèle", photo: "bruno_charge_de_clientele.jpg" },
       { firstname: "Gaëlle", lastname: "H.", title: "Chargée de clientèle", photo: "gaelle_chargee_de_clientele.jpg" },
@@ -76,7 +74,6 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Solène", lastname: "F.", title: "Graphiste Community Manager", photo: "solene_graphiste_community_manager.jpg" },
     ],
     redaction: [
-      { firstname: "Cyrille", lastname: "de M.", title: "Directeur de la Rédaction", photo: "cyrille_directeur_de_la_redaction.jpg" },
       { firstname: "Bérengère", lastname: "M.", title: "Rédactrice en chef", photo: "berengere_redactrice_en_chef.jpg" },
       { firstname: "Alexis", lastname: "D.", title: "Journaliste", photo: "alexis_journaliste.jpg" },
       { firstname: "Allison", lastname: "V.", title: "Journaliste", photo: "allison_journaliste.jpg" },
@@ -91,10 +88,8 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Céline", lastname: "L.", title: "Agent de facturation", photo: "celine_agent_de_facturation.jpg" },
     ],
     informatique: [
-      { firstname: "Arsène", lastname: "D.", title: "Directeur Général Délégué", photo: "arsene_directeur_general_delegue.jpg" },
       { firstname: "Frédéric", lastname: "B.", title: "Analyste Programmeur", photo: "frederic_analyste_programmeur.jpg" },
       { firstname: "Pierre", lastname: "C.", title: "Analyste Programmeur", photo: "pierre_analyste_programmeur.jpg" },
-      { firstname: "Alex", lastname: "G.", title: "Directeur des Systèmes d'Information", photo: "alex_directeur_des_systemes_d_information.jpg" },
     ]
   };
 

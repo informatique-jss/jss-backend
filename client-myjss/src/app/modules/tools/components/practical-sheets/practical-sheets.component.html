@@ -8,14 +8,15 @@
 
     <div class="row w-100 my-3 p-0" #searchInput>
       <div class="col">
-        <autocomplete-post [myJssCategory]=" selectedMyJssCategory" [(model)]="searchText" label="Rechercher"
+        <autocomplete-post [myJssCategory]="selectedMyJssCategory" [(model)]="searchText" label="Rechercher"
           [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false"
-          [isDisplayLabel]="false" (onFormChange)="searchForPosts()"></autocomplete-post>
+          [isDisplayLabel]="false" (onFormChange)="searchForPosts()"
+          (onChangeMyJssCategory)="getTopPosts($event)"></autocomplete-post>
       </div>
     </div>
   </div>
 </section>
-
+{{selectedMyJssCategory?selectedMyJssCategory.name:""}}
 
 <section class="background-opacity">
   <div class="container overflow-hidden">
@@ -224,7 +225,7 @@
         </div>
         <div class="select-box col-3 justify-content-end">
           <select-myjss-category class="cursor-pointer" [additionnalType]="this.myJssCategories[0]"
-            [(model)]="secondSelectedMyJssCategory" label="Catégories" [form]="practicalSheetsForm"
+            [(model)]="secondSelectedMyJssCategory" [form]="practicalSheetsForm"
             propertyName="secondSelectedMyJssCategory" [isMandatory]="false" (onFormChange)="searchForSecondPosts()"
             [isDisabled]="false"></select-myjss-category>
         </div>

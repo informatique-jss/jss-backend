@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -248,6 +249,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                 return new ArrayList<Attachment>();
             attachment.setQuotation(quotation);
         } else if (entityType.equals(Candidacy.class.getSimpleName())) {
+            filename = filename + "_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
             Candidacy candidacy = candidacyService.getCandidacy(idEntity);
             if (candidacy == null)
                 return new ArrayList<Attachment>();

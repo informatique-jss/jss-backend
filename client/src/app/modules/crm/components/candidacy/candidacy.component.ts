@@ -19,6 +19,7 @@ export class CandidacyComponent implements OnInit {
   candidacies: Candidacy[] = [];
   tableActions: SortTableAction<Candidacy>[] = [] as Array<SortTableAction<Candidacy>>;
   attachmentCvCandidacies: Attachment[] = [];
+  isDisplayTreated: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private candidacyService: CandidacyService,
@@ -30,6 +31,7 @@ export class CandidacyComponent implements OnInit {
     this.displayedColumnsCandidacies = [];
 
     this.displayedColumnsCandidacies.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<Candidacy>);
+    this.displayedColumnsCandidacies.push({ id: "isTreated", fieldName: "isAssociated", label: "Traité ?", valueFonction: (element: Candidacy, column: SortTableColumn<Candidacy>) => { return (element.isTreated) ? "Oui" : "Non" } } as SortTableColumn<Candidacy>);
     this.displayedColumnsCandidacies.push({ id: "searchedJob", fieldName: "searchedJob", label: "Poste recherché" } as SortTableColumn<Candidacy>);
     this.displayedColumnsCandidacies.push({ id: "message", fieldName: "message", label: "Message", isShrinkColumn: true } as SortTableColumn<Candidacy>);
     this.displayedColumnsCandidacies.push({ id: "mail", fieldName: "mail.mail", label: "Mail" } as SortTableColumn<Candidacy>);
@@ -57,8 +59,22 @@ export class CandidacyComponent implements OnInit {
         }
       }, display: true
     } as SortTableAction<Candidacy>);
+    this.tableActions.push({
+      actionIcon: "check", actionName: "Marquer comme traitée", actionClick: (column: SortTableAction<Candidacy>, candidacy: Candidacy, event: any): void => {
+        this.candidacyService.markCandidacyAsTreated(candidacy).subscribe(response => this.searchCandidacy());
+      }, display: true
+    } as SortTableAction<Candidacy>);
+    this.tableActions.push({
+      actionIcon: "block", actionName: "Marquer comme non traitée", actionClick: (column: SortTableAction<Candidacy>, candidacy: Candidacy, event: any): void => {
+        this.candidacyService.markCandidacyAsUnTreated(candidacy).subscribe(response => this.searchCandidacy());
+      }, display: true
+    } as SortTableAction<Candidacy>);
 
-    this.candidacyService.getCandidacies().subscribe(response => {
+    this.searchCandidacy();
+  }
+
+  searchCandidacy() {
+    this.candidacyService.getCandidacies(this.isDisplayTreated).subscribe(response => {
       if (response)
         this.candidacies = response;
     });

@@ -1317,6 +1317,17 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/cities/search/postal-code")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<City>> getCitiesByPostalCode(@RequestParam String postalCode, HttpServletRequest request)
+			throws OsirisException {
+		detectFlood(request);
+
+		return new ResponseEntity<List<City>>(
+				cityService.getCitiesByCountryAndPostalCode(constantService.getCountryFrance().getId(), postalCode),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/departments")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Department>> getDepartments(HttpServletRequest request) {

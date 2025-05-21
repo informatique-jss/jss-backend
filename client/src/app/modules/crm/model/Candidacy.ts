@@ -6,4 +6,5 @@ export interface Candidacy extends IAttachment {
   mail: Mail;
   searchedJob: string;
   message: string;
+  isTreated: boolean;
 }

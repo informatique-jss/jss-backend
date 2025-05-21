@@ -1,10 +1,10 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 
 @Component({
-    selector: 'explaination-video',
-    templateUrl: './explaination-video.component.html',
-    styleUrls: ['./explaination-video.component.css'],
-    standalone: false
+  selector: 'explaination-video',
+  templateUrl: './explaination-video.component.html',
+  styleUrls: ['./explaination-video.component.css'],
+  standalone: false
 })
 export class ExplainationVideoComponent implements OnInit {
   @Input() title: string = '';
@@ -24,11 +24,22 @@ export class ExplainationVideoComponent implements OnInit {
   isPlaying: boolean = false;
   currentTime: number = 0;
   videoPlaying = false;
+  isMobile: boolean = false;
 
   constructor() { }
   @ViewChild('videoPlayer') videoPlayer: ElementRef | undefined;
 
   ngOnInit() {
+    this.checkIfMobile();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkIfMobile();
+  }
+
+  private checkIfMobile(): void {
+    this.isMobile = window.innerWidth <= 768;
   }
 
   playVideo(): void {

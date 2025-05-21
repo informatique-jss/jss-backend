@@ -66,9 +66,11 @@ public class CustomerMail {
     public static String TEMPLATE_SEND_RFF = "send-rff";
     public static String TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = "send-competent-authority-reminder";
     public static String TEMPLATE_SEND_WEBINAR_SUBSCRIPTION = "send-webinar-subscription";
+    public static String TEMPLATE_SEND_WEBINAR_REPLAY = "send-webinar-replay";
     public static String TEMPLATE_SEND_DEMO_CONFIRMATION = "send-demo-confirmation";
     public static String TEMPLATE_SEND_PRICES_CONFIRMATION = "send-prices-confirmation";
     public static String TEMPLATE_SEND_DEMO_REQUEST = "send-demo-request";
+    public static String TEMPLATE_SEND_REPLAY_WEBINAR_REQUEST = "send-replay-webinar-request";
     public static String TEMPLATE_SEND_CONTACT_CONFIRMATION = "send-contact-confirmation";
     public static String TEMPLATE_SEND_CONTACT_REQUEST = "send-contact-request";
     public static String TEMPLATE_SEND_PRICES_REQUEST = "send-prices-request";

@@ -15,4 +15,8 @@ export class WebinarParticipantService extends AppRestService<WebinarParticipant
   subscribeWebinar(webinarParticipant: WebinarParticipant) {
     return this.postItem(new HttpParams(), 'webinar/subscribe', webinarParticipant);
   }
+
+  subscribeWebinarReplay(mail: string) {
+    return this.get(new HttpParams().set("mail", mail), 'webinar/subscribe/replay');
+  }
 }
