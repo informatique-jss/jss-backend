@@ -20436,3 +20436,11 @@ ng-autocomplete .autocomplete-container b {
   padding: 0 2px;
   border-radius: 2px;
 }
+
+
+.practical-sheets-pre-border {
+  width: 40px;
+  height: 1px;
+  margin-top: -1px;
+  border-top: solid;
+}
