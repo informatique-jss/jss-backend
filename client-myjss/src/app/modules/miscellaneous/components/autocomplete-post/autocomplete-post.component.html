@@ -25,11 +25,12 @@
         <div class="d-flex align-items-center text-truncate mb-1">
           <a class="h5 text-dark text-truncate-1 me-2 flex-shrink-1" *ngIf="item"
             [innerHTML]="item.titleText | trustHtml"></a>
-          <div *ngIf="item && item.postTags">
-            <a class="badge bg-primary fs-xs flex-shrink-0 text-nowrap" *ngFor="let tag of item.postTags.slice(0,3)">
+          <ng-container *ngIf="item && item.postTags">
+            <span class="badge bg-primary fs-xs flex-shrink-0 text-nowrap" style="margin-top: -15px;margin-right: 3px;"
+              *ngFor="let tag of item.postTags.slice(0,3)">
               {{ tag.name }}
-            </a>
-          </div>
+            </span>
+          </ng-container>
         </div>
         <div class=" row">
           <div class="col">

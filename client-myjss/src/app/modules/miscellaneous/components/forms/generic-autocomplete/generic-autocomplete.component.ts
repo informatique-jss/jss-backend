@@ -31,7 +31,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   expectedMinLengthInput: number = 3;
 
-  @ViewChild('filteredTypes') filteredTypes: T[] = [];
+  filteredTypes: T[] = [];
 
   isLoading: boolean = false;
 
@@ -137,7 +137,8 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
       this.isLoading = true;
       this.page++;
       this.searchEntities(this.searchValue).subscribe(response => {
-        this.filteredTypes = this.filteredTypes.concat(this.mapResponse(response.content));
+        if (response.content)
+          this.filteredTypes = this.filteredTypes.concat(this.mapResponse(response.content));
         this.isLoading = false;
       })
     }
