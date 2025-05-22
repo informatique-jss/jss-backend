@@ -67,6 +67,11 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
                 updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_DONE, "Terminé", "check_small", false, true,
                                 AggregateStatus.AGGREGATE_STATUS_DONE, 1);
 
+                updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY,
+                                "En attente d'éléments définitifs par l'autorité compétente",
+                                "sports_score",
+                                false, false, AggregateStatus.AGGREGATE_STATUS_WAITING, 16);
+
                 setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_NEW,
                                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
                 setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS,
@@ -80,6 +85,10 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
                 setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
                                 SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY);
                 setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
+                                SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY);
+                setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY,
+                                SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
+                setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
                                 SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
                 setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS,
                                 SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_LINKED_PROVISION);
@@ -91,6 +100,8 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
                 setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_DONE,
                                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
                 setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_LINKED_PROVISION,
+                                SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
+                setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY,
                                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
 
         }

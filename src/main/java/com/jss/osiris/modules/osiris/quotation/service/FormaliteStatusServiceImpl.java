@@ -76,6 +76,11 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                                 "bug_report",
                                 false, false, AggregateStatus.AGGREGATE_STATUS_WAITING, 12);
 
+                updateStatus(FormaliteStatus.FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY,
+                                "En attente d'éléments définitifs par l'autorité compétente",
+                                "sports_score",
+                                false, false, AggregateStatus.AGGREGATE_STATUS_WAITING, 16);
+
                 updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true,
                                 AggregateStatus.AGGREGATE_STATUS_DONE, 1);
 
@@ -106,6 +111,11 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED,
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
                 setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED,
+                                FormaliteStatus.FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY);
+                setSuccessor(FormaliteStatus.FORMALITE_AUTHORITY_VALIDATED,
+                                FormaliteStatus.FORMALITE_DONE);
+
+                setSuccessor(FormaliteStatus.FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY,
                                 FormaliteStatus.FORMALITE_DONE);
 
                 setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
@@ -119,6 +129,8 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
 
                 setPredecessor(FormaliteStatus.FORMALITE_AUTHORITY_TECHNICAL_BLOCKING,
+                                FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY);
+                setPredecessor(FormaliteStatus.FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY,
                                 FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY);
 
         }
