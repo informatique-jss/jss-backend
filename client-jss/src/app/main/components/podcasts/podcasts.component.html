@@ -41,7 +41,7 @@
                       <div class="inline-row m-2 d-flex align-items-center">
                         <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4"
                           (click)="togglePlayPodcast(post)"><i
-                            [ngClass]="isPlaying(post) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+                            [ngClass]="isPlayingPodcast(post) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
                         <div class="col-auto dropdown ms-2"
                           [ngClass]="{ show: openedListenDropdownPostId === post.id }">
                           <!-- Listen podcast in.. button -->
@@ -154,5 +154,3 @@
     </div>
   </ng-container>
 </div>
-
-<audio-player [isPlayToggled]="false"></audio-player>

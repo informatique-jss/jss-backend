@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AudioService } from '../../services/audio.service';
 
 @Component({
@@ -10,14 +10,13 @@ import { AudioService } from '../../services/audio.service';
 export class AudioPlayerComponent implements OnInit {
 
   volumeDropdownOpen = false;
+  private volumeHoverTimeout: any = null;
 
-  @Input() isPlayToggled: boolean = false;
-
+  volumePreviousValue: number = 50;
 
   constructor(public audioService: AudioService) { }
 
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
   }
 
   togglePlayPause() {
@@ -25,11 +24,11 @@ export class AudioPlayerComponent implements OnInit {
   }
 
   forward15Secs() {
-    this.audioService.skipNext();
+    this.audioService.addTime(15);
   }
 
   backward15Secs() {
-    this.audioService.skipPrevious();
+    this.audioService.addTime(-15);
   }
 
   onSeek(event: Event) {
@@ -40,10 +39,24 @@ export class AudioPlayerComponent implements OnInit {
   onVolumeChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.audioService.setVolume(+value);
+    this.volumePreviousValue = this.audioService.volume;
   }
 
-  toggleVolumeDropdown(event: Event) {
-    event.preventDefault();
-    this.volumeDropdownOpen = !this.volumeDropdownOpen;
+  onVolumeMouseEnter() {
+    clearTimeout(this.volumeHoverTimeout);
+    this.volumeDropdownOpen = true;
+  }
+
+  onVolumeMouseLeave() {
+    this.volumeHoverTimeout = setTimeout(() => {
+      this.volumeDropdownOpen = false;
+    }, 150);
+  }
+
+  toggleMute() {
+    clearTimeout(this.volumeHoverTimeout);
+
+    const isMuted = this.audioService.volume === 0;
+    this.audioService.setVolume(isMuted ? this.volumePreviousValue : 0);
   }
 }

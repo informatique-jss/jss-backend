@@ -208,4 +208,8 @@ export class PostService extends AppRestService<Post> {
   getPreviousArticle(post: Post) {
     return this.get(new HttpParams().set("idPost", post.id), "post/previous");
   }
+
+  getPostById(idPost: number) {
+    return this.get(new HttpParams().set("idPost", idPost), "post/get");
+  }
 }

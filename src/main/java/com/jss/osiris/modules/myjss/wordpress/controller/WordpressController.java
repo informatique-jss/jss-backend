@@ -702,6 +702,15 @@ public class WordpressController {
 		return new ResponseEntity<Post>(postService.applyPremium(postService.getPreviousPost(post)), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/post/get")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> getPostById(@RequestParam Integer idPost) {
+
+		if (postService.getPost(idPost) == null)
+			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
+		return new ResponseEntity<Post>(postService.applyPremium(postService.getPost(idPost)), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/top/department")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getTopPostByDepartment(

@@ -4,18 +4,17 @@
   <div class="container px-3 d-flex flex-column flex-md-row align-items-center justify-content-between">
 
     <!-- Left Column: Image + Titre -->
-    <div class="d-flex align-items-center col mb-2 mb-md-0">
+    <div class="d-flex align-items-center col-md-5 mb-2 mb-md-0">
       <img src="/assets/images/homepage/raide-comme-la-justice.png" alt="Podcast Cover" class="me-3"
         style="width: 48px; height: 48px; object-fit: cover;">
-      <div class="text-truncate">
-        <div class="fw-bold small">{{ audioService.currentTrack?.title || 'Aucun podcast' }}</div>
-        <div *ngIf="audioService.currentTrack" class="text-muted small"
-          [innerHTML]="audioService.currentTrack.subtitle | trustHtml"></div>
+      <div>
+        <div class="fw-bold small card-truncate-1">{{ audioService.currentPodcast?.titleText || 'Aucun podcast' }}</div>
+        <div *ngIf="audioService.currentPodcast" class="text-muted small">Raide comme la justice</div>
       </div>
     </div>
 
     <!-- Middle Column: Contrôles -->
-    <div class="d-flex col align-items-center justify-content-center mb-2 mb-md-0">
+    <div class="d-flex col-auto align-items-center justify-content-center mb-2 mb-md-0">
       <a class="btn text-white rounded-circle d-flex align-items-center justify-content-center me-2"
         style="width: 48px; height: 48px;" (click)="backward15Secs()">
         <div class="position-relative"><i class="bi-arrow-counterclockwise fs-2"></i>
@@ -34,23 +33,26 @@
     </div>
 
     <!-- Right Column: Progression + Volume -->
-    <div class="d-flex col align-items-center justify-content-end position-relative">
-      <small class="text-muted me-1">{{ audioService.currentTime | date:'mm:ss' }}</small>
-      <input type="range" class="form-range me-1" style="width: 180px;" min="0" max="100" step="0.01"
-        [value]="audioService.progress" (input)="onSeek($event)" />
-      <small class="text-muted">{{ audioService.duration | date:'mm:ss' }}</small>
+    <div class="d-flex col-md-5 align-items-center justify-content-end position-relative">
+      <small class="text-muted me-1">{{ audioService.currentTime*1000 | date:'mm:ss' }}</small>
+      <input type="range" class="form-range me-1" [style.--progress.%]="audioService.progress" style="width: 400px;"
+        min="0" max="100" step="0.01" [value]="audioService.progress" (input)="onSeek($event)" />
+      <small class="text-muted">{{ audioService.duration*1000 | date:'mm:ss' }}</small>
 
-      <!-- Volume Dropdown Custom (manual) -->
-      <div class="dropdown dropup ms-2" (mouseenter)="toggleVolumeDropdown($event)"
-        (mouseleave)="toggleVolumeDropdown($event)" [ngClass]="{ show: volumeDropdownOpen }">
-        <div href="#" role="button" class="d-flex align-items-center justify-content-center"
-          [attr.aria-expanded]="volumeDropdownOpen">
-          <i class="bi-volume-up-fill fs-5 m-0"></i>
+      <!-- Volume Dropdown Custom -->
+      <div class="dropdown dropup ms-2 position-relative" (mouseenter)="onVolumeMouseEnter()"
+        (mouseleave)="onVolumeMouseLeave()">
+
+        <!-- Icône volume : déclenche mute / unmute au clic -->
+        <div role="button" tabindex="0" (click)="toggleMute()" class="d-flex align-items-center justify-content-center">
+          <i *ngIf="this.audioService.volume != 0" class="bi-volume-up fs-4 m-0"></i>
+          <i *ngIf="this.audioService.volume == 0" class="bi-volume-mute fs-4 m-0"></i>
         </div>
-
-        <div class="dropdown-menu p-2" [ngClass]="{ show: volumeDropdownOpen }">
-          <input type="range" class="vertical-range m-0" style="min-width: auto;max-width: auto;" min="0" max="1"
-            step="0.01" [value]="audioService.volume" (input)="onVolumeChange($event)" />
+        <!-- Le dropdown volume slider -->
+        <div class="dropdown-menu p-2" [class.show]="volumeDropdownOpen"
+          style="position: absolute; bottom: 100%; right: -9px; min-width: 40px;">
+          <input type="range" class="vertical-range m-0" min="0" max="1" step="0.01" [value]="audioService.volume"
+            (input)="onVolumeChange($event)" />
         </div>
       </div>
     </div>

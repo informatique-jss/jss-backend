@@ -28,7 +28,6 @@ export class PodcastsComponent implements OnInit {
   tagsByEntityType: Tag[] = [] as Array<Tag>;
   mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
 
-
   constructor(
     private appService: AppService,
     private formBuilder: FormBuilder,
@@ -101,16 +100,16 @@ export class PodcastsComponent implements OnInit {
     }
   }
 
-
   togglePlayPodcast(post: Post) {
-
+    if (this.audioService.currentPodcast && this.audioService.currentPodcast.id == post.id) {
+      this.audioService.togglePlayPause();
+    } else {
+      this.audioService.loadTrack(post.id);
+      this.audioService.play();
+    }
   }
 
-  isPlaying(post: Post) {
-    if (this.audioService.currentTrack && post)
-      // TODO : check if it is like this that we get the url of a podcast
-      return this.audioService.isPlaying && this.audioService.currentTrack.url == post.media.urlFull;
-
-    return false
+  isPlayingPodcast(post: Post) {
+    return this.audioService.isPlayingPodcast(post);
   }
 }

@@ -5831,6 +5831,7 @@ fieldset:disabled .btn {
   width: max-content;
   max-width: 100%;
   pointer-events: none;
+  z-index: 1100;
 }
 
 .toast-container> :not(:last-child) {
@@ -13522,6 +13523,16 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
   text-overflow: ellipsis;
   white-space: normal;
 }
+
+.card-truncate-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
 
 .skeleton {
   background: linear-gradient(90deg, #eeeeee 25%, #e0e0e0 50%, #eeeeee 75%);
