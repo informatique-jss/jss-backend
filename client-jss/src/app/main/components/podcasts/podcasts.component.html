@@ -38,14 +38,13 @@
                 <div *ngIf="postsByEntityType && postsByEntityType.length>0">
                   <div *ngFor="let post of postsByEntityType.slice(0,6)">
                     <div class="card border h-100 my-3" *ngIf="post && post.media">
-                      <div class="inline-row m-2 d-flex align-items-center">
+                      <div class="row row-cols-md-auto m-2 d-flex align-items-center g-1 g-md-2">
                         <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4"
                           (click)="togglePlayPodcast(post)"><i
                             [ngClass]="isPlayingPodcast(post) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
-                        <div class="col-auto dropdown ms-2"
-                          [ngClass]="{ show: openedListenDropdownPostId === post.id }">
+                        <div class="col-auto dropdown" [ngClass]="{ show: openedListenDropdownPostId === post.id }">
                           <!-- Listen podcast in.. button -->
-                          <button type="button" class="btn col-auto bg-light text-secondary dropdown-toggle"
+                          <button type="button" class="btn col-auto bg-light text-secondary"
                             (click)="toggleListenDropdown($event, post.id)"
                             [attr.aria-expanded]="openedListenDropdownPostId === post.id">
                             Écouter <i class="bi-arrow-up-right"></i>
@@ -65,9 +64,9 @@
                           </div>
                         </div>
 
-                        <span class="col-auto small text fs-9 ms-2 pe-2 border-end">
+                        <span class="col-auto small text fs-9 border-end">
                           Publié le {{post.date | date:'EEEE d MMMM'}}</span>
-                        <span class="col-auto small text fs-9 ps-2">Durée {{post.mediaTimeLength | duration}}</span>
+                        <span class="col-auto small text fs-9">Durée {{post.mediaTimeLength | duration}}</span>
                       </div>
                       <div class="card-body">
                         <div class="row pb-1 px-2 align-items-center" *ngIf="post.postTags">

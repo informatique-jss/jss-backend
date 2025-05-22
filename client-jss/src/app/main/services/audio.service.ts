@@ -36,7 +36,7 @@ export class AudioService {
 
     this.audio.addEventListener('timeupdate', () => {
       this.currentTime = this.audio.currentTime;
-      userPreferenceService.setCurrentPlayingTrackTime(this.currentTime);
+      userPreferenceService.setCurrentPlayingTrackTime(this.currentTime - 5);
       this.duration = this.audio.duration;
       this.progress = (this.audio.currentTime / this.audio.duration) * 100;
     });
@@ -46,7 +46,7 @@ export class AudioService {
     });
   }
 
-
+  // To know if the specific podcast is been played
   isPlayingPodcast(post: Post) {
     if (this.currentPodcast && post)
       return this.isPlaying && this.currentPodcast.id == post.id;
@@ -57,6 +57,7 @@ export class AudioService {
   loadTrack(podcastId: number) {
     this.postService.getPostById(podcastId).subscribe(res => {
       this.setTrackProperties(res);
+      this.play();
     });
   }
 
@@ -66,6 +67,14 @@ export class AudioService {
     this.audio.src = res.podcastUrl;
     this.audio.load();
     this.userPreferenceService.setCurrentPlayingTrack(res.id);
+  }
+
+  unloadTrackAndClose() {
+    this.audio.pause();
+    this.currentPodcast = undefined;
+    this.isCurrentPodcastDisplayed.next(false);
+    this.audio.src = "";
+    this.userPreferenceService.setCurrentPlayingTrack(-1);
   }
 
   togglePlayPause() {
@@ -99,13 +108,5 @@ export class AudioService {
   setVolume(value: number) {
     this.volume = value;
     this.audio.volume = value;
-  }
-
-  skipNext() {
-    this.pause();
-  }
-
-  skipPrevious() {
-    this.audio.currentTime = 0;
   }
 }

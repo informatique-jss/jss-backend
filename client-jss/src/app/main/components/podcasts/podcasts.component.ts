@@ -105,7 +105,6 @@ export class PodcastsComponent implements OnInit {
       this.audioService.togglePlayPause();
     } else {
       this.audioService.loadTrack(post.id);
-      this.audioService.play();
     }
   }
 
