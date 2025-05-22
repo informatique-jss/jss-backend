@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppRestService } from '../../services/appRest.service';
 import { Author } from '../model/Author';
+import { Category } from '../model/Category';
 import { JssCategory } from '../model/JssCategory';
 import { Media } from '../model/Media';
 import { PagedContent } from '../model/PagedContent';
@@ -68,6 +69,14 @@ export class PostService extends AppRestService<Post> {
     if (searchText)
       params = params.set('searchText', searchText);
     return this.getPagedList(params, "posts/all/jss-category", "", "");
+  }
+
+  getAllPostsByCategory(category: Category, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('categoryId', category.id.toString())
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/all/category", "", "");
   }
 
   getAllPostsByTag(tag: Tag, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
@@ -198,5 +207,9 @@ export class PostService extends AppRestService<Post> {
 
   getPreviousArticle(post: Post) {
     return this.get(new HttpParams().set("idPost", post.id), "post/previous");
+  }
+
+  getPostById(idPost: number) {
+    return this.get(new HttpParams().set("idPost", idPost), "post/get");
   }
 }

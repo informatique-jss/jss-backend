@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../services/appRest.service';
 import { Author } from '../model/Author';
+import { Category } from '../model/Category';
 import { JssCategory } from '../model/JssCategory';
 import { PublishingDepartment } from '../model/PublishingDepartment';
 import { Serie } from '../model/Serie';
@@ -26,6 +27,10 @@ export class TagService extends AppRestService<Tag> {
 
   getAllTagsByJssCategory(jssCategory: JssCategory) {
     return this.getList(new HttpParams().set("jssCategoryId", jssCategory.id), "tags/all/jss-category");
+  }
+
+  getAllTagsByCategory(page: number, size: number, category: Category) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("categoryId", category.id), "tags/all/category");
   }
 
   getAllTagsByTag(tag: Tag) {

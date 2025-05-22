@@ -33,6 +33,8 @@ public interface PostService {
         public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory,
                         String searchText);
 
+        public Page<Post> getAllPostsByCategory(Pageable pageableRequest, Category category);
+
         public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText);
 
         public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText);

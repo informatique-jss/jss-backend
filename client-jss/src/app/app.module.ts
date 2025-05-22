@@ -9,6 +9,7 @@ import { RouterModule, Routes, provideRouter } from '@angular/router';
 import { HttpErrorInterceptor } from '../httpErrorInterceptor.service';
 import { AppComponent } from './app.component';
 import { ToastComponent } from './libs/toast/toast.component';
+import { AudioPlayerComponent } from './main/components/audio-player/audio-player.component';
 import { FooterComponent } from './main/components/footer/footer.component';
 import { MainModule } from './main/components/main/main.module';
 import { NewsletterComponent } from './main/components/newsletter/newsletter.component';
@@ -22,7 +23,8 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     FooterComponent,
-    ToastComponent
+    ToastComponent,
+    AudioPlayerComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +32,8 @@ const routes: Routes = [
     FormsModule,
     RouterModule,
     MainModule,
-    NewsletterComponent
+    NewsletterComponent,
+
   ],
   exports: [
   ],

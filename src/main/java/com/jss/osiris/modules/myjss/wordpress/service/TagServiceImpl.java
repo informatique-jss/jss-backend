@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
+import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
@@ -69,6 +71,20 @@ public class TagServiceImpl implements TagService {
             }
         }
         return tags;
+    }
+
+    @Override
+    public Page<Tag> getAllTagsByCategory(Pageable pageable, Category category) {
+        List<Tag> tags = new ArrayList<>();
+        if (category != null) {
+            Page<Post> posts = postService.getAllPostsByCategory(pageable, category);
+
+            for (Post post : posts.getContent()) {
+                if (post.getPostTags() != null && !post.getPostTags().isEmpty())
+                    tags.addAll(post.getPostTags());
+            }
+        }
+        return new PageImpl<>(tags);
     }
 
     @Override

@@ -375,6 +375,11 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
     }
 
+    @Override
+    public Page<Post> getAllPostsByCategory(Pageable pageableRequest, Category category) {
+        return postRepository.findByPostCategoriesAndIsCancelled(category, false, pageableRequest);
+    }
+
     private Page<Post> searchPostAgainstEntitiesToMatch(String searchText, Page<Post> entityToMatchWithResearch) {
         List<IndexEntity> tmpEntitiesFound = null;
         List<Post> matchingPosts = new ArrayList<Post>();

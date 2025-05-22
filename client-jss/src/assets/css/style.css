@@ -5831,6 +5831,7 @@ fieldset:disabled .btn {
   width: max-content;
   max-width: 100%;
   pointer-events: none;
+  z-index: 1100;
 }
 
 .toast-container> :not(:last-child) {
@@ -13523,6 +13524,16 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
   white-space: normal;
 }
 
+.card-truncate-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+
 .skeleton {
   background: linear-gradient(90deg, #eeeeee 25%, #e0e0e0 50%, #eeeeee 75%);
   background-size: 200% 100%;
@@ -13579,6 +13590,15 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
 .btn-circle {
   width: 32px;
   height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-circle-md {
+  width: 40px;
+  height: 40px;
   padding: 0;
   display: flex;
   align-items: center;

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AudioService } from './main/services/audio.service';
 import { ConstantService } from './services/constant.service';
 
 @Component({
@@ -9,9 +11,21 @@ import { ConstantService } from './services/constant.service';
 })
 
 export class AppComponent {
-  constructor(private constantService: ConstantService) { }
+
+  isCurrentPodcastDisplayed: boolean = false;
+  currentPodcastSubscription: Subscription = new Subscription;
+
+
+  constructor(private constantService: ConstantService,
+    private audioService: AudioService
+  ) { }
 
   ngOnInit() {
     this.constantService.initConstant();
+    this.currentPodcastSubscription = this.audioService.currentPodcastObservable.subscribe(item => this.isCurrentPodcastDisplayed = item);
+  }
+
+  ngOnDestroy() {
+    this.currentPodcastSubscription.unsubscribe();
   }
 }
