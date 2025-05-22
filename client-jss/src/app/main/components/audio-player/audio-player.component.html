@@ -3,15 +3,19 @@
   <div class="container px-3 d-flex flex-column flex-md-row align-items-center justify-content-between">
 
     <!-- Left Column: Image + Titre -->
-    <div class="d-flex align-items-center col-md-5 mb-2 mb-md-0">
+    <div class="d-flex align-items-center col-md-5 col-12 mb-2 mb-md-0">
       <a (click)="openPodcasts($event)">
         <img src="/assets/images/homepage/raide-comme-la-justice.png" alt="Podcast Cover" class="me-3"
           style="width: 48px; height: 48px; object-fit: cover;">
       </a>
-      <div>
-        <a class="fw-bold small text-white card-truncate-1" (click)="openPodcasts($event)">{{
-          audioService.currentPodcast?.titleText || 'Aucun podcast'
-          }}</a>
+      <div *ngIf="audioService.currentPodcast && audioService.currentPodcast.titleText" class="overflow-hidden w-100">
+        <div #scrollText>
+          <div class="d-inline-block text-nowrap"
+            [ngClass]="{ 'animate-scroll': audioService.currentPodcast.titleText.length*16>containerSize }"
+            class="d-inline-block text-nowrap animate-scroll">
+            {{ audioService.currentPodcast.titleText || 'Aucun podcast' }}
+          </div>
+        </div>
         <div *ngIf="audioService.currentPodcast" class="text-muted small">Raide comme la justice</div>
       </div>
     </div>
@@ -55,7 +59,7 @@
 
         <!-- Volume slider dropdown -->
         <div class="dropdown-menu p-2 bg-secondary rounded-1" [class.show]="volumeDropdownOpen"
-          style="position: absolute; bottom: 100%; right: -9px; min-width: 40px;">
+          style="position: absolute; bottom: 100%; right: -9px; min-width: 40px; writing-mode: vertical-lr; direction: rtl">
           <input type="range" class="vertical-range m-0" min="0" max="1" step="0.01" [value]="audioService.volume"
             (input)="onVolumeChange($event)" />
         </div>

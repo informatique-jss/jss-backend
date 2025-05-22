@@ -1,6 +1,22 @@
+/*---------------  Scroll title --------------- */
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-scroll {
+    animation: scroll-left 10s linear infinite;
+}
+
+
+/* --------------- Volume dropdown --------------- */
 .vertical-range {
-    -webkit-appearance: slider-vertical;
-    writing-mode: bt-lr;
     width: 6px;
     height: 100px;
     padding: 0;

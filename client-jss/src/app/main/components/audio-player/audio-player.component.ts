@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AppService } from '../../../services/app.service';
 import { AudioService } from '../../services/audio.service';
 
@@ -8,7 +8,11 @@ import { AudioService } from '../../services/audio.service';
   styleUrls: ['./audio-player.component.css'],
   standalone: false
 })
-export class AudioPlayerComponent implements OnInit {
+export class AudioPlayerComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('scrollText') scrollTextRef!: ElementRef;
+  containerSize: number = 50;
+
 
   volumeDropdownOpen = false;
   private volumeHoverTimeout: any = null;
@@ -18,9 +22,20 @@ export class AudioPlayerComponent implements OnInit {
   volumePreviousValue: number = 50;
 
   constructor(public audioService: AudioService,
-    private appService: AppService) { }
+    private appService: AppService,
+    private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+    this.checkScroll();
+  }
+
+  checkScroll(): void {
+    const el = this.scrollTextRef.nativeElement as HTMLElement;
+    this.containerSize = el.clientWidth;
+    this.cdr.detectChanges();
   }
 
   togglePlayPause() {
