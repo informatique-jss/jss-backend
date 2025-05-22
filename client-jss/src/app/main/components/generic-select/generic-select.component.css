@@ -4,6 +4,7 @@
 }
 
 .select-wrapper select {
+  cursor: pointer;
   padding-right: 30px;
 }
 
@@ -11,7 +12,7 @@
   position: absolute;
   right: 21px;
   top: 65%;
-  transform: translateY(-50%);
+  transform: translateY(-70%);
   pointer-events: none;
   color: var(--ar-secondary);
 }

@@ -4,7 +4,7 @@
       <div class="w-100 justify-content-between mb-3">
         <div class="container">
           <div class="row">
-            <div class="col-8">
+            <div class="col-lg-8 col-12">
               <div class="w-100 my-3 d-flex justify-content-between">
                 <div class="col-12">
                   <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
@@ -25,10 +25,9 @@
                       </div>
                     </div>
                     <div class="col-3 justify-content-end">
-                      <select-publishing-department class="cursor-pointer" [(model)]="selectedPublishingDepartment"
-                        placeholder="Département" [form]="hubForm" propertyName="selectedPublishingDepartment"
-                        [isMandatory]="false" (onFormChange)="searchForPosts()"
-                        [isDisabled]="false"></select-publishing-department>
+                      <select-publishing-department [(model)]="selectedPublishingDepartment" placeholder="Département"
+                        [form]="hubForm" propertyName="selectedPublishingDepartment" [isMandatory]="false"
+                        (onFormChange)="searchForPosts()" [isDisabled]="false"></select-publishing-department>
                     </div>
                   </div>
                 </div>
@@ -50,7 +49,8 @@
                 <div
                   *ngIf="postsByEntityType[selectedEntityType.id] && postsByEntityType[selectedEntityType.id].length>0 && !searchText"
                   class="row p-0 fixed-size-img-posts">
-                  <div *ngFor="let post of postsByEntityType[selectedEntityType.id].slice(0,6)" class="col-6 mb-4">
+                  <div *ngFor="let post of postsByEntityType[selectedEntityType.id].slice(0,6)"
+                    class="col-lg-6 col-12 mb-4">
                     <article class="border-0 card h-100">
                       <div class="card-img px-2 d-flex">
                         <div class="image-hover-style-1 w-100">
@@ -147,7 +147,7 @@
 
                 <div *ngIf="searchResults && searchResults.length>0 && searchText && searchText.length>2"
                   class="row p-0 fixed-size-img-posts">
-                  <div *ngFor="let post of searchResults.slice(0,6)" class="col-6 mb-4">
+                  <div *ngFor="let post of searchResults.slice(0,6)" class="col-lg-6 col-12 mb-4">
                     <article class="border-0 card h-100">
                       <div class="card-img px-2 d-flex">
                         <div class="image-hover-style-1 w-100">
@@ -242,7 +242,7 @@
               </div>
             </div>
 
-            <div class="col-4">
+            <div class="col-lg-4 col-12">
               <div class="card mb-3 border border-light p-3">
                 <div class="wrapper">
                   <div class="row">

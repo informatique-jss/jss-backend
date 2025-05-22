@@ -41,7 +41,7 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   abstract getMostSeenPostByEntityType(selectedEntityType: T, page: number, pageSize: number): Observable<PagedContent<Post>>
 
   fetchPosts(page: number) {
-    if (this.selectedEntityType && this.selectedEntityType.id && this.postsByEntityTypeFullLoaded.indexOf(this.selectedEntityType.id) < 0)
+    if (this.selectedEntityType && this.selectedEntityType.id && (this.postsByEntityTypeFullLoaded.indexOf(this.selectedEntityType.id) < 0 || (this.searchText && this.searchText.length > 2)))
       this.getAllPostByEntityType(this.selectedEntityType, page, this.pageSize, this.searchText).subscribe(data => {
         if (data && this.selectedEntityType && !this.searchText) {
           this.postsByEntityType[this.selectedEntityType.id] = data.content;
