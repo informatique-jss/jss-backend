@@ -80,7 +80,7 @@ export class AudioService {
     this.currentPodcast = undefined;
     this.isCurrentPodcastDisplayed.next(false);
     this.audio.src = "";
-    this.userPreferenceService.clearUserPrefLocalStorage();
+    this.userPreferenceService.deleteAudioPreferences();
   }
 
   togglePlayPause() {

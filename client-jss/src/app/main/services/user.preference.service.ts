@@ -33,8 +33,12 @@ export class UserPreferenceService {
     return localStorage.getItem('current-playing-volume');
   }
 
-  clearUserPrefLocalStorage() {
-    return localStorage.clear();
+  deleteAudioPreferences() {
+    let allItems = localStorage as any;
+    if (allItems)
+      for (let key in allItems)
+        if (key && ["current-playing-track-id", "current-playing-time", "current-playing-volume"].indexOf(key) >= 0)
+          localStorage.removeItem(key);
   }
 }
 
