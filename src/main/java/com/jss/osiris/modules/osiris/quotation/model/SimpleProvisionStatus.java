@@ -29,6 +29,7 @@ public class SimpleProvisionStatus extends IWorkflowElement implements Serializa
 	public static String SIMPLE_PROVISION_WAITING_DOCUMENT = "SIMPLE_PROVISION_WAITING_DOCUMENT";
 	public static String SIMPLE_PROVISION_WAITING_LINKED_PROVISION = "SIMPLE_PROVISION_WAITING_LINKED_PROVISION";
 	public static String SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY = "SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY";
+	public static String SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY = "SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY";
 	public static String SIMPLE_PROVISION_DONE = "SIMPLE_PROVISION_DONE";
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
