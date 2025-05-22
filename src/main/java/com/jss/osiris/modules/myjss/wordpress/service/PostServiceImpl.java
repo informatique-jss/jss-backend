@@ -167,13 +167,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
-            PublishingDepartment publishingDepartment) {
-        return postRepository.findMostSeenPostPublishingDepartment(pageableRequest, publishingDepartment);
+            PublishingDepartment publishingDepartment) throws OsirisException {
+        return postRepository.findMostSeenPostPublishingDepartment(pageableRequest, getCategoryArticle(),
+                publishingDepartment);
     }
 
     @Override
-    public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest) {
-        return postRepository.findPostsIdf(pageableRequest);
+    public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest) throws OsirisException {
+        return postRepository.findMostSeenPostsIdf(pageableRequest, getCategoryArticle());
     }
 
     @Override
@@ -397,15 +398,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText) {
+    public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText) throws OsirisException {
         if (searchText != null) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findPostsIdf(pageableRequest));
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findPostsIdf(getCategoryArticle(), pageableRequest));
             }
         }
-        return postRepository.findPostsIdf(pageableRequest);
+        return postRepository.findPostsIdf(getCategoryArticle(), pageableRequest);
     }
 
     @Override
@@ -414,17 +416,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) {
+    public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) throws OsirisException {
         if (searchText != null) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByPostTagsAndIsCancelled(tag, false,
+                        postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(), false,
                                 pageableRequest));
             }
         }
-        return postRepository.findByPostTagsAndIsCancelled(tag, false, pageableRequest);
+        return postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(), false, pageableRequest);
     }
 
     @Override
@@ -457,19 +459,20 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
-            PublishingDepartment publishingDepartment, String searchText) {
+            PublishingDepartment publishingDepartment, String searchText) throws OsirisException {
 
         if (searchText != null) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByDepartmentsAndIsCancelled(publishingDepartment,
+                        postRepository.findByDepartmentsAndIsCancelled(getCategoryArticle(), publishingDepartment,
                                 false,
                                 pageableRequest));
             }
         }
-        return postRepository.findByDepartmentsAndIsCancelled(publishingDepartment, false, pageableRequest);
+        return postRepository.findByDepartmentsAndIsCancelled(getCategoryArticle(), publishingDepartment, false,
+                pageableRequest);
     }
 
     @Override
@@ -538,14 +541,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getPostsByTag(Integer page, Tag tag) {
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByPostTagsAndIsCancelled(tag, false, pageableRequest);
-    }
-
-    @Override
     public Page<Post> getPostsByAuthor(Pageable pageableRequest, Author author) {
         return postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
     }
@@ -560,8 +555,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> getTopPostWithDepartment(Pageable pageableRequest)
             throws OsirisException {
-        return postRepository.findByPostCategoriesWithDepartments(getCategoryArticle(), false,
-                pageableRequest);
+        return postRepository.findPostsIdf(getCategoryArticle(), pageableRequest);
     }
 
     private Page<Post> getJssCategoryPostsByCategory(Pageable pageableRequest, Category category) {

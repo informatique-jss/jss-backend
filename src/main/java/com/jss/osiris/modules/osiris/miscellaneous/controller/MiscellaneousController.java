@@ -35,9 +35,10 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
-import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -112,7 +113,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
-import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
@@ -205,9 +205,6 @@ public class MiscellaneousController {
     ProviderService providerService;
 
     @Autowired
-    AccountingAccountService accountingAccountService;
-
-    @Autowired
     PaymentService paymentService;
 
     @Autowired
@@ -241,9 +238,6 @@ public class MiscellaneousController {
     EmployeeService employeeService;
 
     @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
-
-    @Autowired
     RefundService refundService;
 
     @Autowired
@@ -274,10 +268,10 @@ public class MiscellaneousController {
     CategoryService categoryService;
 
     @Autowired
-    AnnouncementService announcementService;
+    PostService postService;
 
     @Autowired
-    PostService postService;
+    PublishingDepartmentService publishingDepartmentService;
 
     @GetMapping(inputEntryPoint + "/categories")
     public ResponseEntity<List<Category>> getCategories() {
@@ -693,6 +687,12 @@ public class MiscellaneousController {
                 "CompetentAuthorityTypeInsee");
 
         return new ResponseEntity<Constant>(constantService.addOrUpdateConstant(constant), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/publishing-departments")
+    public ResponseEntity<List<PublishingDepartment>> getAvailableDepartments() {
+        return new ResponseEntity<List<PublishingDepartment>>(publishingDepartmentService.getAvailableDepartments(),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/providers")

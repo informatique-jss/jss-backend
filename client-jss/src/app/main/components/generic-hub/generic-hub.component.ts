@@ -9,14 +9,16 @@ import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
 
 @Directive()
-export abstract class GenericHubComponent<T> implements OnInit {
+export abstract class GenericHubComponent<T extends { id: number }> implements OnInit {
 
   debounce: any;
   searchObservableRef: Subscription | undefined;
   @Input() selectedEntityType: T | undefined;
   linkedTags: Tag[] = [] as Array<Tag>;
   mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
-  postsByEntityType: Post[] = [] as Array<Post>;
+  postsByEntityType: { [key: number]: Array<Post> } = {};
+  postsByEntityTypeFullLoaded: number[] = [];
+
   tagsByEntityType: Tag[] = [] as Array<Tag>;
   pageSize: number = 15;
   page: number = 0;
@@ -39,10 +41,12 @@ export abstract class GenericHubComponent<T> implements OnInit {
   abstract getMostSeenPostByEntityType(selectedEntityType: T, page: number, pageSize: number): Observable<PagedContent<Post>>
 
   fetchPosts(page: number) {
-    if (this.selectedEntityType)
+    if (this.selectedEntityType && this.selectedEntityType.id && this.postsByEntityTypeFullLoaded.indexOf(this.selectedEntityType.id) < 0)
       this.getAllPostByEntityType(this.selectedEntityType, page, this.pageSize, this.searchText).subscribe(data => {
-        if (data && !this.searchText)
-          this.postsByEntityType = data.content;
+        if (data && this.selectedEntityType && !this.searchText) {
+          this.postsByEntityType[this.selectedEntityType.id] = data.content;
+          this.postsByEntityTypeFullLoaded.push(this.selectedEntityType.id);
+        }
         if (data && this.searchText && this.searchText.length > 2)
           this.searchResults = data.content;
         this.totalPage = data.page.totalPages;

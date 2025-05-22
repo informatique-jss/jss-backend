@@ -249,6 +249,7 @@ import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-sc
 import { SelectProvisionStautsComponent } from '../forms/select-provision-stauts/select-provision-stauts.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
 import { SelectProvisionComponent } from '../forms/select-provision/select-provision.component';
+import { SelectPublishingDepartmentComponent } from '../forms/select-publishing-department/select-publishing-department.component';
 import { SelectQuotationAbandonReasonComponent } from '../forms/select-quotation-abandon-reason/select-quotation-abandon-reason.component';
 import { SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
@@ -579,6 +580,7 @@ const routes: Routes = [
     SelectInvoicingBlockageComponent,
     SelectIncidentResponsibilityComponent,
     SelectIncidentReportStatusComponent,
+    SelectPublishingDepartmentComponent
   ],
   exports: [
     HistoryComponent,
@@ -834,6 +836,7 @@ const routes: Routes = [
     SelectInvoicingBlockageComponent,
     SelectIncidentResponsibilityComponent,
     SelectIncidentReportStatusComponent,
+    SelectPublishingDepartmentComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

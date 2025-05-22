@@ -12,18 +12,17 @@ import { ContributeComponent } from '../contribute/contribute.component';
 import { DepartmentHubComponent } from '../department-hub/department-hub.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { HeaderComponent } from '../header/header.component';
-import { IdfHubComponent } from '../idf-hub/idf-hub.component';
 import { KioskComponent } from '../kiosk/kiosk.component';
 import { NewsletterComponent } from '../newsletter/newsletter.component';
 import { PodcastsComponent } from '../podcasts/podcasts.component';
 import { PostAuthorHeaderComponent } from '../post-author-header/post-author-header.component';
 import { PostCategoryHeaderComponent } from '../post-category-header/post-category-header.component';
 import { PostDepartmentHeaderComponent } from '../post-department-header/post-department-header.component';
-import { PostIdfHeaderComponent } from '../post-idf-header/post-idf-header.component';
 import { PostSerieHeaderComponent } from '../post-serie-header/post-serie-header.component';
 import { PostTagHeaderComponent } from '../post-tag-header/post-tag-header.component';
 import { PostComponent } from '../post/post.component';
 import { SearchAnnouncementComponent } from '../search-announcement/search-announcement.component';
+import { SelectPublishingDepartmentComponent } from '../select-publishing-department/select-publishing-department.component';
 import { SerieHubComponent } from '../serie-hub/serie-hub.component';
 import { SubscriptionComponent } from '../subscription/subscription.component';
 import { TagHubComponent } from '../tag-hub/tag-hub.component';
@@ -36,7 +35,6 @@ const routes: Routes = [
   { path: 'post/author/:slug', component: PostAuthorHeaderComponent },
   { path: 'post/serie/:slug', component: PostSerieHeaderComponent },
   { path: 'post/department/:id', component: PostDepartmentHeaderComponent },
-  { path: 'post/department/idf/all', component: PostIdfHeaderComponent },
   { path: 'home', component: MainComponent },
   { path: 'post/:slug', component: PostComponent },
   { path: 'announcement/search', component: SearchAnnouncementComponent },
@@ -69,19 +67,18 @@ const routes: Routes = [
     AuthorHubComponent,
     SerieHubComponent,
     DepartmentHubComponent,
-    IdfHubComponent,
     PostCategoryHeaderComponent,
     PostTagHeaderComponent,
     PostAuthorHeaderComponent,
     PostSerieHeaderComponent,
     PostDepartmentHeaderComponent,
-    PostIdfHeaderComponent,
     GenericInputComponent,
     PodcastsComponent,
     SubscriptionComponent,
     KioskComponent,
     ContributeComponent,
-    AvatarComponent
+    AvatarComponent,
+    SelectPublishingDepartmentComponent
   ],
   exports: [
     HeaderComponent,

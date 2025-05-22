@@ -20,15 +20,16 @@ public interface TagService {
 
         public List<Tag> getAllTagsByJssCategory(JssCategory jssCategory);
 
-        public List<Tag> getAllTagsByTag(Tag tag);
+        public List<Tag> getAllTagsByTag(Tag tag) throws OsirisException;
 
         public List<Tag> getAllTagsByAuthor(Author author);
 
         public List<Tag> getAllTagsBySerie(Serie serie);
 
-        public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment);
+        public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment)
+                        throws OsirisException;
 
-        public List<Tag> getAllTagsByIdf();
+        public List<Tag> getAllTagsByIdf() throws OsirisException;
 
         public List<Tag> getAllTendencyTags() throws OsirisException;
 

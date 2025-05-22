@@ -13589,3 +13589,7 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
   background: #F6F9FC;
   min-height: 100px;
 }
+
+.btn-search {
+  color: var(--ar-primary) !important;
+}

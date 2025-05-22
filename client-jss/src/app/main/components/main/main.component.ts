@@ -6,6 +6,7 @@ import { ConstantService } from '../../../services/constant.service';
 import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
+import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { Serie } from '../../model/Serie';
 import { Tag } from '../../model/Tag';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
@@ -39,6 +40,7 @@ export class MainComponent implements OnInit {
   firstCategory: JssCategory = this.constantService.getJssCategoryHomepageFirstHighlighted();
   secondCategory: JssCategory = this.constantService.getJssCategoryHomepageSecondHighlighted();
   thirdCategory: JssCategory = this.constantService.getJssCategoryHomepageThirdHighlighted();
+  idf: PublishingDepartment = this.constantService.getPublishingDepartmentIdf();
 
   constructor(
     private postService: PostService,

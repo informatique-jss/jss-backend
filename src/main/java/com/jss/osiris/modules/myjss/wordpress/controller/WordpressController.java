@@ -398,7 +398,7 @@ public class WordpressController {
 	public ResponseEntity<Page<Post>> getMostSeenPostByPublishingDepartment(
 			@RequestParam Integer departmentId, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
@@ -408,22 +408,13 @@ public class WordpressController {
 		if (publishingDepartment == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
+		if (publishingDepartment.getId().equals(constantService.getPublishingDepartmentIdf().getId()))
+			return new ResponseEntity<Page<Post>>(
+					postService.getMostSeenPostByIdf(pageable),
+					HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.getMostSeenPostByPublishingDepartment(pageable, publishingDepartment),
-				HttpStatus.OK);
-	}
-
-	@GetMapping(inputEntryPoint + "/posts/publishing-department/all/most-seen")
-	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<Page<Post>> getMostSeenPostByIdf(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size,
-			HttpServletRequest request) {
-		detectFlood(request);
-		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.DESC, "date"));
-
-		return new ResponseEntity<Page<Post>>(
-				postService.getMostSeenPostByIdf(pageable),
 				HttpStatus.OK);
 	}
 
@@ -455,7 +446,7 @@ public class WordpressController {
 			@RequestParam String tagSlug,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
 
@@ -525,7 +516,7 @@ public class WordpressController {
 			@RequestParam Integer departmentId,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
 
@@ -537,26 +528,14 @@ public class WordpressController {
 		if (publishingDepartment == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
+		if (publishingDepartment.getId().equals(constantService.getPublishingDepartmentIdf().getId()))
+			return new ResponseEntity<Page<Post>>(
+					postService.getAllPostsByIdf(pageableRequest, searchText),
+					HttpStatus.OK);
+
 		return new ResponseEntity<Page<Post>>(
 				postService.getAllPostsByPublishingDepartment(pageableRequest, publishingDepartment,
 						searchText),
-				HttpStatus.OK);
-	}
-
-	@GetMapping(inputEntryPoint + "/posts/all/publishing-department/all")
-	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<Page<Post>> getAllPostsForIdf(
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
-			HttpServletRequest request) {
-
-		detectFlood(request);
-
-		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.DESC, "date"));
-
-		return new ResponseEntity<Page<Post>>(
-				postService.getAllPostsByIdf(pageableRequest, searchText),
 				HttpStatus.OK);
 	}
 
@@ -653,15 +632,6 @@ public class WordpressController {
 				postService.searchPostsByMyJssCategory(searchText, myJssCategory, pageableRequest), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/top/tag")
-	public ResponseEntity<Page<Post>> getTagBySlug(@RequestParam Integer page,
-			@RequestParam Integer tagId) {
-		Tag tag = tagService.getTag(tagId);
-		if (tag == null)
-			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
-		return new ResponseEntity<Page<Post>>(postService.getPostsByTag(page, tag), HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/post/next")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Post> getNextPost(@RequestParam Integer idPost) {
@@ -750,7 +720,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/tag")
-	public ResponseEntity<List<Tag>> getAllTagsByTag(@RequestParam String tagSlug) {
+	public ResponseEntity<List<Tag>> getAllTagsByTag(@RequestParam String tagSlug) throws OsirisException {
 
 		if (tagSlug == null)
 			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
@@ -788,21 +758,19 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/publishing-department")
-	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam Integer departmentId) {
+	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam Integer departmentId)
+			throws OsirisException {
 
 		if (departmentId == null)
 			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
 
 		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
 
+		if (publishingDepartment.getId().equals(constantService.getPublishingDepartmentIdf().getId()))
+			return new ResponseEntity<List<Tag>>(tagService.getAllTagsByIdf(), HttpStatus.OK);
+
 		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByPublishingDepartment(publishingDepartment),
 				HttpStatus.OK);
-	}
-
-	@GetMapping(inputEntryPoint + "/tags/all/publishing-department/all")
-	public ResponseEntity<List<Tag>> getAllTagsByIleDeFrance() {
-
-		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByIdf(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/search/post")

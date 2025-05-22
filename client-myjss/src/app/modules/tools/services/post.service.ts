@@ -5,7 +5,6 @@ import { AppRestService } from '../../../libs/appRest.service';
 import { Media } from '../model/Media';
 import { MyJssCategory } from '../model/MyJssCategory';
 import { Post } from '../model/Post';
-import { Tag } from '../model/Tag';
 
 @Injectable({
   providedIn: 'root'
@@ -82,10 +81,6 @@ export class PostService extends AppRestService<Post> {
 
   getPinnedPostByMyJssCategory(page: number, myJssCategory: MyJssCategory) {
     return this.getPagedList(new HttpParams().set("page", page).set("myJssCategoryId", myJssCategory.id!), "posts/myjss/pinned");
-  }
-
-  getTopPostByTag(page: number, tag: Tag) {
-    return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
   }
 
   getNextArticle(post: Post) {
