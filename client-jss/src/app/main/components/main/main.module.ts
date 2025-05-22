@@ -81,7 +81,7 @@ const routes: Routes = [
     SubscriptionComponent,
     KioskComponent,
     ContributeComponent,
-    AvatarComponent
+    AvatarComponent,
   ],
   exports: [
     HeaderComponent,

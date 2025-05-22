@@ -2,8 +2,12 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
+import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
@@ -19,6 +23,8 @@ public interface TagService {
         public Tag getTagBySlug(String slug);
 
         public List<Tag> getAllTagsByJssCategory(JssCategory jssCategory);
+
+        public Page<Tag> getAllTagsByCategory(Pageable pageable, Category category);
 
         public List<Tag> getAllTagsByTag(Tag tag);
 

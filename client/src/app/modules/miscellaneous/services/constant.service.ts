@@ -935,9 +935,11 @@ export class ConstantService extends AppRestService<Constant> {
   getStringMyJssDemoRequestMail() {
     return this.constant.stringMyJssDemoRequestMail;
   }
+
   getStringMyJssWebinarRequestMail() {
     return this.constant.stringMyJssWebinarRequestMail;
   }
+
   getStringMyJssContactFormRequestMail() {
     return this.constant.stringMyJssContactFormRequestMail;
   }

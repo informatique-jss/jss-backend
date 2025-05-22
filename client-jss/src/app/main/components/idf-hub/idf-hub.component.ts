@@ -24,6 +24,7 @@ export class IdfHubComponent extends GenericHubComponent<PublishingDepartment> i
   ) {
     super(appService, formBuilder);
   }
+
   override getAllPostByEntityType(selectedEntityType: PublishingDepartment, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>> {
     return this.postService.getAllPostsByIleDeFrance(page, pageSize, searchText);
   }
