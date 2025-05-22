@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AudioService } from './main/services/audio.service';
-import { AppService } from './services/app.service';
 import { ConstantService } from './services/constant.service';
 
 @Component({
@@ -18,7 +17,6 @@ export class AppComponent {
 
 
   constructor(private constantService: ConstantService,
-    private appService: AppService,
     private audioService: AudioService
   ) { }
 

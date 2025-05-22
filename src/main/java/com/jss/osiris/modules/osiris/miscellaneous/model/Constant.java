@@ -910,6 +910,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_category_podcast")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Category categoryPodcast;
 
 	@ManyToOne

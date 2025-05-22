@@ -23,7 +23,13 @@ export class AudioService {
   constructor(private postService: PostService,
     private userPreferenceService: UserPreferenceService
   ) {
-    this.audio.volume = this.volume;
+    if (this.userPreferenceService.getCurrentPlayingTrackVolume()) {
+      this.audio.volume = parseInt(this.userPreferenceService.getCurrentPlayingTrackVolume()!);
+      this.volume = parseInt(this.userPreferenceService.getCurrentPlayingTrackVolume()!);
+    } else {
+      this.audio.volume = this.volume;
+      userPreferenceService.setCurrentPlayingTrackVolume(this.volume);
+    }
 
     // If already connected, we look in local storage to make it play where the user left it
     if (userPreferenceService.getCurrentPlayingTrack() && userPreferenceService.getCurrentPlayingTrackTime()) {
@@ -74,7 +80,7 @@ export class AudioService {
     this.currentPodcast = undefined;
     this.isCurrentPodcastDisplayed.next(false);
     this.audio.src = "";
-    this.userPreferenceService.setCurrentPlayingTrack(-1);
+    this.userPreferenceService.clearUserPrefLocalStorage();
   }
 
   togglePlayPause() {
@@ -108,5 +114,6 @@ export class AudioService {
   setVolume(value: number) {
     this.volume = value;
     this.audio.volume = value;
+    this.userPreferenceService.setCurrentPlayingTrackVolume(value);
   }
 }

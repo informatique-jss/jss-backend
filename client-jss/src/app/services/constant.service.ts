@@ -41,4 +41,25 @@ export class ConstantService extends AppRestService<Constant> {
   getJssCategoryHomepageThirdHighlighted() {
     return this.constant.jssCategoryHomepageThirdHighlighted;
   }
+
+  getCategoryInterview() {
+    return this.constant.categoryInterview;
+  }
+
+  getCategoryPodcast() {
+    return this.constant.categoryPodcast;
+  }
+
+  getCategoryArticle() {
+    return this.constant.categoryArticle;
+  }
+
+  getCategorySerie() {
+    return this.constant.categorySerie;
+  }
+
+  getCategoryExclusivity() {
+    return this.constant.categoryExclusivity;
+  }
+
 }

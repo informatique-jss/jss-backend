@@ -27,11 +27,11 @@ export class AudioPlayerComponent implements OnInit {
     this.audioService.togglePlayPause();
   }
 
-  forward15Secs() {
+  forwardFifteenSecs() {
     this.audioService.addTime(15);
   }
 
-  backward15Secs() {
+  backwardFifteenSecs() {
     this.audioService.addTime(-15);
   }
 
@@ -61,8 +61,7 @@ export class AudioPlayerComponent implements OnInit {
   toggleMute() {
     clearTimeout(this.volumeHoverTimeout);
 
-    const isMuted = this.audioService.volume === 0;
-    this.audioService.setVolume(isMuted ? this.volumePreviousValue : 0);
+    this.audioService.setVolume(this.audioService.volume === 0 ? this.volumePreviousValue : 0);
   }
 
   onOpenMenu() {

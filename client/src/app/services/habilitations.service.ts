@@ -20,7 +20,7 @@ export class HabilitationsService {
   }
 
   canViewIndicatorModule() {
-    return true;
+    return this.loginService.hasGroup([BETA_TESTEURS], false);
   }
 
   canDisplayMyIndicatorsForEverybody() {

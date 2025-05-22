@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AppService } from '../../../services/app.service';
+import { ConstantService } from '../../../services/constant.service';
 import { Category } from '../../model/Category';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
@@ -18,12 +19,12 @@ import { TagService } from '../../services/tag.service';
 })
 export class PodcastsComponent implements OnInit {
 
+  categoryPodcast: Category = this.constantService.getCategoryPodcast();
 
   hubForm = this.formBuilder.group({});
 
   openedListenDropdownPostId: number | null = null;
 
-  selectedEntityType: Category = { id: 14, name: "Podcast", slug: "podcast", count: 3 } as Category;
   postsByEntityType: Post[] = [] as Array<Post>;
   tagsByEntityType: Tag[] = [] as Array<Tag>;
   mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
@@ -33,7 +34,8 @@ export class PodcastsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private postService: PostService,
     private tagService: TagService,
-    private audioService: AudioService) { }
+    private audioService: AudioService,
+    private constantService: ConstantService) { }
 
   ngOnInit() {
     this.fetchPosts(0);
@@ -42,8 +44,8 @@ export class PodcastsComponent implements OnInit {
   }
 
   fetchPosts(page: number) {
-    if (this.selectedEntityType)
-      this.getAllPostByEntityType(this.selectedEntityType, page, 10).subscribe(data => {
+    if (this.categoryPodcast)
+      this.getAllPostByEntityType(this.categoryPodcast, page, 10).subscribe(data => {
         if (data) {
           this.postsByEntityType = data.content;
         }
@@ -55,7 +57,7 @@ export class PodcastsComponent implements OnInit {
   }
 
   fetchTags() {
-    this.getAllTagByEntityType(0, this.selectedEntityType).subscribe(data => {
+    this.getAllTagByEntityType(0, this.categoryPodcast).subscribe(data => {
       if (data)
         this.tagsByEntityType = data.content;
     })
