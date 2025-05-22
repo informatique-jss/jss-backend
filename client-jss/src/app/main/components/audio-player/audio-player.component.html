@@ -9,7 +9,7 @@
           style="width: 48px; height: 48px; object-fit: cover;">
       </a>
       <div *ngIf="audioService.currentPodcast && audioService.currentPodcast.titleText" class="overflow-hidden w-100">
-        <div #scrollText>
+        <div #scrollTextZone>
           <div class="d-inline-block text-nowrap"
             [ngClass]="{ 'animate-scroll': audioService.currentPodcast.titleText.length*16>containerSize }"
             class="d-inline-block text-nowrap animate-scroll">

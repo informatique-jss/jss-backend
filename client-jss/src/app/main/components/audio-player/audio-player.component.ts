@@ -10,7 +10,7 @@ import { AudioService } from '../../services/audio.service';
 })
 export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('scrollText') scrollTextRef!: ElementRef;
+  @ViewChild('scrollTextZone') scrollTextRef!: ElementRef;
   containerSize: number = 50;
 
 
@@ -29,10 +29,10 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.checkScroll();
+    this.setScrollSize();
   }
 
-  checkScroll(): void {
+  setScrollSize(): void {
     const el = this.scrollTextRef.nativeElement as HTMLElement;
     this.containerSize = el.clientWidth;
     this.cdr.detectChanges();
