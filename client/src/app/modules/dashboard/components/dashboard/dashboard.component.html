@@ -26,6 +26,8 @@
           [affaireSearch]="affaireSearcAuthorityRejected" [isForDashboard]="true"></provision-list>
         <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED"
           [affaireSearch]="affaireSearcAuthorityValidated" [isForDashboard]="true"></provision-list>
+        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_WAITING_FINAL_DOCUMENT_AUTHORITY"
+          [affaireSearch]="affaireWaitingFinalDocumentAuthority" [isForDashboard]="true"></provision-list>
         <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_TO_DO" [affaireSearch]="affaireSearchToDo"
           [isForDashboard]="true"></provision-list>
         <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_RESPONSIBLE_TO_DO"
