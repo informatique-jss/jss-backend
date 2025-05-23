@@ -10,11 +10,10 @@
       </a>
       <div *ngIf="audioService.currentPodcast && audioService.currentPodcast.titleText" class="overflow-hidden w-100">
         <div #scrollTextZone>
-          <div class="d-inline-block text-nowrap"
-            [ngClass]="{ 'animate-scroll': audioService.currentPodcast.titleText.length*16>containerSize }"
-            class="d-inline-block text-nowrap animate-scroll">
+          <a class="d-inline-block text-nowrap text-white"
+            [ngClass]=" { 'animate-scroll' : audioService.currentPodcast.titleText.length*16>containerSize }">
             {{ audioService.currentPodcast.titleText || 'Aucun podcast' }}
-          </div>
+          </a>
         </div>
         <div *ngIf="audioService.currentPodcast" class="text-muted small">Raide comme la justice</div>
       </div>
@@ -53,14 +52,14 @@
         <!-- Volum icon : mute / unmute on clic -->
         <div role="button" tabindex="0" (click)="toggleMute()"
           class=" d-none d-md-block d-flex align-items-center justify-content-center">
-          <i *ngIf="this.audioService.volume != 0" class="bi-volume-up fs-4 m-0"></i>
-          <i *ngIf="this.audioService.volume == 0" class="bi-volume-mute fs-4 m-0"></i>
+          <i *ngIf="this.volumeCurrentValue != 0" class="bi-volume-up fs-4 m-0"></i>
+          <i *ngIf="this.volumeCurrentValue == 0" class="bi-volume-mute fs-4 m-0"></i>
         </div>
 
         <!-- Volume slider dropdown -->
         <div class="dropdown-menu p-2 bg-secondary rounded-1" [class.show]="volumeDropdownOpen"
           style="position: absolute; bottom: 100%; right: -9px; min-width: 40px; writing-mode: vertical-lr; direction: rtl">
-          <input type="range" class="vertical-range m-0" min="0" max="1" step="0.01" [value]="audioService.volume"
+          <input type="range" class="vertical-range m-0" min="0" max="1" step="0.01" [value]="this.volumeCurrentValue"
             (input)="onVolumeChange($event)" />
         </div>
       </div>

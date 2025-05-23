@@ -13,13 +13,13 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollTextZone') scrollTextRef!: ElementRef;
   containerSize: number = 50;
 
-
   volumeDropdownOpen = false;
   private volumeHoverTimeout: any = null;
 
   menuDropdownOpen = false;
 
-  volumePreviousValue: number = 50;
+  volumeCurrentValue: number = this.getVolume();
+  volumePreviousValue: number = 0.5;
 
   constructor(public audioService: AudioService,
     private appService: AppService,
@@ -58,7 +58,7 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   onVolumeChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.audioService.setVolume(+value);
-    this.volumePreviousValue = this.audioService.volume;
+    this.synchComponentVolumes();
   }
 
   onVolumeMouseEnter() {
@@ -75,8 +75,17 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
   toggleMute() {
     clearTimeout(this.volumeHoverTimeout);
+    if (this.volumePreviousValue === 0) {
+      this.volumePreviousValue = 0.2;
+    }
 
-    this.audioService.setVolume(this.audioService.volume === 0 ? this.volumePreviousValue : 0);
+    this.audioService.setVolume(this.getVolume() === 0 ? this.volumePreviousValue : 0);
+    this.volumeCurrentValue = this.getVolume();
+  }
+
+  synchComponentVolumes() {
+    this.volumeCurrentValue = this.getVolume();
+    this.volumePreviousValue = this.volumeCurrentValue;
   }
 
   onOpenMenu() {
@@ -89,5 +98,9 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
   openPodcasts(event: any) {
     this.appService.openRoute(event, "podcasts", undefined);
+  }
+
+  getVolume() {
+    return this.audioService.getVolume();
   }
 }

@@ -23,9 +23,10 @@ export class AudioService {
   constructor(private postService: PostService,
     private userPreferenceService: UserPreferenceService
   ) {
-    if (this.userPreferenceService.getCurrentPlayingTrackVolume()) {
-      this.audio.volume = parseInt(this.userPreferenceService.getCurrentPlayingTrackVolume()!);
-      this.volume = parseInt(this.userPreferenceService.getCurrentPlayingTrackVolume()!);
+    const currentPlayingTrackVolume = this.userPreferenceService.getCurrentPlayingTrackVolume();
+    if (currentPlayingTrackVolume) {
+      this.audio.volume = parseFloat(currentPlayingTrackVolume);
+      this.volume = parseFloat(currentPlayingTrackVolume);
     } else {
       this.audio.volume = this.volume;
       userPreferenceService.setCurrentPlayingTrackVolume(this.volume);
@@ -33,11 +34,14 @@ export class AudioService {
 
     // If already connected, we look in local storage to make it play where the user left it
     if (userPreferenceService.getCurrentPlayingTrack() && userPreferenceService.getCurrentPlayingTrackTime()) {
-      this.postService.getPostById(parseInt(userPreferenceService.getCurrentPlayingTrack()!)).subscribe(res => {
-        this.setTrackProperties(res);
-        this.audio.currentTime = parseInt(userPreferenceService.getCurrentPlayingTrackTime()!);
-        this.currentTime = this.audio.currentTime;
-      });
+      const currentPlayingTrack = userPreferenceService.getCurrentPlayingTrack();
+      if (currentPlayingTrack)
+        this.postService.getPostById(parseInt(currentPlayingTrack)).subscribe(res => {
+          this.setTrackProperties(res);
+          const currentPlayingTrackTime = userPreferenceService.getCurrentPlayingTrackTime();
+          this.audio.currentTime = parseFloat(currentPlayingTrackTime ? currentPlayingTrack : '0');
+          this.currentTime = this.audio.currentTime;
+        });
     }
 
     this.audio.addEventListener('timeupdate', () => {
@@ -109,6 +113,11 @@ export class AudioService {
     if (value) {
       this.audio.currentTime = this.currentTime + value;
     }
+  }
+
+
+  getVolume() {
+    return this.volume;
   }
 
   setVolume(value: number) {
