@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AudioService } from './main/services/audio.service';
+import { AudioPlayerService } from './main/services/audio.player.service';
 import { ConstantService } from './services/constant.service';
 
 @Component({
@@ -17,7 +17,7 @@ export class AppComponent {
 
 
   constructor(private constantService: ConstantService,
-    private audioService: AudioService
+    private audioService: AudioPlayerService
   ) { }
 
   ngOnInit() {

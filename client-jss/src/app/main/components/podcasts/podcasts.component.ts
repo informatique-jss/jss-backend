@@ -7,7 +7,7 @@ import { Category } from '../../model/Category';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
-import { AudioService } from '../../services/audio.service';
+import { AudioPlayerService } from '../../services/audio.player.service';
 import { PostService } from '../../services/post.service';
 import { TagService } from '../../services/tag.service';
 
@@ -34,7 +34,7 @@ export class PodcastsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private postService: PostService,
     private tagService: TagService,
-    private audioService: AudioService,
+    private audioService: AudioPlayerService,
     private constantService: ConstantService) { }
 
   ngOnInit() {

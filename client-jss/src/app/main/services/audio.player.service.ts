@@ -7,7 +7,8 @@ import { UserPreferenceService } from './user.preference.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AudioService {
+export class AudioPlayerService {
+
 
   private audio = new Audio();
   public isPlaying: boolean = false;
@@ -124,5 +125,25 @@ export class AudioService {
     this.volume = value;
     this.audio.volume = value;
     this.userPreferenceService.setCurrentPlayingTrackVolume(value);
+  }
+
+  getCurrentPodcast() {
+    return this.currentPodcast
+  }
+
+  getIsPlaying() {
+    return this.isPlaying;
+  }
+
+  getCurrentTime() {
+    return this.currentTime;
+  }
+
+  getProgress() {
+    return this.progress;
+  }
+
+  getDuration() {
+    return this.duration;
   }
 }

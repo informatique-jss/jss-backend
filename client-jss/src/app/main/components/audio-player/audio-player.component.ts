@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AppService } from '../../../services/app.service';
-import { AudioService } from '../../services/audio.service';
+import { Post } from '../../model/Post';
+import { AudioPlayerService } from '../../services/audio.player.service';
 
 @Component({
   selector: 'audio-player',
@@ -20,8 +21,13 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
   volumeCurrentValue: number = this.getVolume();
   volumePreviousValue: number = 0.5;
+  currentPodcast: Post | undefined = this.getCurrentPodcast();
+  isPlaying: boolean = this.getIsPlaying();
+  currentTime: number = this.getCurrentTime();
+  progress: number = this.getProgress();
+  duration: number = this.getDuration();
 
-  constructor(public audioService: AudioService,
+  constructor(public audioPlayerService: AudioPlayerService,
     private appService: AppService,
     private cdr: ChangeDetectorRef) { }
 
@@ -39,25 +45,25 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   togglePlayPause() {
-    this.audioService.togglePlayPause();
+    this.audioPlayerService.togglePlayPause();
   }
 
   forwardFifteenSecs() {
-    this.audioService.addTime(15);
+    this.audioPlayerService.addTime(15);
   }
 
   backwardFifteenSecs() {
-    this.audioService.addTime(-15);
+    this.audioPlayerService.addTime(-15);
   }
 
   onSeek(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    this.audioService.seekTo(+value);
+    this.audioPlayerService.seekTo(+value);
   }
 
   onVolumeChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    this.audioService.setVolume(+value);
+    this.audioPlayerService.setVolume(+value);
     this.synchComponentVolumes();
   }
 
@@ -79,7 +85,7 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
       this.volumePreviousValue = 0.2;
     }
 
-    this.audioService.setVolume(this.getVolume() === 0 ? this.volumePreviousValue : 0);
+    this.audioPlayerService.setVolume(this.getVolume() === 0 ? this.volumePreviousValue : 0);
     this.volumeCurrentValue = this.getVolume();
   }
 
@@ -93,7 +99,7 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   closePlayer() {
-    this.audioService.unloadTrackAndClose();
+    this.audioPlayerService.unloadTrackAndClose();
   }
 
   openPodcasts(event: any) {
@@ -101,6 +107,26 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   getVolume() {
-    return this.audioService.getVolume();
+    return this.audioPlayerService.getVolume();
+  }
+
+  getCurrentPodcast() {
+    return this.audioPlayerService.getCurrentPodcast();
+  }
+
+  getIsPlaying() {
+    return this.audioPlayerService.getIsPlaying();
+  }
+
+  getCurrentTime() {
+    return this.audioPlayerService.getCurrentTime();
+  }
+
+  getProgress() {
+    return this.audioPlayerService.getProgress();
+  }
+
+  getDuration() {
+    return this.audioPlayerService.getDuration();
   }
 }
