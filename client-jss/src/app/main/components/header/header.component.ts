@@ -6,6 +6,7 @@ import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
+import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 import { IndexEntity } from '../../model/IndexEntity';
 import { JssCategory } from '../../model/JssCategory';
@@ -52,7 +53,8 @@ export class HeaderComponent implements OnInit {
     private appService: AppService,
     private indexEntityService: IndexEntityService,
     private loginService: LoginService,
-    private constantService: ConstantService
+    private constantService: ConstantService,
+    private platformService: PlatformService
   ) { }
 
   dropdownOpen = false;
@@ -84,19 +86,22 @@ export class HeaderComponent implements OnInit {
   }
 
   displaySearchModal() {
-    const modalElement = document.getElementById('searchModal');
-    if (!this.searchModalInstance) {
-      if (modalElement) {
-        this.searchModalInstance = new Modal(modalElement, {
-          backdrop: 'static'
-        });
+    const doc = this.platformService.getNativeDocument();
+    if (doc) {
+      const modalElement = doc.getElementById('searchModal');
+      if (!this.searchModalInstance) {
+        if (modalElement) {
+          this.searchModalInstance = new Modal(modalElement, {
+            backdrop: 'static'
+          });
+        }
       }
-    }
-    this.searchModalInstance!.show();
-    if (modalElement) {
-      const input = modalElement.querySelector('input[name="search"]') as HTMLInputElement;
-      if (input) {
-        input.focus();
+      this.searchModalInstance!.show();
+      if (modalElement) {
+        const input = modalElement.querySelector('input[name="search"]') as HTMLInputElement;
+        if (input) {
+          input.focus();
+        }
       }
     }
   }
