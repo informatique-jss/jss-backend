@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AudioService } from './main/services/audio.service';
 import { ConstantService } from './services/constant.service';
+import { GtmService } from './services/gtm.service';
 
 @Component({
   selector: 'app-root',
@@ -17,12 +18,15 @@ export class AppComponent {
 
 
   constructor(private constantService: ConstantService,
-    private audioService: AudioService
+    private audioService: AudioService,
+    private gtm: GtmService
   ) { }
 
   ngOnInit() {
     this.constantService.initConstant();
     this.currentPodcastSubscription = this.audioService.currentPodcastObservable.subscribe(item => this.isCurrentPodcastDisplayed = item);
+    //Init Google tag manager if in browser
+    this.gtm.init();
   }
 
   ngOnDestroy() {
