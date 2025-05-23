@@ -8,6 +8,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
@@ -671,6 +672,11 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_department_reunion")
 	private Department departmentReunion;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_publishing_department_idf")
+	private PublishingDepartment publishingDepartmentIdf;
 
 	@ManyToOne
 	@JoinColumn(name = "id_type_personne_personne_physique")
@@ -2855,6 +2861,14 @@ public class Constant implements Serializable, IId {
 
 	public void setMyJssCategoryDomiciliation(MyJssCategory myJssCategoryDomiciliation) {
 		this.myJssCategoryDomiciliation = myJssCategoryDomiciliation;
+	}
+
+	public PublishingDepartment getPublishingDepartmentIdf() {
+		return publishingDepartmentIdf;
+	}
+
+	public void setPublishingDepartmentIdf(PublishingDepartment publishingDepartmentIdf) {
+		this.publishingDepartmentIdf = publishingDepartmentIdf;
 	}
 
 }

@@ -88,7 +88,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> getAllTagsByTag(Tag tag) {
+    public List<Tag> getAllTagsByTag(Tag tag) throws OsirisException {
         List<Tag> tags = new ArrayList<>();
         if (tag != null) {
             Pageable pageable = PageRequest.of(0, 1000000,
@@ -136,7 +136,8 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment) {
+    public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment)
+            throws OsirisException {
         List<Tag> tags = new ArrayList<>();
         if (publishingDepartment != null) {
             Pageable pageable = PageRequest.of(0, 1000000,
@@ -152,7 +153,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> getAllTagsByIdf() {
+    public List<Tag> getAllTagsByIdf() throws OsirisException {
         List<Tag> tags = new ArrayList<>();
         Pageable pageable = PageRequest.of(0, 1000000,
                 Sort.by(Sort.Direction.DESC, "date"));

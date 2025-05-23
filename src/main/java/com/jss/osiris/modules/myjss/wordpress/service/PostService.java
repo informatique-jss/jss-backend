@@ -33,18 +33,18 @@ public interface PostService {
         public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory,
                         String searchText);
 
-        public Page<Post> getAllPostsByCategory(Pageable pageableRequest, Category category);
+        public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) throws OsirisException;
 
-        public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText);
+        public Page<Post> getAllPostsByCategory(Pageable pageableRequest, Category category);
 
         public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText);
 
         public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText);
 
         public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
-                        PublishingDepartment publishingDepartment, String searchText);
+                        PublishingDepartment publishingDepartment, String searchText) throws OsirisException;
 
-        public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText);
+        public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText) throws OsirisException;
 
         public Page<Post> getMostSeenPostByJssCatgory(Pageable pageableRequest, JssCategory jssCategory);
 
@@ -55,9 +55,9 @@ public interface PostService {
         public Page<Post> getMostSeenPostBySerie(Pageable pageableRequest, Serie serie);
 
         public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
-                        PublishingDepartment publishingDepartment);
+                        PublishingDepartment publishingDepartment) throws OsirisException;
 
-        public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest);
+        public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest) throws OsirisException;
 
         public Page<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 
@@ -94,8 +94,6 @@ public interface PostService {
                         throws OsirisException;
 
         public List<Post> getPostBySerie(Serie serie);
-
-        public Page<Post> getPostsByTag(Integer page, Tag tag);
 
         public Page<Post> getPostsByAuthor(Pageable pageableRequest, Author author);
 

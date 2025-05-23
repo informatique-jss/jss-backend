@@ -1,19 +1,31 @@
 <div class="container">
   <ng-container *ngIf="selectedEntityType">
-    <div class="bg-container">
-      <div class="w-100 justify-content-between mb-3">
+    <div class="bg-container pt-0">
+      <div class="w-100 justify-content-between">
         <div class="container">
           <div class="row">
             <div class="col-lg-8 col-12">
-              <div class="input-group custom-input-group align-items-center py-0 rounded-1 row mb-3">
-                <div class="row align-items-center">
-                  <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="hubForm"
-                    propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-                    (onFormChange)="searchForPosts()" class="col" [icon]="'search'"></generic-input>
+              <div class="w-100 my-3 d-flex flex-column flex-md-row justify-content-between mt-0">
+                <div class="row w-100 gx-2">
+                  <div class="col-12 col-md-8 position-relative mb-2 mb-md-0">
+                    <generic-input class="w-100" [(model)]="searchText" label="Rechercher" [form]="hubForm"
+                      propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+                      (onFormChange)="searchForPosts()" [icon]="'search'">
+                    </generic-input>
 
-                  <button *ngIf="searchText" class="btn btn-clear-search" (click)="clearSearch()">
-                    <i class="bi bi-x-lg"></i>
-                  </button>
+                    <button *ngIf="searchText"
+                      class="btn btn-link clear-btn position-absolute top-50 end-0 translate-middle-y me-2"
+                      (click)="clearSearch()" type="button">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <select-publishing-department class="w-100" [(model)]="selectedPublishingDepartment"
+                      placeholder="Département" [form]="hubForm" propertyName="selectedPublishingDepartment"
+                      [isMandatory]="false" (onFormChange)="searchForPosts()" [isDisabled]="false">
+                    </select-publishing-department>
+                  </div>
                 </div>
               </div>
 
@@ -34,7 +46,7 @@
                   *ngIf="postsByEntityType[selectedEntityType.id] && postsByEntityType[selectedEntityType.id].length>0 && !searchText"
                   class="row p-0 fixed-size-img-posts">
                   <div *ngFor="let post of postsByEntityType[selectedEntityType.id].slice(0,6)"
-                    class=" col-lg-6 col-12 mb-4">
+                    class="col-lg-6 col-12 mb-4">
                     <article class="border-0 card h-100">
                       <div class="card-img px-2 d-flex">
                         <div class="image-hover-style-1 w-100">
@@ -239,9 +251,8 @@
                   </div>
                   <ul class="tag-cloud list-inline">
                     <!-- TODO replace with routerLink and make it work -->
-                    <li *ngFor="let tag of tagsByEntityType" class="list-inline-item pb-1"><a
-                        class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary text-hover-white"
-                        (click)="openTagPosts(tag,$event)">{{tag.name}}</a>
+                    <li *ngFor="let tag of tagsByEntityType" class="list-inline-item pb-1"><a class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary
+                        text-hover-white" (click)="openTagPosts(tag,$event)">{{tag.name}}</a>
                     </li>
                   </ul>
                 </div>

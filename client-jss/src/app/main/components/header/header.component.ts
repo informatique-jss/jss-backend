@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { AppService } from '../../../services/app.service';
+import { ConstantService } from '../../../services/constant.service';
 import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 import { IndexEntity } from '../../model/IndexEntity';
@@ -28,7 +29,6 @@ export class HeaderComponent implements OnInit {
   departments: PublishingDepartment[] = [];
   categories: JssCategory[] = [];
   categoriesByOrder: JssCategory[] = [];
-
   debounce: any;
   searchInProgress: boolean = false;
 
@@ -53,6 +53,7 @@ export class HeaderComponent implements OnInit {
     private appService: AppService,
     private indexEntityService: IndexEntityService,
     private loginService: LoginService,
+    private constantService: ConstantService,
     private platformService: PlatformService
   ) { }
 

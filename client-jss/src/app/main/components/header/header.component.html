@@ -95,9 +95,8 @@
       <nav class="navbar text-uppercase text-white-100 navbar-expand-lg">
         <div class="collapse navbar-collapse" id="main_nav">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown"> <a class="nav-link  dropdown-toggle" routerLink="post/department/idf/all">île
+            <li class="nav-item dropdown"> <a class="nav-link  dropdown-toggle">île
                 de France </a>
-
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item" style="cursor: pointer;"
                     (click)="openDepartment(department,$event)">{{department.code!="0" ?(department.code+ " - ")

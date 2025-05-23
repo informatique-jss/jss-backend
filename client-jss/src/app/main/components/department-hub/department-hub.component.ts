@@ -12,18 +12,29 @@ import { GenericHubComponent } from '../generic-hub/generic-hub.component';
 
 @Component({
   selector: 'department-hub',
-  templateUrl: './../generic-hub/generic-hub.component.html',
-  styleUrls: ['./../generic-hub/generic-hub.component.css'],
+  templateUrl: './department-hub.component.html',
+  styleUrls: ['./department-hub.component.css'],
   standalone: false
 })
 export class DepartmentHubComponent extends GenericHubComponent<PublishingDepartment> implements OnInit {
-
+  isLoading: boolean = false;
+  selectedPublishingDepartment: PublishingDepartment | undefined;
+  publishingDepartments: PublishingDepartment[] = [];
   @Input() override selectedEntityType: PublishingDepartment | undefined;
 
-  constructor(private postService: PostService, private tagService: TagService, appService: AppService, formBuilder: FormBuilder
+  constructor(private postService: PostService,
+    private tagService: TagService, appService: AppService, formBuilder: FormBuilder
   ) {
     super(appService, formBuilder);
   }
+
+  override ngOnInit(): void {
+    this.selectedPublishingDepartment = this.selectedEntityType;
+    this.fetchPosts(0);
+    this.fetchTags();
+    this.fetchMostSeenPosts();
+  }
+
   override getAllPostByEntityType(selectedEntityType: PublishingDepartment, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>> {
     return this.postService.getAllPostsByPublishingDepartment(selectedEntityType, page, pageSize, searchText);
   }
@@ -36,4 +47,18 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
     return this.postService.getMostSeenPostByPublishingDepartment(selectedEntityType, page, pageSize);
   }
 
+
+  override searchForPosts() {
+    if (this.searchText || this.selectedPublishingDepartment) {
+      this.selectedEntityType = this.selectedPublishingDepartment;
+      clearTimeout(this.debounce);
+      this.searchResults = [];
+
+      this.debounce = setTimeout(() => {
+        this.fetchPosts(0);
+        this.fetchTags();
+        this.fetchMostSeenPosts();
+      }, 500);
+    }
+  }
 }

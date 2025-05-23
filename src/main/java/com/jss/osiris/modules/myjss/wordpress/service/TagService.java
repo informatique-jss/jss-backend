@@ -24,17 +24,18 @@ public interface TagService {
 
         public List<Tag> getAllTagsByJssCategory(JssCategory jssCategory);
 
-        public Page<Tag> getAllTagsByCategory(Pageable pageable, Category category);
+        public List<Tag> getAllTagsByTag(Tag tag) throws OsirisException;
 
-        public List<Tag> getAllTagsByTag(Tag tag);
+        public Page<Tag> getAllTagsByCategory(Pageable pageable, Category category);
 
         public List<Tag> getAllTagsByAuthor(Author author);
 
         public List<Tag> getAllTagsBySerie(Serie serie);
 
-        public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment);
+        public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment)
+                        throws OsirisException;
 
-        public List<Tag> getAllTagsByIdf();
+        public List<Tag> getAllTagsByIdf() throws OsirisException;
 
         public List<Tag> getAllTendencyTags() throws OsirisException;
 

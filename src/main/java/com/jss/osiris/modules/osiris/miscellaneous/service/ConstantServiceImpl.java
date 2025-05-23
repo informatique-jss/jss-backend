@@ -14,6 +14,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
@@ -896,6 +897,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Department getDepartmentReunion() throws OsirisException {
         return getConstants().getDepartmentReunion();
+    }
+
+    @Override
+    public PublishingDepartment getPublishingDepartmentIdf() throws OsirisException {
+        return getConstants().getPublishingDepartmentIdf();
     }
 
     @Override

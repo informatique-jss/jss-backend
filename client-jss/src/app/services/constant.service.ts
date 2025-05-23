@@ -42,6 +42,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.jssCategoryHomepageThirdHighlighted;
   }
 
+  getPublishingDepartmentIdf() {
+    return this.constant.publishingDepartmentIdf;
+  }
+
   getCategoryInterview() {
     return this.constant.categoryInterview;
   }

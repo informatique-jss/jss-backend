@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../services/app.service';
 import { Announcement } from '../../model/Announcement';
@@ -24,7 +23,6 @@ export class SearchAnnouncementComponent implements OnInit {
   searchInProgress: boolean = false;
 
   constructor(
-    private activatedRoute: ActivatedRoute,
     private appService: AppService,
     private announcementService: AnnouncementService
   ) { }
