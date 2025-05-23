@@ -1,7 +1,7 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_AUTHORITY_REJECTED, FORMALITE_AUTHORITY_VALIDATED, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY, SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_AUTHORITY_REJECTED, FORMALITE_AUTHORITY_TECHNICAL_BLOCKING, FORMALITE_AUTHORITY_VALIDATED, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY, SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { PaymentSearch } from 'src/app/modules/invoicing/model/PaymentSearch';
 import { RefundSearch } from 'src/app/modules/invoicing/model/RefundSearch';
@@ -69,6 +69,7 @@ export class DashboardComponent implements OnInit {
   AFFAIRE_WAITING_FINAL_DOCUMENT_AUTHORITY = "Mes formalités en attente d'éléments définitifs par l'AC"
   AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT = "Mes formalités simples en attente de documents"
   AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER = "Mes formalités en PM à relancer manuellement"
+  AFFAIRE_DOCUMENT_AUTHORITY_TECHNICAL_BLOCKING = "Mes formalités en blocage technique par l'autorité compétente"
 
   affaireSearchInProgress: AffaireSearch = {} as AffaireSearch;
   affaireSearchToDo: AffaireSearch = {} as AffaireSearch;
@@ -77,6 +78,7 @@ export class DashboardComponent implements OnInit {
   affaireSearchWaitingAuthority: AffaireSearch = {} as AffaireSearch;
   affaireSearcAuthorityRejected: AffaireSearch = {} as AffaireSearch;
   affaireSearcAuthorityValidated: AffaireSearch = {} as AffaireSearch;
+  affairTechnicalBlockingAuthority: AffaireSearch = {} as AffaireSearch;
   affaireWaitingFinalDocumentAuthority: AffaireSearch = {} as AffaireSearch;
   affaireSearchWaitingDocument: AffaireSearch = {} as AffaireSearch;
   affaireSearchMissingAttachmentQueryManually: AffaireSearch = {} as AffaireSearch;
@@ -120,7 +122,7 @@ export class DashboardComponent implements OnInit {
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
   this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN, this.ALL_ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
-  this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT,
+  this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT, this.AFFAIRE_DOCUMENT_AUTHORITY_TECHNICAL_BLOCKING,
   this.PROVISION_BOARD, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED, this.AFFAIRE_WAITING_FINAL_DOCUMENT_AUTHORITY, this.AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER, this.ORDER_GROUP_TAGGED_WITH_COMMENT].sort((a, b) => a.localeCompare(b));
 
   BOX_SIZE_X_SMALL = "Zoom très petit";
@@ -201,8 +203,12 @@ export class DashboardComponent implements OnInit {
         this.affaireSearcAuthorityValidated.assignedTo = this.currentEmployee;
         this.affaireSearcAuthorityValidated.status = this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_AUTHORITY_VALIDATED);
 
+        this.affairTechnicalBlockingAuthority.assignedTo = this.currentEmployee;
+        this.affairTechnicalBlockingAuthority.status = this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_AUTHORITY_TECHNICAL_BLOCKING);
+
         this.affaireWaitingFinalDocumentAuthority.assignedTo = this.currentEmployee;
-        this.affaireWaitingFinalDocumentAuthority.status = this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY || stauts.code == SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY);
+        this.affaireWaitingFinalDocumentAuthority.status = [];
+        this.affaireWaitingFinalDocumentAuthority.status.push(...this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY), ...this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY));
 
         this.orderingSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
