@@ -1,9 +1,8 @@
 import { HttpClient, HttpContext, HttpContextToken, HttpEvent, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PagedContent } from '../main/model/PagedContent';
-import { PlatformService } from './platform.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +13,7 @@ export abstract class AppRestService<T> {
 
   cache: any;
 
-  constructor(protected _http: HttpClient, @Inject(String) protected entryPoint: string, private plateformService: PlatformService) {
+  constructor(protected _http: HttpClient, @Inject(String) protected entryPoint: string) {
   }
 
   successfulToken: HttpContextToken<string> = new HttpContextToken<string>(() => "");
@@ -105,65 +104,6 @@ export abstract class AppRestService<T> {
     let context: HttpContext = new HttpContext();
     context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
     return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T>;
-  }
-
-  downloadPost(api: string, item: T, successfulMessage: string = "", errorMessage: string = "") {
-    let context: HttpContext = new HttpContext();
-    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
-    const doc = this.plateformService.getNativeDocument();
-    const win = this.plateformService.getNativeWindow();
-    if (!doc || !win) return;
-    this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
-      (response: any) => {
-        let dataType = response.type;
-        let binaryData = [];
-        binaryData.push(response.body);
-        let downloadLink = doc.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }));
-        if (response.headers.get("filename"))
-          downloadLink.setAttribute('download', response.headers.get("filename"));
-        doc.body.appendChild(downloadLink);
-        downloadLink.click();
-      }
-    )
-  }
-
-  downloadGet(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = "") {
-    let context: HttpContext = new HttpContext();
-    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
-    const doc = this.plateformService.getNativeDocument();
-    const win = this.plateformService.getNativeWindow();
-    if (!doc || !win) return;
-    this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
-      (response: any) => {
-        let dataType = response.type;
-        let binaryData = [];
-        binaryData.push(response.body);
-        let downloadLink = doc.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }));
-        if (response.headers.get("filename"))
-          downloadLink.setAttribute('download', response.headers.get("filename"));
-        doc.body.appendChild(downloadLink);
-        downloadLink.click();
-      }
-    )
-  }
-
-  previewFileGet(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = "") {
-    let context: HttpContext = new HttpContext();
-    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
-    const win = this.plateformService.getNativeWindow();
-    if (!win) return;
-    this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
-      (response: any) => {
-        let dataType = response.type;
-        let binaryData = [];
-        binaryData.push(response.body);
-        let url = window.URL.createObjectURL(new Blob(binaryData, { type: response.headers.get("content-type") }));
-        win.open(url, '_blank');
-        return of(url);
-      }
-    )
   }
 
   previewFileUrl(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): any {

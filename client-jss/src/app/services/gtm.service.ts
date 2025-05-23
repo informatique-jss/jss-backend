@@ -6,14 +6,14 @@ export class GtmService {
   constructor(private platformService: PlatformService) { }
 
   init() {
-    if (this.platformService.isBrowser()) {
-      const script = document.createElement('script');
+    if (this.platformService.isBrowser() && this.platformService.getNativeDocument() && this.platformService.getNativeWindow()) {
+      const script = this.platformService.getNativeDocument()!.createElement('script');
       script.async = true;
       script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-MQRHV8GR';
-      document.head.appendChild(script);
+      this.platformService.getNativeDocument()!.head.appendChild(script);
 
-      (window as any).dataLayer = (window as any).dataLayer || [];
-      (window as any).dataLayer.push({
+      (this.platformService.getNativeWindow()! as any).dataLayer = (this.platformService.getNativeWindow()! as any).dataLayer || [];
+      (this.platformService.getNativeWindow()! as any).dataLayer.push({
         'gtm.start': new Date().getTime(),
         event: 'gtm.js'
       });
