@@ -28,7 +28,6 @@ export class HeaderComponent implements OnInit {
   departments: PublishingDepartment[] = [];
   categories: JssCategory[] = [];
   categoriesByOrder: JssCategory[] = [];
-  idf: PublishingDepartment = this.constantService.getPublishingDepartmentIdf();
   debounce: any;
   searchInProgress: boolean = false;
 

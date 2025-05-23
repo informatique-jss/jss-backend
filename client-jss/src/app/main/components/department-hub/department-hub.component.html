@@ -1,34 +1,30 @@
 <div class="container">
   <ng-container *ngIf="selectedEntityType">
-    <div class="bg-container">
-      <div class="w-100 justify-content-between mb-3">
+    <div class="bg-container pt-0">
+      <div class="w-100 justify-content-between">
         <div class="container">
           <div class="row">
             <div class="col-lg-8 col-12">
-              <div class="w-100 my-3 d-flex justify-content-between">
-                <div class="col-12">
-                  <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
-                    <div class="col">
-                      <div class="row align-items-center">
-                        <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="hubForm"
-                          propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-                          (onFormChange)="searchForPosts()" [icon]="'search'" class="btn-search col"></generic-input>
+              <div class="w-100 my-3 d-flex flex-column flex-md-row justify-content-between mt-0">
+                <div class="row w-100 gx-2">
+                  <div class="col-12 col-md-8 position-relative mb-2 mb-md-0">
+                    <generic-input class="w-100" [(model)]="searchText" label="Rechercher" [form]="hubForm"
+                      propertyName="searchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+                      (onFormChange)="searchForPosts()" [icon]="'search'">
+                    </generic-input>
 
-                        <div *ngIf="isLoading" class="col-1 d-flex spinner-border rounded-circle text-dark me-2"
-                          role="status">
-                          <span class="visually-hidden">chargement...</span>
-                        </div>
+                    <button *ngIf="searchText"
+                      class="btn btn-link clear-btn position-absolute top-50 end-0 translate-middle-y me-2"
+                      (click)="clearSearch()" type="button">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
 
-                        <button *ngIf="searchText" class="col-1 btn btn-link btn-search" (click)="clearSearch()">
-                          <i class="ai ai-cross-alt"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="col-3 justify-content-end">
-                      <select-publishing-department [(model)]="selectedPublishingDepartment" placeholder="Département"
-                        [form]="hubForm" propertyName="selectedPublishingDepartment" [isMandatory]="false"
-                        (onFormChange)="searchForPosts()" [isDisabled]="false"></select-publishing-department>
-                    </div>
+                  <div class="col-12 col-md-4">
+                    <select-publishing-department class="w-100" [(model)]="selectedPublishingDepartment"
+                      placeholder="Département" [form]="hubForm" propertyName="selectedPublishingDepartment"
+                      [isMandatory]="false" (onFormChange)="searchForPosts()" [isDisabled]="false">
+                    </select-publishing-department>
                   </div>
                 </div>
               </div>
