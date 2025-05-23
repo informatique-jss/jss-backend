@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { MyJssCategory } from '../../../tools/model/MyJssCategory';
@@ -24,6 +24,8 @@ export class AutocompletePostComponent extends GenericAutocompleteComponent<Post
   postResults: Post[] = [];
   searchText: string = "";
 
+  @ViewChild('autoComp') autoComp: any;
+
   /**
  * Fired when MyJssCategory is modified by user
  */
@@ -46,6 +48,22 @@ export class AutocompletePostComponent extends GenericAutocompleteComponent<Post
       this.onChangeMyJssCategory.next(this.myJssCategory);
   }
 
+  triggerSearch(search: string) {
+    this.isLoading = true;
+    this.searchEntities(search).subscribe(response => {
+      this.isLoading = false;
+      if (this.filteredTypes)
+        this.filteredTypes = response.content
+
+      setTimeout(() => {
+        const inputEl = this.autoCompEl?.nativeElement?.querySelector('input');
+        if (inputEl) {
+          inputEl.focus();
+          inputEl.dispatchEvent(new Event('input'));
+        }
+      }, 100);
+    });
+  }
 
   override ngAfterViewInit() {
     setTimeout(() => {
@@ -84,17 +102,8 @@ export class AutocompletePostComponent extends GenericAutocompleteComponent<Post
   }
 
 
-  filterResultPosts(filteredTypes: any[], query: string) {
-    var results: any[] = [];
-    filteredTypes.forEach(
-      (item) => {
-        if ((item.titleText && item.titleText.toLowerCase().includes(query.toLowerCase())) ||
-          (item.excerptText && item.excerptText.toLowerCase().includes(query.toLowerCase()))) {
-          results.push(item);
-        }
-      }
-    );
-    return results;
+  filterResultPosts(filteredTypes: Post[], query: string) {
+    return filteredTypes;
   }
 
   highlightText(text: string): string {

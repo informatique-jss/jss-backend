@@ -492,9 +492,11 @@ public class PostServiceImpl implements PostService {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
+
                 return searchPostAgainstEntitiesToMatch(searchText,
                         postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
-                                pageableRequest));
+                                pageableRequestForMatch));
             }
         }
         return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,

@@ -2,7 +2,6 @@ generic-input {
   border: none;
 }
 
-.custom-input-border {
-  border: 1px solid;
+.input-group-border {
   border-color: var(--ar-primary);
 }

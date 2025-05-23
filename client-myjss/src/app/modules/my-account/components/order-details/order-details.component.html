@@ -152,7 +152,8 @@
           <div class="accordion-item border-top mb-0" *ngIf="!ordersAssoAffaireOrders[order.id]">
             <ul class="nav nav-tabs p-3" role="tablist" style="margin-bottom: 0;">
               <li class="nav-item ">
-                <a [attr.href]="'#myDocs'+service.id" class="nav-link active " data-bs-toggle="tab" role="tab">
+                <a [attr.href]="'#myDocs'+service.id" class="nav-link active " data-bs-toggle="tab" role="tab"
+                  *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
                   <i class="fi-home me-2"></i>
                   Mes documents
                 </a>

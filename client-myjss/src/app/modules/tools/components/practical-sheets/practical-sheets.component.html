@@ -8,15 +8,14 @@
 
     <div class="row w-100 my-3 p-0" #searchInput>
       <div class="col">
-        <autocomplete-post [myJssCategory]="selectedMyJssCategory" [(model)]="searchText" label="Rechercher"
-          [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false"
-          [isDisplayLabel]="false" (onFormChange)="searchForPosts()"
+        <autocomplete-post #autocomplePost [myJssCategory]="selectedMyJssCategory" [(model)]="searchText"
+          label="Rechercher" [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false"
+          [isDisabled]="false" [isDisplayLabel]="false" (onFormChange)="searchForPosts()"
           (onChangeMyJssCategory)="getTopPosts($event)"></autocomplete-post>
       </div>
     </div>
   </div>
 </section>
-{{selectedMyJssCategory?selectedMyJssCategory.name:""}}
 
 <section class="background-opacity">
   <div class="container overflow-hidden">

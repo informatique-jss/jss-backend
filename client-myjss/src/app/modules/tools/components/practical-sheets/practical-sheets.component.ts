@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
+import { AutocompletePostComponent } from '../../../miscellaneous/components/autocomplete-post/autocomplete-post.component';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
 import { MyJssCategoryService } from '../../services/myjss.category.service';
@@ -43,6 +44,7 @@ export class PracticalSheetsComponent implements OnInit {
   page: number = 0;
 
   @ViewChild('searchInput') searchInput: ElementRef | undefined;
+  @ViewChild('autocomplePost') autocomplePost: AutocompletePostComponent | undefined;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -183,6 +185,8 @@ export class PracticalSheetsComponent implements OnInit {
     if (tagSlug && this.searchInput) {
       this.searchInput.nativeElement.scrollIntoView({ behavior: 'smooth', block: "center" })
       this.searchText = tagSlug;
+      if (this.autocomplePost)
+        this.autocomplePost.triggerSearch(this.searchText);
     }
   }
 
