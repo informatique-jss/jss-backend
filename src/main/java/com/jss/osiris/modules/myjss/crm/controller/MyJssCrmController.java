@@ -220,6 +220,18 @@ public class MyJssCrmController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @GetMapping(inputEntryPoint + "/webinar/subscribe/replay")
+    public ResponseEntity<Boolean> subscribeWebinarReplay(@RequestParam String mail,
+            HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
+        if (!validationHelper.validateMail(mail))
+            throw new OsirisValidationException("mail");
+
+        webinarParticipantService.subscribeToWebinarReplay(mail);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/subscribe/demo")
     public ResponseEntity<Boolean> subscribeDemo(@RequestParam String mail, @RequestParam String firstName,
             @RequestParam String lastName, @RequestParam(required = false) String phoneNumber,
@@ -288,6 +300,6 @@ public class MyJssCrmController {
         validationHelper.validateString(candidacy.getSearchedJob(), false, 50, "searchedJob");
         validationHelper.validateString(candidacy.getMessage(), true, "message");
 
-        return new ResponseEntity<Candidacy>(candidacyService.addOrUpdateCandidacy(candidacy), HttpStatus.OK);
+        return new ResponseEntity<Candidacy>(candidacyService.declareNewCandidacy(candidacy), HttpStatus.OK);
     }
 }

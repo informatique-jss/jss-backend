@@ -156,10 +156,12 @@ public class Post implements IId {
 
     private Integer premiumPercentage;
 
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String podcastUrl;
 
     private String videoUrl;
 
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer mediaTimeLength;
 
     private Boolean isCancelled;

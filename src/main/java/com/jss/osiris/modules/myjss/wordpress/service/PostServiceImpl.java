@@ -376,6 +376,11 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
     }
 
+    @Override
+    public Page<Post> getAllPostsByCategory(Pageable pageableRequest, Category category) {
+        return postRepository.findByPostCategoriesAndIsCancelled(category, false, pageableRequest);
+    }
+
     private Page<Post> searchPostAgainstEntitiesToMatch(String searchText, Page<Post> entityToMatchWithResearch) {
         List<IndexEntity> tmpEntitiesFound = null;
         List<Post> matchingPosts = new ArrayList<Post>();
@@ -490,9 +495,11 @@ public class PostServiceImpl implements PostService {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
+
                 return searchPostAgainstEntitiesToMatch(searchText,
                         postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
-                                pageableRequest));
+                                pageableRequestForMatch));
             }
         }
         return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,

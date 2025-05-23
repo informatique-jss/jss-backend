@@ -5,11 +5,13 @@ import { AppService } from '../../../../libs/app.service';
 import { ConstantService } from '../../../../libs/constant.service';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { getDocument } from '../../../../libs/DocumentHelper';
+import { capitalizeName } from '../../../../libs/FormatHelper';
 import { copyObject } from '../../../../libs/GenericHelper';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
 import { Quotation } from '../../../my-account/model/Quotation';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
+import { DocumentService } from '../../../my-account/services/document.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
 import { ServiceService } from '../../../my-account/services/service.service';
 import { Mail } from '../../../profile/model/Mail';
@@ -17,6 +19,7 @@ import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { LoginService } from '../../../profile/services/login.service';
+import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { IQuotation } from '../../model/IQuotation';
 
 @Component({
@@ -69,6 +72,9 @@ export class CheckoutComponent implements OnInit {
 
   quotationPriceObservableRef: Subscription | undefined;
 
+  userScope: Responsable[] | undefined;
+  capitalizeName = capitalizeName;
+
   constructor(
     private loginService: LoginService,
     private quotationService: QuotationService,
@@ -76,7 +82,9 @@ export class CheckoutComponent implements OnInit {
     private formBuilder: FormBuilder,
     private appService: AppService,
     private constantService: ConstantService,
-    private serviceService: ServiceService
+    private serviceService: ServiceService,
+    private userScopeService: UserScopeService,
+    private documentService: DocumentService
   ) { }
 
   ngOnInit() {
@@ -92,6 +100,13 @@ export class CheckoutComponent implements OnInit {
       }
     })
     this.initIQuotation();
+
+    this.userScopeService.getUserScope().subscribe(response => {
+      this.userScope = [];
+      if (response)
+        for (let scope of response)
+          this.userScope.push(scope.responsableViewed);
+    })
   }
 
   ngOnDestroy() {
@@ -249,6 +264,24 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
+  changeCurrentUser(user: Responsable) {
+    this.currentUser = user;
+    if (this.currentUser)
+      this.documentService.getDocumentForResponsable(this.currentUser.id).subscribe(response => {
+        if (this.quotation) {
+          this.quotation.documents = [];
+          for (let doc of response) {
+            if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id
+              || doc.documentType.id == this.constantService.getDocumentTypeDigital().id
+              || doc.documentType.id == this.constantService.getDocumentTypePaper().id
+            )
+              this.quotation.documents.push(doc);
+          }
+          this.sortDocuments(this.quotation.documents);
+        }
+      })
+  }
+
   initEmptyDocuments() {
     if (this.quotation) {
       if (!this.quotation.responsable)
@@ -267,8 +300,18 @@ export class CheckoutComponent implements OnInit {
         this.quotation.documents.push(billingDocument)
         this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypeDigital(), responsableForDocument)))
         this.quotation.documents.push(copyObject(getDocument(this.constantService.getDocumentTypePaper(), responsableForDocument)))
+
+        this.sortDocuments(this.quotation.documents);
       }
     }
+  }
+
+  sortDocuments(documents: Document[]) {
+    const defaultOrder = [this.constantService.getDocumentTypeBilling().code, this.constantService.getDocumentTypeDigital().code, this.constantService.getDocumentTypePaper().code];
+
+    documents.sort((a, b) => {
+      return defaultOrder.indexOf(a.documentType.code) - defaultOrder.indexOf(b.documentType.code);
+    });
   }
 
   computeQuotationPrice(isFromInit: boolean) {

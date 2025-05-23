@@ -1,5 +1,6 @@
 <section class="container pb-5 mb-md-3 mb-lg-4 mb-xxl-5">
-  <div class="row pb-md-4 pb-xl-5">
+  <h2 class="h1 text-white pb-2 pb-sm-3 pb-xl-4" *ngIf="isMobile">Parcourir l'espace <br>"Mon compte"</h2>
+  <div class="row pb-md-4 pb-xl-5 order-1 order-md-1">
     <div class="col-md-5 mb-2 mb-md-0">
       <div class="card border-0 h-100 bg-size-cover bg-position-center"
         style="background-image: url(assets/img/myjss-services/myjss_phone.png);">
@@ -7,13 +8,13 @@
         <div class="d-sm-none" style="height: 350px;"></div>
       </div>
     </div>
-    <div class="col-md-1 d-flex align-items-end">
+    <div class="col-md-1 d-flex align-items-end order-3 order-md-2">
       <img src="assets/img/myjss-services/announcement/vector.svg" />
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-6 order-2 order-md-3">
+      <h2 class="h1 text-white pb-2 pb-sm-3 pb-xl-4" *ngIf="!isMobile">Parcourir l'espace <br>"Mon compte"</h2>
       <div class="pt-4 pb-sm-4 ps-md-4 ps-xl-0">
-        <h2 class="h1 text-white pb-2 pb-sm-3 pb-xl-4">Parcourir l'espace <br>"Mon compte"</h2>
         <div class="d-flex pb-3 mb-2 mb-xl-3">
           <div class="text-body-secondary pt-1">01</div>
           <div class="ps-3">

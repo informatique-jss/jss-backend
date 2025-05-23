@@ -1790,6 +1790,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
             HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (order.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
+                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
+                    affaireService.addOrUpdateAffaire(asso.getAffaire());
+
         order.setResponsable(employeeService.getCurrentMyJssUser());
         order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         order.setCustomerOrderStatus(

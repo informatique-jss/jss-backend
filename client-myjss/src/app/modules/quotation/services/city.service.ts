@@ -31,4 +31,11 @@ export class CityService extends AppRestService<City> {
     return this.getList(params, "cities/search/country");
   }
 
+  getCitiesByPostalCode(postalCode: string) {
+    let params = new HttpParams();
+    params = params.set("postalCode", postalCode);
+
+    return this.getList(params, "cities/search/postal-code");
+  }
+
 }

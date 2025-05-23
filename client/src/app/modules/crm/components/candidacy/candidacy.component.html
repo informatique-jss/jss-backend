@@ -1,5 +1,18 @@
-<div class="mat-elevation-z2 form-div">
+<div class=" form-div mat-elevation-z2">
   <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-toggle [(model)]="isDisplayTreated" label="Afficher les candidatures traitées ?"
+            [form]="candidaciesForm" propertyName="isDisplayTreated"></generic-toggle>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchCandidacy()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
     <sort-table [actions]="tableActions" [columns]="displayedColumnsCandidacies" [values]="candidacies"
       tableName="candidacies" *ngIf="displayedColumnsCandidacies && displayedColumnsCandidacies.length>0 "
       [displayTotalLines]="true">

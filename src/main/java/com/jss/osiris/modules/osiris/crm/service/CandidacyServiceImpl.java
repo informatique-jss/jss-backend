@@ -36,6 +36,11 @@ public class CandidacyServiceImpl implements CandidacyService {
     }
 
     @Override
+    public List<Candidacy> getCandidacies(Boolean isDisplayTreated) {
+        return candidacyRepository.findByIsTrated(isDisplayTreated);
+    }
+
+    @Override
     public Candidacy getCandidacy(Integer id) {
         Optional<Candidacy> candidacy = candidacyRepository.findById(id);
         if (candidacy.isPresent())
@@ -45,20 +50,38 @@ public class CandidacyServiceImpl implements CandidacyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Candidacy addOrUpdateCandidacy(
+    public Candidacy declareNewCandidacy(
             Candidacy candidacy) throws OsirisException {
-        Candidacy existingCandidacy = null;
-
-        mailService.populateMailId(candidacy.getMail());
-
-        existingCandidacy = candidacyRepository.findByMail(candidacy.getMail());
-        if (existingCandidacy != null)
-            candidacy.setId(existingCandidacy.getId());
-        candidacy = candidacyRepository.save(candidacy);
-
+        addOrUpdateCandidacy(candidacy);
         mailHelper.sendConfirmationCandidacyMyJss(candidacy);
         notificationService.notifyNewCandidacy(candidacy);
 
         return candidacy;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Candidacy addOrUpdateCandidacy(Candidacy candidacy) throws OsirisException {
+        if (candidacy.getIsTreated() == null)
+            candidacy.setIsTreated(false);
+        mailService.populateMailId(candidacy.getMail());
+        candidacy = candidacyRepository.save(candidacy);
+        return candidacy;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void markCandidacyAsUnTreated(Candidacy candidacy) throws OsirisException {
+        candidacy = getCandidacy(candidacy.getId());
+        candidacy.setIsTreated(false);
+        addOrUpdateCandidacy(candidacy);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void markCandidacyAsTreated(Candidacy candidacy) throws OsirisException {
+        candidacy = getCandidacy(candidacy.getId());
+        candidacy.setIsTreated(true);
+        addOrUpdateCandidacy(candidacy);
     }
 }

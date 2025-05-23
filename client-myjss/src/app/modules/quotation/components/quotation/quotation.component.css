@@ -1,138 +1,143 @@
 :host {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 :host ::ng-deep * {
-    color: #2C4057;
-    --ar-body-color: #2C4057;
+  color: #2C4057;
+  --ar-body-color: #2C4057;
 }
 
 h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
-    color: #4B6380;
+  color: #4B6380;
 }
 
 .quotation-breadcrumb {
-    background-color: var(--ar-primary);
-    z-index: 100;
-    position: relative;
+  background-color: var(--ar-primary);
+  z-index: 100;
+  position: relative;
 }
 
 .quotation-nav-link {
-    border-color: transparent;
-    --ar-nav-tabs-link-active-bg: #ECF5FF;
-    --ar-nav-tabs-link-active-border-color: #ECF5FF;
-    --ar-nav-tabs-link-active-color: #2C4057;
-    color: var(--ar-gray-600);
-    border-color: transparent !important;
-    border-bottom-width: 0px;
+  border-color: transparent;
+  --ar-nav-tabs-link-active-bg: #ECF5FF;
+  --ar-nav-tabs-link-active-border-color: #ECF5FF;
+  --ar-nav-tabs-link-active-color: #2C4057;
+  color: var(--ar-gray-600);
+  border-color: transparent !important;
+  border-bottom-width: 0px;
 }
 
 :host ::ng-deep .btn:hover {
-    background-color: #ECF5FF;
-    border-color: #2C4057;
+  background-color: #ECF5FF;
+  border-color: #2C4057;
 }
 
 :host ::ng-deep .btn-primary:hover {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 :host ::ng-deep .btn-primary:hover i {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 :host ::ng-deep .btn-primary:hover span {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 :host ::ng-deep .btn.btn-outline-primary {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 :host ::ng-deep .btn-secondary {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 :host ::ng-deep .btn-secondary:hover {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 :host ::ng-deep .btn-secondary i {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 :host ::ng-deep .btn-secondary:hover i {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 :host ::ng-deep .btn-secondary span {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 :host ::ng-deep .btn-secondary:hover span {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 :host ::ng-deep .form-label {
-    color: var(--ar-secondary);
+  color: var(--ar-secondary);
 }
 
 :host ::ng-deep .form-control {
-    color: var(--ar-gray-600);
+  color: var(--ar-gray-600);
 }
 
 :host ::ng-deep .form-control:focus {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 .btn.btn-outline-primary:hover {
-    color: var(--ar-secondary);
+  color: var(--ar-secondary);
 }
 
 :host ::ng-deep .btn.btn-outline-secondary {
-    color: #2C4057;
+  color: #2C4057;
 }
 
 ::ng-deep .sub-title {
-    margin-top: 2rem;
-    font-weight: 600;
-    opacity: 80%;
+  margin-top: 2rem;
+  font-weight: 600;
+  opacity: 80%;
 }
 
 :host ::ng-deep input::placeholder {
-    color: var(--ar-gray-600);
+  color: var(--ar-gray-600);
 }
 
 :host ::ng-deep .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
-    border-bottom-color: var(--ar-secondary);
-    border-bottom-width: 3px;
-    border-top-color: transparent;
-    border-left-color: transparent;
-    border-right-color: transparent;
-    color: var(--ar-secondary);
+  border-bottom-color: var(--ar-secondary);
+  border-bottom-width: 3px;
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  color: var(--ar-secondary);
 }
 
 :host ::ng-deep .nav-tabs .nav-link, .nav-tabs .nav-item.show .nav-link {
-    color: var(--ar-gray-700);
-    border-radius: 0%;
-    border-bottom-width: 0px;
+  color: var(--ar-gray-700);
+  border-radius: 0%;
+  border-bottom-width: 0px;
 }
 
 :host ::ng-deep .white-card {
-    background-color: var(--ar-primary);
-    position: relative;
-    cursor: pointer;
-    border: 1px solid var(--ar-secondary);
+  background-color: var(--ar-primary);
+  position: relative;
+  cursor: pointer;
+  border: 1px solid var(--ar-secondary);
 }
 
 :host ::ng-deep .card.selected, .card:hover {
-    border: 3px solid var(--ar-secondary);
+  border: 3px solid var(--ar-secondary);
 }
 
 :host ::ng-deep .card:hover {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 :host ::ng-deep .pill {
-    position: relative;
-    z-index: 1;
+  position: relative;
+  z-index: 1;
+}
+
+:host ::ng-deep .dropdown-menu, :host ::ng-deep.dropdown-menu:hover, :host ::ng-deep.dropdown-item, :host ::ng-deep .dropdown-item:hover {
+  --ar-dropdown-bg: #fff;
+  color: #1c2d41 !important;
 }

@@ -68,6 +68,13 @@ public class WebinarParticipantServiceImpl implements WebinarParticipantService 
         return null;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void subscribeToWebinarReplay(String mail) throws OsirisException {
+        mailHelper.sendConfirmationSubscriptionWebinarReplayMyJss(mail);
+        mailHelper.sendCustomerWebinarRequestToWebinarManager(mail);
+    }
+
     @Override
     public List<WebinarParticipant> getWebinarParticipants(Webinar webinar) {
         if (webinar != null)

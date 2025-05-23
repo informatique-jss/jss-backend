@@ -35,6 +35,8 @@ public interface PostService {
 
         public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) throws OsirisException;
 
+        public Page<Post> getAllPostsByCategory(Pageable pageableRequest, Category category);
+
         public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText);
 
         public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText);

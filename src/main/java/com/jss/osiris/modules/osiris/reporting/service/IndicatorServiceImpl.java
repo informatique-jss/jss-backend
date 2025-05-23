@@ -97,6 +97,9 @@ public class IndicatorServiceImpl implements IndicatorService {
         if (results != null) {
             indicatorValueService.deleteIndicatorValuesForIndicator(indicator);
             for (Map<String, Object> result : results) {
+                if (result.get("date") == null || result.get("id_employee") == null || result.get("value") == null)
+                    continue;
+
                 Integer employeeId = (Integer) result.get("id_employee");
                 LocalDate date = ((Timestamp) result.get("date")).toLocalDateTime().toLocalDate();
                 BigDecimal value = null;

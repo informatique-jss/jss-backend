@@ -440,6 +440,28 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/all/category")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> getAllPostsByCategory(
+			@RequestParam Integer categoryId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size,
+			HttpServletRequest request) {
+
+		detectFlood(request);
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		Category category = categoryService.getCategory(categoryId);
+
+		if (category == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
+		return new ResponseEntity<Page<Post>>(
+				postService.getAllPostsByCategory(pageableRequest, category),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/all/tag")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getAllPostsByTag(
@@ -650,6 +672,15 @@ public class WordpressController {
 		return new ResponseEntity<Post>(postService.applyPremium(postService.getPreviousPost(post)), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/post/get")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> getPostById(@RequestParam Integer idPost) {
+
+		if (postService.getPost(idPost) == null)
+			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
+		return new ResponseEntity<Post>(postService.applyPremium(postService.getPost(idPost)), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/top/department")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getTopPostByDepartment(
@@ -717,6 +748,28 @@ public class WordpressController {
 		JssCategory category = jssCategoryService.getJssCategory(jssCategoryId);
 
 		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByJssCategory(category), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/all/category")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Tag>> getAllTagsByJssCategory(
+			@RequestParam Integer categoryId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size,
+			HttpServletRequest request) {
+
+		detectFlood(request);
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		Category category = categoryService.getCategory(categoryId);
+
+		if (category == null)
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
+		return new ResponseEntity<Page<Tag>>(
+				tagService.getAllTagsByCategory(pageableRequest, category),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/tag")

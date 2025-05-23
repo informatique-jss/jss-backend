@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
+import { AutocompletePostComponent } from '../../../miscellaneous/components/autocomplete-post/autocomplete-post.component';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
 import { MyJssCategoryService } from '../../services/myjss.category.service';
@@ -43,6 +44,7 @@ export class PracticalSheetsComponent implements OnInit {
   page: number = 0;
 
   @ViewChild('searchInput') searchInput: ElementRef | undefined;
+  @ViewChild('autocomplePost') autocomplePost: AutocompletePostComponent | undefined;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -78,7 +80,7 @@ export class PracticalSheetsComponent implements OnInit {
     if (slug)
       this.openTagSearch(slug, null);
 
-    this.getTopPosts();
+    this.getTopPosts(undefined);
     this.getTendencyPosts();
     this.getMostSeenPosts();
   }
@@ -183,16 +185,31 @@ export class PracticalSheetsComponent implements OnInit {
     if (tagSlug && this.searchInput) {
       this.searchInput.nativeElement.scrollIntoView({ behavior: 'smooth', block: "center" })
       this.searchText = tagSlug;
+      if (this.autocomplePost)
+        this.autocomplePost.triggerSearch(this.searchText);
     }
   }
 
   /**************** posts carousel ***********************/
-  getTopPosts() {
-    this.postService.getTopPosts(this.page).subscribe(response => {
-      if (response && response.length > 0) {
-        this.topPosts.push(...response);
-      }
-    });
+  getTopPosts(category: MyJssCategory | undefined, doNotOverriteSelectedCategory: boolean = false) {
+    if (category) {
+      this.selectedMyJssCategory = category;
+      this.postService.getTopPostByMyJssCategory(this.page, this.selectedMyJssCategory).subscribe(response => {
+        if (response && response.content.length > 0) {
+          this.topPosts = response.content;
+        } else {
+          this.getTopPosts(undefined, true);
+        }
+      });
+    } else {
+      if (!doNotOverriteSelectedCategory)
+        this.selectedMyJssCategory = this.allMyJssCategories;
+      this.postService.getTopPosts(this.page).subscribe(response => {
+        if (response) {
+          this.topPosts = response;
+        }
+      });
+    }
   }
 
   getTendencyPosts() {

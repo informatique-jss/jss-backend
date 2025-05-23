@@ -1,3 +1,4 @@
+import { Category } from "../main/model/Category";
 import { JssCategory } from "../main/model/JssCategory";
 import { PublishingDepartment } from "../main/model/PublishingDepartment";
 
@@ -7,4 +8,10 @@ export interface Constant {
   jssCategoryHomepageSecondHighlighted: JssCategory;
   jssCategoryHomepageThirdHighlighted: JssCategory;
   publishingDepartmentIdf: PublishingDepartment;
+  categoryInterview: Category;
+  categoryPodcast: Category;
+  categoryArticle: Category;
+  categorySerie: Category;
+  categoryExclusivity: Category;
+
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AppService } from '../../../../libs/app.service';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
@@ -13,6 +13,7 @@ import { CommunicationPreferencesService } from '../../../my-account/services/co
 export class NewsletterSubscriptionComponent implements OnInit {
 
   mail: string = '';
+  isMobile: boolean = false;
 
   constructor(
     private communicationPreferencesService: CommunicationPreferencesService,
@@ -21,8 +22,20 @@ export class NewsletterSubscriptionComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.checkIfMobile();
   }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkIfMobile();
+  }
+
+  private checkIfMobile(): void {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
   newsletterForm = this.formBuilder.group({});
+
   registerEmail(mailToRegister: string) {
     if (!mailToRegister) {
       return;

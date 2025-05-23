@@ -95,11 +95,14 @@ export class TopBarComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: MouseEvent): void {
-    const targetElement = event.target as HTMLElement;
-    if (
+    this.attempToCloseNavbar(false, event);
+  }
+
+  attempToCloseNavbar(force: boolean = true, event: MouseEvent | any) {
+    if (force ||
       this.navbarCollapse &&
       this.navbarCollapse.nativeElement.getAttribute('aria-expanded') == 'true' &&
-      !this.eRef.nativeElement.contains(targetElement)
+      !this.eRef.nativeElement.contains(event.target as HTMLElement)
     ) {
       this.navbarCollapse.nativeElement.click();
     }

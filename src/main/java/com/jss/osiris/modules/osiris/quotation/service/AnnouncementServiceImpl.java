@@ -541,7 +541,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void sendRemindersToConfrereForProviderInvoice() throws OsirisException {
         List<Announcement> announcements = announcementRepository
                 .getAnnouncementForConfrereReminderProviderInvoice(announcementStatusService
-                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE),
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_INVOICE),
                         constantService.getConfrereJssSpel());
 
         if (announcements != null && announcements.size() > 0) {

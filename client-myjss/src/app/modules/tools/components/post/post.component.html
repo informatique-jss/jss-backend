@@ -80,13 +80,30 @@
       <span class="fs-lg pt-2 pt-sm-3" [innerHTML]="post.contentText| trustHtml"></span>
 
       <!-- Submit a formality or contact us -->
-      <div class="row my-5">
-        <a class="col-auto btn btn-primary m-2">Déposer ma formalité
-          <i class="ai-arrow-right fs-lg ms-2"></i>
-        </a>
-        <a class="col-auto btn btn-outline-secondary m-2">Nous contacter pour un accompagnement
-          <i class="ai-arrow-right fs-lg ms-2"></i>
-        </a>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryFormality)">
+        <double-buttons orderActionLabel=" Déposer une formalité" quotationActionLabel="Demander un devis"
+          [isLightButtons]="true">
+        </double-buttons>
+      </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryAnnouncement)">
+        <double-buttons orderActionLabel=" Publier une annonce légale" quotationActionLabel="Demander un devis"
+          [isLightButtons]="true">
+        </double-buttons>
+      </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryApostille)">
+        <double-buttons orderActionLabel=" Demander une apostille ou légalisation"
+          quotationActionLabel="Demander un devis" [isLightButtons]="true">
+        </double-buttons>
+      </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDomiciliation)">
+        <double-buttons orderActionLabel=" Domicilier mon entreprise" quotationActionLabel="Demander un devis"
+          [isLightButtons]="true">
+        </double-buttons>
+      </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDocument)">
+        <double-buttons orderActionLabel=" Commander des documents" quotationActionLabel="Demander un devis"
+          [isLightButtons]="true">
+        </double-buttons>
       </div>
 
       <!-- Tags -->

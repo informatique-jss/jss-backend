@@ -3,11 +3,13 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { AppService } from '../../../../libs/app.service';
+import { ConstantService } from '../../../../libs/constant.service';
 import { getTimeReading } from '../../../../libs/FormatHelper';
 import { Pagination } from '../../../miscellaneous/model/Pagination';
 import { Mail } from '../../../profile/model/Mail';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Comment } from '../../model/Comment';
+import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
 import { CommentService } from '../../services/comment.service';
 import { PostService } from '../../services/post.service';
@@ -38,12 +40,19 @@ export class PostComponent implements OnInit, AfterViewInit {
   commentsPagination: Pagination = {} as Pagination;
   pageSize: number = 10; // computed
 
+  myJssCategoryFormality = this.constantService.getMyJssCategoryFormality();
+  myJssCategoryAnnouncement = this.constantService.getMyJssCategoryAnnouncement();
+  myJssCategoryApostille = this.constantService.getMyJssCategoryApostille();
+  myJssCategoryDocument = this.constantService.getMyJssCategoryDocument();
+  myJssCategoryDomiciliation = this.constantService.getMyJssCategoryDomiciliation();
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private postService: PostService,
     private commentService: CommentService,
     private formBuilder: FormBuilder,
     private appService: AppService,
+    private constantService: ConstantService
   ) { }
 
   getTimeReading = getTimeReading;
@@ -231,5 +240,13 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   showLessComments() {
     this.fetchComments(0);
+  }
+
+  isPostContainsMyJssCategory(category: MyJssCategory) {
+    if (this.post && this.post.myJssCategories)
+      for (let cat of this.post.myJssCategories)
+        if (cat.id == category.id)
+          return true;
+    return false;
   }
 }

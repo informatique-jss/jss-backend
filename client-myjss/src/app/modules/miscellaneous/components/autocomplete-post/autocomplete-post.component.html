@@ -14,9 +14,9 @@
       </ng-autocomplete>
 
       <div class="custom-input-group align-items-center col-3 justify-content-end ps-0">
-        <select-myjss-category class="cursor-pointer ps-0" [(model)]=" myJssCategory"
-          [additionnalType]="additionalCategory!" [form]="autocompletePostForm" propertyName="selectedMyJssCategory"
-          [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
+        <select-myjss-category class="cursor-pointer ps-0" [(model)]="myJssCategory"
+          (onFormChange)="changeMyJssCategory()" [additionnalType]="additionalCategory!" [form]="autocompletePostForm"
+          propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
       </div>
     </div>
 
@@ -26,8 +26,8 @@
           <a class="h5 text-dark text-truncate-1 me-2 flex-shrink-1" *ngIf="item"
             [innerHTML]="item.titleText | trustHtml"></a>
           <ng-container *ngIf="item && item.postTags">
-            <span class="badge bg-primary fs-xs flex-shrink-0 text-nowrap" style="margin-top: -15px;margin-right: 3px;"
-              *ngFor="let tag of item.postTags.slice(0,3)">
+            <span class="badge bg-primary fs-xs flex-shrink-0 text-nowrap text-dark"
+              style="margin-top: -15px;margin-right: 3px;" *ngFor="let tag of item.postTags.slice(0,3)">
               {{ tag.name }}
             </span>
           </ng-container>

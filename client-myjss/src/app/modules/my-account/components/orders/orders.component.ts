@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AppService } from '../../../../libs/app.service';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
@@ -48,6 +49,7 @@ export class OrdersComponent implements OnInit {
   ordersAssoAffaireOrders: AssoAffaireOrder[][] = [];
   ordersInvoiceLabelResult: InvoiceLabelResult[] = [];
   ordersMailComputeResult: MailComputeResult[] = [];
+  currentSearchRef: Subscription | undefined;
 
   constructor(
     private customerOrderService: CustomerOrderService,
@@ -92,10 +94,13 @@ export class OrdersComponent implements OnInit {
     if (this.currentPage == 0)
       this.isFirstLoading = true;
 
-    this.customerOrderService.searchOrdersForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+    if (this.currentSearchRef)
+      this.currentSearchRef.unsubscribe();
+
+    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
       if (response) {
         this.orders.push(...response);
-        if (response.length < 51)
+        if (response.length < 50)
           this.hideSeeMore = true;
       }
       this.isFirstLoading = false;

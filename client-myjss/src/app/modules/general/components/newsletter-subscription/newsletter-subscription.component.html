@@ -10,14 +10,14 @@
 
 <section class="container pb-5">
   <div class="row g-5">
-    <div class="col-md-6 order-md-1">
-      <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/others/Newsletter.png" alt="Image">
-    </div>
     <div class="col-md-6 order-md-2 d-flex align-items-center">
       <form class="needs-validation row g-4 " novalidate>
         <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">Pour ne rien rater de nos prochains articles,
           abonnez-vous à notre newsletter
         </h2>
+        <div class="col-md-6 order-md-1" *ngIf="isMobile">
+          <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/others/Newsletter.png" alt="Image">
+        </div>
         <div class="input-group input-group-border text-white align-items-center py-1 mt-5 rounded-1 d-flex">
           <div class="col">
             <div class="row align-items-center me-1">
@@ -30,6 +30,9 @@
           </div>
         </div>
       </form>
+    </div>
+    <div class="col-md-6 order-md-1" *ngIf="!isMobile">
+      <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/others/Newsletter.png" alt="Image">
     </div>
   </div>
 

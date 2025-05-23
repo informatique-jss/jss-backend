@@ -774,6 +774,12 @@ public class MailHelper {
                 CustomerMail.TEMPLATE_SEND_WEBINAR_SUBSCRIPTION);
     }
 
+    public void sendConfirmationSubscriptionWebinarReplayMyJss(String mail) throws OsirisException {
+        sendCustomerMailForMyJssMail(mail, null,
+                constantService.getStringMyJssWebinarRequestMail(), "Confirmation de demande de replay du webinaire",
+                CustomerMail.TEMPLATE_SEND_WEBINAR_REPLAY);
+    }
+
     public void sendConfirmationCandidacyMyJss(Candidacy candidacy) throws OsirisException {
         sendCustomerMailForMyJssMail(candidacy.getMail().getMail(), null,
                 constantService.getEmployeeCandidacyResponsible().getMail(), "Confirmation de candidature",
@@ -806,6 +812,14 @@ public class MailHelper {
                 constantService.getStringMyJssDemoRequestMail(),
                 "Notification de demande de démo client",
                 CustomerMail.TEMPLATE_SEND_DEMO_REQUEST);
+    }
+
+    public void sendCustomerWebinarRequestToWebinarManager(String mailAdress) throws OsirisException {
+        String explaination = mailAdress;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssWebinarRequestMail(), explaination,
+                constantService.getStringMyJssWebinarRequestMail(),
+                "Notification de demande de replay du webinaire",
+                CustomerMail.TEMPLATE_SEND_REPLAY_WEBINAR_REQUEST);
     }
 
     public void sendContactFormNotificationMail(String mailAdress, String firstName, String lastName,
