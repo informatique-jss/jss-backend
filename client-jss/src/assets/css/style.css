@@ -13617,3 +13617,7 @@ ngb-modal-backdrop {
 ngb-modal-window {
   z-index: 1055 !important;
 }
+
+.btn-search {
+  color: var(--ar-primary) !important;
+}

@@ -48,6 +48,7 @@ import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
 import { MyJssCategory } from './MyJssCategory';
 import { PaymentType } from "./PaymentType";
+import { PublishingDepartment } from './PublishingDepartment';
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
 
@@ -284,4 +285,5 @@ export interface Constant {
   stringMyJssDemoRequestMail: string;
   stringMyJssWebinarRequestMail: string;
   stringMyJssContactFormRequestMail: string;
+  publishingDepartmentIdf: PublishingDepartment;
 }

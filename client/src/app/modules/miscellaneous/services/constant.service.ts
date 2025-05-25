@@ -944,4 +944,7 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.stringMyJssContactFormRequestMail;
   }
 
+  getPublishingDepartmentIdf() {
+    return this.constant.publishingDepartmentIdf;
+  }
 }
