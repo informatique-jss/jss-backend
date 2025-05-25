@@ -11,12 +11,13 @@ import { PostService } from '../../services/post.service';
 import { TagService } from '../../services/tag.service';
 import { GenericHubComponent } from '../generic-hub/generic-hub.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
+import { SelectPublishingDepartmentComponent } from '../select-publishing-department/select-publishing-department.component';
 
 @Component({
   selector: 'department-hub',
   templateUrl: './department-hub.component.html',
   styleUrls: ['./department-hub.component.css'],
-  imports: [SHARED_IMPORTS, GenericInputComponent],
+  imports: [SHARED_IMPORTS, GenericInputComponent, SelectPublishingDepartmentComponent],
   standalone: true
 })
 export class DepartmentHubComponent extends GenericHubComponent<PublishingDepartment> implements OnInit {

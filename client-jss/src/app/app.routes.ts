@@ -30,10 +30,6 @@ export const routes: Routes = [
         loadComponent: () => import('./main/components/post-serie-header/post-serie-header.component').then(m => m.PostSerieHeaderComponent)
       },
       {
-        path: 'post/department/idf/all',
-        loadComponent: () => import('./main/components/post-idf-header/post-idf-header.component').then(m => m.PostIdfHeaderComponent)
-      },
-      {
         path: 'post/department/:id',
         loadComponent: () => import('./main/components/post-department-header/post-department-header.component').then(m => m.PostDepartmentHeaderComponent)
       },

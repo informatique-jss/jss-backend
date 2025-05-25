@@ -7,7 +7,6 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'post/author/:slug', renderMode: RenderMode.Server },
   { path: 'post/serie/:slug', renderMode: RenderMode.Server },
   { path: 'post/department/:id', renderMode: RenderMode.Server },
-  { path: 'post/department/idf/all', renderMode: RenderMode.Server },
   { path: 'post/:slug', renderMode: RenderMode.Server },
   { path: 'announcement/search', renderMode: RenderMode.Server },
   { path: 'announcement/:id', renderMode: RenderMode.Server },

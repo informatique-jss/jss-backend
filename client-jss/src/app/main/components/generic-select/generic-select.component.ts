@@ -3,7 +3,9 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { compareWithId } from '../../../libs/CompareHelper';
 import { GenericFormComponent } from '../generic-form.components';
 
-@Directive()
+@Directive({
+  standalone: true,
+})
 export abstract class GenericSelectComponent<T> extends GenericFormComponent implements OnInit {
 
   /**

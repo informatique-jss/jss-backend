@@ -7,6 +7,7 @@ import { ConstantService } from '../../../services/constant.service';
 import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
+import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { Serie } from '../../model/Serie';
 import { Tag } from '../../model/Tag';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
@@ -41,6 +42,7 @@ export class MainComponent implements OnInit {
   firstCategory!: JssCategory;
   secondCategory!: JssCategory;
   thirdCategory!: JssCategory;
+  idf!: PublishingDepartment;
 
   constructor(
     private postService: PostService,
@@ -56,6 +58,7 @@ export class MainComponent implements OnInit {
     this.firstCategory = this.constantService.getJssCategoryHomepageFirstHighlighted();
     this.secondCategory = this.constantService.getJssCategoryHomepageSecondHighlighted();
     this.thirdCategory = this.constantService.getJssCategoryHomepageThirdHighlighted();
+    this.idf = this.constantService.getPublishingDepartmentIdf();
 
     // Fetch top posts
     this.postService.getTopPost(0, 10).subscribe(pagedPosts => {

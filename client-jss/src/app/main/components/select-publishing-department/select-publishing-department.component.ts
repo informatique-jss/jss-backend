@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { DepartmentService } from '../../services/department.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -8,7 +9,8 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
   selector: 'select-publishing-department',
   templateUrl: '../generic-select/generic-select.component.html',
   styleUrls: ['../generic-select/generic-select.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class SelectPublishingDepartmentComponent extends GenericSelectComponent<PublishingDepartment> implements OnInit {
 
