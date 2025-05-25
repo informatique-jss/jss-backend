@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { getTimeReading } from '../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
+import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../services/app.service';
 import { PlatformService } from '../../../services/platform.service';
 import { Author } from '../../model/Author';
@@ -17,7 +19,8 @@ declare var tns: any;
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  standalone: false
+  imports: [SHARED_IMPORTS, TrustHtmlPipe],
+  standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
 

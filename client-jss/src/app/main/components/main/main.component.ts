@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MY_JSS_HOME_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
 import { Author } from '../../model/Author';
@@ -19,7 +20,8 @@ declare var tns: any;
   selector: 'main-page',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class MainComponent implements OnInit {
 
@@ -36,9 +38,9 @@ export class MainComponent implements OnInit {
 
   mail: string = '';
 
-  firstCategory: JssCategory = this.constantService.getJssCategoryHomepageFirstHighlighted();
-  secondCategory: JssCategory = this.constantService.getJssCategoryHomepageSecondHighlighted();
-  thirdCategory: JssCategory = this.constantService.getJssCategoryHomepageThirdHighlighted();
+  firstCategory!: JssCategory;
+  secondCategory!: JssCategory;
+  thirdCategory!: JssCategory;
 
   constructor(
     private postService: PostService,
@@ -51,6 +53,10 @@ export class MainComponent implements OnInit {
 
 
   ngOnInit() {
+    this.firstCategory = this.constantService.getJssCategoryHomepageFirstHighlighted();
+    this.secondCategory = this.constantService.getJssCategoryHomepageSecondHighlighted();
+    this.thirdCategory = this.constantService.getJssCategoryHomepageThirdHighlighted();
+
     // Fetch top posts
     this.postService.getTopPost(0, 10).subscribe(pagedPosts => {
       if (pagedPosts.content) {

@@ -1,7 +1,6 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
 
@@ -9,7 +8,7 @@ import { CommunicationPreferencesService } from '../../services/communication.pr
   selector: 'newsletter',
   templateUrl: './newsletter.component.html',
   styleUrls: ['./newsletter.component.css'],
-  imports: [FormsModule, CommonModule],
+  imports: [SHARED_IMPORTS],
   standalone: true
 })
 export class NewsletterComponent implements OnInit {

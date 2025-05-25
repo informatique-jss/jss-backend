@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { AudioService } from '../../services/audio.service';
 
@@ -6,7 +7,8 @@ import { AudioService } from '../../services/audio.service';
   selector: 'audio-player',
   templateUrl: './audio-player.component.html',
   styleUrls: ['./audio-player.component.css'],
-  standalone: false
+  imports: [SHARED_IMPORTS],
+  standalone: true
 })
 export class AudioPlayerComponent implements OnInit, AfterViewInit {
 

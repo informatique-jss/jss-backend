@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { Modal } from 'bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
@@ -16,12 +17,17 @@ import { DepartmentService } from '../../services/department.service';
 import { IndexEntityService } from '../../services/index.entity.service';
 import { JssCategoryService } from '../../services/jss.category.service';
 import { LoginService } from '../../services/login.service';
+import { AvatarComponent } from '../avatar/avatar.component';
 
 @Component({
   selector: 'main-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  standalone: false
+  imports: [
+    SHARED_IMPORTS,
+    AvatarComponent
+  ],
+  standalone: true
 })
 export class HeaderComponent implements OnInit {
 
@@ -36,13 +42,13 @@ export class HeaderComponent implements OnInit {
   indexedEntities: IndexEntity[] | undefined;
   searchObservableRef: Subscription | undefined;
 
-  searchModalInstance: Modal | undefined;
+  searchModalInstance: any | undefined;
 
   currentUser: Responsable | undefined;
 
   capitalizeName = capitalizeName;
 
-  myAccountItems: AccountMenuItem[] = this.appService.getAllAccountMenuItems();
+  myAccountItems: AccountMenuItem[] = [];
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
   MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
 
@@ -53,7 +59,8 @@ export class HeaderComponent implements OnInit {
     private appService: AppService,
     private indexEntityService: IndexEntityService,
     private loginService: LoginService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private modalService: NgbModal
   ) { }
 
   dropdownOpen = false;
@@ -68,6 +75,8 @@ export class HeaderComponent implements OnInit {
     this.openMyJssRoute(item);
   }
   ngOnInit() {
+    this.myAccountItems = this.appService.getAllAccountMenuItems();
+
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
     })
@@ -84,32 +93,40 @@ export class HeaderComponent implements OnInit {
     this.appService.openMyJssRoute(undefined, item.route, false);
   }
 
-  displaySearchModal() {
-    const doc = this.platformService.getNativeDocument();
-    if (doc) {
-      const modalElement = doc.getElementById('searchModal');
-      if (!this.searchModalInstance) {
-        if (modalElement) {
-          this.searchModalInstance = new Modal(modalElement, {
-            backdrop: 'static'
-          });
-        }
-      }
-      this.searchModalInstance!.show();
-      if (modalElement) {
-        const input = modalElement.querySelector('input[name="search"]') as HTMLInputElement;
-        if (input) {
-          input.focus();
-        }
-      }
+  displaySearchModal(content: TemplateRef<any>) {
+    if (this.searchModalInstance) {
+      return;
     }
+
+    this.searchModalInstance = this.modalService.open(content, {
+      backdrop: 'static',
+      modalDialogClass: 'modal-fullscreen'
+    });
+
+    this.searchModalInstance.shown.subscribe(() => {
+      const input = document.querySelector('input[name="search"]') as HTMLInputElement;
+      if (input) {
+        input.focus();
+      }
+    });
+
+    this.searchModalInstance.result.finally(() => {
+      this.searchModalInstance = undefined;
+      this.indexedEntities = [];
+      this.searchText = "";
+      if (this.searchObservableRef)
+        this.searchObservableRef.unsubscribe();
+    });
   }
 
   hideSearchModal() {
     if (this.searchModalInstance) {
       this.searchModalInstance.hide();
+      this.searchModalInstance = undefined;
       this.indexedEntities = [];
       this.searchText = "";
+      if (this.searchObservableRef)
+        this.searchObservableRef.unsubscribe();
     }
   }
 

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MY_JSS_CGV_ROUTE, MY_JSS_CONFIDENTIALITY_ROUTE, MY_JSS_JOIN_US_ROUTE, MY_JSS_LEGAL_MENTIONS_ROUTE, MY_JSS_PARTNERS_ROUTE, MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE, MY_JSS_SERVICES_APOSITLLE_ROUTE, MY_JSS_SERVICES_DOCUMENT_ROUTE, MY_JSS_SERVICES_DOMICILIATION_ROUTE, MY_JSS_SERVICES_FORMALITY_ROUTE, MY_JSS_SUBSCRIBE_ROUTE, MY_JSS_WHO_ARE_WE_ROUTE } from '../../../libs/Constants';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { JssCategory } from '../../model/JssCategory';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
@@ -10,7 +11,8 @@ import { JssCategoryService } from '../../services/jss.category.service';
   selector: 'footer-page',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css'],
-  standalone: false
+  imports: [SHARED_IMPORTS],
+  standalone: true
 })
 export class FooterComponent implements OnInit {
 
@@ -32,12 +34,12 @@ export class FooterComponent implements OnInit {
       this.departments = response.sort((a: PublishingDepartment, b: PublishingDepartment) => a.name.localeCompare(b.name));
     })
 
-    if (localStorage.getItem('hasAcceptCookie') != null) {
-      let a = localStorage.getItem('hasAcceptCookie');
-      let hasAcceptCookie = JSON.parse(a!) as boolean;
-      if (hasAcceptCookie)
-        this.hasAcceptCookie = hasAcceptCookie;
-    }
+    //if (localStorage.getItem('hasAcceptCookie') != null) {
+    //  let a = localStorage.getItem('hasAcceptCookie');
+    //  let hasAcceptCookie = JSON.parse(a!) as boolean;
+    //  if (hasAcceptCookie)
+    //    this.hasAcceptCookie = hasAcceptCookie;
+    //}
   }
 
   acceptCookie() {

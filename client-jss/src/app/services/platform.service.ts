@@ -17,6 +17,14 @@ export class PlatformService {
     return this.isBrowser() ? window : null;
   }
 
+  getNativeAudio(): HTMLAudioElement | null {
+    return this.isBrowser() ? new Audio() : null;
+  }
+
+  getNativeLocalStorage(): Storage | null {
+    return this.isBrowser() ? localStorage : null;
+  }
+
   getNativeDocument(): Document | null {
     return this.isBrowser() ? document : null;
   }

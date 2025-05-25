@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
   selector: 'generic-input',
   templateUrl: './generic-input.component.html',
   styleUrls: ['./generic-input.component.css'],
-  standalone: false
+  imports: [SHARED_IMPORTS],
+  standalone: true
 })
 export class GenericInputComponent extends GenericFormComponent implements OnInit {
   /**

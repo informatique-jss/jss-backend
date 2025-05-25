@@ -47,9 +47,8 @@
                         </a>
                       </div>
                       <h6 class="mb-0 ">
-                        <a class="card-text-truncate" (click)="openPost(post, $event)"
-                          [innerHTML]="post.titleText | trustHtml"> <img *ngIf="post.isPremium" class="pe-0"
-                            src="/assets/images/premium-icon.svg">
+                        <a class="card-text-truncate" (click)="openPost(post, $event)">{{post.titleText}} <img
+                            *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
                         </a>
                       </h6>
                     </div>
@@ -82,11 +81,11 @@
                       </a>
                     </div>
                     <h2>
-                      <a class="card-title-truncate" (click)="openPost(lastPosts[0], $event)"
-                        [innerHTML]="lastPosts[0].titleText | trustHtml"> <img *ngIf="lastPosts[0].isPremium"
-                          class="pe-0" src="/assets/images/premium-icon.svg"></a>
+                      <a class="card-title-truncate"
+                        (click)="openPost(lastPosts[0], $event)"><span>{{lastPosts[0].titleText}}</span> <img
+                          *ngIf="lastPosts[0].isPremium" class="pe-0" src="/assets/images/premium-icon.svg"></a>
                     </h2>
-                    <p class="card-text-truncate" [innerHTML]="lastPosts[0].excerptText">
+                    <p class="card-text-truncate">{{lastPosts[0].excerptText}}
                     </p>
                   </div>
                 </article>
@@ -139,7 +138,7 @@
                             class="col-auto pe-1" src="/assets/images/premium-icon.svg">{{post.titleText}}</a>
                       </h4>
                       <div class="">
-                        <div [innerHTML]="post.excerptText | trustHtml" class="card-truncate-6-line">
+                        <div class="card-truncate-6-line">{{post.excerptText}}
                         </div>
                       </div>
                       <div class="row align-items-center">
@@ -600,7 +599,7 @@
                   <h2><a class="card-title-truncate" (click)="openSeriePosts(series[0], $event)">
                       {{series[0].titleText}}</a>
                   </h2>
-                  <p class="card-text-truncate" [innerHTML]="series[0].excerptText | trustHtml">
+                  <p class="card-text-truncate">{{series[0].excerptText}}
                   </p>
                 </div>
               </article>
@@ -679,7 +678,7 @@
                     src="/assets/images/premium-icon.svg">
                   {{post.titleText}}</a>
               </h4>
-              <p class="card-text-truncate mb-0" [innerHTML]="post.excerptText | trustHtml">
+              <p class="card-text-truncate mb-0">{{post.excerptText}}
               </p>
             </div>
             <div class="row align-items-center px-2">
@@ -702,6 +701,6 @@
         </div>
       </div>
     </div>
-    <newsletter></newsletter>
+    <!-- <newsletter></newsletter> -->
   </div>
 </div>

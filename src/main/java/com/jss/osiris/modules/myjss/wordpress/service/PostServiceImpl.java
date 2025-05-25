@@ -197,9 +197,10 @@ public class PostServiceImpl implements PostService {
     public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException {
         post.setIsCancelled(false);
         if (post.getTitle() != null)
-            post.setTitleText(StringEscapeUtils.unescapeHtml4(post.getTitle().getRendered()));
+            post.setTitleText(StringEscapeUtils.unescapeHtml4(post.getTitle().getRendered()).replaceAll("<[^>]*>", ""));
         if (post.getExcerpt() != null)
-            post.setExcerptText(StringEscapeUtils.unescapeHtml4(post.getExcerpt().getRendered()));
+            post.setExcerptText(
+                    StringEscapeUtils.unescapeHtml4(post.getExcerpt().getRendered().replaceAll("<[^>]*>", "")));
         if (post.getContent() != null)
             post.setContentText(StringEscapeUtils.unescapeHtml4(post.getContent().getRendered()));
 

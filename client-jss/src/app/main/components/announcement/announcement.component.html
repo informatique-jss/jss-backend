@@ -33,8 +33,9 @@ Main START -->
     <div class="row">
       <!-- Main Content START -->
       <div class="col-lg-9 mx-auto">
-        <p *ngIf="announcement && announcement.noticeHeader" [innerHTML]="announcement.noticeHeader| trustHtml"></p>
-        <p *ngIf="announcement && announcement.notice" [innerHTML]="announcement.notice| trustHtml"></p>
+        <p *ngIf="announcement && announcement.noticeHeader"><span
+            [innerHTML]="announcement.noticeHeader| trustHtml"></span></p>
+        <p *ngIf="announcement && announcement.notice"><span [innerHTML]="announcement.notice| trustHtml"></span></p>
       </div>
       <!-- Main Content END -->
     </div>

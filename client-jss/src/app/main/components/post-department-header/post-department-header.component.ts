@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { DepartmentService } from '../../services/department.service';
+import { DepartmentHubComponent } from '../department-hub/department-hub.component';
 
 @Component({
   selector: 'post-department-header',
   templateUrl: './post-department-header.component.html',
   styleUrls: ['./post-department-header.component.css'],
-  standalone: false
+  imports: [SHARED_IMPORTS, DepartmentHubComponent],
+  standalone: true
 })
 export class PostDepartmentHeaderComponent implements OnInit {
 

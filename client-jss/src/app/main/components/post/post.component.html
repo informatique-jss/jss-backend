@@ -11,9 +11,9 @@ Inner intro START -->
             [style.background-color]="category.color+' !important'"><i
               class="fas fa-circle me-2 small fw-bold"></i>{{category.name}}</a>
         </ng-container>
-        <h1 [innerHTML]="post.titleText| trustHtml"> </h1>
+        <h1>{{post.titleText}} </h1>
       </div>
-      <p class="lead" [innerHTML]="post.excerptText| trustHtml"> </p>
+      <p class="lead"> {{post.excerptText}}</p>
     </div>
   </div>
 </section>
@@ -101,7 +101,7 @@ Main START -->
                 </div>
                 <div class="card-body px-0 pt-3">
                   <h5 class="card-title"><a (click)="openPost(relatedPost, $event)" style="cursor: pointer;"
-                      class="btn-link text-reset stretched-link fw-bold" [innerHTML]="relatedPost.titleText| trustHtml">
+                      class="btn-link text-reset stretched-link fw-bold">{{relatedPost.titleText}}
                     </a></h5>
                   <!-- Card info -->
                   <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
@@ -136,13 +136,12 @@ Main START -->
           <div class="col-sm-6 bg-primary bg-opacity-10 p-4 position-relative border-end border-1 rounded-start">
             <span *ngIf="previousPost"><i class="bi bi-arrow-left me-3 rtl-flip"></i>Article précédent</span>
             <h5 class="m-0" *ngIf="previousPost"><a (click)="openPost(previousPost, $event)" style="cursor: pointer;"
-                class="stretched-link btn-link text-reset" [innerHTML]="previousPost.titleText| trustHtml"></a></h5>
+                class="stretched-link btn-link text-reset">{{previousPost.titleText}}</a></h5>
           </div>
           <div class="col-sm-6 bg-primary bg-opacity-10 p-4 position-relative text-sm-end rounded-end">
             <span *ngIf="nextPost">Article suivant<i class="bi bi-arrow-right ms-3 rtl-flip"></i></span>
             <h5 class="m-0" *ngIf="nextPost"><a class="stretched-link btn-link text-reset"
-                (click)="openPost(nextPost, $event)" style="cursor: pointer;"
-                [innerHTML]="nextPost.titleText| trustHtml"></a></h5>
+                (click)="openPost(nextPost, $event)" style="cursor: pointer;">{{nextPost.titleText}}</a></h5>
           </div>
         </div>
 

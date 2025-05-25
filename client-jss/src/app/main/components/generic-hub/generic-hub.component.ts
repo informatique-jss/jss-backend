@@ -1,5 +1,5 @@
 import { Directive, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
@@ -23,16 +23,18 @@ export abstract class GenericHubComponent<T> implements OnInit {
   totalPage: number = 0;
   searchText: string = "";
   searchResults: Post[] = [] as Array<Post>;
+  hubForm!: FormGroup;
 
   constructor(protected appService: AppService, protected formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    this.hubForm = this.formBuilder.group({});
     this.fetchPosts(0);
     this.fetchTags();
     this.fetchMostSeenPosts();
   }
 
-  hubForm = this.formBuilder.group({});
+
 
   abstract getAllPostByEntityType(selectedEntityType: T, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>>;
   abstract getAllTagByEntityType(selectedEntityType: T): Observable<Array<Tag>>;

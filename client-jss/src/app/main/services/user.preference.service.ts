@@ -1,44 +1,56 @@
 import { Injectable } from '@angular/core';
+import { PlatformService } from '../../services/platform.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserPreferenceService {
 
-  constructor() { }
+  constructor(private platformService: PlatformService) { }
 
   // --------- Audio information --------
 
   setCurrentPlayingTrack(idPodcast: number) {
-    localStorage.setItem('current-playing-track-id', JSON.stringify(idPodcast));
+    if (this.platformService.isBrowser())
+      this.platformService.getNativeLocalStorage()!.setItem('current-playing-track-id', JSON.stringify(idPodcast));
   }
 
   getCurrentPlayingTrack() {
-    return localStorage.getItem('current-playing-track-id');
+    if (this.platformService.isBrowser())
+      return this.platformService.getNativeLocalStorage()!.getItem('current-playing-track-id');
+    return "0";
   }
 
   setCurrentPlayingTrackTime(currentPlyingTime: number) {
-    localStorage.setItem('current-playing-time', JSON.stringify(currentPlyingTime));
+    if (this.platformService.isBrowser())
+      this.platformService.getNativeLocalStorage()!.setItem('current-playing-time', JSON.stringify(currentPlyingTime));
   }
 
   getCurrentPlayingTrackTime() {
-    return localStorage.getItem('current-playing-time');
+    if (this.platformService.isBrowser())
+      return this.platformService.getNativeLocalStorage()!.getItem('current-playing-time');
+    return "0";
   }
 
   setCurrentPlayingTrackVolume(currentPlyingVolume: number) {
-    localStorage.setItem('current-playing-volume', JSON.stringify(currentPlyingVolume));
+    if (this.platformService.isBrowser())
+      this.platformService.getNativeLocalStorage()!.setItem('current-playing-volume', JSON.stringify(currentPlyingVolume));
   }
 
   getCurrentPlayingTrackVolume() {
-    return localStorage.getItem('current-playing-volume');
+    if (this.platformService.isBrowser())
+      return this.platformService.getNativeLocalStorage()!.getItem('current-playing-volume');
+    return "0";
   }
 
   deleteAudioPreferences() {
-    let allItems = localStorage as any;
-    if (allItems)
-      for (let key in allItems)
-        if (key && ["current-playing-track-id", "current-playing-time", "current-playing-volume"].indexOf(key) >= 0)
-          localStorage.removeItem(key);
+    if (this.platformService.isBrowser()) {
+      let allItems = this.platformService.getNativeLocalStorage()! as any;
+      if (allItems)
+        for (let key in allItems)
+          if (key && ["current-playing-track-id", "current-playing-time", "current-playing-volume"].indexOf(key) >= 0)
+            this.platformService.getNativeLocalStorage()!.removeItem(key);
+    }
   }
 }
 
