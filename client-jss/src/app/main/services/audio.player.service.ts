@@ -10,41 +10,57 @@ import { UserPreferenceService } from './user.preference.service';
 })
 export class AudioPlayerService {
 
-
-  private audio: HTMLAudioElement = new Audio();
+  private audio: HTMLAudioElement | null = null;
   public isPlaying: boolean = false;
   public currentTime: number = 0;
   public duration: number = 0;
   public volume: number = 0.5;
   public progress: number = 0;
 
-  private isCurrentPodcastDisplayed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  currentPodcastObservable = this.isCurrentPodcastDisplayed.asObservable();
+  private currentPodcastId: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  currentPodcastObservable = this.currentPodcastId.asObservable();
   currentPodcast: Post | undefined;
 
   constructor(private postService: PostService,
     private userPreferenceService: UserPreferenceService,
     private platformService: PlatformService
   ) {
-    const currentPlayingTrackVolume = this.userPreferenceService.getCurrentPlayingTrackVolume();
-    if (currentPlayingTrackVolume) {
-      this.audio.volume = parseFloat(currentPlayingTrackVolume);
-      this.volume = parseFloat(currentPlayingTrackVolume);
-    } else {
-      this.audio.volume = this.volume;
-      userPreferenceService.setCurrentPlayingTrackVolume(this.volume);
-    }
+    this.audio = platformService.getNativeAudio();
+    if (this.audio) {
+      const currentPlayingTrackVolume = this.userPreferenceService.getCurrentPlayingTrackVolume();
+      if (currentPlayingTrackVolume) {
+        this.audio.volume = parseFloat(currentPlayingTrackVolume);
+        this.volume = parseFloat(currentPlayingTrackVolume);
+      } else {
+        this.audio.volume = this.volume;
+        userPreferenceService.setCurrentPlayingTrackVolume(this.volume);
+      }
 
-    // If already connected, we look in local storage to make it play where the user left it
-    if (userPreferenceService.getCurrentPlayingTrack() && userPreferenceService.getCurrentPlayingTrackTime()) {
-      const currentPlayingTrack = userPreferenceService.getCurrentPlayingTrack();
-      if (currentPlayingTrack)
-        this.postService.getPostById(parseInt(currentPlayingTrack)).subscribe(res => {
-          this.setTrackProperties(res);
-          const currentPlayingTrackTime = userPreferenceService.getCurrentPlayingTrackTime();
-          this.audio.currentTime = parseFloat(currentPlayingTrackTime ? currentPlayingTrack : '0');
+      // If already connected, we look in local storage to make it play where the user left it
+      if (userPreferenceService.getCurrentPlayingTrack() && userPreferenceService.getCurrentPlayingTrackTime()) {
+        const currentPlayingTrackId = userPreferenceService.getCurrentPlayingTrack();
+        if (currentPlayingTrackId)
+          this.postService.getPostById(parseInt(currentPlayingTrackId)).subscribe(res => {
+            this.setTrackProperties(res);
+            this.duration = res.mediaTimeLength;
+            const currentPlayingTrackTime = userPreferenceService.getCurrentPlayingTrackTime();
+            this.audio!.currentTime = parseFloat(currentPlayingTrackTime ? currentPlayingTrackTime : '0');
+            this.currentTime = this.audio!.currentTime;
+          });
+      }
+
+      this.audio.addEventListener('timeupdate', () => {
+        if (this.audio) {
           this.currentTime = this.audio.currentTime;
-        });
+          userPreferenceService.setCurrentPlayingTrackTime(this.currentTime - 5);
+          this.duration = this.audio.duration;
+          this.progress = (this.audio.currentTime / this.audio.duration) * 100;
+        }
+      });
+
+      this.audio.addEventListener('ended', () => {
+        this.isPlaying = false;
+      });
     }
   }
 
@@ -66,9 +82,10 @@ export class AudioPlayerService {
   private setTrackProperties(res: Post) {
     if (this.audio) {
       this.currentPodcast = res;
-      this.isCurrentPodcastDisplayed.next(true);
+      this.currentPodcastId.next(res.id);
       this.audio.src = res.podcastUrl;
       this.audio.load();
+      this.duration = res.mediaTimeLength;
       this.userPreferenceService.setCurrentPlayingTrack(res.id);
     }
   }
@@ -77,7 +94,7 @@ export class AudioPlayerService {
     if (this.audio) {
       this.audio.pause();
       this.currentPodcast = undefined;
-      this.isCurrentPodcastDisplayed.next(false);
+      this.currentPodcastId.next(0);
       this.audio.src = "";
       this.userPreferenceService.deleteAudioPreferences();
     }
@@ -114,7 +131,6 @@ export class AudioPlayerService {
         this.audio.currentTime = this.currentTime + value;
       }
   }
-
 
   getVolume() {
     return this.volume;

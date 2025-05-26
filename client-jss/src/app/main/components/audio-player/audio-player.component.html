@@ -8,14 +8,14 @@
         <img src="/assets/images/homepage/raide-comme-la-justice.png" alt="Podcast Cover" class="me-3"
           style="width: 48px; height: 48px; object-fit: cover;">
       </a>
-      <div *ngIf="currentPodcast && currentPodcast.titleText" class="overflow-hidden w-100">
+      <div *ngIf="getCurrentPodcast() && getCurrentPodcast()!.titleText" class="overflow-hidden w-100">
         <div #scrollTextZone>
           <a class="d-inline-block text-nowrap text-white"
-            [ngClass]=" { 'animate-scroll' : currentPodcast.titleText.length*16>containerSize }">
-            {{ currentPodcast.titleText || 'Aucun podcast' }}
+            [ngClass]=" { 'animate-scroll' : getCurrentPodcast()!.titleText.length*16>containerSize }">
+            {{ getCurrentPodcast()!.titleText || 'Aucun podcast' }}
           </a>
         </div>
-        <div *ngIf="audioPlayerService.currentPodcast" class="text-muted small">Raide comme la justice</div>
+        <div *ngIf="currentPodcast" class="text-muted small">Raide comme la justice</div>
       </div>
     </div>
 
@@ -28,7 +28,7 @@
         </div>
       </a>
       <a class="col-auto btn-light rounded-circle btn-circle-md fs-4 me-2" (click)="togglePlayPause()"><i
-          [ngClass]="isPlaying ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+          [ngClass]="getIsPlaying() ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
 
       <a class="btn text-white rounded-circle d-flex align-items-center justify-content-center me-2"
         style="width: 48px; height: 48px;" (click)="forwardFifteenSecs()">
@@ -40,10 +40,10 @@
 
     <!-- Right Column: Progression + Volume -->
     <div class="d-flex col-md-5 align-items-center justify-content-end position-relative">
-      <small class="text-muted me-1">{{ currentTime*1000 | date:'mm:ss' }}</small>
-      <input type="range" class="form-range flex-grow-1 me-1" [style.--progress.%]="progress" min="0" max="100"
-        step="0.01" [value]="progress" (input)="onSeek($event)" />
-      <small class="text-muted">{{ duration*1000 | date:'mm:ss' }}</small>
+      <small class="text-muted me-1">{{ getCurrentTime()*1000 | date:'mm:ss' }}</small>
+      <input type="range" class="form-range flex-grow-1 me-1" [style.--progress.%]="getProgress()" min="0" max="100"
+        step="0.01" [value]="getProgress()" (input)="onSeek($event)" />
+      <small class="text-muted">{{ getDuration()*1000 | date:'mm:ss' }}</small>
 
       <!-- Volume Dropdown Custom -->
       <div class="dropdown dropup ms-2 position-relative" (mouseenter)="onVolumeMouseEnter()"
@@ -52,14 +52,14 @@
         <!-- Volum icon : mute / unmute on clic -->
         <div role="button" tabindex="0" (click)="toggleMute()"
           class=" d-none d-md-block d-flex align-items-center justify-content-center">
-          <i *ngIf="this.volumeCurrentValue != 0" class="bi-volume-up fs-4 m-0"></i>
-          <i *ngIf="this.volumeCurrentValue == 0" class="bi-volume-mute fs-4 m-0"></i>
+          <i *ngIf="getVolume() != 0" class="bi-volume-up fs-4 m-0"></i>
+          <i *ngIf="getVolume() == 0" class="bi-volume-mute fs-4 m-0"></i>
         </div>
 
         <!-- Volume slider dropdown -->
         <div class="dropdown-menu p-2 bg-secondary rounded-1" [class.show]="volumeDropdownOpen"
           style="position: absolute; bottom: 100%; right: -9px; min-width: 40px; writing-mode: vertical-lr; direction: rtl">
-          <input type="range" class="vertical-range m-0" min="0" max="1" step="0.01" [value]="this.volumeCurrentValue"
+          <input type="range" class="vertical-range m-0" min="0" max="1" step="0.01" [value]="getVolume()"
             (input)="onVolumeChange($event)" />
         </div>
       </div>

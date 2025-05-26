@@ -21,19 +21,26 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
   menuDropdownOpen = false;
 
-  volumeCurrentValue: number = this.getVolume();
+  volumeCurrentValue: number = 0.5;
   volumePreviousValue: number = 0.5;
-  currentPodcast: Post | undefined = this.getCurrentPodcast();
-  isPlaying: boolean = this.getIsPlaying();
-  currentTime: number = this.getCurrentTime();
-  progress: number = this.getProgress();
-  duration: number = this.getDuration();
+  currentPodcast: Post | undefined;
+  isPlaying: boolean = false;
+  currentTime: number = 0;
+  progress: number = 0;
+  duration: number = 0;
 
-  constructor(public audioPlayerService: AudioPlayerService,
+  constructor(private audioPlayerService: AudioPlayerService,
     private appService: AppService,
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
+    this.volumeCurrentValue = this.getVolume();
+    this.volumePreviousValue = 0.5;
+    this.currentPodcast = this.getCurrentPodcast();
+    this.isPlaying = this.getIsPlaying();
+    this.currentTime = this.getCurrentTime();
+    this.progress = this.getProgress();
+    this.duration = this.getDuration();
   }
 
   ngAfterViewInit(): void {
