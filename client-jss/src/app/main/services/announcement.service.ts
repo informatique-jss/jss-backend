@@ -23,4 +23,8 @@ export class AnnouncementService extends AppRestService<Announcement> {
   getTopAnnouncementSearch(page: number, denomination: string, siren: string, noticeSearch: string) {
     return this.getList(new HttpParams().set("page", page).set("denomination", denomination).set("noticeSearch", noticeSearch).set("siren", siren), "announcement/search");
   }
+
+  downloadPublicationReceipt(announcement: Announcement) {
+    this.downloadGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "publication/flag/download");
+  }
 }

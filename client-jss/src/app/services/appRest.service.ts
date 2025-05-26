@@ -144,4 +144,23 @@ export abstract class AppRestService<T> {
     return stringParams;
   }
 
+  downloadGet(params: HttpParams, api: string, fallbackFilename: string = "", successfulMessage: string = "", errorMessage: string = "") {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
+      (response: any) => {
+        let dataType = response.type;
+        let binaryData = [];
+        binaryData.push(response.body);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }));
+        if (response.headers.get("filename"))
+          downloadLink.setAttribute('download', response.headers.get("filename"));
+        else if (fallbackFilename)
+          downloadLink.setAttribute('download', fallbackFilename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      }
+    )
+  }
 }

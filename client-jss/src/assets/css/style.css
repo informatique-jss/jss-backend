@@ -13621,3 +13621,17 @@ ngb-modal-window {
 .btn-search {
   color: var(--ar-primary) !important;
 }
+
+.tag-custom-dark {
+  background-color: var(--ar-blue-dark) !important;
+  color: white !important;
+}
+
+.tag-custom-light {
+  background-color: var(--ar-blue-light) !important;
+  color: var(--ar-blue-dark) !important;
+}
+
+.gray-color {
+  color: var(--bs-gray-700) !important;
+}
