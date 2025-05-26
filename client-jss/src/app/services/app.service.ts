@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Toast } from '../libs/toast/Toast';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../main/model/AccountMenuItem';
+import { PlatformService } from './platform.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class AppService {
   private toastSource = new BehaviorSubject<Toast[]>(this.toasts);
 
   constructor(
-    private router: Router,
+    private router: Router, private platformService: PlatformService
   ) { }
 
   /**
@@ -25,8 +26,9 @@ export class AppService {
    * @returns
    */
   openRoute(event: any, route: string, sameWindowEndFonction: any) {
-    if (event && (event.ctrlKey || event.button && event.button == "1")) {
-      window.open(location.origin + "/" + route, "_blank");
+    const win = this.platformService.getNativeWindow();
+    if (event && (event.ctrlKey || event.button && event.button == "1") && win) {
+      win.open(location.origin + "/" + route, "_blank");
     } else {
       this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
         this.router.navigate(['/' + route])
@@ -50,19 +52,27 @@ export class AppService {
   }
 
   openMyJssRoute(event: any, route: string, inNewWindows = true) {
-    window.open(environment.frontendMyJssUrl + route, inNewWindows ? "_blank" : "_self");
+    const win = this.platformService.getNativeWindow();
+    if (win)
+      win.open(environment.frontendMyJssUrl + route, inNewWindows ? "_blank" : "_self");
   }
 
   openLinkedinJssPage() {
-    window.open("https://www.linkedin.com/company/journal-special-des-societes/_blank");
+    const win = this.platformService.getNativeWindow();
+    if (win)
+      win.open("https://www.linkedin.com/company/journal-special-des-societes/_blank");
   }
 
   openInstagramJssPage() {
-    window.open("https://www.instagram.com/journalspecialdessocietes/_blank");
+    const win = this.platformService.getNativeWindow();
+    if (win)
+      win.open("https://www.instagram.com/journalspecialdessocietes/_blank");
   }
 
   openFacebookJssPage() {
-    window.open("https://www.facebook.com/Journal.Special.des.Societes/_blank");
+    const win = this.platformService.getNativeWindow();
+    if (win)
+      win.open("https://www.facebook.com/Journal.Special.des.Societes/_blank");
   }
 
   getAllAccountMenuItems(): AccountMenuItem[] {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { PlatformService } from '../../services/platform.service';
 import { Post } from '../model/Post';
 import { PostService } from './post.service';
 import { UserPreferenceService } from './user.preference.service';
@@ -10,7 +11,7 @@ import { UserPreferenceService } from './user.preference.service';
 export class AudioPlayerService {
 
 
-  private audio = new Audio();
+  private audio: HTMLAudioElement = new Audio();
   public isPlaying: boolean = false;
   public currentTime: number = 0;
   public duration: number = 0;
@@ -22,7 +23,8 @@ export class AudioPlayerService {
   currentPodcast: Post | undefined;
 
   constructor(private postService: PostService,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private platformService: PlatformService
   ) {
     const currentPlayingTrackVolume = this.userPreferenceService.getCurrentPlayingTrackVolume();
     if (currentPlayingTrackVolume) {
@@ -44,17 +46,6 @@ export class AudioPlayerService {
           this.currentTime = this.audio.currentTime;
         });
     }
-
-    this.audio.addEventListener('timeupdate', () => {
-      this.currentTime = this.audio.currentTime;
-      userPreferenceService.setCurrentPlayingTrackTime(this.currentTime - 5);
-      this.duration = this.audio.duration;
-      this.progress = (this.audio.currentTime / this.audio.duration) * 100;
-    });
-
-    this.audio.addEventListener('ended', () => {
-      this.isPlaying = false;
-    });
   }
 
   // To know if the specific podcast is been played
@@ -73,19 +64,23 @@ export class AudioPlayerService {
   }
 
   private setTrackProperties(res: Post) {
-    this.currentPodcast = res;
-    this.isCurrentPodcastDisplayed.next(true);
-    this.audio.src = res.podcastUrl;
-    this.audio.load();
-    this.userPreferenceService.setCurrentPlayingTrack(res.id);
+    if (this.audio) {
+      this.currentPodcast = res;
+      this.isCurrentPodcastDisplayed.next(true);
+      this.audio.src = res.podcastUrl;
+      this.audio.load();
+      this.userPreferenceService.setCurrentPlayingTrack(res.id);
+    }
   }
 
   unloadTrackAndClose() {
-    this.audio.pause();
-    this.currentPodcast = undefined;
-    this.isCurrentPodcastDisplayed.next(false);
-    this.audio.src = "";
-    this.userPreferenceService.deleteAudioPreferences();
+    if (this.audio) {
+      this.audio.pause();
+      this.currentPodcast = undefined;
+      this.isCurrentPodcastDisplayed.next(false);
+      this.audio.src = "";
+      this.userPreferenceService.deleteAudioPreferences();
+    }
   }
 
   togglePlayPause() {
@@ -93,27 +88,31 @@ export class AudioPlayerService {
   }
 
   play() {
-    this.audio.play();
+    if (this.audio)
+      this.audio.play();
     this.isPlaying = true;
   }
 
   pause() {
-    this.audio.pause();
+    if (this.audio)
+      this.audio.pause();
     this.isPlaying = false;
   }
 
   // When using the progress bar
   seekTo(value: number) {
-    if (this.audio.duration) {
-      this.audio.currentTime = (value / 100) * this.audio.duration;
-    }
+    if (this.audio)
+      if (this.audio.duration) {
+        this.audio.currentTime = (value / 100) * this.audio.duration;
+      }
   }
 
   // If needs to go at a specific moment of the audio
   addTime(value: number) {
-    if (value) {
-      this.audio.currentTime = this.currentTime + value;
-    }
+    if (this.audio)
+      if (value) {
+        this.audio.currentTime = this.currentTime + value;
+      }
   }
 
 
@@ -123,7 +122,8 @@ export class AudioPlayerService {
 
   setVolume(value: number) {
     this.volume = value;
-    this.audio.volume = value;
+    if (this.audio)
+      this.audio.volume = value;
     this.userPreferenceService.setCurrentPlayingTrackVolume(value);
   }
 

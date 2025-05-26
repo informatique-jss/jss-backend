@@ -1,5 +1,5 @@
 import { Directive, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
@@ -9,40 +9,46 @@ import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
 
 @Directive()
-export abstract class GenericHubComponent<T> implements OnInit {
+export abstract class GenericHubComponent<T extends { id: number }> implements OnInit {
 
   debounce: any;
   searchObservableRef: Subscription | undefined;
   @Input() selectedEntityType: T | undefined;
   linkedTags: Tag[] = [] as Array<Tag>;
   mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
-  postsByEntityType: Post[] = [] as Array<Post>;
+  postsByEntityType: { [key: number]: Array<Post> } = {};
+  postsByEntityTypeFullLoaded: number[] = [];
+
   tagsByEntityType: Tag[] = [] as Array<Tag>;
   pageSize: number = 15;
   page: number = 0;
   totalPage: number = 0;
   searchText: string = "";
   searchResults: Post[] = [] as Array<Post>;
+  hubForm!: FormGroup;
 
   constructor(protected appService: AppService, protected formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    this.hubForm = this.formBuilder.group({});
     this.fetchPosts(0);
     this.fetchTags();
     this.fetchMostSeenPosts();
   }
 
-  hubForm = this.formBuilder.group({});
+
 
   abstract getAllPostByEntityType(selectedEntityType: T, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>>;
   abstract getAllTagByEntityType(selectedEntityType: T): Observable<Array<Tag>>;
   abstract getMostSeenPostByEntityType(selectedEntityType: T, page: number, pageSize: number): Observable<PagedContent<Post>>
 
   fetchPosts(page: number) {
-    if (this.selectedEntityType)
+    if (this.selectedEntityType && this.selectedEntityType.id && (this.postsByEntityTypeFullLoaded.indexOf(this.selectedEntityType.id) < 0 || (this.searchText && this.searchText.length > 2)))
       this.getAllPostByEntityType(this.selectedEntityType, page, this.pageSize, this.searchText).subscribe(data => {
-        if (data && !this.searchText)
-          this.postsByEntityType = data.content;
+        if (data && this.selectedEntityType && !this.searchText) {
+          this.postsByEntityType[this.selectedEntityType.id] = data.content;
+          this.postsByEntityTypeFullLoaded.push(this.selectedEntityType.id);
+        }
         if (data && this.searchText && this.searchText.length > 2)
           this.searchResults = data.content;
         this.totalPage = data.page.totalPages;

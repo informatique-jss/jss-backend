@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
@@ -9,15 +10,16 @@ import { Tag } from '../../model/Tag';
 import { PostService } from '../../services/post.service';
 import { TagService } from '../../services/tag.service';
 import { GenericHubComponent } from '../generic-hub/generic-hub.component';
+import { GenericInputComponent } from '../generic-input/generic-input.component';
 
 @Component({
   selector: 'serie-hub',
   templateUrl: './../generic-hub/generic-hub.component.html',
   styleUrls: ['./../generic-hub/generic-hub.component.css'],
-  standalone: false
+  imports: [SHARED_IMPORTS, GenericInputComponent],
+  standalone: true
 })
 export class SerieHubComponent extends GenericHubComponent<Serie> implements OnInit {
-  @Input() override selectedEntityType: Serie | undefined;
 
   constructor(private postService: PostService, private tagService: TagService, appService: AppService, formBuilder: FormBuilder
   ) {

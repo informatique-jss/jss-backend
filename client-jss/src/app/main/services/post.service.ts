@@ -119,17 +119,6 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(params, "posts/all/publishing-department", "", "");
   }
 
-
-  getAllPostsByIleDeFrance(page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-    if (searchText)
-      params = params.set('searchText', searchText);
-
-    return this.getPagedList(params, "posts/all/publishing-department/all", "", "");
-  }
-
   getMostSeenPostByJssCategory(jssCategory: JssCategory, page: number, size: number): Observable<PagedContent<Post>> {
     let params = new HttpParams()
       .set('jssCategoryId', jssCategory.id.toString())
@@ -168,17 +157,6 @@ export class PostService extends AppRestService<Post> {
       .set('page', page.toString())
       .set('size', size.toString());
     return this.getPagedList(params, "posts/publishing-department/most-seen", "", "");
-  }
-
-  getMostSeenPostByIleDeFrance(page: number, size: number): Observable<PagedContent<Post>> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-    return this.getPagedList(params, "posts/publishing-department/all/most-seen", "", "");
-  }
-
-  getTopPostByTag(page: number, tag: Tag) {
-    return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
   }
 
   getIleDeFranceTopPost(page: number, size: number) {

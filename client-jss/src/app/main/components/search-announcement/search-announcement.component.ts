@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementService } from '../../services/announcement.service';
@@ -9,7 +9,8 @@ import { AnnouncementService } from '../../services/announcement.service';
   selector: 'app-search-announcement',
   templateUrl: './search-announcement.component.html',
   styleUrls: ['./search-announcement.component.css'],
-  standalone: false
+  imports: [SHARED_IMPORTS],
+  standalone: true
 })
 export class SearchAnnouncementComponent implements OnInit {
 
@@ -24,7 +25,6 @@ export class SearchAnnouncementComponent implements OnInit {
   searchInProgress: boolean = false;
 
   constructor(
-    private activatedRoute: ActivatedRoute,
     private appService: AppService,
     private announcementService: AnnouncementService
   ) { }

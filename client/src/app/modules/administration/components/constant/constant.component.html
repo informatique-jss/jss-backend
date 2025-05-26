@@ -1278,6 +1278,14 @@
           </tr>
           <tr>
             <td>
+              <select-publishing-department [(model)]="constant.publishingDepartmentIdf" label="Région - Ile de France"
+                [form]="constantForm" propertyName="publishingDepartmentIdf" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </select-publishing-department>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <radio-group-type-personne [(model)]="constant.typePersonnePersonnePhysique"
                 label="Type de personne - Personne physique" [form]="constantForm"
                 propertyName="typePersonnePersonnePhysique" [isMandatory]="true" [isDisabled]="!editMode"

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { AppRestService } from '../../services/appRest.service';
+import { PlatformService } from '../../services/platform.service';
 import { Responsable } from '../model/Responsable';
 
 export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
@@ -14,7 +15,7 @@ export const ACCOUNTING_RESPONSIBLE: string = 'ROLE_OSIRIS_RESPONSABLE_COMPTABIL
 })
 export class LoginService extends AppRestService<Responsable> {
 
-  constructor(http: HttpClient, private appService: AppService) {
+  constructor(http: HttpClient, private appService: AppService, private platformService: PlatformService) {
     super(http, "profile");
   }
 
@@ -30,7 +31,9 @@ export class LoginService extends AppRestService<Responsable> {
           for (let role of response as any) {
             roles.push(role["authority"]);
           }
-          localStorage.setItem('roles', JSON.stringify(roles));
+
+          if (this.platformService.isBrowser())
+            this.platformService.getNativeLocalStorage()!.setItem('roles', JSON.stringify(roles));
           this.currentUserChange.next(true);
           observer.next(true);
           observer.complete();
@@ -75,7 +78,9 @@ export class LoginService extends AppRestService<Responsable> {
   }
 
   public hasGroup(searchRoles: string[]): boolean {
-    let roleJson = localStorage.getItem('roles');
+    let roleJson = null;
+    if (this.platformService.isBrowser())
+      roleJson = this.platformService.getNativeLocalStorage()!.getItem('roles');
     let roles = null;
     if (roleJson != null) {
       try {

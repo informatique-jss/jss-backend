@@ -71,12 +71,15 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and :serie MEMBER OF p.postSerie and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostSerie(Pageable pageable, @Param("serie") Serie serie);
 
-        @Query("select p from Post p join p.postViews v where p.isCancelled = false and :publishingDepartment MEMBER OF p.departments and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        Page<Post> findMostSeenPostPublishingDepartment(Pageable pageable,
+        @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false and :publishingDepartment MEMBER OF p.departments and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostPublishingDepartment(Pageable pageable, Category category,
                         @Param("publishingDepartment") PublishingDepartment publishingDepartment);
 
-        @Query("select p from Post p where p.isCancelled = false and size(p.departments) > 0 and size(p.jssCategories) > 0 ")
-        Page<Post> findPostsIdf(Pageable pageable);
+ @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false and size(p.departments)>0 and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostsIdf(Pageable pageable, Category category);
+
+        @Query("select p from Post p where p.isCancelled = false and :category MEMBER OF p.postCategories and size(p.departments) > 0 and size(p.jssCategories) > 0 ")
+        Page<Post> findPostsIdf(Category category, Pageable pageable);
 
         @Query("select p from Post p where p.isCancelled = false and size(p.jssCategories) > 0 and p.isSticky = true")
         Page<Post> findJssCategoryStickyPost(Pageable pageable);
@@ -93,14 +96,10 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findByPostCategoriesAndIsCancelledAndDepartments(Category categoryArticle, boolean b,
                         PublishingDepartment department, Pageable pageableRequest);
 
-        @Query("SELECT p FROM Post p WHERE :category MEMBER OF p.postCategories AND p.isCancelled = :isCancelled AND SIZE(p.departments) > 0")
-        Page<Post> findByPostCategoriesWithDepartments(Category category, @Param("isCancelled") boolean isCancelled,
-                        Pageable pageableRequest);
-
         List<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b);
 
-        @Query("SELECT p FROM Post p WHERE :tag MEMBER OF p.postTags AND p.isCancelled = :b")
-        Page<Post> findByPostTagsAndIsCancelled(Tag tag, boolean b, Pageable pageableRequest);
+        @Query("SELECT p FROM Post p WHERE :tag MEMBER OF p.postTags AND :category MEMBER OF p.postCategories AND p.isCancelled = :b and size(p.jssCategories) > 0")
+        Page<Post> findByPostTagsAndIsCancelled(Tag tag, Category category, boolean b, Pageable pageableRequest);
 
         @Query("SELECT p FROM Post p WHERE p.fullAuthor =:author AND p.isCancelled = :b")
         Page<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, Pageable pageableRequest);
@@ -108,8 +107,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("SELECT p FROM Post p WHERE :serie MEMBER OF p.postSerie AND p.isCancelled = :b")
         Page<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b, Pageable pageableRequest);
 
-        @Query("select p from Post p where p.isCancelled = :isCancelled and size(p.jssCategories) > 0 and :publishingDepartment MEMBER OF p.departments ")
-        Page<Post> findByDepartmentsAndIsCancelled(PublishingDepartment publishingDepartment, boolean isCancelled,
+        @Query("select p from Post p where p.isCancelled = :isCancelled and size(p.jssCategories) > 0 and :publishingDepartment MEMBER OF p.departments and :category MEMBER OF p.postCategories")
+        Page<Post> findByDepartmentsAndIsCancelled(Category category, PublishingDepartment publishingDepartment,
+                        boolean isCancelled,
                         Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled = false and :jssCategories member of p.jssCategories and p.date>:date")

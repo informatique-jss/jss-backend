@@ -13609,3 +13609,15 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
   background: #F6F9FC;
   min-height: 100px;
 }
+
+ngb-modal-backdrop {
+  z-index: 1050 !important;
+}
+
+ngb-modal-window {
+  z-index: 1055 !important;
+}
+
+.btn-search {
+  color: var(--ar-primary) !important;
+}

@@ -3,7 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { getTimeReading } from '../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
+import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../services/app.service';
+import { PlatformService } from '../../../services/platform.service';
 import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
@@ -13,10 +16,11 @@ import { PostService } from '../../services/post.service';
 declare var tns: any;
 
 @Component({
-    selector: 'app-post',
-    templateUrl: './post.component.html',
-    styleUrls: ['./post.component.css'],
-    standalone: false
+  selector: 'app-post',
+  templateUrl: './post.component.html',
+  styleUrls: ['./post.component.css'],
+  imports: [SHARED_IMPORTS, TrustHtmlPipe],
+  standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
 
@@ -35,6 +39,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   constructor(private activatedRoute: ActivatedRoute,
     private postService: PostService,
     private appService: AppService,
+    private plateformDocument: PlatformService
   ) { }
 
   getTimeReading = getTimeReading;
@@ -52,7 +57,10 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   ngOnDestroy() {
-    window.speechSynthesis.pause();
+    const win = this.plateformDocument.getNativeWindow();
+
+    if (win)
+      win.speechSynthesis.pause();
     this.isPlaying = undefined;
   }
 
@@ -101,37 +109,45 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   shareOnFacebook() {
-    if (this.post) {
+    const win = this.plateformDocument.getNativeWindow();
+    if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
-      window.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank");
+      win.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank");
     }
   }
 
   shareOnLinkedin() {
-    if (this.post) {
+    const win = this.plateformDocument.getNativeWindow();
+    if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
-      window.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
+      win.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
     }
   }
 
   shareOnTwitter() {
-    if (this.post) {
+    const win = this.plateformDocument.getNativeWindow();
+    if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
-      window.open("https://twitter.com/intent/tweet?text=" + this.extractContent(this.post.titleText) + "&url=" + url, "_blank");
+      win.open("https://twitter.com/intent/tweet?text=" + this.extractContent(this.post.titleText) + "&url=" + url, "_blank");
     }
   }
 
   shareByMail() {
-    if (this.post) {
+    const win = this.plateformDocument.getNativeWindow();
+    if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
-      window.open('mailto:?subject=Découvrez cet article intéressant sur JSS.FR&body=Bonjour,%0A%0AJe voulais vous partager cet article :%0A%0A' + this.extractContent(this.post.titleText) + '%0A' + url + '%0A%0ABonne lecture!', "_blank");
+      win.open('mailto:?subject=Découvrez cet article intéressant sur JSS.FR&body=Bonjour,%0A%0AJe voulais vous partager cet article :%0A%0A' + this.extractContent(this.post.titleText) + '%0A' + url + '%0A%0ABonne lecture!', "_blank");
     }
   }
 
   extractContent(s: string) {
-    var span = document.createElement('span');
-    span.innerHTML = s;
-    return span.textContent || span.innerText;
+    const doc = this.plateformDocument.getNativeDocument();
+    if (doc) {
+      var span = doc.createElement('span');
+      span.innerHTML = s;
+      return span.textContent || span.innerText;
+    }
+    return '';
   };
 
   openSubscribe(event: any) {
@@ -139,7 +155,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   readArticle(): void {
-    if (this.post && this.post.contentText) {
+    const win = this.plateformDocument.getNativeWindow();
+    if (this.post && this.post.contentText && win) {
       const articleText = this.extractContent(this.post.contentText);
 
       this.speechSynthesisUtterance = new SpeechSynthesisUtterance();
@@ -148,27 +165,30 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.speechSynthesisUtterance.rate = this.speechRate;
       this.speechSynthesisUtterance.pitch = 1.4;
 
-      window.speechSynthesis.speak(this.speechSynthesisUtterance);
+      win.speechSynthesis.speak(this.speechSynthesisUtterance);
     }
   }
 
   togglePlayPause(): void {
-    if (this.isPlaying === undefined) {
-      this.readArticle();
-      this.isPlaying = true;
-    } else if (this.isPlaying == false) {
-      window.speechSynthesis.resume();
-      this.isPlaying = true;
-    } else {
-      window.speechSynthesis.pause();
-      this.isPlaying = false;
-    }
+    const win = this.plateformDocument.getNativeWindow();
+    if (win)
+      if (this.isPlaying === undefined) {
+        this.readArticle();
+        this.isPlaying = true;
+      } else if (this.isPlaying == false) {
+        win.speechSynthesis.resume();
+        this.isPlaying = true;
+      } else {
+        win.speechSynthesis.pause();
+        this.isPlaying = false;
+      }
   }
 
   updateSpeed(): void {
-    if (this.speechSynthesisUtterance) {
+    const win = this.plateformDocument.getNativeWindow();
+    if (this.speechSynthesisUtterance && win) {
       this.speechSynthesisUtterance.rate = this.speechRate;
-      window.speechSynthesis.speak(this.speechSynthesisUtterance);
+      win.speechSynthesis.speak(this.speechSynthesisUtterance);
     }
   }
 }

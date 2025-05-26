@@ -1,6 +1,8 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
+import { TimeFormatPipe } from '../../../libs/TimeFormatPipe';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
 import { Category } from '../../model/Category';
@@ -15,13 +17,13 @@ import { TagService } from '../../services/tag.service';
   selector: 'podcasts',
   templateUrl: './podcasts.component.html',
   styleUrls: ['./podcasts.component.css'],
-  standalone: false
+  imports: [SHARED_IMPORTS, TimeFormatPipe],
+  standalone: true
 })
 export class PodcastsComponent implements OnInit {
 
-  categoryPodcast: Category = this.constantService.getCategoryPodcast();
-
-  hubForm = this.formBuilder.group({});
+  categoryPodcast!: Category;
+  hubForm!: FormGroup;
 
   openedListenDropdownPostId: number | null = null;
 
@@ -38,6 +40,8 @@ export class PodcastsComponent implements OnInit {
     private constantService: ConstantService) { }
 
   ngOnInit() {
+    this.categoryPodcast = this.constantService.getCategoryPodcast();
+    this.hubForm = this.formBuilder.group({});
     this.fetchPosts(0);
     this.fetchTags();
     this.fetchMostSeenPosts();
@@ -94,7 +98,7 @@ export class PodcastsComponent implements OnInit {
   }
 
   // Fermer dropdown si clic en dehors
-  @HostListener('document:click', ['$event'])
+  //@HostListener('document:click', ['$event'])
   closeDropdownOnClickOutside(event: Event) {
     const target = event.target as HTMLElement;
     if (!target.closest('.dropdown')) {

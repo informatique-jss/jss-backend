@@ -1,7 +1,9 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from "@angular/core";
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-@Directive()
+@Directive({
+  standalone: true
+})
 export abstract class GenericFormComponent implements OnInit {
   /**
   * The model of input property
