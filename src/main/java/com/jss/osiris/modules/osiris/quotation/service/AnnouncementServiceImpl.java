@@ -8,17 +8,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.itextpdf.text.pdf.PdfReader;
@@ -894,12 +891,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public List<Announcement> getAnnouncementForWebSite(Integer page, String denomination, String siren,
-            String noticeSearch) throws OsirisException {
-        Order order = new Order(Direction.DESC, "publicationDate");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
-
+    public Page<Announcement> getAnnouncementSearch(String searchText, Pageable pageableRequest)
+            throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusExcluded = new ArrayList<CustomerOrderStatus>();
         customerOrderStatusExcluded
                 .add(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
@@ -911,42 +904,20 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
 
         return populateAffaireLabel(
-                announcementRepository.searchAnnouncementForWebSite(denomination, siren, noticeSearch,
-                        customerOrderStatusExcluded, announcementStatus, constantService.getConfrereJssSpel(),
-                        pageableRequest));
-    }
-
-    @Override
-    public List<Announcement> getTopAnnouncementForWebSite(Integer page) throws OsirisException {
-        Order order = new Order(Direction.DESC, "publicationDate");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(page, 20, sort);
-
-        List<CustomerOrderStatus> customerOrderStatusExcluded = new ArrayList<CustomerOrderStatus>();
-        customerOrderStatusExcluded
-                .add(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
-
-        List<AnnouncementStatus> announcementStatus = new ArrayList<AnnouncementStatus>();
-        announcementStatus
-                .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
-        announcementStatus
-                .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
-
-        return populateAffaireLabel(
-                announcementRepository.searchAnnouncementTopForWebSite(customerOrderStatusExcluded, announcementStatus,
-                        constantService.getConfrereJssSpel(), LocalDate.now().minusMonths(3),
+                announcementRepository.searchAnnouncementForWebSite(searchText, customerOrderStatusExcluded,
+                        announcementStatus, constantService.getConfrereJssSpel(),
                         pageableRequest));
     }
 
     @Override
     public Announcement getAnnouncementForWebSite(Announcement announcement) throws OsirisException {
         announcement = getAnnouncement(announcement.getId());
-        return populateAffaireLabel(Arrays.asList(announcement)).get(0);
+        return populateAffaireLabel(new PageImpl<>(List.of(announcement))).getContent().get(0);
     }
 
-    private List<Announcement> populateAffaireLabel(List<Announcement> announcements) {
+    private Page<Announcement> populateAffaireLabel(Page<Announcement> announcements) {
         if (announcements != null)
-            for (Announcement announcement : announcements) {
+            for (Announcement announcement : announcements.toList()) {
                 if (announcement.getProvisions() != null && announcement.getProvisions().size() > 0)
                     if (announcement.getProvisions().get(0).getService() != null)
                         if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder() != null)

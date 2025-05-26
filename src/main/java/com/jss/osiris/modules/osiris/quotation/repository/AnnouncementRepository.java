@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.repository;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -109,23 +110,16 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
 
         @Query("select a from Announcement a join a.provisions p join p.service s join s.assoAffaireOrder asso join asso.affaire af "
                         + " join asso.customerOrder c "
-                        + " where a.confrere = :confrere and (lower(af.denomination) like '%' || :denomination|| '%' or lower(concat(af.firstname, ' ',af.lastname )) like '%' || :denomination|| '%' "
-                        +
-                        " or lower(a.notice) like '%' || :noticeSearch|| '%' " +
-                        " or af.siren=:siren ) and c.customerOrderStatus not in (:customerOrderStatusExcluded) and a.announcementStatus in (:announcementStatus) ")
-        List<Announcement> searchAnnouncementForWebSite(@Param("denomination") String denomination,
-                        @Param("siren") String siren, @Param("noticeSearch") String noticeSearch,
+                        + " where a.confrere = :confrere "
+                        + " and (:searchText is null or :searchText = '' "
+                        + " or lower(af.denomination) like %:searchText% "
+                        + " or lower(concat(af.firstname, ' ', af.lastname)) like %:searchText% "
+                        + " or lower(a.notice) like %:searchText% "
+                        + " or af.siren = :searchText )"
+                        + " and c.customerOrderStatus not in (:customerOrderStatusExcluded) and a.announcementStatus in (:announcementStatus) ")
+        Page<Announcement> searchAnnouncementForWebSite(@Param("searchText") String searchText,
                         @Param("customerOrderStatusExcluded") List<CustomerOrderStatus> customerOrderStatusExcluded,
                         @Param("announcementStatus") List<AnnouncementStatus> announcementStatus,
                         @Param("confrere") Confrere confrere,
                         Pageable pageable);
-
-        @Query("select a from Announcement a join a.provisions p join p.service s join s.assoAffaireOrder asso join asso.affaire af "
-                        + " join asso.customerOrder c "
-                        + " where a.confrere = :confrere and c.customerOrderStatus not in (:customerOrderStatusExcluded) and a.announcementStatus in (:announcementStatus) and a.publicationDate > :publicationDateLimit ")
-        List<Announcement> searchAnnouncementTopForWebSite(
-                        @Param("customerOrderStatusExcluded") List<CustomerOrderStatus> customerOrderStatusExcluded,
-                        @Param("announcementStatus") List<AnnouncementStatus> announcementStatus,
-                        @Param("confrere") Confrere confrere,
-                        @Param("publicationDateLimit") LocalDate publicationDateLimit, Pageable pageableRequest);
 }
