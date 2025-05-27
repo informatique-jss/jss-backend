@@ -43,12 +43,14 @@ public class Announcement implements IId, IDocument {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssListView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_department")
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssListView.class })
 	private Department department;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -62,17 +64,20 @@ public class Announcement implements IId, IDocument {
 	private AnnouncementStatus announcementStatus;
 
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssListView.class })
 	private LocalDate publicationDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_notice_type_family")
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssListView.class })
 	private NoticeTypeFamily noticeTypeFamily;
 
 	@ManyToMany
 	@JoinTable(name = "asso_announcement_notice_type", joinColumns = @JoinColumn(name = "id_announcement"), inverseJoinColumns = @JoinColumn(name = "id_notice_type"))
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssListView.class })
 	private List<NoticeType> noticeTypes;
 
 	@Column(columnDefinition = "TEXT")
@@ -130,11 +135,13 @@ public class Announcement implements IId, IDocument {
 	private List<Provision> provisions;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssListView.class })
 	private String affaireLabel;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssListView.class })
 	private String affaireSiren;
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)

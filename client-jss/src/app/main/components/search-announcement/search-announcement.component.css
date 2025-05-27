@@ -1,0 +1,50 @@
+.clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  z-index: 10;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.search-btn {
+  background-color: var(--ar-primary);
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  padding: 0 24px;
+  transition: background-color 0.2s ease;
+  height: 46px;
+  white-space: nowrap;
+}
+
+::ng-deep generic-input input {
+  border-radius: 6px 0 0 6px;
+  height: 46px;
+  padding-right: 3rem;
+}
+
+.input-icons-wrapper {
+  position: absolute;
+  right: 0.75rem;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-right: 0.25rem;
+  z-index: 10;
+}
+
+.clear-icon-btn {
+  line-height: 1;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
