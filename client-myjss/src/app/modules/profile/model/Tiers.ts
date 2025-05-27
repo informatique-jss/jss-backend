@@ -1,6 +1,6 @@
+import { Mail } from "../../general/model/Mail";
 import { City } from "./City";
 import { Country } from "./Country";
-import { Mail } from "./Mail";
 import { Phone } from "./Phone";
 import { SpecialOffer } from "./SpecialOffer";
 

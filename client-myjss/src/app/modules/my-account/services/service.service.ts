@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from '../../../libs/appRest.service';
+import { AppRestService } from '../../main/services/appRest.service';
 import { Affaire } from '../model/Affaire';
 import { Service } from '../model/Service';
 import { ServiceType } from '../model/ServiceType';

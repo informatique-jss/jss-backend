@@ -1,13 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { AppService } from '../../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
+import { AppService } from '../../../../main/services/app.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
-    selector: 'generic-textarea',
-    templateUrl: './generic-textarea.component.html',
-    styleUrls: ['./generic-textarea.component.css'],
-    standalone: false
+  selector: 'generic-textarea',
+  templateUrl: './generic-textarea.component.html',
+  styleUrls: ['./generic-textarea.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class GenericTextareaComponent extends GenericFormComponent implements OnInit {
   /**

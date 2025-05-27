@@ -1,4 +1,4 @@
-import { Mail } from "../modules/profile/model/Mail";
+import { Mail } from "../modules/general/model/Mail";
 import { Phone } from "../modules/profile/model/Phone";
 
 export function capitalizeName(name: string): string {

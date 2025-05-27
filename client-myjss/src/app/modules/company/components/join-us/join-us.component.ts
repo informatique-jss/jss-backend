@@ -1,20 +1,25 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { jarallax } from 'jarallax';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { APPLICATION_CV_ENTITY_TYPE } from '../../../../libs/Constants';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { Mail } from '../../../general/model/Mail';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { PlatformService } from '../../../main/services/platform.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
 import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
+import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
 import { AttachmentType } from '../../../my-account/model/AttachmentType';
 import { Candidacy } from '../../../profile/model/Candidacy';
-import { Mail } from '../../../profile/model/Mail';
 import { CandidacyService } from '../../services/candidacy.service';
 
 @Component({
   selector: 'join-us',
   templateUrl: './join-us.component.html',
   styleUrls: ['./join-us.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent, GenericTextareaComponent, SingleUploadComponent, GenericSwiperComponent]
 })
 export class JoinUsComponent implements OnInit {
 
@@ -32,25 +37,31 @@ export class JoinUsComponent implements OnInit {
   @ViewChild(SingleUploadComponent) singleUploadComponent: SingleUploadComponent | undefined;
 
   APPLICATION_CV_ENTITY_TYPE = APPLICATION_CV_ENTITY_TYPE;
-  attachmentTypeApplicationCv: AttachmentType = this.constantService.getAttachmentTypeApplicationCv();
+  attachmentTypeApplicationCv!: AttachmentType;
   newCandidacy: Candidacy = { mail: {} as Mail } as Candidacy;
   modalInstance: any;
+  applicationForm!: FormGroup;
 
   constructor(private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private candidacyService: CandidacyService,
     private appService: AppService,
+    private platformService: PlatformService
   ) { }
 
   ngOnInit() {
+    this.attachmentTypeApplicationCv = this.constantService.getAttachmentTypeApplicationCv();
+    this.applicationForm = this.formBuilder.group({});
   }
 
-  applicationForm = this.formBuilder.group({});
-
   ngAfterViewInit(): void {
-    jarallax(document.querySelectorAll('.jarallax'), {
-      speed: 0.6
-    });
+    if (this.platformService.getNativeDocument())
+      import('jarallax').then(module => {
+        module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
+          speed: 0.6
+        });
+      });
+
   }
 
   openImageModal(imageUrl: string): void {

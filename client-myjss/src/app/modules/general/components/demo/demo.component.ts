@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { AppService } from '../../../../libs/app.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { MailService } from '../../services/mail.service';
 
 @Component({
   selector: 'demo',
   templateUrl: './demo.component.html',
   styleUrls: ['./demo.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent]
 })
 export class DemoComponent implements OnInit {
   isConditionAccepted: boolean = false;
@@ -16,7 +19,7 @@ export class DemoComponent implements OnInit {
   lastName: string = "";
   phoneNumber: string = "";
   mail: string = "";
-  demoForm = this.formBuilder.group({});
+  demoForm!: FormGroup;
 
   constructor(private formBuilder: FormBuilder,
     private mailService: MailService,
@@ -24,6 +27,7 @@ export class DemoComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.demoForm = this.formBuilder.group({});
   }
 
   getDemoByMail(event: any) {

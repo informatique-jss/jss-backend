@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { combineLatest } from 'rxjs';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -16,7 +18,8 @@ import { ServiceFamilyService } from '../../services/service.family.service';
   selector: 'services-selection',
   templateUrl: './services-selection.component.html',
   styleUrls: ['./services-selection.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent]
 })
 export class ServicesSelectionComponent implements OnInit {
 
@@ -40,10 +43,11 @@ export class ServicesSelectionComponent implements OnInit {
     private serviceService: ServiceService
   ) { }
 
-  servicesForm = this.formBuilder.group({});
+  servicesForm!: FormGroup;
 
 
   async ngOnInit() {
+    this.servicesForm = this.formBuilder.group({});
     await this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
       this.initIQuotation();

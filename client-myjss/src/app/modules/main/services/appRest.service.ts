@@ -1,8 +1,8 @@
 import { HttpClient, HttpContext, HttpContextToken, HttpEvent, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { PagedContent } from '../modules/miscellaneous/model/PagedContent';
+import { environment } from '../../../../environments/environment';
+import { PagedContent } from '../../miscellaneous/model/PagedContent';
 
 @Injectable({
   providedIn: 'root'
@@ -51,16 +51,16 @@ export abstract class AppRestService<T> {
     this.setCache(params, api, undefined);
   }
 
-  getList(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<T[]> {
-    let context: HttpContext = new HttpContext();
-    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
-    return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<T[]>;
-  }
-
   getPagedList(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<PagedContent<T>> {
     let context: HttpContext = new HttpContext();
     context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
     return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<PagedContent<T>>;
+  }
+
+  getList(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<T[]> {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<T[]>;
   }
 
   postList(params: HttpParams, api: string, item?: any, successfulMessage: string = "", errorMessage: string = ""): Observable<T[]> {
@@ -95,6 +95,12 @@ export abstract class AppRestService<T> {
   }
 
   addOrUpdate(params: HttpParams, api: string, item: T, successfulMessage: string = "", errorMessage: string = ""): Observable<T> {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T>;
+  }
+
+  loginUser(params: HttpParams, api: string, item: T, successfulMessage: string = "", errorMessage: string = ""): Observable<T> {
     let context: HttpContext = new HttpContext();
     context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
     return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T>;
@@ -190,4 +196,3 @@ export abstract class AppRestService<T> {
   }
 
 }
-

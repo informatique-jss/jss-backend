@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 
 @Component({
   selector: 'generic-testimonial',
   templateUrl: './generic-testimonial.component.html',
   styleUrls: ['./generic-testimonial.component.css'],
-  imports: [CommonModule],
+  imports: [SHARED_IMPORTS],
   standalone: true
 })
 export class GenericTestimonialComponent implements OnInit {

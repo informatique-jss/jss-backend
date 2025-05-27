@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from '../../../libs/appRest.service';
+import { AppRestService } from '../../main/services/appRest.service';
 import { City } from '../../profile/model/City';
 import { Country } from '../../profile/model/Country';
 

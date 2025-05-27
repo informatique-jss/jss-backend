@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { ServiceFieldType } from '../../../../my-account/model/ServiceFieldType';
 import { ServiceTypeFieldTypePossibleValue } from '../../../../my-account/model/ServiceTypeFieldTypePossibleValue';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -8,7 +9,8 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
   selector: 'select-value-service-field-type',
   templateUrl: '../generic-select/generic-select.component.html',
   styleUrls: ['../generic-select/generic-select.component.css'],
-  standalone: false,
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 
 export class SelectValueServiceFieldTypeComponent extends GenericSelectComponent<ServiceTypeFieldTypePossibleValue> implements OnInit {

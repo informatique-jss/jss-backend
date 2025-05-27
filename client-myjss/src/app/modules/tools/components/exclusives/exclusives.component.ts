@@ -1,9 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { jarallax } from 'jarallax';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { PlatformService } from '../../../main/services/platform.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { Category } from '../../model/Category';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
@@ -13,7 +15,8 @@ import { PostService } from '../../services/post.service';
   selector: 'exclusives',
   templateUrl: './exclusives.component.html',
   styleUrls: ['./exclusives.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent]
 })
 export class ExclusivesComponent implements OnInit {
 
@@ -22,32 +25,38 @@ export class ExclusivesComponent implements OnInit {
   debounce: any;
   isLoading: boolean = false;
   searchObservableRef: Subscription | undefined;
-  categoryExclusive: Category = this.constantService.getCategoryExclusivity();
+  categoryExclusive!: Category;
 
   currentPage: number = 0;
   page: number = 0;
   pageSize: number = 10;
   totalPages: number = 0;
 
+  exclusivePostsForm!: FormGroup;
+
   @ViewChild('exclusivitySection') exclusivitySection!: ElementRef;
 
   constructor(private formBuilder: FormBuilder,
     private postService: PostService,
     private appService: AppService,
-    private constantService: ConstantService
+    private constantService: ConstantService,
+    private platformService: PlatformService
   ) { }
 
   ngOnInit() {
+    this.exclusivePostsForm = this.formBuilder.group({});
+    this.categoryExclusive = this.constantService.getCategoryExclusivity();
     this.searchPosts(0);
   }
 
   ngAfterViewInit(): void {
-    jarallax(document.querySelectorAll('.jarallax'), {
-      speed: 0.5
-    });
+    if (this.platformService.getNativeDocument())
+      import('jarallax').then(module => {
+        module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
+          speed: 0.5
+        });
+      });
   }
-
-  exclusivePostsForm = this.formBuilder.group({});
 
   searchForPosts() {
     if (this.searchText && this.searchText.length > 2) {

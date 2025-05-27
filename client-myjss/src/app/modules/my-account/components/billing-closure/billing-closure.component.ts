@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { capitalizeName } from '../../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { Responsable } from '../../../profile/model/Responsable';
 import { UserScope } from '../../../profile/model/UserScope';
 import { LoginService } from '../../../profile/services/login.service';
@@ -13,7 +15,8 @@ import { BillingClosureService } from '../../services/billing.closure.service';
   selector: 'app-billing-closure',
   templateUrl: './billing-closure.component.html',
   styleUrls: ['./billing-closure.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, TrustHtmlPipe]
 })
 export class BillingClosureComponent implements OnInit {
 
@@ -63,7 +66,7 @@ export class BillingClosureComponent implements OnInit {
         this.receiptValues = [];
         if (response)
           for (let billingClosureValues of response)
-            this.receiptValues.push(...billingClosureValues.filter(b => b.eventDateTime));
+            this.receiptValues.push(...billingClosureValues.filter((b: BillingClosureReceiptValue) => b.eventDateTime));
 
         this.allAffaires = [];
         this.allResponsables = [];

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   ContentChild,
@@ -11,14 +10,15 @@ import {
 } from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { SwiperContainer } from 'swiper/element';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { PlatformService } from '../../../main/services/platform.service';
 
 @Component({
   selector: 'generic-swiper',
   templateUrl: './generic-swiper.component.html',
   styleUrls: ['./generic-swiper.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule],
+  imports: [SHARED_IMPORTS],
   standalone: true
 })
 export class GenericSwiperComponent implements OnInit {
@@ -28,7 +28,7 @@ export class GenericSwiperComponent implements OnInit {
   maxHeight: number = 0;
   slideWidth: number = 0;
 
-  @ViewChild('genericSwiper') genericSwiper!: ElementRef<SwiperContainer>;
+  @ViewChild('genericSwiper') genericSwiper!: ElementRef<any>;
   @Input() items: any[] = [];
   @Input() subtitle: string = '';
   @Input() title: string = '';
@@ -39,12 +39,16 @@ export class GenericSwiperComponent implements OnInit {
 
   private destroy$ = new Subject<void>();
 
-  constructor() { }
+  constructor(private platformService: PlatformService) { }
 
   ngOnInit() { }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
+    if (this.platformService.isServer())
+      return;
+
     // Initialize main Swiper
+    await customElements.whenDefined('swiper-container');
     const params = {
       autoHeight: true,
       spaceBetween: "10",
@@ -89,6 +93,7 @@ export class GenericSwiperComponent implements OnInit {
     }
 
     Object.assign(this.genericSwiper.nativeElement, params);
+
     this.genericSwiper.nativeElement.initialize();
 
     // We set a timeout to be sure that everything is loaded
@@ -109,7 +114,14 @@ export class GenericSwiperComponent implements OnInit {
     this.destroy$.complete();
   }
 
+  isBrowser() {
+    return this.platformService.isBrowser();
+  }
+
   private getSlidesPerView(): number {
+    if (this.platformService.isServer())
+      return this.slidesPerView;
+
     const width = window.innerWidth;
 
     if (width < this.mediumViewport) {
@@ -134,13 +146,14 @@ export class GenericSwiperComponent implements OnInit {
 
     const slides = swiperEl.querySelectorAll('swiper-slide');
 
-    slides.forEach((slide: HTMLElement) => {
+    slides.forEach((slide: any) => {
       // Reset the height to properly calculate the new value
       slide.style.height = 'auto';
     });
 
+    this.maxHeight = 0;
     // We search for the slide with the maxHeight
-    slides.forEach((slide: HTMLElement) => {
+    slides.forEach((slide: any) => {
       const slideHeight = slide.scrollHeight;
       if (slideHeight > this.maxHeight) {
         this.maxHeight = slideHeight;
@@ -152,7 +165,7 @@ export class GenericSwiperComponent implements OnInit {
 
     swiperEl.style.height = `${this.maxHeight}px`;
 
-    slides.forEach((slide: HTMLElement) => {
+    slides.forEach((slide: any) => {
       slide.style.height = `${this.maxHeight}px`;
     });
   }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { Civility } from '../../../../profile/model/Civility';
 import { CivilityService } from '../../../../quotation/services/civility.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -8,7 +9,8 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
   selector: 'select-civility',
   templateUrl: '../generic-select/generic-select.component.html',
   styleUrls: ['../generic-select/generic-select.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class SelectCivilityComponent extends GenericSelectComponent<Civility> implements OnInit {
 

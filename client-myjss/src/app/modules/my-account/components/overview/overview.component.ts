@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
 import { capitalizeName } from '../../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { DashboardUserStatistics } from '../../../quotation/model/DashboardUserStatistics';
 import { DashboardUserStatisticsService } from '../../../quotation/services/dashboard.user.statistics.service';
 
 @Component({
-    selector: 'overview',
-    templateUrl: './overview.component.html',
-    styleUrls: ['./overview.component.css'],
-    standalone: false
+  selector: 'overview',
+  templateUrl: './overview.component.html',
+  styleUrls: ['./overview.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, AvatarComponent]
 })
 export class OverviewComponent implements OnInit {
 

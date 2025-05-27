@@ -1,9 +1,15 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
+import { AppService } from '../../../main/services/app.service';
 import { AutocompletePostComponent } from '../../../miscellaneous/components/autocomplete-post/autocomplete-post.component';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { SelectMyJssCategoryComponent } from '../../../miscellaneous/components/forms/select-myjss-category/select-myjss-category.component';
+import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
 import { MyJssCategoryService } from '../../services/myjss.category.service';
@@ -13,7 +19,8 @@ import { PostService } from '../../services/post.service';
   selector: 'practical-sheets',
   templateUrl: './practical-sheets.component.html',
   styleUrls: ['./practical-sheets.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, AutocompletePostComponent, GenericSwiperComponent, GenericInputComponent, SelectMyJssCategoryComponent, NewsletterComponent, NgbTooltipModule]
 })
 
 export class PracticalSheetsComponent implements OnInit {
@@ -43,6 +50,8 @@ export class PracticalSheetsComponent implements OnInit {
   mostSeenPosts: Post[] = [];
   page: number = 0;
 
+  practicalSheetsForm!: FormGroup;
+
   @ViewChild('searchInput') searchInput: ElementRef | undefined;
   @ViewChild('autocomplePost') autocomplePost: AutocompletePostComponent | undefined;
 
@@ -55,6 +64,7 @@ export class PracticalSheetsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.practicalSheetsForm = this.formBuilder.group({});
     this.myJssCategories.push(this.allMyJssCategories);
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
       if (response) {
@@ -84,8 +94,6 @@ export class PracticalSheetsComponent implements OnInit {
     this.getTendencyPosts();
     this.getMostSeenPosts();
   }
-
-  practicalSheetsForm = this.formBuilder.group({});
 
   @ViewChild('searchResultsSection') searchResultsSection: ElementRef | undefined;
   @HostListener('document:click', ['$event'])

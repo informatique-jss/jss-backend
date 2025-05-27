@@ -1,12 +1,21 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
 import { getTimeReading } from '../../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
+import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
+import { Mail } from '../../../general/model/Mail';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { PlatformService } from '../../../main/services/platform.service';
+import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
+import { DoubleButtonsComponent } from '../../../miscellaneous/components/double-buttons/double-buttons.component';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
+import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
 import { Pagination } from '../../../miscellaneous/model/Pagination';
-import { Mail } from '../../../profile/model/Mail';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Comment } from '../../model/Comment';
 import { MyJssCategory } from '../../model/MyJssCategory';
@@ -18,7 +27,15 @@ import { PostService } from '../../services/post.service';
   selector: 'post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS,
+    TrustHtmlPipe,
+    DoubleButtonsComponent,
+    AvatarComponent,
+    GenericInputComponent,
+    GenericTextareaComponent,
+    GenericSwiperComponent,
+    NewsletterComponent]
 })
 export class PostComponent implements OnInit, AfterViewInit {
 
@@ -36,15 +53,15 @@ export class PostComponent implements OnInit, AfterViewInit {
   comments: Comment[] = [];
   newComment: Comment = {} as Comment;
   newCommentParent: Comment = {} as Comment;
-  createCommentForm = this.formBuilder.group({});
+  createCommentForm!: FormGroup;
   commentsPagination: Pagination = {} as Pagination;
   pageSize: number = 10; // computed
 
-  myJssCategoryFormality = this.constantService.getMyJssCategoryFormality();
-  myJssCategoryAnnouncement = this.constantService.getMyJssCategoryAnnouncement();
-  myJssCategoryApostille = this.constantService.getMyJssCategoryApostille();
-  myJssCategoryDocument = this.constantService.getMyJssCategoryDocument();
-  myJssCategoryDomiciliation = this.constantService.getMyJssCategoryDomiciliation();
+  myJssCategoryFormality!: MyJssCategory;
+  myJssCategoryAnnouncement!: MyJssCategory;
+  myJssCategoryApostille!: MyJssCategory;
+  myJssCategoryDocument!: MyJssCategory;
+  myJssCategoryDomiciliation!: MyJssCategory;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -52,12 +69,21 @@ export class PostComponent implements OnInit, AfterViewInit {
     private commentService: CommentService,
     private formBuilder: FormBuilder,
     private appService: AppService,
-    private constantService: ConstantService
+    private constantService: ConstantService,
+    private platformService: PlatformService
   ) { }
 
   getTimeReading = getTimeReading;
 
   ngOnInit() {
+    this.myJssCategoryFormality = this.constantService.getMyJssCategoryFormality();
+    this.myJssCategoryAnnouncement = this.constantService.getMyJssCategoryAnnouncement();
+    this.myJssCategoryApostille = this.constantService.getMyJssCategoryApostille();
+    this.myJssCategoryDocument = this.constantService.getMyJssCategoryDocument();
+    this.myJssCategoryDomiciliation = this.constantService.getMyJssCategoryDomiciliation();
+
+    this.createCommentForm = this.formBuilder.group({});
+
     this.slug = this.activatedRoute.snapshot.params['slug'];
 
     if (this.slug) {
@@ -136,7 +162,9 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   extractContent(s: string) {
-    var span = document.createElement('span');
+    if (this.platformService.isServer())
+      return;
+    var span = this.platformService.getNativeDocument()!.createElement('span');
     span.innerHTML = s;
     return span.textContent || span.innerText;
   };
@@ -146,8 +174,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   readArticle(): void {
-    if (this.post && this.post.contentText) {
-      const articleText = this.extractContent(this.post.contentText);
+    if (this.post && this.post.contentText && this.platformService.isBrowser()) {
+      const articleText = this.extractContent(this.post.contentText)!;
 
       this.speechSynthesisUtterance = new SpeechSynthesisUtterance();
       this.speechSynthesisUtterance.text = articleText;
@@ -200,7 +228,9 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   scrollToView(anchorId: string) {
-    const element = document.getElementById(anchorId);
+    if (this.platformService.isServer())
+      return;
+    const element = this.platformService.getNativeDocument()!.getElementById(anchorId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
@@ -223,7 +253,7 @@ export class PostComponent implements OnInit, AfterViewInit {
             this.comments = this.comments.concat(data.content);
           }
 
-          if (fragment) {
+          if (fragment && this.platformService.isBrowser()) {
             setTimeout(() => {
               document.getElementById(fragment)?.scrollIntoView({ behavior: "smooth", block: "start" });
             }, 0);

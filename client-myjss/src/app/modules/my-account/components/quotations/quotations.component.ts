@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AppService } from '../../../../libs/app.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
-import { UserPreferenceService } from '../../../../libs/user.preference.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { UserPreferenceService } from '../../../main/services/user.preference.service';
 import { UserScope } from '../../../profile/model/UserScope';
 import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -22,7 +23,8 @@ declare var bootstrap: any;
   selector: 'app-quotations',
   templateUrl: './quotations.component.html',
   styleUrls: ['./quotations.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class QuotationsComponent implements OnInit {
 
@@ -109,7 +111,6 @@ export class QuotationsComponent implements OnInit {
     this.currentSearchRef = this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
       this.quotations.push(...response);
       this.isFirstLoading = false;
-      this.initTooltips();
       if (response.length < 50)
         this.hideSeeMore = true;
     })
@@ -139,7 +140,6 @@ export class QuotationsComponent implements OnInit {
     if (!this.quotationsAssoAffaireOrders[quotation.id]) {
       this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(quotation).subscribe(response => {
         this.quotationsAssoAffaireOrders[quotation.id] = response;
-        this.initTooltips();
       })
       this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(quotation.id).subscribe(response => {
         this.quotationsInvoiceLabelResult[quotation.id] = response;
@@ -148,15 +148,6 @@ export class QuotationsComponent implements OnInit {
         this.quotationsMailComputeResult[quotation.id] = response;
       })
     }
-  }
-
-  initTooltips() {
-    setTimeout(() => {
-      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl, { placement: "right" })
-      })
-    }, 0);
   }
 
   getQuotationBillingMailList(quotation: Quotation) {

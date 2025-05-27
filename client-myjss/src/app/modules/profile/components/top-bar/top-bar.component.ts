@@ -1,9 +1,10 @@
 import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
 import { capitalizeName } from '../../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
-import { initTooltips } from '../../../my-account/components/orders/orders.component';
+import { AppService } from '../../../main/services/app.service';
+import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
 import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
@@ -14,7 +15,8 @@ declare var bootstrap: any;
   selector: 'top-bar',
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, AvatarComponent]
 })
 export class TopBarComponent implements OnInit {
 
@@ -29,11 +31,11 @@ export class TopBarComponent implements OnInit {
 
   currentUser: Responsable | undefined;
 
-  actualUrl: string = this.router.url;
-  services: MenuItem[] = this.appService.getAllServicesMenuItems();
-  companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
-  tools: MenuItem[] = this.appService.getAllToolsMenuItems();
-  myAccountItems: AccountMenuItem[] = this.appService.getAllAccountMenuItems();
+  actualUrl!: string;
+  services!: MenuItem[];
+  companyItems!: MenuItem[];
+  tools!: MenuItem[];
+  myAccountItems!: AccountMenuItem[];
 
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
   MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
@@ -49,12 +51,16 @@ export class TopBarComponent implements OnInit {
   capitalizeName = capitalizeName;
 
   ngOnInit() {
+    this.actualUrl = this.router.url;
+    this.services = this.appService.getAllServicesMenuItems();
+    this.companyItems = this.appService.getAllCompanyMenuItems();
+    this.tools = this.appService.getAllToolsMenuItems();
+    this.myAccountItems = this.appService.getAllAccountMenuItems();
     this.loginService.currentUserChangeMessage.subscribe(response => {
       if (!response)
         this.currentUser = undefined;
       else
         this.refreshCurrentUser()
-      initTooltips('bottom');
     });
   }
 

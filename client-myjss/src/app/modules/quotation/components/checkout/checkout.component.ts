@@ -1,20 +1,30 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { getDocument } from '../../../../libs/DocumentHelper';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { copyObject } from '../../../../libs/GenericHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { Mail } from '../../../general/model/Mail';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
+import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
+import { SelectBillingLabelTypeComponent } from '../../../miscellaneous/components/forms/select-billing-label-type/select-billing-label-type.component';
+import { SelectCivilityComponent } from '../../../miscellaneous/components/forms/select-civility/select-civility.component';
+import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
+import { BillingLabelType } from '../../../my-account/model/BillingLabelType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
+import { DocumentType } from '../../../my-account/model/DocumentType';
 import { Quotation } from '../../../my-account/model/Quotation';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { DocumentService } from '../../../my-account/services/document.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
 import { ServiceService } from '../../../my-account/services/service.service';
-import { Mail } from '../../../profile/model/Mail';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
@@ -26,7 +36,16 @@ import { IQuotation } from '../../model/IQuotation';
   selector: 'checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS,
+    GenericInputComponent,
+    GenericToggleComponent,
+    AutocompleteCityComponent,
+    GenericTextareaComponent,
+    SelectCountryComponent,
+    SelectCivilityComponent,
+    SelectBillingLabelTypeComponent
+  ]
 })
 export class CheckoutComponent implements OnInit {
 
@@ -47,13 +66,13 @@ export class CheckoutComponent implements OnInit {
   isNotIndividualTiers: boolean = true;
   isComputingPrice: boolean = false;
 
-  documentTypeBilling = this.constantService.getDocumentTypeBilling();
-  documentTypeDigital = this.constantService.getDocumentTypeDigital();
-  documentTypePaper = this.constantService.getDocumentTypePaper();
-  billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
+  documentTypeBilling!: DocumentType;
+  documentTypeDigital!: DocumentType;
+  documentTypePaper!: DocumentType;
+  billingLabelTypeOther!: BillingLabelType;
   isExtRefMandatory: boolean = false;
 
-  documentForm = this.formBuilder.group({});
+  documentForm!: FormGroup;
 
   newMailBillingAffaire: string = "";
   newMailBillingClient: string = "";
@@ -88,6 +107,13 @@ export class CheckoutComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.documentForm = this.formBuilder.group({});
+
+    this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
+    this.documentTypeDigital = this.constantService.getDocumentTypeDigital();
+    this.documentTypePaper = this.constantService.getDocumentTypePaper();
+    this.billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
+
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
       this.initIQuotation();
@@ -188,7 +214,10 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  cleanStorageData = this.quotationService.cleanStorageData;
+  cleanStorageData() {
+    this.quotationService.cleanStorageData;
+  }
+
 
   isOrderPossible() {
     if (this.documentForm.invalid) {

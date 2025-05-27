@@ -2,12 +2,14 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AppService } from './src/app/libs/app.service';
+import { AppService } from './app.service';
+import { PlatformService } from './platform.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
 
   constructor(private appService: AppService,
+    private platformService: PlatformService
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -52,7 +54,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
           // If HTTP 403, user not logged in
           if (error.status == 403) {
-            if (doNotRedirectOnNonAuthenticated != "true" && window.location.href.indexOf('/account') >= 0 && window.location.href.indexOf('/account/signin') < 0)
+            if (doNotRedirectOnNonAuthenticated != "true" && this.platformService.isBrowser() && window.location.href.indexOf('/account') >= 0 && window.location.href.indexOf('/account/signin') < 0)
               this.appService.openRoute(undefined, "/", undefined);
             return EMPTY;
           } else if (error.status == 0) {

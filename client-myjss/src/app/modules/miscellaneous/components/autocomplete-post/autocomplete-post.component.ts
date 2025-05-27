@@ -1,28 +1,33 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormGroup, UntypedFormBuilder } from '@angular/forms';
+import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { Observable } from 'rxjs';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MyJssCategory } from '../../../tools/model/MyJssCategory';
 import { Post } from '../../../tools/model/Post';
 import { MyJssCategoryService } from '../../../tools/services/myjss.category.service';
 import { PostService } from '../../../tools/services/post.service';
 import { PagedContent } from '../../model/PagedContent';
 import { GenericAutocompleteComponent } from '../forms/generic-autocomplete/generic-autocomplete.component';
+import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
 
 @Component({
   selector: 'autocomplete-post',
   templateUrl: './autocomplete-post.component.html',
   styleUrls: ['./autocomplete-post.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, SelectMyJssCategoryComponent, AutocompleteLibModule]
 })
 export class AutocompletePostComponent extends GenericAutocompleteComponent<Post, Post> implements OnInit {
 
   @Input() myJssCategory: MyJssCategory | undefined;
 
   additionalCategory: MyJssCategory = { id: -1, name: 'Toutes les categories', slug: "all-categories", categoryOrder: 1 };
-  autocompletePostForm = this.formBuild.group({});
 
   postResults: Post[] = [];
   searchText: string = "";
+
+  autocompletePostForm!: FormGroup;
 
   @ViewChild('autoComp') autoComp: any;
 
@@ -39,6 +44,7 @@ export class AutocompletePostComponent extends GenericAutocompleteComponent<Post
 
   override ngOnInit(): void {
     super.ngOnInit();
+    this.autocompletePostForm = this.formBuild.group({});
     if (!this.additionalCategory)
       this.myJssCategoryService.getMyJssCategories().subscribe(res => this.additionalCategory = res[0]);
   }

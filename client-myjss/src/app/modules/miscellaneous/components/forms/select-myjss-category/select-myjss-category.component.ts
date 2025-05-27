@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { MyJssCategory } from '../../../../tools/model/MyJssCategory';
 import { MyJssCategoryService } from '../../../../tools/services/myjss.category.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -8,7 +9,8 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
   selector: 'select-myjss-category',
   templateUrl: './select-myjss-category.component.html',
   styleUrls: ['./select-myjss-category.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class SelectMyJssCategoryComponent extends GenericSelectComponent<MyJssCategory> implements OnInit {
 

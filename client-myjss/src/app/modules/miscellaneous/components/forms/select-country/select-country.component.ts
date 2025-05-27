@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { Country } from '../../../../profile/model/Country';
 import { CountryService } from '../../../../quotation/services/country.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -8,7 +9,8 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
   selector: 'select-country',
   templateUrl: '../generic-select/generic-select.component.html',
   styleUrls: ['../generic-select/generic-select.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class SelectCountryComponent extends GenericSelectComponent<Country> implements OnInit {
 

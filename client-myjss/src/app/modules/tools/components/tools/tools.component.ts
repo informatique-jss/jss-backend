@@ -1,17 +1,19 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
+import { AppService } from '../../../main/services/app.service';
 
 @Component({
   selector: 'app-tools',
   templateUrl: './tools.component.html',
   styleUrls: ['./tools.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class ToolsComponent implements OnInit {
 
-  toolsItems: MenuItem[] = this.appService.getAllToolsMenuItems();
+  toolsItems!: MenuItem[];
 
   selectedTab: MenuItem | null = null;
 
@@ -21,6 +23,8 @@ export class ToolsComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
+    this.toolsItems = this.appService.getAllToolsMenuItems();
+
     this.toolsItems = this.appService.getAllToolsMenuItems();
 
     if (this.toolsItems.length > 0 && this.router.url) {

@@ -1,16 +1,19 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { AppService } from '../../../../libs/app.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { CommunicationPreference } from '../../../general/model/CommunicationPreference';
+import { CommunicationPreferencesService } from '../../../general/services/communication.preference.service';
+import { AppService } from '../../../main/services/app.service';
+import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
 import { LoginService } from '../../../profile/services/login.service';
-import { CommunicationPreference } from '../../model/CommunicationPreference';
-import { CommunicationPreferencesService } from '../../services/communication.preference.service';
 
 
 @Component({
-    selector: 'communication-preference',
-    templateUrl: './communication-preference.component.html',
-    styleUrls: ['./communication-preference.component.css'],
-    standalone: false
+  selector: 'communication-preference',
+  templateUrl: './communication-preference.component.html',
+  styleUrls: ['./communication-preference.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericToggleComponent]
 })
 export class CommunicationPreferenceComponent implements OnInit, AfterContentChecked {
 
@@ -18,6 +21,7 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
   @Input() validationToken: string | null = null;
 
   communicationPreference: CommunicationPreference = {} as CommunicationPreference;
+  communicationPreferenceForm!: FormGroup;
 
   constructor(
     private communicationPreferenceService: CommunicationPreferencesService,
@@ -27,13 +31,13 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
     private appService: AppService
   ) { }
 
-  communicationPreferenceForm = this.formBuilder.group({});
 
   ngOnInit() {
+    this.communicationPreferenceForm = this.formBuilder.group({});
     if (!this.mail) {
       this.loginService.getCurrentUser().subscribe((user) => {
         this.mail = user.mail.mail;
-        this.loadPreferenceByMail(this.mail);
+        this.loadPreferenceByMail(this.mail!);
       })
     } else {
       this.loadPreferenceByMail(this.mail);

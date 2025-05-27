@@ -186,8 +186,8 @@
                     <div class="author-block">
                       <ul class="avatar list-inline mb-0">
                         <li class="list-inline-item align-items-center" *ngIf="post.text.author"><a class="fs-9"><img
-                              [src]="post.text.author.avatar_url_size_24" [alt]="post.text.author.name"
-                              data-bs-toggle="tooltip" data-bs-placement="top" [title]="post.text.author.name">
+                              [src]="post.text.author.avatar_url_size_24" [alt]="post.text.author.name" placement="top"
+                              [ngbTooltip]="post.text.author.name">
                             {{post.text.author.name}}</a></li>
                       </ul>
                     </div>
