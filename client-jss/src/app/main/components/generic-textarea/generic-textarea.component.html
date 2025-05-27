@@ -1,0 +1,9 @@
+<div class="position-relative ">
+  <div [formGroup]="form!" class="needs-validation">
+    <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
+      class="form-label">{{label}}</label>
+    <textarea (keyup)="onInputChange()" (keydown)="onInputChange()" (paste)="onInputChange()" [rows]="numberOfLines"
+      matInput [formControlName]="propertyName" [placeholder]="placeholder" [maxlength]="maxLength+''"
+      [required]="isMandatory" [minlength]="minLength+''" class="form-control"></textarea>
+  </div>
+</div>

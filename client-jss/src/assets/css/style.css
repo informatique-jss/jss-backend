@@ -61,6 +61,7 @@ Primary use:  blog, news, magazine
   --ar-tertiary-bg: #F8EB83;
   --ar-blue-dark: #2C4057;
   --ar-blue-light: #EDF1F5;
+  --ar-red: #FF5757;
 }
 
 *,
@@ -611,7 +612,7 @@ progress {
   margin-top: -0.9375rem;
   margin-bottom: 0.9375rem;
   font-size: 0.875em;
-  color: #6c757d;
+  color: var(--ar-red);
 }
 
 .blockquote-footer::before {
@@ -11872,10 +11873,10 @@ dl, ol, ul {
 
 blockquote {
   background: #f5f5f5;
-  border-left: 5px solid #3366ff;
+  border-left: 5px solid var(--ar-red);
   margin: 1.5em 10px;
   padding: 1em 10px;
-  quotes: "“""”""‘""’";
+  quotes: none;
 }
 
 blockquote:before {
@@ -13641,4 +13642,8 @@ ngb-modal-window {
 
 .gray-color {
   color: var(--bs-gray-700) !important;
+}
+
+.gray-dark-color {
+  color: var(--bs-gray-dark) !important;
 }

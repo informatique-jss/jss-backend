@@ -1,3 +1,109 @@
-<p>
-  contribute works!
-</p>
+<section class="pt-4 container">
+  <div class="bg-container">
+    <div class="col-12 mx-auto">
+      <div class="w-100 justify-content-between mb-3">
+        <div class="header-hub-bg d-flex align-items-center rounded-1 mb-3">
+          <div class="row w-100">
+            <div class="col-12">
+              <h3 class="section-widget-title ps-3">Contribuer</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-7 col-lg-7">
+            <div class="contact-info-block mb-3 pe-5">
+              <h3>Mettez votre plume au service de l’info !</h3>
+              <img class="rounded-2 mb-2" src="/assets/images/page_contribuer.jpg">
+              <h4>Partagez votre regard sur l'actualité</h4>
+              <p>Vous avez une analyse ou une opinion à partager en lien avec l’actualité ? Sur le jss.fr, l’information
+                se construit avec vous ! Que vous soyez journaliste indépendant ou spécialiste d’un sujet qui pourrait
+                intéresser les lecteurs de notre média, nous vous offrons un espace pour exprimer vos idées et enrichir
+                le débat public.</p>
+              <h4>Notre ligne éditoriale</h4>
+              <p>Le JSS, c'est un média engagé dans une information libre, rigoureuse et diversifiée. Notre mission :
+                donner la parole à des voix variées pour décrypter l’actualité autrement. Nous privilégions une approche
+                analytique et approfondie, loin des formats courts et sensationnalistes.</p>
+
+              <h4>Pourquoi contribuer ? </h4>
+              <blockquote class="ms-0 pb-2 pt-1">
+                <ul class="ms-0 no-bullet gray-dark-color">
+                  <li>
+                    <strong>Gagnez en visibilité :</strong> Faites entendre votre voix dans un média
+                    spécialisé.
+                  </li>
+                  <li>
+                    <strong>Affirmez votre expertise :</strong> faites reconnaître votre plume et vos
+                    décryptages.
+                  </li>
+                </ul>
+              </blockquote>
+              <h4>Comment ça marche ? </h4>
+              <blockquote class="ms-0 pb-2 pt-1">
+                <ul class="ms-0 no-bullet gray-dark-color">
+                  <li>
+                    <strong>1. Proposez votre sujet</strong> via notre formulaire.
+                  </li>
+                  <li>
+                    <strong>2. Échangez avec la Rédaction </strong> pour affiner votre article.
+                  </li>
+                  <li>
+                    <strong>3. Une fois validée, </strong> votre contribution pourra paraître dans nos colonnes.
+                  </li>
+                </ul>
+              </blockquote>
+            </div>
+          </div>
+          <div class="col-xl-5 col-lg-5">
+            <div class="contact-form border rounded-1 py-2">
+              <h2 class="mb-2 ps-2">Contributeur</h2>
+              <form class="needs-validation row" novalidate>
+                <div class="col-sm-6">
+                  <generic-input class="form-control" [(model)]="firstName" label="Prénom*" placeholder="Prénom*"
+                    [form]="contributeForm" propertyName="firstname" [isMandatory]="true" [isDisabled]="false"
+                    [maxLength]="50" type="text"></generic-input>
+                </div>
+                <div class="col-sm-6">
+                  <generic-input class="form-control" [(model)]="lastName" placeholder="Nom*" label="Nom*"
+                    [form]="contributeForm" propertyName="lastname" [isMandatory]="true" [isDisabled]="false"
+                    [maxLength]="50" type="text"></generic-input>
+                </div>
+                <div class="col-sm-6">
+                  <generic-input class="form-control" [(model)]="mail" placeholder="E-mail*" label="E-mail*"
+                    [form]="contributeForm" propertyName="mail" [isMandatory]="true" [isDisabled]="false"
+                    [maxLength]="250" type="email"></generic-input>
+                </div>
+                <div class="col-sm-6">
+                  <generic-input class="form-control" [(model)]="phone" placeholder="Téléphone" label="Téléphone"
+                    [form]="contributeForm" propertyName="phone" [isMandatory]="false" [isDisabled]="false"
+                    [maxLength]="50" type="text"></generic-input>
+                </div>
+                <div class="col-sm-12">
+                  <generic-textarea class="form-control" [(model)]="message" label="Message*" [form]="contributeForm"
+                    propertyName="message" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"
+                    [numberOfLines]="4"></generic-textarea>
+                </div>
+                <div class="col-sm-12 mx-2">
+                  <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="cgv" [(ngModel)]="isConditionAccepted"
+                      name="isConditionAccepted" required>
+                    <label class="form-check-label fs-16" for="cgv">J’accepte d’être contacté.e par le Journal Spécial
+                      des
+                      Sociétés
+                      à des fins d’information et de marketing conformément à la Politique de Confidentialité*
+                    </label>
+                  </div>
+                </div>
+                <div class="col-sm-12 px-4">
+                  <button class="btn btn-lg contact-btn rounded-1 w-100" (click)="subscribeFormContact($event)">Envoyer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <newsletter></newsletter>
+      </div>
+    </div>
+  </div>
+</section>
