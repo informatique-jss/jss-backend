@@ -61,7 +61,7 @@
               <h3 class="h4 card-title card-title-truncate">
                 <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
               </h3>
-              <p class="card-text card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+              <p class="card-text card-text-truncate">{{post.excerptText}}</p>
             </div>
             <div class="card-footer pt-3">
               <div class="d-flex align-items-center text-decoration-none pb-2">
@@ -120,7 +120,7 @@
             <h3 class="h4 card-title card-title-truncate">
               <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
             </h3>
-            <p class="card-text card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+            <p class="card-text card-text-truncate">{{post.excerptText}}</p>
           </div>
           <div class="card-footer pt-3">
             <div class="d-flex align-items-center text-decoration-none pb-2">
@@ -180,7 +180,7 @@
               <h3 class="h4 card-title card-title-truncate">
                 <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
               </h3>
-              <p class="card-text card-text-truncate" [innerHTML]="post.excerptText | trustHtml"></p>
+              <p class="card-text card-text-truncate">{{post.excerptText}}</p>
             </div>
             <div class="card-footer pt-3">
               <div class="d-flex align-items-center text-decoration-none pb-2">
@@ -264,9 +264,7 @@
                 *ngFor="let post of (isExpanded(myJssCategory.id)  ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-gray" (click)="openPost(post.slug,$event)"
-                    data-bs-toggle="tooltip" [title]="post.titleText" data-bs-placement="top"
-                    [innerHTML]="post.titleText | trustHtml"></a>
+                  <a class="text-decoration-none text-gray" (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
                 </li>
               </div>
             </div>
@@ -296,9 +294,8 @@
                 *ngFor="let post of (isExpanded(myJssCategory.id)  ? secondSearchResults[myJssCategory.id] :  secondSearchResults[myJssCategory.id].slice(0,3))">
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-gray text-truncate-custom" (click)="openPost(post.slug,$event)"
-                    data-bs-toggle="tooltip" [title]="post.titleText" data-bs-placement="top"
-                    [innerHTML]="post.titleText | trustHtml"></a>
+                  <a class="text-decoration-none text-gray text-truncate-custom"
+                    (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
                 </li>
               </div>
             </div>
@@ -329,9 +326,8 @@
               *ngFor="let post of (isExpanded(secondSelectedMyJssCategory.id)  ? secondSearchResults[secondSelectedMyJssCategory.id] :  secondSearchResults[secondSelectedMyJssCategory.id].slice(0,3))">
               <li class="d-flex pb-2 mb-1">
                 <span class="bg-primary mt-2 checkbox-custom"></span>
-                <a class="text-decoration-none text-gray text-truncate-custom" (click)="openPost(post.slug,$event)"
-                  data-bs-toggle="tooltip" [title]="post.titleText" data-bs-placement="top"
-                  [innerHTML]="post.titleText | trustHtml"></a>
+                <a class="text-decoration-none text-gray text-truncate-custom"
+                  (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
               </li>
             </div>
           </div>

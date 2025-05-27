@@ -1,12 +1,12 @@
-import { AttachmentType } from "../modules/my-account/model/AttachmentType";
-import { BillingLabelType } from "../modules/my-account/model/BillingLabelType";
-import { DocumentType } from "../modules/my-account/model/DocumentType";
-import { PaymentType } from "../modules/my-account/model/PaymentType";
-import { Country } from "../modules/profile/model/Country";
-import { Responsable } from "../modules/profile/model/Responsable";
-import { ServiceFamilyGroup } from "../modules/quotation/model/ServiceFamilyGroup";
-import { Category } from "../modules/tools/model/Category";
-import { MyJssCategory } from "../modules/tools/model/MyJssCategory";
+import { AttachmentType } from "../../my-account/model/AttachmentType";
+import { BillingLabelType } from "../../my-account/model/BillingLabelType";
+import { DocumentType } from "../../my-account/model/DocumentType";
+import { PaymentType } from "../../my-account/model/PaymentType";
+import { Country } from "../../profile/model/Country";
+import { Responsable } from "../../profile/model/Responsable";
+import { ServiceFamilyGroup } from "../../quotation/model/ServiceFamilyGroup";
+import { Category } from "../../tools/model/Category";
+import { MyJssCategory } from "../../tools/model/MyJssCategory";
 
 export interface Constant {
   id: number;

@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { AppService } from '../../../../libs/app.service';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
-import { CommunicationPreferencesService } from '../../../my-account/services/communication.preference.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { CommunicationPreferencesService } from '../../services/communication.preference.service';
 
 @Component({
-    selector: 'newsletter',
-    templateUrl: './newsletter.component.html',
-    styleUrls: ['./newsletter.component.css'],
-    standalone: false
+  selector: 'newsletter',
+  templateUrl: './newsletter.component.html',
+  styleUrls: ['./newsletter.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class NewsletterComponent implements OnInit {
 

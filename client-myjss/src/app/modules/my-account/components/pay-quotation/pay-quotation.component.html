@@ -62,15 +62,15 @@
           utilisez les
           informations suivantes :</p>
         <p class="text-center"> {{JSS_IBAN}} <i style="cursor: pointer;" [copy-clipboard]="JSS_IBAN"
-            (copied)="notifyCopied( )" class="ai-copy" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Copier dans le presse-papier"></i></p>
+            (copied)="notifyCopied( )" class="ai-copy" placement="right" ngbTooltip="Copier dans le presse-papier"></i>
+        </p>
         <p class="text-center"> {{JSS_BIC}} <i style="cursor: pointer;" [copy-clipboard]="JSS_BIC"
-            (copied)="notifyCopied( )" class="ai-copy" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Copier dans le presse-papier"></i></p>
+            (copied)="notifyCopied( )" class="ai-copy" placement="right" ngbTooltip="Copier dans le presse-papier"></i>
+        </p>
         <div class="alert alert-danger" role="alert">
           Veuillez indiquer absolument la référence <span class="color-red">{{idQuotation}}</span> <i
             style="cursor: pointer;" [copy-clipboard]="JSS_BIC" (copied)="notifyCopied( )" class="ai-copy"
-            data-bs-toggle="tooltip" data-bs-placement="right" title="Copier dans le presse-papier"></i> de la commande
+            placement="right" ngbTooltip="Copier dans le presse-papier"></i> de la commande
           dans le libellé de votre
           virement
         </div>

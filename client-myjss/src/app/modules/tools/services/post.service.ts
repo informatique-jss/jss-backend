@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Category } from '../../../../../../client/src/app/modules/miscellaneous/model/Category';
-import { AppRestService } from '../../../libs/appRest.service';
+import { AppRestService } from '../../main/services/appRest.service';
+import { Category } from '../model/Category';
 import { Media } from '../model/Media';
 import { MyJssCategory } from '../model/MyJssCategory';
 import { Post } from '../model/Post';

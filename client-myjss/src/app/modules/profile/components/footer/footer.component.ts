@@ -1,12 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
+import { AppService } from '../../../main/services/app.service';
 
 @Component({
   selector: 'main-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class FooterComponent implements OnInit {
 
@@ -16,9 +18,9 @@ export class FooterComponent implements OnInit {
 
   @Input() isInNavbar: boolean = false;
 
-  services: MenuItem[] = this.appService.getAllServicesMenuItems();
-  companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
-  tools: MenuItem[] = this.appService.getAllToolsMenuItems();
+  services!: MenuItem[];
+  companyItems!: MenuItem[];
+  tools!: MenuItem[];
 
 
   constructor(
@@ -26,6 +28,9 @@ export class FooterComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.services = this.appService.getAllServicesMenuItems();
+    this.companyItems = this.appService.getAllCompanyMenuItems();
+    this.tools = this.appService.getAllToolsMenuItems();
   }
 
   openPage(page: string, event: any) {

@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { SwiperContainer } from 'swiper/element';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { PlatformService } from '../../../main/services/platform.service';
 
 
 @Component({
@@ -10,13 +10,13 @@ import { SwiperContainer } from 'swiper/element';
   templateUrl: './our-clients.component.html',
   styleUrls: ['./our-clients.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule],
+  imports: [SHARED_IMPORTS],
   standalone: true
 })
 export class OurClientsComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('ourClientsSwiper1') ourClientsSwiper1!: ElementRef<SwiperContainer>;
-  @ViewChild('ourClientsSwiper2') ourClientsSwiper2!: ElementRef<SwiperContainer>;
+  @ViewChild('ourClientsSwiper1') ourClientsSwiper1!: ElementRef<any>;
+  @ViewChild('ourClientsSwiper2') ourClientsSwiper2!: ElementRef<any>;
 
   smallViewport: number = 576;
   mediumViewport: number = 768;
@@ -25,11 +25,15 @@ export class OurClientsComponent implements OnInit, AfterViewInit {
 
   private destroy$ = new Subject<void>();
 
-  constructor() { }
+  constructor(private plaformService: PlatformService) { }
 
   ngOnInit() { }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
+    if (this.plaformService.isServer())
+      return;
+
+    await customElements.whenDefined('swiper-container');
 
     // Initialize main Swiper
     const params1 = {
@@ -65,9 +69,12 @@ export class OurClientsComponent implements OnInit, AfterViewInit {
     }
 
     Object.assign(this.ourClientsSwiper1.nativeElement, params1);
-    this.ourClientsSwiper1.nativeElement.initialize();
     Object.assign(this.ourClientsSwiper2.nativeElement, params2);
-    this.ourClientsSwiper2.nativeElement.initialize();
+
+    setTimeout(() => {
+      this.ourClientsSwiper1.nativeElement.initialize();
+      this.ourClientsSwiper2.nativeElement.initialize();
+    });
 
     fromEvent(window, 'resize')
       .pipe(debounceTime(200), takeUntil(this.destroy$))
@@ -82,6 +89,9 @@ export class OurClientsComponent implements OnInit, AfterViewInit {
   }
 
   private getSlidesPerView(): number {
+    if (this.plaformService.isServer())
+      return 9;
+
     const width = window.innerWidth;
 
     if (width < this.smallViewport) {

@@ -1,25 +1,29 @@
-import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { SwiperContainer } from 'swiper/element';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { PlatformService } from '../../../main/services/platform.service';
 
 @Component({
   selector: 'our-story-swiper',
   templateUrl: './our-story-swiper.component.html',
   styleUrls: ['./our-story-swiper.component.css'],
-  imports: [CommonModule],
+  imports: [SHARED_IMPORTS],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true
 })
 export class OurStorySwiperComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('mainSwiper') mainSwiper!: ElementRef<SwiperContainer>;
-  @ViewChild('datesSwiper') datesSwiper!: ElementRef<SwiperContainer>;
+  @ViewChild('mainSwiper') mainSwiper!: ElementRef<any>;
+  @ViewChild('datesSwiper') datesSwiper!: ElementRef<any>;
 
-  constructor() { }
+  constructor(private platformService: PlatformService) { }
 
   ngOnInit() { }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
+    if (this.platformService.isServer())
+      return;
+
+    await customElements.whenDefined('swiper-container');
     // Initialize main Swiper
     const mainSwiperParams = {
       thumbs: {
@@ -32,7 +36,10 @@ export class OurStorySwiperComponent implements OnInit, AfterViewInit {
       autoHeight: true
     };
     Object.assign(this.mainSwiper.nativeElement, mainSwiperParams);
-    this.mainSwiper.nativeElement.initialize();
+
+    setTimeout(() => {
+      this.mainSwiper.nativeElement.initialize();
+    });
 
     // Initialize dates Swiper
     const datesSwiperParams = {
@@ -51,7 +58,7 @@ export class OurStorySwiperComponent implements OnInit, AfterViewInit {
         const activeIndex = this.mainSwiper.nativeElement.swiper.activeIndex;
         this.datesSwiper.nativeElement.swiper.slideTo(activeIndex);
         const slides = this.datesSwiper.nativeElement.querySelectorAll('swiper-slide');
-        slides.forEach((slide, index) => {
+        slides.forEach((slide: any, index: any) => {
           if (index === activeIndex) {
             slide.classList.add('zoom');
           } else {
@@ -65,7 +72,7 @@ export class OurStorySwiperComponent implements OnInit, AfterViewInit {
     const updateVisibleSlides = () => {
       const activeIndex = this.datesSwiper.nativeElement.swiper.activeIndex;
       const slides = this.datesSwiper.nativeElement.querySelectorAll('swiper-slide');
-      slides.forEach((slide, index) => {
+      slides.forEach((slide: any, index: any) => {
         if (index >= activeIndex - 1 && index <= activeIndex + 1) {
           slide.classList.remove('hidden');
         } else {
@@ -76,7 +83,7 @@ export class OurStorySwiperComponent implements OnInit, AfterViewInit {
 
     const showAll = () => {
       const slides = this.datesSwiper.nativeElement.querySelectorAll('swiper-slide');
-      slides.forEach((slide) => {
+      slides.forEach((slide: any) => {
         slide.classList.remove('hidden');
       });
     };

@@ -60,8 +60,7 @@
             <h3>
               <a class="card-title-truncate" (click)="openPost(post.slug, $event)">{{post.titleText}}</a>
             </h3>
-            <p class="d-sm-none d-md-block card-text-truncate" [innerHTML]="post.excerptText | trustHtml">
-            </p>
+            <p class="d-sm-none d-md-block card-text-truncate">{{post.excerptText}}</p>
             <div class="d-flex flex-wrap align-items-center mt-n2">
               <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM'}}</span>
               <span class="fs-xs opacity-20 mt-2 mx-3">|</span>

@@ -1,23 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
 import { JSS_BIC, JSS_IBAN } from '../../../../libs/Constants';
+import { CopyClipboardDirective } from '../../../../libs/CopyClipboard.directive';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { MyJssImage } from '../../model/MyJssImage';
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { MyJssImageService } from '../../services/my.jss.image.service';
-import { initTooltips } from '../orders/orders.component';
 
 @Component({
-    selector: 'app-pay-order',
-    templateUrl: './pay-order.component.html',
-    styleUrls: ['./pay-order.component.css'],
-    standalone: false
+  selector: 'app-pay-order',
+  templateUrl: './pay-order.component.html',
+  styleUrls: ['./pay-order.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent, CopyClipboardDirective]
 })
 export class PayOrderComponent implements OnInit {
   idOrder: number | undefined;
@@ -37,9 +40,10 @@ export class PayOrderComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private appService: AppService,) { }
 
-  payOrderForm = this.formBuilder.group({});
+  payOrderForm!: FormGroup;
 
   ngOnInit() {
+    this.payOrderForm = this.formBuilder.group({});
     this.idOrder = this.activatedRoute.snapshot.params['idOrder'];
     if (this.idOrder) {
       this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(this.idOrder).subscribe(response => {
@@ -50,7 +54,6 @@ export class PayOrderComponent implements OnInit {
       })
       this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.idOrder).subscribe(response => {
         this.invoiceSummary = response;
-        initTooltips();
       })
     }
   }

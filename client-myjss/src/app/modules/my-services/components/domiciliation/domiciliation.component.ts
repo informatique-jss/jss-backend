@@ -1,15 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { jarallax } from 'jarallax';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { PlatformService } from '../../../main/services/platform.service';
+import { DoubleButtonsComponent } from '../../../miscellaneous/components/double-buttons/double-buttons.component';
+import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
+import { OurClientsComponent } from '../../../miscellaneous/components/our-clients/our-clients.component';
 import { Post } from '../../../tools/model/Post';
 import { PostService } from '../../../tools/services/post.service';
+import { DescriptionMyAccountComponent } from '../description-my-account/description-my-account.component';
+import { ExplainationVideoComponent } from '../explaination-video/explaination-video.component';
 
 @Component({
   selector: 'domiciliation',
   templateUrl: './domiciliation.component.html',
   styleUrls: ['./domiciliation.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, DoubleButtonsComponent, ExplainationVideoComponent, DescriptionMyAccountComponent, GenericSwiperComponent, OurClientsComponent]
 })
 export class DomiciliationComponent implements OnInit {
 
@@ -17,7 +24,8 @@ export class DomiciliationComponent implements OnInit {
 
   constructor(private appService: AppService,
     private postService: PostService,
-    private constantService: ConstantService
+    private constantService: ConstantService,
+    private platformService: PlatformService
   ) { }
 
   ngOnInit() {
@@ -28,9 +36,12 @@ export class DomiciliationComponent implements OnInit {
     });
   }
   ngAfterViewInit(): void {
-    jarallax(document.querySelectorAll('.jarallax'), {
-      speed: 0.5
-    });
+    if (this.platformService.getNativeDocument())
+      import('jarallax').then(module => {
+        module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
+          speed: 0.5
+        });
+      });
   }
 
   openPost(slug: string, event: any) {

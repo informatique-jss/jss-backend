@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { MenuItem } from '../modules/general/model/MenuItem';
-import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../modules/my-account/model/AccountMenuItem';
-import { ResponsableService } from '../modules/profile/services/responsable.service';
-import { UserScopeService } from '../modules/profile/services/user.scope.service';
-import { Toast } from './toast/Toast';
+import { environment } from '../../../../environments/environment';
+import { Toast } from '../../../libs/toast/Toast';
+import { MenuItem } from '../../general/model/MenuItem';
+import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../my-account/model/AccountMenuItem';
+import { ResponsableService } from '../../profile/services/responsable.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +17,7 @@ export class AppService {
 
   constructor(
     private router: Router,
-    private userScopeService: UserScopeService,
-    private responsableService: ResponsableService
+    private responsableService: ResponsableService,
   ) { }
 
   displayToast(message: string, isError: boolean, title: string, delayInMili: number) {

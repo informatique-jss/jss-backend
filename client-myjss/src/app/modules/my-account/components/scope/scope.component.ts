@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { capitalizeName } from '../../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { UserScope } from '../../../profile/model/UserScope';
@@ -8,10 +9,11 @@ import { ResponsableService } from '../../../profile/services/responsable.servic
 import { UserScopeService } from '../../../profile/services/user.scope.service';
 
 @Component({
-    selector: 'scope',
-    templateUrl: './scope.component.html',
-    styleUrls: ['./scope.component.css'],
-    standalone: false
+  selector: 'scope',
+  templateUrl: './scope.component.html',
+  styleUrls: ['./scope.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class ScopeComponent implements OnInit {
 

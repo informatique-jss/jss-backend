@@ -1,19 +1,24 @@
-import { AfterViewInit, Component } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { ConstantService } from './libs/constant.service';
-import { ThemeService } from './libs/theme.service';
+import { SHARED_IMPORTS } from './libs/SharedImports';
+import { ConstantService } from './modules/main/services/constant.service';
+import { GtmService } from './modules/main/services/gtm.service';
+import { PlatformService } from './modules/main/services/platform.service';
+import { ThemeService } from './modules/main/services/theme.service';
 import { Responsable } from './modules/profile/model/Responsable';
 import { LoginService } from './modules/profile/services/login.service';
 
 @Component({
   selector: 'app-root',
+  imports: [RouterOutlet,
+    SHARED_IMPORTS,
+  ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: false
+  styleUrl: './app.component.css',
+  standalone: true
 })
-
-export class AppComponent implements AfterViewInit {
+export class AppComponent {
   title = 'myjss';
   currentUser: Responsable | undefined;
 
@@ -21,22 +26,30 @@ export class AppComponent implements AfterViewInit {
     private constantService: ConstantService,
     private loginService: LoginService,
     private themeService: ThemeService,
+    private gtm: GtmService,
+    private platformService: PlatformService
   ) {
   }
 
   ngOnInit() {
     this.constantService.initConstant();
+
+    //Init Google tag manager if in browser
+    this.gtm.init();
+
     this.loginService.currentUserChangeMessage.subscribe(response => {
       if (!response)
         this.currentUser = undefined;
       else
         this.refreshCurrentUser()
     });
+
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
       const url = event.urlAfterRedirects;
-      this.themeService.updateThemeFromUrl(url);
+      if (this.platformService.isBrowser())
+        this.themeService.updateThemeFromUrl(url);
     });
   }
 
@@ -44,10 +57,6 @@ export class AppComponent implements AfterViewInit {
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
     });
-  }
-
-  ngAfterViewInit() {
-    this.loadScript('../assets/js/theme.js');
   }
 
   isDisplayGreyBackground() {
@@ -83,13 +92,4 @@ export class AppComponent implements AfterViewInit {
     return true;
   }
 
-  loadScript(url: string) {
-    const body = <HTMLDivElement>document.body;
-    const script = document.createElement('script');
-    script.innerHTML = '';
-    script.src = url;
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
 }

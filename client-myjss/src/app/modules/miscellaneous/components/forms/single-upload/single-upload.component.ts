@@ -1,10 +1,11 @@
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { forkJoin, tap } from 'rxjs';
-import { AppService } from '../../../../../libs/app.service';
 import { MAX_SIZE_UPLOAD_FILES } from '../../../../../libs/Constants';
 import { formatBytes } from '../../../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
+import { AppService } from '../../../../main/services/app.service';
 import { AttachmentType } from '../../../../my-account/model/AttachmentType';
 import { IAttachment } from '../../../../my-account/model/IAttachment';
 import { TypeDocument } from '../../../../my-account/model/TypeDocument';
@@ -14,7 +15,8 @@ import { UploadAttachmentService } from '../../../../my-account/services/upload.
   selector: 'single-upload',
   templateUrl: './single-upload.component.html',
   styleUrls: ['./single-upload.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class SingleUploadComponent implements OnInit {
 
@@ -37,6 +39,7 @@ export class SingleUploadComponent implements OnInit {
   @Input() isDirectUpload: boolean = false;
 
   attachmentTypes: AttachmentType[] = [] as Array<AttachmentType>;
+  attachmentForm!: FormGroup;
 
   @Input() attachmentType: AttachmentType | null = null;
   filename: string = "";
@@ -49,12 +52,11 @@ export class SingleUploadComponent implements OnInit {
     private uploadAttachmentService: UploadAttachmentService) { }
 
   ngOnInit() {
+    this.attachmentForm = this.formBuilder.group({
+      attachmentType: ['', Validators.required],
+      filename: ['', Validators.required],
+    });
   }
-
-  attachmentForm = this.formBuilder.group({
-    attachmentType: ['', Validators.required],
-    filename: ['', Validators.required],
-  });
 
   fileBrowseHandler(files: any | null) {
     this.files = files;

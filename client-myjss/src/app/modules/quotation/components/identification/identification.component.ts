@@ -1,8 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { validateSiret } from '../../../../libs/CustomFormsValidatorsHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
+import { RadioGroupAffaireTypeComponent } from '../../../miscellaneous/components/forms/radio-group-affaire-type/radio-group-affaire-type.component';
+import { RadioGroupQuotationTypeComponent } from '../../../miscellaneous/components/forms/radio-group-quotation-type/radio-group-quotation-type.component';
+import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
 import { Affaire } from '../../../my-account/model/Affaire';
 import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
 import { AffaireService } from '../../../my-account/services/affaire.service';
@@ -21,7 +28,14 @@ import { ServiceFamilyGroupService } from '../../services/service.family.group.s
   selector: 'app-identification',
   templateUrl: './identification.component.html',
   styleUrls: ['./identification.component.css'],
-  standalone: false,
+  standalone: true,
+  imports: [SHARED_IMPORTS,
+    GenericInputComponent,
+    RadioGroupQuotationTypeComponent,
+    RadioGroupAffaireTypeComponent,
+    SelectCountryComponent,
+    GenericToggleComponent,
+    AutocompleteCityComponent]
 })
 export class IdentificationComponent implements OnInit {
 
@@ -44,7 +58,7 @@ export class IdentificationComponent implements OnInit {
   currentUser: Responsable | undefined;
   isSavingQuotation: boolean = false;
 
-  currentDraftStep: string | null = this.quotationService.getCurrentDraftQuotationStep();
+  currentDraftStep: string | null = null;
 
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyGroupService: ServiceFamilyGroupService,
@@ -57,11 +71,15 @@ export class IdentificationComponent implements OnInit {
     private cityService: CityService
   ) { }
 
-  idenficationForm = this.formBuilder.group({
-    quotationType: []
-  });
+  idenficationForm!: FormGroup;
 
   ngOnInit() {
+    this.idenficationForm = this.formBuilder.group({
+      quotationType: []
+    });
+
+    this.currentDraftStep = this.quotationService.getCurrentDraftQuotationStep();
+
     this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => this.familyGroupService = response);
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;

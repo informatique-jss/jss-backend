@@ -1,7 +1,7 @@
+import { Mail } from "../../general/model/Mail";
 import { City } from "../../profile/model/City";
 import { Civility } from "../../profile/model/Civility";
 import { Country } from "../../profile/model/Country";
-import { Mail } from "../../profile/model/Mail";
 import { Phone } from "../../profile/model/Phone";
 import { CompetentAuthority } from "./CompetentAuthority";
 import { FormeExerciceActivitePrincipal } from "./FormeExerciceActivitePrincipal";

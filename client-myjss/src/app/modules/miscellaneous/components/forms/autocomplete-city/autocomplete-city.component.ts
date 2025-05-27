@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { Observable } from 'rxjs';
 import { PagedContent } from '../../../../../../../../client/src/app/services/model/PagedContent';
-import { ConstantService } from '../../../../../libs/constant.service';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
+import { ConstantService } from '../../../../main/services/constant.service';
 import { City } from '../../../../profile/model/City';
 import { Country } from '../../../../profile/model/Country';
 import { CityService } from '../../../../quotation/services/city.service';
@@ -12,7 +14,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
   selector: 'autocomplete-city',
   templateUrl: './../generic-autocomplete/generic-autocomplete.component.html',
   styleUrls: ['./../generic-autocomplete/generic-autocomplete.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, AutocompleteLibModule]
 })
 export class AutocompleteCityComponent extends GenericAutocompleteComponent<City, City> implements OnInit {
 

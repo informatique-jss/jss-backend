@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { MY_JSS_HOME_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -22,7 +23,7 @@ declare var tns: any;
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS]
+  imports: [SHARED_IMPORTS, NgbTooltipModule]
 })
 export class MainComponent implements OnInit {
 

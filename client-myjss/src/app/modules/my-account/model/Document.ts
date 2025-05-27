@@ -1,6 +1,6 @@
+import { Mail } from "../../general/model/Mail";
 import { City } from "../../profile/model/City";
 import { Country } from "../../profile/model/Country";
-import { Mail } from "../../profile/model/Mail";
 import { BillingLabelType } from "./BillingLabelType";
 import { DocumentType } from "./DocumentType";
 

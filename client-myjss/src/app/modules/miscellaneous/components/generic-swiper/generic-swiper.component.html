@@ -27,7 +27,8 @@
           <img [src]="firstFixedImg" class="card object-fit-cover" alt="Card image">
         </div>
       </div>
-      <swiper-container #genericSwiper class="genericSwiper" [ngClass]="{'col-9' : firstFixedImg }" init="false">
+      <swiper-container #genericSwiper class="genericSwiper" [ngClass]="{'col-9' : firstFixedImg }" init="false"
+        *ngIf="isBrowser()">
         <swiper-slide *ngFor="let item of items" class="pb-5">
           <ng-container *ngTemplateOutlet="templateRef; context: { $implicit: item }"></ng-container>
         </swiper-slide>

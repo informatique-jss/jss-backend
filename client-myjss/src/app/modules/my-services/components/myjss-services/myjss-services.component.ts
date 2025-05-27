@@ -1,16 +1,18 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
+import { AppService } from '../../../main/services/app.service';
 
 @Component({
   selector: 'jss-services',
   templateUrl: './myjss-services.component.html',
   styleUrls: ['./myjss-services.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class MyJssServicesComponent implements OnInit {
-  myJssServicesItems: MenuItem[] = this.appService.getAllServicesMenuItems();
+  myJssServicesItems!: MenuItem[];
 
   selectedTab: MenuItem | null = null;
 
@@ -20,6 +22,7 @@ export class MyJssServicesComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
+    this.myJssServicesItems = this.appService.getAllServicesMenuItems();
     if (this.myJssServicesItems.length > 0 && this.router.url) {
       this.matchRoute(this.router.url);
     } else {

@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { AppService } from '../../../../libs/app.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { MailService } from '../../services/mail.service';
 
 @Component({
   selector: 'prices',
   templateUrl: './prices.component.html',
   styleUrls: ['./prices.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent]
 })
 export class PricesComponent implements OnInit {
 
@@ -17,7 +20,7 @@ export class PricesComponent implements OnInit {
   lastName: string = "";
   phoneNumber: string = "";
   mail: string = "";
-  pricesForm = this.formBuilder.group({});
+  pricesForm!: FormGroup;
 
   constructor(private formBuilder: FormBuilder,
     private mailService: MailService,
@@ -25,6 +28,7 @@ export class PricesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.pricesForm = this.formBuilder.group({});
   }
 
   getPricesByMail(event: any) {

@@ -1,11 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
 
 @Component({
   selector: 'double-buttons',
   templateUrl: './double-buttons.component.html',
   styleUrls: ['./double-buttons.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class DoubleButtonsComponent implements OnInit {
   @Input() orderActionLabel: string = "";

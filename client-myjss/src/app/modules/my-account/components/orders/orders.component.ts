@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AppService } from '../../../../libs/app.service';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
-import { UserPreferenceService } from '../../../../libs/user.preference.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { UserPreferenceService } from '../../../main/services/user.preference.service';
 import { UserScope } from '../../../profile/model/UserScope';
 import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -22,7 +23,8 @@ declare var bootstrap: any;
   selector: 'app-orders',
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class OrdersComponent implements OnInit {
 
@@ -104,7 +106,6 @@ export class OrdersComponent implements OnInit {
           this.hideSeeMore = true;
       }
       this.isFirstLoading = false;
-      initTooltips();
     })
   }
 
@@ -132,7 +133,6 @@ export class OrdersComponent implements OnInit {
     if (!this.ordersAssoAffaireOrders[order.id]) {
       this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order).subscribe(response => {
         this.ordersAssoAffaireOrders[order.id] = response;
-        initTooltips();
       })
       this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id).subscribe(response => {
         this.ordersInvoiceLabelResult[order.id] = response;
@@ -233,21 +233,6 @@ export function getClassForCustomerOrderStatus(order: CustomerOrder) {
   if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)
     return "bg-dark text-dark";
   return "bg-light text-light";
-}
-
-export function initTooltips(forcedPlacement: string = 'right') {
-  setTimeout(() => {
-    try {
-      if (bootstrap == undefined)
-        return;
-    } catch {
-      return;
-    }
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl, { placement: forcedPlacement })
-    })
-  }, 0);
 }
 
 export function getCustomerOrderBillingMailList(mailComputeResult: MailComputeResult) {

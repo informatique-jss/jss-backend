@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
@@ -16,7 +17,7 @@ import { GenericInputComponent } from '../generic-input/generic-input.component'
   selector: 'category-hub',
   templateUrl: './../generic-hub/generic-hub.component.html',
   styleUrls: ['./../generic-hub/generic-hub.component.css'],
-  imports: [SHARED_IMPORTS, GenericInputComponent],
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbTooltipModule],
   standalone: true
 })
 export class CategoryHubComponent extends GenericHubComponent<JssCategory> implements OnInit {

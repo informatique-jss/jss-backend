@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE } from '../../../../libs/Constants';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { GenericDatePickerComponent } from '../../../miscellaneous/components/forms/generic-date-picker/generic-datetime-picker.component';
+import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
 import { Attachment } from '../../../my-account/model/Attachment';
 import { AttachmentService } from '../../../my-account/services/attachment.service';
@@ -9,7 +12,8 @@ import { UploadState } from '../../model/UploadState';
   selector: 'quotation-file-uploader',
   templateUrl: './quotation-file-uploader.component.html',
   styleUrls: ['./quotation-file-uploader.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericDatePickerComponent, SingleUploadComponent]
 })
 export class QuotationFileUploaderComponent implements OnInit {
 

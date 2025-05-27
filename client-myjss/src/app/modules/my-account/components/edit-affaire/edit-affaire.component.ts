@@ -1,24 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
-import { Mail } from '../../../profile/model/Mail';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { Mail } from '../../../general/model/Mail';
+import { AppService } from '../../../main/services/app.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { Phone } from '../../../profile/model/Phone';
 import { Affaire } from '../../model/Affaire';
 import { AffaireService } from '../../services/affaire.service';
 
 @Component({
-    selector: 'app-edit-affaire',
-    templateUrl: './edit-affaire.component.html',
-    styleUrls: ['./edit-affaire.component.css'],
-    standalone: false
+  selector: 'app-edit-affaire',
+  templateUrl: './edit-affaire.component.html',
+  styleUrls: ['./edit-affaire.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent]
 })
 export class EditAffaireComponent implements OnInit {
 
   affaire: Affaire | undefined;
-  editAffaireForm = this.formBuilder.group({});
+  editAffaireForm!: FormGroup;
   newMail: string = "";
   newPhone: string = "";
 
@@ -33,6 +36,7 @@ export class EditAffaireComponent implements OnInit {
   getListPhones = getListPhones;
 
   ngOnInit() {
+    this.editAffaireForm = this.formBuilder.group({});
     this.affaireService.getAffaire(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.affaire = response;
     })

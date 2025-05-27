@@ -853,40 +853,23 @@ public class WordpressController {
 		return new ResponseEntity<List<IndexEntity>>(new ArrayList<IndexEntity>(), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/announcement/top")
-	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Announcement>> getTopAnnouncement(@RequestParam Integer page, HttpServletRequest request)
-			throws OsirisException {
-		detectFlood(request);
-		return new ResponseEntity<List<Announcement>>(announcementService.getTopAnnouncementForWebSite(page),
-				HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/announcement/search")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Announcement>> getTopAnnouncementSearch(@RequestParam Integer page,
-			@RequestParam String denomination, @RequestParam String siren, @RequestParam String noticeSearch,
-			HttpServletRequest request)
-			throws OsirisException {
+	public ResponseEntity<Page<Announcement>> getTopAnnouncementSearch(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int pageSize, @RequestParam(required = false) String searchText,
+			HttpServletRequest request) throws OsirisException {
+
 		detectFlood(request);
 
-		if (denomination == null || denomination.trim().length() == 0)
-			denomination = "";
-		denomination = denomination.trim().toLowerCase();
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(pageSize),
+				Sort.by(Sort.Direction.DESC, "publicationDate"));
 
-		if (siren == null || siren.trim().length() == 0)
-			siren = "";
-		siren = siren.trim().toLowerCase();
+		if (searchText == null || searchText.trim().length() == 0)
+			searchText = "";
+		searchText = searchText.trim().toLowerCase();
 
-		if (noticeSearch == null || noticeSearch.trim().length() == 0)
-			noticeSearch = "";
-		noticeSearch = noticeSearch.trim().toLowerCase();
-
-		if (denomination.equals("") && siren.equals("") && noticeSearch.equals(""))
-			return new ResponseEntity<List<Announcement>>(new ArrayList<Announcement>(), HttpStatus.OK);
-
-		return new ResponseEntity<List<Announcement>>(
-				announcementService.getAnnouncementForWebSite(page, denomination, siren, noticeSearch), HttpStatus.OK);
+		return new ResponseEntity<Page<Announcement>>(
+				announcementService.getAnnouncementSearch(searchText, pageable), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/unique")

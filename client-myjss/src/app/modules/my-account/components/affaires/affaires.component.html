@@ -129,9 +129,8 @@
                               <div class="fs-sm text-body-secondary fw-bold text-center">
                                 n°{{order.id}}
                                 <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
-                                  data-bs-toggle="tooltip" data-bs-placement="right"
-                                  *ngIf="order.hasMissingInformations"
-                                  title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                                  placement="right" *ngIf="order.hasMissingInformations"
+                                  ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
                               </div>
                               <span class="badge bg-opacity-10 fs-xs text-wrap mt-2"
                                 [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
@@ -195,8 +194,7 @@
                             <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
                             <td>
                               <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
-                                data-bs-toggle="tooltip" data-bs-placement="right" title="Télécharger"
-                                (click)="downloadAttachment(attachment)">
+                                placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
                                 <i class="ai-download"></i>
                               </button>
                             </td>
