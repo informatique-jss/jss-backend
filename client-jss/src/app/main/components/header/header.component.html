@@ -76,15 +76,13 @@
       <!-- Navigation (desktop layout) -->
       <nav class="navbar navbar-expand-lg text-uppercase text-white-100 d-none d-lg-flex">
         <div class="collapse navbar-collapse" id="main_nav">
-          <ul class="navbar-nav me-auto">
-            <!-- Département dropdown -->
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle">Île de France</a>
+          <ul class="navbar-nav me-auto"> 
+            <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle">île
+                de France </a>
               <ul class="dropdown-menu">
-                <li *ngFor="let department of departments">
-                  <a class="dropdown-item" (click)="openDepartment(department, $event)">
-                    {{department.code !== '0' ? department.code + ' - ' : ''}}{{department.name}}
-                  </a>
+                <li> <a *ngFor="let department of departments" class="dropdown-item"
+                    (click)="openDepartment(department,$event)">{{department.code!="0" ?(department.code+ " - ")
+                    :""}}{{department.name}}</a> 
                 </li>
               </ul>
             </li>

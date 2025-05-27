@@ -9,7 +9,7 @@ import { Category } from '../../model/Category';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
-import { AudioService } from '../../services/audio.service';
+import { AudioPlayerService } from '../../services/audio.player.service';
 import { PostService } from '../../services/post.service';
 import { TagService } from '../../services/tag.service';
 
@@ -36,7 +36,7 @@ export class PodcastsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private postService: PostService,
     private tagService: TagService,
-    private audioService: AudioService,
+    private audioService: AudioPlayerService,
     private constantService: ConstantService) { }
 
   ngOnInit() {
@@ -97,17 +97,8 @@ export class PodcastsComponent implements OnInit {
     this.openedListenDropdownPostId = this.openedListenDropdownPostId === postId ? null : postId;
   }
 
-  // Fermer dropdown si clic en dehors
-  //@HostListener('document:click', ['$event'])
-  closeDropdownOnClickOutside(event: Event) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.dropdown')) {
-      this.openedListenDropdownPostId = null;
-    }
-  }
-
   togglePlayPodcast(post: Post) {
-    if (this.audioService.currentPodcast && this.audioService.currentPodcast.id == post.id) {
+    if (this.audioService.currentPost && this.audioService.currentPost.id == post.id) {
       this.audioService.togglePlayPause();
     } else {
       this.audioService.loadTrack(post.id);
@@ -115,6 +106,6 @@ export class PodcastsComponent implements OnInit {
   }
 
   isPlayingPodcast(post: Post) {
-    return this.audioService.isPlayingPodcast(post);
+    return this.audioService.isPlayingPost(post);
   }
 }

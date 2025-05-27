@@ -4,47 +4,55 @@
 
     <!-- Left Column: Image + Titre -->
     <div class="d-flex align-items-center col-md-5 col-12 mb-2 mb-md-0">
-      <a (click)="openPodcasts($event)">
-        <img src="/assets/images/homepage/raide-comme-la-justice.png" alt="Podcast Cover" class="me-3"
-          style="width: 48px; height: 48px; object-fit: cover;">
+      <a (click)="openPost(getCurrentPost()!.id, $event)">
+        <img *ngIf="getIsPodcast(getCurrentPost())" src="/assets/images/homepage/raide-comme-la-justice.png"
+          alt="Podcast Cover" class="me-3" style="width: 48px; height: 48px; object-fit: cover;">
+        <img *ngIf="!getIsPodcast(getCurrentPost())" [src]="getCurrentPost()?.media?.urlThumbnail" alt="Podcast Cover"
+          class="me-3" style="width: 48px; height: 48px; object-fit: cover;">
       </a>
-      <div *ngIf="audioService.currentPodcast && audioService.currentPodcast.titleText" class="overflow-hidden w-100">
+      <div *ngIf="getCurrentPost() && getCurrentPost()!.titleText" class="overflow-hidden w-100">
         <div #scrollTextZone>
-          <div class="d-inline-block text-nowrap"
-            [ngClass]="{ 'animate-scroll': audioService.currentPodcast.titleText.length*16>containerSize }"
-            class="d-inline-block text-nowrap animate-scroll">
-            {{ audioService.currentPodcast.titleText || 'Aucun podcast' }}
-          </div>
+          <a class="d-inline-block text-nowrap text-white"
+            [ngClass]=" { 'animate-scroll' : getCurrentPost()!.titleText.length*16>containerSize }"
+            (click)="openPost(getCurrentPost()!.id, $event)">
+            {{ getCurrentPost()!.titleText || 'Aucun podcast' }}
+          </a>
         </div>
-        <div *ngIf="audioService.currentPodcast" class="text-muted small">Raide comme la justice</div>
+        <div *ngIf="getCurrentPost() && getCurrentPost()!.podcastUrl" class="text-muted small">Raide comme la
+          justice</div>
       </div>
     </div>
 
     <!-- Middle Column: Contrôles -->
     <div class="d-flex col-auto align-items-center justify-content-center mb-2 mb-md-0">
       <a class="btn text-white rounded-circle d-flex align-items-center justify-content-center me-2"
-        style="width: 48px; height: 48px;" (click)="backwardFifteenSecs()">
+        *ngIf="getIsPodcast(getCurrentPost())" style="width: 48px; height: 48px;" (click)="backwardFifteenSecs()">
         <div class="position-relative"><i class="bi-arrow-counterclockwise fs-2"></i>
           <span class="position-absolute top-50 start-50 translate-middle fs-9">15</span>
         </div>
       </a>
       <a class="col-auto btn-light rounded-circle btn-circle-md fs-4 me-2" (click)="togglePlayPause()"><i
-          [ngClass]="audioService.isPlaying ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+          [ngClass]="getIsPlaying() ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
 
       <a class="btn text-white rounded-circle d-flex align-items-center justify-content-center me-2"
-        style="width: 48px; height: 48px;" (click)="forwardFifteenSecs()">
+        *ngIf="getIsPodcast(getCurrentPost())" style="width: 48px; height: 48px;" (click)="forwardFifteenSecs()">
         <div class="position-relative"><i class="bi-arrow-clockwise fs-2"></i>
           <span class="position-absolute top-50 start-50 translate-middle fs-9">15</span>
         </div>
+      </a>
+      <a class="text-white d-flex align-items-center justify-content-center me-2"
+        *ngIf="!getIsPodcast(getCurrentPost())" style="width: 48px; height: 48px;" (click)="changeSpeechRate()">
+        <span class="fs-7 me-1">{{getSpeechRate()}}×</span>
+        <i class="bi-speedometer2 fs-4"></i>
       </a>
     </div>
 
     <!-- Right Column: Progression + Volume -->
     <div class="d-flex col-md-5 align-items-center justify-content-end position-relative">
-      <small class="text-muted me-1">{{ audioService.currentTime*1000 | date:'mm:ss' }}</small>
-      <input type="range" class="form-range flex-grow-1 me-1" [style.--progress.%]="audioService.progress" min="0"
-        max="100" step="0.01" [value]="audioService.progress" (input)="onSeek($event)" />
-      <small class="text-muted">{{ audioService.duration*1000 | date:'mm:ss' }}</small>
+      <small class="text-muted me-1">{{ getCurrentTime()*1000 | date:'mm:ss' }}</small>
+      <input type="range" class="form-range flex-grow-1 me-1" [style.--progress.%]="progress" min="0" max="100"
+        step="0.01" (input)="onSeek($event)" />
+      <small class="text-muted">{{ getDuration()*1000 | date:'mm:ss' }}</small>
 
       <!-- Volume Dropdown Custom -->
       <div class="dropdown dropup ms-2 position-relative" (mouseenter)="onVolumeMouseEnter()"
@@ -53,14 +61,14 @@
         <!-- Volum icon : mute / unmute on clic -->
         <div role="button" tabindex="0" (click)="toggleMute()"
           class=" d-none d-md-block d-flex align-items-center justify-content-center">
-          <i *ngIf="this.audioService.volume != 0" class="bi-volume-up fs-4 m-0"></i>
-          <i *ngIf="this.audioService.volume == 0" class="bi-volume-mute fs-4 m-0"></i>
+          <i *ngIf="getVolume() != 0" class="bi-volume-up fs-4 m-0"></i>
+          <i *ngIf="getVolume() == 0" class="bi-volume-mute fs-4 m-0"></i>
         </div>
 
         <!-- Volume slider dropdown -->
         <div class="dropdown-menu p-2 bg-secondary rounded-1" [class.show]="volumeDropdownOpen"
           style="position: absolute; bottom: 100%; right: -9px; min-width: 40px; writing-mode: vertical-lr; direction: rtl">
-          <input type="range" class="vertical-range m-0" min="0" max="1" step="0.01" [value]="audioService.volume"
+          <input type="range" class="vertical-range m-0" min="0" max="1" step="0.01" [value]="getVolume()"
             (input)="onVolumeChange($event)" />
         </div>
       </div>

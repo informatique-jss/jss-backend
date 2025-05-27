@@ -1,7 +1,10 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
-import { AudioService } from '../../services/audio.service';
+import { Post } from '../../model/Post';
+import { AudioPlayerService } from '../../services/audio.player.service';
+import { PostService } from '../../services/post.service';
 
 @Component({
   selector: 'audio-player',
@@ -15,19 +18,30 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollTextZone') scrollTextRef!: ElementRef;
   containerSize: number = 50;
 
-
   volumeDropdownOpen = false;
   private volumeHoverTimeout: any = null;
 
+  progress: number = 0;
+  progressSubscription: Subscription = new Subscription;
+
+
   menuDropdownOpen = false;
 
-  volumePreviousValue: number = 50;
+  volumePreviousValue: number = 0.5;
 
-  constructor(public audioService: AudioService,
+  constructor(private audioPlayerService: AudioPlayerService,
     private appService: AppService,
+    private postService: PostService,
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
+    this.volumePreviousValue = 0.5;
+
+    this.progressSubscription = this.audioPlayerService.progressObservable.subscribe(item => {
+      this.progress = item;
+      this.cdr.detectChanges();
+    }
+    );
   }
 
   ngAfterViewInit(): void {
@@ -41,26 +55,30 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   togglePlayPause() {
-    this.audioService.togglePlayPause();
+    this.audioPlayerService.togglePlayPause();
+  }
+
+  changeSpeechRate() {
+    this.audioPlayerService.changeSpeechRate();
   }
 
   forwardFifteenSecs() {
-    this.audioService.addTime(15);
+    this.audioPlayerService.addTime(15);
   }
 
   backwardFifteenSecs() {
-    this.audioService.addTime(-15);
+    this.audioPlayerService.addTime(-15);
   }
 
   onSeek(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    this.audioService.seekTo(+value);
+    this.audioPlayerService.seekTo(+value);
   }
 
   onVolumeChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    this.audioService.setVolume(+value);
-    this.volumePreviousValue = this.audioService.volume;
+    this.audioPlayerService.setVolume(+value);
+    this.synchComponentVolumes();
   }
 
   onVolumeMouseEnter() {
@@ -77,8 +95,15 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
   toggleMute() {
     clearTimeout(this.volumeHoverTimeout);
+    if (this.volumePreviousValue === 0) {
+      this.volumePreviousValue = 0.2;
+    }
 
-    this.audioService.setVolume(this.audioService.volume === 0 ? this.volumePreviousValue : 0);
+    this.audioPlayerService.setVolume(this.getVolume() === 0 ? this.volumePreviousValue : 0);
+  }
+
+  synchComponentVolumes() {
+    this.volumePreviousValue = this.getVolume();
   }
 
   onOpenMenu() {
@@ -86,10 +111,47 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   closePlayer() {
-    this.audioService.unloadTrackAndClose();
+    this.audioPlayerService.unloadTrackAndClose();
   }
 
-  openPodcasts(event: any) {
-    this.appService.openRoute(event, "podcasts", undefined);
+  openPost(id: number, event: any) {
+    this.postService.getPostById(id).subscribe(res => {
+      if (res && res.podcastUrl) {
+        this.appService.openRoute(event, "podcasts", undefined);
+      } else if (res && res.id) {
+        this.appService.openRoute(event, "post/" + res.slug, undefined);
+      }
+    });
+  }
+
+  getVolume() {
+    return this.audioPlayerService.getVolume();
+  }
+
+  getCurrentPost() {
+    return this.audioPlayerService.getCurrentPost();
+  }
+
+  getIsPlaying() {
+    return this.audioPlayerService.getIsPlaying();
+  }
+
+  getCurrentTime() {
+    return this.audioPlayerService.getCurrentTime();
+  }
+
+  getDuration() {
+    return this.audioPlayerService.getDuration();
+  }
+
+  getSpeechRate(): number {
+    return this.audioPlayerService.getSpeechRate();
+  }
+
+  getIsPodcast(post: Post | undefined) {
+    if (post)
+      return this.audioPlayerService.isAudioPodcast(post);
+
+    return null;
   }
 }
