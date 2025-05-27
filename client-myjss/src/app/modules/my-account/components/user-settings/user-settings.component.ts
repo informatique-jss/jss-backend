@@ -1,21 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
-import { UserPreferenceService } from '../../../../libs/user.preference.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { UserPreferenceService } from '../../../main/services/user.preference.service';
+import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { UserScopeService } from '../../../profile/services/user.scope.service';
+import { BillingLabelType } from '../../model/BillingLabelType';
 import { Document } from '../../model/Document';
+import { DocumentType } from '../../model/DocumentType';
 import { DocumentService } from '../../services/document.service';
 
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent, AvatarComponent]
 })
 export class UserSettingsComponent implements OnInit {
 
@@ -24,15 +30,15 @@ export class UserSettingsComponent implements OnInit {
   idResponsable: number | undefined;
 
   documents: Document[] | undefined;
-  documentForm = this.formBuilder.group({});
+  documentForm!: FormGroup;
 
-  documentTypeBilling = this.constantService.getDocumentTypeBilling();
-  documentTypeDigital = this.constantService.getDocumentTypeDigital();
-  documentTypePaper = this.constantService.getDocumentTypePaper();
+  documentTypeBilling!: DocumentType;
+  documentTypeDigital!: DocumentType;
+  documentTypePaper!: DocumentType;
 
-  billingLabelTypeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
-  billingLabelTypeCustomer = this.constantService.getBillingLabelTypeCustomer();
-  billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
+  billingLabelTypeAffaire!: BillingLabelType;
+  billingLabelTypeCustomer!: BillingLabelType;
+  billingLabelTypeOther!: BillingLabelType;
 
   constructor(
     private loginService: LoginService,
@@ -50,6 +56,16 @@ export class UserSettingsComponent implements OnInit {
   getListMails = getListMails;
 
   ngOnInit() {
+    this.documentForm = this.formBuilder.group({});
+
+    this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
+    this.documentTypeDigital = this.constantService.getDocumentTypeDigital();
+    this.documentTypePaper = this.constantService.getDocumentTypePaper();
+
+    this.billingLabelTypeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
+    this.billingLabelTypeCustomer = this.constantService.getBillingLabelTypeCustomer();
+    this.billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
+
     this.idResponsable = this.activatedRoute.snapshot.params['idResponsable'];
     this.userScopeService.getUserScope().subscribe(response => {
       this.userScope = [];

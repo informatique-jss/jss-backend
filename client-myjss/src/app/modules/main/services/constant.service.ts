@@ -1,14 +1,17 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Resolve } from '@angular/router';
+import { Observable, of, tap } from 'rxjs';
+import { Constant } from '../model/Constant';
 import { AppRestService } from './appRest.service';
-import { Constant } from './Constant';
+import { PlatformService } from './platform.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ConstantService extends AppRestService<Constant> {
 
-  constructor(http: HttpClient) {
+  constructor(http: HttpClient, private platformService: PlatformService) {
     super(http, "quotation");
   }
 
@@ -19,15 +22,39 @@ export class ConstantService extends AppRestService<Constant> {
   }
 
   initConstant() {
-    if (localStorage.getItem('constants') != null) {
-      let a = localStorage.getItem('constants');
+    if (this.platformService.isBrowser() && this.platformService.getNativeLocalStorage()!.getItem('constants') != null) {
+      let a = this.platformService.getNativeLocalStorage()!.getItem('constants');
       this.constant = JSON.parse(a!) as Constant;
     }
 
     this.getConstants().subscribe(response => {
       this.constant = response;
-      localStorage.setItem('constants', JSON.stringify(this.constant));
+      if (this.platformService.isBrowser())
+        this.platformService.getNativeLocalStorage()!.setItem('constants', JSON.stringify(this.constant));
     });
+  }
+
+  initConstantFromResolver(): Observable<Constant> {
+    if (this.constant && this.constant.id) {
+      return of(this.constant);
+    }
+
+    if (this.platformService.isBrowser()) {
+      const stored = this.platformService.getNativeLocalStorage()?.getItem('constants');
+      if (stored) {
+        this.constant = JSON.parse(stored) as Constant;
+        return of(this.constant);
+      }
+    }
+
+    return this.getConstants().pipe(
+      tap(response => {
+        this.constant = response;
+        if (this.platformService.isBrowser()) {
+          this.platformService.getNativeLocalStorage()?.setItem('constants', JSON.stringify(this.constant));
+        }
+      })
+    );
   }
 
   getPaymentTypeAccount() {
@@ -116,5 +143,15 @@ export class ConstantService extends AppRestService<Constant> {
 
   getAttachmentTypeApplicationCv() {
     return this.constant.attachmentTypeApplicationCv;
+  }
+
+}
+
+@Injectable({ providedIn: 'root' })
+export class ConstantsResolver implements Resolve<any> {
+  constructor(private constantsService: ConstantService) { }
+
+  resolve(): Observable<any> {
+    return this.constantsService.initConstantFromResolver();
   }
 }

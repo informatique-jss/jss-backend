@@ -1,0 +1,14 @@
+.download-btn {
+  color: var(--ar-blue-dark);
+  font-weight: 500;
+  font-size: 16px;
+  border: 1px solid;
+  border-color: var(--ar-blue-dark);
+  height: 46px;
+  padding: 0 24px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}

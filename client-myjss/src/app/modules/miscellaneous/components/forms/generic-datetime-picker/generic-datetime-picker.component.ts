@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
   selector: 'generic-datetime-picker',
   templateUrl: './generic-datetime-picker.component.html',
   styleUrls: ['./generic-datetime-picker.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class GenericDatetimePickerComponent extends GenericFormComponent implements OnInit {
 

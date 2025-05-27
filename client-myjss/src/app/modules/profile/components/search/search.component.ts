@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
 import { EntityType } from '../../../miscellaneous/model/EntityType';
 import { IndexEntity } from '../../model/IndexEntity';
 import { IndexEntityService } from '../../services/index.entity.service';
@@ -15,7 +16,8 @@ export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName:
   selector: 'search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class SearchComponent implements OnInit {
 

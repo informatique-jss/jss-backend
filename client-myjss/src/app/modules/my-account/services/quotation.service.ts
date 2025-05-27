@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from '../../../libs/appRest.service';
 import { MenuItem } from '../../general/model/MenuItem';
+import { AppRestService } from '../../main/services/appRest.service';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { Document } from '../model/Document';
 import { Quotation } from '../model/Quotation';

@@ -189,8 +189,7 @@
                               <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
                               <td>
                                 <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
-                                  data-bs-toggle="tooltip" data-bs-placement="right" title="Télécharger"
-                                  (click)="downloadAttachment(attachment)">
+                                  placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
                                   <i class="ai-download"></i>
                                 </button>
                               </td>

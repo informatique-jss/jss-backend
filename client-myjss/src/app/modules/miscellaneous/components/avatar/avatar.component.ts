@@ -1,12 +1,14 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Employee } from '../../../profile/model/Employee';
 import { Responsable } from '../../../profile/model/Responsable';
 
 @Component({
-    selector: 'avatar',
-    templateUrl: './avatar.component.html',
-    styleUrls: ['./avatar.component.css'],
-    standalone: false
+  selector: 'avatar',
+  templateUrl: './avatar.component.html',
+  styleUrls: ['./avatar.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class AvatarComponent implements OnInit {
 

@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AppService } from '../../../libs/app.service';
-import { AppRestService } from '../../../libs/appRest.service';
+import { AppService } from '../../main/services/app.service';
+import { AppRestService } from '../../main/services/appRest.service';
 import { Responsable } from '../model/Responsable';
 
 export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';

@@ -1,17 +1,19 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
+import { AppService } from '../../../main/services/app.service';
 
 @Component({
-    selector: 'company',
-    templateUrl: './company.component.html',
-    styleUrls: ['./company.component.css'],
-    standalone: false
+  selector: 'company',
+  templateUrl: './company.component.html',
+  styleUrls: ['./company.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class CompanyComponent implements OnInit, AfterContentChecked {
 
-  companyItems: MenuItem[] = this.appService.getAllCompanyMenuItems();
+  companyItems!: MenuItem[];
 
   selectedTab: MenuItem | null = null;
 
@@ -21,6 +23,8 @@ export class CompanyComponent implements OnInit, AfterContentChecked {
     private router: Router) { }
 
   ngOnInit() {
+    this.companyItems = this.appService.getAllCompanyMenuItems();
+
     if (this.companyItems.length > 0 && this.router.url) {
       this.matchRoute(this.router.url);
     } else {

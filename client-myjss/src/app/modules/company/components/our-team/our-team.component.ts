@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { jarallax } from 'jarallax';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { PlatformService } from '../../../main/services/platform.service';
 
 @Component({
   selector: 'our-team',
   templateUrl: './our-team.component.html',
   styleUrls: ['./our-team.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class OurTeamComponent implements OnInit {
 
-  constructor() { }
+  constructor(private platformService: PlatformService) { }
 
   departments: any[] = [
     { name: 'Direction', key: 'direction' },
@@ -98,9 +100,12 @@ export class OurTeamComponent implements OnInit {
 
 
   ngAfterViewInit(): void {
-    jarallax(document.querySelectorAll('.jarallax'), {
-      speed: 0.5
-    });
+    if (this.platformService.getNativeDocument())
+      import('jarallax').then(module => {
+        module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
+          speed: 0.5
+        });
+      });
   }
 
   onTabClick(department: string) {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
@@ -17,7 +18,7 @@ import { SelectPublishingDepartmentComponent } from '../select-publishing-depart
   selector: 'department-hub',
   templateUrl: './department-hub.component.html',
   styleUrls: ['./department-hub.component.css'],
-  imports: [SHARED_IMPORTS, GenericInputComponent, SelectPublishingDepartmentComponent],
+  imports: [SHARED_IMPORTS, GenericInputComponent, SelectPublishingDepartmentComponent, NgbTooltipModule],
   standalone: true
 })
 export class DepartmentHubComponent extends GenericHubComponent<PublishingDepartment> implements OnInit {

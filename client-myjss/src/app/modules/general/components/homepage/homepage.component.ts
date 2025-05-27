@@ -1,13 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
+import { GenericTestimonialComponent } from '../../../miscellaneous/components/generic-testimonial/generic-testimonial.component';
+import { OurClientsComponent } from '../../../miscellaneous/components/our-clients/our-clients.component';
 import { Post } from '../../../tools/model/Post';
 import { PostService } from '../../../tools/services/post.service';
+import { NewsletterComponent } from '../newsletter/newsletter.component';
 
 @Component({
   selector: 'app-homepage',
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericSwiperComponent, GenericTestimonialComponent, NewsletterComponent, OurClientsComponent]
 })
 export class HomepageComponent implements OnInit {
 

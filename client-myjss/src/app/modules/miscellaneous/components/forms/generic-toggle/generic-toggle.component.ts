@@ -1,13 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { AppService } from '../../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
+import { AppService } from '../../../../main/services/app.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
   selector: 'generic-toggle',
   templateUrl: './generic-toggle.component.html',
   styleUrls: ['./generic-toggle.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class GenericToggleComponent extends GenericFormComponent implements OnInit {
 

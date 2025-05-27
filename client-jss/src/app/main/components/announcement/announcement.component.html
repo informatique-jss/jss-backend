@@ -1,45 +1,69 @@
-<!-- =======================
-Inner intro START -->
-<section *ngIf="announcement">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-9 mx-auto pt-md-5">
-        <a class="badge text-bg-warning mb-2 margin-category btn-primary-soft" style="margin-right: 8px;"><i
-            class="fas fa-circle me-2 small fw-bold"></i>{{announcement.noticeTypeFamily.label}}</a>
-        <ng-container *ngIf="announcement.noticeTypes!=null">
-          <a *ngFor="let noticeType of announcement.noticeTypes" style="margin-right: 8px;"
-            class="badge text-bg-primary mb-2 margin-category btn-primary-soft"><i
-              class="fas fa-circle me-2 small fw-bold"></i>{{noticeType.label}}</a>
-        </ng-container>
-        <h1 class="display-4 text-center pt-3">{{announcement.affaireLabel}}</h1>
-        <ul class="nav nav-divider align-items-center">
-          <li class="nav-item " *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
-            <span>{{announcement.affaireSiren}}</span>
-          </li>
-          <li class="nav-item">{{announcement.department.label}} ({{announcement.department.code}})</li>
-          <li class="nav-item">le {{announcement.publicationDate | date:'EEEE d MMMM'}}</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- =======================
-Inner intro END -->
+<section class="pt-4 container">
+  <div class="bg-container">
+    <div class="col-lg-9 mx-auto">
+      <div class="bg-container">
+        <div class="w-100 justify-content-between">
+          <div class="header-hub-bg d-flex align-items-center rounded-1">
+            <div class="row w-100 ">
+              <div class="col-12">
+                <h3 class="section-widget-title ps-4">Consulter une annonce légale</h3>
+              </div>
+            </div>
+          </div>
+          <div>
+            <button class="btn gray-color mt-2" (click)="goBack()">
+              <i class="bi bi-arrow-left gray-color"></i>Retour
+            </button>
+          </div>
+          <section class="position-relative mt-2">
+            <div class="row">
+              <div class="col-12">
+                <div class="card border rounded-2 p-4 mb-4" *ngIf="announcement">
+                  <div class="row">
+                    <div>
+                      <a *ngIf="announcement.noticeTypeFamily"
+                        class="tag-custom-dark mb-2 me-1">{{announcement.noticeTypeFamily.label}}</a>
+                      <ng-container *ngIf="announcement.noticeTypes!=null">
+                        <a *ngFor="let noticeType of announcement.noticeTypes"
+                          class="badge tag-custom-light mb-2 me-1">{{noticeType.label}}</a>
+                      </ng-container>
+                      <h3 class="card-title">
+                        <a
+                          class="btn-link text-reset text-decoration-none stretched-link">{{announcement.affaireLabel}}</a>
+                      </h3>
+                      <ul class="nav nav-divider align-items-center d-sm-inline-block gray-color">
+                        <li class="nav-item" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
+                          {{announcement.affaireSiren}} <span class="mt-2 me-2 bullet-point-custom"></span>
+                        </li>
+                        <li class="nav-item"> {{announcement.department.label}} ({{announcement.department.code}})
+                          <span class="ms-2"></span> {{announcement.publicationDate | date:'EEEE d MMMM y'}}
+                        </li>
+                      </ul>
+                      <div class="col-lg-12 mt-2">
+                        <p *ngIf="announcement && announcement.noticeHeader"><span
+                            [innerHTML]="announcement.noticeHeader| trustHtml"></span></p>
+                        <p *ngIf="announcement && announcement.notice"><span
+                            [innerHTML]="announcement.notice| trustHtml"></span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
 
-<!-- =======================
-Main START -->
-<section class="pt-0">
-  <div class="container position-relative">
-    <div class="row">
-      <!-- Main Content START -->
-      <div class="col-lg-9 mx-auto">
-        <p *ngIf="announcement && announcement.noticeHeader"><span
-            [innerHTML]="announcement.noticeHeader| trustHtml"></span></p>
-        <p *ngIf="announcement && announcement.notice"><span [innerHTML]="announcement.notice| trustHtml"></span></p>
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-6 text-center">
+            <button class="btn btn-lg download-btn w-100 w-md-auto rounded-1" type="submit"
+              (click)="downloadPublicationReceipt()">
+              <span class="d-md-block">Télécharger le témoin de parution</span>
+            </button>
+          </div>
+        </div>
+
       </div>
-      <!-- Main Content END -->
     </div>
+    <newsletter></newsletter>
   </div>
 </section>
-<!-- =======================
-Main END -->

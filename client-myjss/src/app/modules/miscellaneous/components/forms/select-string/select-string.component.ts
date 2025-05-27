@@ -1,12 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
   selector: 'select-string',
   templateUrl: '../generic-select/generic-select.component.html',
   styleUrls: ['../generic-select/generic-select.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class SelectStringComponent extends GenericSelectComponent<string> implements OnInit {
 

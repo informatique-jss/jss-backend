@@ -439,28 +439,41 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
             savedFormaliteGuichetUnique.setFormalite(formalite);
             addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+            boolean isToSign = false;
+            boolean isToPay = false;
 
             if ((savedFormaliteGuichetUnique.getStatus().getCode()
                     .equals(FormaliteGuichetUniqueStatus.SIGNATURE_PENDING)
                     || savedFormaliteGuichetUnique.getStatus().getCode()
                             .equals(FormaliteGuichetUniqueStatus.AMENDMENT_SIGNATURE_PENDING)
                             && savedFormaliteGuichetUnique.getIsAuthorizedToSign() != null
-                            && savedFormaliteGuichetUnique.getIsAuthorizedToSign()))
+                            && savedFormaliteGuichetUnique.getIsAuthorizedToSign())) {
+                isToSign = true;
                 batchService.declareNewBatch(Batch.SIGN_FORMALITE_GUICHET_UNIQUE, savedFormaliteGuichetUnique.getId());
+            }
 
             if (formalite != null && savedFormaliteGuichetUnique != null && (Arrays
                     .asList(FormaliteGuichetUniqueStatus.PAYMENT_PENDING,
-                            FormaliteGuichetUniqueStatus.PAYMENT_VALIDATION_PENDING))
+                            FormaliteGuichetUniqueStatus.PAYMENT_VALIDATION_PENDING,
+                            FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING,
+                            FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_VALIDATION_PENDING))
                     .contains(savedFormaliteGuichetUnique.getStatus().getCode())
                     ||
                     savedFormaliteGuichetUnique != null && (Arrays
-                            .asList(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING,
-                                    FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING,
-                                    FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_VALIDATION_PENDING))
+                            .asList(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING))
                             .contains(savedFormaliteGuichetUnique.getStatus().getCode())
                             && savedFormaliteGuichetUnique.getIsAuthorizedToSign() != null
-                            && savedFormaliteGuichetUnique.getIsAuthorizedToSign())
+                            && savedFormaliteGuichetUnique.getIsAuthorizedToSign()) {
+                isToPay = true;
                 batchService.declareNewBatch(Batch.PAY_FORMALITE_GUICHET_UNIQUE, savedFormaliteGuichetUnique.getId());
+            }
+
+            if (savedFormaliteGuichetUnique != null && formalityHasNewStatus && !isToSign && !isToPay
+                    && savedFormaliteGuichetUnique.getIsAuthorizedToSign() != null
+                    && savedFormaliteGuichetUnique.getIsAuthorizedToSign()) {
+                savedFormaliteGuichetUnique.setIsAuthorizedToSign(false);
+                addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+            }
         }
         return savedFormaliteGuichetUnique;
 

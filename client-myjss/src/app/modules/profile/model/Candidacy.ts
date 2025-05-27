@@ -1,5 +1,5 @@
+import { Mail } from "../../general/model/Mail";
 import { IAttachment } from "../../my-account/model/IAttachment";
-import { Mail } from "./Mail";
 
 export interface Candidacy extends IAttachment {
   id: number;

@@ -42,8 +42,8 @@
         <!-- Search button -->
         <div class="me-3 me-lg-4 ms-auto" *ngIf="currentUser && actualUrl.includes('account')" data-bs-toggle="modal"
           data-bs-target="#searchModal">
-          <a class="nav-link fs-4 p-2 mx-sm-1" style="cursor: pointer;" title="Rechercher" data-bs-toggle="tooltip"
-            data-bs-placement="right" aria-label="Search2">
+          <a class="nav-link fs-4 p-2 mx-sm-1" style="cursor: pointer;" ngbTooltip="Rechercher" placement="right"
+            aria-label="Search2">
             <i class="ai-search"></i>
           </a>
         </div>

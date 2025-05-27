@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
 import { LoginService } from '../../../profile/services/login.service';
 
 @Component({
-    selector: 'app-sign-out',
-    templateUrl: './sign-out.component.html',
-    styleUrls: ['./sign-out.component.css'],
-    standalone: false
+  selector: 'app-sign-out',
+  templateUrl: './sign-out.component.html',
+  styleUrls: ['./sign-out.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class SignOutComponent implements OnInit {
 

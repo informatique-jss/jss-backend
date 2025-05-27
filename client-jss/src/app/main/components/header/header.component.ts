@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
@@ -24,7 +24,8 @@ import { AvatarComponent } from '../avatar/avatar.component';
   styleUrls: ['./header.component.css'],
   imports: [
     SHARED_IMPORTS,
-    AvatarComponent
+    AvatarComponent,
+    NgbTooltipModule
   ],
   standalone: true
 })
@@ -46,6 +47,9 @@ export class HeaderComponent implements OnInit {
 
   capitalizeName = capitalizeName;
 
+  isMobileMenuOpen: boolean = false;
+  showDepartments: boolean = false;
+
   myAccountItems: AccountMenuItem[] = [];
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
   MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
@@ -60,17 +64,6 @@ export class HeaderComponent implements OnInit {
     private modalService: NgbModal
   ) { }
 
-  dropdownOpen = false;
-
-  toggleDropdown(event: Event): void {
-    event.preventDefault();
-    this.dropdownOpen = !this.dropdownOpen;
-  }
-
-  handleItemClick(item: any): void {
-    this.dropdownOpen = false;
-    this.openMyJssRoute(item);
-  }
   ngOnInit() {
     this.myAccountItems = this.appService.getAllAccountMenuItems();
 
@@ -84,6 +77,22 @@ export class HeaderComponent implements OnInit {
       this.categories = categories
       this.categoriesByOrder = this.categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
     });
+  }
+
+  dropdownOpen = false;
+
+  toggleDropdown(event: Event): void {
+    event.preventDefault();
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    this.showDepartments = false;
+  }
+
+  toggleDepartmentDropdown(): void {
+    this.showDepartments = !this.showDepartments;
   }
 
   openMyJssRoute(item: MenuItem) {
@@ -132,23 +141,38 @@ export class HeaderComponent implements OnInit {
   }
 
   openSubscribe(event: any) {
+    this.isMobileMenuOpen = false;
     this.appService.openMyJssRoute(event, MY_JSS_SUBSCRIBE_ROUTE);
   }
 
   openSignIn(event: any) {
+    this.isMobileMenuOpen = false;
     this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
   }
 
   openCategoryPosts(category: JssCategory, event: any) {
+    this.isMobileMenuOpen = false;
     this.appService.openRoute(event, "post/category/" + category.slug, undefined);
     this.hideSearchModal();
   }
 
   openDepartment(department: PublishingDepartment, event: any) {
+    this.isMobileMenuOpen = false;
     this.appService.openRoute(event, "post/department/" + department.id, undefined);
   }
 
+  openPremiumPosts() {
+    this.isMobileMenuOpen = false;
+    // TODO
+  }
+
+  openPodcasts(event: any) {
+    this.isMobileMenuOpen = false;
+    this.appService.openRoute(event, "podcasts", undefined);
+  }
+
   openSearchAnnouncement(event: any) {
+    this.isMobileMenuOpen = false;
     this.appService.openRoute(event, "announcement/search", undefined);
   }
 
@@ -161,6 +185,7 @@ export class HeaderComponent implements OnInit {
   }
 
   openMyJss(event: any) {
+    this.isMobileMenuOpen = false;
     this.appService.openMyJssRoute(event, MY_JSS_HOME_ROUTE);
   }
 

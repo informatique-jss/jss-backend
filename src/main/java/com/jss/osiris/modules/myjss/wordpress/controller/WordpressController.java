@@ -1,5 +1,8 @@
 package com.jss.osiris.modules.myjss.wordpress.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +34,7 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
@@ -55,7 +59,12 @@ import com.jss.osiris.modules.osiris.crm.service.CommentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
+import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -113,6 +122,12 @@ public class WordpressController {
 
 	@Autowired
 	ConstantService constantService;
+
+	@Autowired
+	CustomerOrderService customerOrderService;
+
+	@Autowired
+	GeneratePdfDelegate generatePdfDelegate;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -838,40 +853,23 @@ public class WordpressController {
 		return new ResponseEntity<List<IndexEntity>>(new ArrayList<IndexEntity>(), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/announcement/top")
-	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Announcement>> getTopAnnouncement(@RequestParam Integer page, HttpServletRequest request)
-			throws OsirisException {
-		detectFlood(request);
-		return new ResponseEntity<List<Announcement>>(announcementService.getTopAnnouncementForWebSite(page),
-				HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/announcement/search")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Announcement>> getTopAnnouncementSearch(@RequestParam Integer page,
-			@RequestParam String denomination, @RequestParam String siren, @RequestParam String noticeSearch,
-			HttpServletRequest request)
-			throws OsirisException {
+	public ResponseEntity<Page<Announcement>> getTopAnnouncementSearch(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int pageSize, @RequestParam(required = false) String searchText,
+			HttpServletRequest request) throws OsirisException {
+
 		detectFlood(request);
 
-		if (denomination == null || denomination.trim().length() == 0)
-			denomination = "";
-		denomination = denomination.trim().toLowerCase();
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(pageSize),
+				Sort.by(Sort.Direction.DESC, "publicationDate"));
 
-		if (siren == null || siren.trim().length() == 0)
-			siren = "";
-		siren = siren.trim().toLowerCase();
+		if (searchText == null || searchText.trim().length() == 0)
+			searchText = "";
+		searchText = searchText.trim().toLowerCase();
 
-		if (noticeSearch == null || noticeSearch.trim().length() == 0)
-			noticeSearch = "";
-		noticeSearch = noticeSearch.trim().toLowerCase();
-
-		if (denomination.equals("") && siren.equals("") && noticeSearch.equals(""))
-			return new ResponseEntity<List<Announcement>>(new ArrayList<Announcement>(), HttpStatus.OK);
-
-		return new ResponseEntity<List<Announcement>>(
-				announcementService.getAnnouncementForWebSite(page, denomination, siren, noticeSearch), HttpStatus.OK);
+		return new ResponseEntity<Page<Announcement>>(
+				announcementService.getAnnouncementSearch(searchText, pageable), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/unique")
@@ -888,6 +886,63 @@ public class WordpressController {
 
 		return new ResponseEntity<Announcement>(announcementService.getAnnouncementForWebSite(announcement),
 				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/publication/flag/download")
+	public ResponseEntity<byte[]> downloadPublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement)
+			throws OsirisValidationException, OsirisException {
+		byte[] data = null;
+		HttpHeaders headers = null;
+
+		Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+
+		if (announcement == null)
+			throw new OsirisValidationException("Annonce non trouvée");
+
+		Provision provision = null;
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+		// Get provision
+		if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+			for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+				for (Service service : asso.getServices())
+					for (Provision orderProvision : service.getProvisions())
+						if (orderProvision.getAnnouncement() != null
+								&& orderProvision.getAnnouncement().getId().equals(announcement.getId())) {
+							provision = orderProvision;
+							break;
+						}
+
+		if (provision == null)
+			throw new OsirisValidationException("Provision non trouvée");
+
+		File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, true, false, false);
+
+		if (file != null) {
+			try {
+				data = Files.readAllBytes(file.toPath());
+			} catch (IOException e) {
+				throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+			}
+
+			headers = new HttpHeaders();
+			headers.setContentLength(data.length);
+			headers.add("filename", "Attestation de parution n°" + announcement.getId() + ".pdf");
+			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+			// Compute content type
+			String mimeType = null;
+			try {
+				mimeType = Files.probeContentType(file.toPath());
+			} catch (IOException e) {
+				throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+			}
+			if (mimeType == null)
+				mimeType = "application/pdf";
+			headers.set("content-type", mimeType);
+			file.delete();
+		}
+		return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/comments")

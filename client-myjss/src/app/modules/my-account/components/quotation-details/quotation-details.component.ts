@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { Attachment } from '../../model/Attachment';
+import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
@@ -22,14 +25,15 @@ import { MailComputeResultService } from '../../services/mail.compute.result.ser
 import { QuotationService } from '../../services/quotation.service';
 import { ServiceService } from '../../services/service.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
-import { getCustomerOrderBillingMailList, initTooltips } from '../orders/orders.component';
+import { getCustomerOrderBillingMailList } from '../orders/orders.component';
 import { getClassForQuotationStatus, getQuotationStatusLabel } from '../quotations/quotations.component';
 
 @Component({
   selector: 'app-quotation-details',
   templateUrl: './quotation-details.component.html',
   styleUrls: ['./quotation-details.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, SingleUploadComponent]
 })
 export class QuotationDetailsComponent implements OnInit {
 
@@ -41,7 +45,7 @@ export class QuotationDetailsComponent implements OnInit {
   quotationDigitalMailComputeResult: MailComputeResult | undefined;
   quotationPhysicalMailComputeResult: InvoiceLabelResult | undefined;
   invoiceSummary: InvoicingSummary | undefined;
-  billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
+  billingLabelTypeCodeAffaire!: BillingLabelType;
   associatedCustomerOrder: CustomerOrder | undefined;
 
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
@@ -50,7 +54,7 @@ export class QuotationDetailsComponent implements OnInit {
   currentSelectedAttachmentForDisable: Attachment | undefined;
 
   displayPayButton: boolean = false;
-  quotationDetailsForm = this.formBuilder.group({});
+  quotationDetailsForm!: FormGroup;
 
   canEditQuotation: boolean = false;
 
@@ -82,6 +86,9 @@ export class QuotationDetailsComponent implements OnInit {
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
 
   ngOnInit() {
+    this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
+    this.quotationDetailsForm = this.formBuilder.group({});
+
     this.quotationService.getQuotation(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.quotation = response;
       this.canEditQuotation = this.quotation.quotationStatus.code != QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
@@ -99,7 +106,6 @@ export class QuotationDetailsComponent implements OnInit {
       if (this.quotationAssoAffaireOrders && this.quotationAssoAffaireOrders.length > 0) {
         this.changeAffaire(this.quotationAssoAffaireOrders[0]);
       }
-      initTooltips();
     })
     this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(this.quotation.id).subscribe(response => {
       this.quotationInvoiceLabelResult = response;
@@ -169,7 +175,6 @@ export class QuotationDetailsComponent implements OnInit {
           for (let asso of this.quotationAssoAffaireOrders)
             if (asso.id == this.selectedAssoAffaireOrder.id)
               this.changeAffaire(asso);
-        initTooltips();
       })
   }
 

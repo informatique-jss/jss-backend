@@ -1,10 +1,19 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { GenericDatePickerComponent } from '../../../miscellaneous/components/forms/generic-date-picker/generic-datetime-picker.component';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
+import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
+import { SelectDepartmentComponent } from '../../../miscellaneous/components/forms/select-department/select-department.component';
+import { SelectMultipleNoticeTypeComponent } from '../../../miscellaneous/components/forms/select-multiple-notice-type/select-multiple-notice-type.component';
+import { SelectNoticeTypeFamilyComponent } from '../../../miscellaneous/components/forms/select-notice-type-family/select-notice-type-family.component';
+import { SelectStringComponent } from '../../../miscellaneous/components/forms/select-string/select-string.component';
+import { SelectValueServiceFieldTypeComponent } from '../../../miscellaneous/components/forms/select-value-service-field-type/select-value-service-field-type.component';
 import { Affaire } from '../../../my-account/model/Affaire';
 import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
@@ -26,12 +35,26 @@ import { CivilityService } from '../../services/civility.service';
 import { DepartmentService } from '../../services/department.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
+import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quotation-file-uploader.component';
 
 @Component({
   selector: 'required-information',
   templateUrl: './required-information.component.html',
   styleUrls: ['./required-information.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS,
+    GenericInputComponent,
+    GenericTextareaComponent,
+    GenericDatePickerComponent,
+    QuotationFileUploaderComponent,
+    SelectStringComponent,
+    SelectValueServiceFieldTypeComponent,
+    GenericToggleComponent,
+    SelectDepartmentComponent,
+    SelectNoticeTypeFamilyComponent,
+    SelectMultipleNoticeTypeComponent,
+    CKEditorModule
+  ]
 })
 export class RequiredInformationComponent implements OnInit {
 
@@ -62,6 +85,7 @@ export class RequiredInformationComponent implements OnInit {
   isSaving: boolean = false;
 
   checkedOnce = false;
+  isBrowser = false;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
@@ -86,12 +110,13 @@ export class RequiredInformationComponent implements OnInit {
     private noticeTypeService: NoticeTypeService,
     private departmentService: DepartmentService,
     private civilityService: CivilityService,
-    private constantService: ConstantService,
   ) { }
 
-  informationForm = this.formBuilder.group({});
+  informationForm!: FormGroup;
 
   ngOnInit() {
+    this.informationForm = this.formBuilder.group({});
+
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
       this.initIQuotation();

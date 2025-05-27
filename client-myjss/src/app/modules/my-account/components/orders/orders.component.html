@@ -104,8 +104,8 @@
                   <div class="fs-sm text-body-secondary fw-bold text-center">
                     n°{{order.id}}
                     <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
-                      data-bs-toggle="tooltip" data-bs-placement="right" *ngIf="order.hasMissingInformations"
-                      title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                      placement="right" *ngIf="order.hasMissingInformations"
+                      ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
                   </div>
                   <span class="badge bg-opacity-10 fs-xs text-wrap mt-2 mr-2"
                     [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
@@ -193,8 +193,8 @@
                     <!-- Icône alerte -->
                     <div class="mt-2 mt-sm-0 ps-sm-3 d-flex align-items-center">
                       <i class="ai-triangle-alert fs-base text-danger" style="-webkit-text-stroke: 1px;"
-                        data-bs-toggle="tooltip" data-bs-placement="right" *ngIf="service.hasMissingInformations"
-                        title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du devis">
+                        placement="right" *ngIf="service.hasMissingInformations"
+                        ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du devis">
                       </i>
                     </div>
 

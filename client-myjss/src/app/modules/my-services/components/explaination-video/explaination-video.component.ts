@@ -1,10 +1,14 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Subject, debounceTime, fromEvent, takeUntil } from 'rxjs';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { PlatformService } from '../../../main/services/platform.service';
 
 @Component({
   selector: 'explaination-video',
   templateUrl: './explaination-video.component.html',
   styleUrls: ['./explaination-video.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class ExplainationVideoComponent implements OnInit {
   @Input() title: string = '';
@@ -26,19 +30,32 @@ export class ExplainationVideoComponent implements OnInit {
   videoPlaying = false;
   isMobile: boolean = false;
 
-  constructor() { }
+  private eventResize = new Subject<void>();
+
+  constructor(private platformService: PlatformService) { }
   @ViewChild('videoPlayer') videoPlayer: ElementRef | undefined;
 
   ngOnInit() {
     this.checkIfMobile();
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    this.checkIfMobile();
+  ngOnDestroy(): void {
+    this.eventResize.next();
+    this.eventResize.complete();
+  }
+
+  ngAfterViewInit() {
+    if (this.platformService.isServer()) return;
+
+    fromEvent(window, 'resize')
+      .pipe(debounceTime(200), takeUntil(this.eventResize))
+      .subscribe(() => {
+        this.checkIfMobile();
+      });
   }
 
   private checkIfMobile(): void {
+    if (this.platformService.isServer()) return;
     this.isMobile = window.innerWidth <= 768;
   }
 

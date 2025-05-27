@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ThemeService } from '../../../../libs/theme.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AccountMenuComponent } from '../account-menu/account-menu.component';
 
 @Component({
   selector: '.my-account',
   templateUrl: './my-account.component.html',
   styleUrls: ['./my-account.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, AccountMenuComponent]
 })
 export class MyAccountComponent implements OnInit {
 
   constructor(
-    private router: Router,
-    private themeService: ThemeService
   ) { }
 
   ngOnInit() {

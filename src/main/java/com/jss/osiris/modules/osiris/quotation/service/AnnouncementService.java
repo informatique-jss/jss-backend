@@ -2,6 +2,9 @@ package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -94,10 +97,8 @@ public interface AnnouncementService {
         public void sendReminderToCustomerForBilanPublication(Announcement announcement)
                         throws OsirisException, OsirisClientMessageException;
 
-        public List<Announcement> getAnnouncementForWebSite(Integer page, String denomination, String siren,
-                        String noticeSearch) throws OsirisException;
-
-        public List<Announcement> getTopAnnouncementForWebSite(Integer page) throws OsirisException;
+        public Page<Announcement> getAnnouncementSearch(String searchText, Pageable pageableRequest)
+                        throws OsirisException;
 
         public Announcement getAnnouncementForWebSite(Announcement announcement) throws OsirisException;
 

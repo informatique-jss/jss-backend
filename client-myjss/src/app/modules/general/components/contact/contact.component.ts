@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { jarallax } from 'jarallax';
-import { AppService } from '../../../../libs/app.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { PlatformService } from '../../../main/services/platform.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
 import { MailService } from '../../services/mail.service';
 
 @Component({
   selector: 'contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericTextareaComponent, GenericInputComponent]
 })
 export class ContactComponent implements OnInit {
 
@@ -18,21 +22,25 @@ export class ContactComponent implements OnInit {
   message: string = "";
   emailJss = "contact@jss.fr";
   isConditionAccepted: boolean = false;
+  contactForm!: FormGroup;
 
   constructor(
     private appService: AppService,
     private mailService: MailService,
-    private formBuilder: FormBuilder,) { }
+    private formBuilder: FormBuilder,
+    private platformService: PlatformService) { }
 
   ngOnInit() {
+    this.contactForm = this.formBuilder.group({});
   }
 
-  contactForm = this.formBuilder.group({});
-
   ngAfterViewInit(): void {
-    jarallax(document.querySelectorAll('.jarallax'), {
-      speed: 0.5
-    });
+    if (this.platformService.getNativeDocument())
+      import('jarallax').then(module => {
+        module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
+          speed: 0.5
+        });
+      });
   }
 
   subscribeFormContact(event: any): any {

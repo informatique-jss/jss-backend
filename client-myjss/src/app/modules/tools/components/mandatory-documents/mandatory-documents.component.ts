@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { jarallax } from 'jarallax';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { SERVICE_FIELD_TYPE_SELECT } from '../../../../libs/Constants';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
+import { PlatformService } from '../../../main/services/platform.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { ServiceFamily } from '../../../quotation/model/ServiceFamily';
@@ -12,7 +15,8 @@ import { ServiceTypeService } from '../../../quotation/services/service.type.ser
   selector: 'mandatory-documents',
   templateUrl: './mandatory-documents.component.html',
   styleUrls: ['./mandatory-documents.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent, NewsletterComponent]
 })
 export class MandatoryDocumentsComponent implements OnInit {
 
@@ -22,15 +26,18 @@ export class MandatoryDocumentsComponent implements OnInit {
   selectedFamilyTab: ServiceFamily = {} as ServiceFamily;
   serviceTypesByFamily: { [key: number]: Array<ServiceType> } = {};
   filteredServiceTypesByFamily: { [key: number]: Array<ServiceType> } = {};
+  practicalSheetsForm!: FormGroup;
 
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyService: ServiceFamilyService,
     private serviceTypeService: ServiceTypeService,
+    private platformService: PlatformService
   ) { }
 
   ngOnInit() {
+    this.practicalSheetsForm = this.formBuilder.group({});
     this.serviceFamilyService.getServiceFamiliesForMandatoryDocuments().subscribe(response => {
       if (response) {
         this.serviceFamilies = response;
@@ -52,12 +59,13 @@ export class MandatoryDocumentsComponent implements OnInit {
     });
   }
 
-  practicalSheetsForm = this.formBuilder.group({});
-
   ngAfterViewInit(): void {
-    jarallax(document.querySelectorAll('.jarallax'), {
-      speed: 0.5
-    });
+    if (this.platformService.getNativeDocument())
+      import('jarallax').then(module => {
+        module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
+          speed: 0.5
+        });
+      });
   }
 
   selectFamilyTab(serviceFamily: ServiceFamily) {

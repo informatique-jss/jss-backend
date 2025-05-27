@@ -437,7 +437,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     List<AccountingRecordSearchResult> finalRecords = new ArrayList<AccountingRecordSearchResult>();
     if (getAccountingRecordTableName(accountingRecordSearch.getStartDate().toLocalDate())
-        .equals(this.ACCOUNTING_RECORD_TABLE_NAME)) {
+        .equals(this.ACCOUNTING_RECORD_TABLE_NAME) || accountingRecordSearch.getIdPayment() != 0) {
 
       finalRecords = accountingRecordRepository.searchAccountingRecordsCurrent(accountingAccountId, accountingClass,
           journalId,
