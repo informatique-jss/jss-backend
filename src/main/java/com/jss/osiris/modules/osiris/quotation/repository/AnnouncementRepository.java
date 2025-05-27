@@ -108,7 +108,7 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
                         @Param("announcementStatusDoneId") Integer announcementStatusDoneId,
                         @Param("provisionTypeBilanPublicationId") Integer provisionTypeBilanPublicationId);
 
-        @Query("select a from Announcement a join a.provisions p join p.service s join s.assoAffaireOrder asso join asso.affaire af "
+        @Query("select a from Announcement a join fetch a.provisions p join fetch p.service s join fetch s.assoAffaireOrder asso join fetch asso.affaire af "
                         + " join asso.customerOrder c "
                         + " where a.confrere = :confrere "
                         + " and (:searchText is null or :searchText = '' "
