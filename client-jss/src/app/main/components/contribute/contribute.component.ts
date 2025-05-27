@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
-import { MailService } from '../../services/mail.service';
+import { ContributeService } from '../../services/contribute.service';
 import { GenericInputComponent } from "../generic-input/generic-input.component";
 import { GenericTextareaComponent } from "../generic-textarea/generic-textarea.component";
 import { NewsletterComponent } from "../newsletter/newsletter.component";
@@ -25,7 +25,7 @@ export class ContributeComponent implements OnInit {
   isConditionAccepted: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
-    private mailService: MailService,
+    private mailService: ContributeService,
     private appService: AppService,
   ) { }
 
@@ -33,7 +33,7 @@ export class ContributeComponent implements OnInit {
     this.contributeForm = this.formBuilder.group({});
   }
 
-  subscribeFormContact(event: any): any {
+  contributeContactForm(event: any): any {
     if (!this.firstName || !this.lastName || !this.mail || !this.message) {
       return;
     }
@@ -42,7 +42,7 @@ export class ContributeComponent implements OnInit {
       return;
     }
 
-    this.mailService.subscribeContactForm(this.mail, this.firstName, this.lastName, this.phone, this.message).subscribe(response => {
+    this.mailService.contributeContactForm(this.mail, this.firstName, this.lastName, this.phone, this.message).subscribe(response => {
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande reçue", 3000);
         this.contributeForm.reset();
