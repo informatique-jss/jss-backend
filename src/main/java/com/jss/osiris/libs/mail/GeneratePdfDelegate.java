@@ -315,7 +315,7 @@ public class GeneratePdfDelegate {
         if (tier != null) {
             ctx.setVariable("denomination",
                     tier.getDenomination() != null
-                            ? tier.getDenomination().replaceAll("&", "<![CDATA[&]]>")
+                            ? tier.getDenomination()
                             : (tier.getFirstname() + " " + tier.getLastname()));
             ctx.setVariable("address", tier.getAddress());
             ctx.setVariable("postalCode", tier.getPostalCode());
@@ -385,7 +385,8 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ")
+                .replaceAll("&(?!(amp|lt|gt|quot|apos|#\\d+|#x[\\da-fA-F]+);)", "&amp;"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
