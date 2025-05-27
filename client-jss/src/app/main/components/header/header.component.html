@@ -1,53 +1,15 @@
 <header class="header-area">
-  <div class="header-navbar-top py-1 d-none d-lg-block">
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center flex-wrap py-0">
-        <div class="d-flex flex-wrap">
-          <a (click)="openNewAnnouncement($event)" class="me-2 pointer">PUBLIER UNE ANNONCE LÉGALE <i
-              class="fa fa-external-link-alt ms-1"></i></a>
-          <a (click)="openNewFormality($event)" class="middle-link me-2 px-2  pointer">DÉPOSER UNE FORMALITÉ <i
-              class="fa fa-external-link-alt ms-1"></i></a>
-          <a (click)="openSearchAnnouncement($event)" class=" pointer">CONSULTER UNE ANNONCE LÉGALE <i
-              class="fa fa-external-link-alt ms-1"></i></a>
-        </div>
-        <div class="d-flex align-items-center flex-wrap gap-2">
-          <a routerLink="kiosk">KIOSQUE</a>
-          <a routerLink="newsletter">NEWSLETTER</a>
-          <ul class="list-inline mb-0 d-flex gap-1">
-            <li class="list-inline-item">
-              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#"
-                (click)="openLinkedinJssPage()">
-                <i class="bi-linkedin"></i>
-              </a>
-            </li>
-            <li class="list-inline-item">
-              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#"
-                (click)="openFacebookJssPage()">
-                <i class="bi-facebook"></i>
-              </a>
-            </li>
-            <li class="list-inline-item">
-              <a class="social-icon rounded-circle d-flex align-items-center justify-content-center" href="#"
-                (click)="openInstagramJssPage()">
-                <i class="fab fa-instagram"></i>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="header-navbar-middle d-none d-lg-block">
     <div class="container">
       <div class="navbar-brand-wrapper py-1 d-flex justify-content-between align-items-center">
-        <a class="btn btn-secondary pointer" (click)="openMyJss($event)">MyJSS<i
-            class="fa fa-external-link-alt ms-1"></i></a>
-        <a class="navbar-brand ms-5 ps-3" href="index.html">
-          <img class="lazyload" src="assets/images/homepage/logo.svg" alt="image">
+        <a class="btn btn-secondary btn-fixed-secondary px-3 align-items-center d-flex" (click)="openMyJss($event)"><img
+            src="assets/images/homepage/my-jss-logo-link.svg" /><i class="bi-arrow-up-right ms-1"></i></a>
+        <a class="navbar-brand ms-5 ps-3 " href="index.html">
+          <img class="lazyload" src="assets/images/homepage/logo.svg" style="max-height: 90px;" alt="image">
         </a>
         <div>
           <a class="btn btn-light me-2 pointer" *ngIf="!currentUser" (click)="openSignIn($event)">Se connecter</a>
-          <a class="btn btn-yellow " *ngIf="!currentUser" routerLink="subscription">S'abonner</a>
+          <a class="btn btn-yellow " *ngIf="!currentUser" (click)="openSubscribe($event)">S'abonner</a>
           <!-- User signed in state. Account dropdown on screens > 576px -->
           <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }" *ngIf="currentUser && currentUser.id">
             <a href="#" role="button" class="d-flex align-items-center p-0 user-account dropdown-toggle"
@@ -92,33 +54,146 @@
   </div>
   <div class="header-navbar-bottom pt-2 pt-lg-0 border-top border-light">
     <div class="container themeix-menu-selector">
-      <nav class="navbar text-uppercase text-white-100 navbar-expand-lg">
+
+      <!-- Top bar on mobile: burger - logo - search -->
+      <div class="d-flex justify-content-between align-items-center d-lg-none pb-2 pt-1">
+        <!-- Burger button -->
+        <a class="btn btn-sm text-white rounded-1 border-light" (click)=" toggleMobileMenu()">
+          <i class="bi bi-list fs-3"></i>
+        </a>
+
+        <!-- Mobile logo -->
+        <a class="navbar-brand mx-auto" href="/">
+          <img src="assets/images/homepage/my-jss-logo-white.svg" alt="logo" style="height: 40px;" />
+        </a>
+
+        <!-- Search icon -->
+        <a class="nav-link pointer text-white" (click)="displaySearchModal(searchModal)">
+          <i class="fas fa-search fs-5"></i>
+        </a>
+      </div>
+
+      <!-- Navigation (desktop layout) -->
+      <nav class="navbar navbar-expand-lg text-uppercase text-white-100 d-none d-lg-flex">
         <div class="collapse navbar-collapse" id="main_nav">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown"> <a class="nav-link  dropdown-toggle">île
-                de France </a>
+            <!-- Département dropdown -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle">Île de France</a>
               <ul class="dropdown-menu">
-                <li> <a *ngFor="let department of departments" class="dropdown-item" style="cursor: pointer;"
-                    (click)="openDepartment(department,$event)">{{department.code!="0" ?(department.code+ " - ")
-                    :""}}{{department.name}}</a>
+                <li *ngFor="let department of departments">
+                  <a class="dropdown-item" (click)="openDepartment(department, $event)">
+                    {{department.code !== '0' ? department.code + ' - ' : ''}}{{department.name}}
+                  </a>
                 </li>
               </ul>
             </li>
-            <li class="nav-item" *ngFor="let category of categories"> <a class="nav-link"
-                [ngClass]="{'active':getCurrentRoute().indexOf('/post/category')>=0 && getCurrentRoute().indexOf('/'+category.slug)>=0}"
-                style="cursor: pointer;" (click)="openCategoryPosts(category,$event)">{{category.name}}</a></li>
 
-            <li class="nav-item nav-item-podcast"><span><a class="nav-link podcast-nav-link mt-auto py-0 ps-2"
-                  routerLink="podcasts">Podcast<span><i class="fas fa-bolt"></i></span></a></span></li>
+            <!-- Categories -->
+            <li class="nav-item" *ngFor="let category of categories">
+              <a class="nav-link"
+                [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
+                (click)="openCategoryPosts(category, $event)">
+                {{category.name}}
+              </a>
+            </li>
 
-            <li class="nav-item"><a class="nav-link" href="#"><img src="assets/images/premium-icon.svg"
-                  class="me-1" />Premium</a></li>
+            <!-- Podcast -->
+            <li class="nav-item nav-item-podcast">
+              <span>
+                <a class="nav-link podcast-nav-link mt-auto py-0 ps-2" routerLink="podcasts">
+                  Podcast <span><i class="fas fa-bolt"></i></span>
+                </a>
+              </span>
+            </li>
+
+            <!-- Premium -->
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <img src="assets/images/premium-icon.svg" class="me-1" />Premium
+              </a>
+            </li>
+
+            <!-- Annonce légale -->
+            <li class="nav-item d-flex align-items-center">
+              <button class="btn btn-outline-light fs-9 px-2 m-0 rounded-1" (click)="openSearchAnnouncement($event)">
+                CONSULTER UNE ANNONCE LÉGALE
+              </button>
+            </li>
           </ul>
         </div>
-        <div class="search-modal"><a class="nav-link pointer" (click)="displaySearchModal(searchModal)"> <i
-              class="fas fa-search"></i></a>
-        </div>
       </nav>
+
+      <!-- Navigation Mobile (expandable) -->
+      <div class="d-lg-none" *ngIf="isMobileMenuOpen">
+        <div class="py-3 row g-2">
+          <div class="col">
+            <a class="btn btn-light w-100" *ngIf="!currentUser" (click)="openSignIn($event)">Se connecter</a>
+          </div>
+          <div class="col">
+            <a class="btn btn-yellow btn-yellow-burger w-100" *ngIf="!currentUser"
+              (click)="openSubscribe($event)">S'abonner</a>
+          </div>
+        </div>
+
+        <ul class="navbar-nav me-auto">
+          <!-- Département dropdown -->
+          <li class="nav-item dropdown">
+            <a class="w-100 mb-2" (click)="toggleDepartmentDropdown()">
+              Île-de-France
+              <i class="bi float-end"
+                [ngClass]="{'bi-chevron-down': !showDepartments, 'bi-chevron-up': showDepartments}"></i>
+            </a>
+            <ul class="list-unstyled ps-3" *ngIf="showDepartments">
+              <li *ngFor="let department of departments" class="py-1">
+                <a class="text-white dropdown-item" (click)="openDepartment(department, $event)">
+                  {{department.code !== '0' ? department.code + ' - ' : ''}}{{department.name}}
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Categories -->
+          <li class="nav-item" *ngFor="let category of categories">
+            <a class="nav-link"
+              [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
+              (click)="openCategoryPosts(category, $event)">
+              {{category.name}}
+            </a>
+          </li>
+
+          <!-- Podcast -->
+          <li class="nav-item">
+            <a class="nav-link" (click)="openPodcasts($event)">
+              Podcast
+            </a>
+          </li>
+
+          <!-- Premium -->
+          <li class="nav-item">
+            <a class="nav-link" (click)="openPremiumPosts()">
+              Premium <img src="assets/images/premium-icon.svg" class="ms-1" />
+            </a>
+          </li>
+        </ul>
+        <hr>
+        <!-- End buttons -->
+        <div class="pt-1">
+          <div class="pb-2 row g-2">
+            <div class="col-sm col-12">
+              <a class="btn btn-outline-light w-100 h-100 fs-9 d-flex align-items-center justify-content-center"
+                (click)="openSearchAnnouncement($event)">CONSULTER UNE ANNONCE LÉGALE</a>
+            </div>
+            <div class="col-sm col-12 ">
+              <a class="btn btn-outline-dark w-100 h-100 d-flex align-items-center justify-content-center border-light"
+                (click)=" openMyJss($event)">
+                <img src="assets/images/homepage/my-jss-logo-link.svg" /> <i class="bi-arrow-up-right ms-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </header>

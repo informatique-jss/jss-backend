@@ -3409,8 +3409,7 @@ fieldset:disabled .btn {
 }
 
 .btn-yellow:hover {
-  color: var(--ar-primary);
-  opacity: 80%;
+  color: var(--ar-tertiary-bg);
   border-color: var(--ar-tertiary-bg);
 }
 
@@ -12230,7 +12229,7 @@ blockquote p {
 }
 
 .header-navbar-bottom .navbar-nav>li>a, .header-navbar-bottom .navbar-nav>li>span>a {
-  color: #ffffffb9;
+  color: var(--ar-secondary);
   font-weight: 600;
   font-size: 14px;
   position: relative;
