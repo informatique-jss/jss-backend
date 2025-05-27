@@ -59,7 +59,7 @@
     </div>
     <ul *ngIf="serviceFamilies" class="nav nav-tabs" role="tablist">
       <li class="nav-item " *ngFor="let serviceFamily of serviceFamilies">
-        <a href="#home" class="nav-link quotation-tabs"
+        <a class="nav-link quotation-tabs"
           [ngClass]="{'active' : selectedServiceFamily && selectedServiceFamily.id == serviceFamily.id}"
           data-bs-toggle="tab" role="tab" (click)="selecteServiceFamily(serviceFamily)">
           <i class="{{serviceFamily.myJssIcon}} me-2"></i>

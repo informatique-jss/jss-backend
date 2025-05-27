@@ -60,7 +60,7 @@ export class PracticalSheetsComponent implements OnInit {
     private postService: PostService,
     private appService: AppService,
     private myJssCategoryService: MyJssCategoryService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit() {

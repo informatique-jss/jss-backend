@@ -568,7 +568,7 @@ public class ServiceServiceImpl implements ServiceService {
                 if (service.getServiceTotalPrice().compareTo(new BigDecimal(0)) <= 0f)
                     service.setServiceTotalPrice(null);
                 removeDisabledAttachments(service);
-                removePublicationFlagAssoServiceDocument(service);
+                removeUnusedAssoServiceDocument(service);
 
                 if (service.getProvisions() != null)
                     for (Provision provision : service.getProvisions())
@@ -596,7 +596,7 @@ public class ServiceServiceImpl implements ServiceService {
             }
     }
 
-    private void removePublicationFlagAssoServiceDocument(Service service) throws OsirisException {
+    private void removeUnusedAssoServiceDocument(Service service) throws OsirisException {
         // When published in the same service, do not ask for publication flag, JSS will
         // provide it
         if (service != null && service.getProvisions() != null) {
@@ -615,6 +615,13 @@ public class ServiceServiceImpl implements ServiceService {
                         assoServiceDocument.setIsMandatory(false);
                     }
                 }
+            }
+
+            // Remove "more informations" field
+            for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+                if (assoServiceFieldType.getServiceFieldType().getId()
+                        .equals(constantService.getFurtherInformationServiceFieldType().getId()))
+                    assoServiceFieldType.setIsMandatory(false);
             }
         }
     }

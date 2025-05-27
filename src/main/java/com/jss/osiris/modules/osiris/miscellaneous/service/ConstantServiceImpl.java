@@ -78,19 +78,6 @@ public class ConstantServiceImpl implements ConstantService {
 
     @Override
     public Constant getConstants() throws OsirisException {
-        // TODO : erreur proxy, sur pricingHelper par exemple...
-        /*
-         * if (cachedConstant == null || lastFetchedConstant == null
-         * || lastFetchedConstant.isBefore(LocalDateTime.now().minusSeconds(5))) {
-         * List<Constant> constants =
-         * IterableUtils.toList(constantRepository.findAll());
-         * if (constants == null || constants.size() != 1)
-         * throw new OsirisException(null, "Constants not defined or multiple");
-         * cachedConstant = (Constant) Hibernate.unproxy(constants.get(0));
-         * lastFetchedConstant = LocalDateTime.now();
-         * }
-         * return cachedConstant;
-         */
         List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
         if (constants == null || constants.size() != 1)
             throw new OsirisException(null, "Constants not defined or multiple");

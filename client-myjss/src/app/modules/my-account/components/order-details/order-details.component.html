@@ -153,12 +153,12 @@
             <ul class="nav nav-tabs p-3" role="tablist" style="margin-bottom: 0;">
               <li class="nav-item ">
                 <a [attr.href]="'#myDocs'+service.id" class="nav-link active " data-bs-toggle="tab" role="tab"
-                  *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
+                  *ngIf="displayMyDoc(service)">
                   <i class="fi-home me-2"></i>
                   Mes documents
                 </a>
               </li>
-              <li class="nav-item" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+              <li class="nav-item" *ngIf=" displayMyInformation(service)">
                 <a [attr.href]="'#myFields'+service.id" class="nav-link" data-bs-toggle="tab" role="tab">
                   <i class="fi-home me-2"></i>
                   Mes informations complémentaires

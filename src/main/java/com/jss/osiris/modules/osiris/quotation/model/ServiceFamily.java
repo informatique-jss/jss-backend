@@ -56,6 +56,7 @@ public class ServiceFamily implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "serviceFamily" }, allowSetters = true)
 	private List<ServiceType> services;
 
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Integer myJssOrder;
 
 	private Boolean hideInMyJssMandatoryDocument;

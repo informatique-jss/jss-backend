@@ -56,6 +56,7 @@ export class AutocompletePostComponent extends GenericAutocompleteComponent<Post
 
   triggerSearch(search: string) {
     this.isLoading = true;
+    this.autoComp.searchInput.nativeElement.value = search;
     this.searchEntities(search).subscribe(response => {
       this.isLoading = false;
       if (this.filteredTypes)

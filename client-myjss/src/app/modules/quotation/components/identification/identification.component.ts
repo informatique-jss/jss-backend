@@ -99,12 +99,15 @@ export class IdentificationComponent implements OnInit {
         this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
           this.quotation = response;
           this.refreshIsRegisteredAffaire();
+          this.recomputeAffaireType();
         });
         return;
       } else if (this.orderService.getCurrentDraftOrderId()) {
         this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
+          this.selectedQuotationType = order;
           this.quotation = response
           this.refreshIsRegisteredAffaire();
+          this.recomputeAffaireType();
         });
         return;
       }
@@ -112,10 +115,13 @@ export class IdentificationComponent implements OnInit {
       if (this.quotationService.getCurrentDraftQuotation()) {
         this.quotation = this.quotationService.getCurrentDraftQuotation()!;
         this.refreshIsRegisteredAffaire();
+        this.recomputeAffaireType();
         return;
       } else if (this.orderService.getCurrentDraftOrder()) {
+        this.selectedQuotationType = order;
         this.quotation = this.orderService.getCurrentDraftOrder()!;
         this.refreshIsRegisteredAffaire();
+        this.recomputeAffaireType();
         return;
       }
     }
@@ -147,6 +153,15 @@ export class IdentificationComponent implements OnInit {
     this.isRegisteredAffaire[this.quotation.assoAffaireOrders.length - 1] = true;
     this.affaireTypes[this.quotation.assoAffaireOrders.length - 1] = notIndividual;
     this.currentOpenedPanel = this.quotation.assoAffaireOrders.length - 1;
+  }
+
+  recomputeAffaireType() {
+    if (this.quotation && this.quotation.assoAffaireOrders)
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++)
+        if (this.quotation.assoAffaireOrders[i].affaire.isIndividual)
+          this.affaireTypes[this.quotation.assoAffaireOrders.length - 1] = individual;
+        else
+          this.affaireTypes[this.quotation.assoAffaireOrders.length - 1] = notIndividual;
   }
 
   openPanel(index: number) {
@@ -199,9 +214,6 @@ export class IdentificationComponent implements OnInit {
             }
           }
           if (!asso.affaire.city || !asso.affaire.city.id || !asso.affaire.country || !asso.affaire.country.id || !asso.affaire.postalCode)
-            allAssoOk = false;
-        } else {
-          if (!asso.affaire.siret)
             allAssoOk = false;
         }
       }

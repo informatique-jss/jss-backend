@@ -1,7 +1,9 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
+import { combineLatest } from 'rxjs';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -58,7 +60,7 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
 })
 export class RequiredInformationComponent implements OnInit {
 
-  @ViewChild('confirmBackModal') confirmBackModal!: ElementRef<HTMLDivElement>;
+  @ViewChild('confirmBackModal') confirmBackModal!: TemplateRef<any>;
 
   CONFIER_ANNONCE_AU_JSS: string = "Confier l'annonce légale au JSS";
 
@@ -83,6 +85,7 @@ export class RequiredInformationComponent implements OnInit {
   selectionRedaction: string[] = [this.CONFIER_ANNONCE_AU_JSS, "Je m'occupe de la publication de l'annonce légale"];
   selectedRedaction: string[][] = [];
   isSaving: boolean = false;
+  isGoBack: boolean = false;
 
   checkedOnce = false;
   isBrowser = false;
@@ -98,6 +101,10 @@ export class RequiredInformationComponent implements OnInit {
 
   ckEditorHeader = ClassicEditor;
 
+  goBackModalInstance: any | undefined;
+
+  currentTab: string = 'documents';
+
   constructor(
     private formBuilder: FormBuilder,
     private appService: AppService,
@@ -110,6 +117,7 @@ export class RequiredInformationComponent implements OnInit {
     private noticeTypeService: NoticeTypeService,
     private departmentService: DepartmentService,
     private civilityService: CivilityService,
+    private modalService: NgbModal
   ) { }
 
   informationForm!: FormGroup;
@@ -179,6 +187,8 @@ export class RequiredInformationComponent implements OnInit {
       if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services.length > 0) {
         this.selectedServiceIndex = 0;
       }
+
+      console.log(this.quotation)
 
     }
   }
@@ -285,7 +295,7 @@ export class RequiredInformationComponent implements OnInit {
 
     if (newAssoIndex < 0) {
       this.saveFieldsValue();
-      this.goBackQuotationModale();
+      this.goBackQuotationModale(this.confirmBackModal);
       return;
     }
 
@@ -312,15 +322,43 @@ export class RequiredInformationComponent implements OnInit {
     }, 0);
   }
 
-  goBackQuotationModale() {
-    const modalElement = this.confirmBackModal.nativeElement;
-    const modal = new (window as any).bootstrap.Modal(modalElement);
-    modal.show();
+  goBackQuotationModale(content: TemplateRef<any>) {
+    if (this.goBackModalInstance) {
+      return;
+    }
+
+    this.goBackModalInstance = this.modalService.open(content, {
+      backdrop: 'static',
+    });
+
+    this.goBackModalInstance.result.finally(() => {
+      this.goBackModalInstance = undefined;
+    });
   }
 
   confirmGoBack() {
-    this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-    this.appService.openRoute(undefined, "quotation", undefined);
+    if (this.currentUser) {
+      this.isGoBack = true;
+      let promises = [];
+      if (this.quotation && this.quotation.assoAffaireOrders)
+        for (let asso of this.quotation.assoAffaireOrders)
+          if (asso.services)
+            for (let service of asso.services)
+              promises.push(this.serviceService.deleteService(service));
+      combineLatest(promises).subscribe(response => {
+        this.isGoBack = false;
+        this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
+        this.appService.openRoute(undefined, "quotation", undefined);
+      })
+    } else {
+      if (this.quotation && this.quotation.assoAffaireOrders)
+        for (let asso of this.quotation.assoAffaireOrders)
+          asso.services = [];
+      this.saveFieldsValue();
+      this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
+      this.appService.openRoute(undefined, "quotation", undefined);
+    }
+
   }
 
   changeDoNotGenerateAnnouncement(selection: string, provision: Provision) {

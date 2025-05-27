@@ -8,4 +8,5 @@ export interface ServiceFamily {
   myJssIcon: string;
   comment: string;
   services: ServiceType[];
+  myJssOrder: number;
 }

@@ -34,13 +34,15 @@ export abstract class GenericMultipleSelectComponent<T> extends GenericFormCompo
 
       const control = this.form?.get(this.propertyName);
       if (control && (control.value === null || control.value === undefined) && this.types.length > 0) {
-        control.setValue(this.types[0], { emitEvent: false }); // do not emit change event at loading
+        control.setValue([this.types[0]], { emitEvent: false }); // do not emit change event at loading
       }
     }
 
     if (this.form)
       this.form.get(this.propertyName)?.valueChanges.subscribe(
         (newValue) => {
+          this.model = newValue;
+          this.modelChange.emit(this.model);
           this.selectionChange.emit(this.model);
         }
       );
