@@ -37,7 +37,6 @@ export class PostService extends AppRestService<Post> {
     return this.get(new HttpParams().set("slug", slug), "posts/slug");
   }
 
-
   completeMediaInPosts(posts: Post[]) {
     posts.forEach(post => {
       if (!post.media) {

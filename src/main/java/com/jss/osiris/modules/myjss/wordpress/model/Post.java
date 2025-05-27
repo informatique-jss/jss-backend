@@ -81,7 +81,8 @@ public class Post implements IId {
     private Integer featured_media;
 
     @IndexedField
-    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class,
+            JacksonViews.MyJssDetailedView.class })
     private String slug;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })

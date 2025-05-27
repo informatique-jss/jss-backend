@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -97,8 +97,8 @@ export class PodcastsComponent implements OnInit {
     this.openedListenDropdownPostId = this.openedListenDropdownPostId === postId ? null : postId;
   }
 
-  // Fermer dropdown si clic en dehors
-  //@HostListener('document:click', ['$event'])
+  // Close dropdown if click outside of it
+  @HostListener('document:click', ['$event'])
   closeDropdownOnClickOutside(event: Event) {
     const target = event.target as HTMLElement;
     if (!target.closest('.dropdown')) {
@@ -107,7 +107,7 @@ export class PodcastsComponent implements OnInit {
   }
 
   togglePlayPodcast(post: Post) {
-    if (this.audioService.currentPodcast && this.audioService.currentPodcast.id == post.id) {
+    if (this.audioService.currentPost && this.audioService.currentPost.id == post.id) {
       this.audioService.togglePlayPause();
     } else {
       this.audioService.loadTrack(post.id);
@@ -115,6 +115,6 @@ export class PodcastsComponent implements OnInit {
   }
 
   isPlayingPodcast(post: Post) {
-    return this.audioService.isPlayingPodcast(post);
+    return this.audioService.isPlayingPost(post);
   }
 }

@@ -31,7 +31,7 @@ export class DefaultComponent implements OnInit {
 
   ngOnInit() {
     if (this.platformService.isBrowser())
-      this.currentPodcastSubscription = this.audioService.currentPodcastObservable.subscribe(item => this.currentPodcastId = item);
+      this.currentPodcastSubscription = this.audioService.currentPostObservable.subscribe(item => this.currentPodcastId = item);
   }
 
   ngOnDestroy() {

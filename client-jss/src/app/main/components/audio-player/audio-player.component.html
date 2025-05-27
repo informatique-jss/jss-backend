@@ -4,25 +4,29 @@
 
     <!-- Left Column: Image + Titre -->
     <div class="d-flex align-items-center col-md-5 col-12 mb-2 mb-md-0">
-      <a (click)="openPodcasts($event)">
-        <img src="/assets/images/homepage/raide-comme-la-justice.png" alt="Podcast Cover" class="me-3"
-          style="width: 48px; height: 48px; object-fit: cover;">
+      <a (click)="openPost(getCurrentPost()!.id, $event)">
+        <img *ngIf="getIsPodcast(getCurrentPost())" src="/assets/images/homepage/raide-comme-la-justice.png"
+          alt="Podcast Cover" class="me-3" style="width: 48px; height: 48px; object-fit: cover;">
+        <img *ngIf="!getIsPodcast(getCurrentPost())" [src]="getCurrentPost()?.media?.urlThumbnail" alt="Podcast Cover"
+          class="me-3" style="width: 48px; height: 48px; object-fit: cover;">
       </a>
-      <div *ngIf="getCurrentPodcast() && getCurrentPodcast()!.titleText" class="overflow-hidden w-100">
+      <div *ngIf="getCurrentPost() && getCurrentPost()!.titleText" class="overflow-hidden w-100">
         <div #scrollTextZone>
           <a class="d-inline-block text-nowrap text-white"
-            [ngClass]=" { 'animate-scroll' : getCurrentPodcast()!.titleText.length*16>containerSize }">
-            {{ getCurrentPodcast()!.titleText || 'Aucun podcast' }}
+            [ngClass]=" { 'animate-scroll' : getCurrentPost()!.titleText.length*16>containerSize }"
+            (click)="openPost(getCurrentPost()!.id, $event)">
+            {{ getCurrentPost()!.titleText || 'Aucun podcast' }}
           </a>
         </div>
-        <div *ngIf="currentPodcast" class="text-muted small">Raide comme la justice</div>
+        <div *ngIf="getCurrentPost() && getCurrentPost()!.podcastUrl" class="text-muted small">Raide comme la
+          justice</div>
       </div>
     </div>
 
     <!-- Middle Column: Contrôles -->
     <div class="d-flex col-auto align-items-center justify-content-center mb-2 mb-md-0">
       <a class="btn text-white rounded-circle d-flex align-items-center justify-content-center me-2"
-        style="width: 48px; height: 48px;" (click)="backwardFifteenSecs()">
+        *ngIf="getIsPodcast(getCurrentPost())" style="width: 48px; height: 48px;" (click)="backwardFifteenSecs()">
         <div class="position-relative"><i class="bi-arrow-counterclockwise fs-2"></i>
           <span class="position-absolute top-50 start-50 translate-middle fs-9">15</span>
         </div>
@@ -31,18 +35,23 @@
           [ngClass]="getIsPlaying() ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
 
       <a class="btn text-white rounded-circle d-flex align-items-center justify-content-center me-2"
-        style="width: 48px; height: 48px;" (click)="forwardFifteenSecs()">
+        *ngIf="getIsPodcast(getCurrentPost())" style="width: 48px; height: 48px;" (click)="forwardFifteenSecs()">
         <div class="position-relative"><i class="bi-arrow-clockwise fs-2"></i>
           <span class="position-absolute top-50 start-50 translate-middle fs-9">15</span>
         </div>
+      </a>
+      <a class="text-white d-flex align-items-center justify-content-center me-2"
+        *ngIf="!getIsPodcast(getCurrentPost())" style="width: 48px; height: 48px;" (click)="changeSpeechRate()">
+        <span class="fs-7 me-1">{{getSpeechRate()}}×</span>
+        <i class="bi-speedometer2 fs-4"></i>
       </a>
     </div>
 
     <!-- Right Column: Progression + Volume -->
     <div class="d-flex col-md-5 align-items-center justify-content-end position-relative">
       <small class="text-muted me-1">{{ getCurrentTime()*1000 | date:'mm:ss' }}</small>
-      <input type="range" class="form-range flex-grow-1 me-1" [style.--progress.%]="getProgress()" min="0" max="100"
-        step="0.01" [value]="getProgress()" (input)="onSeek($event)" />
+      <input type="range" class="form-range flex-grow-1 me-1" [style.--progress.%]="progress" min="0" max="100"
+        step="0.01" (input)="onSeek($event)" />
       <small class="text-muted">{{ getDuration()*1000 | date:'mm:ss' }}</small>
 
       <!-- Volume Dropdown Custom -->

@@ -1,8 +1,10 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { Post } from '../../model/Post';
 import { AudioPlayerService } from '../../services/audio.player.service';
+import { PostService } from '../../services/post.service';
 
 @Component({
   selector: 'audio-player',
@@ -19,28 +21,27 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   volumeDropdownOpen = false;
   private volumeHoverTimeout: any = null;
 
+  progress: number = 0;
+  progressSubscription: Subscription = new Subscription;
+
+
   menuDropdownOpen = false;
 
-  volumeCurrentValue: number = 0.5;
   volumePreviousValue: number = 0.5;
-  currentPodcast: Post | undefined;
-  isPlaying: boolean = false;
-  currentTime: number = 0;
-  progress: number = 0;
-  duration: number = 0;
 
   constructor(private audioPlayerService: AudioPlayerService,
     private appService: AppService,
+    private postService: PostService,
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.volumeCurrentValue = this.getVolume();
     this.volumePreviousValue = 0.5;
-    this.currentPodcast = this.getCurrentPodcast();
-    this.isPlaying = this.getIsPlaying();
-    this.currentTime = this.getCurrentTime();
-    this.progress = this.getProgress();
-    this.duration = this.getDuration();
+
+    this.progressSubscription = this.audioPlayerService.progressObservable.subscribe(item => {
+      this.progress = item;
+      this.cdr.detectChanges();
+    }
+    );
   }
 
   ngAfterViewInit(): void {
@@ -55,6 +56,10 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
   togglePlayPause() {
     this.audioPlayerService.togglePlayPause();
+  }
+
+  changeSpeechRate() {
+    this.audioPlayerService.changeSpeechRate();
   }
 
   forwardFifteenSecs() {
@@ -95,12 +100,10 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     }
 
     this.audioPlayerService.setVolume(this.getVolume() === 0 ? this.volumePreviousValue : 0);
-    this.volumeCurrentValue = this.getVolume();
   }
 
   synchComponentVolumes() {
-    this.volumeCurrentValue = this.getVolume();
-    this.volumePreviousValue = this.volumeCurrentValue;
+    this.volumePreviousValue = this.getVolume();
   }
 
   onOpenMenu() {
@@ -111,16 +114,22 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     this.audioPlayerService.unloadTrackAndClose();
   }
 
-  openPodcasts(event: any) {
-    this.appService.openRoute(event, "podcasts", undefined);
+  openPost(id: number, event: any) {
+    this.postService.getPostById(id).subscribe(res => {
+      if (res && res.podcastUrl) {
+        this.appService.openRoute(event, "podcasts", undefined);
+      } else if (res && res.id) {
+        this.appService.openRoute(event, "post/" + res.slug, undefined);
+      }
+    });
   }
 
   getVolume() {
     return this.audioPlayerService.getVolume();
   }
 
-  getCurrentPodcast() {
-    return this.audioPlayerService.getCurrentPodcast();
+  getCurrentPost() {
+    return this.audioPlayerService.getCurrentPost();
   }
 
   getIsPlaying() {
@@ -131,11 +140,18 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     return this.audioPlayerService.getCurrentTime();
   }
 
-  getProgress() {
-    return this.audioPlayerService.getProgress();
-  }
-
   getDuration() {
     return this.audioPlayerService.getDuration();
+  }
+
+  getSpeechRate(): number {
+    return this.audioPlayerService.getSpeechRate();
+  }
+
+  getIsPodcast(post: Post | undefined) {
+    if (post)
+      return this.audioPlayerService.isAudioPodcast(post);
+
+    return null;
   }
 }

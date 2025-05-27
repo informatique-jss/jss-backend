@@ -11,6 +11,7 @@ import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
+import { AudioPlayerService } from '../../services/audio.player.service';
 import { PostService } from '../../services/post.service';
 
 declare var tns: any;
@@ -39,7 +40,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   constructor(private activatedRoute: ActivatedRoute,
     private postService: PostService,
     private appService: AppService,
-    private plateformDocument: PlatformService
+    private plateformDocument: PlatformService,
+    private audioService: AudioPlayerService
   ) { }
 
   getTimeReading = getTimeReading;
@@ -169,20 +171,21 @@ export class PostComponent implements OnInit, AfterViewInit {
     }
   }
 
-  togglePlayPause(): void {
-    const win = this.plateformDocument.getNativeWindow();
-    if (win)
-      if (this.isPlaying === undefined) {
-        this.readArticle();
-        this.isPlaying = true;
-      } else if (this.isPlaying == false) {
-        win.speechSynthesis.resume();
-        this.isPlaying = true;
-      } else {
-        win.speechSynthesis.pause();
-        this.isPlaying = false;
-      }
+  togglePlayPause(post: Post) {
+    if (this.audioService.currentPost && this.audioService.currentPost.id == post.id && this.isPlaying) {
+      this.audioService.togglePlayPause();
+      this.isPlaying = this.audioService.getIsPlaying();
+    } else {
+      this.audioService.loadTrack(post.id);
+      this.isPlaying = true;
+    }
   }
+
+  changeSpeechRate() {
+    this.audioService.changeSpeechRate();
+    this.speechRate = this.audioService.getSpeechRate();
+  }
+
 
   updateSpeed(): void {
     const win = this.plateformDocument.getNativeWindow();
@@ -190,5 +193,9 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.speechSynthesisUtterance.rate = this.speechRate;
       win.speechSynthesis.speak(this.speechSynthesisUtterance);
     }
+  }
+
+  getIsPlaying(post: Post) {
+    return this.audioService.isPlayingPost(post);
   }
 }
