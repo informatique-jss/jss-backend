@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,7 +27,7 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true) })
-public class Post implements IId {
+public class Post implements IId, Serializable {
     @Id
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class,
             JacksonViews.MyJssListView.class })

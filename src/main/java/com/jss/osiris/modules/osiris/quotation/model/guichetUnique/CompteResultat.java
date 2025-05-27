@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.io.Serializable;
+
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
 import jakarta.persistence.CascadeType;
@@ -14,7 +16,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
-public class CompteResultat {
+public class CompteResultat implements Serializable {
     @Id
     @SequenceGenerator(name = "guichet_unique_compte_resultat_sequence", sequenceName = "guichet_unique_compte_resultat_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_compte_resultat_sequence")

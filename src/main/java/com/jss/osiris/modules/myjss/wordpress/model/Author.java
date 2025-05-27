@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -9,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
 
 @Entity
-public class Author {
+public class Author implements Serializable {
 
     @Id
     private Integer id;

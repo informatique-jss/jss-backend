@@ -1,5 +1,6 @@
 package com.jss.osiris.libs.mail.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +41,7 @@ import jakarta.persistence.Table;
         @Index(name = "idx_customer_mail_customer_order", columnList = "id_customer_order"),
         @Index(name = "idx_customer_mail_competent_authority", columnList = "id_competent_authority"),
         @Index(name = "idx_customer_mail_confrere", columnList = "id_confrere") })
-public class CustomerMail {
+public class CustomerMail implements Serializable {
 
     public static String TEMPLATE_WAITING_DEPOSIT = "waiting-deposit";
     public static String TEMPLATE_WAITING_QUOTATION_VALIDATION = "waiting-quotation-validation";

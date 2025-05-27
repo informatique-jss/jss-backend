@@ -1,4 +1,5 @@
 package com.jss.osiris.modules.osiris.quotation.model;
+import java.io.Serializable;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ import jakarta.persistence.Table;
 @Table(indexes = { @Index(name = "idx_formalite_status", columnList = "id_formalite_status"),
         @Index(name = "idx_formalite_id_waited_competent_authority", columnList = "id_waited_competent_authority"),
 })
-public class Formalite implements IId {
+public class Formalite implements IId, Serializable {
 
     @Id
     @SequenceGenerator(name = "formalite_sequence", sequenceName = "formalite_sequence", allocationSize = 1)

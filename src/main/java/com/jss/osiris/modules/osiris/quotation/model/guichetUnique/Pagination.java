@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
@@ -11,7 +13,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
-public class Pagination {
+public class Pagination implements Serializable {
     @Id
     @SequenceGenerator(name = "guichet_unique_pagination_sequence", sequenceName = "guichet_unique_pagination_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_pagination_sequence")

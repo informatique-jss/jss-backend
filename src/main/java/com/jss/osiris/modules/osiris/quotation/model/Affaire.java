@@ -1,5 +1,4 @@
 package com.jss.osiris.modules.osiris.quotation.model;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;

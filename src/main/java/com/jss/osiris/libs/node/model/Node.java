@@ -1,5 +1,6 @@
 package com.jss.osiris.libs.node.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
@@ -11,7 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class Node implements IId {
+public class Node implements IId, Serializable {
 
     @Id
     @SequenceGenerator(name = "node_sequence", sequenceName = "node_sequence", allocationSize = 1)

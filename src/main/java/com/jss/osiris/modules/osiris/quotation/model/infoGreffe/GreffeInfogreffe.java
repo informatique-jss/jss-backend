@@ -1,10 +1,12 @@
 package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
-public class GreffeInfogreffe {
+public class GreffeInfogreffe implements Serializable {
     @Id
     private String numero;
     private String nom;

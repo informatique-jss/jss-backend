@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class CentralPayPaymentRequest {
+public class CentralPayPaymentRequest implements Serializable {
     @Id
     @SequenceGenerator(name = "central_pay_payment_request_sequence", sequenceName = "central_pay_payment_request_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "central_pay_payment_request_sequence")

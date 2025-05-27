@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,7 +28,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_service_missing_attachment_query", columnList = "id_service") })
-public class MissingAttachmentQuery {
+public class MissingAttachmentQuery implements Serializable {
     @Id
     @SequenceGenerator(name = "missing_attachment_query_sequence", sequenceName = "missing_attachment_query_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "missing_attachment_query_sequence")

@@ -1,5 +1,6 @@
 package com.jss.osiris.libs.mail.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -16,7 +17,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class MailComputeResult {
+public class MailComputeResult implements Serializable {
     @Id
     @SequenceGenerator(name = "customer_mail_sequence", sequenceName = "customer_mail_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_mail_sequence")

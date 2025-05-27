@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 
@@ -8,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
 
 @Entity
-public class PublishingDepartment {
+public class PublishingDepartment implements Serializable {
 
     @Id
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })

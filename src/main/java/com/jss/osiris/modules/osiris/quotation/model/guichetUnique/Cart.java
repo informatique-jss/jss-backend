@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,7 +23,7 @@ import jakarta.persistence.Table;
 @Table(indexes = {
         @Index(name = "idx_cart_formalite", columnList = "id_formalite_guichet_unique"),
         @Index(name = "idx_cart_invoice", columnList = "id_invoice") })
-public class Cart {
+public class Cart implements Serializable {
 
     @Id
     private Integer id;
