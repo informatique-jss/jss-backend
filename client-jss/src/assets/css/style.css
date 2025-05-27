@@ -13638,3 +13638,7 @@ ngb-modal-window {
   background-color: var(--ar-blue-light) !important;
   color: var(--ar-blue-dark) !important;
 }
+
+.gray-color {
+  color: var(--bs-gray-700) !important;
+}

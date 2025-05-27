@@ -26,4 +26,8 @@ export class AnnouncementService extends AppRestService<Announcement> {
       params = params.set('searchText', searchText);
     return this.getPagedList(params, "announcement/search", "", "");
   }
+
+  downloadPublicationReceipt(announcement: Announcement) {
+    this.downloadGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "publication/flag/download");
+  }
 }
