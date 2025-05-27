@@ -450,13 +450,13 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
             if (formalite != null && savedFormaliteGuichetUnique != null && (Arrays
                     .asList(FormaliteGuichetUniqueStatus.PAYMENT_PENDING,
-                            FormaliteGuichetUniqueStatus.PAYMENT_VALIDATION_PENDING))
+                            FormaliteGuichetUniqueStatus.PAYMENT_VALIDATION_PENDING,
+                            FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING,
+                            FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_VALIDATION_PENDING))
                     .contains(savedFormaliteGuichetUnique.getStatus().getCode())
                     ||
                     savedFormaliteGuichetUnique != null && (Arrays
-                            .asList(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING,
-                                    FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_PENDING,
-                                    FormaliteGuichetUniqueStatus.AMENDMENT_PAYMENT_VALIDATION_PENDING))
+                            .asList(FormaliteGuichetUniqueStatus.AMENDMENT_PENDING))
                             .contains(savedFormaliteGuichetUnique.getStatus().getCode())
                             && savedFormaliteGuichetUnique.getIsAuthorizedToSign() != null
                             && savedFormaliteGuichetUnique.getIsAuthorizedToSign())
