@@ -1,0 +1,24 @@
+.no-bullet {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+generic-input {
+  border: none;
+}
+
+generic-textarea {
+  border: none;
+}
+
+.contact-btn {
+  background-color: var(--ar-primary);
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  padding: 0 24px;
+  transition: background-color 0.2s ease;
+  height: 46px;
+  white-space: nowrap;
+}

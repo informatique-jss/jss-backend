@@ -823,8 +823,11 @@ public class MailHelper {
     }
 
     public void sendContactFormNotificationMail(String mailAdress, String firstName, String lastName,
+            String phoneNumber,
             String message) throws OsirisException {
-        String explaination = firstName + " " + lastName + " - " + mailAdress + " : " + message;
+        String explaination = firstName + " " + lastName + " - "
+                + (phoneNumber != null && phoneNumber.length() > 0 ? phoneNumber + " - " : "") + mailAdress + " : "
+                + message;
         sendCustomerMailForMyJssMail(constantService.getStringMyJssContactFormRequestMail(), explaination,
                 constantService.getStringMyJssContactFormRequestMail(),
                 "Notification d'une prise d'information client",

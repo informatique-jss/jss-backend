@@ -274,7 +274,8 @@ public class MyJssCrmController {
 
     @GetMapping(inputEntryPoint + "/subscribe/contact")
     public ResponseEntity<Boolean> subscribeContactForm(@RequestParam String mail, @RequestParam String firstName,
-            @RequestParam String lastName, @RequestParam String message,
+            @RequestParam String lastName, @RequestParam(required = false) String phoneNumber,
+            @RequestParam String message,
             HttpServletRequest request) throws OsirisException {
         detectFlood(request);
         if (!validationHelper.validateMail(mail))
@@ -284,8 +285,12 @@ public class MyJssCrmController {
         validationHelper.validateString(lastName, true, 50, "lastname");
         validationHelper.validateString(message, true, 250, "message");
 
+        if (phoneNumber != null
+                && !validationHelper.validateFrenchPhone(phoneNumber))
+            throw new OsirisValidationException("phone");
+
         mailHelper.sendConfirmationContactFormMyJss(mail);
-        mailHelper.sendContactFormNotificationMail(mail, firstName, lastName, message);
+        mailHelper.sendContactFormNotificationMail(mail, firstName, lastName, phoneNumber, message);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
