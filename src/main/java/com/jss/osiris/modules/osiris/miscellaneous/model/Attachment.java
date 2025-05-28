@@ -189,6 +189,7 @@ public class Attachment implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "attachments", "invoices" }, allowSetters = true)
 	private AzureReceipt azureReceipt;
 
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
 	private Boolean isAlreadySent;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
