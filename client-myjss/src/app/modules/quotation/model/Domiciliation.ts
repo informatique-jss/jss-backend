@@ -1,8 +1,18 @@
+import { Mail } from "../../general/model/Mail";
+import { City } from "../../profile/model/City";
+import { Civility } from "../../profile/model/Civility";
+import { Country } from "../../profile/model/Country";
+import { Phone } from "../../profile/model/Phone";
+import { BuildingDomiciliation } from "./BuildingDomiciliation";
+import { DomiciliationContractType } from "./DomiciliationContractType";
+import { Language } from "./Language";
+import { LegalForm } from "./LegalForm";
+import { MailRedirectionType } from "./MailRedirectionType";
 
 
 export interface Domiciliation {
   id: number;
-  /*domiciliationContractType: DomiciliationContractType;
+  domiciliationContractType: DomiciliationContractType;
   language: Language;
   buildingDomiciliation: BuildingDomiciliation;
   mailRedirectionType: MailRedirectionType;
@@ -40,6 +50,6 @@ export interface Domiciliation {
   legalGardianCountry: Country;
   legalGardianMails: Mail[];
   legalGardianPhones: Phone[];
-  domiciliationStatus: DomiciliationStatus;
-  domiciliationFees: DomiciliationFee[];*/
+  // domiciliationStatus: DomiciliationStatus;
+  // domiciliationFees: DomiciliationFee[];
 }

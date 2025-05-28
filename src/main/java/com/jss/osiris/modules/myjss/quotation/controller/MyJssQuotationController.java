@@ -52,6 +52,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
+import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
@@ -60,15 +62,20 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
+import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
@@ -84,8 +91,11 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
+import com.jss.osiris.modules.osiris.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.DomiciliationContractTypeService;
+import com.jss.osiris.modules.osiris.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.NoticeTypeFamilyService;
 import com.jss.osiris.modules.osiris.quotation.service.NoticeTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.PricingHelper;
@@ -199,6 +209,21 @@ public class MyJssQuotationController {
 
 	@Autowired
 	MyJssQuotationDelegate quotationDelegate;
+
+	@Autowired
+	DomiciliationContractTypeService contractTypeService;
+
+	@Autowired
+	LanguageService languageService;
+
+	@Autowired
+	MailRedirectionTypeService mailRedirectionTypeService;
+
+	@Autowired
+	BuildingDomiciliationService buildingDomiciliationService;
+
+	@Autowired
+	LegalFormService legalFormService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1477,6 +1502,47 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<List<Service>>(
 				serviceService.generateServiceInstanceFromMultiServiceTypes(serviceTypes, affaire, null),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/domiciliation-contract-types")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<List<DomiciliationContractType>> getContractTypes() {
+		return new ResponseEntity<List<DomiciliationContractType>>(contractTypeService.getDomiciliationContractTypes(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/languages")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<List<Language>> getLanguages() {
+		return new ResponseEntity<List<Language>>(languageService.getLanguages(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/mail-redirection-types")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<List<MailRedirectionType>> getMailRedirectionTypes() {
+		return new ResponseEntity<List<MailRedirectionType>>(mailRedirectionTypeService.getMailRedirectionTypes(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/building-domiciliations")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<List<BuildingDomiciliation>> getBuildingDomiciliations() {
+		return new ResponseEntity<List<BuildingDomiciliation>>(buildingDomiciliationService.getBuildingDomiciliations(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/legal-forms/label")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<LegalForm>> getLegalFormsByLabel(@RequestParam String label, @RequestParam Integer page,
+			@RequestParam Integer size, HttpServletRequest request) {
+		detectFlood(request);
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.ASC, "label"));
+
+		return new ResponseEntity<Page<LegalForm>>(
+				legalFormService.getLegalFormsByName(label, pageable),
 				HttpStatus.OK);
 	}
 }

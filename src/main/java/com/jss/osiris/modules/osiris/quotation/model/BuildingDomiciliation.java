@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
@@ -22,17 +24,21 @@ public class BuildingDomiciliation implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "building_domiciliation_sequence", sequenceName = "building_domiciliation_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "building_domiciliation_sequence")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@Column(nullable = false, length = 100)
 	private String label;
 
 	@Column(nullable = false, length = 20)
 	private String code;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@Column(length = 60, nullable = false)
 	private String address;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@Column(length = 10)
 	private String postalCode;
 
