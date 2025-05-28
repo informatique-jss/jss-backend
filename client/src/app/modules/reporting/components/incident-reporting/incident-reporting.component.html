@@ -55,15 +55,24 @@
             (cdkDragStarted)="onDragStarted(status.id!,incident)" (cdkDragEnded)="onDragEnded()"
             (click)="fetchEntityAndOpenPanel(incident)">
             <div class="card-content">
-              <strong>{{incident.title}} </strong>
-              <p> </p>
+              <strong>{{incident.provision.service.assoAffaireOrder.affaire.denomination
+                ?incident.provision.service.assoAffaireOrder.affaire.denomination :
+                (incident.provision.service.assoAffaireOrder.affaire.firstname + '
+                '+incident.provision.service.assoAffaireOrder.affaire.lastname)}} </strong>
+              {{incident.provision.service.assoAffaireOrder.affaire.city ? (' - ' +
+              incident.provision.service.assoAffaireOrder.affaire.city.label)
+              :''}}
+              <p>{{incident.provision.service.customLabel}}</p>
+              <p>{{incident.title}}</p>
             </div>
             <div class="card-footer">
               <div class="card-ticket">
-
-                <br /> <span *ngIf="incident.startDate">le {{formatDateFrance(incident.startDate)}}</span>
+                {{ incident.provision.service.assoAffaireOrder.customerOrder.id }} -
+                {{getResponsableLabelIQuotation(incident.provision.service.assoAffaireOrder.customerOrder)}} -
+                {{getTiersLabelIQuotation(incident.provision.service.assoAffaireOrder.customerOrder)}}
+                <br /> le {{formatDateFrance(incident.provision.service.assoAffaireOrder.customerOrder.createdDate)}}
               </div>
-              <div class="card-avatar" *ngIf="incident.assignedTo">
+              <div class="card-avatar">
                 <avatar class="avatar-select" [employee]="incident.assignedTo" [size]="20">
                 </avatar>
               </div>
