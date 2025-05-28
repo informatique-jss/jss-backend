@@ -351,6 +351,16 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-incident-responsibility>
+        <referential-incident-cause *ngIf="selectedReferential==INCIDENT_CAUSE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-incident-cause>
+        <referential-incident-type *ngIf="selectedReferential==INCIDENT_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-incident-type>
         <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
           (click)="saveEntity()">
           <mat-icon>save</mat-icon>

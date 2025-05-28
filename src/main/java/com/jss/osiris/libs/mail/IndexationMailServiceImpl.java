@@ -1,5 +1,7 @@
 package com.jss.osiris.libs.mail;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +67,7 @@ public class IndexationMailServiceImpl implements IndexationMailService {
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeClientCommunication(),
                     ("Mail client - " + currentExportedMail.getSubject().replace(":", " ")
-                            + ".html"),
+                            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".html"),
                     false, null, null, null, null);
         }
     }
