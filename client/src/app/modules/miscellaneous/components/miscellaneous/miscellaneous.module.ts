@@ -225,6 +225,7 @@ import { SelectFollowupComponent } from '../forms/select-followup/select-followu
 import { SelectFormaliteInfogreffeStatusComponent } from '../forms/select-formalite-infogreffe-status/select-formalite-infogreffe-status.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
+import { SelectIncidentCauseComponent } from '../forms/select-incident-cause/select-incident-cause.component';
 import { SelectIncidentReportStatusComponent } from '../forms/select-incident-report-status/select-incident-report-status.component';
 import { SelectIncidentResponsibilityComponent } from '../forms/select-incident-responsibility/select-incident-responsibility.component';
 import { SelectIncidentTypeComponent } from '../forms/select-incident-type/select-incident-type.component';
@@ -284,7 +285,6 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
-import { SelectIncidentCauseComponent } from '../forms/select-incident-cause/select-incident-cause.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -582,7 +582,7 @@ const routes: Routes = [
     SelectInvoicingBlockageComponent,
     SelectIncidentResponsibilityComponent,
     SelectIncidentReportStatusComponent,
-    SelectPublishingDepartmentComponent
+    SelectPublishingDepartmentComponent,
     SelectIncidentCauseComponent,
     SelectIncidentTypeComponent,
   ],
@@ -840,7 +840,7 @@ const routes: Routes = [
     SelectInvoicingBlockageComponent,
     SelectIncidentResponsibilityComponent,
     SelectIncidentReportStatusComponent,
-    SelectPublishingDepartmentComponent
+    SelectPublishingDepartmentComponent,
     SelectIncidentCauseComponent,
     SelectIncidentTypeComponent,
   ], providers: [
