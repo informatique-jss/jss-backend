@@ -26,15 +26,19 @@ import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.reporting.model.IncidentCause;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReportStatus;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentResponsibility;
+import com.jss.osiris.modules.osiris.reporting.model.IncidentType;
 import com.jss.osiris.modules.osiris.reporting.model.UserReporting;
 import com.jss.osiris.modules.osiris.reporting.service.AnnouncementReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.CustomerOrderReportingService;
+import com.jss.osiris.modules.osiris.reporting.service.IncidentCauseService;
 import com.jss.osiris.modules.osiris.reporting.service.IncidentReportService;
 import com.jss.osiris.modules.osiris.reporting.service.IncidentReportStatusService;
 import com.jss.osiris.modules.osiris.reporting.service.IncidentResponsibilityService;
+import com.jss.osiris.modules.osiris.reporting.service.IncidentTypeService;
 import com.jss.osiris.modules.osiris.reporting.service.ProvisionProductionReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.ProvisionReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.QuotationReportingService;
@@ -99,6 +103,46 @@ public class ReportingController {
 
 	@Autowired
 	CustomerOrderService customerOrderService;
+
+	@Autowired
+	IncidentCauseService incidentCauseService;
+
+	@Autowired
+	IncidentTypeService incidentTypeService;
+
+	@GetMapping(inputEntryPoint + "/incident-types")
+	public ResponseEntity<List<IncidentType>> getIncidentTypes() {
+		return new ResponseEntity<List<IncidentType>>(incidentTypeService.getIncidentTypes(), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/incident-type")
+	public ResponseEntity<IncidentType> addOrUpdateIncidentType(
+			@RequestBody IncidentType incidentTypes) throws OsirisValidationException, OsirisException {
+		if (incidentTypes.getId() != null)
+			validationHelper.validateReferential(incidentTypes, true, "incidentTypes");
+		validationHelper.validateString(incidentTypes.getCode(), true, "code");
+		validationHelper.validateString(incidentTypes.getLabel(), true, "label");
+
+		return new ResponseEntity<IncidentType>(incidentTypeService.addOrUpdateIncidentType(incidentTypes),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/incident-causes")
+	public ResponseEntity<List<IncidentCause>> getIncidentCauses() {
+		return new ResponseEntity<List<IncidentCause>>(incidentCauseService.getIncidentCauses(), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/incident-cause")
+	public ResponseEntity<IncidentCause> addOrUpdateIncidentCause(
+			@RequestBody IncidentCause incidentCauses) throws OsirisValidationException, OsirisException {
+		if (incidentCauses.getId() != null)
+			validationHelper.validateReferential(incidentCauses, true, "incidentCauses");
+		validationHelper.validateString(incidentCauses.getCode(), true, "code");
+		validationHelper.validateString(incidentCauses.getLabel(), true, "label");
+
+		return new ResponseEntity<IncidentCause>(incidentCauseService.addOrUpdateIncidentCause(incidentCauses),
+				HttpStatus.OK);
+	}
 
 	@GetMapping(inputEntryPoint + "/incident-responsibilities")
 	public ResponseEntity<List<IncidentResponsibility>> getIncidentResponsibilities() {
@@ -308,6 +352,8 @@ public class ReportingController {
 		validationHelper.validateReferential(incidentReports.getIncidentReportStatus(), false, "incidentReportStatus");
 		validationHelper.validateReferential(incidentReports.getIncidentResponsibility(), false,
 				"incidentResponsibility");
+		validationHelper.validateReferential(incidentReports.getIncidentType(), false, "incidentType");
+		validationHelper.validateReferential(incidentReports.getIncidentCause(), false, "incidentCause");
 		validationHelper.validateReferential(incidentReports.getAssignedTo(), false, "assignedTo");
 		validationHelper.validateReferential(incidentReports.getInitiatedBy(), false, "initiatedBy");
 		validationHelper.validateString(incidentReports.getTitle(), true, 200, "title");

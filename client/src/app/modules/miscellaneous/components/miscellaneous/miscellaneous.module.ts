@@ -227,6 +227,7 @@ import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-t
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
 import { SelectIncidentReportStatusComponent } from '../forms/select-incident-report-status/select-incident-report-status.component';
 import { SelectIncidentResponsibilityComponent } from '../forms/select-incident-responsibility/select-incident-responsibility.component';
+import { SelectIncidentTypeComponent } from '../forms/select-incident-type/select-incident-type.component';
 import { SelectIndicatorGroupComponent } from '../forms/select-indicator-group/select-indicator-group.component';
 import { SelectIndicatorComponent } from '../forms/select-indicator/select-indicator.component';
 import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-one/select-invoice-status-one.component';
@@ -283,6 +284,7 @@ import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.compone
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
+import { SelectIncidentCauseComponent } from '../forms/select-incident-cause/select-incident-cause.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
@@ -581,6 +583,8 @@ const routes: Routes = [
     SelectIncidentResponsibilityComponent,
     SelectIncidentReportStatusComponent,
     SelectPublishingDepartmentComponent
+    SelectIncidentCauseComponent,
+    SelectIncidentTypeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -837,6 +841,8 @@ const routes: Routes = [
     SelectIncidentResponsibilityComponent,
     SelectIncidentReportStatusComponent,
     SelectPublishingDepartmentComponent
+    SelectIncidentCauseComponent,
+    SelectIncidentTypeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

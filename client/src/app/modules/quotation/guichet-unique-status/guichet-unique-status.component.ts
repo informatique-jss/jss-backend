@@ -1,6 +1,8 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { combineLatest } from 'rxjs';
 import { GUICHET_UNIQUE_STATUS_VALIDATION_PENDING } from 'src/app/libs/Constants';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
+import { FormaliteGuichetUniqueService } from '../../miscellaneous/services/formalite.guichet.unique.service';
 import { FormaliteGuichetUnique } from '../model/guichet-unique/FormaliteGuichetUnique';
 import { ValidationRequest } from '../model/guichet-unique/ValidationRequest';
 
@@ -11,13 +13,25 @@ import { ValidationRequest } from '../model/guichet-unique/ValidationRequest';
 })
 export class GuichetUniqueStatusComponent implements OnInit {
 
-  @Input() formalitesGuichetUnique: FormaliteGuichetUnique[] | undefined;
+  @Input() formalitesGuichetUniqueIn: FormaliteGuichetUnique[] | undefined;
+  formalitesGuichetUnique: FormaliteGuichetUnique[] | undefined;
   GUICHET_UNIQUE_STATUS_VALIDATION_PENDING = GUICHET_UNIQUE_STATUS_VALIDATION_PENDING;
   selectedIndex: number[] = [];
-  constructor() { }
+  constructor(
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService
+  ) { }
 
   ngOnInit() {
-    this.orderValidationRequests();
+    let promises = [];
+    if (this.formalitesGuichetUniqueIn) {
+      for (let formalite of this.formalitesGuichetUniqueIn)
+        promises.push(this.formaliteGuichetUniqueService.getFormaliteGuichetUniqueService(formalite.id));
+
+      combineLatest(promises).subscribe(response => {
+        this.formalitesGuichetUnique = response;
+        this.orderValidationRequests();
+      })
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
