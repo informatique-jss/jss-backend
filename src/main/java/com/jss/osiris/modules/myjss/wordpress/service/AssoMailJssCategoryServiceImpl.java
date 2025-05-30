@@ -64,9 +64,11 @@ public class AssoMailJssCategoryServiceImpl implements AssoMailJssCategoryServic
     public AssoMailJssCategory updateJssCategoryConsultationDate(Mail mail, JssCategory jssCategory) {
         AssoMailJssCategory AssoMailJssCategory = assoMailJssCategoryRepository.findByMailAndJssCategory(mail,
                 jssCategory);
-        if (AssoMailJssCategory != null)
+        if (AssoMailJssCategory != null) {
             AssoMailJssCategory.setLastConsultationDate(LocalDateTime.now());
-        return addOrUpdateAssoMailJssCategory(AssoMailJssCategory);
+            return addOrUpdateAssoMailJssCategory(AssoMailJssCategory);
+        }
+        return AssoMailJssCategory;
     }
 
     @Override

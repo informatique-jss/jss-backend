@@ -98,7 +98,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         List<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b);
 
-        @Query("SELECT p FROM Post p WHERE :tag MEMBER OF p.postTags AND :category MEMBER OF p.postCategories AND p.isCancelled = :b AND p.date<=CURRENT_TIMESTAMP and p.date<=CURRENT_TIMESTAMP and p.date>:consultationDate  and size(p.jssCategories) > 0")
+        @Query("SELECT p FROM Post p WHERE :tag MEMBER OF p.postTags AND :category MEMBER OF p.postCategories AND p.isCancelled = :b and p.date<=CURRENT_TIMESTAMP and p.date>:consultationDate  and size(p.jssCategories) > 0")
         Page<Post> findByPostTagsAndIsCancelled(Tag tag, Category category, boolean b, LocalDateTime consultationDate,
                         Pageable pageableRequest);
 

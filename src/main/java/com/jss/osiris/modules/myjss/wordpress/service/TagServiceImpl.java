@@ -86,18 +86,14 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> getAllTagsByTag(Tag tag, LocalDateTime consultationDate) throws OsirisException {
-        List<Tag> tags = new ArrayList<>();
         if (tag != null) {
             Pageable pageable = PageRequest.of(0, 1000000,
                     Sort.by(Sort.Direction.DESC, "date"));
             Page<Post> posts = postService.getAllPostsByTag(pageable, tag, null, consultationDate);
 
-            for (Post post : posts.getContent()) {
-                if (post.getPostTags() != null && !post.getPostTags().isEmpty())
-                    tags.addAll(post.getPostTags());
-            }
+            return computeTagsLinkedToPost(posts);
         }
-        return tags;
+        return null;
     }
 
     @Override

@@ -61,9 +61,11 @@ public class AssoMailTagServiceImpl implements AssoMailTagService {
     @Override
     public AssoMailTag updateTagConsultationDate(Mail mail, Tag tag) {
         AssoMailTag assoMailTag = assoMailTagRepository.findByMailAndTag(mail, tag);
-        if (assoMailTag != null)
+        if (assoMailTag != null) {
             assoMailTag.setLastConsultationDate(LocalDateTime.now());
-        return addOrUpdateAssoMailTag(assoMailTag);
+            return addOrUpdateAssoMailTag(assoMailTag);
+        }
+        return assoMailTag;
     }
 
     @Override

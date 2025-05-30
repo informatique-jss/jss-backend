@@ -55,7 +55,7 @@ public class AssoMailAuthorServiceImpl implements AssoMailAuthorService {
         AssoMailAuthor assoMailAuthor = assoMailAuthorRepository.findByMailAndAuthor(mail, author);
         if (assoMailAuthor != null) {
             assoMailAuthor.setLastConsultationDate(LocalDateTime.now());
-            addOrUpdateAssoMailAuthor(assoMailAuthor);
+            return addOrUpdateAssoMailAuthor(assoMailAuthor);
         }
         return assoMailAuthor;
     }
