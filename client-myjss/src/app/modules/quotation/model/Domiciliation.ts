@@ -52,4 +52,9 @@ export interface Domiciliation {
   legalGardianPhones: Phone[];
   // domiciliationStatus: DomiciliationStatus;
   // domiciliationFees: DomiciliationFee[];
+  accountingDocumentsConservationAddress: string;
+  accountingDocumentsConservationPostalCode: string;
+  accountingDocumentsConservationCedexComplement: string;
+  accountingDocumentsConservationCity: City;
+  accountingDocumentsConservationCountry: Country;
 }

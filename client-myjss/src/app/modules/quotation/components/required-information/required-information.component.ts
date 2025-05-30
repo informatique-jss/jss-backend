@@ -448,6 +448,15 @@ export class RequiredInformationComponent implements OnInit {
     }
   }
 
+  findCityForAccountingDomiciliation(domiciliation: Domiciliation) {
+    if (domiciliation && domiciliation.accountingDocumentsConservationPostalCode) {
+      this.cityService.getCitiesByPostalCode(domiciliation.accountingDocumentsConservationPostalCode).subscribe(response => {
+        if (response && response.length == 1)
+          domiciliation.accountingDocumentsConservationCity = response[0];
+      })
+    }
+  }
+
   addLegalGardianMail(domiciliation: Domiciliation) {
     if (domiciliation)
       if (this.newMailLegalGardian && (validateEmail(this.newMailLegalGardian))) {
