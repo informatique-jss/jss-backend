@@ -2544,6 +2544,15 @@ public class QuotationController {
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/formalite-guichet-unique")
+  public ResponseEntity<FormaliteGuichetUnique> getFormaliteGuichetUniqueService(
+      @RequestParam Integer idFormaliteGuichetUnique)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    return new ResponseEntity<FormaliteGuichetUnique>(
+        formaliteGuichetUniqueService.getFormaliteGuichetUnique(idFormaliteGuichetUnique), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/formalite-infogreffe/search")
   public ResponseEntity<List<FormaliteInfogreffe>> getFormaliteInfogreffeServiceByReference(
       @RequestParam String value)

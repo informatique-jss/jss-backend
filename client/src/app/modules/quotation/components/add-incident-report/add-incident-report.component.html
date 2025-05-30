@@ -58,6 +58,13 @@
           </tr>
           <tr>
             <td>
+              <select-incident-type *ngIf="incident.id" [(model)]="incident.incidentType" label="Type d'incident"
+                [form]="incidentForm" propertyName="incidentType" [isMandatory]="false"
+                [isDisabled]="!canDisplayManagementFieldsInIncidentReport()"></select-incident-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-textarea [(model)]="incident.customerImpact" label="Quel a été l'impact pour le client ?"
                 [form]="incidentForm" propertyName="customerImpact" [isMandatory]="false"
                 [isDisabled]="false"></generic-textarea>
@@ -103,6 +110,14 @@
           </tr>
           <tr>
             <td>
+              <select-incident-cause *ngIf="incident.id" [(model)]="incident.incidentCause"
+                label="Catégorisation de la cause" [form]="incidentForm" propertyName="incidentCause"
+                [isMandatory]="false"
+                [isDisabled]="!canDisplayManagementFieldsInIncidentReport()"></select-incident-cause>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-textarea [(model)]="incident.remedialActions"
                 label="Quelles actions correctives ont été mennées ?" [form]="incidentForm"
                 propertyName="remedialActions" [isMandatory]="false" [isDisabled]="false"></generic-textarea>
@@ -126,14 +141,15 @@
             <td>
               <generic-textarea [(model)]="incident.managementComments" label="Commentaires (à remplir par le manager)"
                 [form]="incidentForm" propertyName="managementComments" [isMandatory]="false"
-                [isDisabled]="false"></generic-textarea>
+                [isDisabled]="!canDisplayManagementFieldsInIncidentReport()"></generic-textarea>
             </td>
           </tr>
           <tr>
             <td>
               <generic-textarea [(model)]="incident.preventiveActions"
                 label="Actions préventives menées (à remplir par le manager)" [form]="incidentForm"
-                propertyName="preventiveActions" [isMandatory]="false" [isDisabled]="false"></generic-textarea>
+                propertyName="preventiveActions" [isMandatory]="false"
+                [isDisabled]="!canDisplayManagementFieldsInIncidentReport()"></generic-textarea>
             </td>
           </tr>
         </table>

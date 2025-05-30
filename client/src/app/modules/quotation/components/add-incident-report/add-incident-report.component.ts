@@ -47,6 +47,10 @@ export class AddIncidentReportComponent implements OnInit {
     return this.habilitationService.canUpdateIncidentResponsibility();
   }
 
+  canDisplayManagementFieldsInIncidentReport() {
+    return this.habilitationService.canDisplayManagementFieldsInIncidentReport();
+  }
+
   saveIncident() {
     if (this.incident && this.incident.title && this.customerOrder) {
       this.incident.customerOrder = this.customerOrder;

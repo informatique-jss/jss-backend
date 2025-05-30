@@ -56,6 +56,11 @@ public class IncidentReportServiceImpl implements IncidentReportService {
     @Transactional(rollbackFor = Exception.class)
     public IncidentReport addOrUpdateIncidentReport(
             IncidentReport incidentReport) throws OsirisException {
+
+        IncidentReport currentIncidentReport = null;
+        if (incidentReport.getId() != null)
+            currentIncidentReport = getIncidentReport(incidentReport.getId());
+
         if (incidentReport.getIncidentReportStatus() == null) {
             incidentReport.setIncidentReportStatus(
                     incidentReportStatusService.getIncidentReportStatusByCode(IncidentReportStatus.TO_COMPLETE));
@@ -67,10 +72,15 @@ public class IncidentReportServiceImpl implements IncidentReportService {
             incidentReport.setAssignedTo(incidentReport.getProvision().getAssignedTo());
         }
 
-        boolean isNew = incidentReport.getId() == null;
+        boolean isToNotify = incidentReport.getId() == null;
+
+        if (!isToNotify && currentIncidentReport != null
+                && !currentIncidentReport.getAssignedTo().getId().equals(incidentReport.getAssignedTo().getId()))
+            isToNotify = true;
+
         incidentReportRepository.save(incidentReport);
 
-        if (isNew)
+        if (isToNotify)
             notificationService.notifyIncidentReportAsked(incidentReport);
 
         return incidentReport;

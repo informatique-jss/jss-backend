@@ -57,7 +57,7 @@
     </mat-tab>
     <mat-tab label="Historique GU" *ngIf="formalite && formalite.id && formalite.formalitesGuichetUnique ">
       <ng-template matTabContent>
-        <guichet-unique-status [formalitesGuichetUnique]="formalite.formalitesGuichetUnique"></guichet-unique-status>
+        <guichet-unique-status [formalitesGuichetUniqueIn]="formalite.formalitesGuichetUnique"></guichet-unique-status>
       </ng-template>
     </mat-tab>
     <mat-tab label="Historique Infogreffe" *ngIf="formalite && formalite.id && formalite.formalitesInfogreffe ">

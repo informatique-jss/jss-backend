@@ -15,6 +15,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canDisplayManagementFieldsInIncidentReport() {
+    return this.loginService.hasGroup([ADMINISTRATEURS])
+  }
+
   canDisplayKanban() {
     return this.loginService.hasGroup([BETA_TESTEURS], false)
   }
