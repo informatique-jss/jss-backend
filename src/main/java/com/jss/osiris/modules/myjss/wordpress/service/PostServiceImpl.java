@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +40,8 @@ import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.repository.PostRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -81,6 +84,18 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     HtmlTruncateHelper htmlTruncateHelper;
+
+    @Autowired
+    AssoMailAuthorService assoMailAuthorService;
+
+    @Autowired
+    AssoMailTagService assoMailTagService;
+
+    @Autowired
+    AssoMailJssCategoryService assoMailJssCategoryService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @Value("${apache.media.base.url}")
     private String apacheMediaBaseUrl;
@@ -364,17 +379,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory, String searchText) {
+    public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory, String searchText,
+            LocalDateTime consultationDate) {
+        Responsable responsable = employeeService.getCurrentMyJssUser();
+        if (responsable != null)
+            assoMailJssCategoryService.updateJssCategoryConsultationDate(responsable.getMail(), jssCategory);
+
         if (searchText != null) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false,
+                        postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, consultationDate,
                                 pageableRequest));
             }
         }
-        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
+        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, consultationDate, pageableRequest);
     }
 
     @Override
@@ -418,35 +438,48 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory) {
-        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, pageableRequest);
+        return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, LocalDateTime.of(1970, 1, 1, 0, 0),
+                pageableRequest);
     }
 
     @Override
-    public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) throws OsirisException {
+    public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText,
+            LocalDateTime consultationDate) throws OsirisException {
+        Responsable responsable = employeeService.getCurrentMyJssUser();
+        if (responsable != null)
+            assoMailTagService.updateTagConsultationDate(responsable.getMail(), tag);
+
         if (searchText != null) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(), false,
+                        postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(), false, consultationDate,
                                 pageableRequest));
             }
         }
-        return postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(), false, pageableRequest);
+        return postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(), false, consultationDate,
+                pageableRequest);
     }
 
     @Override
-    public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText) {
+    public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText,
+            LocalDateTime consultationDate) {
+
+        Responsable responsable = employeeService.getCurrentMyJssUser();
+        if (responsable != null)
+            assoMailAuthorService.updateAuthorConsultationDate(responsable.getMail(), author);
+
         if (searchText != null) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByFullAuthorAndIsCancelled(author, false,
+                        postRepository.findByFullAuthorAndIsCancelled(author, false, consultationDate,
                                 pageableRequest));
             }
         }
-        return postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
+        return postRepository.findByFullAuthorAndIsCancelled(author, false, consultationDate, pageableRequest);
     }
 
     @Override
@@ -546,11 +579,6 @@ public class PostServiceImpl implements PostService {
             }
         }
         return firstPostsByMyJssCategory;
-    }
-
-    @Override
-    public Page<Post> getPostsByAuthor(Pageable pageableRequest, Author author) {
-        return postRepository.findByFullAuthorAndIsCancelled(author, false, pageableRequest);
     }
 
     @Override
@@ -772,5 +800,4 @@ public class PostServiceImpl implements PostService {
         }
         return post;
     }
-
 }

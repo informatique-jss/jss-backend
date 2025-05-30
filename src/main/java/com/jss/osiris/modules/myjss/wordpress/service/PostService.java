@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -31,13 +32,15 @@ public interface PostService {
         public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory);
 
         public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory,
-                        String searchText);
+                        String searchText, LocalDateTime consultationDate);
 
-        public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText) throws OsirisException;
+        public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText,
+                        LocalDateTime consultationDate) throws OsirisException;
 
         public Page<Post> getAllPostsByCategory(Pageable pageableRequest, Category category);
 
-        public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText);
+        public Page<Post> getAllPostsByAuthor(Pageable pageableRequest, Author author, String searchText,
+                        LocalDateTime consultationDate);
 
         public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText);
 
@@ -95,8 +98,6 @@ public interface PostService {
 
         public List<Post> getPostBySerie(Serie serie);
 
-        public Page<Post> getPostsByAuthor(Pageable pageableRequest, Author author);
-
         public void reindexPosts() throws OsirisException;
 
         public List<Post> applyPremium(List<Post> posts);
@@ -108,4 +109,5 @@ public interface PostService {
         public Post getNextPost(Post post);
 
         public Post getPreviousPost(Post post);
+
 }

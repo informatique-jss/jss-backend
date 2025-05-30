@@ -37,6 +37,9 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoMailAuthor;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoMailJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoMailTag;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
@@ -45,6 +48,9 @@ import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
+import com.jss.osiris.modules.myjss.wordpress.service.AssoMailAuthorService;
+import com.jss.osiris.modules.myjss.wordpress.service.AssoMailJssCategoryService;
+import com.jss.osiris.modules.myjss.wordpress.service.AssoMailTagService;
 import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.JssCategoryService;
@@ -58,6 +64,7 @@ import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.service.CommentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -129,6 +136,18 @@ public class WordpressController {
 	@Autowired
 	GeneratePdfDelegate generatePdfDelegate;
 
+	@Autowired
+	AssoMailAuthorService assoMailAuthorService;
+
+	@Autowired
+	AssoMailTagService assoMailTagService;
+
+	@Autowired
+	AssoMailJssCategoryService assoMailJssCategoryService;
+
+	@Autowired
+	EmployeeService employeeService;
+
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
 			"DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver");
@@ -190,6 +209,151 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/author/slug")
 	public ResponseEntity<Author> getAuthorBySlug(@RequestParam String slug) {
 		return new ResponseEntity<Author>(authorService.getAuthorBySlug(slug), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/author/follow/add")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<AssoMailAuthor> followAuthorForUser(@RequestParam Integer idAuthor,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Author author = authorService.getAuthor(idAuthor);
+
+		if (author == null)
+			throw new OsirisValidationException("author");
+
+		return new ResponseEntity<AssoMailAuthor>(assoMailAuthorService.addNewAuthorFollow(author),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/author/follow/get")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> getAssoMailAuthor(@RequestParam Integer idAuthor,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Author author = authorService.getAuthor(idAuthor);
+
+		if (author == null)
+			throw new OsirisValidationException("author");
+
+		return new ResponseEntity<Boolean>(
+				assoMailAuthorService.getIsAssoMailAuthorByMailAndAuthor(author),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/author/unfollow")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> unfollowAuthor(@RequestParam Integer idAuthor,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+		if (idAuthor == null)
+			throw new OsirisValidationException("idAssoMailAuthor");
+
+		Author author = authorService.getAuthor(idAuthor);
+		assoMailAuthorService.deleteAssoMailAuthor(author);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tag/follow/add")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<AssoMailTag> followTagForUser(@RequestParam Integer idTag,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Tag tag = tagService.getTag(idTag);
+
+		if (tag == null)
+			throw new OsirisValidationException("tag");
+
+		return new ResponseEntity<AssoMailTag>(assoMailTagService.addNewTagFollow(tag),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tag/follow/get")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> getAssoMailTag(@RequestParam Integer idTag,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Tag tag = tagService.getTag(idTag);
+
+		if (tag == null)
+			throw new OsirisValidationException("tag");
+
+		return new ResponseEntity<Boolean>(
+				assoMailTagService.getIsAssoMailTagByMailAndTag(tag),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tag/unfollow")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> unfollowTag(@RequestParam Integer idTag,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		if (idTag == null)
+			throw new OsirisValidationException("idTag");
+
+		Tag tag = tagService.getTag(idTag);
+
+		assoMailTagService.deleteAssoMailTag(tag);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/jss-category/follow/add")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<AssoMailJssCategory> followJssCategoryForUser(@RequestParam Integer idJssCategory,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		JssCategory jssCategory = jssCategoryService.getJssCategory(idJssCategory);
+
+		if (jssCategory == null)
+			throw new OsirisValidationException("jssCategory");
+
+		return new ResponseEntity<AssoMailJssCategory>(assoMailJssCategoryService.addNewJssCategoryFollow(jssCategory),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/jss-category/follow/get")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> getAssoMailJssCategory(@RequestParam Integer idJssCategory,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		JssCategory jssCategory = jssCategoryService.getJssCategory(idJssCategory);
+
+		if (jssCategory == null)
+			throw new OsirisValidationException("jssCategory");
+
+		return new ResponseEntity<Boolean>(
+				assoMailJssCategoryService.getIsAssoMailJssCategoryByMailAndJssCategory(jssCategory),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/jss-category/unfollow")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> unfollowJssCategory(@RequestParam Integer idJssCategory,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		JssCategory jssCategory = jssCategoryService.getJssCategory(idJssCategory);
+
+		if (jssCategory == null)
+			throw new OsirisValidationException("jssCategory");
+
+		assoMailJssCategoryService.deleteAssoMailJssCategory(jssCategory);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss/top")
@@ -438,20 +602,23 @@ public class WordpressController {
 	public ResponseEntity<Page<Post>> getAllPostsByJssCategory(
 			@RequestParam Integer categoryId,
 			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			@RequestParam(defaultValue = "20") int size,
+			@RequestParam(required = false) String searchText,
+			@RequestParam Boolean isDisplayNewPosts,
 			HttpServletRequest request) {
 
 		detectFlood(request);
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		JssCategory category = jssCategoryService.getJssCategory(categoryId);
+		JssCategory jssCategory = jssCategoryService.getJssCategory(categoryId);
 
-		if (category == null)
+		if (jssCategory == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getAllPostsByJssCategory(pageableRequest, category, searchText),
+				postService.getAllPostsByJssCategory(pageableRequest, jssCategory, searchText,
+						computeJssCategoryConsultationDate(isDisplayNewPosts, jssCategory)),
 				HttpStatus.OK);
 	}
 
@@ -482,7 +649,9 @@ public class WordpressController {
 	public ResponseEntity<Page<Post>> getAllPostsByTag(
 			@RequestParam String tagSlug,
 			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			@RequestParam(defaultValue = "20") int size,
+			@RequestParam Boolean isDisplayNewPosts,
+			@RequestParam(required = false) String searchText,
 			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
@@ -496,7 +665,8 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getAllPostsByTag(pageableRequest, tag, searchText),
+				postService.getAllPostsByTag(pageableRequest, tag, searchText,
+						computeTagConsultationDate(isDisplayNewPosts, tag)),
 				HttpStatus.OK);
 
 	}
@@ -506,7 +676,9 @@ public class WordpressController {
 	public ResponseEntity<Page<Post>> getAllPostsByAuthor(
 			@RequestParam String authorSlug,
 			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			@RequestParam(defaultValue = "20") int size,
+			@RequestParam Boolean isDisplayNewPosts,
+			@RequestParam(required = false) String searchText,
 			HttpServletRequest request) {
 
 		detectFlood(request);
@@ -520,7 +692,8 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getAllPostsByAuthor(pageableRequest, author, searchText),
+				postService.getAllPostsByAuthor(pageableRequest, author, searchText,
+						computeAuthorConsultationDate(isDisplayNewPosts, author)),
 				HttpStatus.OK);
 	}
 
@@ -788,25 +961,29 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/tag")
-	public ResponseEntity<List<Tag>> getAllTagsByTag(@RequestParam String tagSlug) throws OsirisException {
+	public ResponseEntity<List<Tag>> getAllTagsByTag(@RequestParam String tagSlug,
+			@RequestParam Boolean isDisplayNewPosts) throws OsirisException {
 
 		if (tagSlug == null)
 			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
 
 		Tag tag = tagService.getTagBySlug(tagSlug);
 
-		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByTag(tag), HttpStatus.OK);
+		return new ResponseEntity<List<Tag>>(
+				tagService.getAllTagsByTag(tag, computeTagConsultationDate(isDisplayNewPosts, tag)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/author")
-	public ResponseEntity<List<Tag>> getAllTagsByAuthor(@RequestParam String authorSlug) {
+	public ResponseEntity<List<Tag>> getAllTagsByAuthor(@RequestParam String authorSlug,
+			@RequestParam Boolean isDisplayNewPosts) {
 
 		if (authorSlug == null)
 			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
 
 		Author author = authorService.getAuthorBySlug(authorSlug);
 
-		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByAuthor(author), HttpStatus.OK);
+		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByAuthor(author,
+				computeAuthorConsultationDate(isDisplayNewPosts, author)), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/serie")
@@ -1004,4 +1181,37 @@ public class WordpressController {
 		return null;
 	}
 
+	private LocalDateTime computeAuthorConsultationDate(Boolean isDisplayNewPosts,
+			Author author) {
+		AssoMailAuthor assoMailAuthor = null;
+
+		if (isDisplayNewPosts) {
+			assoMailAuthor = assoMailAuthorService.getAssoMailAuthorByMailAndAuthor(author);
+			if (assoMailAuthor != null)
+				return assoMailAuthor.getLastConsultationDate();
+		}
+		return LocalDateTime.of(1970, 1, 1, 0, 0);
+	}
+
+	private LocalDateTime computeTagConsultationDate(Boolean isDisplayNewPosts, Tag tag) {
+		AssoMailTag assoMailTag = null;
+
+		if (isDisplayNewPosts) {
+			assoMailTag = assoMailTagService.getAssoMailTagByMailAndTag(tag);
+			if (assoMailTag != null)
+				return assoMailTag.getLastConsultationDate();
+		}
+		return LocalDateTime.of(1970, 1, 1, 0, 0);
+	}
+
+	private LocalDateTime computeJssCategoryConsultationDate(Boolean isDisplayNewPosts, JssCategory jssCategory) {
+		AssoMailJssCategory assoMailJssCategory = null;
+
+		if (isDisplayNewPosts) {
+			assoMailJssCategory = assoMailJssCategoryService.getAssoMailJssCategoryByMailAndJssCategory(jssCategory);
+			if (assoMailJssCategory != null)
+				return assoMailJssCategory.getLastConsultationDate();
+		}
+		return LocalDateTime.of(1970, 1, 1, 0, 0);
+	}
 }

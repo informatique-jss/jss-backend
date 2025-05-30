@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
+import { AppService } from '../../../services/app.service';
 import { Tag } from '../../model/Tag';
+import { AssoMailTagService } from '../../services/asso.mail.tag.service';
 import { TagService } from '../../services/tag.service';
 import { TagHubComponent } from '../tag-hub/tag-hub.component';
 
@@ -14,18 +16,47 @@ import { TagHubComponent } from '../tag-hub/tag-hub.component';
 })
 export class PostTagHeaderComponent implements OnInit {
   constructor(private tagService: TagService,
-    private activeRoute: ActivatedRoute
+    private assoMailTagService: AssoMailTagService,
+    private activeRoute: ActivatedRoute,
+    private appService: AppService
   ) { }
 
   selectedTag: Tag | undefined;
+  isFollowed: Boolean = false;
 
   ngOnInit() {
     let slug = this.activeRoute.snapshot.params['slug'];
     if (slug)
       this.tagService.getTagBySlug(slug).subscribe(response => {
-        if (response)
+        if (response) {
           this.selectedTag = response;
+          this.assoMailTagService.getAssoMailTag(this.selectedTag).subscribe(response => {
+            if (response) {
+              this.isFollowed = true;
+            }
+          });
+        }
       });
   }
 
+  followAuthor() {
+    if (this.selectedTag) {
+      this.assoMailTagService.followTag(this.selectedTag).subscribe(response => {
+        if (response) {
+          this.isFollowed = true;
+        }
+      });
+    }
+    else
+      this.appService.displayToast("Veuillez vous connecter", true, "Une erreur s’est produite...", 3000);
+  }
+
+  unfollowAuthor() {
+    if (this.isFollowed && this.selectedTag) {
+      this.assoMailTagService.unfollowTag(this.selectedTag).subscribe(response => {
+        if (response)
+          this.isFollowed = false;
+      });
+    }
+  }
 }
