@@ -58,6 +58,8 @@ export class IncidentReportingComponent extends KanbanComponent<IncidentReport, 
 
     this.swimlaneTypes.push({ fieldName: "assignedTo.id", label: "Responsable du CRI", valueFonction: ((incident: IncidentReport) => (incident.assignedTo ? (incident.assignedTo.firstname + ' ' + incident.assignedTo.lastname) : '')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "incidentResponsibility.label", label: "Responsabilité", valueFonction: undefined, fieldValueFunction: undefined });
+    this.swimlaneTypes.push({ fieldName: "incidentCause.label", label: "Cause", valueFonction: undefined, fieldValueFunction: undefined });
+    this.swimlaneTypes.push({ fieldName: "incidentType.label", label: "Type", valueFonction: undefined, fieldValueFunction: undefined });
     this.selectedSwimlaneType = this.swimlaneTypes[0];
 
     this.employeeService.getCurrentEmployee().subscribe(employee => {

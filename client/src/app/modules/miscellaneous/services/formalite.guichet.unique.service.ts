@@ -16,4 +16,8 @@ export class FormaliteGuichetUniqueService extends AppRestService<FormaliteGuich
     return this.getList(new HttpParams().set("value", value), "formalite-guichet-unique/search");
   }
 
+  getFormaliteGuichetUniqueService(id: number) {
+    return this.get(new HttpParams().set("idFormaliteGuichetUnique", id), "formalite-guichet-unique");
+  }
+
 }

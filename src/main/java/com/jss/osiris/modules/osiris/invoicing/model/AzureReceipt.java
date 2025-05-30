@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class AzureReceipt {
+public class AzureReceipt implements Serializable {
 
     @Id
     @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)

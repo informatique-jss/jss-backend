@@ -22,7 +22,7 @@ public class NoticeType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "notice_type_sequence", sequenceName = "notice_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notice_type_sequence")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 200)

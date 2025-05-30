@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { NoticeType } from '../../../../quotation/model/NoticeType';
@@ -9,7 +9,7 @@ import { GenericMultipleSelectComponent } from '../generic-select/generic-multip
 @Component({
   selector: 'select-multiple-notice-type',
   templateUrl: '../generic-select/generic-multiple-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css'],
+  styleUrls: ['../generic-select/generic-multiple-select.component.css'],
   standalone: true,
   imports: [SHARED_IMPORTS]
 })
@@ -17,6 +17,7 @@ export class SelectMultipleNoticeTypeComponent extends GenericMultipleSelectComp
 
   @Input() types: NoticeType[] = [] as Array<NoticeType>;
   @Input() noticeTypeFamily: NoticeTypeFamily | undefined;
+  allTypes: NoticeType[] = [];
 
   constructor(private formBuild: UntypedFormBuilder,
     private noticeTypeService: NoticeTypeService) {
@@ -25,10 +26,21 @@ export class SelectMultipleNoticeTypeComponent extends GenericMultipleSelectComp
 
   initTypes(): void {
     this.noticeTypeService.getNoticeTypes().subscribe(response => {
-      if (this.noticeTypeFamily)
-        this.types = response.filter(t => t.noticeTypeFamily.id == this.noticeTypeFamily!.id);
-      else
-        this.types = response;
+      this.allTypes = response;
     })
+  }
+
+  setTypes() {
+    if (this.noticeTypeFamily)
+      this.types = this.allTypes.filter(t => t.noticeTypeFamily.id == this.noticeTypeFamily!.id);
+    else
+      this.types = this.allTypes;
+  }
+
+  override ngOnChanges(changes: SimpleChanges) {
+    super.ngOnChanges(changes);
+    if (changes['noticeTypeFamily'] && this.form != undefined) {
+      this.setTypes();
+    }
   }
 }

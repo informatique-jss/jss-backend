@@ -7,8 +7,7 @@ import { GtmService } from './services/gtm.service';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet,
-    SHARED_IMPORTS,
-  ],
+    SHARED_IMPORTS],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   standalone: true

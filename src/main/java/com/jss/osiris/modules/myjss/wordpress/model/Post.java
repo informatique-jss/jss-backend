@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,7 +30,7 @@ import jakarta.persistence.Transient;
         @Index(name = "idx_post_author", columnList = "id_author", unique = true),
         @Index(name = "idx_post_publication_date", columnList = "date", unique = true)
 })
-public class Post implements IId {
+public class Post implements IId, Serializable {
     @Id
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class,
             JacksonViews.MyJssListView.class })
@@ -84,7 +85,8 @@ public class Post implements IId {
     private Integer featured_media;
 
     @IndexedField
-    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class,
+            JacksonViews.MyJssDetailedView.class })
     private String slug;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })

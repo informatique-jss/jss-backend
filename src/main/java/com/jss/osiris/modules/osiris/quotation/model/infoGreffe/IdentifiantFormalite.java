@@ -1,12 +1,14 @@
 package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 
+import java.io.Serializable;
+
 import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
-public class IdentifiantFormalite {
+public class IdentifiantFormalite implements Serializable {
     @Id
     @IndexedField
     private Integer formaliteNumero;

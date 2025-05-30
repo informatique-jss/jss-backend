@@ -1,4 +1,5 @@
 package com.jss.osiris.modules.osiris.quotation.model;
+import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -21,7 +22,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(indexes = { @Index(name = "idx_simple_provision_status", columnList = "id_simple_provision_status"),
 })
-public class SimpleProvision implements IId {
+public class SimpleProvision implements IId, Serializable {
 
 	@Id
 	@SequenceGenerator(name = "simple_provision_sequence", sequenceName = "simple_provision_sequence", allocationSize = 1)

@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -16,7 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 
 @Entity
-public class Media {
+public class Media implements Serializable {
     @Id
     private Integer id;
 

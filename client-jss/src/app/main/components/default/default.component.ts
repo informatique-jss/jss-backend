@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { ToastComponent } from '../../../libs/toast/toast.component';
 import { PlatformService } from '../../../services/platform.service';
-import { AudioService } from '../../services/audio.service';
+import { AudioPlayerService } from '../../services/audio.player.service';
 import { AudioPlayerComponent } from '../audio-player/audio-player.component';
 import { FooterComponent } from '../footer/footer.component';
 import { HeaderComponent } from '../header/header.component';
@@ -21,21 +21,20 @@ import { HeaderComponent } from '../header/header.component';
   standalone: true
 })
 export class DefaultComponent implements OnInit {
-  isCurrentPodcastDisplayed: boolean = false;
+  currentPodcastId: number = 0;
   currentPodcastSubscription: Subscription = new Subscription;
 
   constructor(
-    private audioService: AudioService,
+    private audioService: AudioPlayerService,
     private platformService: PlatformService
   ) { }
 
   ngOnInit() {
     if (this.platformService.isBrowser())
-      this.currentPodcastSubscription = this.audioService.currentPodcastObservable.subscribe(item => this.isCurrentPodcastDisplayed = item);
+      this.currentPodcastSubscription = this.audioService.currentPostObservable.subscribe(item => this.currentPodcastId = item);
   }
 
   ngOnDestroy() {
     this.currentPodcastSubscription.unsubscribe();
   }
-
 }

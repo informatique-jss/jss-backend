@@ -97,12 +97,18 @@
       (click)="currentTabDisplayed='COMMENTS'">Commentaires</button>
     <button mat-raised-button [color]="currentTabDisplayed === 'ATTACHMENT' ? 'primary' : 'accent'"
       (click)="currentTabDisplayed='ATTACHMENT'">Documents</button>
+    <button mat-raised-button [color]="currentTabDisplayed === 'HISTORY_GU' ? 'primary' : 'accent'"
+      (click)="currentTabDisplayed='HISTORY_GU'"
+      *ngIf="provision.formalite && provision.formalite.formalitesGuichetUnique && provision.formalite.formalitesGuichetUnique.length>0">Historique
+      GU</button>
     <button mat-raised-button [color]="currentTabDisplayed === 'HISTORY' ? 'primary' : 'accent'"
       (click)="currentTabDisplayed='HISTORY'">Historique</button>
   </div>
   <customer-order-comment [isDisplayCommentInput]="true" [provision]="provision"
     *ngIf="currentTabDisplayed=='COMMENTS'"></customer-order-comment>
   <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE" *ngIf="currentTabDisplayed=='HISTORY'"></history>
+  <guichet-unique-status [formalitesGuichetUniqueIn]="provision.formalite.formalitesGuichetUnique"
+    *ngIf="provision.formalite && currentTabDisplayed=='HISTORY_GU'"></guichet-unique-status>
   <attachments [entity]="provision" *ngIf="currentTabDisplayed=='ATTACHMENT'" [editMode]="false"
     [entityType]="PROVISION_ENTITY_TYPE.entityType"></attachments>
 </div>

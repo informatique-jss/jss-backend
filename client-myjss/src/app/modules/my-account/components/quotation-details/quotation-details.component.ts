@@ -203,4 +203,12 @@ export class QuotationDetailsComponent implements OnInit {
       this.refreshCurrentAssoAffaireOrder();
     })
   }
+
+  displayMyDoc(service: Service) {
+    return service.assoServiceDocuments && service.assoServiceDocuments.find(a => a.isMandatory);
+  }
+
+  displayMyInformation(service: Service) {
+    return service.assoServiceFieldTypes && service.assoServiceFieldTypes.find(a => a.isMandatory);
+  }
 }

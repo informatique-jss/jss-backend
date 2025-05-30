@@ -1,14 +1,9 @@
 package com.jss.osiris.modules.osiris.miscellaneous.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
@@ -36,7 +31,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
-import com.jss.osiris.modules.osiris.miscellaneous.repository.ConstantRepository;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
 import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
@@ -71,47 +65,17 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 public class ConstantServiceImpl implements ConstantService {
 
     @Autowired
-    ConstantRepository constantRepository;
+    ConstantServiceProxyImpl constantServiceProxy;
 
-    LocalDateTime lastFetchedConstant = null;
-    Constant cachedConstant = null;
+    @Override
+    public Constant addOrUpdateConstant(
+            Constant constant) throws OsirisException {
+        return constantServiceProxy.addOrUpdateConstant(constant);
+    }
 
     @Override
     public Constant getConstants() throws OsirisException {
-        // TODO : erreur proxy, sur pricingHelper par exemple...
-        /*
-         * if (cachedConstant == null || lastFetchedConstant == null
-         * || lastFetchedConstant.isBefore(LocalDateTime.now().minusSeconds(5))) {
-         * List<Constant> constants =
-         * IterableUtils.toList(constantRepository.findAll());
-         * if (constants == null || constants.size() != 1)
-         * throw new OsirisException(null, "Constants not defined or multiple");
-         * cachedConstant = (Constant) Hibernate.unproxy(constants.get(0));
-         * lastFetchedConstant = LocalDateTime.now();
-         * }
-         * return cachedConstant;
-         */
-        List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
-        if (constants == null || constants.size() != 1)
-            throw new OsirisException(null, "Constants not defined or multiple");
-        return constants.get(0);
-    }
-
-    @Override
-    public Constant getConstant(Integer id) {
-        Optional<Constant> constant = constantRepository.findById(id);
-        if (constant.isPresent())
-            return constant.get();
-        return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Constant addOrUpdateConstant(
-            Constant constant) throws OsirisException {
-        cachedConstant = null;
-        lastFetchedConstant = null;
-        return constantRepository.save(constant);
+        return constantServiceProxy.getConstants();
     }
 
     @Override

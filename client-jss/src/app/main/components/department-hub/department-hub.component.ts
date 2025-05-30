@@ -35,9 +35,7 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
 
   override ngOnInit(): void {
     this.selectedPublishingDepartment = this.selectedEntityType;
-    this.fetchPosts(0);
-    this.fetchTags();
-    this.fetchMostSeenPosts();
+    super.ngOnInit();
   }
 
   override getAllPostByEntityType(selectedEntityType: PublishingDepartment, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>> {

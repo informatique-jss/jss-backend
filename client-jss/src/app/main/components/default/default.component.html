@@ -1,5 +1,5 @@
 <main-header></main-header>
 <router-outlet></router-outlet>
-<audio-player *ngIf="isCurrentPodcastDisplayed  "></audio-player>
+<audio-player *ngIf="currentPodcastId != 0"></audio-player>
 <footer-page></footer-page>
 <toast style="display: block; position: fixed; bottom: 20px; right: 20px; z-index: 10" class="z-3"></toast>

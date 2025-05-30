@@ -44,6 +44,16 @@ public class IncidentReport implements Serializable, IId {
 	private IncidentResponsibility incidentResponsibility;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_incident_type")
+	@JsonView(JacksonViews.OsirisListView.class)
+	private IncidentType incidentType;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_incident_cause")
+	@JsonView(JacksonViews.OsirisListView.class)
+	private IncidentCause incidentCause;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
 	@JsonView(JacksonViews.OsirisListView.class)
 	private Employee assignedTo;
@@ -295,6 +305,22 @@ public class IncidentReport implements Serializable, IId {
 
 	public void setProvision(Provision provision) {
 		this.provision = provision;
+	}
+
+	public IncidentCause getIncidentCause() {
+		return incidentCause;
+	}
+
+	public void setIncidentCause(IncidentCause incidentCause) {
+		this.incidentCause = incidentCause;
+	}
+
+	public IncidentType getIncidentType() {
+		return incidentType;
+	}
+
+	public void setIncidentType(IncidentType incidentType) {
+		this.incidentType = incidentType;
 	}
 
 }

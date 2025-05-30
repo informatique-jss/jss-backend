@@ -203,8 +203,8 @@
         <div class="row g-3 mt-3">
           <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
             [(model)]="quotation.responsable.tiers.postalCode" label="Code postal" [form]="documentForm"
-            propertyName="tiersPostalCode" [isMandatory]="true" [isDisabled]="false" [maxLength]="10"
-            (change)="computeQuotationPrice(false)">
+            propertyName="tiersPostalCode" [isMandatory]="true" (onFormBlur)="findCityForTiers()" [isDisabled]="false"
+            [maxLength]="10" (change)="computeQuotationPrice(false)">
           </generic-input>
           <div>
             <autocomplete-city [(model)]="quotation.responsable.tiers.city" [form]="documentForm"
@@ -293,8 +293,8 @@
       <div class="row g-3 mt-3">
         <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
           [(model)]="quotation.responsable.postalCode" label="Code postal" [form]="documentForm"
-          propertyName="respPostalCode" [isMandatory]="true" [isDisabled]="false" [maxLength]="10"
-          (change)="computeQuotationPrice(false)">
+          (onFormBlur)="findCityForResponsable()" propertyName="respPostalCode" [isMandatory]="true"
+          [isDisabled]="false" [maxLength]="10" (change)="computeQuotationPrice(false)">
         </generic-input>
         <div>
           <autocomplete-city [(model)]="quotation.responsable.city" [form]="documentForm"
@@ -368,15 +368,14 @@
               <div class="col-md-4">
                 <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
                   [(model)]="document.billingPostalCode" label="Code postal" [form]="documentForm"
-                  propertyName="docPostalCode" [isMandatory]="true" [isDisabled]="false" [maxLength]="10"
-                  (change)="computeQuotationPrice(false)">
+                  (onFormBlur)="findCityForDocument(document)" propertyName="docPostalCode" [isMandatory]="true"
+                  [isDisabled]="false" [maxLength]="10" (change)="computeQuotationPrice(false)">
                 </generic-input>
               </div>
 
               <div class="col-md-4">
                 <autocomplete-city [(model)]="document.billingLabelCity" [form]="documentForm"
                   [modelCountry]="document.billingLabelCountry" label="Ville"
-                  [preFilterPostalCode]="document.billingPostalCode"
                   propertyName="autocompleteDocCity"></autocomplete-city>
               </div>
 

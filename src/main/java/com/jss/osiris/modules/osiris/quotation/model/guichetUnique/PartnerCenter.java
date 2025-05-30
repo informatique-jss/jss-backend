@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.io.Serializable;
+
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
 import jakarta.persistence.Entity;
@@ -7,7 +9,7 @@ import jakarta.persistence.Id;
 
 @Entity
 @DoNotAudit
-public class PartnerCenter {
+public class PartnerCenter implements Serializable {
 
     @Id
     private Integer id;

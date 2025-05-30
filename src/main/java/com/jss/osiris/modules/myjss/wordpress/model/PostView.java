@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
@@ -12,7 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class PostView {
+public class PostView implements Serializable {
     @Id
     @SequenceGenerator(name = "post_view_sequence", sequenceName = "post_view_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_view_sequence")

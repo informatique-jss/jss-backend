@@ -84,7 +84,7 @@ export class ServicesSelectionComponent implements OnInit {
     this.selectedAssoIndex = 0;
     if (this.quotation && this.quotation.serviceFamilyGroup)
       this.serviceFamilyService.getServiceFamiliesForFamilyGroup(this.quotation.serviceFamilyGroup.id).subscribe(response => {
-        this.serviceFamilies = response;
+        this.serviceFamilies = response.filter(s => s.myJssOrder != null && s.myJssOrder != undefined).sort((a: ServiceFamily, b: ServiceFamily) => a.myJssOrder - b.myJssOrder);
         this.selectedServiceFamily = this.serviceFamilies[0];
       });
 

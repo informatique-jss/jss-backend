@@ -1,5 +1,7 @@
 package com.jss.osiris.libs.batch.model;
 
+import java.io.Serializable;
+
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -13,7 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class BatchSettings implements IId {
+public class BatchSettings implements IId, Serializable {
 
     @Id
     @SequenceGenerator(name = "batch_settings_sequence", sequenceName = "batch_settings_sequence", allocationSize = 1)

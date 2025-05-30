@@ -1,8 +1,10 @@
 import { Employee } from "../../profile/model/Employee";
 import { CustomerOrder } from "../../quotation/model/CustomerOrder";
 import { Provision } from "../../quotation/model/Provision";
+import { IncidentCause } from "./IncidentCause";
 import { IncidentReportStatus } from "./IncidentReportStatus";
 import { IncidentResponsibility } from "./IncidentResponsibility";
+import { IncidentType } from "./IncidentType";
 
 export interface IncidentReport {
   id: number;
@@ -27,6 +29,8 @@ export interface IncidentReport {
   costEstimation: number;
   provision: Provision;
   customerOrder: CustomerOrder;
+  incidentCause: IncidentCause;
+  incidentType: IncidentType;
 }
 
 

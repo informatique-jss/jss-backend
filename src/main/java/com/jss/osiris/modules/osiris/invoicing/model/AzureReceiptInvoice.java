@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,7 +21,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(indexes = {
         @Index(name = "idx_azure_receipt_invoice", columnList = "id_azure_receipt") })
-public class AzureReceiptInvoice implements IId {
+public class AzureReceiptInvoice implements IId, Serializable {
 
     @Id
     @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)

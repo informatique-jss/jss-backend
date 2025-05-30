@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,7 +25,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(indexes = {
         @Index(name = "idx_formalite_infogreffe_formalite", columnList = "id_formalite") })
-public class FormaliteInfogreffe {
+public class FormaliteInfogreffe implements Serializable {
 
     public static String INFOGREFFE_STATUS_RECEIVED = "RECU_PAR_LE_GRF";
     public static String INFOGREFFE_STATUS_STRICT_REJECT = "REJETE_DEF_GRF";

@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 
 @Entity
-public class Serie {
+public class Serie implements Serializable {
     @Id
     private Integer id;
     private String name;

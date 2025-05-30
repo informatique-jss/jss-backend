@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,7 +34,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class Domiciliation implements IId {
+public class Domiciliation implements IId, Serializable {
 
 	public static String DOMICILIATION_CONTRACT_TEMPLATE_FRENCH = "domiciliation-french";
 	public static String DOMICILIATION_CONTRACT_TEMPLATE_BILINGUAL = "domiciliation-bilingual";

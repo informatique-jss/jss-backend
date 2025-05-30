@@ -14,6 +14,10 @@
     animation: scroll-left 10s linear infinite;
 }
 
+.text-white .text-nowrap a {
+    color: var(--ar-secondary) !important;
+}
+
 
 /* --------------- Volume dropdown --------------- */
 .vertical-range {

@@ -31,6 +31,7 @@ import { Tiers } from '../../../profile/model/Tiers';
 import { LoginService } from '../../../profile/services/login.service';
 import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { IQuotation } from '../../model/IQuotation';
+import { CityService } from '../../services/city.service';
 
 @Component({
   selector: 'checkout',
@@ -103,7 +104,8 @@ export class CheckoutComponent implements OnInit {
     private constantService: ConstantService,
     private serviceService: ServiceService,
     private userScopeService: UserScopeService,
-    private documentService: DocumentService
+    private documentService: DocumentService,
+    private cityService: CityService
   ) { }
 
   ngOnInit() {
@@ -591,5 +593,32 @@ export class CheckoutComponent implements OnInit {
   toggleTiersIndividual() {
     if (this.quotation && this.quotation.responsable && this.quotation.responsable.tiers)
       this.quotation.responsable.tiers.isIndividual = !this.isNotIndividualTiers;
+  }
+
+  findCityForResponsable() {
+    if (this.quotation && this.quotation.responsable && this.quotation.responsable.postalCode) {
+      this.cityService.getCitiesByPostalCode(this.quotation.responsable.postalCode).subscribe(response => {
+        if (response && response.length == 1)
+          this.quotation!.responsable!.city = response[0];
+      })
+    }
+  }
+
+  findCityForTiers() {
+    if (this.quotation && this.quotation.responsable && this.quotation.responsable.tiers && this.quotation.responsable.tiers.postalCode) {
+      this.cityService.getCitiesByPostalCode(this.quotation.responsable.tiers.postalCode).subscribe(response => {
+        if (response && response.length == 1)
+          this.quotation!.responsable!.tiers.city = response[0];
+      })
+    }
+  }
+
+  findCityForDocument(document: Document) {
+    if (document && document.billingPostalCode) {
+      this.cityService.getCitiesByPostalCode(document.billingPostalCode).subscribe(response => {
+        if (response && response.length == 1)
+          document.billingLabelCity = response[0];
+      })
+    }
   }
 }

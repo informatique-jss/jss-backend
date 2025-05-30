@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,7 +25,7 @@ import jakarta.persistence.Table;
 @JsonIgnoreProperties
 @Table(indexes = {
         @Index(name = "idx_validation_request_formalite", columnList = "id_formalite_guichet_unique") })
-public class ValidationRequest {
+public class ValidationRequest implements Serializable {
 
     @Id
     private Integer id;
