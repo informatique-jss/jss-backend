@@ -1,18 +1,30 @@
-import { AfterViewInit, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
 import { getTimeReading } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../services/app.service';
 import { PlatformService } from '../../../services/platform.service';
 import { Author } from '../../model/Author';
+import { Comment } from '../../model/Comment';
 import { JssCategory } from '../../model/JssCategory';
+import { Mail } from '../../model/Mail';
+import { PagedContent } from '../../model/PagedContent';
+import { Pagination } from '../../model/Pagination';
 import { Post } from '../../model/Post';
+import { Responsable } from '../../model/Responsable';
 import { Tag } from '../../model/Tag';
 import { AudioPlayerService } from '../../services/audio.player.service';
+import { CommentService } from '../../services/comment.service';
 import { PostService } from '../../services/post.service';
+import { AvatarComponent } from '../avatar/avatar.component';
+import { GenericInputComponent } from '../generic-input/generic-input.component';
+import { GenericTextareaComponent } from '../generic-textarea/generic-textarea.component';
+import { NewsletterComponent } from "../newsletter/newsletter.component";
 
 declare var tns: any;
 
@@ -20,7 +32,7 @@ declare var tns: any;
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  imports: [SHARED_IMPORTS, TrustHtmlPipe],
+  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent],
   standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
@@ -29,24 +41,42 @@ export class PostComponent implements OnInit, AfterViewInit {
   post: Post | undefined;
   nextPost: Post | undefined;
   previousPost: Post | undefined;
+  commentsPagination: Pagination = {} as Pagination;
+
+  comments: Comment[] = [];
+  newComment: Comment = {} as Comment;
+  newCommentParent: Comment = {} as Comment;
+
+  pageSize: number = 10; // computed
+
+  mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
 
   speechSynthesisUtterance: SpeechSynthesisUtterance | undefined;
   speechRate: number = 1;
   isPlaying: boolean | undefined;
   audioUrl: string | undefined;
+  progress: number = 0;
+  progressSubscription: Subscription = new Subscription;
 
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
 
   constructor(private activatedRoute: ActivatedRoute,
+    private formBuilder: FormBuilder,
     private postService: PostService,
     private appService: AppService,
-    private plateformDocument: PlatformService,
-    private audioService: AudioPlayerService
+    private platformService: PlatformService,
+    private audioService: AudioPlayerService,
+    private commentService: CommentService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   getTimeReading = getTimeReading;
 
+  newCommentForm!: FormGroup;
+
   ngOnInit() {
+    this.newCommentForm = this.formBuilder.group({});
+
     this.slug = this.activatedRoute.snapshot.params['slug'];
     if (this.slug)
       this.postService.getPostBySlug(this.slug).subscribe(post => {
@@ -54,12 +84,20 @@ export class PostComponent implements OnInit, AfterViewInit {
         if (this.post) {
           this.postService.getNextArticle(this.post).subscribe(response => this.nextPost = response);
           this.postService.getPreviousArticle(this.post).subscribe(response => this.previousPost = response);
+          this.fetchComments(0);
         }
       })
+    this.cancelReply()
+    this.fetchMostSeenPosts();
+
+    this.progressSubscription = this.audioService.progressObservable.subscribe(item => {
+      this.progress = item;
+      this.cdr.detectChanges();
+    });
   }
 
   ngOnDestroy() {
-    const win = this.plateformDocument.getNativeWindow();
+    const win = this.platformService.getNativeWindow();
 
     if (win)
       win.speechSynthesis.pause();
@@ -94,24 +132,106 @@ export class PostComponent implements OnInit, AfterViewInit {
     })
   }
 
+  dropdownOpen = false;
+
+  toggleDropdown(event: Event): void {
+    event.preventDefault();
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  fetchMostSeenPosts() {
+    this.getMostSeenPosts(0, 5).subscribe(data => {
+      if (data)
+        this.mostSeenPostsByEntityType = data.content;
+    });
+  }
+
+  getMostSeenPosts(page: number, pageSize: number): Observable<PagedContent<Post>> {
+    return this.postService.getMostViewedPosts(page, pageSize);
+  }
+
+  fetchComments(page: number) {
+    if (this.post) {
+      this.activatedRoute.fragment.subscribe(fragment => {
+        if (fragment) this.pageSize = 1000000;
+        this.commentService.getParentCommentsForPost(this.post!.id, page, this.pageSize).subscribe(data => {
+          if (page == 0) {
+            this.comments = data.content;
+          } else {
+            this.comments = this.comments.concat(data.content);
+          }
+
+          if (fragment && this.platformService.isBrowser()) {
+            setTimeout(() => {
+              document.getElementById(fragment)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 0);
+          }
+          this.commentsPagination = data.page;
+        });
+      });
+    }
+  }
+
+  cancelReply() {
+    this.newComment = { mail: {} as Mail } as Comment;
+    this.newCommentParent = {} as Comment;
+  }
+
+  postComment() {
+    if (this.post) {
+      this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
+        this.fetchComments(0);
+      });
+    }
+    this.cancelReply();
+  }
+
+  replyComment(comment: Comment) {
+    this.newComment = { mail: {} as Mail } as Comment;
+    this.newCommentParent = comment;
+    // Scroll to new comment form
+    this.scrollToView("commentForm");
+  }
+
+  scrollToView(anchorId: string) {
+    if (this.platformService.isServer())
+      return;
+    const element = this.platformService.getNativeDocument()!.getElementById(anchorId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }
+
+  showMoreComments() {
+    this.fetchComments(this.commentsPagination.pageNumber + 1);
+  }
+
+  showLessComments() {
+    this.fetchComments(0);
+  }
+
+  getResponsableNames(comment: Comment): Responsable {
+    return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastNameInitials || '' } as Responsable;
+  }
+
   openPost(post: Post, event: any) {
     this.appService.openRoute(event, "post/" + post.slug, undefined);
   }
 
   openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "author/" + author.slug, undefined);
+    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
   }
 
   openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "category/" + category.slug, undefined);
+    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
   }
 
   openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "tag/" + tag.slug, undefined);
+    this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
   }
 
   shareOnFacebook() {
-    const win = this.plateformDocument.getNativeWindow();
+    const win = this.platformService.getNativeWindow();
     if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       win.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank");
@@ -119,31 +239,31 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   shareOnLinkedin() {
-    const win = this.plateformDocument.getNativeWindow();
+    const win = this.platformService.getNativeWindow();
     if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       win.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
     }
   }
 
-  shareOnTwitter() {
-    const win = this.plateformDocument.getNativeWindow();
-    if (this.post && win) {
-      let url = environment.frontendUrl + "post/" + this.post.slug;
-      win.open("https://twitter.com/intent/tweet?text=" + this.extractContent(this.post.titleText) + "&url=" + url, "_blank");
-    }
+  shareOnInstagram() {
+    this.appService.openInstagramJssPage();
   }
 
   shareByMail() {
-    const win = this.plateformDocument.getNativeWindow();
+    const win = this.platformService.getNativeWindow();
     if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       win.open('mailto:?subject=Découvrez cet article intéressant sur JSS.FR&body=Bonjour,%0A%0AJe voulais vous partager cet article :%0A%0A' + this.extractContent(this.post.titleText) + '%0A' + url + '%0A%0ABonne lecture!', "_blank");
     }
   }
 
+  openSignIn(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
+  }
+
   extractContent(s: string) {
-    const doc = this.plateformDocument.getNativeDocument();
+    const doc = this.platformService.getNativeDocument();
     if (doc) {
       var span = doc.createElement('span');
       span.innerHTML = s;
@@ -157,7 +277,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   readArticle(): void {
-    const win = this.plateformDocument.getNativeWindow();
+    const win = this.platformService.getNativeWindow();
     if (this.post && this.post.contentText && win) {
       const articleText = this.extractContent(this.post.contentText);
 
@@ -188,7 +308,7 @@ export class PostComponent implements OnInit, AfterViewInit {
 
 
   updateSpeed(): void {
-    const win = this.plateformDocument.getNativeWindow();
+    const win = this.platformService.getNativeWindow();
     if (this.speechSynthesisUtterance && win) {
       this.speechSynthesisUtterance.rate = this.speechRate;
       win.speechSynthesis.speak(this.speechSynthesisUtterance);
@@ -198,4 +318,21 @@ export class PostComponent implements OnInit, AfterViewInit {
   getIsPlaying(post: Post) {
     return this.audioService.isPlayingPost(post);
   }
+
+
+  getDuration() {
+    return this.audioService.getDuration();
+  }
+
+  getCurrentTime() {
+    return this.audioService.getCurrentTime();
+  }
+
+
+  onSeek(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.audioService.seekTo(+value);
+  }
+
+
 }

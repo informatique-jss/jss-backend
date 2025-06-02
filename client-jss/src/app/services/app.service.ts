@@ -60,19 +60,19 @@ export class AppService {
   openLinkedinJssPage() {
     const win = this.platformService.getNativeWindow();
     if (win)
-      win.open("https://www.linkedin.com/company/journal-special-des-societes/_blank");
+      win.open("https://www.linkedin.com/company/journal-special-des-societes/", "_blank");
   }
 
   openInstagramJssPage() {
     const win = this.platformService.getNativeWindow();
     if (win)
-      win.open("https://www.instagram.com/journalspecialdessocietes/_blank");
+      win.open("https://www.instagram.com/journalspecialdessocietes/", "_blank");
   }
 
   openFacebookJssPage() {
     const win = this.platformService.getNativeWindow();
     if (win)
-      win.open("https://www.facebook.com/Journal.Special.des.Societes/_blank");
+      win.open("https://www.facebook.com/Journal.Special.des.Societes/", "_blank");
   }
 
   getAllAccountMenuItems(): AccountMenuItem[] {

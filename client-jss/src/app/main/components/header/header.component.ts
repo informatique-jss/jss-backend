@@ -127,7 +127,7 @@ export class HeaderComponent implements OnInit {
 
   hideSearchModal() {
     if (this.searchModalInstance) {
-      this.searchModalInstance.hide();
+      this.searchModalInstance.dismiss('manual-close');
       this.searchModalInstance = undefined;
       this.indexedEntities = [];
       this.searchText = "";

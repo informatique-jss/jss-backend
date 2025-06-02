@@ -86,7 +86,6 @@
             </div>
 
             <!---------------------Right column---------------------->
-            <!-- Tags liés -->
             <div class="col-md-4">
               <div class="card mb-3 border border-light p-3">
                 <div class="wrapper">
@@ -107,6 +106,7 @@
                 </div>
               </div>
 
+              <!-- Les plus vus -->
               <div class="mb-3 border border-light card">
                 <div class="wrapper p-3">
                   <div class="row">
@@ -117,7 +117,7 @@
                     </div>
                   </div>
                   <div class="tab-content" id="tab-content">
-                    <div *ngFor="let post of mostSeenPostsByEntityType.slice(0,5); let index = index"
+                    <div *ngFor="let post of mostSeenPostsByEntityType; let index = index"
                       class="row align-items-center my-3">
                       <div class="col-auto digits pe-2">
                         {{index+1}}.
@@ -130,6 +130,7 @@
                 </div>
               </div>
 
+              <!-- Newsletter -->
               <div class="border border-light card p-3 mb-3 bg-secondary">
                 <div class="wrapper text-white">
                   <div class="row">
