@@ -56,6 +56,14 @@ export class PostService extends AppRestService<Post> {
     });
   }
 
+  addAssoMailPost(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/add");
+  }
+
+  deleteAssoMailPost(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/delete");
+  }
+
   getTopPostByJssCategory(page: number, size: number, jssCategory: JssCategory) {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("categoryId", jssCategory.id), "posts/top/jss-category");
   }

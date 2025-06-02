@@ -19,6 +19,10 @@ import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 public interface PostService {
         public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException;
 
+        public Post updateBookmarkPost(Post post);
+
+        public Post deleteBookmarkPost(Post post);
+
         public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException;
 
         public List<Post> getMyJssCategoryPosts(int page) throws OsirisException;

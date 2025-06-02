@@ -18,8 +18,13 @@ import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
 public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> {
+
+        @Query("SELECT p from Post p join p.assoMailPosts a"
+                        + " WHERE p.isCancelled =:isCancelled AND a.mail= :mail ")
+        List<Post> findBookmarkedPostsByMail(@Param("isCancelled") Boolean isCancelled, @Param("mail") Mail mail);
 
         @Query("select p from Post p where p.isCancelled =:isCancelled and p.date<=CURRENT_TIMESTAMP and p.date>:consultationDate and ((:jssCategory IS NOT NULL AND :jssCategory MEMBER OF p.jssCategories) OR (:jssCategory IS NULL AND size(p.jssCategories) > 0))")
         Page<Post> findByJssCategoriesAndIsCancelled(@Param("jssCategory") JssCategory jssCategory,

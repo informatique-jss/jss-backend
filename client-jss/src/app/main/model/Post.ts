@@ -16,6 +16,7 @@ export interface Post {
   podcastUrl: string;
   videoUrl: string;
   isSticky: boolean;
+  isBookmarked: boolean;
   relatedPosts: Post[];
   mediaTimeLength: number;
 

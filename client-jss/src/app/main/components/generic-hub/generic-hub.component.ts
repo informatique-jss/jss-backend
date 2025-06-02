@@ -8,6 +8,7 @@ import { JssCategory } from '../../model/JssCategory';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
+import { PostService } from '../../services/post.service';
 
 @Directive()
 export abstract class GenericHubComponent<T extends { id: number }> implements OnInit {
@@ -29,7 +30,11 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   searchResults: Post[] = [] as Array<Post>;
   hubForm!: FormGroup;
 
-  constructor(protected appService: AppService, protected formBuilder: FormBuilder, protected activeRoute: ActivatedRoute) { }
+  constructor(protected appService: AppService,
+    protected formBuilder: FormBuilder,
+    protected activeRoute: ActivatedRoute,
+    protected postService: PostService
+  ) { }
 
   ngOnInit() {
     if (this.activeRoute.snapshot.params['isDisplayNews'])
@@ -71,6 +76,20 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
         if (data)
           this.mostSeenPostsByEntityType = data.content;
       });
+  }
+
+  unBookmarkPost(post: Post) {
+    this.postService.deleteAssoMailPost(post).subscribe(response => {
+      if (response)
+        post.isBookmarked = false;
+    });
+  }
+
+  bookmarkPost(post: Post) {
+    this.postService.addAssoMailPost(post).subscribe(response => {
+      if (response)
+        post.isBookmarked = true;
+    });
   }
 
   searchForPosts() {

@@ -50,6 +50,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailAuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailJssCategoryService;
+import com.jss.osiris.modules.myjss.wordpress.service.AssoMailPostService;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailTagService;
 import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
@@ -146,6 +147,9 @@ public class WordpressController {
 	AssoMailJssCategoryService assoMailJssCategoryService;
 
 	@Autowired
+	AssoMailPostService assoMailPostService;
+
+	@Autowired
 	EmployeeService employeeService;
 
 	// Crawler user-agents
@@ -209,6 +213,38 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/author/slug")
 	public ResponseEntity<Author> getAuthorBySlug(@RequestParam String slug) {
 		return new ResponseEntity<Author>(authorService.getAuthorBySlug(slug), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/bookmark/add")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> addAssoMailPost(@RequestParam Integer idPost,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Post post = postService.getPost(idPost);
+
+		if (post == null)
+			throw new OsirisValidationException("post");
+
+		return new ResponseEntity<Post>(postService.updateBookmarkPost(post),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/bookmark/delete")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> deleteAssoMailPost(@RequestParam Integer idPost,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Post post = postService.getPost(idPost);
+
+		if (post == null)
+			throw new OsirisValidationException("post");
+
+		return new ResponseEntity<Post>(postService.deleteBookmarkPost(post),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/author/follow/add")

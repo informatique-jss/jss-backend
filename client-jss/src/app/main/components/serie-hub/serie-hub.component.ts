@@ -23,9 +23,9 @@ import { GenericInputComponent } from '../generic-input/generic-input.component'
 })
 export class SerieHubComponent extends GenericHubComponent<Serie> implements OnInit {
 
-  constructor(private postService: PostService, private tagService: TagService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
+  constructor(private tagService: TagService, postService: PostService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
-    super(appService, formBuilder, activeRoute);
+    super(appService, formBuilder, activeRoute, postService);
   }
   override getAllPostByEntityType(selectedEntityType: Serie, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>> {
     return this.postService.getAllPostsBySerie(selectedEntityType, page, pageSize, searchText);

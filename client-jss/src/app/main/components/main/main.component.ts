@@ -179,12 +179,19 @@ export class MainComponent implements OnInit {
     }
   }
 
-  followPost(postToFollow: Post, event: MouseEvent) {
-    //TODO
+  unBookmarkPost(post: Post) {
+    this.postService.deleteAssoMailPost(post).subscribe(response => {
+      if (response)
+        post.isBookmarked = false;
+    });
   }
 
-  unfollowPost(postToFollow: Post, event: MouseEvent) {
-    //TODO
+  bookmarkPost(post: Post) {
+    this.postService.addAssoMailPost(post).subscribe(response => {
+      if (response)
+        post.isBookmarked = true;
+    });
+
   }
 
   followSerie(serieToFollow: Serie, event: MouseEvent) {

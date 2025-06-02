@@ -23,9 +23,9 @@ import { GenericInputComponent } from '../generic-input/generic-input.component'
 })
 export class CategoryHubComponent extends GenericHubComponent<JssCategory> implements OnInit {
 
-  constructor(private postService: PostService, private tagService: TagService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
+  constructor(private tagService: TagService, postService: PostService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
-    super(appService, formBuilder, activeRoute);
+    super(appService, formBuilder, activeRoute, postService);
   }
   override getAllPostByEntityType(selectedEntityType: JssCategory, page: number, pageSize: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
     return this.postService.getAllPostsByJssCategory(selectedEntityType, page, pageSize, searchText, isDisplayNewPosts);

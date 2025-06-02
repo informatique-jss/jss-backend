@@ -22,9 +22,9 @@ import { GenericInputComponent } from '../generic-input/generic-input.component'
 })
 export class TagHubComponent extends GenericHubComponent<Tag> implements OnInit {
 
-  constructor(private postService: PostService, private tagService: TagService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
+  constructor(private tagService: TagService, postService: PostService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
-    super(appService, formBuilder, activeRoute);
+    super(appService, formBuilder, activeRoute, postService);
   }
   override getAllPostByEntityType(selectedEntityType: Tag, page: number, pageSize: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
     return this.postService.getAllPostsByTag(selectedEntityType, page, pageSize, searchText, isDisplayNewPosts);

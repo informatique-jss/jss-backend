@@ -94,6 +94,21 @@ export class PostComponent implements OnInit, AfterViewInit {
     })
   }
 
+  //TODO implement template after new dev is done
+  unBookmarkPost(post: Post) {
+    this.postService.deleteAssoMailPost(post).subscribe(response => {
+      if (response)
+        post.isBookmarked = false;
+    });
+  }
+
+  bookmarkPost(post: Post) {
+    this.postService.addAssoMailPost(post).subscribe(response => {
+      if (response)
+        post.isBookmarked = true;
+    });
+  }
+
   openPost(post: Post, event: any) {
     this.appService.openRoute(event, "post/" + post.slug, undefined);
   }

@@ -27,10 +27,9 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
   selectedPublishingDepartment: PublishingDepartment | undefined;
   publishingDepartments: PublishingDepartment[] = [];
 
-  constructor(private postService: PostService,
-    private tagService: TagService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
+  constructor(private tagService: TagService, postService: PostService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
-    super(appService, formBuilder, activeRoute);
+    super(appService, formBuilder, activeRoute, postService);
   }
 
   override ngOnInit(): void {
