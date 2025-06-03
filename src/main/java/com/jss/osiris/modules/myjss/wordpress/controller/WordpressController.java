@@ -218,8 +218,15 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/jss/tendency")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Post>> getJssCategoryPostsTendency() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getJssCategoryPostTendency(),
+	public ResponseEntity<Page<Post>> getJssCategoryPostsTendency(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(required = false) String searchText,
+			HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+		return new ResponseEntity<Page<Post>>(postService.getJssCategoryPostTendency(searchText, pageable),
 				HttpStatus.OK);
 	}
 

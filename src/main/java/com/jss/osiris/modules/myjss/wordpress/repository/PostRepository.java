@@ -39,8 +39,8 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p where id not in :postFetchedId")
         List<Post> findPostExcludIds(@Param("postFetchedId") List<Integer> postFetchedId);
 
-        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
-        List<Integer> findJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
+        Page<Post> findJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
                         @Param("category") Category category, Pageable pageable);
 
         @Query("select p.id from Post p join p.postViews v where p.isCancelled = false and size(p.myJssCategories) > 0 and v.day >= :oneWeekAgo group by p.id order by sum(v.count) desc ")
@@ -75,7 +75,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findMostSeenPostPublishingDepartment(Pageable pageable, Category category,
                         @Param("publishingDepartment") PublishingDepartment publishingDepartment);
 
- @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false and size(p.departments)>0 and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false and size(p.departments)>0 and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostsIdf(Pageable pageable, Category category);
 
         @Query("select p from Post p where p.isCancelled = false and :category MEMBER OF p.postCategories and size(p.departments) > 0 and size(p.jssCategories) > 0 ")
