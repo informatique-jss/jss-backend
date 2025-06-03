@@ -77,17 +77,11 @@
       <div class="dropdown dropup ms-2 position-relative">
 
         <!-- Menu icon -->
-        <div role="button" tabindex="0" (click)="onOpenMenu()"
+        <div role="button" tabindex="0" (click)="closePlayer()"
           class=" d-flex align-items-center justify-content-center">
-          <i class="bi-three-dots-vertical fs-4 m-0"></i>
-        </div>
-        <!-- Menu dropdown -->
-        <div class="dropdown-menu p-2 bg-secondary rounded-1" [class.show]="menuDropdownOpen"
-          style="position: absolute; bottom: 120%; right: -9px; min-width: 40px;">
-          <a class="text-white" (click)="closePlayer()">Fermer</a>
+          <i class="bi-x-circle fs-4 m-0"></i>
         </div>
       </div>
-
     </div>
   </div>
 </div>

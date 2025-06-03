@@ -94,7 +94,7 @@ body {
 
 hr {
   margin: 0.9375rem 0;
-  color: inherit;
+  color: var(--bs-gray-300);
   background-color: var(--bs-gray-300);
   border: 0;
 }
@@ -3091,30 +3091,30 @@ fieldset:disabled .btn {
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #3366ff;
-  border-color: #3366ff;
+  color: var(--ar-primary);
+  background-color: var(--ar-primary-bg);
+  border-color: var(--ar-primary);
 }
 
 .btn-primary:hover {
-  color: #fff;
-  background-color: #2b57d9;
-  border-color: #2952cc;
+  color: var(--ar-primary);
+  background-color: var(--bs-gray-300);
+  border-color: var(--ar-primary);
 }
 
 .btn-check:focus+.btn-primary, .btn-primary:focus {
-  color: #fff;
-  background-color: #2b57d9;
-  border-color: #2952cc;
+  color: var(--ar-primary);
+  background-color: var(--bs-gray-300);
+  border-color: var(--ar-primary);
   box-shadow: 0 0 0 0.1rem rgba(82, 125, 255, 0.5);
 }
 
 .btn-check:checked+.btn-primary,
 .btn-check:active+.btn-primary, .btn-primary:active, .btn-primary.active,
 .show>.btn-primary.dropdown-toggle {
-  color: #fff;
-  background-color: #2952cc;
-  border-color: #264dbf;
+  color: var(--ar-primary);
+  background-color: var(--bs-gray-300);
+  border-color: var(--ar-primary);
 }
 
 .btn-check:checked+.btn-primary:focus,
@@ -3124,9 +3124,9 @@ fieldset:disabled .btn {
 }
 
 .btn-primary:disabled, .btn-primary.disabled {
-  color: #fff;
-  background-color: #3366ff;
-  border-color: #3366ff;
+  color: var(--ar-primary);
+  background-color: var(--bs-gray-800);
+  border-color: var(--ar-primary);
 }
 
 .btn-secondary {
@@ -13645,4 +13645,69 @@ ngb-modal-window {
 
 .gray-dark-color {
   color: var(--bs-gray-dark) !important;
+}
+
+/* Limit size of images in inner HTML of wordpress posts */
+img[class^="wp-image-"] {
+  max-width: 100%;
+  height: 100%;
+}
+
+/* ==============================================
+  Custom Progression Bar
+============================================== */
+/* Audio progression-bar (horizontal) */
+.form-range {
+  width: 180px;
+  height: 6px;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Fixed progression-bar background*/
+.form-range::-webkit-slider-runnable-track {
+  background: #dee2e6;
+  /* Gris clair Bootstrap */
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* Progression-bar red */
+.form-range::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, #FF5757 0%, #FF5757 var(--progress), #dee2e6 var(--progress), #dee2e6 100%);
+}
+
+/* Bouton (thumb) invisible */
+.form-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0px;
+  height: 0px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  margin-top: -6px;
+}
+
+/* Firefox fallback */
+.form-range::-moz-range-thumb {
+  width: 0px;
+  height: 0px;
+  background: transparent;
+  border: none;
+}
+
+.form-range::-moz-range-track {
+  background: #dee2e6;
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* IE / Edge */
+.form-range::-ms-thumb {
+  width: 0;
+  height: 0;
+  background: transparent;
+  border: none;
 }
