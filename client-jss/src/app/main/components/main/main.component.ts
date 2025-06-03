@@ -12,6 +12,7 @@ import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { Responsable } from '../../model/Responsable';
 import { Serie } from '../../model/Serie';
 import { Tag } from '../../model/Tag';
+import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
@@ -56,7 +57,8 @@ export class MainComponent implements OnInit {
     private appService: AppService,
     private communicationPreferenceService: CommunicationPreferencesService,
     private constantService: ConstantService,
-    private tagService: TagService
+    private tagService: TagService,
+    private audioService: AudioPlayerService
   ) { }
 
 
@@ -209,5 +211,19 @@ export class MainComponent implements OnInit {
 
   unfollowSerie(serieToFollow: Serie, event: MouseEvent) {
     //TODO
+  }
+
+  // Audio methods
+  togglePlayPodcast(post: Post) {
+    if (this.audioService.currentPost && this.audioService.currentPost.id == post.id) {
+      this.audioService.togglePlayPause();
+    } else {
+      this.audioService.loadTrack(post.id);
+    }
+  }
+
+  // Audio getters 
+  isPlayingPodcast(post: Post) {
+    return this.audioService.isPlayingPost(post);
   }
 }

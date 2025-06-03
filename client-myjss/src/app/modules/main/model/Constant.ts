@@ -4,6 +4,9 @@ import { DocumentType } from "../../my-account/model/DocumentType";
 import { PaymentType } from "../../my-account/model/PaymentType";
 import { Country } from "../../profile/model/Country";
 import { Responsable } from "../../profile/model/Responsable";
+import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
+import { Language } from "../../quotation/model/Language";
+import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
 import { ServiceFamilyGroup } from "../../quotation/model/ServiceFamilyGroup";
 import { Category } from "../../tools/model/Category";
 import { MyJssCategory } from "../../tools/model/MyJssCategory";
@@ -32,4 +35,8 @@ export interface Constant {
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
   categoryExclusivity: Category;
   attachmentTypeApplicationCv: AttachmentType;
+  languageFrench: Language;
+  mailRedirectionTypeOther: MailRedirectionType;
+  domiciliationContractTypeRouteEmailAndMail: DomiciliationContractType;
+  domiciliationContractTypeRouteMail: DomiciliationContractType;
 }

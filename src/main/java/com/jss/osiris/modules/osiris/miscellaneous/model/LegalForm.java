@@ -2,6 +2,9 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,9 +18,11 @@ public class LegalForm implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "legal_form_sequence", sequenceName = "legal_form_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "legal_form_sequence")
+	@JsonView(JacksonViews.MyJssListView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String label;
 
 	@Column(nullable = false, length = 20)

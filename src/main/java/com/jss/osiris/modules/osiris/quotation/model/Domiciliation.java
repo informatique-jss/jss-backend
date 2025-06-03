@@ -185,6 +185,23 @@ public class Domiciliation implements IId, Serializable {
 	@JsonIgnoreProperties(value = { "domiciliation" }, allowSetters = true)
 	private List<DomiciliationFee> domiciliationFees;
 
+	@Column(length = 60)
+	private String accountingDocumentsConservationAddress;
+
+	@Column(length = 10)
+	private String accountingDocumentsConservationPostalCode;
+
+	@Column(length = 20)
+	private String accountingDocumentsConservationCedexComplement;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_documents_conservation_city")
+	private City accountingDocumentsConservationCity;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_accounting_documents_conservation_country")
+	private Country accountingDocumentsConservationCountry;
+
 	public Integer getId() {
 		return id;
 	}
@@ -519,6 +536,47 @@ public class Domiciliation implements IId, Serializable {
 
 	public void setDomiciliationFees(List<DomiciliationFee> domiciliationFees) {
 		this.domiciliationFees = domiciliationFees;
+	}
+
+	public String getAccountingDocumentsConservationAddress() {
+		return accountingDocumentsConservationAddress;
+	}
+
+	public void setAccountingDocumentsConservationAddress(String accountingDocumentsConservationAddress) {
+		this.accountingDocumentsConservationAddress = accountingDocumentsConservationAddress;
+	}
+
+	public String getAccountingDocumentsConservationPostalCode() {
+		return accountingDocumentsConservationPostalCode;
+	}
+
+	public void setAccountingDocumentsConservationPostalCode(String accountingDocumentsConservationPostalCode) {
+		this.accountingDocumentsConservationPostalCode = accountingDocumentsConservationPostalCode;
+	}
+
+	public String getAccountingDocumentsConservationCedexComplement() {
+		return accountingDocumentsConservationCedexComplement;
+	}
+
+	public void setAccountingDocumentsConservationCedexComplement(
+			String accountingDocumentsConservationCedexComplement) {
+		this.accountingDocumentsConservationCedexComplement = accountingDocumentsConservationCedexComplement;
+	}
+
+	public City getAccountingDocumentsConservationCity() {
+		return accountingDocumentsConservationCity;
+	}
+
+	public void setAccountingDocumentsConservationCity(City accountingDocumentsConservationCity) {
+		this.accountingDocumentsConservationCity = accountingDocumentsConservationCity;
+	}
+
+	public Country getAccountingDocumentsConservationCountry() {
+		return accountingDocumentsConservationCountry;
+	}
+
+	public void setAccountingDocumentsConservationCountry(Country accountingDocumentsConservationCountry) {
+		this.accountingDocumentsConservationCountry = accountingDocumentsConservationCountry;
 	}
 
 }

@@ -1,5 +1,5 @@
+import { Domiciliation } from "../../quotation/model/Domiciliation";
 import { Announcement } from "./Announcement";
-import { Domiciliation } from "./Domiciliation";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
 import { ProvisionType } from "./ProvisionType";
 

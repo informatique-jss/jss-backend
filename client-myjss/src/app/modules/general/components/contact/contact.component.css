@@ -9,3 +9,9 @@ generic-textarea {
 .bg-card-green {
   background-color: #4B6380;
 }
+
+@media (max-width: 768px) {
+  .jarallax-size {
+    height: 20vh;
+  }
+}

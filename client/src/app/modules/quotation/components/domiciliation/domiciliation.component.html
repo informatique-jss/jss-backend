@@ -167,8 +167,8 @@
           <tr>
             <td>
               <autocomplete-legal-form [(model)]="domiciliation.legalGardianLegalForm" [form]="domiciliationForm"
-                label="Forme juridique" [isDisabled]="!editMode" propertyName="legalGardianLegalForm"
-                [isMandatory]="true" [isDisabled]="!editMode"
+                label="Forme juridique" propertyName="legalGardianLegalForm" [isMandatory]="true"
+                [isDisabled]="!editMode"
                 [conditionnalRequired]="domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen">
               </autocomplete-legal-form>
             </td>

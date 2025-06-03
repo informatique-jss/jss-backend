@@ -135,7 +135,7 @@ public class Comment implements Serializable, IId {
 		this.authorLastName = authorLastName;
 	}
 
-	@JsonView({ JacksonViews.MyJssListView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	public String getAuthorLastNameInitials() {
 		if (this.getAuthorLastName() != null) {
 			this.authorLastNameInitials = this.getAuthorLastName().substring(0, 1);
