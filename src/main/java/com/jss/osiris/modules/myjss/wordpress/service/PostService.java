@@ -83,7 +83,8 @@ public interface PostService {
 
         public void cancelPost(Post post);
 
-        public List<Post> getJssCategoryPostTendency() throws OsirisException;
+        public Page<Post> getJssCategoryPostTendency(String searchText, Pageable pageableRequest)
+                        throws OsirisException;
 
         public List<Post> getMyJssCategoryPostTendency() throws OsirisException;
 

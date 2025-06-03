@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
@@ -161,7 +162,12 @@ public class TagServiceImpl implements TagService {
     public List<Tag> getAllTendencyTags() throws OsirisException {
         List<Tag> tags = new ArrayList<Tag>();
         List<Integer> tagsAdded = new ArrayList<Integer>();
-        List<Post> posts = postService.getJssCategoryPostTendency();
+
+        Pageable pageable = PageRequest.of(0, ValidationHelper.limitPageSize(15),
+                Sort.by(Sort.Direction.DESC, "date"));
+
+        List<Post> posts = postService.getJssCategoryPostTendency(null, pageable).getContent();
+
         if (posts != null)
             for (Post post : posts)
                 if (post.getPostTags() != null) {

@@ -29,8 +29,13 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(new HttpParams().set("page", page).set("size", pageSize), "posts/jss/top");
   }
 
-  getPostsTendency() {
-    return this.getList(new HttpParams(), "posts/jss/tendency");
+  getPostsTendency(page: number, size: number, searchText: string) {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/jss/tendency");
   }
 
   getPostBySlug(slug: string) {

@@ -139,13 +139,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getJssCategoryPostTendency() throws OsirisException {
-        List<Integer> idPosts = postRepository.findJssCategoryPostTendency(LocalDate.now().minusDays(7),
-                getCategoryArticle(),
-                PageRequest.of(0, 5));
-        if (idPosts != null)
-            return IterableUtils.toList(postRepository.findAllById(idPosts));
-        return null;
+    public Page<Post> getJssCategoryPostTendency(String searchText, Pageable pageableRequest) throws OsirisException {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findJssCategoryPostTendency(LocalDate.now().minusDays(7), getCategoryArticle(),
+                                pageableRequest));
+            }
+        }
+        return postRepository.findJssCategoryPostTendency(LocalDate.now().minusDays(7), getCategoryArticle(),
+                pageableRequest);
     }
 
     @Override
