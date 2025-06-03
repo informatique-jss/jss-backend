@@ -131,7 +131,21 @@ export class PostComponent implements OnInit, AfterViewInit {
       });
     })
   }
+ 
+  unBookmarkPost(post: Post) {
+    this.postService.deleteAssoMailPost(post).subscribe(response => {
+      if (response)
+        post.isBookmarked = false;
+    });
+  }
 
+  bookmarkPost(post: Post) {
+    this.postService.addAssoMailPost(post).subscribe(response => {
+      if (response)
+        post.isBookmarked = true;
+    });
+  }
+ 
   dropdownOpen = false;
 
   toggleDropdown(event: Event): void {
@@ -213,7 +227,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   getResponsableNames(comment: Comment): Responsable {
     return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastNameInitials || '' } as Responsable;
   }
-
+ 
   openPost(post: Post, event: any) {
     this.appService.openRoute(event, "post/" + post.slug, undefined);
   }

@@ -42,6 +42,18 @@ export class PostService extends AppRestService<Post> {
     });
   }
 
+  getBookmarkPostsByMail(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "post/bookmark/all");
+  }
+
+  addAssoMailPost(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/add");
+  }
+
+  deleteAssoMailPost(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/delete");
+  }
+
   getFirstPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory | undefined) {
     let httpParams = new HttpParams();
     if (searchText)

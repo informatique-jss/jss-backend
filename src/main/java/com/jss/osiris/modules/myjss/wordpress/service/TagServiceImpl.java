@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,18 +60,14 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> getAllTagsByJssCategory(JssCategory jssCategory) {
-        List<Tag> tags = new ArrayList<>();
         if (jssCategory != null) {
             Pageable pageable = PageRequest.of(0, 1000000,
                     Sort.by(Sort.Direction.DESC, "date"));
-            Page<Post> posts = postService.getAllPostsByJssCategory(pageable, jssCategory, null);
-
-            for (Post post : posts.getContent()) {
-                if (post.getPostTags() != null && !post.getPostTags().isEmpty())
-                    tags.addAll(post.getPostTags());
-            }
+            Page<Post> posts = postService.getAllPostsByJssCategory(pageable, jssCategory, null,
+                    LocalDateTime.of(1970, 1, 1, 0, 0));
+            return computeTagsLinkedToPost(posts);
         }
-        return tags;
+        return null;
     }
 
     @Override
@@ -88,82 +85,76 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> getAllTagsByTag(Tag tag) throws OsirisException {
-        List<Tag> tags = new ArrayList<>();
+    public List<Tag> getAllTagsByTag(Tag tag, LocalDateTime consultationDate) throws OsirisException {
         if (tag != null) {
             Pageable pageable = PageRequest.of(0, 1000000,
                     Sort.by(Sort.Direction.DESC, "date"));
-            Page<Post> posts = postService.getAllPostsByTag(pageable, tag, null);
+            Page<Post> posts = postService.getAllPostsByTag(pageable, tag, null, consultationDate);
 
-            for (Post post : posts.getContent()) {
-                if (post.getPostTags() != null && !post.getPostTags().isEmpty())
-                    tags.addAll(post.getPostTags());
-            }
+            return computeTagsLinkedToPost(posts);
         }
-        return tags;
+        return null;
     }
 
     @Override
-    public List<Tag> getAllTagsByAuthor(Author author) {
-        List<Tag> tags = new ArrayList<>();
+    public List<Tag> getAllTagsByAuthor(Author author, LocalDateTime consuLocalDateTime) {
         if (author != null) {
             Pageable pageable = PageRequest.of(0, 1000000,
                     Sort.by(Sort.Direction.DESC, "date"));
-            Page<Post> posts = postService.getAllPostsByAuthor(pageable, author, null);
+            Page<Post> posts = postService.getAllPostsByAuthor(pageable, author, null, consuLocalDateTime);
 
+            return computeTagsLinkedToPost(posts);
+        }
+        return null;
+    }
+
+    private List<Tag> computeTagsLinkedToPost(Page<Post> posts) {
+        List<Tag> tags = new ArrayList<>();
+        List<Integer> tagIds = new ArrayList<>();
+
+        if (posts != null && !posts.getContent().isEmpty())
             for (Post post : posts.getContent()) {
                 if (post.getPostTags() != null && !post.getPostTags().isEmpty())
-                    tags.addAll(post.getPostTags());
+                    for (Tag tag : post.getPostTags())
+                        if (!tagIds.contains(tag.getId())) {
+                            tags.add(tag);
+                            tagIds.add(tag.getId());
+                        }
             }
-        }
         return tags;
     }
 
     @Override
     public List<Tag> getAllTagsBySerie(Serie serie) {
-        List<Tag> tags = new ArrayList<>();
         if (serie != null) {
             Pageable pageable = PageRequest.of(0, 1000000,
                     Sort.by(Sort.Direction.DESC, "date"));
             Page<Post> posts = postService.getAllPostsBySerie(pageable, serie, null);
 
-            for (Post post : posts.getContent()) {
-                if (post.getPostTags() != null && !post.getPostTags().isEmpty())
-                    tags.addAll(post.getPostTags());
-            }
+            return computeTagsLinkedToPost(posts);
         }
-        return tags;
+        return null;
     }
 
     @Override
     public List<Tag> getAllTagsByPublishingDepartment(PublishingDepartment publishingDepartment)
             throws OsirisException {
-        List<Tag> tags = new ArrayList<>();
         if (publishingDepartment != null) {
             Pageable pageable = PageRequest.of(0, 1000000,
                     Sort.by(Sort.Direction.DESC, "date"));
             Page<Post> posts = postService.getAllPostsByPublishingDepartment(pageable, publishingDepartment, null);
-
-            for (Post post : posts.getContent()) {
-                if (post.getPostTags() != null && !post.getPostTags().isEmpty())
-                    tags.addAll(post.getPostTags());
-            }
+            return computeTagsLinkedToPost(posts);
         }
-        return tags;
+        return null;
     }
 
     @Override
     public List<Tag> getAllTagsByIdf() throws OsirisException {
-        List<Tag> tags = new ArrayList<>();
         Pageable pageable = PageRequest.of(0, 1000000,
                 Sort.by(Sort.Direction.DESC, "date"));
         Page<Post> posts = postService.getAllPostsByIdf(pageable, null);
 
-        for (Post post : posts.getContent()) {
-            if (post.getPostTags() != null && !post.getPostTags().isEmpty())
-                tags.addAll(post.getPostTags());
-        }
-        return tags;
+        return computeTagsLinkedToPost(posts);
     }
 
     @Override
