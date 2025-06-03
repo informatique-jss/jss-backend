@@ -9,6 +9,7 @@ import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
 import { Serie } from '../../model/Serie';
 import { Tag } from '../../model/Tag';
+import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
 import { TagService } from '../../services/tag.service';
 import { GenericHubComponent } from '../generic-hub/generic-hub.component';
@@ -23,9 +24,9 @@ import { GenericInputComponent } from '../generic-input/generic-input.component'
 })
 export class SerieHubComponent extends GenericHubComponent<Serie> implements OnInit {
 
-  constructor(private tagService: TagService, postService: PostService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
+  constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
-    super(appService, formBuilder, activeRoute, postService);
+    super(appService, formBuilder, activeRoute, postService, loginService);
   }
   override getAllPostByEntityType(selectedEntityType: Serie, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>> {
     return this.postService.getAllPostsBySerie(selectedEntityType, page, pageSize, searchText);

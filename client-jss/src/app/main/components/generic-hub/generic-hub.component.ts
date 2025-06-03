@@ -37,7 +37,7 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
     protected formBuilder: FormBuilder,
     protected activeRoute: ActivatedRoute,
     protected postService: PostService,
-    private loginService: LoginService
+    protected loginService: LoginService
   ) { }
 
   ngOnInit() {
