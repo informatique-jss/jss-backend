@@ -552,7 +552,7 @@
                   <generic-input class="col-md-6 mt-0" [(model)]="newPhoneLegalGardian"
                     label="Téléphone(s) (entrer pour valider)" [form]="informationForm"
                     propertyName="newPhoneLegalGardian" [isMandatory]="false" [isDisabled]="false" [icon]="'phone'"
-                    [maxLength]="13" (onEnter)="addPhone(provision.domiciliation)">
+                    [maxLength]="13" (onEnter)="addDomiciliationPhone(provision.domiciliation)">
                   </generic-input>
                   <ul class="list-group">
                     <li class="list-group-item py-0" *ngFor="let phone of provision.domiciliation.legalGardianPhones">

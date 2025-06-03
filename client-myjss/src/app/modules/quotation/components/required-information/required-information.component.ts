@@ -502,7 +502,7 @@ export class RequiredInformationComponent implements OnInit {
     return new Date();
   }
 
-  addPhone(domiciliation: Domiciliation) {
+  addDomiciliationPhone(domiciliation: Domiciliation) {
     if (domiciliation)
       if (this.newPhoneLegalGardian && (validateFrenchPhone(this.newPhoneLegalGardian) || validateInternationalPhone(this.newPhoneLegalGardian))) {
         let phone = {} as Phone;
