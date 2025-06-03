@@ -20,20 +20,20 @@
   </div>
 </section>
 <section>
-  <div class="jarallax overflow-hidden z-2" data-speed="0.5">
-    <div class="jarallax-img" style="background-image: url('assets/img/others/contact-jarallax.jpg');"></div>
+  <div class="jarallax jarallax-size overflow-hidden z-2" data-img-size="contain" data-speed="0.5">
+    <div class="jarallax-img " style="background-image: url('assets/img/others/contact-jarallax.jpg'); "></div>
   </div>
 </section>
 <section class="container my-5">
   <div class="pb-sm-3 pt-4">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 pt-2">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 pt-2 justify-content-between">
 
-      <div class="col pb-2">
+      <div class="col-auto pb-2">
         <h4 class="mb-lg-4">Adresse</h4>
         <p class="fs-lg fw-medium pb-3 mb-3">10 Bd Haussmann,<br />75009 Paris</p>
       </div>
 
-      <div class="col pb-2">
+      <div class="col-auto pb-2">
         <h4 class="mb-lg-4">Téléphone</h4>
         <ul class="list-unstyled mb-0">
           <li class="pb-1 mb-2">
@@ -43,7 +43,7 @@
         </ul>
       </div>
 
-      <div class="col pb-2">
+      <div class="col-auto pb-2">
         <h4 class="mb-lg-4">Horaires</h4>
         <ul class="list-unstyled mb-0">
           <li class="pb-1 mb-2">
@@ -62,7 +62,7 @@
         </ul>
       </div>
 
-      <div class="col pb-2">
+      <div class="col-auto pb-2">
         <h4 class="mb-lg-4">Email</h4>
         <p class="fs-lg">{{emailJss}}</p>
       </div>
@@ -71,7 +71,7 @@
 
   <div class="border-top pb-sm-3 pt-4">
     <div class="row g-4 pt-2">
-      <div class="col-6 pb-2">
+      <div class="col-md-6 pb-2">
         <h4 class="mb-lg-6">Transports publics
           les plus proches</h4>
         <p class="fs-lg fw-medium pb-3 mb-3">Métro [ lignes 3, 7, 8 ,9 ] et RER A</p>
@@ -79,7 +79,7 @@
         <p class="fs-lg fw-medium pb-3 mb-3">Bus Richelieu - Drouot - Mairie du 9e [ 39, 74, 85 ]</p>
       </div>
 
-      <div class="col-6 pb-2">
+      <div class="col-md-6 pb-2">
         <h4 class="mb-lg-4">Parking</h4>
         <ul class="list-unstyled mb-0">
           <li class="pb-1 mb-2">
@@ -99,7 +99,7 @@
 
 <section class="container pt-5 pb-lg-2 pb-xl-4 py-xxl-5 my-5">
   <div class="row pb-1 pb-sm-3 pb-lg-4 d-flex align-items-center">
-    <div class="col-6 pe-xxl-4">
+    <div class="col-lg-6 pe-xxl-4">
       <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">Besoin d'infos ? On vous répond !
       </h2>
       <p>Vous avez une question ou besoin d’éclaircissements ? Remplissez ce formulaire et notre équipe vous répondra
@@ -136,15 +136,15 @@
             </label>
           </div>
         </div>
-        <div class=" col-sm-12 pt-5">
+        <div class=" col-sm-12 pt-lg-5 pt-md-4 pt-sm-3 pt-2">
           <button class=" btn btn-lg btn-primary w-100" (click)="subscribeFormContact($event)">Envoyer ma
             demande</button>
         </div>
       </form>
     </div>
-    <div class="col-6">
-      <div class="row row-cols-2 g-4">
-        <div class="col">
+    <div class="col-lg-6 mt-5">
+      <div class="row g-4">
+        <div class="col-12 col-md-6">
           <div class="card h-100 border-0 rounded-5 ">
             <div class="card-body pb-3">
               <img src="assets/img/icons/assistance_dedie.svg" class="w-25" alt="Icon">
@@ -157,7 +157,7 @@
           </div>
         </div>
 
-        <div class="col">
+        <div class="col-12 col-md-6">
           <div class="card bg-card-green h-100 border-0 rounded-5">
             <div class="card-body pb-3">
               <img src="assets/img/icons/couverture_nationale.svg" class="w-25" alt="Icon">
@@ -168,7 +168,7 @@
           </div>
         </div>
 
-        <div class="col">
+        <div class="col-12 col-md-6">
           <div class="card bg-card-green h-100 border-0 rounded-5 ">
             <div class="card-body pb-3">
               <img src="assets/img/icons/expertise_reconnue.svg" class="w-25" alt="Icon">
@@ -179,7 +179,7 @@
           </div>
         </div>
 
-        <div class="col">
+        <div class="col-12 col-md-6">
           <div class="card h-100 border-0 rounded-5 ">
             <div class="card-body pb-3">
               <img src="assets/img/icons/Tarifs_avantageux.svg" class="w-25" alt="Icon">
