@@ -1,0 +1,21 @@
+.btn-tab:active {
+    border: solid 1px black;
+}
+
+.btn-tab:focus {
+    box-shadow: none;
+}
+
+.date-pill-bg {
+    background: #F6F9FC;
+
+}
+
+.kiosk-img {
+    box-shadow: -2px 2px 4px #18171926;
+    max-height: 320px;
+}
+
+.bg-gray {
+    background-color: #5050506e;
+}
