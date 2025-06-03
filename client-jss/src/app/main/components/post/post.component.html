@@ -215,7 +215,7 @@
                         <a>
                           <div class="post-img-wrap position-relative overflow-hidden  me-2 ms-0">
                             <img class="post-img"
-                              [src]="previousPost.media.urlThumbnail ? previousPost.media.urlThumbnail : previousPost.media.urlFull"
+                              [src]="previousPost.media ? (previousPost.media.urlThumbnail ? previousPost.media.urlThumbnail : previousPost.media.urlFull) : ''"
                               [alt]="previousPost.titleText">
                           </div>
                         </a>

@@ -98,7 +98,9 @@ export class AudioPlayerService {
     const win = this.platform.getNativeWindow();
     if (!win || !post.contentText) return;
 
-    this.ttsText = this.extractContent(post.titleText + post.excerptText + post.contentText);
+    let textToRead = post.titleText + post.excerptText + this.deleteQuotesFigcaptionFromHtml(post.contentText);
+
+    this.ttsText = this.extractContent(textToRead);
     this.ttsWords = this.ttsText.split(/\s+/);
     this.speechUtterance = this.createSpeechUtterance(this.ttsText);
 
@@ -118,6 +120,27 @@ export class AudioPlayerService {
 
     this.attachUtteranceEvents();
     win.speechSynthesis.speak(this.speechUtterance);
+  }
+
+  deleteQuotesFigcaptionFromHtml(html: string) {
+    let tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    let blockquotes = tempDiv.querySelectorAll('blockquote');
+    blockquotes.forEach(bq => {
+      if (bq.parentNode) {
+        bq.parentNode.removeChild(bq);
+      }
+    });
+
+    let figcaptions = tempDiv.querySelectorAll('figcaption');
+    figcaptions.forEach(bq => {
+      if (bq.parentNode) {
+        bq.parentNode.removeChild(bq);
+      }
+    });
+
+    return tempDiv.innerHTML;
   }
 
   play(): void {
