@@ -13647,6 +13647,12 @@ ngb-modal-window {
   color: var(--bs-gray-dark) !important;
 }
 
+/* Limit size of images in inner HTML of wordpress posts */
+img[class^="wp-image-"] {
+  max-width: 100%;
+  height: 100%;
+}
+
 /* ==============================================
   Custom Progression Bar
 ============================================== */

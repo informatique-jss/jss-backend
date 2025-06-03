@@ -98,7 +98,7 @@ export class AudioPlayerService {
     const win = this.platform.getNativeWindow();
     if (!win || !post.contentText) return;
 
-    this.ttsText = this.extractContent(post.contentText);
+    this.ttsText = this.extractContent(post.titleText + post.excerptText + post.contentText);
     this.ttsWords = this.ttsText.split(/\s+/);
     this.speechUtterance = this.createSpeechUtterance(this.ttsText);
 
