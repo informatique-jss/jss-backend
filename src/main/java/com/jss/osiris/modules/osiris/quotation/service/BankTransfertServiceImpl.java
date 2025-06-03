@@ -78,6 +78,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
     @Value("${jss.bic}")
     private String bicJss;
 
+    @Value("${jss.siret}")
+    private String siretJss;
+
     @Autowired
     InvoiceHelper invoiceHelper;
 
@@ -255,7 +258,7 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             id.setOrgIdBean(orgId);
             OthrBean othrBean = new OthrBean();
             orgId.setOthrBean(othrBean);
-            othrBean.setId("55207462700035");
+            othrBean.setId(siretJss);
 
             document.getCstmrCdtTrfInitnBean().setPmtInfBean(new ArrayList<PmtInfBean>());
 
