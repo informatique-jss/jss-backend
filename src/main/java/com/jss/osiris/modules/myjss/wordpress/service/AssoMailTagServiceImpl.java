@@ -69,7 +69,7 @@ public class AssoMailTagServiceImpl implements AssoMailTagService {
     }
 
     @Override
-    public List<AssoMailTag> getAssoMailTagByMail() {
+    public List<AssoMailTag> getAssoMailTagForCurrentUser() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         return assoMailTagRepository.findByMail(responsable.getMail());
     }

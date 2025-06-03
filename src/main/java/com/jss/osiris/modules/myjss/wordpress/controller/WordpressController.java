@@ -233,7 +233,7 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/delete")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Post> deleteAssoMailPost(@RequestParam Integer idPost,
+	public ResponseEntity<Post> deleteBookmarkPost(@RequestParam Integer idPost,
 			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
@@ -244,6 +244,20 @@ public class WordpressController {
 			throw new OsirisValidationException("post");
 
 		return new ResponseEntity<Post>(postService.deleteBookmarkPost(post),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/bookmark/all")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Page<Post>> getBookmarkPostsForCurrentUser(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<Page<Post>>(postService.getBookmarkPostsForCurrentUser(pageable),
 				HttpStatus.OK);
 	}
 

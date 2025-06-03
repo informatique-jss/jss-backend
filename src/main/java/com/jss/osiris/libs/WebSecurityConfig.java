@@ -55,7 +55,6 @@ public class WebSecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/myjss/profile/login").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/constants").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/profile/login/token/send").permitAll()
-				.requestMatchers(HttpMethod.GET, "/myjss/profile/user").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/countries").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/departments").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/quotation/civilities").permitAll()

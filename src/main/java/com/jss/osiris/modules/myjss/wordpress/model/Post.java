@@ -29,8 +29,8 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true),
-        @Index(name = "idx_post_author", columnList = "id_author", unique = true),
-        @Index(name = "idx_post_publication_date", columnList = "date", unique = true)
+        @Index(name = "idx_post_author", columnList = "id_author"),
+        @Index(name = "idx_post_publication_date", columnList = "date")
 })
 public class Post implements IId, Serializable {
     @Id

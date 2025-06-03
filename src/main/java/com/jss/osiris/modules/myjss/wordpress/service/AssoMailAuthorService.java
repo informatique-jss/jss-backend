@@ -18,7 +18,7 @@ public interface AssoMailAuthorService {
 
     public AssoMailAuthor updateAuthorConsultationDate(Mail mail, Author author);
 
-    public List<AssoMailAuthor> getAssoMailAuthorByMail();
+    public List<AssoMailAuthor> getAssoMailAuthorForCurrentUser();
 
     public AssoMailAuthor getAssoMailAuthor(Integer id);
 

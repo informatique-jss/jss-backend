@@ -21,8 +21,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_asso_mail_author_mail", columnList = "id_mail"),
-        @Index(name = "idx_asso_mail_author_author", columnList = "id_author") })
+@Table(indexes = { @Index(name = "idx_asso_mail_author", columnList = "id_mail, id_author", unique = true) })
 public class AssoMailAuthor implements Serializable, IId {
 
     @Id
@@ -34,16 +33,13 @@ public class AssoMailAuthor implements Serializable, IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_mail")
     @IndexedField
-    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private Mail mail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author")
     @IndexedField
-    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private Author author;
 
-    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private LocalDateTime lastConsultationDate;
 
     public Integer getId() {

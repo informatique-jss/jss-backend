@@ -72,7 +72,7 @@ public class AssoMailJssCategoryServiceImpl implements AssoMailJssCategoryServic
     }
 
     @Override
-    public List<AssoMailJssCategory> getAssoMailJssCategoryByMail() {
+    public List<AssoMailJssCategory> getAssoMailJssCategoryForCurrentUser() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         return assoMailJssCategoryRepository.findByMail(responsable.getMail());
     }

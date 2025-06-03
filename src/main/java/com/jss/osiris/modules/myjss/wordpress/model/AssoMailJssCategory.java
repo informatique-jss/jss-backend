@@ -21,8 +21,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_asso_mail_jss_category_mail", columnList = "id_mail"),
-        @Index(name = "idx_asso_mail_jss_category_category", columnList = "id_jss_category") })
+@Table(indexes = {
+        @Index(name = "idx_asso_mail_jss_category", columnList = "id_mail, id_jss_category", unique = true) })
 public class AssoMailJssCategory implements Serializable, IId {
     @Id
     @SequenceGenerator(name = "asso_mail_jss_category_sequence", sequenceName = "asso_mail_jss_category_sequence", allocationSize = 1)
@@ -33,16 +33,13 @@ public class AssoMailJssCategory implements Serializable, IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_mail")
     @IndexedField
-    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private Mail mail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_jss_category")
     @IndexedField
-    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private JssCategory jssCategory;
 
-    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private LocalDateTime lastConsultationDate;
 
     public Integer getId() {

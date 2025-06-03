@@ -17,7 +17,7 @@ public interface AssoMailTagService {
 
     public AssoMailTag updateTagConsultationDate(Mail mail, Tag tag);
 
-    public List<AssoMailTag> getAssoMailTagByMail();
+    public List<AssoMailTag> getAssoMailTagForCurrentUser();
 
     public AssoMailTag getAssoMailTag(Integer id);
 

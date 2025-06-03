@@ -3,8 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { Author } from '../../model/Author';
+import { Responsable } from '../../model/Responsable';
 import { AssoMailAuthorService } from '../../services/asso.mail.author.service';
 import { AuthorService } from '../../services/author.service';
+import { LoginService } from '../../services/login.service';
 import { AuthorHubComponent } from '../author-hub/author-hub.component';
 
 @Component({
@@ -19,15 +21,17 @@ export class PostAuthorHeaderComponent implements OnInit {
   constructor(private assoMailAuthorService: AssoMailAuthorService,
     private authorService: AuthorService,
     private activeRoute: ActivatedRoute,
+    private loginService: LoginService,
     private appService: AppService
   ) { }
 
   selectedAuthor: Author | undefined;
   isFollowed: Boolean = false;
+  currentUser: Responsable | undefined;
 
   ngOnInit() {
     let slug = this.activeRoute.snapshot.params['slug'];
-    if (slug)
+    if (slug) {
       this.authorService.getAuthorBySlug(slug).subscribe(response => {
         if (response) {
           this.selectedAuthor = response;
@@ -38,6 +42,10 @@ export class PostAuthorHeaderComponent implements OnInit {
           });
         }
       });
+      this.loginService.getCurrentUser().subscribe(response => {
+        this.currentUser = response;
+      });
+    }
   }
 
   followAuthor() {

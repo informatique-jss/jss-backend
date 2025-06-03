@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
+import { Responsable } from '../../model/Responsable';
 import { Tag } from '../../model/Tag';
 import { AssoMailTagService } from '../../services/asso.mail.tag.service';
+import { LoginService } from '../../services/login.service';
 import { TagService } from '../../services/tag.service';
 import { TagHubComponent } from '../tag-hub/tag-hub.component';
 
@@ -18,15 +20,17 @@ export class PostTagHeaderComponent implements OnInit {
   constructor(private tagService: TagService,
     private assoMailTagService: AssoMailTagService,
     private activeRoute: ActivatedRoute,
+    private loginService: LoginService,
     private appService: AppService
   ) { }
 
   selectedTag: Tag | undefined;
   isFollowed: Boolean = false;
+  currentUser: Responsable | undefined;
 
   ngOnInit() {
     let slug = this.activeRoute.snapshot.params['slug'];
-    if (slug)
+    if (slug) {
       this.tagService.getTagBySlug(slug).subscribe(response => {
         if (response) {
           this.selectedTag = response;
@@ -37,6 +41,10 @@ export class PostTagHeaderComponent implements OnInit {
           });
         }
       });
+      this.loginService.getCurrentUser().subscribe(response => {
+        this.currentUser = response;
+      });
+    }
   }
 
   followAuthor() {

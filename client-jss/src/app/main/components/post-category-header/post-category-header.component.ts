@@ -3,8 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { JssCategory } from '../../model/JssCategory';
+import { Responsable } from '../../model/Responsable';
 import { AssoMailJssCategoryService } from '../../services/asso.mail.jss.category.service';
 import { JssCategoryService } from '../../services/jss.category.service';
+import { LoginService } from '../../services/login.service';
 import { CategoryHubComponent } from '../category-hub/category-hub.component';
 
 @Component({
@@ -19,15 +21,17 @@ export class PostCategoryHeaderComponent implements OnInit {
   constructor(private jssCategoryService: JssCategoryService,
     private assoMailJssCategoryService: AssoMailJssCategoryService,
     private activeRoute: ActivatedRoute,
+    private loginService: LoginService,
     private appService: AppService
   ) { }
 
   selectedJssCategory: JssCategory | undefined;
   isFollowed: Boolean = false;
+  currentUser: Responsable | undefined;
 
   ngOnInit() {
     let slug = this.activeRoute.snapshot.params['slug'];
-    if (slug)
+    if (slug) {
       this.jssCategoryService.getJssCategoryBySlug(slug).subscribe(response => {
         if (response) {
           this.selectedJssCategory = response;
@@ -38,6 +42,10 @@ export class PostCategoryHeaderComponent implements OnInit {
           });
         }
       });
+      this.loginService.getCurrentUser().subscribe(response => {
+        this.currentUser = response;
+      });
+    }
   }
 
   followAuthor() {

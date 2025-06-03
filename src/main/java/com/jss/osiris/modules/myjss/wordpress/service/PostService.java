@@ -23,6 +23,8 @@ public interface PostService {
 
         public Post deleteBookmarkPost(Post post);
 
+        public Page<Post> getBookmarkPostsForCurrentUser(Pageable pageableRequest);
+
         public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException;
 
         public List<Post> getMyJssCategoryPosts(int page) throws OsirisException;

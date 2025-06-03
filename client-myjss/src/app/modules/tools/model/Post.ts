@@ -22,4 +22,5 @@ export interface Post {
   postTags: Tag[];
   media: Media;
   isPremium: boolean;
+  isBookmarked: boolean;
 }

@@ -441,13 +441,26 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByPostCategoriesAndIsCancelled(category, false, pageableRequest);
     }
 
+    @Override
+    public Page<Post> getBookmarkPostsForCurrentUser(Pageable pageableRequest) {
+        Responsable responsable = employeeService.getCurrentMyJssUser();
+        if (responsable != null && responsable.getMail() != null)
+            return postRepository.findBookmarkedPostsByMail(false, responsable.getMail(), pageableRequest);
+        else
+            return null;
+    }
+
     private Page<Post> computeBookmarkedPosts(Page<Post> posts) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         List<Post> bookmarkedPosts = null;
+        Order order = new Order(Direction.DESC, "date");
+        Sort sort = Sort.by(Arrays.asList(order));
+        Pageable pageableRequest = PageRequest.of(0, 15, sort);
 
         if (posts != null && !posts.getContent().isEmpty()) {
             if (responsable != null && responsable.getMail() != null) {
-                bookmarkedPosts = postRepository.findBookmarkedPostsByMail(false, responsable.getMail());
+                bookmarkedPosts = postRepository.findBookmarkedPostsByMail(false, responsable.getMail(),
+                        pageableRequest).getContent();
 
                 if (bookmarkedPosts != null) {
                     for (Post post : posts.getContent()) {

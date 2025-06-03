@@ -20,8 +20,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_asso_mail_post_mail", columnList = "id_mail"),
-                @Index(name = "idx_asso_mail_post_post", columnList = "id_post") })
+@Table(indexes = { @Index(name = "idx_asso_mail_post", columnList = "id_mail,id_post", unique = true) })
 public class AssoMailPost implements Serializable, IId {
 
         @Id

@@ -326,31 +326,31 @@ public class MyJssCrmController {
 
     @JsonView(JacksonViews.MyJssDetailedView.class)
     @GetMapping(inputEntryPoint + "/preferences/followed/author")
-    public ResponseEntity<List<AssoMailAuthor>> getAssoMailAuthorByMail(HttpServletRequest request)
+    public ResponseEntity<List<AssoMailAuthor>> getAssoMailAuthorForCurrentUser(HttpServletRequest request)
             throws OsirisValidationException {
         detectFlood(request);
 
         return new ResponseEntity<List<AssoMailAuthor>>(
-                assoMailAuthorService.getAssoMailAuthorByMail(), HttpStatus.OK);
+                assoMailAuthorService.getAssoMailAuthorForCurrentUser(), HttpStatus.OK);
     }
 
     @JsonView(JacksonViews.MyJssDetailedView.class)
     @GetMapping(inputEntryPoint + "/preferences/followed/tag")
-    public ResponseEntity<List<AssoMailTag>> getAssoMailTagByMail(HttpServletRequest request)
+    public ResponseEntity<List<AssoMailTag>> getAssoMailTagForCurrentUser(HttpServletRequest request)
             throws OsirisValidationException {
         detectFlood(request);
 
         return new ResponseEntity<List<AssoMailTag>>(
-                assoMailTagService.getAssoMailTagByMail(), HttpStatus.OK);
+                assoMailTagService.getAssoMailTagForCurrentUser(), HttpStatus.OK);
     }
 
     @JsonView(JacksonViews.MyJssDetailedView.class)
     @GetMapping(inputEntryPoint + "/preferences/followed/jss-category")
-    public ResponseEntity<List<AssoMailJssCategory>> getAssoMailJssCategoryByMail(HttpServletRequest request)
+    public ResponseEntity<List<AssoMailJssCategory>> getAssoMailJssCategoryForCurrentUser(HttpServletRequest request)
             throws OsirisValidationException {
         detectFlood(request);
 
         return new ResponseEntity<List<AssoMailJssCategory>>(
-                assoMailJssCategoryService.getAssoMailJssCategoryByMail(), HttpStatus.OK);
+                assoMailJssCategoryService.getAssoMailJssCategoryForCurrentUser(), HttpStatus.OK);
     }
 }

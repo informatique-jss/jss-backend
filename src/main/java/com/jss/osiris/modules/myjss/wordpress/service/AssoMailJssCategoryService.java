@@ -18,7 +18,7 @@ public interface AssoMailJssCategoryService {
 
     public AssoMailJssCategory updateJssCategoryConsultationDate(Mail mail, JssCategory jssCategory);
 
-    public List<AssoMailJssCategory> getAssoMailJssCategoryByMail();
+    public List<AssoMailJssCategory> getAssoMailJssCategoryForCurrentUser();
 
     public AssoMailJssCategory getAssoMailJssCategory(Integer id);
 

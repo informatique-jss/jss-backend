@@ -61,7 +61,7 @@ public class AssoMailAuthorServiceImpl implements AssoMailAuthorService {
     }
 
     @Override
-    public List<AssoMailAuthor> getAssoMailAuthorByMail() {
+    public List<AssoMailAuthor> getAssoMailAuthorForCurrentUser() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         return assoMailAuthorRepository.findByMail(responsable.getMail());
     }
