@@ -232,7 +232,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "    from" + "        accounting_record record " + "    inner join"
                         + "        accounting_account accounting join principal_accounting_account pa on pa.id = accounting.id_principal_accounting_account "
                         + "            on record.id_accounting_account=accounting.id  join accounting_account_class aac on aac.id = pa.id_accounting_account_class  "
-                        + "			left join invoice i on i.id = record.id_invoice"
+                        + "			left join invoice i on i.id = record.id_invoice  and i.id_invoice_status =83 "
                         + " where (accounting.id=:accountingAccountId or :accountingAccountId =0 ) and "
                         + "   (:isFromAs400 = false or record.is_from_as400=true ) and " +
                         "  (:accountingJournalId =0 or record.id_accounting_journal = :accountingJournalId) and " +
@@ -275,7 +275,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "    from" + "        closed_accounting_record record " + "    inner join"
                         + "        accounting_account accounting join principal_accounting_account pa on pa.id = accounting.id_principal_accounting_account "
                         + "            on record.id_accounting_account=accounting.id  join accounting_account_class aac on aac.id = pa.id_accounting_account_class  "
-                        + "			left join invoice i on i.id = record.id_invoice"
+                        + "			left join invoice i on i.id = record.id_invoice  and i.id_invoice_status =83 "
                         + " where (accounting.id=:accountingAccountId or :accountingAccountId =0 ) and "
                         + "   (:isFromAs400 = false or record.is_from_as400=true ) and " +
                         "  (:accountingJournalId =0 or record.id_accounting_journal = :accountingJournalId) and " +
@@ -316,7 +316,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "    from" + "        accounting_record record " + "    inner join"
                         + "        accounting_account accounting  join principal_accounting_account pa on pa.id = accounting.id_principal_accounting_account  "
                         + "            on record.id_accounting_account=accounting.id  join accounting_account_class aac on aac.id = pa.id_accounting_account_class  "
-                        + "			left join invoice i on i.id = record.id_invoice"
+                        + "			left join invoice i on i.id = record.id_invoice  and i.id_invoice_status =83  "
                         + " where (accounting.id=:accountingAccountId or :accountingAccountId =0 ) and "
                         + "  (:isFromAs400 = false or coalesce(record.is_from_as400,false)=true ) and " +
                         "  (:accountingJournalId =0 or record.id_accounting_journal = :accountingJournalId) and " +
@@ -353,7 +353,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "    from" + "        closed_accounting_record record " + "    inner join"
                         + "        accounting_account accounting  join principal_accounting_account pa on pa.id = accounting.id_principal_accounting_account  "
                         + "            on record.id_accounting_account=accounting.id  join accounting_account_class aac on aac.id = pa.id_accounting_account_class  "
-                        + "			left join invoice i on i.id = record.id_invoice"
+                        + "			left join invoice i on i.id = record.id_invoice and i.id_invoice_status =83 "
                         + " where (accounting.id=:accountingAccountId or :accountingAccountId =0 ) and "
                         + "  (:isFromAs400 = false or coalesce(record.is_from_as400,false)=true ) and " +
                         "  (:accountingJournalId =0 or record.id_accounting_journal = :accountingJournalId) and " +
