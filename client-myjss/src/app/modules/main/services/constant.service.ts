@@ -145,6 +145,21 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.attachmentTypeApplicationCv;
   }
 
+  getLanguageFrench() {
+    return this.constant.languageFrench;
+  }
+
+  getDomiciliationContractTypeRouteEmailAndMail() {
+    return this.constant.domiciliationContractTypeRouteEmailAndMail;
+  }
+
+  getDomiciliationContractTypeRouteMail() {
+    return this.constant.domiciliationContractTypeRouteMail;
+  }
+
+  getMailRedirectionTypeOther() {
+    return this.constant.mailRedirectionTypeOther;
+  }
 }
 
 @Injectable({ providedIn: 'root' })

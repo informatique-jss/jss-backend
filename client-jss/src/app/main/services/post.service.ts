@@ -61,15 +61,24 @@ export class PostService extends AppRestService<Post> {
     });
   }
 
+  addAssoMailPost(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/add");
+  }
+
+  deleteAssoMailPost(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/delete");
+  }
+
   getTopPostByJssCategory(page: number, size: number, jssCategory: JssCategory) {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("categoryId", jssCategory.id), "posts/top/jss-category");
   }
 
-  getAllPostsByJssCategory(jssCategory: JssCategory, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
+  getAllPostsByJssCategory(jssCategory: JssCategory, page: number, size: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
     let params = new HttpParams()
       .set('categoryId', jssCategory.id.toString())
       .set('page', page.toString())
-      .set('size', size.toString());
+      .set('size', size.toString())
+      .set('isDisplayNewPosts', isDisplayNewPosts);
     if (searchText)
       params = params.set('searchText', searchText);
     return this.getPagedList(params, "posts/all/jss-category", "", "");
@@ -83,21 +92,23 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(params, "posts/all/category", "", "");
   }
 
-  getAllPostsByTag(tag: Tag, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
+  getAllPostsByTag(tag: Tag, page: number, size: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
     let params = new HttpParams()
       .set('tagSlug', tag.slug)
       .set('page', page.toString())
-      .set('size', size.toString());
+      .set('size', size.toString())
+      .set('isDisplayNewPosts', isDisplayNewPosts);
     if (searchText)
       params = params.set('searchText', searchText);
     return this.getPagedList(params, "posts/all/tag", "", "");
   }
 
-  getAllPostsByAuthor(author: Author, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
+  getAllPostsByAuthor(author: Author, page: number, size: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
     let params = new HttpParams()
       .set('authorSlug', author.slug)
       .set('page', page.toString())
-      .set('size', size.toString());
+      .set('size', size.toString())
+      .set('isDisplayNewPosts', isDisplayNewPosts);
     if (searchText)
       params = params.set('searchText', searchText);
     return this.getPagedList(params, "posts/all/author", "", "");

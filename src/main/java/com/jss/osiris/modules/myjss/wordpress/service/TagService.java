@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -24,11 +25,11 @@ public interface TagService {
 
         public List<Tag> getAllTagsByJssCategory(JssCategory jssCategory);
 
-        public List<Tag> getAllTagsByTag(Tag tag) throws OsirisException;
+        public List<Tag> getAllTagsByTag(Tag tag, LocalDateTime consultationDate) throws OsirisException;
 
         public Page<Tag> getAllTagsByCategory(Pageable pageable, Category category);
 
-        public List<Tag> getAllTagsByAuthor(Author author);
+        public List<Tag> getAllTagsByAuthor(Author author, LocalDateTime consultationDate);
 
         public List<Tag> getAllTagsBySerie(Serie serie);
 

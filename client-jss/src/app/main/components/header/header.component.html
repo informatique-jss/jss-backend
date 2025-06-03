@@ -76,13 +76,13 @@
       <!-- Navigation (desktop layout) -->
       <nav class="navbar navbar-expand-lg text-uppercase text-white-100 d-none d-lg-flex">
         <div class="collapse navbar-collapse" id="main_nav">
-          <ul class="navbar-nav me-auto"> 
+          <ul class="navbar-nav me-auto">
             <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle">île
                 de France </a>
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item"
                     (click)="openDepartment(department,$event)">{{department.code!="0" ?(department.code+ " - ")
-                    :""}}{{department.name}}</a> 
+                    :""}}{{department.name}}</a>
                 </li>
               </ul>
             </li>
@@ -119,6 +119,9 @@
               </button>
             </li>
           </ul>
+          <a class="nav-link pointer text-white" (click)="displaySearchModal(searchModal)">
+            <i class="fas fa-search fs-5"></i>
+          </a>
         </div>
       </nav>
 
@@ -203,7 +206,8 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body">
-    <div class="row align-items-center h-100">
+    <div class="row align-items-center"
+      [ngClass]="{'h-50': indexedEntities && indexedEntities.length>0, 'h-100':  !indexedEntities || indexedEntities.length<=0}">
       <div class="col-lg-5 mx-auto mb-5">
         <h2 class="mb-4">Rechercher des articles du JSS</h2>
         <!-- Search form START -->

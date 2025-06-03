@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,5 +37,10 @@ public class LegalFormServiceImpl implements LegalFormService {
     public LegalForm addOrUpdateLegalForm(
             LegalForm legalForm) {
         return legalFormRepository.save(legalForm);
+    }
+
+    @Override
+    public Page<LegalForm> getLegalFormsByName(String label, Pageable pageable) {
+        return legalFormRepository.findByLabelContainingIgnoreCase(label, pageable);
     }
 }
