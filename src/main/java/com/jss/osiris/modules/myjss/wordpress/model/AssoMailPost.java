@@ -32,13 +32,11 @@ public class AssoMailPost implements Serializable, IId {
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "id_mail")
         @IndexedField
-        @JsonView({ JacksonViews.MyJssDetailedView.class })
         private Mail mail;
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "id_post")
         @IndexedField
-        @JsonView({ JacksonViews.MyJssDetailedView.class })
         private Post post;
 
         public Integer getId() {

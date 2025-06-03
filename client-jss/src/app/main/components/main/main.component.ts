@@ -9,9 +9,11 @@ import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
+import { Responsable } from '../../model/Responsable';
 import { Serie } from '../../model/Serie';
 import { Tag } from '../../model/Tag';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
+import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
 import { SerieService } from '../../services/serie.service';
 import { TagService } from '../../services/tag.service';
@@ -45,9 +47,12 @@ export class MainComponent implements OnInit {
   thirdCategory!: JssCategory;
   idf!: PublishingDepartment;
 
+  currentUser: Responsable | undefined;
+
   constructor(
     private postService: PostService,
     private serieService: SerieService,
+    private loginService: LoginService,
     private appService: AppService,
     private communicationPreferenceService: CommunicationPreferencesService,
     private constantService: ConstantService,
@@ -61,6 +66,10 @@ export class MainComponent implements OnInit {
     this.thirdCategory = this.constantService.getJssCategoryHomepageThirdHighlighted();
     this.idf = this.constantService.getPublishingDepartmentIdf();
 
+    this.loginService.getCurrentUser().subscribe(user => {
+      if (user)
+        this.currentUser = user;
+    })
     // Fetch top posts
     this.postService.getTopPost(0, 10).subscribe(pagedPosts => {
       if (pagedPosts.content) {

@@ -48,7 +48,8 @@
                           <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+                            <a *ngIf="currentUser"
+                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
                               (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
                               <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
@@ -98,7 +99,8 @@
                           <div class="d-flex flex-wrap">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+                            <a *ngIf="currentUser"
+                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
                               (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
                               <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
@@ -151,7 +153,8 @@
                           <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+                            <a *ngIf="currentUser"
+                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
                               (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
                               <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
@@ -199,7 +202,8 @@
                           <div class="d-flex flex-wrap">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+                            <a *ngIf="currentUser"
+                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
                               (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
                               <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,

@@ -7,7 +7,9 @@ import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
+import { Responsable } from '../../model/Responsable';
 import { Tag } from '../../model/Tag';
+import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
 
 @Directive()
@@ -29,11 +31,13 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   searchText: string = "";
   searchResults: Post[] = [] as Array<Post>;
   hubForm!: FormGroup;
+  currentUser: Responsable | undefined;
 
   constructor(protected appService: AppService,
     protected formBuilder: FormBuilder,
     protected activeRoute: ActivatedRoute,
-    protected postService: PostService
+    protected postService: PostService,
+    private loginService: LoginService
   ) { }
 
   ngOnInit() {
@@ -43,6 +47,10 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
     this.fetchPosts(0);
     this.fetchTags();
     this.fetchMostSeenPosts();
+    this.loginService.getCurrentUser().subscribe(user => {
+      if (user)
+        this.currentUser = user;
+    });
   }
 
   abstract getAllPostByEntityType(selectedEntityType: T, page: number, pageSize: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>>;
