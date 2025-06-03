@@ -1507,27 +1507,32 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/domiciliation-contract-types")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<List<DomiciliationContractType>> getContractTypes() {
+	public ResponseEntity<List<DomiciliationContractType>> getContractTypes(HttpServletRequest request) {
+		detectFlood(request);
+
 		return new ResponseEntity<List<DomiciliationContractType>>(contractTypeService.getDomiciliationContractTypes(),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/languages")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<List<Language>> getLanguages() {
+	public ResponseEntity<List<Language>> getLanguages(HttpServletRequest request) {
+		detectFlood(request);
 		return new ResponseEntity<List<Language>>(languageService.getLanguages(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/mail-redirection-types")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<List<MailRedirectionType>> getMailRedirectionTypes() {
+	public ResponseEntity<List<MailRedirectionType>> getMailRedirectionTypes(HttpServletRequest request) {
+		detectFlood(request);
 		return new ResponseEntity<List<MailRedirectionType>>(mailRedirectionTypeService.getMailRedirectionTypes(),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/building-domiciliations")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<List<BuildingDomiciliation>> getBuildingDomiciliations() {
+	public ResponseEntity<List<BuildingDomiciliation>> getBuildingDomiciliations(HttpServletRequest request) {
+		detectFlood(request);
 		return new ResponseEntity<List<BuildingDomiciliation>>(buildingDomiciliationService.getBuildingDomiciliations(),
 				HttpStatus.OK);
 	}

@@ -422,6 +422,18 @@ public class QuotationValidationHelper {
                                         false, 600,
                                         "AccountingRecordDomiciliation");
 
+                        validationHelper.validateString(domiciliation.getAccountingDocumentsConservationAddress(),
+                                        false, 60, "AccountingDocumentsConservationAddress");
+                        validationHelper.validateString(domiciliation.getAccountingDocumentsConservationPostalCode(),
+                                        false, 10, "AccountingDocumentsConservationPostalCode");
+                        validationHelper.validateString(
+                                        domiciliation.getAccountingDocumentsConservationCedexComplement(), false, 20,
+                                        "AccountingDocumentsConservationCedexComplement");
+                        validationHelper.validateReferential(domiciliation.getAccountingDocumentsConservationCity(),
+                                        false, "AccountingDocumentsConservationCity");
+                        validationHelper.validateReferential(domiciliation.getAccountingDocumentsConservationCountry(),
+                                        false, "AccountingDocumentsConservationCountry");
+
                         if (domiciliation.isLegalPerson()) {
                                 if ((domiciliation.getLegalGardianSiren() == null
                                                 || !validationHelper

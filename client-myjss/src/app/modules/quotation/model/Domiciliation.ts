@@ -50,8 +50,6 @@ export interface Domiciliation {
   legalGardianCountry: Country;
   legalGardianMails: Mail[];
   legalGardianPhones: Phone[];
-  // domiciliationStatus: DomiciliationStatus;
-  // domiciliationFees: DomiciliationFee[];
   accountingDocumentsConservationAddress: string;
   accountingDocumentsConservationPostalCode: string;
   accountingDocumentsConservationCedexComplement: string;

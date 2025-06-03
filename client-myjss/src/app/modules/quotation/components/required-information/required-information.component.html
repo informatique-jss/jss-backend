@@ -558,7 +558,8 @@
                     <li class="list-group-item py-0" *ngFor="let phone of provision.domiciliation.legalGardianPhones">
                       <div class="d-flex flex-wrap w-100">
                         <div>
-                          <a class="nav-link fs-xl p-2" (click)="deletePhone(phone, provision.domiciliation)">
+                          <a class="nav-link fs-xl p-2"
+                            (click)="deletePhoneForDomiciliation(phone, provision.domiciliation)">
                             <i class="ai-trash"></i>
                           </a>
                         </div>

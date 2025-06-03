@@ -514,7 +514,7 @@ export class RequiredInformationComponent implements OnInit {
       }
   }
 
-  deletePhone(phone: Phone, domiciliation: Domiciliation) {
+  deletePhoneForDomiciliation(phone: Phone, domiciliation: Domiciliation) {
     if (domiciliation)
       domiciliation.legalGardianPhones.splice(domiciliation.legalGardianPhones.indexOf(phone), 1);
   }
