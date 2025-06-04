@@ -44,6 +44,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
@@ -53,9 +54,11 @@ import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
 import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
+import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.service.CommentService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
@@ -125,6 +128,9 @@ public class WordpressController {
 
 	@Autowired
 	CustomerOrderService customerOrderService;
+
+	@Autowired
+	SubscriptionService subscriptionService;
 
 	@Autowired
 	GeneratePdfDelegate generatePdfDelegate;
@@ -984,6 +990,32 @@ public class WordpressController {
 			}
 		}
 		return new ResponseEntity<Comment>(new Comment(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/subscription/give-post")
+	public ResponseEntity<Subscription> givePost(@RequestParam Integer postId, @RequestParam String recipientMailString,
+			HttpServletRequest request)
+			throws OsirisValidationException {
+
+		detectFlood(request);
+
+		if (!validationHelper.validateMail(recipientMailString)) {
+			throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
+		}
+
+		Mail recipientMail = new Mail(recipientMailString);
+
+		recipientMail = mailService.populateMailId(recipientMail);
+
+		Post postToOffer = postService.getPost(postId);
+
+		if (postToOffer == null) {
+			throw new OsirisValidationException("Trying to offer a non-existing post");
+		}
+
+		return new ResponseEntity<Subscription>(
+				subscriptionService.givePostSubscription(postToOffer, recipientMail),
+				HttpStatus.OK);
 	}
 
 	private ResponseEntity<String> detectFlood(HttpServletRequest request) {

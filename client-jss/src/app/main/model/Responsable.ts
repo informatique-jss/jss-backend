@@ -22,4 +22,5 @@ export interface Responsable {
   city: City;
   country: Country;
   documents: Document[];
+  numberOfPostsSharingAuthorized: number;
 }

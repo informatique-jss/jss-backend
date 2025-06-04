@@ -36,9 +36,13 @@ import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription.SubscriptionTypeEnum;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.repository.PostRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -78,6 +82,12 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     SearchService searchService;
+
+    @Autowired
+    EmployeeService employeeService;
+
+    @Autowired
+    SubscriptionService subscriptionService;
 
     @Autowired
     HtmlTruncateHelper htmlTruncateHelper;
@@ -619,15 +629,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> applyPremium(List<Post> posts) {
-        if (posts != null)
-            for (Post post : posts) {
-                applyPremium(post);
-            }
-        return posts;
-    }
-
-    @Override
     public Page<Post> applyPremium(Page<Post> posts) {
         if (posts != null)
             for (Post post : posts) {
@@ -638,17 +639,55 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post applyPremium(Post post) {
+        return applyPremium(post, null, null);
+    }
+
+    @Override
+    public Post applyPremium(Post post, String token, String mail) {
         if (post != null)
             if (post.getIsPremium() != null && post.getIsPremium()) {
-                // TODO : check user connected and have the right
-                boolean haveTheRight = false;
-                if (!haveTheRight) {
-                    Integer percentage = 20;
-                    if (post.getPremiumPercentage() != null && post.getPremiumPercentage() > 0)
-                        percentage = post.getPremiumPercentage();
 
-                    post.setContentText(htmlTruncateHelper.truncateHtml(post.getContentText(), percentage));
+                Responsable signedInUser = employeeService.getCurrentMyJssUser();
+
+                if (signedInUser != null) {
+                    if (signedInUser.getMail() != null) {
+                        List<Subscription> subscriptions = subscriptionService
+                                .getSubscriptionsForMail(signedInUser.getMail());
+                        for (Subscription sub : subscriptions) {
+                            if (sub.getStartDate() != null && sub.getEndDate() != null
+                                    && sub.getStartDate().isBefore(LocalDate.now())
+                                    && LocalDate.now().isBefore(sub.getEndDate())) {
+                                return post;
+
+                            } else if (sub.getPost().getId().equals(post.getId())
+                                    && sub.getSubscriptionType().equals(SubscriptionTypeEnum.ONE_POST_SUBSCRIPTION)) {
+                                return post;
+                            }
+                        }
+                    }
                 }
+
+                if (token != null && mail != null) {
+                    Subscription subscription = subscriptionService
+                            .getSubscriptionByToken(token);
+
+                    if (subscription != null && subscription.getSubscriptionOfferedMail().getMail().equals(mail)
+                            && subscription.getPost().getId().equals(post.getId())) {
+                        subscription.setViewsPerTokenNumber(
+                                subscription.getViewsPerTokenNumber() != null
+                                        ? subscription.getViewsPerTokenNumber() + 1
+                                        : 1);
+
+                        subscriptionService.addOrUpdateSubscription(subscription);
+                        return post;
+                    }
+                }
+
+                Integer percentage = 20;
+                if (post.getPremiumPercentage() != null && post.getPremiumPercentage() > 0)
+                    percentage = post.getPremiumPercentage();
+
+                post.setContentText(htmlTruncateHelper.truncateHtml(post.getContentText(), percentage));
             }
         return post;
     }

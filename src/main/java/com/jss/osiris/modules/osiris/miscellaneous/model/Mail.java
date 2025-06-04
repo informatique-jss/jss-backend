@@ -30,6 +30,13 @@ public class Mail implements Serializable, IId {
 			JacksonViews.OsirisDetailedView.class })
 	private String mail;
 
+	public Mail() {
+	}
+
+	public Mail(String mail) {
+		this.setMail(mail);
+	}
+
 	public Integer getId() {
 		return id;
 	}

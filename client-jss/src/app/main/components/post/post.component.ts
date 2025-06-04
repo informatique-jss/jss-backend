@@ -1,9 +1,11 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
+import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { getTimeReading } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
@@ -20,7 +22,9 @@ import { Responsable } from '../../model/Responsable';
 import { Tag } from '../../model/Tag';
 import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommentService } from '../../services/comment.service';
+import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
+import { SubscriptionService } from '../../services/subscription.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../generic-textarea/generic-textarea.component';
@@ -58,6 +62,10 @@ export class PostComponent implements OnInit, AfterViewInit {
   progress: number = 0;
   progressSubscription: Subscription = new Subscription;
 
+  recipientMail: string | undefined;
+
+  currentUser: Responsable | undefined;
+
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
 
   constructor(private activatedRoute: ActivatedRoute,
@@ -67,15 +75,26 @@ export class PostComponent implements OnInit, AfterViewInit {
     private platformService: PlatformService,
     private audioService: AudioPlayerService,
     private commentService: CommentService,
+    private subscriptionService: SubscriptionService,
+    private loginService: LoginService,
+    private modalService: NgbModal,
     private cdr: ChangeDetectorRef,
   ) { }
 
   getTimeReading = getTimeReading;
 
+  giftForm!: FormGroup;
   newCommentForm!: FormGroup;
 
   ngOnInit() {
+    this.loginService.getCurrentUser().subscribe(res => {
+      if (res) {
+        this.currentUser = res;
+      }
+    });
+
     this.newCommentForm = this.formBuilder.group({});
+    this.giftForm = this.formBuilder.group({});
 
     this.slug = this.activatedRoute.snapshot.params['slug'];
     if (this.slug)
@@ -260,6 +279,25 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   openSignIn(event: any) {
     this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
+  }
+
+  openOfferPostModal(content: any) {
+    this.modalService.open(content, { centered: true, size: 'md' });
+  }
+
+  givePost(modalRef: any, post: Post) {
+    if (!this.recipientMail || !validateEmail(this.recipientMail)) {
+      this.appService.displayToast("Merci de renseigner une adresse mail valide", true, "Adresse mail invalide", 5000)
+
+    } else {
+      this.subscriptionService.givePost(post.id, this.recipientMail).subscribe(res => {
+        if (res) {
+          modalRef.close();
+          this.giftForm.reset();
+          this.appService.displayToast("L'article a bien été partagé à l'adresse mail indiquée !", false, "Article partagé", 5000)
+        }
+      });
+    }
   }
 
   extractContent(s: string) {

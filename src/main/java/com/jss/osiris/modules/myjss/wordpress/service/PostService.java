@@ -99,9 +99,9 @@ public interface PostService {
 
         public void reindexPosts() throws OsirisException;
 
-        public List<Post> applyPremium(List<Post> posts);
-
         public Page<Post> applyPremium(Page<Post> posts);
+
+        public Post applyPremium(Post post, String token, String mail);
 
         public Post applyPremium(Post post);
 
