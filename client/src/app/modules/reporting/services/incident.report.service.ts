@@ -23,4 +23,12 @@ export class IncidentReportService extends AppRestService<IncidentReport> {
   getIncidentReportsForCustomerOrder(idCustomerOrder: number) {
     return this.getList(new HttpParams().set("idCustomerOrder", idCustomerOrder), 'incident-report/order');
   }
+
+  getIncidentReportsForTiers(idTiers: number) {
+    return this.getList(new HttpParams().set("idTiers", idTiers), 'incident-report/tiers');
+  }
+
+  getIncidentReportsForReponsable(idResponsable: number) {
+    return this.getList(new HttpParams().set("idResponsable", idResponsable), 'incident-report/responsable');
+  }
 }

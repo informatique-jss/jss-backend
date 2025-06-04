@@ -20,10 +20,14 @@ export class HabilitationsService {
   }
 
   canDisplayKanban() {
-    return this.loginService.hasGroup([BETA_TESTEURS], false)
+    return true;
   }
 
   canViewIndicatorModule() {
+    return true;
+  }
+
+  canViewIndicators() {
     return this.loginService.hasGroup([BETA_TESTEURS], false)
   }
 
@@ -222,6 +226,10 @@ export class HabilitationsService {
 
   canCancelBankTransfert() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canViewBankBalance() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
   canRefundPayment() {

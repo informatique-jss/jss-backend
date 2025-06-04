@@ -44,8 +44,10 @@
         </provision-list>
       </ng-template>
     </mat-tab>
-    <mat-tab label="Reclamation">
-      <complaint-tiers [tiers]="tiers"></complaint-tiers>
+    <mat-tab label="CRI">
+      <ng-template matTabContent>
+        <incident-report-list [tiers]="tiers"></incident-report-list>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <ng-template matTabContent>

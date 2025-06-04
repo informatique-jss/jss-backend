@@ -2030,7 +2030,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder assignNewCustomerOrderToBilled() {
-        Order order = new Order(Direction.DESC, "lastStatusUpdate");
+        Order order = new Order(Direction.ASC, "lastStatusUpdate");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(0, 1, sort);
         List<CustomerOrder> customerOrders = customerOrderRepository.findNewCustomerOrderToBilled(

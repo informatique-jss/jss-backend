@@ -222,7 +222,8 @@ const routes: Routes = [
     ProvisionSidePanelDetailsComponent,
     OrderSidePanelDetailsComponent,
     ServiceSidePanelDetailsComponent,
-    AddIncidentReportComponent
+    AddIncidentReportComponent,
+    IncidentReportListComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
