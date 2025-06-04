@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.myjss.crm.controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -22,6 +23,12 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoMailAuthor;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoMailJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoMailTag;
+import com.jss.osiris.modules.myjss.wordpress.service.AssoMailAuthorService;
+import com.jss.osiris.modules.myjss.wordpress.service.AssoMailJssCategoryService;
+import com.jss.osiris.modules.myjss.wordpress.service.AssoMailTagService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
@@ -54,6 +61,15 @@ public class MyJssCrmController {
 
     @Autowired
     CandidacyService candidacyService;
+
+    @Autowired
+    AssoMailAuthorService assoMailAuthorService;
+
+    @Autowired
+    AssoMailTagService assoMailTagService;
+
+    @Autowired
+    AssoMailJssCategoryService assoMailJssCategoryService;
 
     private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
     private final long rateLimit = 1000;
@@ -306,5 +322,35 @@ public class MyJssCrmController {
         validationHelper.validateString(candidacy.getMessage(), true, "message");
 
         return new ResponseEntity<Candidacy>(candidacyService.declareNewCandidacy(candidacy), HttpStatus.OK);
+    }
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @GetMapping(inputEntryPoint + "/preferences/followed/author")
+    public ResponseEntity<List<AssoMailAuthor>> getAssoMailAuthorForCurrentUser(HttpServletRequest request)
+            throws OsirisValidationException {
+        detectFlood(request);
+
+        return new ResponseEntity<List<AssoMailAuthor>>(
+                assoMailAuthorService.getAssoMailAuthorForCurrentUser(), HttpStatus.OK);
+    }
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @GetMapping(inputEntryPoint + "/preferences/followed/tag")
+    public ResponseEntity<List<AssoMailTag>> getAssoMailTagForCurrentUser(HttpServletRequest request)
+            throws OsirisValidationException {
+        detectFlood(request);
+
+        return new ResponseEntity<List<AssoMailTag>>(
+                assoMailTagService.getAssoMailTagForCurrentUser(), HttpStatus.OK);
+    }
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @GetMapping(inputEntryPoint + "/preferences/followed/jss-category")
+    public ResponseEntity<List<AssoMailJssCategory>> getAssoMailJssCategoryForCurrentUser(HttpServletRequest request)
+            throws OsirisValidationException {
+        detectFlood(request);
+
+        return new ResponseEntity<List<AssoMailJssCategory>>(
+                assoMailJssCategoryService.getAssoMailJssCategoryForCurrentUser(), HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -8,6 +9,7 @@ import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { Tag } from '../../model/Tag';
+import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
 import { TagService } from '../../services/tag.service';
 import { GenericHubComponent } from '../generic-hub/generic-hub.component';
@@ -26,10 +28,9 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
   selectedPublishingDepartment: PublishingDepartment | undefined;
   publishingDepartments: PublishingDepartment[] = [];
 
-  constructor(private postService: PostService,
-    private tagService: TagService, appService: AppService, formBuilder: FormBuilder
+  constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
-    super(appService, formBuilder);
+    super(appService, formBuilder, activeRoute, postService, loginService);
   }
 
   override ngOnInit(): void {

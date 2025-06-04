@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
@@ -12,6 +13,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,7 +28,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true) })
+@Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true),
+        @Index(name = "idx_post_author", columnList = "id_author"),
+        @Index(name = "idx_post_publication_date", columnList = "date")
+})
 public class Post implements IId, Serializable {
     @Id
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class,
@@ -50,6 +55,10 @@ public class Post implements IId, Serializable {
     @Transient
     private Content title;
 
+    @Transient
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private Boolean isBookmarked;
+
     @Column(columnDefinition = "TEXT")
     @IndexedField
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class,
@@ -58,6 +67,7 @@ public class Post implements IId, Serializable {
 
     @Transient
     private Content excerpt;
+
     @Column(columnDefinition = "TEXT")
     @IndexedField
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
@@ -151,6 +161,11 @@ public class Post implements IId, Serializable {
     @JoinTable(name = "asso_post_related", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_post_related"))
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private List<Post> relatedPosts;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = { "post" }, allowSetters = true)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private List<AssoMailPost> assoMailPosts;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     @IndexedField
@@ -458,6 +473,22 @@ public class Post implements IId, Serializable {
 
     public void setIsSticky(Boolean isSticky) {
         this.isSticky = isSticky;
+    }
+
+    public List<AssoMailPost> getAssoMailPosts() {
+        return assoMailPosts;
+    }
+
+    public void setAssoMailPosts(List<AssoMailPost> assoMailPosts) {
+        this.assoMailPosts = assoMailPosts;
+    }
+
+    public Boolean getIsBookmarked() {
+        return isBookmarked;
+    }
+
+    public void setIsBookmarked(Boolean isBookmarked) {
+        this.isBookmarked = isBookmarked;
     }
 
 }

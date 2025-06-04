@@ -18,11 +18,23 @@ export const routes: Routes = [
         loadComponent: () => import('./main/components/post-category-header/post-category-header.component').then(m => m.PostCategoryHeaderComponent)
       },
       {
+        path: 'post/category/:slug/:isDisplayNews',
+        loadComponent: () => import('./main/components/post-category-header/post-category-header.component').then(m => m.PostCategoryHeaderComponent)
+      },
+      {
         path: 'post/tag/:slug',
         loadComponent: () => import('./main/components/post-tag-header/post-tag-header.component').then(m => m.PostTagHeaderComponent)
       },
       {
+        path: 'post/tag/:slug/:isDisplayNews',
+        loadComponent: () => import('./main/components/post-tag-header/post-tag-header.component').then(m => m.PostTagHeaderComponent)
+      },
+      {
         path: 'post/author/:slug',
+        loadComponent: () => import('./main/components/post-author-header/post-author-header.component').then(m => m.PostAuthorHeaderComponent)
+      },
+      {
+        path: 'post/author/:slug/:isDisplayNews',
         loadComponent: () => import('./main/components/post-author-header/post-author-header.component').then(m => m.PostAuthorHeaderComponent)
       },
       {
@@ -32,6 +44,10 @@ export const routes: Routes = [
       {
         path: 'post/department/:id',
         loadComponent: () => import('./main/components/post-department-header/post-department-header.component').then(m => m.PostDepartmentHeaderComponent)
+      },
+      {
+        path: 'post/tendency',
+        loadComponent: () => import('./main/components/post-tendency-header/post-tendency-header.component').then(m => m.PostTendencyHeaderComponent)
       },
       {
         path: 'post/:slug',

@@ -105,13 +105,13 @@
           <tr>
             <td>
               <generic-datepicker [(model)]="quotation.recurringStartDate" label="Date de début"
-                [form]="orderingCustomerForm" propertyName="recurringStartDate" [isMandatory]="false"
-                [isDisabled]="true"></generic-datepicker>
+                [form]="orderingCustomerForm" propertyName="recurringStartDate" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
             </td>
             <td>
               <generic-datepicker [(model)]="quotation.recurringEndDate" label="Date de fin"
-                [form]="orderingCustomerForm" propertyName="recurringEndDate" [isMandatory]="false"
-                [isDisabled]="true"></generic-datepicker>
+                [form]="orderingCustomerForm" propertyName="recurringEndDate" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-datepicker>
             </td>
         </table>
         <div class="div-customer-order"

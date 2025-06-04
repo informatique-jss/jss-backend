@@ -8,6 +8,7 @@ const routesMyAccount = [
     loadComponent: () => import('./modules/my-account/components/my-account/my-account.component').then(m => m.MyAccountComponent),
     children: [
       { path: 'overview', loadComponent: () => import('./modules/my-account/components/overview/overview.component').then(m => m.OverviewComponent) },
+      { path: 'bookmarks', loadComponent: () => import('./modules/my-account/components/bookmarks/bookmarks.component').then(m => m.BookmarksComponent) },
       { path: 'scope', loadComponent: () => import('./modules/my-account/components/scope/scope.component').then(m => m.ScopeComponent) },
       { path: 'closure', loadComponent: () => import('./modules/my-account/components/billing-closure/billing-closure.component').then(m => m.BillingClosureComponent) },
       { path: 'communication-preference', loadComponent: () => import('./modules/my-account/components/communication-preference/communication-preference.component').then(m => m.CommunicationPreferenceComponent) },

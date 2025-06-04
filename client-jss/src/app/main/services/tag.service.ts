@@ -25,20 +25,20 @@ export class TagService extends AppRestService<Tag> {
     return this.get(new HttpParams().set("slug", slug), "tag/slug");
   }
 
-  getAllTagsByJssCategory(jssCategory: JssCategory) {
-    return this.getList(new HttpParams().set("jssCategoryId", jssCategory.id), "tags/all/jss-category");
+  getAllTagsByJssCategory(jssCategory: JssCategory, isDisplayNewPosts: boolean) {
+    return this.getList(new HttpParams().set("jssCategoryId", jssCategory.id).set("isDisplayNewPosts", isDisplayNewPosts), "tags/all/jss-category");
   }
 
   getAllTagsByCategory(page: number, size: number, category: Category) {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("categoryId", category.id), "tags/all/category");
   }
 
-  getAllTagsByTag(tag: Tag) {
-    return this.getList(new HttpParams().set("tagSlug", tag.slug), "tags/all/tag");
+  getAllTagsByTag(tag: Tag, isDisplayNewPosts: boolean) {
+    return this.getList(new HttpParams().set("tagSlug", tag.slug).set("isDisplayNewPosts", isDisplayNewPosts), "tags/all/tag");
   }
 
-  getAllTagsByAuthor(author: Author) {
-    return this.getList(new HttpParams().set("authorSlug", author.slug), "tags/all/author");
+  getAllTagsByAuthor(author: Author, isDisplayNewPosts: boolean) {
+    return this.getList(new HttpParams().set("authorSlug", author.slug).set("isDisplayNewPosts", isDisplayNewPosts), "tags/all/author");
   }
 
   getAllTagsBySerie(serie: Serie) {
