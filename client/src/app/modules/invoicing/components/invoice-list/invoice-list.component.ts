@@ -203,7 +203,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
         this.invoiceService.getInvoiceById(invoice.invoiceId).subscribe(completeInvoice => {
           if (completeInvoice.attachments) {
             for (let attachement of completeInvoice.attachments) {
-              if (attachement.attachmentType.id == this.constantService.getAttachmentTypeInvoice().id && count < 100) {
+              if (attachement.attachmentType.id == this.constantService.getAttachmentTypeInvoice().id && count < 200) {
                 this.uploadAttachmentService.downloadAttachment(attachement);
                 count++;
               }
