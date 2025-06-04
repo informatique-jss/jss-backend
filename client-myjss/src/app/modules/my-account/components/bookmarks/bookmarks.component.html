@@ -25,8 +25,8 @@
                           class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
                         <a class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
                           (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
-                          <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                          <i [ngClass]="{'ai-bookmark': !post.isBookmarked,
+                                'ai-bookmark-fill': post.isBookmarked,
                                 'text-transparent': !post.isBookmarked}">
                           </i>
                         </a>

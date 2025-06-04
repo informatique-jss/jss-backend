@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { AppRestService } from "../../services/appRest.service";
-import { AssoMailAuthor } from '../model/AssoMailAuthor';
+import { AppRestService } from "../../main/services/appRest.service";
+import { AssoMailAuthor } from "../model/AssoMailAuthor";
 import { Author } from "../model/Author";
 
 @Injectable({
@@ -20,9 +20,4 @@ export class AssoMailAuthorService extends AppRestService<AssoMailAuthor> {
   unfollowAuthor(author: Author) {
     return this.get(new HttpParams().set("idAuthor", author.id), "author/unfollow");
   }
-
-  getAssoMailAuthor(author: Author) {
-    return this.get(new HttpParams().set("idAuthor", author.id), "author/follow/get");
-  }
-
 }

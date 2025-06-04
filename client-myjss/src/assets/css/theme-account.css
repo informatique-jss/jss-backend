@@ -20238,3 +20238,18 @@ hr {
   border-top: var(--ar-border-width) solid;
   opacity: 1;
 }
+
+.rounded-outline-icon {
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border: 1px solid black;
+  color: black;
+  transition: background-color 0.3s, color 0.3s;
+  text-decoration: none;
+
+  &:hover {
+    background-color: var(--bs-gray-300);
+    color: #0F1E2E;
+  }
+}
