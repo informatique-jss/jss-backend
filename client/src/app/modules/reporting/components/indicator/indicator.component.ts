@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 
 @Component({
@@ -12,6 +13,7 @@ export class IndicatorComponent implements OnInit {
 
   constructor(private userPreferenceService: UserPreferenceService,
     private activatedRoute: ActivatedRoute,
+    private habilitationService: HabilitationsService
   ) { }
 
   idIndicator: number | undefined;
@@ -36,6 +38,10 @@ export class IndicatorComponent implements OnInit {
 
   restoreTab() {
     this.index = this.userPreferenceService.getUserTabsSelectionIndex('indicator');
+  }
+
+  canViewIndicators() {
+    return this.habilitationService.canViewIndicators();
   }
 
 }

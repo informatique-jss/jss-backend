@@ -18,16 +18,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { CrmModule } from 'src/app/modules/crm/components/crm/crm.module';
-import { SelectComplainCauseComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-causes/select-complain-causes.component';
-import { SelectComplainOriginComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-origin/select-complain-origin.component';
-import { SelectComplainProblemComponent } from 'src/app/modules/miscellaneous/components/forms/select-complain-problem/select-complain-problem.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
 import { InvoicingModule } from '../../../invoicing/components/invoicing/invoicing.module';
 import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
 import { ReportingModule } from '../../../reporting/components/reporting/reporting.module';
-import { ComplaintTiersComponent } from '../complaint-tiers/complaint-tiers.component';
 import { ConfrereComponent } from '../confrere/confrere.component';
 import { SearchPhoneComponent } from '../phone-teams/search-phone.component';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
@@ -73,6 +69,7 @@ const routes: Routes = [
     MatBadgeModule,
     ReportingModule,
     CrmModule,
+    QuotationModule,
   ],
   declarations: [TiersComponent,
     PrincipalComponent,
@@ -84,10 +81,6 @@ const routes: Routes = [
     TiersListComponent,
     RffListComponent,
     VisitPrepaTiersResponsibleInfoComponent,
-    ComplaintTiersComponent,
-    SelectComplainProblemComponent,
-    SelectComplainOriginComponent,
-    SelectComplainCauseComponent,
     VisitPrepaCustomerOrdersResponsibleComponent,
   ],
   providers: [
