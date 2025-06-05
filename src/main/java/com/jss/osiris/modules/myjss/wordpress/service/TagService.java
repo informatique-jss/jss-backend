@@ -40,4 +40,5 @@ public interface TagService {
 
         public List<Tag> getAllTendencyTags() throws OsirisException;
 
+        public List<Tag> getFollowedTagsForCurrentUser();
 }

@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -10,7 +9,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.AssoMailAuthor;
 import com.jss.osiris.modules.myjss.wordpress.model.AssoMailJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.AssoMailTag;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -73,30 +71,6 @@ public class Mail implements Serializable, IId {
 
 	public void setMail(String mail) {
 		this.mail = mail;
-	}
-
-	public List<AssoMailAuthor> getAssoMailAuthors() {
-		return assoMailAuthors;
-	}
-
-	public void setAssoMailAuthors(List<AssoMailAuthor> assoMailAuthors) {
-		this.assoMailAuthors = assoMailAuthors;
-	}
-
-	public List<AssoMailTag> getAssoMailTags() {
-		return assoMailTags;
-	}
-
-	public void setAssoMailTags(List<AssoMailTag> assoMailTags) {
-		this.assoMailTags = assoMailTags;
-	}
-
-	public List<AssoMailJssCategory> getAssoMailJssCategories() {
-		return assoMailJssCategories;
-	}
-
-	public void setAssoMailJssCategories(List<AssoMailJssCategory> assoMailJssCategories) {
-		this.assoMailJssCategories = assoMailJssCategories;
 	}
 
 }

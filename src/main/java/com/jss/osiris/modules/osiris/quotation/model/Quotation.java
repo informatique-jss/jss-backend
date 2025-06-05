@@ -77,7 +77,7 @@ public class Quotation implements IQuotation {
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)

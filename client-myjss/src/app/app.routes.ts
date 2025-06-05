@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 import { RenderMode } from '@angular/ssr';
 import { ConstantsResolver } from './modules/main/services/constant.service';
+import { MyAccountComponent } from './modules/my-account/components/my-account/my-account.component';
 
 const routesMyAccount = [
   {
-    path: 'account',
-    loadComponent: () => import('./modules/my-account/components/my-account/my-account.component').then(m => m.MyAccountComponent),
+    path: 'account', component: MyAccountComponent,
     children: [
       { path: 'overview', loadComponent: () => import('./modules/my-account/components/overview/overview.component').then(m => m.OverviewComponent) },
       { path: 'bookmarks', loadComponent: () => import('./modules/my-account/components/bookmarks/bookmarks.component').then(m => m.BookmarksComponent) },

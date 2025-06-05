@@ -174,10 +174,10 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/publishing-department")
-	public ResponseEntity<PublishingDepartment> getPublishingDepartmentById(
-			@Param("departmentId") Integer departmentId) {
+	public ResponseEntity<PublishingDepartment> getPublishingDepartmentByCode(
+			@Param("departmentCode") String departmentCode) {
 		return new ResponseEntity<PublishingDepartment>(
-				publishingDepartmentService.getPublishingDepartment(departmentId),
+				publishingDepartmentService.getPublishingDepartment(departmentCode),
 				HttpStatus.OK);
 	}
 
@@ -650,14 +650,14 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/posts/publishing-department/most-seen")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostByPublishingDepartment(
-			@RequestParam Integer departmentId, @RequestParam(defaultValue = "0") int page,
+			@RequestParam String departmentCode, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
+		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentCode);
 
 		if (publishingDepartment == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
@@ -798,7 +798,7 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/posts/all/publishing-department")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getAllPostsByPublishingDepartment(
-			@RequestParam Integer departmentId,
+			@RequestParam String departmentCode,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
 			HttpServletRequest request) throws OsirisException {
@@ -808,7 +808,7 @@ public class WordpressController {
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
+		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentCode);
 
 		if (publishingDepartment == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
@@ -949,13 +949,13 @@ public class WordpressController {
 	public ResponseEntity<Page<Post>> getTopPostByDepartment(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
-			@RequestParam Integer departmentId,
+			@RequestParam String departmentCode,
 			HttpServletRequest request) throws OsirisException {
 
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		PublishingDepartment department = publishingDepartmentService.getPublishingDepartment(departmentId);
+		PublishingDepartment department = publishingDepartmentService.getPublishingDepartment(departmentCode);
 		if (department == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
@@ -1078,13 +1078,13 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/publishing-department")
-	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam Integer departmentId)
+	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam String departmentCode)
 			throws OsirisException {
 
-		if (departmentId == null)
+		if (departmentCode == null)
 			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
 
-		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
+		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentCode);
 
 		if (publishingDepartment.getId().equals(constantService.getPublishingDepartmentIdf().getId()))
 			return new ResponseEntity<List<Tag>>(tagService.getAllTagsByIdf(), HttpStatus.OK);

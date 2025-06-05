@@ -46,7 +46,7 @@ export class TagService extends AppRestService<Tag> {
   }
 
   getAllTagsByPublishingDepartment(department: PublishingDepartment) {
-    return this.getList(new HttpParams().set("departmentId", department.id), "tags/all/publishing-department");
+    return this.getList(new HttpParams().set("departmentCode", department.code), "tags/all/publishing-department");
   }
 
   getAllTendencyTags() {

@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, Inject } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { SHARED_IMPORTS } from './libs/SharedImports';
 import { ConstantService } from './modules/main/services/constant.service';
 import { GtmService } from './modules/main/services/gtm.service';
-import { PlatformService } from './modules/main/services/platform.service';
-import { ThemeService } from './modules/main/services/theme.service';
 import { Responsable } from './modules/profile/model/Responsable';
 import { LoginService } from './modules/profile/services/login.service';
 
@@ -23,11 +22,10 @@ export class AppComponent {
   currentUser: Responsable | undefined;
 
   constructor(private router: Router,
+    @Inject(DOCUMENT) private document: Document,
     private constantService: ConstantService,
     private loginService: LoginService,
-    private themeService: ThemeService,
     private gtm: GtmService,
-    private platformService: PlatformService
   ) {
   }
 
@@ -44,13 +42,22 @@ export class AppComponent {
         this.refreshCurrentUser()
     });
 
-    this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      const url = event.urlAfterRedirects;
-      if (this.platformService.isBrowser())
-        this.themeService.updateThemeFromUrl(url);
-    });
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+
+        const url = (event as NavigationEnd).urlAfterRedirects;
+        const htmlEl = this.document.documentElement;
+
+        if (url.includes('/account') && !url.includes('/signin')) {
+          htmlEl.classList.add('theme-account');
+        } else {
+          htmlEl.classList.remove('theme-account');
+        }
+
+      });
+
+
   }
 
   refreshCurrentUser() {

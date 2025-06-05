@@ -457,10 +457,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> getBookmarkPostsForCurrentUser(Pageable pageableRequest) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
+        Page<Post> bookmarkedPosts = null;
+
         if (responsable != null && responsable.getMail() != null)
-            return postRepository.findBookmarkedPostsByMail(false, responsable.getMail(), pageableRequest);
-        else
-            return null;
+            bookmarkedPosts = postRepository.findBookmarkedPostsByMail(false, responsable.getMail(), pageableRequest);
+
+        if (bookmarkedPosts != null)
+            for (Post post : bookmarkedPosts.getContent())
+                post.setIsBookmarked(true);
+        return bookmarkedPosts;
     }
 
     private Page<Post> computeBookmarkedPosts(Page<Post> posts) {

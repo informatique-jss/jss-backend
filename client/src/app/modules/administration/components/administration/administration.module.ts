@@ -47,9 +47,6 @@ import { ReferentialCityComponent } from '../referentials/referential-city/refer
 import { ReferentialCivilityComponent } from '../referentials/referential-civility/referential-civility.component';
 import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
 import { ReferentialCompetitorComponent } from '../referentials/referential-competitor/referential-competitor.component';
-import { ReferentialComplainCauseComponent } from '../referentials/referential-complain-cause/referential-complain-cause.component';
-import { ReferentialComplainOriginComponent } from '../referentials/referential-complain-origin/referential-complain-origin.component';
-import { ReferentialComplainProblemComponent } from '../referentials/referential-complain-problem/referential-complain-problem.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
 import { ReferentialCustomerOrderFrequencyComponent } from '../referentials/referential-customer-order-frequency/referential-customer-order-frequency.component';
 import { ReferentialCustomerOrderOriginComponent } from '../referentials/referential-customer-order-origin/referential-customer-order-origin.component';
@@ -199,9 +196,6 @@ const routes: Routes = [
     ReferentialDepartmentVatSettingComponent,
     ReferentialTypeDocumentComponent,
     ReferentialRffFrequencyComponent,
-    ReferentialComplainProblemComponent,
-    ReferentialComplainCauseComponent,
-    ReferentialComplainOriginComponent,
     ReferentialServiceTypeComponent,
     ReferentialServiceFamilyComponent,
     ReferentialServiceFamilyGroupComponent,

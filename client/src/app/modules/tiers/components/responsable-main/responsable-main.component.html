@@ -248,6 +248,11 @@
             </div>
           </ng-template>
         </mat-tab>
+        <mat-tab label="CRI">
+          <ng-template matTabContent>
+            <incident-report-list [responsable]="selectedResponsable"></incident-report-list>
+          </ng-template>
+        </mat-tab>
         <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
           <ng-template matTabContent>
             <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>

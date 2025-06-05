@@ -38,6 +38,7 @@ public class AssoMailAuthor implements Serializable, IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author")
     @IndexedField
+    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private Author author;
 
     private LocalDateTime lastConsultationDate;
