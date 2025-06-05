@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT } from 'src/app/libs/Constants';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AssoServiceProvisionType } from 'src/app/modules/quotation/model/AssoServiceProvisionType';
 import { AssoServiceTypeDocument } from 'src/app/modules/quotation/model/AssoServiceTypeDocument';
+import { NoticeType } from 'src/app/modules/quotation/model/NoticeType';
 import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
+import { NoticeTypeService } from 'src/app/modules/quotation/services/notice.type.service';
 import { ServiceFieldTypeService } from 'src/app/modules/quotation/services/service.field.type.service';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
 import { AppService } from 'src/app/services/app.service';
@@ -18,6 +21,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialServiceTypeComponent extends GenericReferentialComponent<ServiceType> implements OnInit {
   constructor(private serviceService: ServiceTypeService,
+    private noticeTypeService: NoticeTypeService,
     private serviceFieldTypeService: ServiceFieldTypeService,
     private formBuilder2: FormBuilder,
     private constantService: ConstantService,
@@ -25,6 +29,9 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
     super(formBuilder2, appService2);
   }
 
+  noticeTypes: NoticeType[] = [] as Array<NoticeType>;
+  filteredNoticeTypes: Observable<NoticeType[]> | undefined;
+  PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
   deleteIndex: number = 1;
 
   getAddOrUpdateObservable(): Observable<ServiceType> {
@@ -101,4 +108,12 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
     this.entities.push(this.selectedEntity!);
     this.setDataTable();
   }
+
+  changeProvisionFamilyType(assoServiceProvisionType: AssoServiceProvisionType) {
+    if (assoServiceProvisionType) {
+      if (assoServiceProvisionType.noticeType && assoServiceProvisionType.noticeTypeFamily && assoServiceProvisionType.noticeType.noticeTypeFamily.id != assoServiceProvisionType.noticeTypeFamily.id)
+        assoServiceProvisionType.noticeType = undefined!;
+    }
+  }
+
 }

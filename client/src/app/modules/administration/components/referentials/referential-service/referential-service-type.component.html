@@ -147,6 +147,30 @@
               </td>
             </tr>
           </table>
+          <table class="full-width"
+            *ngIf="assoServiceProvisionType.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
+            <tr>
+              <td>
+                <select-notice-family (onFormChange)="changeProvisionFamilyType(assoServiceProvisionType);"
+                  [(model)]="assoServiceProvisionType.noticeTypeFamily" label="Rubrique" [form]="entityForm"
+                  [propertyName]="'noticeTypeFamily'+index+deleteIndex" [isMandatory]="false" [isDisabled]="!editMode">
+                </select-notice-family>
+              </td>
+              <td *ngIf="assoServiceProvisionType.noticeTypeFamily">
+                <select-notice-type [(model)]="assoServiceProvisionType.noticeType" label="Sous-rubrique"
+                  [form]="entityForm" [propertyName]="'noticeType'+index+deleteIndex" [isMandatory]="false"
+                  [isDisabled]="!editMode"
+                  [filteredNoticeTypeFamily]="assoServiceProvisionType.noticeTypeFamily"></select-notice-type>
+              </td>
+              <td
+                *ngIf="assoServiceProvisionType.noticeTypeFamily && assoServiceProvisionType.provisionType.provisionFamilyType">
+                <select-notice-template [(model)]="assoServiceProvisionType.noticeTemplate" label="Template"
+                  [form]="entityForm" [propertyName]="'noticeTemplate'+index+deleteIndex" [isMandatory]="false"
+                  [isDisabled]="!editMode"
+                  [filteredProvisionFamilyType]="assoServiceProvisionType.provisionType.provisionFamilyType"></select-notice-template>
+              </td>
+            </tr>
+          </table>
         </ng-container>
         <table class="full-width">
           <tr>
