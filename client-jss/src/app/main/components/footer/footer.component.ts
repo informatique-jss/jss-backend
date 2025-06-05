@@ -119,4 +119,8 @@ export class FooterComponent implements OnInit {
   openSeriesPosts(event: any) {
     this.appService.openRoute(event, "series", undefined);
   }
+
+  openKiosk(event: any) {
+    this.appService.openRoute(event, "kiosk", undefined);
+  }
 }
