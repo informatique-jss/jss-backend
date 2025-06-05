@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -35,17 +36,17 @@ public class Mail implements Serializable, IId {
 			JacksonViews.OsirisDetailedView.class })
 	private String mail;
 
-	@OneToMany(mappedBy = "mail", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "mail")
 	@JsonIgnoreProperties(value = { "mail" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private List<AssoMailAuthor> assoMailAuthors;
 
-	@OneToMany(mappedBy = "mail", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "mail")
 	@JsonIgnoreProperties(value = { "mail" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private List<AssoMailTag> assoMailTags;
 
-	@OneToMany(mappedBy = "mail", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "mail")
 	@JsonIgnoreProperties(value = { "mail" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private List<AssoMailJssCategory> assoMailJssCategories;

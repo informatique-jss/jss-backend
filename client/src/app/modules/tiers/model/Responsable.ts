@@ -48,4 +48,5 @@ export interface Responsable extends IDocument, IAttachment {
   rffIban: string;
   rffBic: string;
   rffMail: string;
+  numberOfGiftPostsPerMonth: number;
 }

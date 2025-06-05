@@ -107,10 +107,10 @@ public class Post implements IId, Serializable {
 
     @Column(columnDefinition = "TEXT")
     @IndexedField
-    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String originalContentText;
 
     @Transient
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String contentText;
 
     // Computed field
@@ -350,14 +350,6 @@ public class Post implements IId, Serializable {
         this.postTags = postTags;
     }
 
-    public String getContentText() {
-        return contentText;
-    }
-
-    public void setContentText(String contentText) {
-        this.contentText = contentText;
-    }
-
     public String getOriginalContentText() {
         return originalContentText;
     }
@@ -500,6 +492,14 @@ public class Post implements IId, Serializable {
 
     public void setIsBookmarked(Boolean isBookmarked) {
         this.isBookmarked = isBookmarked;
+    }
+
+    public String getContentText() {
+        return contentText;
+    }
+
+    public void setContentText(String contentText) {
+        this.contentText = contentText;
     }
 
 }
