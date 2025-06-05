@@ -104,7 +104,7 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.validationToken = this.activatedRoute.snapshot.params['token'];
       if (this.validationToken) {
         let mail = this.activatedRoute.snapshot.params['mail'];
-        this.postService.getOfferedPostByToken(this.slug, this.validationToken, mail).subscribe(post => {
+        this.postService.getOfferedPostByToken(this.validationToken, mail).subscribe(post => {
           this.post = post;
           if (this.post) {
             this.fetchNextPrevArticleAndComments(this.post);
