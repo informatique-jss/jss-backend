@@ -53,11 +53,11 @@ export class FooterComponent implements OnInit {
   }
 
   openDepartment(department: PublishingDepartment, event: any) {
-    this.appService.openRoute(event, "department/" + department.code, undefined);
+    this.appService.openRoute(event, "post/department/" + department.id, undefined);
   }
 
   openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "category/" + category.slug, undefined);
+    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
   }
 
   openSubscribe(event: any) {
@@ -112,8 +112,8 @@ export class FooterComponent implements OnInit {
     this.appService.openRoute(event, "podcasts", undefined);
   }
 
-  openInterviewPosts(event: any) {
-    this.appService.openRoute(event, "interviews", undefined);
+  openContributePage(event: any) {
+    this.appService.openRoute(event, "contribute", undefined);
   }
 
   openSeriesPosts(event: any) {
