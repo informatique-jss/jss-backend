@@ -68,33 +68,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     /**
-     * If null ==> no annual subscription ==> impossible to share posts
+     * @return null ==> no annual subscription ==> impossible to share posts
      */
     @Override
     public Integer getRemainingPostToShareForCurrentMonth(Responsable signedInUser) {
-        if (signedInUser.getMail() != null) {
-            List<Subscription> subscriptions = getSubscriptionsForMail(signedInUser.getMail());
-            for (Subscription sub : subscriptions) {
-                if (sub.getStartDate() != null && sub.getEndDate() != null
-                        && sub.getStartDate().isBefore(LocalDate.now())
-                        && LocalDate.now().isBefore(sub.getEndDate())
-                        && sub.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)) {
-
-                    if (signedInUser.getNumberOfPostsSharingAuthorized() == null) {
-                        return null;
-                    }
-
-                    // Get number of remaining posts to share
-                    return signedInUser.getNumberOfPostsSharingAuthorized()
-                            - getNumberOfPostSharedForCurrentMonthForUserWithAnualSubscription(
-                                    signedInUser.getMail());
-                }
-            }
+        if (signedInUser.getMail() != null && signedInUser.getNumberOfGiftPostsPerMonth() != null
+                && signedInUser.getNumberOfGiftPostsPerMonth() > 0) {
+            // Get number of remaining posts to share
+            return signedInUser.getNumberOfGiftPostsPerMonth()
+                    - getNumberOfPostSharedForCurrentMonthForUser(
+                            signedInUser.getMail());
         }
         return null;
     }
 
-    private Integer getNumberOfPostSharedForCurrentMonthForUserWithAnualSubscription(Mail responsableMail) {
+    private Integer getNumberOfPostSharedForCurrentMonthForUser(Mail responsableMail) {
         return subscriptionRepository.getNumberOfPostSharedByResponsableFromDateAndSubscriptionType(
                 responsableMail.getId(), LocalDate.now().withDayOfMonth(1),
                 Subscription.SHARED_POST_SUBSCRIPTION);

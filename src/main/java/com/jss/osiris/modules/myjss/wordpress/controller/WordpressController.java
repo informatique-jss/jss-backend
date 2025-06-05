@@ -532,13 +532,17 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/slug/token")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Post> getPostBySlugWithToken(@RequestParam String slug, String validationToken, String mail,
+	public ResponseEntity<Post> getPostBySlugWithToken(String validationToken, String mail,
 			HttpServletRequest request)
 			throws OsirisException {
-		Post post = postService.getPostsBySlug(slug);
-		if (post != null && !isCrawler(request))
-			postViewService.incrementView(post);
-		return new ResponseEntity<Post>(postService.applyPremium(post, validationToken, mail), HttpStatus.OK);
+		Subscription subscription = subscriptionService.getSubscriptionByToken(validationToken);
+		if (subscription == null)
+			throw new OsirisValidationException("validationToken");
+
+		if (subscription.getPost() != null && !isCrawler(request))
+			postViewService.incrementView(subscription.getPost());
+		return new ResponseEntity<Post>(postService.applyPremium(subscription.getPost(), validationToken, mail),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/serie/slug")
@@ -1244,20 +1248,15 @@ public class WordpressController {
 			throws OsirisValidationException {
 
 		detectFlood(request);
-
-		if (!validationHelper.validateMail(recipientMailString)) {
+		if (!validationHelper.validateMail(recipientMailString))
 			throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
-		}
 
 		Mail recipientMail = new Mail(recipientMailString);
-
 		recipientMail = mailService.populateMailId(recipientMail);
 
 		Post postToOffer = postService.getPost(postId);
-
-		if (postToOffer == null) {
+		if (postToOffer == null)
 			throw new OsirisValidationException("Trying to offer a non-existing post");
-		}
 
 		return new ResponseEntity<Subscription>(
 				subscriptionService.givePostSubscription(postToOffer, recipientMail),
