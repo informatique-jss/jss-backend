@@ -36,6 +36,7 @@ import jakarta.persistence.Transient;
 @Entity
 @Table(indexes = { @Index(name = "idx_announcement_status", columnList = "id_announcement_status"),
 		@Index(name = "idx_announcement_confrere", columnList = "id_confrere"),
+		@Index(name = "idx_announcement_publication_date", columnList = "publication_date"),
 })
 public class Announcement implements IId, IDocument {
 
