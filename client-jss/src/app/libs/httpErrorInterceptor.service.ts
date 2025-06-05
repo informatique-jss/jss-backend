@@ -15,7 +15,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
     request = request.clone({
       withCredentials: true,
-      headers: request.headers.set("domain", "media")
+      headers: request.headers.set("domain", "myjss")
     });
 
     return next.handle(request).pipe(
