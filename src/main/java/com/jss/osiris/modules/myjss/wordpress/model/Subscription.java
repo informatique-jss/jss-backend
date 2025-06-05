@@ -12,10 +12,13 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,7 +28,13 @@ import jakarta.persistence.Table;
         @Index(name = "idx_subscription_validation_token", columnList = "validationToken", unique = true) })
 public class Subscription implements IId, Serializable {
 
+    public static String ANNUAL_SUBSCRIPTION = "ANNUAL_SUBSCRIPTION";
+    public static String ONE_POST_SUBSCRIPTION = "ONE_POST_SUBSCRIPTION";
+    public static String SHARED_POST_SUBSCRIPTION = "SHARED_POST_SUBSCRIPTION";
+
     @Id
+    @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Integer id;
 
     @JsonDeserialize(using = JacksonLocalDateDeserializer.class)
@@ -36,7 +45,7 @@ public class Subscription implements IId, Serializable {
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private LocalDate endDate;
 
-    private SubscriptionTypeEnum subscriptionType;
+    private String subscriptionType;
 
     @ManyToOne
     @JoinColumn(name = "id_post", nullable = true)
@@ -56,12 +65,6 @@ public class Subscription implements IId, Serializable {
     private LocalDate sharedDate;
 
     private Integer viewsPerTokenNumber;
-
-    public enum SubscriptionTypeEnum {
-        ANNUAL_SUBSCRIPTION,
-        ONE_POST_SUBSCRIPTION,
-        SHARED_POST_SUBSCRIPTION;
-    }
 
     @Override
     public Integer getId() {
@@ -88,11 +91,11 @@ public class Subscription implements IId, Serializable {
         this.endDate = endDate;
     }
 
-    public SubscriptionTypeEnum getSubscriptionType() {
+    public String getSubscriptionType() {
         return subscriptionType;
     }
 
-    public void setSubscriptionType(SubscriptionTypeEnum subscriptionType) {
+    public void setSubscriptionType(String subscriptionType) {
         this.subscriptionType = subscriptionType;
     }
 

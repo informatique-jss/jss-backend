@@ -108,6 +108,9 @@ public class Post implements IId, Serializable {
     @Column(columnDefinition = "TEXT")
     @IndexedField
     @JsonView(JacksonViews.MyJssDetailedView.class)
+    private String originalContentText;
+
+    @Transient
     private String contentText;
 
     // Computed field
@@ -353,6 +356,14 @@ public class Post implements IId, Serializable {
 
     public void setContentText(String contentText) {
         this.contentText = contentText;
+    }
+
+    public String getOriginalContentText() {
+        return originalContentText;
+    }
+
+    public void setOriginalContentText(String originalContentText) {
+        this.originalContentText = originalContentText;
     }
 
     public Integer[] getCategories() {

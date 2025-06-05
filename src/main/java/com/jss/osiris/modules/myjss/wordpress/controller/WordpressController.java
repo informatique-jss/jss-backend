@@ -76,6 +76,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -527,6 +528,17 @@ public class WordpressController {
 		if (post != null && !isCrawler(request))
 			postViewService.incrementView(post);
 		return new ResponseEntity<Post>(postService.applyPremium(post), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/slug/token")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> getPostBySlugWithToken(@RequestParam String slug, String validationToken, String mail,
+			HttpServletRequest request)
+			throws OsirisException {
+		Post post = postService.getPostsBySlug(slug);
+		if (post != null && !isCrawler(request))
+			postViewService.incrementView(post);
+		return new ResponseEntity<Post>(postService.applyPremium(post, validationToken, mail), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/serie/slug")
@@ -1249,6 +1261,30 @@ public class WordpressController {
 
 		return new ResponseEntity<Subscription>(
 				subscriptionService.givePostSubscription(postToOffer, recipientMail),
+				HttpStatus.OK);
+	}
+
+	/**
+	 * If response is null ==> the user cannot share any post
+	 * 
+	 * @param request
+	 * @return
+	 * @throws OsirisValidationException
+	 */
+	@GetMapping(inputEntryPoint + "/subscription/share-post-left")
+	public ResponseEntity<Integer> getNumberOfRemainingPostsToShareForMonth(HttpServletRequest request)
+			throws OsirisValidationException {
+
+		detectFlood(request);
+
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
+
+		if (currentUser == null) {
+			throw new OsirisValidationException("Subscription e-mail does not exist");
+		}
+
+		return new ResponseEntity<Integer>(
+				subscriptionService.getRemainingPostToShareForCurrentMonth(currentUser),
 				HttpStatus.OK);
 	}
 

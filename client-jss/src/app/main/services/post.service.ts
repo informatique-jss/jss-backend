@@ -42,6 +42,10 @@ export class PostService extends AppRestService<Post> {
     return this.get(new HttpParams().set("slug", slug), "posts/slug");
   }
 
+  getPostBySlugWithToken(slug: string, validationToken: string, mail: string) {
+    return this.get(new HttpParams().set("slug", slug).set("validationToken", validationToken).set("mail", mail), "posts/slug/token");
+  }
+
   completeMediaInPosts(posts: Post[]) {
     posts.forEach(post => {
       if (!post.media) {

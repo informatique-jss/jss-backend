@@ -5,6 +5,7 @@ import java.util.List;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface SubscriptionService {
 
@@ -16,5 +17,5 @@ public interface SubscriptionService {
 
         public Subscription givePostSubscription(Post postToOffer, Mail recipientMail);
 
-        public Integer getNumberOfPostSharedOnMonth(Mail responsableMail);
+        public Integer getRemainingPostToShareForCurrentMonth(Responsable signedInUser);
 }

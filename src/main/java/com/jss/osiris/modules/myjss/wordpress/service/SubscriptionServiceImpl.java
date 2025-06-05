@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
-import com.jss.osiris.modules.myjss.wordpress.model.Subscription.SubscriptionTypeEnum;
 import com.jss.osiris.modules.myjss.wordpress.repository.SubscriptionRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
@@ -47,35 +46,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public Subscription givePostSubscription(Post postToOffer, Mail recipientMail) {
         Responsable signedInUser = employeeService.getCurrentMyJssUser();
 
-        boolean canSharePost = false;
+        Integer remainingPostsToShare = getRemainingPostToShareForCurrentMonth(signedInUser);
 
-        // Verify that connceted user can offer the post
-        if (signedInUser != null) {
-            if (signedInUser.getMail() != null) {
-                List<Subscription> subscriptions = getSubscriptionsForMail(signedInUser.getMail());
-                for (Subscription sub : subscriptions) {
-                    if (sub.getStartDate() != null && sub.getEndDate() != null
-                            && sub.getStartDate().isBefore(LocalDate.now())
-                            && LocalDate.now().isBefore(sub.getEndDate())) {
-
-                        if (signedInUser.getNumberOfPostsSharingAuthorized() == null) {
-                            // TODO : create constant 5 ?
-                            signedInUser.setNumberOfPostsSharingAuthorized(5);
-                        }
-
-                        // Get number of post shared and compare with max share possible
-                        if (signedInUser
-                                .getNumberOfPostsSharingAuthorized() > getNumberOfPostSharedOnMonth(recipientMail)) {
-                            canSharePost = true;
-                        }
-                    }
-                }
-            }
+        if (remainingPostsToShare == null) {
+            return null;
         }
 
-        if (canSharePost) {
+        if (remainingPostsToShare > 0) {
             Subscription onePostSubscriptionGiven = new Subscription();
-            onePostSubscriptionGiven.setSubscriptionType(SubscriptionTypeEnum.SHARED_POST_SUBSCRIPTION);
+            onePostSubscriptionGiven.setSubscriptionType(Subscription.SHARED_POST_SUBSCRIPTION);
             onePostSubscriptionGiven.setPost(postToOffer);
             onePostSubscriptionGiven.setSharedDate(LocalDate.now());
             onePostSubscriptionGiven.setSubscriptionOfferedMail(recipientMail);
@@ -88,10 +67,37 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return null;
     }
 
+    /**
+     * If null ==> no annual subscription ==> impossible to share posts
+     */
     @Override
-    public Integer getNumberOfPostSharedOnMonth(Mail responsableMail) {
-        subscriptionRepository.getNumberOfPostSharedByResponsableFromDateAndSubscriptionType(responsableMail,
-                LocalDate.now().withDayOfMonth(1), SubscriptionTypeEnum.SHARED_POST_SUBSCRIPTION);
+    public Integer getRemainingPostToShareForCurrentMonth(Responsable signedInUser) {
+        if (signedInUser.getMail() != null) {
+            List<Subscription> subscriptions = getSubscriptionsForMail(signedInUser.getMail());
+            for (Subscription sub : subscriptions) {
+                if (sub.getStartDate() != null && sub.getEndDate() != null
+                        && sub.getStartDate().isBefore(LocalDate.now())
+                        && LocalDate.now().isBefore(sub.getEndDate())
+                        && sub.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)) {
+
+                    if (signedInUser.getNumberOfPostsSharingAuthorized() == null) {
+                        return null;
+                    }
+
+                    // Get number of remaining posts to share
+                    return signedInUser.getNumberOfPostsSharingAuthorized()
+                            - getNumberOfPostSharedForCurrentMonthForUserWithAnualSubscription(
+                                    signedInUser.getMail());
+                }
+            }
+        }
         return null;
     }
+
+    private Integer getNumberOfPostSharedForCurrentMonthForUserWithAnualSubscription(Mail responsableMail) {
+        return subscriptionRepository.getNumberOfPostSharedByResponsableFromDateAndSubscriptionType(
+                responsableMail.getId(), LocalDate.now().withDayOfMonth(1),
+                Subscription.SHARED_POST_SUBSCRIPTION);
+    }
+
 }

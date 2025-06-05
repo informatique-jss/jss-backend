@@ -41,7 +41,7 @@
           <!-- Boutons offrir article, enrregistrer, partager  -->
           <div class="row inline-row align-items-center mb-2 g-2">
             <div class="col-auto mt-0">
-              <button class="btn btn-primary" (click)="openOfferPostModal(givePostModal)" [disabled]="!currentUser"><i
+              <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
                   class="bi bi-gift me-2"></i>Offrir cet article</button>
             </div>
             <div class="col-auto mt-0">
@@ -475,16 +475,16 @@
             </div>
           </form>
         </div>
-        <p class="small text-muted" *ngIf="currentUser!.numberOfPostsSharingAuthorized">
+        <p class="small text-muted" *ngIf="numberOfSharingPostRemaining">
           Nombre d'articles que vous pouvez encore partager ce mois-ci : <strong>
-            {{ currentUser!.numberOfPostsSharingAuthorized }}</strong>
+            {{ numberOfSharingPostRemaining }}</strong>
         </p>
-        <p class="small text-muted" *ngIf="!currentUser!.numberOfPostsSharingAuthorized">
+        <p class="small text-muted alert alert-danger" *ngIf="!numberOfSharingPostRemaining">
           Il ne vous reste plus d'article à partager pour ce mois-ci ! Vous retrouverez votre crédit le mois prochain.
         </p>
         <div class="text-end">
           <button type="submit" class="btn btn-secondary"
-            [disabled]="giftForm.invalid && currentUser!.numberOfPostsSharingAuthorized <= 0">Envoyer</button>
+            [disabled]="giftForm.invalid && !numberOfSharingPostRemaining">Envoyer</button>
         </div>
       </form>
     </div>
