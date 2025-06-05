@@ -13,7 +13,7 @@
             <h6 class="col m-0"> {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
               asso.affaire.denomination
               ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
-              asso.affaire.lastname) }} -{{asso.affaire.address}}</h6>
+              asso.affaire.lastname) }} - {{asso.affaire.address}}</h6>
           </div>
 
           <div class="row align-items-center" *ngIf="asso.services">
@@ -35,16 +35,14 @@
   <section>
     <div class="pb-3 row align-items-center" *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
       <strong class="col-auto">
-        <ng-container *ngIf="true">
-          <span>
-            {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret?(quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret
-            + ' - '):''}}{{
-            quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination
-            ?quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination :
-            (quotation.assoAffaireOrders[selectedAssoIndex].affaire.firstname+ ' ' +
-            quotation.assoAffaireOrders[selectedAssoIndex].affaire.lastname) }}
-            -{{quotation.assoAffaireOrders[selectedAssoIndex].affaire.address}}</span>
-        </ng-container>
+        <span>
+          {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret?(quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret
+          + ' - '):''}}{{
+          quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination
+          ?quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination :
+          (quotation.assoAffaireOrders[selectedAssoIndex].affaire.firstname+ ' ' +
+          quotation.assoAffaireOrders[selectedAssoIndex].affaire.lastname) }}
+          - {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.address}}</span>
       </strong>
       <a class="btn btn-secondary rounded-pill col-auto pill ms-3 fs-xs">
         {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceLabelToDisplay }}

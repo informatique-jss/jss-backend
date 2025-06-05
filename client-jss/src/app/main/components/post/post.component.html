@@ -136,13 +136,8 @@
                 <span [innerHTML]="post.contentText| trustHtml"></span>
 
                 <!-- Bannière d'abonnement en bas de l'article visible -->
-                <div class="bg-secondary d-flex justify-content-center align-items-center text-center text-white"
-                  style="position: relative; margin-top: -70px;" *ngIf="post.isPremium">
-                  La suite est réservée à nos abonnés. Déjà abonné ?
-                  <a class="ms-1 text-white fw-bold" (click)="openSignIn($event)">Se connecter</a>
-                </div>
                 <div class="bg-blue-400 d-flex justify-content-center align-items-center flex-column text-center p-4"
-                  style="position: relative; ">
+                  style="position: relative; " *ngIf="post.isPremium">
                   <h2 class=" fw-bold">Vous souhaitez lire la suite ?</h2>
                   <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
                     intégralité et de bien d'autres !</p>

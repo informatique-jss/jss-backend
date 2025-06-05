@@ -23,7 +23,8 @@
     <ng-template #itemTemplate let-item>
       <div class="overflow-x-hidden">
         <div class="d-flex align-items-center text-truncate mb-1">
-          <a class="h5 text-dark text-truncate-1 me-2 flex-shrink-1" *ngIf="item">{{item.titleText}}</a>
+          <a class="h5 text-dark text-truncate-1 me-2 flex-shrink-1" *ngIf="item"><span
+              [innerHTML]="item.titleText | trustHtml"></span></a>
           <ng-container *ngIf="item && item.postTags">
             <span class="badge bg-primary fs-xs flex-shrink-0 text-nowrap text-dark"
               style="margin-top: -15px;margin-right: 3px;" *ngFor="let tag of item.postTags.slice(0,3)">
@@ -33,8 +34,8 @@
         </div>
         <div class=" row">
           <div class="col">
-            <p class="text-truncate-1 text-dark mb-0 mx-3" *ngIf="item">
-              <span>{{item.excerptText}}</span>
+            <p class="text-truncate-1 text-dark mb-0 mx-3 pb-1" *ngIf="item">
+              <span [innerHTML]="item.excerptText | trustHtml"></span>
             </p>
           </div>
         </div>

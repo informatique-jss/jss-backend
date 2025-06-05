@@ -666,12 +666,8 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/service-types/provisions")
-  public ResponseEntity<List<Service>> getServiceForMultiServiceTypesAndAffaire(@RequestParam Integer idAffaire,
+  public ResponseEntity<List<Service>> getServiceForMultiServiceTypesAndAffaire(
       @RequestParam List<Integer> serviceTypeIds, String customLabel) throws OsirisException {
-
-    Affaire affaire = affaireService.getAffaire(idAffaire);
-    if (affaire == null)
-      throw new OsirisValidationException("Affaire");
 
     if (serviceTypeIds == null || serviceTypeIds.size() == 0)
       throw new OsirisValidationException("ServiceType");
@@ -689,7 +685,7 @@ public class QuotationController {
       customLabel = null;
 
     return new ResponseEntity<List<Service>>(
-        serviceService.generateServiceInstanceFromMultiServiceTypes(serviceTypes, affaire, customLabel),
+        serviceService.generateServiceInstanceFromMultiServiceTypes(serviceTypes, customLabel),
         HttpStatus.OK);
   }
 

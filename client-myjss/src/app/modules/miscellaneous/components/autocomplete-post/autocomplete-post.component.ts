@@ -3,6 +3,7 @@ import { FormGroup, UntypedFormBuilder } from '@angular/forms';
 import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { MyJssCategory } from '../../../tools/model/MyJssCategory';
 import { Post } from '../../../tools/model/Post';
 import { MyJssCategoryService } from '../../../tools/services/myjss.category.service';
@@ -16,7 +17,7 @@ import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/sel
   templateUrl: './autocomplete-post.component.html',
   styleUrls: ['./autocomplete-post.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, SelectMyJssCategoryComponent, AutocompleteLibModule]
+  imports: [SHARED_IMPORTS, SelectMyJssCategoryComponent, AutocompleteLibModule, TrustHtmlPipe]
 })
 export class AutocompletePostComponent extends GenericAutocompleteComponent<Post, Post> implements OnInit {
 
@@ -113,8 +114,4 @@ export class AutocompletePostComponent extends GenericAutocompleteComponent<Post
     return filteredTypes;
   }
 
-  highlightText(text: string): string {
-    const regex = new RegExp(`(${this.searchText})`, 'gi');
-    return text.replace(regex, `<span style="background-color: yellow;">$1</span>`);
-  }
 }

@@ -20,7 +20,6 @@ export class SearchAnnouncementComponent implements OnInit {
   searchObservableRef: Subscription | undefined;
   page: number = 0;
   pageSize: number = 10;
-  announcements: Announcement[] = [];
   searchResults: Announcement[] | undefined;
   displayLoadMoreButton: boolean = false;
   searchText: string = "";
@@ -36,7 +35,6 @@ export class SearchAnnouncementComponent implements OnInit {
 
   ngOnInit() {
     this.searchAnnouncementForm = this.formBuilder.group({});
-    this.fetchNextAnnouncements();
   }
 
 
@@ -51,18 +49,16 @@ export class SearchAnnouncementComponent implements OnInit {
 
   fetchNextAnnouncements() {
     this.isLoading = true;
-    this.announcementService.getTopAnnouncementSearch(this.page, this.pageSize, this.searchText).subscribe(response => {
-      if (response && response.content && response.content.length > 0 && (!this.searchText || this.searchText.length <= 2))
-        this.announcements.push(...response.content);
-      else if (response && response.content && response.content.length > 0 && this.searchText && this.searchText.length > 2) {
+    if (this.searchText && this.searchText.length > 2)
+      this.announcementService.getTopAnnouncementSearch(this.page, this.pageSize, this.searchText).subscribe(response => {
         if (!this.searchResults)
           this.searchResults = [];
         this.searchResults.push(...response.content);
-      }
-      if (!this.searchResults || response.page.totalElements <= this.searchResults.length)
-        this.displayLoadMoreButton = false;
-      this.isLoading = false;
-    });
+
+        if (!this.searchResults || response.page.totalElements <= this.searchResults.length)
+          this.displayLoadMoreButton = false;
+        this.isLoading = false;
+      });
   }
 
   clearSearch() {

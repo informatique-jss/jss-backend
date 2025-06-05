@@ -349,7 +349,7 @@ export class RequiredInformationComponent implements OnInit {
     if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
       this.saveFieldsValue();
       this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-      this.appService.openRoute(undefined, "quotation", undefined);
+      this.appService.openRoute(undefined, "quotation/checkout", undefined);
       return;
     }
 
@@ -389,7 +389,7 @@ export class RequiredInformationComponent implements OnInit {
       combineLatest(promises).subscribe(response => {
         this.isGoBack = false;
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-        this.appService.openRoute(undefined, "quotation", undefined);
+        this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       })
     } else {
       if (this.quotation && this.quotation.assoAffaireOrders)
@@ -397,7 +397,7 @@ export class RequiredInformationComponent implements OnInit {
           asso.services = [];
       this.saveFieldsValue();
       this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-      this.appService.openRoute(undefined, "quotation", undefined);
+      this.appService.openRoute(undefined, "quotation/services-selection", undefined);
     }
 
   }
