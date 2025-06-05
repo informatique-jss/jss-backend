@@ -27,13 +27,14 @@
             ],
             "styles": [
               "src/assets/css/styles.scss",
-              "src/assets/css/theme.css",
               "src/assets/icons/around-icons.min.css",
               {
                 "input": "src/assets/css/swiper.min.css",
                 "inject": true,
                 "bundleName": "swiper.min.css"
-              }
+              },
+              "src/assets/css/theme.css",
+              "src/assets/css/theme-account.css"
             ],
             "scripts": [],
             "server": "src/main.server.ts",

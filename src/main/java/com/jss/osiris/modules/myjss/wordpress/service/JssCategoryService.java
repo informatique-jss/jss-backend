@@ -12,4 +12,6 @@ public interface JssCategoryService {
         public JssCategory addOrUpdateJssCategory(JssCategory jssCategory);
 
         public JssCategory getJssCategoryBySlug(String slug);
+
+        public List<JssCategory> getFollowedJssCategoriesForCurrentUser();
 }
