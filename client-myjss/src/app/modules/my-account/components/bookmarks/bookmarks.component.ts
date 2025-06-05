@@ -50,14 +50,14 @@ export class BookmarksComponent implements OnInit {
   }
 
   openPost(post: Post, event: any) {
-    this.appService.openRoute(event, "post/" + post.slug, undefined);
+    this.appService.openJssRoute(event, "post/" + post.slug, undefined);
   }
 
   openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
+    this.appService.openJssRoute(event, "post/author/" + author.slug, undefined);
   }
 
   openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
+    this.appService.openJssRoute(event, "post/tag/" + tag.slug, undefined);
   }
 }

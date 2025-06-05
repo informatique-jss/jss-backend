@@ -52,7 +52,8 @@
     <h2 class="h4 mb-4">Gérer vos contenus suivis</h2>
     <ul class="nav nav-tabs" role="tablist">
       <li class="nav-item" *ngFor="let item of followedItems">
-        <a class="nav-link" [class.active]="item === selectedTab" (click)="selectedTab = item" role="tab">
+        <a class="nav-link cursor-pointer" [class.active]="item === selectedTab" (click)="selectedTab = item"
+          role="tab">
           {{ item }}
         </a>
       </li>

@@ -5412,6 +5412,7 @@ textarea.form-control-lg {
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: var(--ar-badge-border-radius);
+  cursor: pointer;
 }
 
 .badge:empty {
@@ -20252,4 +20253,26 @@ hr {
     background-color: var(--bs-gray-300);
     color: #0F1E2E;
   }
+}
+
+.card-text-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.card-title-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
