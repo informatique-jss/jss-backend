@@ -42,7 +42,7 @@ export const routes: Routes = [
         loadComponent: () => import('./main/components/post-serie-header/post-serie-header.component').then(m => m.PostSerieHeaderComponent)
       },
       {
-        path: 'post/department/:id',
+        path: 'post/department/:code',
         loadComponent: () => import('./main/components/post-department-header/post-department-header.component').then(m => m.PostDepartmentHeaderComponent)
       },
       {

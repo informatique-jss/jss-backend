@@ -74,7 +74,15 @@
               </div>
             </div>
 
-            <div class="col-12 text-center mt-5">
+            <div class="panel-loader" *ngIf="isLoading">
+              <div class="skeleton skeleton-header"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line short"></div>
+              <div class="skeleton skeleton-block"></div>
+            </div>
+
+            <div class="col-12 text-center mt-5" *ngIf="!isLoading">
               <button type="button" class="btn btn-primary-soft" *ngIf="displayLoadMoreButton"
                 (click)="getNextAnnouncements()">Voir
                 + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
@@ -114,7 +122,7 @@
             </div>
 
             <div class="col-12 text-center mt-5">
-              <button type="button" class="btn btn-primary-soft" *ngIf="displayLoadMoreButton"
+              <button type="button" class="btn btn-primary-soft search-btn" *ngIf="displayLoadMoreButton"
                 (click)="getNextAnnouncements()">Voir
                 + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
             </div>

@@ -21,9 +21,9 @@ export class PostDepartmentHeaderComponent implements OnInit {
   selectedDepartment: PublishingDepartment | undefined;
 
   ngOnInit() {
-    let id = this.activeRoute.snapshot.params['id'];
-    if (id)
-      this.departmentService.getPublishingDepartmentById(id).subscribe(response => {
+    let code = this.activeRoute.snapshot.params['code'];
+    if (code)
+      this.departmentService.getPublishingDepartmentByCode(code).subscribe(response => {
         if (response)
           this.selectedDepartment = response;
       });

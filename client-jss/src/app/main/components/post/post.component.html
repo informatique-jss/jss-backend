@@ -8,7 +8,7 @@
         <div class="row pt-2">
           <div class="col-12">
             <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
-              <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
+              <a *ngFor="let category of post.jssCategories | slice : 1 " style="cursor: pointer;"
                 (click)="openCategoryPosts(category, $event)" class="my-2 margin-category fw-bold"
                 [style.background-color]="category.color+' !important'">{{category.name}}</a>
             </ng-container>
@@ -66,7 +66,7 @@
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-linkedin fs-6"></i>
                       </a>
-                      <a (click)="shareOnLinkedin()"
+                      <a (click)="shareOnInstagram()"
                         class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-instagram fs-4"></i>
@@ -175,7 +175,7 @@
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-linkedin fs-6"></i>
                       </a>
-                      <a (click)="shareOnLinkedin()"
+                      <a (click)="shareOnInstagram()"
                         class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-instagram fs-4"></i>
@@ -236,7 +236,7 @@
                             <a (click)="openPost(nextPost, $event)">{{nextPost.titleText}}</a>
                           </h6>
                         </div>
-                        <a (click)="openPost(nextPost, $event)">
+                        <a (click)="openPost(nextPost, $event)" *ngIf="nextPost.media">
                           <div class="post-img-wrap position-relative overflow-hidden me-0 ms-2">
                             <img class="post-img"
                               [src]="nextPost.media.urlThumbnail ? nextPost.media.urlThumbnail : nextPost.media.urlFull"

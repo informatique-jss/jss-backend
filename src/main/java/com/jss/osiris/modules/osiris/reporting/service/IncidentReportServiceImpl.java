@@ -18,6 +18,8 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReportStatus;
 import com.jss.osiris.modules.osiris.reporting.repository.IncidentReportRepository;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @Service
 public class IncidentReportServiceImpl implements IncidentReportService {
@@ -100,5 +102,17 @@ public class IncidentReportServiceImpl implements IncidentReportService {
                 : Arrays.asList(0);
 
         return incidentReportRepository.searchIncidentReport(employeeIds, statusIds);
+    }
+
+    @Override
+    public List<IncidentReport> getIncidentReportByResponsable(Responsable responsable) {
+        return incidentReportRepository.findIncidentReportByResponsable(responsable,
+                incidentReportStatusService.getIncidentReportStatusByCode(IncidentReportStatus.ABANDONED));
+    }
+
+    @Override
+    public List<IncidentReport> getIncidentReportByTiers(Tiers tiers) {
+        return incidentReportRepository.findIncidentReportByTiers(tiers,
+                incidentReportStatusService.getIncidentReportStatusByCode(IncidentReportStatus.ABANDONED));
     }
 }

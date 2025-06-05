@@ -71,7 +71,7 @@ export class HeaderComponent implements OnInit {
       this.currentUser = response;
     })
     this.departmentService.getAvailablePublishingDepartments().subscribe(departments => {
-      this.departments = departments
+      this.departments = departments.sort((a: PublishingDepartment, b: PublishingDepartment) => parseInt(a.code) - parseInt(b.code));
     });
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
       this.categories = categories
@@ -158,7 +158,7 @@ export class HeaderComponent implements OnInit {
 
   openDepartment(department: PublishingDepartment, event: any) {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "post/department/" + department.id, undefined);
+    this.appService.openRoute(event, "post/department/" + department.code, undefined);
   }
 
   openPremiumPosts() {

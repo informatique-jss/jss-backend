@@ -22,7 +22,7 @@
                   <div class="row">
                     <div>
                       <a *ngIf="announcement.noticeTypeFamily"
-                        class="tag-custom-dark mb-2 me-1">{{announcement.noticeTypeFamily.label}}</a>
+                        class="badge tag-custom-dark mb-2 me-1">{{announcement.noticeTypeFamily.label}}</a>
                       <ng-container *ngIf="announcement.noticeTypes!=null">
                         <a *ngFor="let noticeType of announcement.noticeTypes"
                           class="badge tag-custom-light mb-2 me-1">{{noticeType.label}}</a>

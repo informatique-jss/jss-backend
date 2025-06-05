@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   backendUrl: "http://localhost:8080/",
   frontendUrl: "http://localhost:4201/",
-  frontendMyJssUrl: "http://localhost:4202/"
+  frontendMyJssUrl: "http://localhost:4202"
 };
 
 /*

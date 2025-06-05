@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +16,8 @@ public class PublishingDepartmentServiceImpl implements PublishingDepartmentServ
     PublishingDepartmentRepository publishingDepartmentRepository;
 
     @Override
-    public PublishingDepartment getPublishingDepartment(Integer id) {
-        Optional<PublishingDepartment> department = publishingDepartmentRepository.findById(id);
-        if (department.isPresent())
-            return department.get();
-        return null;
+    public PublishingDepartment getPublishingDepartment(String code) {
+        return publishingDepartmentRepository.findByCode(code);
     }
 
     @Override

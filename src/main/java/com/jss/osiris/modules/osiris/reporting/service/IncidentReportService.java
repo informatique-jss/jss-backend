@@ -7,6 +7,8 @@ import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReportStatus;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 public interface IncidentReportService {
     public List<IncidentReport> getIncidentReports();
@@ -19,4 +21,8 @@ public interface IncidentReportService {
 
     public List<IncidentReport> searchIncidentReport(List<Employee> employees,
             List<IncidentReportStatus> status);
+
+    public List<IncidentReport> getIncidentReportByResponsable(Responsable responsable);
+
+    public List<IncidentReport> getIncidentReportByTiers(Tiers tiers);
 }

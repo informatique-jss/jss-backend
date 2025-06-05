@@ -47,6 +47,10 @@ import com.jss.osiris.modules.osiris.reporting.service.TiersReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.TurnoverReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.TurnoverVatReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.UserReportingService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
+import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 @RestController
 public class ReportingController {
@@ -109,6 +113,12 @@ public class ReportingController {
 
 	@Autowired
 	IncidentTypeService incidentTypeService;
+
+	@Autowired
+	TiersService tiersService;
+
+	@Autowired
+	ResponsableService responsableService;
 
 	@GetMapping(inputEntryPoint + "/incident-types")
 	public ResponseEntity<List<IncidentType>> getIncidentTypes() {
@@ -371,6 +381,32 @@ public class ReportingController {
 	@GetMapping(inputEntryPoint + "/incident-report-status-list")
 	public ResponseEntity<List<IncidentReportStatus>> getIncidentReportStatusList() {
 		return new ResponseEntity<List<IncidentReportStatus>>(incidentReportStatusService.getIncidentReportStatusList(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/incident-report/tiers")
+	@JsonView(JacksonViews.OsirisListView.class)
+	public ResponseEntity<List<IncidentReport>> getIncidentReportsForTiers(
+			@RequestParam Integer idTiers)
+			throws OsirisValidationException {
+		Tiers tiers = tiersService.getTiers(idTiers);
+		if (tiers == null)
+			throw new OsirisValidationException("tiers");
+		return new ResponseEntity<List<IncidentReport>>(
+				incidentReportService.getIncidentReportByTiers(tiers),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/incident-report/responsable")
+	@JsonView(JacksonViews.OsirisListView.class)
+	public ResponseEntity<List<IncidentReport>> getIncidentReportsForReponsable(
+			@RequestParam Integer idResponsable)
+			throws OsirisValidationException {
+		Responsable responsable = responsableService.getResponsable(idResponsable);
+		if (responsable == null)
+			throw new OsirisValidationException("responsable");
+		return new ResponseEntity<List<IncidentReport>>(
+				incidentReportService.getIncidentReportByResponsable(responsable),
 				HttpStatus.OK);
 	}
 

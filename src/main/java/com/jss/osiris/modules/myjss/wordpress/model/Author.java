@@ -14,6 +14,7 @@ import jakarta.persistence.Transient;
 public class Author implements Serializable {
 
     @Id
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer id;
 
     @Transient

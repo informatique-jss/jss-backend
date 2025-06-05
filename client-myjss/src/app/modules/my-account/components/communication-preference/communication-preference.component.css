@@ -1,0 +1,15 @@
+hr {
+  color: var(--ar-gray-300) !important;
+}
+
+.custom-list-group {
+  border: none;
+  border-radius: 0;
+}
+
+.custom-list-group .list-group-item {
+  border-left: none;
+  border-right: none;
+  padding-left: 0;
+  padding-right: 0;
+}
