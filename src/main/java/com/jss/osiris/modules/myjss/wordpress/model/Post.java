@@ -107,6 +107,9 @@ public class Post implements IId, Serializable {
 
     @Column(columnDefinition = "TEXT")
     @IndexedField
+    private String originalContentText;
+
+    @Transient
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private String contentText;
 
@@ -347,12 +350,12 @@ public class Post implements IId, Serializable {
         this.postTags = postTags;
     }
 
-    public String getContentText() {
-        return contentText;
+    public String getOriginalContentText() {
+        return originalContentText;
     }
 
-    public void setContentText(String contentText) {
-        this.contentText = contentText;
+    public void setOriginalContentText(String originalContentText) {
+        this.originalContentText = originalContentText;
     }
 
     public Integer[] getCategories() {
@@ -489,6 +492,14 @@ public class Post implements IId, Serializable {
 
     public void setIsBookmarked(Boolean isBookmarked) {
         this.isBookmarked = isBookmarked;
+    }
+
+    public String getContentText() {
+        return contentText;
+    }
+
+    public void setContentText(String contentText) {
+        this.contentText = contentText;
     }
 
 }

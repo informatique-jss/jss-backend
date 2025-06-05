@@ -38,6 +38,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.repository.PostRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -85,6 +86,12 @@ public class PostServiceImpl implements PostService {
     SearchService searchService;
 
     @Autowired
+    EmployeeService employeeService;
+
+    @Autowired
+    SubscriptionService subscriptionService;
+
+    @Autowired
     HtmlTruncateHelper htmlTruncateHelper;
 
     @Autowired
@@ -95,9 +102,6 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     AssoMailJssCategoryService assoMailJssCategoryService;
-
-    @Autowired
-    EmployeeService employeeService;
 
     @Autowired
     AssoMailPostService assoMailPostService;
@@ -255,8 +259,9 @@ public class PostServiceImpl implements PostService {
         if (post.getExcerpt() != null)
             post.setExcerptText(
                     StringEscapeUtils.unescapeHtml4(post.getExcerpt().getRendered().replaceAll("<[^>]*>", "")));
-        if (post.getContent() != null)
-            post.setContentText(StringEscapeUtils.unescapeHtml4(post.getContent().getRendered()));
+        if (post.getContent() != null) {
+            post.setOriginalContentText(StringEscapeUtils.unescapeHtml4(post.getContent().getRendered()));
+        }
 
         modifyPodcastUrls(post);
         modifyVideoUrls(post);
@@ -276,7 +281,7 @@ public class PostServiceImpl implements PostService {
      */
     private void modifyPodcastUrls(Post post) {
         Pattern pattern = Pattern.compile("<audio[^>]*\\ssrc=\"(.*?)\"");
-        Matcher matcher = pattern.matcher(post.getContentText());
+        Matcher matcher = pattern.matcher(post.getOriginalContentText());
         if (matcher.find()) {
             String url = matcher.group(1);
             Media podcastMedia = mediaService.getMediaByUrl(url);
@@ -294,7 +299,7 @@ public class PostServiceImpl implements PostService {
      */
     private void modifyVideoUrls(Post post) {
         Pattern pattern = Pattern.compile("<video[^>]*\\ssrc=\"(.*?)\"");
-        Matcher matcher = pattern.matcher(post.getContentText());
+        Matcher matcher = pattern.matcher(post.getOriginalContentText());
         if (matcher.find()) {
             String url = matcher.group(1);
             Media videoMedia = mediaService.getMediaByUrl(url);
@@ -316,7 +321,7 @@ public class PostServiceImpl implements PostService {
         final String TARGET_BLANK = " target=\"_blank\"";
         pattern = Pattern.compile("<a\\s+[^>]*href=\"([^\"]+)\".*?>(.*?)<\\/a>");
 
-        matcher = pattern.matcher(post.getContentText());
+        matcher = pattern.matcher(post.getOriginalContentText());
 
         int insertions = 0; // Keeps track of the number of insertions of the ATTRIBUTE_TO_INSERT attribute
         while (matcher.find()) {
@@ -325,10 +330,10 @@ public class PostServiceImpl implements PostService {
                 // We want to insert after the " of the found url (+1) and shift the end index
                 // everytime we add the attribute TARGET_BLANK
                 int indexToInsert = matcher.end(1) + 1 + insertions * TARGET_BLANK.length();
-                String newString = post.getContentText().substring(0, indexToInsert)
+                String newString = post.getOriginalContentText().substring(0, indexToInsert)
                         + TARGET_BLANK
-                        + post.getContentText().substring(indexToInsert);
-                post.setContentText(newString);
+                        + post.getOriginalContentText().substring(indexToInsert);
+                post.setOriginalContentText(newString);
                 insertions++;
             }
         }
@@ -341,25 +346,27 @@ public class PostServiceImpl implements PostService {
      */
     private void reformatQuotes(Post post) {
         Pattern pattern = Pattern.compile("(?s)<blockquote[^>]*\\sclass=\"([^\"]+)\".*?</blockquote>");
-        Matcher matcher = pattern.matcher(post.getContentText());
+        Matcher matcher = pattern.matcher(post.getOriginalContentText());
 
         while (matcher.find()) {
             String blockquoteElement = matcher.group();
 
             // Addind a <figure> tag encapsulating the quote
-            post.setContentText(post.getContentText().replaceFirst(escapeRegexSpecialChars(blockquoteElement),
-                    "<figure class=\"my-5\">" + blockquoteElement + "</figure>"));
+            post.setOriginalContentText(
+                    post.getOriginalContentText().replaceFirst(escapeRegexSpecialChars(blockquoteElement),
+                            "<figure class=\"my-5\">" + blockquoteElement + "</figure>"));
 
             // Replacing the <blockquote> wordpress classes by the "blockquote" class
             String wordpressQuoteClasses = matcher.group(1);
-            post.setContentText(
-                    post.getContentText().replaceFirst(escapeRegexSpecialChars(wordpressQuoteClasses), "blockquote"));
+            post.setOriginalContentText(
+                    post.getOriginalContentText().replaceFirst(escapeRegexSpecialChars(wordpressQuoteClasses),
+                            "blockquote"));
 
         }
 
         // We modify all the <cite> tag classes with good format
         final String CITE_TAG = "<cite";
-        post.setContentText(post.getContentText().replace(CITE_TAG,
+        post.setOriginalContentText(post.getOriginalContentText().replace(CITE_TAG,
                 CITE_TAG + " class=\"blockquote-footer\" style=\"padding-left:0\""));
     }
 
@@ -383,7 +390,7 @@ public class PostServiceImpl implements PostService {
     private void reformatFootnotes(Post post) {
         Pattern pattern = Pattern.compile(
                 "<sup\\s+data-fn=\"([0-9a-fA-F\\-]+)\"\\s+class=\"fn\"><a[^>]*id=\"\\1-link\"[^>]*>(.*?)<\\/a><\\/sup>");
-        Matcher matcher = pattern.matcher(post.getContentText());
+        Matcher matcher = pattern.matcher(post.getOriginalContentText());
 
         while (matcher.find()) {
             String id = matcher.group(1);
@@ -393,11 +400,12 @@ public class PostServiceImpl implements PostService {
                     + "-link\">" + footnoteNumber + "</sup>";
 
             // Changing the <sup> tag of the footnote
-            post.setContentText(post.getContentText().replace(supElement, newSupTag));
+            post.setOriginalContentText(post.getOriginalContentText().replace(supElement, newSupTag));
 
             // Changing the footnote it self to have it link to the <sup> tag
-            post.setContentText(post.getContentText().replace("<a href=\"#" + id + "-link\" target=\"_blank\"",
-                    "<a onclick=\"scrollToElement('" + id + "-link')\" style=\"cursor: pointer;\""));
+            post.setOriginalContentText(
+                    post.getOriginalContentText().replace("<a href=\"#" + id + "-link\" target=\"_blank\"",
+                            "<a onclick=\"scrollToElement('" + id + "-link')\" style=\"cursor: pointer;\""));
         }
     }
 
@@ -742,15 +750,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> applyPremium(List<Post> posts) {
-        if (posts != null)
-            for (Post post : posts) {
-                applyPremium(post);
-            }
-        return posts;
-    }
-
-    @Override
     public Page<Post> applyPremium(Page<Post> posts) {
         if (posts != null)
             for (Post post : posts) {
@@ -761,18 +760,60 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post applyPremium(Post post) {
-        if (post != null)
-            if (post.getIsPremium() != null && post.getIsPremium()) {
-                // TODO : check user connected and have the right
-                boolean haveTheRight = false;
-                if (!haveTheRight) {
-                    Integer percentage = 20;
-                    if (post.getPremiumPercentage() != null && post.getPremiumPercentage() > 0)
-                        percentage = post.getPremiumPercentage();
+        return applyPremium(post, null, null);
+    }
 
-                    post.setContentText(htmlTruncateHelper.truncateHtml(post.getContentText(), percentage));
+    @Override
+    public Post applyPremium(Post post, String token, String mail) {
+        if (post != null) {
+            post.setContentText(post.getOriginalContentText());
+
+            if (post.getIsPremium() != null && post.getIsPremium()) {
+
+                Responsable signedInUser = employeeService.getCurrentMyJssUser();
+
+                if (signedInUser != null) {
+                    if (signedInUser.getMail() != null) {
+                        List<Subscription> subscriptions = subscriptionService
+                                .getSubscriptionsForMail(signedInUser.getMail());
+                        for (Subscription sub : subscriptions) {
+                            if (sub.getStartDate() != null && sub.getEndDate() != null
+                                    && sub.getStartDate().isBefore(LocalDate.now())
+                                    && LocalDate.now().isBefore(sub.getEndDate())
+                                    && sub.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)) {
+                                return post;
+
+                            } else if (sub.getPost().getId().equals(post.getId())
+                                    && sub.getSubscriptionType().equals(Subscription.ONE_POST_SUBSCRIPTION)) {
+                                return post;
+                            }
+                        }
+                    }
                 }
+
+                if (token != null && mail != null) {
+                    Subscription subscription = subscriptionService
+                            .getSubscriptionByToken(token);
+
+                    if (subscription != null && subscription.getSubscriptionOfferedMail().getMail().equals(mail)
+                            && subscription.getPost().getId().equals(post.getId())) {
+                        subscription.setViewsPerTokenNumber(
+                                subscription.getViewsPerTokenNumber() != null
+                                        ? subscription.getViewsPerTokenNumber() + 1
+                                        : 1);
+
+                        subscriptionService.addOrUpdateSubscription(subscription);
+                        return post;
+                    }
+                }
+
+                Integer percentage = 20;
+                if (post.getPremiumPercentage() != null && post.getPremiumPercentage() > 0)
+                    percentage = post.getPremiumPercentage();
+
+                post.setContentText(htmlTruncateHelper.truncateHtml(post.getOriginalContentText(), percentage));
             }
+        }
         return post;
     }
 
