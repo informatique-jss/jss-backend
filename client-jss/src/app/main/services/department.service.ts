@@ -15,7 +15,7 @@ export class DepartmentService extends AppRestService<PublishingDepartment> {
   getAvailablePublishingDepartments() {
     return this.getListCached(new HttpParams(), "publishing-departments");
   }
-  getPublishingDepartmentById(id: number) {
-    return this.get(new HttpParams().set("departmentId", id), "publishing-department");
+  getPublishingDepartmentByCode(code: string) {
+    return this.get(new HttpParams().set("departmentCode", code), "publishing-department");
   }
 }

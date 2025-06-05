@@ -10,5 +10,5 @@ public interface PublishingDepartmentService {
 
         public List<PublishingDepartment> getAvailableDepartments();
 
-        public PublishingDepartment getPublishingDepartment(Integer departmentId);
+        public PublishingDepartment getPublishingDepartment(String departmentCode);
 }
