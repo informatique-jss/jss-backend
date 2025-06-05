@@ -7,9 +7,6 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'quotation/identification', renderMode: RenderMode.Client },
   { path: 'quotation/services-selection', renderMode: RenderMode.Client },
   { path: 'quotation/checkout', renderMode: RenderMode.Client },
-  { path: 'account', renderMode: RenderMode.Client },
-  { path: 'account/communication-preference', renderMode: RenderMode.Client },
-  { path: 'account/bookmarks', renderMode: RenderMode.Client },
   { path: 'account/signin', renderMode: RenderMode.Prerender },
   { path: 'account/signout', renderMode: RenderMode.Prerender },
 
@@ -32,6 +29,8 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'tools', renderMode: RenderMode.Prerender },
   { path: 'tools/mandatory-documents', renderMode: RenderMode.Prerender },
   { path: 'tools/webinars', renderMode: RenderMode.Prerender },
+  { path: 'account', renderMode: RenderMode.Client },
+  { path: 'account/:subroute', renderMode: RenderMode.Client },
   {
     path: '**',
     renderMode: RenderMode.Server
