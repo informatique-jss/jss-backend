@@ -119,7 +119,7 @@ export class AnnouncementComponent implements OnInit {
 
     this.announcementNoticeTemplateService.getAnnouncementNoticeTemplates().subscribe(response => {
       this.noticeTemplates = response;
-    })
+    });
 
     this.filteredNoticeTypes = this.announcementForm.get("noticeTypes")?.valueChanges.pipe(
       startWith(''),
