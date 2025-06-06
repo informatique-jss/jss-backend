@@ -4,6 +4,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'quotation/required-information', renderMode: RenderMode.Client },
   { path: 'account/signout', renderMode: RenderMode.Client },
   { path: 'profile/login', renderMode: RenderMode.Client },
+  { path: 'quotation', renderMode: RenderMode.Client },
   { path: 'quotation/identification', renderMode: RenderMode.Client },
   { path: 'quotation/services-selection', renderMode: RenderMode.Client },
   { path: 'quotation/checkout', renderMode: RenderMode.Client },

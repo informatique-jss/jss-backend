@@ -20,8 +20,8 @@
 <div class="d-flex align-items-center mb-4"
   *ngIf="order && ordersAssoAffaireOrders && ordersAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
   <div class="ms-auto">
-    <div class="btn-group dropdown" style="margin-right: 10px;">
-      <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+    <div ngbDropdown class="btn-group dropdown" style="margin-right: 10px;">
+      <button type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
         aria-expanded="false">
         <i class="ai-briefcase me-2"></i>
         Affaire :
@@ -30,7 +30,7 @@
         "+selectedAssoAffaireOrder.affaire.lastname))}}{{selectedAssoAffaireOrder.affaire.city?(" -
         "+capitalizeName(selectedAssoAffaireOrder.affaire.city.label)):""}}
       </button>
-      <div class="dropdown-menu my-1">
+      <div ngbDropdownMenu class="dropdown-menu my-1">
         <label class=" dropdown-item" *ngFor="let asso of ordersAssoAffaireOrders">
           <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire(asso) ">
             {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname

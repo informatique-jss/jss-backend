@@ -8,8 +8,7 @@
       <li class="nav-item d-flex align-items-center rounded-4" *ngFor="let item of myJssQuotationItems;">
         <i class="ai-chevron-right quotation-nav-link me-2 fs-5" *ngIf="item!=myJssQuotationItems[0]"></i>
         <a class="quotation-nav-link nav-link rounded-1 " [class.active]="item == selectedTab"
-          [ngClass]="{'pointer':isStepAccessible(item)}" [class.disabled]="!isStepAccessible(item)"
-          (click)="goToStep(item)">
+          [class.disabled]="!isStepAccessible(item)">
           {{ item.label }}
         </a>
       </li>

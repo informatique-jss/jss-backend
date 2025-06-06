@@ -157,7 +157,7 @@ export class ServicesSelectionComponent implements OnInit {
       if (!this.currentUser) {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          promises.push(this.serviceService.getServiceForServiceTypeAndAffaire(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].affaire));
+          promises.push(this.serviceService.getServiceForServiceType(this.selectedServiceTypes[i]));
         }
         combineLatest(promises).subscribe(response => {
           for (let i = 0; i < this.quotation!.assoAffaireOrders.length; i++) {
@@ -172,17 +172,17 @@ export class ServicesSelectionComponent implements OnInit {
 
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
           this.isSavingQuotation = false;
-          this.appService.openRoute(undefined, "quotation", undefined);
+          this.appService.openRoute(undefined, "quotation/required-information", undefined);
         });
       } else {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          promises.push(this.serviceService.addOrUpdateServices(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].affaire.id, this.quotation.assoAffaireOrders[i].id));
+          promises.push(this.serviceService.addOrUpdateServices(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].id));
         }
         combineLatest(promises).subscribe(response => {
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
           this.isSavingQuotation = false;
-          this.appService.openRoute(undefined, "quotation", undefined);
+          this.appService.openRoute(undefined, "quotation/required-information", undefined);
         });
       }
     }
@@ -190,6 +190,15 @@ export class ServicesSelectionComponent implements OnInit {
 
   goBackQuotation() {
     this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[0]);
-    this.appService.openRoute(undefined, "quotation", undefined);
+    this.appService.openRoute(undefined, "quotation/identification", undefined);
+  }
+
+  hasServiceForUnregisteredAffaire(serviceFamily: ServiceFamily) {
+    if (serviceFamily) {
+      for (let service of serviceFamily.services)
+        if (service.isRequiringNewUnregisteredAffaire)
+          return true;
+    }
+    return false;
   }
 }

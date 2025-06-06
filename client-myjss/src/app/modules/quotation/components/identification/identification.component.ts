@@ -233,7 +233,7 @@ export class IdentificationComponent implements OnInit {
             this.quotation = response;
             this.quotationService.setCurrentDraftQuotationId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-            this.appService.openRoute(undefined, "quotation", undefined);
+            this.appService.openRoute(undefined, "quotation/services-selection", undefined);
           })
         } else if (this.selectedQuotationType.id == order.id) {
           this.quotation.isQuotation = false;
@@ -241,7 +241,7 @@ export class IdentificationComponent implements OnInit {
             this.quotation = response;
             this.orderService.setCurrentDraftOrderId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-            this.appService.openRoute(undefined, "quotation", undefined);
+            this.appService.openRoute(undefined, "quotation/services-selection", undefined);
           })
         }
       } else {
@@ -253,7 +253,7 @@ export class IdentificationComponent implements OnInit {
           this.orderService.setCurrentDraftOrder(this.quotation);
         }
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-        this.appService.openRoute(undefined, "quotation", undefined);
+        this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       }
   }
 

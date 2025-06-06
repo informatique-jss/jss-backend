@@ -27,7 +27,7 @@
               {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
               asso.affaire.denomination
               ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
-              asso.affaire.lastname) }} -{{asso.affaire.address}}</h6>
+              asso.affaire.lastname) }} - {{asso.affaire.address}}</h6>
           </div>
           <div class="row align-items-center">
             <!-- Les boutons pills -->
@@ -58,14 +58,17 @@
       </p>
     </div>
     <ul *ngIf="serviceFamilies" class="nav nav-tabs" role="tablist">
-      <li class="nav-item " *ngFor="let serviceFamily of serviceFamilies">
-        <a class="nav-link quotation-tabs"
-          [ngClass]="{'active' : selectedServiceFamily && selectedServiceFamily.id == serviceFamily.id}"
-          data-bs-toggle="tab" role="tab" (click)="selecteServiceFamily(serviceFamily)">
-          <i class="{{serviceFamily.myJssIcon}} me-2"></i>
-          {{serviceFamily.customLabel}}
-        </a>
-      </li>
+      <ng-container *ngFor="let serviceFamily of serviceFamilies">
+        <li class="nav-item "
+          *ngIf="quotation && selectedAssoIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret!=null || hasServiceForUnregisteredAffaire(serviceFamily) ">
+          <a class="nav-link quotation-tabs"
+            [ngClass]="{'active' : selectedServiceFamily && selectedServiceFamily.id == serviceFamily.id}"
+            data-bs-toggle="tab" role="tab" (click)="selecteServiceFamily(serviceFamily)">
+            <i class="{{serviceFamily.myJssIcon}} me-2"></i>
+            {{serviceFamily.customLabel}}
+          </a>
+        </li>
+      </ng-container>
     </ul>
 
     <!-- Tabs content -->
@@ -79,7 +82,8 @@
         <div class="d-flex flex-column flex-md-row flex-wrap">
           <ng-container *ngFor="let service of selectedServiceFamily.services ; let indexService  =index">
             <div class="form-check service-item m-1"
-              *ngIf="service.customLabel.toLocaleLowerCase().indexOf(searchtext.toLocaleLowerCase())>=0 && selectedAssoIndex!=null">
+              *ngIf="service.customLabel.toLocaleLowerCase().indexOf(searchtext.toLocaleLowerCase())>=0 && selectedAssoIndex!=null
+              && (quotation && selectedAssoIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret || service.isRequiringNewUnregisteredAffaire)">
               <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
                 (click)="removeServiceFromCurrentAffaire(service)" *ngIf="getServiceIndexInCurrentAffaire(service)>=0"
                 checked>
@@ -106,14 +110,15 @@
         <div class="row align-items-center mx-2">
           <img class="col-1" src="/assets/img/quotation/services-selection/message-question.svg" />
           <p class="col-11 mb-0">Une question sur la liste des pièces à transmettre pour votre formalité, consultez le
-            guide des formalités du JSS à <a href="">télécharger ici</a></p>
+            guide des formalités du JSS à <a href="assets/documents/guide.pdf" target="_blank">télécharger ici</a></p>
         </div>
       </div>
       <div class="col">
         <div class="row align-items-center mx-2">
           <img class="col-1" src="/assets/img/quotation/services-selection/file-validation.svg" />
           <p class="col-11 mb-0">Transmettez-nous vos actes signés et documents justificatifs numérisés en PDF
-            accompagnés d'un pouvoir au JSS à <a href="">télécharger ici</a></p>
+            accompagnés d'un pouvoir au JSS à <a href="assets/documents/pouvoir.pdf" target="_blank">télécharger ici</a>
+          </p>
         </div>
       </div>
     </div>

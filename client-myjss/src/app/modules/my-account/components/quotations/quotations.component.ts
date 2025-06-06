@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
@@ -24,7 +25,7 @@ declare var bootstrap: any;
   templateUrl: './quotations.component.html',
   styleUrls: ['./quotations.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS]
+  imports: [SHARED_IMPORTS, NgbDropdownModule]
 })
 export class QuotationsComponent implements OnInit {
 

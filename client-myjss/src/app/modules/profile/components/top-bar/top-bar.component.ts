@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
@@ -16,7 +17,7 @@ declare var bootstrap: any;
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AvatarComponent]
+  imports: [SHARED_IMPORTS, AvatarComponent, NgbDropdownModule]
 })
 export class TopBarComponent implements OnInit {
 

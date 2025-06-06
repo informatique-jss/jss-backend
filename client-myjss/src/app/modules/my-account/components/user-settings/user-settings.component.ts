@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -21,7 +22,7 @@ import { DocumentService } from '../../services/document.service';
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, AvatarComponent]
+  imports: [SHARED_IMPORTS, GenericInputComponent, AvatarComponent, NgbDropdownModule]
 })
 export class UserSettingsComponent implements OnInit {
 
