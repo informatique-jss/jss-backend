@@ -5,7 +5,6 @@ import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT } from 'src/app/libs/Constants';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AssoServiceProvisionType } from 'src/app/modules/quotation/model/AssoServiceProvisionType';
 import { AssoServiceTypeDocument } from 'src/app/modules/quotation/model/AssoServiceTypeDocument';
-import { NoticeType } from 'src/app/modules/quotation/model/NoticeType';
 import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { NoticeTypeService } from 'src/app/modules/quotation/services/notice.type.service';
 import { ServiceFieldTypeService } from 'src/app/modules/quotation/services/service.field.type.service';
@@ -29,8 +28,6 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
     super(formBuilder2, appService2);
   }
 
-  noticeTypes: NoticeType[] = [] as Array<NoticeType>;
-  filteredNoticeTypes: Observable<NoticeType[]> | undefined;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
   deleteIndex: number = 1;
 

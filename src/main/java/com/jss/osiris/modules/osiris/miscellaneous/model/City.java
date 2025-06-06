@@ -48,7 +48,6 @@ public class City implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_department")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private Department department;
 
 	@ManyToOne(fetch = FetchType.LAZY)

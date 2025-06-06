@@ -217,8 +217,6 @@ export class RequiredInformationComponent implements OnInit {
                     provision.announcement = {} as Announcement;
                     provision.isRedactedByJss = true;
                   }
-                  if (provision.announcement && asso.affaire.city && asso.affaire.city.department)
-                    provision.announcement.department = asso.affaire.city.department;
                 } else if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
                   if (!provision.domiciliation) {
                     provision.domiciliation = {} as Domiciliation;

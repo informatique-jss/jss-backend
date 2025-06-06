@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { NoticeType } from 'src/app/modules/quotation/model/NoticeType';
 import { NoticeTypeFamily } from 'src/app/modules/quotation/model/NoticeTypeFamily';
@@ -13,6 +13,7 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 })
 export class SelectNoticeTypeComponent extends GenericSelectComponent<NoticeType> implements OnInit {
 
+  allTypes: NoticeType[] = [] as Array<NoticeType>;
   types: NoticeType[] = [] as Array<NoticeType>;
 
   @Input() filteredNoticeTypeFamily: NoticeTypeFamily | undefined;
@@ -23,7 +24,22 @@ export class SelectNoticeTypeComponent extends GenericSelectComponent<NoticeType
 
   initTypes(): void {
     this.noticeTypeService.getNoticeTypes().subscribe(response => {
-      this.types = response.sort((a, b) => a.label.localeCompare(b.label));
+      this.allTypes = response.sort((a, b) => a.label.localeCompare(b.label));
+      this.setTypes();
     })
+  }
+
+  setTypes() {
+    if (this.filteredNoticeTypeFamily)
+      this.types = this.allTypes.filter(t => t.noticeTypeFamily.id == this.filteredNoticeTypeFamily!.id);
+    else
+      this.types = this.allTypes;
+  }
+
+  override ngOnChanges(changes: SimpleChanges) {
+    super.ngOnChanges(changes);
+    if (changes['filteredNoticeTypeFamily'] && this.form != undefined) {
+      this.setTypes();
+    }
   }
 }
