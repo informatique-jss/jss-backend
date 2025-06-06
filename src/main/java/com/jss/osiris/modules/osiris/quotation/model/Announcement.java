@@ -436,5 +436,4 @@ public class Announcement implements IId, IDocument {
 	public void setIsReReadByJss(Boolean isReReadByJss) {
 		this.isReReadByJss = isReReadByJss;
 	}
-
 }

@@ -20,4 +20,5 @@ export interface ProvisionType extends IReferential {
   isRecurring: boolean;
   isMergeable: boolean;
   recurringFrequency: CustomerOrderFrequency;
+
 }

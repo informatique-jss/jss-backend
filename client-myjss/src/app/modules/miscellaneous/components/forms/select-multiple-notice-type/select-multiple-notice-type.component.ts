@@ -27,6 +27,7 @@ export class SelectMultipleNoticeTypeComponent extends GenericMultipleSelectComp
   initTypes(): void {
     this.noticeTypeService.getNoticeTypes().subscribe(response => {
       this.allTypes = response;
+      this.setTypes();
     })
   }
 
