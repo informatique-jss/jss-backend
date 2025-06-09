@@ -99,19 +99,19 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.newCommentForm = this.formBuilder.group({});
     this.giftForm = this.formBuilder.group({});
 
-    this.slug = this.activatedRoute.snapshot.params['slug'];
-    if (this.slug) {
-      this.validationToken = this.activatedRoute.snapshot.params['token'];
-      if (this.validationToken) {
-        let mail = this.activatedRoute.snapshot.params['mail'];
-        this.postService.getOfferedPostByToken(this.validationToken, mail).subscribe(post => {
-          this.post = post;
-          if (this.post) {
-            this.fetchNextPrevArticleAndComments(this.post);
-          }
-        });
+    this.validationToken = this.activatedRoute.snapshot.params['token'];
+    if (this.validationToken) {
+      let mail = this.activatedRoute.snapshot.params['mail'];
+      this.postService.getOfferedPostByToken(this.validationToken, mail).subscribe(post => {
+        this.post = post;
+        if (this.post) {
+          this.fetchNextPrevArticleAndComments(this.post);
+        }
+      });
 
-      } else {
+    } else {
+      this.slug = this.activatedRoute.snapshot.params['slug'];
+      if (this.slug) {
         this.postService.getPostBySlug(this.slug).subscribe(post => {
           this.post = post;
           if (this.post) {

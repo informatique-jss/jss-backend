@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -63,6 +64,7 @@ public class CustomerMail implements Serializable {
     public static String TEMPLATE_MISSING_ATTACHMENT = "missing-attachment";
     public static String TEMPLATE_RENEW_PASSWORD = "renew-password"; // TODO : delete
     public static String TEMPLATE_SEND_TOKEN = "send-token";
+    public static String TEMPLATE_SEND_GIFTED_POST = "send-gifted-post";
     public static String TEMPLATE_REQUEST_RIB = "request-rib";
     public static String TEMPLATE_SEND_RFF = "send-rff";
     public static String TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = "send-competent-authority-reminder";
@@ -168,6 +170,10 @@ public class CustomerMail implements Serializable {
     private Boolean isCancelled;
 
     private Boolean isLastReminder;
+
+    @ManyToOne
+    @JoinColumn(name = "id_subscription")
+    private Subscription subscription;
 
     public Integer getId() {
         return id;
@@ -608,6 +614,14 @@ public class CustomerMail implements Serializable {
 
     public void setCopyToMail(String copyToMail) {
         this.copyToMail = copyToMail;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 
 }
