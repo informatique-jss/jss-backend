@@ -241,6 +241,8 @@ import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection
 import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
 import { SelectNodeComponent } from '../forms/select-node/select-node.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
+import { SelectNoticeTemplateComponent } from '../forms/select-notice-template/select-notice-template.component';
+import { SelectNoticeTypeComponent } from '../forms/select-notice-type/select-notice-type.component';
 import { SelectNotificationTypesComponent } from '../forms/select-notification-types/select-notification-types.component';
 import { SelectPaperSetTypeComponent } from '../forms/select-paper-set-type/select-paper-set-type.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
@@ -585,6 +587,8 @@ const routes: Routes = [
     SelectPublishingDepartmentComponent,
     SelectIncidentCauseComponent,
     SelectIncidentTypeComponent,
+    SelectNoticeTypeComponent,
+    SelectNoticeTemplateComponent
   ],
   exports: [
     HistoryComponent,
@@ -843,6 +847,8 @@ const routes: Routes = [
     SelectPublishingDepartmentComponent,
     SelectIncidentCauseComponent,
     SelectIncidentTypeComponent,
+    SelectNoticeTypeComponent,
+    SelectNoticeTemplateComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent
