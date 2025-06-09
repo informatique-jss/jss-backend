@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.repository.SubscriptionRepository;
@@ -24,6 +26,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private MailHelper mailHelper;
 
     @Override
     public List<Subscription> getSubscriptionsForMail(Mail mail) {
@@ -43,14 +48,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     @Transactional
-    public Subscription givePostSubscription(Post postToOffer, Mail recipientMail) {
+    public Subscription givePostSubscription(Post postToOffer, Mail recipientMail) throws OsirisException {
         Responsable signedInUser = employeeService.getCurrentMyJssUser();
 
         Integer remainingPostsToShare = getRemainingPostToShareForCurrentMonth(signedInUser);
 
-        if (remainingPostsToShare == null) {
+        if (remainingPostsToShare == null)
             return null;
-        }
 
         if (remainingPostsToShare > 0) {
             Subscription onePostSubscriptionGiven = new Subscription();
@@ -61,7 +65,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             onePostSubscriptionGiven.setSubcriptionMail(signedInUser.getMail());
             onePostSubscriptionGiven.setValidationToken(UUID.randomUUID().toString());
 
-            return subscriptionRepository.save(onePostSubscriptionGiven);
+            Subscription newSubscription = subscriptionRepository.save(onePostSubscriptionGiven);
+
+            mailHelper.sendGiftedPost(newSubscription);
+            return newSubscription;
         }
 
         return null;

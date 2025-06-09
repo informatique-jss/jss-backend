@@ -144,6 +144,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.mail.automatic.indexation");
         isOk = isOk && checkProperty("outlook.default.url");
         isOk = isOk && checkProperty("microsoft.host");
+        isOk = isOk && checkProperty("jss.media.entry.point");
 
         if (!isOk)
             System.exit(-1);
