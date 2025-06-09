@@ -20,8 +20,8 @@
 <div class="d-flex align-items-center mb-4"
   *ngIf="order && ordersAssoAffaireOrders && ordersAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
   <div class="ms-auto">
-    <div class="btn-group dropdown" style="margin-right: 10px;">
-      <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+    <div ngbDropdown class="btn-group dropdown" style="margin-right: 10px;">
+      <button type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
         aria-expanded="false">
         <i class="ai-briefcase me-2"></i>
         Affaire :
@@ -30,7 +30,7 @@
         "+selectedAssoAffaireOrder.affaire.lastname))}}{{selectedAssoAffaireOrder.affaire.city?(" -
         "+capitalizeName(selectedAssoAffaireOrder.affaire.city.label)):""}}
       </button>
-      <div class="dropdown-menu my-1">
+      <div ngbDropdownMenu class="dropdown-menu my-1">
         <label class=" dropdown-item" *ngFor="let asso of ordersAssoAffaireOrders">
           <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire(asso) ">
             {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
@@ -105,13 +105,11 @@
       <h2 class="h4 mb-0">Services commandés</h2>
     </div>
   </div>
-  <div class="accordion accordion-alt accordion-orders" id="orders" *ngIf="selectedAssoAffaireOrder.services">
-    <div class="accordion-item border-top mb-0"
-      *ngFor="let service of selectedAssoAffaireOrder.services; let index =index">
-      <div class="accordion-header">
-        <a class="accordion-button d-flex fs-4 fw-normal text-decoration-none py-3 collapsed" href="#"
-          [attr.data-bs-target]="'#order'+service.id" data-bs-toggle="collapse" aria-expanded="false"
-          [attr.aria-controls]="'#order'+service.id">
+  <div ngbAccordion [closeOthers]="true" *ngIf="selectedAssoAffaireOrder.services">
+    <div ngbAccordionItem *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
+      (show)="loadServiceDetails(service,false)">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton class="border-top">
           <div class="d-flex justify-content-between w-100">
             <div class="ps-3 ps-sm-4">
               <h4 class="h6 mb-2">
@@ -144,187 +142,176 @@
               </div>
             </div>
           </div>
-        </a>
-      </div>
-      <div class="accordion-collapse collapse" [id]="'order'+service.id" data-bs-parent="#orders"
-        (show.bs.collapse)="loadServiceDetails(service,false)" [ngClass]="{'show':index==0}">
-        <div class="accordion-body">
-          <div class="accordion-item border-top mb-0" *ngIf="!ordersAssoAffaireOrders[order.id]">
-            <ul class="nav nav-tabs p-3" role="tablist" style="margin-bottom: 0;">
-              <li class="nav-item ">
-                <a [attr.href]="'#myDocs'+service.id" class="nav-link active " data-bs-toggle="tab" role="tab"
-                  *ngIf="displayMyDoc(service)">
-                  <i class="fi-home me-2"></i>
-                  Mes documents
-                </a>
-              </li>
-              <li class="nav-item" *ngIf=" displayMyInformation(service)">
-                <a [attr.href]="'#myFields'+service.id" class="nav-link" data-bs-toggle="tab" role="tab">
-                  <i class="fi-home me-2"></i>
-                  Mes informations complémentaires
-                </a>
-              </li>
-              <li class="nav-item"
-                *ngIf="this.serviceProvisionAttachments[service.id] && this.serviceProvisionAttachments[service.id].length>0">
-                <a [attr.href]="'#availableDocs'+service.id" class="nav-link" data-bs-toggle="tab" role="tab">
-                  Documents disponibles <span class="badge bg-success"
-                    style="margin-left: 10px;">{{this.serviceProvisionAttachments[service.id].length}}</span>
-                </a>
-              </li>
-            </ul>
-            <div class="tab-content ">
-              <div class="tab-pane fade show active" [attr.id]="'myDocs'+service.id" role="tabpanel">
-                <div class="alert alert-info d-flex mb-0 mb-2" role="alert">
-                  <i class="ai-circle-info fs-xl"></i>
-                  <div class="ps-2">Vous pouvez télécharger ci-dessous les documents nécessaires au traitement du
-                    service</div>
-                </div>
-                <div class="list-group">
-                  <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
-                    <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
-                      [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
-                      *ngIf="assoServiceDocument.isMandatory">
-                      <div class="d-flex flex-wrap w-100 justify-content-between">
-                        <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
-                      </div>
-                      <p class="fs-sm  "
-                        *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
-                        {{assoServiceDocument.formalisteComment}}</p>
-                      <div class="mb-2 mb-md-3 row  ">
-                        <div class="col-md-12">
-                          <single-upload [entity]="assoServiceDocument" (endOfUpload)="refreshCurrentAssoAffaireOrder()"
-                            [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                            [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                            [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+        </button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+              <li [ngbNavItem]="1">
+                <button ngbNavLink>Mes documents</button>
+                <ng-template ngbNavContent>
+                  <div class="alert alert-info d-flex mb-0 mb-2" role="alert">
+                    <i class="ai-circle-info fs-xl"></i>
+                    <div class="ps-2">Vous pouvez télécharger ci-dessous les documents nécessaires au traitement du
+                      service</div>
+                  </div>
+                  <div class="list-group">
+                    <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
+                      <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
+                        [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
+                        *ngIf="assoServiceDocument.isMandatory">
+                        <div class="d-flex flex-wrap w-100 justify-content-between">
+                          <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                        </div>
+                        <p class="fs-sm  "
+                          *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
+                          {{assoServiceDocument.formalisteComment}}</p>
+                        <div class="mb-2 mb-md-3 row  ">
+                          <div class="col-md-12">
+                            <single-upload [entity]="assoServiceDocument"
+                              (endOfUpload)="refreshCurrentAssoAffaireOrder()"
+                              [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
+                              [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
+                              [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                          </div>
+                        </div>
+                        <div class="table-responsive"
+                          *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
+                          <table class="table table-hover mb-0">
+                            <thead>
+                              <tr>
+                                <th style="width: 5%;">#</th>
+                                <th>Nom</th>
+                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                <th style="width: 10%;"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
+                                <th scope="row">{{i + 1}}</th>
+                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                                <td>
+                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                    (click)="downloadAttachment(attachment)">
+                                    <i class="ai-download"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
                       </div>
-                      <div class="table-responsive"
-                        *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
-                        <table class="table table-hover mb-0">
-                          <thead>
-                            <tr>
-                              <th style="width: 5%;">#</th>
-                              <th>Nom</th>
-                              <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
-                              <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
-                              <th style="width: 10%;"></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
-                              <th scope="row">{{i + 1}}</th>
-                              <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
-                              <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
-                              <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                              <td>
-                                <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
-                                  placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
-                                  <i class="ai-download"></i>
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                    </ng-container>
+                  </div>
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="2" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+                <button ngbNavLink>Mes informations complémentaires</button>
+                <ng-template ngbNavContent>
+                  <div class="alert alert-info d-flex mb-2" role="alert">
+                    <i class="ai-circle-info fs-xl"></i>
+                    <div class="ps-2">Vous pouvez renseigner ci-dessous les informations complémentaires nécessaires au
+                      traitement du service</div>
+                  </div>
+                  <div *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
+                    <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
+                      <label for="text-input" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                      <div> <input class="form-control" id="text-input" [(ngModel)]="assoServiceFieldType.stringValue"
+                          maxLength="255" />
                       </div>
                     </div>
-                  </ng-container>
-                </div>
-              </div>
-            </div>
-            <div class="tab-content "
-              *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
-              <div class="tab-pane fade" [attr.id]="'availableDocs'+service.id" role="tabpanel">
-                <div class="table-responsive"
-                  *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
-                  <table class="table table-hover mb-0">
-                    <thead>
-                      <tr>
-                        <th style="width: 5%;">#</th>
-                        <th>Nom</th>
-                        <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
-                        <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
-                        <th style="width: 10%;"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let attachment of serviceProvisionAttachments[service.id]; let i = index">
-                        <th scope="row">{{i + 1}}</th>
-                        <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
-                        <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
-                        <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                        <td>
-                          <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
-                            placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
-                            <i class="ai-download"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            <div class="tab-content p-3"
-              *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
-              <div class="tab-pane fade show" [attr.id]="'myFields'+service.id" role="tabpanel">
-                <div class="alert alert-info d-flex mb-2" role="alert">
-                  <i class="ai-circle-info fs-xl"></i>
-                  <div class="ps-2">Vous pouvez renseigner ci-dessous les informations complémentaires nécessaires au
-                    traitement du service</div>
-                </div>
-                <div *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
-                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
-                    <label for="text-input" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                    <div> <input class="form-control" id="text-input" [(ngModel)]="assoServiceFieldType.stringValue"
-                        maxLength="255" />
+                    <div class="mb-3"
+                      *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
+                      <label for="text-textarea"
+                        class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                      <div> <textarea class="form-control" id="text-textarea"
+                          [(ngModel)]="assoServiceFieldType.textAreaValue" rows="5"></textarea>
+                      </div>
+                    </div>
+                    <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
+                      <label for="text-date" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                      <div> <input class="form-control" id="text-date" type="date"
+                          [(ngModel)]="assoServiceFieldType.dateValue" />
+                      </div>
+                    </div>
+                    <div class="mb-3"
+                      *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
+                      <label for="text-integer"
+                        class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                      <div> <input class="form-control" id="integer" type="number"
+                          [(ngModel)]="assoServiceFieldType.integerValue" />
+                      </div>
+                    </div>
+                    <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
+                      <label for="text-select"
+                        class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                      <div>
+                        <select id="text-select" class="form-select form-select-lg"
+                          [(ngModel)]="assoServiceFieldType.selectValue">
+                          <option
+                            *ngFor="let option of assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues"
+                            [value]="option">
+                            {{option.value}}</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
-                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
-                    <label for="text-textarea"
-                      class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                    <div> <textarea class="form-control" id="text-textarea"
-                        [(ngModel)]="assoServiceFieldType.textAreaValue" rows="5"></textarea>
+                  <div class="text-center pt-1 pt-sm-2">
+                    <div class="btn-group   " role="group" aria-label="Outline button group">
+                      <button type="button" class="btn btn-primary"
+                        (click)="saveFieldsValue(service)">Enregistrer</button>
                     </div>
                   </div>
-                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
-                    <label for="text-date" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                    <div> <input class="form-control" id="text-date" type="date"
-                        [(ngModel)]="assoServiceFieldType.dateValue" />
-                    </div>
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="3" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+                <button ngbNavLink>Documents disponibles <span class="badge bg-success"
+                    style="margin-left: 10px;"></span></button>
+                <ng-template ngbNavContent>
+                  <div class="table-responsive"
+                    *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
+                    <table class="table table-hover mb-0">
+                      <thead>
+                        <tr>
+                          <th style="width: 5%;">#</th>
+                          <th>Nom</th>
+                          <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                          <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                          <th style="width: 10%;"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let attachment of serviceProvisionAttachments[service.id]; let i = index">
+                          <th scope="row">{{i + 1}}</th>
+                          <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                          <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                          <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                          <td>
+                            <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
+                              placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
+                              <i class="ai-download"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
-                    <label for="text-integer" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                    <div> <input class="form-control" id="integer" type="number"
-                        [(ngModel)]="assoServiceFieldType.integerValue" />
-                    </div>
-                  </div>
-                  <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
-                    <label for="text-select" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                    <div>
-                      <select id="text-select" class="form-select form-select-lg"
-                        [(ngModel)]="assoServiceFieldType.selectValue">
-                        <option
-                          *ngFor="let option of assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues"
-                          [value]="option">
-                          {{option.value}}</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="text-center pt-1 pt-sm-2">
-                  <div class="btn-group   " role="group" aria-label="Outline button group">
-                    <button type="button" class="btn btn-primary"
-                      (click)="saveFieldsValue(service)">Enregistrer</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                </ng-template>
+              </li>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+          </ng-template>
         </div>
       </div>
     </div>
   </div>
 </section>
+
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
   <!-- Address -->
   <section class="col">

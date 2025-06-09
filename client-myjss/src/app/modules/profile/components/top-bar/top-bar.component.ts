@@ -1,5 +1,6 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbCollapseModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
@@ -8,6 +9,7 @@ import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
 import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
+import { SearchComponent } from '../search/search.component';
 
 declare var bootstrap: any;
 
@@ -16,12 +18,11 @@ declare var bootstrap: any;
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AvatarComponent]
+  imports: [SHARED_IMPORTS, AvatarComponent, NgbDropdownModule, NgbCollapseModule]
 })
 export class TopBarComponent implements OnInit {
 
   @Input() isForQuotationNavbar: boolean = false;
-  @ViewChild('navbarCollapseRef', { static: false }) navbarCollapse!: ElementRef;
 
   logoJss: string = '/assets/images/white-logo-myjss.svg';
   logoJssDark: string = '/assets/images/dark-logo-myjss.svg';
@@ -30,6 +31,8 @@ export class TopBarComponent implements OnInit {
   anonymousConnexion: string = '/assets/images/anonymous.svg';
 
   currentUser: Responsable | undefined;
+
+  searchModalInstance: any | undefined;
 
   actualUrl!: string;
   services!: MenuItem[];
@@ -40,12 +43,13 @@ export class TopBarComponent implements OnInit {
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
   MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
 
-  isNavbarCollapsed: boolean = false;
+  isNavbarCollapsed: boolean = true;
 
   constructor(private loginService: LoginService,
     private appService: AppService,
     private router: Router,
-    private eRef: ElementRef
+    private eRef: ElementRef,
+    private modalService: NgbModal
   ) { }
 
   capitalizeName = capitalizeName;
@@ -70,7 +74,7 @@ export class TopBarComponent implements OnInit {
       if (url.indexOf("quotation") >= 0 || url.indexOf("account") >= 0)
         return false;
 
-    return !this.isNavbarCollapsed;
+    return this.isNavbarCollapsed;
   }
 
   refreshCurrentUser() {
@@ -106,12 +110,25 @@ export class TopBarComponent implements OnInit {
 
   attempToCloseNavbar(force: boolean = true, event: MouseEvent | any) {
     if (force ||
-      this.navbarCollapse &&
-      this.navbarCollapse.nativeElement.getAttribute('aria-expanded') == 'true' &&
+      !this.isNavbarCollapsed &&
       !this.eRef.nativeElement.contains(event.target as HTMLElement)
     ) {
-      this.navbarCollapse.nativeElement.click();
+      this.isNavbarCollapsed = true;
     }
+  }
+
+  displaySearchModal() {
+    if (this.searchModalInstance) {
+      return;
+    }
+
+    this.searchModalInstance = this.modalService.open(SearchComponent, {
+      size: 'lg',
+    });
+
+    this.searchModalInstance.result.finally(() => {
+      this.searchModalInstance = undefined;
+    });
   }
 
 }

@@ -4,13 +4,13 @@
     <div style="margin-right: 10px;"><generic-input [(model)]="searchText" label="SIRET / Dénomination"
         [form]="affaireForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false" icon="search"
         [isDisplayLabel]="false" (onFormChange)="changeFilter()"></generic-input></div>
-    <div class="btn-group dropdown">
-      <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false">
+    <div ngbDropdown class="btn-group dropdown">
+      <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+        aria-expanded="false">
         <i class="ai-bar-chart-3 me-2"></i>
         Trier par
       </button>
-      <div class="dropdown-menu my-1">
+      <div ngbDropdownMenu class="dropdown-menu my-1">
         <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameAsc');$event.stopPropagation();">
           <i class="ai-bar-chart-3 me-2"></i>
           Dans l'ordre alphabétique
@@ -49,14 +49,10 @@
         </div>
       </div>
 
-      <!-- Itération des affaires -->
-      <ng-container *ngFor="let affaire of affaires">
-        <div class="accordion-item border-top mb-3">
-          <div class="accordion-header">
-            <a class="accordion-button d-flex justify-content-between align-items-start text-decoration-none py-3 collapsed"
-              [attr.data-bs-target]="'#affaire'+affaire.id" data-bs-toggle="collapse" aria-expanded="false"
-              [attr.aria-controls]="'#affaire'+affaire.id">
-
+      <div ngbAccordion>
+        <div ngbAccordionItem *ngFor="let affaire of affaires" (show)="loadAffaireDetails( affaire)">
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton class="border-top">
               <div class="container-fluid ">
                 <div class="row g-2 w-100">
 
@@ -79,150 +75,136 @@
                   </div>
                 </div>
               </div>
-            </a>
-          </div>
-          <div [id]="'affaire' + affaire.id" class="accordion-collapse collapse" data-bs-parent="#affaires"
-            (show.bs.collapse)="loadAffaireDetails($event, affaire)">
-            <div class="accordion-body p-0">
+            </button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <ng-template>
+                <div class="accordion-body p-0">
 
-              <!-- Placeholder chargement détail -->
-              <div *ngIf="!ordersAffaire[affaire.id]" class="p-4">
-                <p class="card-text placeholder-glow mb-0">
-                  <span class="placeholder placeholder-sm col-7 me-2"></span>
-                  <span class="placeholder placeholder-sm col-4"></span>
-                  <span class="placeholder placeholder-sm col-4 me-2"></span>
-                  <span class="placeholder placeholder-sm col-6"></span>
-                  <span class="placeholder placeholder-sm col-8"></span>
-                </p>
-              </div>
+                  <!-- Placeholder chargement détail -->
+                  <div *ngIf="!ordersAffaire[affaire.id]" class="p-4">
+                    <p class="card-text placeholder-glow mb-0">
+                      <span class="placeholder placeholder-sm col-7 me-2"></span>
+                      <span class="placeholder placeholder-sm col-4"></span>
+                      <span class="placeholder placeholder-sm col-4 me-2"></span>
+                      <span class="placeholder placeholder-sm col-6"></span>
+                      <span class="placeholder placeholder-sm col-8"></span>
+                    </p>
+                  </div>
 
-              <!-- Contenu des onglets -->
-              <div *ngIf="ordersAffaire[affaire.id]" class="pt-3">
-                <ul class="nav nav-tabs px-3" role="tablist">
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="orders-tab-{{affaire.id}}" data-bs-toggle="tab"
-                      [attr.data-bs-target]="'#orders'+affaire.id" type="button" role="tab"
-                      [attr.aria-controls]="'orders'+affaire.id" aria-selected="true">
-                      Commandes
-                    </button>
-                  </li>
-                  <li class="nav-item" role="presentation"
-                    *ngIf="attachmentsAffaire[affaire.id] && attachmentsAffaire[affaire.id].length > 0">
-                    <button class="nav-link" id="docs-tab-{{affaire.id}}" data-bs-toggle="tab"
-                      [attr.data-bs-target]="'#availableDocs'+affaire.id" type="button" role="tab"
-                      [attr.aria-controls]="'availableDocs'+affaire.id" aria-selected="false">
-                      Documents disponibles
-                    </button>
-                  </li>
-                </ul>
 
-                <div class="tab-content p-3  border-top-0 rounded-bottom">
-                  <!-- Onglet Commandes -->
-                  <div class="tab-pane fade show active" id="orders{{affaire.id}}" role="tabpanel"
-                    [attr.aria-labelledby]="'orders-tab-' + affaire.id">
-                    <div class="d-flex flex-column gap-3">
-                      <div *ngFor="let order of ordersAffaire[affaire.id]" class="card  p-3">
-                        <div class="container-fluid p-0">
-                          <div class="row g-2 w-100">
+                  <!-- Contenu des onglets -->
+                  <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+                    <li [ngbNavItem]="1">
+                      <button ngbNavLink>Commandes</button>
+                      <ng-template ngbNavContent>
+                        <div class="d-flex flex-column gap-3">
+                          <div *ngFor="let order of ordersAffaire[affaire.id]" class="card  p-3">
+                            <div class="container-fluid p-0">
+                              <div class="row g-2 w-100">
 
-                            <div class="col-12 col-sm-2 d-flex flex-column align-items-center">
-                              <div class="fs-sm text-body-secondary fw-bold text-center">
-                                n°{{order.id}}
-                                <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
-                                  placement="right" *ngIf="order.hasMissingInformations"
-                                  ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
-                              </div>
-                              <span class="badge bg-opacity-10 fs-xs text-wrap mt-2"
-                                [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
-                                {{getCustomerOrderStatusLabel(order)}}
-                              </span>
-                            </div>
+                                <div class="col-12 col-sm-2 d-flex flex-column align-items-center">
+                                  <div class="fs-sm text-body-secondary fw-bold text-center">
+                                    n°{{order.id}}
+                                    <i class="ai-triangle-alert fs-base text-danger ms-2"
+                                      style="-webkit-text-stroke: 1px;" placement="right"
+                                      *ngIf="order.hasMissingInformations"
+                                      ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                                  </div>
+                                  <span class="badge bg-opacity-10 fs-xs text-wrap mt-2"
+                                    [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
+                                    {{getCustomerOrderStatusLabel(order)}}
+                                  </span>
+                                </div>
 
-                            <div class="col-12 col-sm-2" *ngIf="  order.responsable">
-                              <div class="fs-sm text-body-secondary fw-bold mb-1">Responsable</div>
-                              <div class="fs-sm fw-medium text-dark">
-                                {{capitalizeName(order.responsable.firstname + ' ' + order.responsable.lastname)}}
-                              </div>
-                            </div>
+                                <div class="col-12 col-sm-2" *ngIf="  order.responsable">
+                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Responsable</div>
+                                  <div class="fs-sm fw-medium text-dark">
+                                    {{capitalizeName(order.responsable.firstname + ' ' + order.responsable.lastname)}}
+                                  </div>
+                                </div>
 
-                            <div class="col-12 col-sm-2">
-                              <div class="fs-sm text-body-secondary fw-bold mb-1">Date de commande</div>
-                              <div class="fs-sm fw-medium text-dark">
-                                {{order.createdDate | date:'dd/MM/yyyy'}}
-                              </div>
-                            </div>
+                                <div class="col-12 col-sm-2">
+                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Date de commande</div>
+                                  <div class="fs-sm fw-medium text-dark">
+                                    {{order.createdDate | date:'dd/MM/yyyy'}}
+                                  </div>
+                                </div>
 
-                            <div class="col-12 col-sm-3">
-                              <div class="fs-sm text-body-secondary fw-bold mb-1">Affaire</div>
-                              <div class="fs-sm fw-medium text-dark">
-                                {{capitalizeName(order.affairesList)}}
+                                <div class="col-12 col-sm-3">
+                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Affaire</div>
+                                  <div class="fs-sm fw-medium text-dark">
+                                    {{capitalizeName(order.affairesList)}}
+                                  </div>
+                                </div>
+
+                                <div class="col-12 col-sm-3">
+                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Services</div>
+                                  <div class="fs-sm fw-medium text-dark">
+                                    {{order.servicesList}}
+                                  </div>
+                                </div>
+
                               </div>
                             </div>
-
-                            <div class="col-12 col-sm-3">
-                              <div class="fs-sm text-body-secondary fw-bold mb-1">Services</div>
-                              <div class="fs-sm fw-medium text-dark">
-                                {{order.servicesList}}
-                              </div>
-                            </div>
-
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
+                      </ng-template>
+                    </li>
+                    <li [ngbNavItem]="2"
+                      *ngIf="attachmentsAffaire[affaire.id] && attachmentsAffaire[affaire.id].length > 0">
+                      <button ngbNavLink>Documents disponibles</button>
+                      <ng-template ngbNavContent>
+                        <div class="table-responsive">
+                          <table class="table table-hover mb-0">
+                            <thead>
+                              <tr>
+                                <th style="width: 5%;">#</th>
+                                <th>Nom</th>
+                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                <th style="width: 10%;"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let attachment of attachmentsAffaire[affaire.id]; let i = index">
+                                <th scope="row">{{i + 1}}</th>
+                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                                <td>
+                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                    (click)="downloadAttachment(attachment)">
+                                    <i class="ai-download"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </ng-template>
+                    </li>
+                  </ul>
 
-                  <!-- Onglet Documents -->
-                  <div class="tab-pane fade" id="availableDocs{{affaire.id}}" role="tabpanel"
-                    [attr.aria-labelledby]="'docs-tab-' + affaire.id">
-                    <div class="table-responsive">
-                      <table class="table table-hover mb-0">
-                        <thead>
-                          <tr>
-                            <th style="width: 5%;">#</th>
-                            <th>Nom</th>
-                            <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
-                            <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
-                            <th style="width: 10%;"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let attachment of attachmentsAffaire[affaire.id]; let i = index">
-                            <th scope="row">{{i + 1}}</th>
-                            <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
-                            <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
-                            <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                            <td>
-                              <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
-                                placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
-                                <i class="ai-download"></i>
-                              </button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
+                  <div [ngbNavOutlet]="nav" class="mt-2"></div>
 
                 </div>
-
-              </div>
-
+              </ng-template>
             </div>
           </div>
         </div>
-      </ng-container>
-    </div>
+      </div>
 
-
-    <!-- Pagination -->
-    <div class="d-sm-flex align-items-center pt-4 pt-sm-5" *ngIf="!hideSeeMore">
-      <nav class="order-sm-2 ms-sm-auto">
-      </nav>
-      <button class="btn btn-primary w-100 w-sm-auto order-sm-1 ms-sm-auto me-sm-n5" type="button" (click)="loadMore()">
-        <i class="ai-chevrons-down me-2 ms-n1"></i>
-        Voir plus</button>
+      <!-- Pagination -->
+      <div class="d-sm-flex align-items-center pt-4 pt-sm-5" *ngIf="!hideSeeMore">
+        <nav class="order-sm-2 ms-sm-auto">
+        </nav>
+        <button class="btn btn-primary w-100 w-sm-auto order-sm-1 ms-sm-auto me-sm-n5" type="button"
+          (click)="loadMore()">
+          <i class="ai-chevrons-down me-2 ms-n1"></i>
+          Voir plus</button>
+      </div>
     </div>
   </div>
-</div>

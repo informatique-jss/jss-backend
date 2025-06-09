@@ -26,7 +26,7 @@ export class DefaultComponent implements OnInit {
 
   constructor(
     private audioService: AudioPlayerService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
   ) { }
 
   ngOnInit() {

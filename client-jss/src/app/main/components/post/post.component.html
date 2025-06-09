@@ -8,7 +8,7 @@
         <div class="row pt-2">
           <div class="col-12">
             <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
-              <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
+              <a *ngFor="let category of post.jssCategories | slice : 1 " style="cursor: pointer;"
                 (click)="openCategoryPosts(category, $event)" class="my-2 margin-category fw-bold"
                 [style.background-color]="category.color+' !important'">{{category.name}}</a>
             </ng-container>
@@ -41,7 +41,8 @@
           <!-- Boutons offrir article, enrregistrer, partager  -->
           <div class="row inline-row align-items-center mb-2 g-2">
             <div class="col-auto mt-0">
-              <a class="btn btn-primary"><i class="bi bi-gift me-2"></i>Offrir cet article</a>
+              <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
+                  class="bi bi-gift me-2"></i>Offrir cet article</button>
             </div>
             <div class="col-auto mt-0">
               <a class="btn btn-primary"><i class="bi bi-bookmark me-2"></i>Enregistrer</a>
@@ -65,7 +66,7 @@
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-linkedin fs-6"></i>
                       </a>
-                      <a (click)="shareOnLinkedin()"
+                      <a (click)="shareOnInstagram()"
                         class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-instagram fs-4"></i>
@@ -135,13 +136,8 @@
                 <span [innerHTML]="post.contentText| trustHtml"></span>
 
                 <!-- Bannière d'abonnement en bas de l'article visible -->
-                <div class="bg-secondary d-flex justify-content-center align-items-center text-center text-white"
-                  style="position: relative; margin-top: -70px;" *ngIf="post.isPremium">
-                  La suite est réservée à nos abonnés. Déjà abonné ?
-                  <a class="ms-1 text-white fw-bold" (click)="openSignIn($event)">Se connecter</a>
-                </div>
                 <div class="bg-blue-400 d-flex justify-content-center align-items-center flex-column text-center p-4"
-                  style="position: relative; ">
+                  style="position: relative; " *ngIf="post.isPremium">
                   <h2 class=" fw-bold">Vous souhaitez lire la suite ?</h2>
                   <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
                     intégralité et de bien d'autres !</p>
@@ -174,7 +170,7 @@
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-linkedin fs-6"></i>
                       </a>
-                      <a (click)="shareOnLinkedin()"
+                      <a (click)="shareOnInstagram()"
                         class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-instagram fs-4"></i>
@@ -235,7 +231,7 @@
                             <a (click)="openPost(nextPost, $event)">{{nextPost.titleText}}</a>
                           </h6>
                         </div>
-                        <a (click)="openPost(nextPost, $event)">
+                        <a (click)="openPost(nextPost, $event)" *ngIf="nextPost.media">
                           <div class="post-img-wrap position-relative overflow-hidden me-0 ms-2">
                             <img class="post-img"
                               [src]="nextPost.media.urlThumbnail ? nextPost.media.urlThumbnail : nextPost.media.urlFull"
@@ -455,3 +451,37 @@
     <newsletter></newsletter>
   </div>
 </div>
+
+<ng-template #givePostModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Offrir cet article</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="giftForm" (ngSubmit)="givePost(modal, post!)">
+        <div class="mb-3">
+          <form class="subscription-from needs-validation" novalidate>
+            <div class="input-group">
+              <generic-input [(model)]="recipientMail"
+                label="Adresse e-mail de la personne à qui vous voulez offrir cet article" [form]="giftForm"
+                class="white-form-control" propertyName="propertyName" [isMandatory]="true" [isDisabled]="false"
+                type="email"></generic-input>
+            </div>
+          </form>
+        </div>
+        <p class="small text-muted" *ngIf="numberOfSharingPostRemaining">
+          Nombre d'articles que vous pouvez encore partager ce mois-ci : <strong>
+            {{ numberOfSharingPostRemaining }}</strong>
+        </p>
+        <p class="small text-muted alert alert-danger" *ngIf="!numberOfSharingPostRemaining">
+          Il ne vous reste plus d'article à partager pour ce mois-ci ! Vous retrouverez votre crédit le mois prochain.
+        </p>
+        <div class="text-end">
+          <button type="submit" class="btn btn-secondary"
+            [disabled]="giftForm.invalid && !numberOfSharingPostRemaining">Envoyer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { getDocument } from '../../../../libs/DocumentHelper';
@@ -45,7 +46,9 @@ import { CityService } from '../../services/city.service';
     GenericTextareaComponent,
     SelectCountryComponent,
     SelectCivilityComponent,
-    SelectBillingLabelTypeComponent
+    SelectBillingLabelTypeComponent,
+    NgbDropdownModule,
+    NgbNavModule,
   ]
 })
 export class CheckoutComponent implements OnInit {
@@ -620,5 +623,10 @@ export class CheckoutComponent implements OnInit {
           document.billingLabelCity = response[0];
       })
     }
+  }
+
+  goBackQuotation() {
+    this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
+    this.appService.openRoute(undefined, "quotation/required-information", undefined);
   }
 }

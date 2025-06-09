@@ -259,13 +259,7 @@
 
     <!-- Sidebar (offcanvas on sreens < 992px) -->
     <aside class="col-lg-3 offset-xl-1">
-      <div class="offcanvas-lg offcanvas-end" data-bs-scroll="true" id="sidebar">
-        <div class="offcanvas-header">
-          <h4 class="offcanvas-title">Sidebar</h4>
-          <a class="ms-auto" type="button" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Close">
-            <i class="ai-cross-alt fs-sm"></i>
-          </a>
-        </div>
+      <div class="offcanvas-lg offcanvas-end" id="sidebar">
 
         <div class="offcanvas-body">
           <h4 *ngIf="hotPosts[0] && hotPosts[1]" class="pt-1 pt-lg-0 mt-lg-n2">Populaires :</h4>
@@ -346,10 +340,3 @@
 
 <newsletter></newsletter>
 <div class="my-4 py-4"></div>
-
-<!-- Sidebar toggle button -->
-<button class="d-lg-none btn btn-sm fs-sm btn-primary w-100 rounded-0 fixed-bottom" type="button"
-  data-bs-toggle="offcanvas" data-bs-target="#sidebar">
-  <i class="ai-layout-column me-2"></i>
-  Sidebar
-</button>

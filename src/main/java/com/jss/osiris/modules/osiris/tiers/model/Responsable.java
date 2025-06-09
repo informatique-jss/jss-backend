@@ -229,6 +229,9 @@ public class Responsable implements IAttachment, IId {
 
 	private LocalDateTime loginTokenExpirationDateTime;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Integer numberOfGiftPostsPerMonth;
+
 	public Tiers getTiers() {
 		return tiers;
 	}
@@ -589,4 +592,11 @@ public class Responsable implements IAttachment, IId {
 		this.mails = mails;
 	}
 
+	public Integer getNumberOfGiftPostsPerMonth() {
+		return numberOfGiftPostsPerMonth;
+	}
+
+	public void setNumberOfGiftPostsPerMonth(Integer numberOfPostsSharingAuthorized) {
+		this.numberOfGiftPostsPerMonth = numberOfPostsSharingAuthorized;
+	}
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -44,7 +44,7 @@ import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCus
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, SingleUploadComponent, AvatarComponent, TrustHtmlPipe, NgbTooltipModule]
+  imports: [SHARED_IMPORTS, SingleUploadComponent, AvatarComponent, TrustHtmlPipe, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
 })
 export class OrderDetailsComponent implements OnInit {
 

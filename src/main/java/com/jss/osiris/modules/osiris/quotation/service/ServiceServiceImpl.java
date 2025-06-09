@@ -112,17 +112,14 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean addOrUpdateServices(List<ServiceType> services, Integer affaireId, Integer assoAffaireOrderId,
+    public Boolean addOrUpdateServices(List<ServiceType> services, Integer assoAffaireOrderId,
             String customLabel)
             throws OsirisException {
-
-        Affaire affaire = affaireService.getAffaire(affaireId);
 
         AssoAffaireOrder assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(assoAffaireOrderId);
 
         if (assoAffaireOrder != null) {
-            List<Service> servicesGenerated = generateServiceInstanceFromMultiServiceTypes(services, affaire,
-                    customLabel);
+            List<Service> servicesGenerated = generateServiceInstanceFromMultiServiceTypes(services, customLabel);
             for (Service service : servicesGenerated) {
                 service.setAssoAffaireOrder(assoAffaireOrder);
                 addOrUpdateServiceFromUser(service);
@@ -172,26 +169,26 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes, Affaire affaire,
+    public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes,
             String customLabel) throws OsirisException {
 
         List<Service> services = new ArrayList<Service>();
 
         List<ServiceType> mergeableTypes = serviceTypes.stream().filter(s -> s.getIsMergeable()).toList();
         if (!mergeableTypes.isEmpty()) {
-            services.add(getServiceForMultiServiceTypesAndAffaire(mergeableTypes, affaire, customLabel));
+            services.add(getServiceForMultiServiceTypesAndAffaire(mergeableTypes, customLabel));
         }
 
         List<ServiceType> serviceTypeNonMergeables = serviceTypes.stream().filter(s -> !s.getIsMergeable())
                 .toList();
         for (ServiceType serviceType : serviceTypeNonMergeables)
             services.add(
-                    getServiceForMultiServiceTypesAndAffaire(Arrays.asList(serviceType), affaire, customLabel));
+                    getServiceForMultiServiceTypesAndAffaire(Arrays.asList(serviceType), customLabel));
 
         return services;
     }
 
-    private Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire,
+    private Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes,
             String customLabel)
             throws OsirisException {
 

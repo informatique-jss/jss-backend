@@ -30,9 +30,7 @@
               </div>
 
               <div class="row p-0">
-                <div
-                  *ngIf="!postsByEntityType[selectedEntityType.id] || postsByEntityType[selectedEntityType.id].length == 0"
-                  class="pb-3">
+                <div *ngIf="!postsByEntityType[selectedEntityType.id] " class="pb-3">
                   <div class="panel-loader">
                     <div class="skeleton skeleton-header"></div>
                     <div class="skeleton skeleton-line"></div>

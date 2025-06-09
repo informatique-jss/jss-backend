@@ -47,6 +47,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailAuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailJssCategoryService;
@@ -60,9 +61,11 @@ import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
 import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
+import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.service.CommentService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
@@ -73,6 +76,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -133,6 +137,9 @@ public class WordpressController {
 
 	@Autowired
 	CustomerOrderService customerOrderService;
+
+	@Autowired
+	SubscriptionService subscriptionService;
 
 	@Autowired
 	GeneratePdfDelegate generatePdfDelegate;
@@ -521,6 +528,21 @@ public class WordpressController {
 		if (post != null && !isCrawler(request))
 			postViewService.incrementView(post);
 		return new ResponseEntity<Post>(postService.applyPremium(post), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/slug/token")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> getPostBySlugWithToken(String validationToken, String mail,
+			HttpServletRequest request)
+			throws OsirisException {
+		Subscription subscription = subscriptionService.getSubscriptionByToken(validationToken);
+		if (subscription == null)
+			throw new OsirisValidationException("validationToken");
+
+		if (subscription.getPost() != null && !isCrawler(request))
+			postViewService.incrementView(subscription.getPost());
+		return new ResponseEntity<Post>(postService.applyPremium(subscription.getPost(), validationToken, mail),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/serie/slug")
@@ -1218,6 +1240,51 @@ public class WordpressController {
 			}
 		}
 		return new ResponseEntity<Comment>(new Comment(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/subscription/give-post")
+	public ResponseEntity<Subscription> givePost(@RequestParam Integer postId, @RequestParam String recipientMailString,
+			HttpServletRequest request)
+			throws OsirisValidationException {
+
+		detectFlood(request);
+		if (!validationHelper.validateMail(recipientMailString))
+			throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
+
+		Mail recipientMail = new Mail(recipientMailString);
+		recipientMail = mailService.populateMailId(recipientMail);
+
+		Post postToOffer = postService.getPost(postId);
+		if (postToOffer == null)
+			throw new OsirisValidationException("Trying to offer a non-existing post");
+
+		return new ResponseEntity<Subscription>(
+				subscriptionService.givePostSubscription(postToOffer, recipientMail),
+				HttpStatus.OK);
+	}
+
+	/**
+	 * If response is null ==> the user cannot share any post
+	 * 
+	 * @param request
+	 * @return
+	 * @throws OsirisValidationException
+	 */
+	@GetMapping(inputEntryPoint + "/subscription/share-post-left")
+	public ResponseEntity<Integer> getNumberOfRemainingPostsToShareForMonth(HttpServletRequest request)
+			throws OsirisValidationException {
+
+		detectFlood(request);
+
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
+
+		if (currentUser == null) {
+			throw new OsirisValidationException("Subscription e-mail does not exist");
+		}
+
+		return new ResponseEntity<Integer>(
+				subscriptionService.getRemainingPostToShareForCurrentMonth(currentUser),
+				HttpStatus.OK);
 	}
 
 	private ResponseEntity<String> detectFlood(HttpServletRequest request) {

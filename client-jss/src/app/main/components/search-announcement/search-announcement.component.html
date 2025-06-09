@@ -74,46 +74,15 @@
               </div>
             </div>
 
-            <div class="col-12 text-center mt-5">
-              <button type="button" class="btn btn-primary-soft" *ngIf="displayLoadMoreButton"
-                (click)="getNextAnnouncements()">Voir
-                + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="position-relative pt-0" *ngIf="!isClickedOnce">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-9 mx-auto">
-            <div class="card border rounded-2 up-hover p-4 mb-4" *ngFor="let announcement of announcements">
-              <div class="row g-3">
-                <div>
-                  <a *ngIf="announcement.noticeTypeFamily"
-                    class="badge tag-custom-dark mb-2 me-1 margin-category">{{announcement.noticeTypeFamily.label}}</a>
-                  <ng-container *ngIf="announcement.noticeTypes!=null">
-                    <a *ngFor="let noticeType of announcement.noticeTypes"
-                      class="badge tag-custom-light mb-2 me-1 margin-category">{{noticeType.label}}</a>
-                  </ng-container>
-                  <h3 class="card-title">
-                    <a style="cursor: pointer;" (click)="openAnnouncement(announcement,  $event)"
-                      class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
-                  </h3>
-                  <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
-                    <li class="nav-item" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
-                      {{announcement.affaireSiren}} <span class="mt-2 me-2 bullet-point-custom"></span>
-                      {{announcement.department.label}} ({{announcement.department.code}})
-                      {{announcement.publicationDate | date:'EEEE d MMMM y'}}
-                    </li>
-                    <li class="nav-item"></li>
-                  </ul>
-                </div>
-              </div>
+            <div class="panel-loader" *ngIf="isLoading">
+              <div class="skeleton skeleton-header"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line short"></div>
+              <div class="skeleton skeleton-block"></div>
             </div>
 
-            <div class="col-12 text-center mt-5">
+            <div class="col-12 text-center mt-5" *ngIf="!isLoading">
               <button type="button" class="btn btn-primary-soft" *ngIf="displayLoadMoreButton"
                 (click)="getNextAnnouncements()">Voir
                 + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>

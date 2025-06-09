@@ -1,3 +1,7 @@
 .card {
   --ar-card-border-radius: 10px
 }
+
+.border-top {
+  border-radius: 0px !important;
+}

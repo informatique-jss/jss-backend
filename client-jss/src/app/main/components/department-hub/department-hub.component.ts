@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -28,6 +28,8 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
   selectedPublishingDepartment: PublishingDepartment | undefined;
   publishingDepartments: PublishingDepartment[] = [];
 
+  @Output() departmentChange = new EventEmitter<PublishingDepartment>();
+
   constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
     super(appService, formBuilder, activeRoute, postService, loginService);
@@ -54,6 +56,7 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
   override searchForPosts() {
     if (this.searchText || this.selectedPublishingDepartment) {
       this.selectedEntityType = this.selectedPublishingDepartment;
+      this.departmentChange.emit(this.selectedPublishingDepartment);
       clearTimeout(this.debounce);
       this.searchResults = [];
 

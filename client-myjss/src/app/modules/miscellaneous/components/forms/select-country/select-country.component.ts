@@ -23,7 +23,7 @@ export class SelectCountryComponent extends GenericSelectComponent<Country> impl
 
   initTypes(): void {
     this.countryService.getCountries().subscribe(response => {
-      this.types = response;
+      this.types = response.sort((a, b) => a.label.localeCompare(b.label));
     })
   }
 }

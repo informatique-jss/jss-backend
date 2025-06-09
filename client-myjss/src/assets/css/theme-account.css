@@ -2756,10 +2756,6 @@ html.theme-account[data-bs-theme=light] {
   color: var(--ar-body-color);
 }
 
-.theme-account .form-switch {
-  padding-left: 3.375em;
-}
-
 .theme-account .form-switch .form-check-input {
   --ar-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
   width: 2.875em;

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { JSS_BIC, JSS_IBAN } from '../../../../libs/Constants';
 import { CopyClipboardDirective } from '../../../../libs/CopyClipboard.directive';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
@@ -20,7 +21,7 @@ import { MyJssImageService } from '../../services/my.jss.image.service';
   templateUrl: './pay-order.component.html',
   styleUrls: ['./pay-order.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, CopyClipboardDirective]
+  imports: [SHARED_IMPORTS, GenericInputComponent, CopyClipboardDirective, NgbNavModule]
 })
 export class PayOrderComponent implements OnInit {
   idOrder: number | undefined;

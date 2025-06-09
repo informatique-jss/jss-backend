@@ -117,6 +117,12 @@
                       [isDisabled]="true"></generic-input>
                   </td>
                   <td>
+                    <generic-input [(model)]="selectedResponsable.numberOfGiftPostsPerMonth"
+                      label="Nombre d'articles offrables par mois" [form]="principalForm"
+                      propertyName="numberOfGiftPostsPerMonth" [isMandatory]="false" [isDisabled]="!editMode"
+                      type="number"></generic-input>
+                  </td>
+                  <td>
                     <generic-toggle [(model)]="selectedResponsable.canViewAllTiersInWeb"
                       label="JSS.fr : peut voir l'ensemble du tiers ? " [form]="principalForm"
                       propertyName="canViewAllTiersInWeb"></generic-toggle>
