@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { ToastComponent } from '../../../../libs/toast/toast.component';
 import { FooterComponent } from '../../../profile/components/footer/footer.component';
@@ -14,17 +14,11 @@ import { TopBarComponent } from '../../../profile/components/top-bar/top-bar.com
 })
 export class DefaultComponent implements OnInit {
 
-  navigationCompleted: boolean = false;
   constructor(
     private router: Router,
   ) { }
 
   ngOnInit() {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.navigationCompleted = true;
-      }
-    });
   }
 
   ngOnDestroy() {

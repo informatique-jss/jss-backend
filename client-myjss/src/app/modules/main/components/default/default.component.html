@@ -1,8 +1,6 @@
 <top-bar [isForQuotationNavbar]="false" *ngIf="!isDisplayLightHeader()"></top-bar>
 <top-bar [isForQuotationNavbar]="true" *ngIf="isDisplayLightHeader()"></top-bar>
-<ng-container *ngIf="navigationCompleted">
-  <router-outlet></router-outlet>
-</ng-container>
+<router-outlet></router-outlet>
 <div>
   <main-footer *ngIf="isDisplayFooter()"></main-footer>
 </div>
