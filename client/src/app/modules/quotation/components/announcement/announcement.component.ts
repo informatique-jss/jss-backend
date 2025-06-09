@@ -14,7 +14,6 @@ import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
-import { getDocument } from '../../../../libs/DocumentHelper';
 import { PROVISION_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
@@ -130,9 +129,6 @@ export class AnnouncementComponent implements OnInit {
       startWith(''),
       map(value => this._filterNoticeTemplates(value)),
     );
-
-    if (this.provision && this.provision.announcement)
-      this.paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.provision.announcement);
 
     this.restoreTab();
   }

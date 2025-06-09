@@ -667,11 +667,17 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/service-types/provisions")
   public ResponseEntity<List<Service>> getServiceForMultiServiceTypesAndAffaire(
+<<<<<<< HEAD
       @RequestParam List<Integer> serviceTypeIds, String customLabel, @RequestParam Integer affaireId)
       throws OsirisException {
+=======
+      @RequestParam List<Integer> serviceTypeIds, String customLabel, Integer idAffaire) throws OsirisException {
+>>>>>>> develop
 
     if (serviceTypeIds == null || serviceTypeIds.size() == 0)
       throw new OsirisValidationException("ServiceType");
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
 
     List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
     for (Integer id : serviceTypeIds)

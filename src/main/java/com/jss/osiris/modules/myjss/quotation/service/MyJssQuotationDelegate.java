@@ -22,6 +22,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
@@ -69,6 +70,9 @@ public class MyJssQuotationDelegate {
     @Autowired
     MailService mailService;
 
+    @Autowired
+    AffaireService affaireService;
+
     @Transactional(rollbackFor = Exception.class)
     public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation) throws OsirisException {
 
@@ -87,15 +91,19 @@ public class MyJssQuotationDelegate {
                     throw new OsirisValidationException("Tiers");
                 } else {
                     tiersService.addOrUpdateTiers(quotation.getResponsable().getTiers());
-                    // responsableService.addOrUpdateResponsable(quotation.getResponsable());
                 }
             }
         }
 
-        // TODO : check if need to reset tiers and resp before saving
-        // customerorder/quotation
-
         populateBooleansOfProvisions(quotation);
+
+        // Save new affaire
+        for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
+            if (asso.getAffaire() != null && asso.getAffaire().getId() == null
+                    && (asso.getAffaire().getDenomination() != null || asso.getAffaire().getLastname() != null)) {
+                asso.setAffaire(affaireService.addOrUpdateAffaire(asso.getAffaire()));
+            }
+        }
 
         // Validate Quotation or CustomerOrder
         quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null);

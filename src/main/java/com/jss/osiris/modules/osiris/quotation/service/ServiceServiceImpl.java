@@ -310,10 +310,18 @@ public class ServiceServiceImpl implements ServiceService {
         List<Integer> noticeTypeFamilyIds = new ArrayList<>();
         List<Integer> noticeTemplateIds = new ArrayList<>();
 
+        Announcement announcement = new Announcement();
+        announcement.setIsHeader(false);
+        announcement.setIsHeaderFree(false);
+        announcement.setIsProofReadingDocument(false);
+        announcement.setAnnouncementStatus(
+                announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
+
         if (provision.getProvisionType().getProvisionScreenType().getId()
                 .equals(constantService.getProvisionScreenTypeAnnouncement().getId())) {
             if (provision.getAnnouncement() == null)
-                provision.setAnnouncement(new Announcement());
+                provision.setAnnouncement(announcement);
+
             for (AssoServiceProvisionType asso : assoAnnouncementMergeable) {
                 if (asso.getNoticeTypeFamily() != null
                         && !noticeTypeFamilyIds.contains(asso.getNoticeTypeFamily().getId())) {

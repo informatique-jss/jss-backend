@@ -44,7 +44,8 @@ public class Provision implements IId, IAttachment {
 	@Id
 	@SequenceGenerator(name = "provision_sequence", sequenceName = "provision_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_sequence")
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -111,6 +112,7 @@ public class Provision implements IId, IAttachment {
 	private Boolean isLogo;
 
 	@Column(nullable = false)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private Boolean isRedactedByJss;
 
 	@Column(nullable = false)

@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { CommunicationPreference } from '../../../general/model/CommunicationPreference';
 import { CommunicationPreferencesService } from '../../../general/services/communication.preference.service';
@@ -22,7 +23,7 @@ import { TagService } from '../../../tools/services/tag.service';
   templateUrl: './communication-preference.component.html',
   styleUrls: ['./communication-preference.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericToggleComponent]
+  imports: [SHARED_IMPORTS, GenericToggleComponent, NgbNavModule]
 })
 export class CommunicationPreferenceComponent implements OnInit, AfterContentChecked {
 
@@ -31,14 +32,14 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
 
   communicationPreference: CommunicationPreference = {} as CommunicationPreference;
   communicationPreferenceForm!: FormGroup;
-  followedAuthors: Author[] = [];
-  followedTags: Tag[] = [];
-  followedJssCategories: JssCategory[] = [];
+  followedAuthors: Author[] | undefined;
+  followedTags: Tag[] | undefined;
+  followedJssCategories: JssCategory[] | undefined;
   isFollowedAuthor: { [key: number]: boolean } = {};
   isFollowedTag: { [key: number]: boolean } = {};
   isFollowedJssCategory: { [key: number]: boolean } = {};
-  followedItems: string[] = ['Rédacteurs', 'Catégories', 'Tags'];
-  selectedTab: string = this.followedItems[0];
+
+  displayedTab: number = -1;
 
   constructor(
     private communicationPreferenceService: CommunicationPreferencesService,
@@ -70,14 +71,9 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
         this.followedAuthors = response;
         for (let author of this.followedAuthors)
           this.isFollowedAuthor[author.id] = true;
-      }
-    });
 
-    this.tagService.getFollowedTagForCurrentUser().subscribe(response => {
-      if (response) {
-        this.followedTags = response;
-        for (let tag of this.followedTags)
-          this.isFollowedTag[tag.id] = true;
+        if (this.followedAuthors.length > 0)
+          this.displayedTab = 0;
       }
     });
 
@@ -86,8 +82,23 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
         this.followedJssCategories = response;
         for (let jssCategory of this.followedJssCategories)
           this.isFollowedJssCategory[jssCategory.id] = true;
+
+        if (this.followedJssCategories.length > 0 && this.displayedTab < 0)
+          this.displayedTab = 1;
       }
     });
+
+    this.tagService.getFollowedTagForCurrentUser().subscribe(response => {
+      if (response) {
+        this.followedTags = response;
+        for (let tag of this.followedTags)
+          this.isFollowedTag[tag.id] = true;
+
+        if (this.followedTags.length > 0 && this.displayedTab < 0)
+          this.displayedTab = 2;
+      }
+    });
+
   }
 
   loadPreferenceByMail(mail: string) {

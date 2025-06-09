@@ -42,7 +42,7 @@
                 </a>
               </ng-container>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item btn-outline-light" [routerLink]="'/account/signout'">
+              <a class="dropdown-item btn-outline-light" (click)="disconnect()">
                 Se déconnecter
               </a>
             </div>

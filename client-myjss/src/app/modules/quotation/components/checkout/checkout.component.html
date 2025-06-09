@@ -125,15 +125,18 @@
                   <button ngbNavLink>{{doc.documentType.label}}</button>
                   <ng-template ngbNavContent>
                     <ng-container *ngFor="let document of quotation.documents; let docIndex = index">
-                      <ng-container *ngIf="document.documentType.code == documentTypeBilling.code ">
+                      <ng-container
+                        *ngIf="doc.documentType.code == documentTypeBilling.code  && document.documentType.code == documentTypeBilling.code ">
                         <ng-container [ngTemplateOutlet]="billingDocumentForm"
                           [ngTemplateOutletContext]="{document:document}"></ng-container>
                       </ng-container>
-                      <ng-container *ngIf="document.documentType.code == documentTypeDigital.code ">
+                      <ng-container
+                        *ngIf="doc.documentType.code == documentTypeDigital.code  && document.documentType.code == documentTypeDigital.code ">
                         <ng-container [ngTemplateOutlet]="digitalDocumentForm"
                           [ngTemplateOutletContext]="{document:document}"></ng-container>
                       </ng-container>
-                      <ng-container *ngIf="document.documentType.code == documentTypePaper.code ">
+                      <ng-container
+                        *ngIf="doc.documentType.code == documentTypePaper.code  && document.documentType.code == documentTypePaper.code ">
                         <ng-container [ngTemplateOutlet]="paperDocumentForm"
                           [ngTemplateOutletContext]="{document:document}"></ng-container>
                       </ng-container>

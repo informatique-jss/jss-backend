@@ -4,7 +4,6 @@ import { MatExpansionPanel } from '@angular/material/expansion';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_FORMALITE, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
 import { Employee } from 'src/app/modules/profile/model/Employee';
-import { getDocument } from '../../../../libs/DocumentHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Affaire } from '../../model/Affaire';
@@ -145,10 +144,6 @@ export class ProvisionItemComponent implements OnInit {
         this.provision.announcement = undefined;
       } else if (!this.provision.announcement) {
         this.provision.announcement = {} as Announcement;
-        this.provision.announcement.documents = [];
-        let paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.quotation!);
-        paperDocument.id = undefined;
-        this.provision.announcement.documents.push(paperDocument);
       }
 
       if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_FORMALITE) {

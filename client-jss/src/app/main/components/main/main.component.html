@@ -669,7 +669,7 @@
                 <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
                   class="badge bg-info rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
                 <a class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                  (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
+                  (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)" *ngIf="currentUser">
                   <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
                                 'text-transparent': !post.isBookmarked}">

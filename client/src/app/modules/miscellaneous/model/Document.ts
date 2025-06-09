@@ -19,8 +19,6 @@ export interface Document {
   affaireRecipient: string;
   clientRecipient: string;
   mails: Mail[];
-  numberMailingAffaire: number;
-  numberMailingClient: number;
   mailsClient: Mail[];
   addToClientMailList: boolean;
   mailsAffaire: Mail[];

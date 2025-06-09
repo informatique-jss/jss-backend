@@ -54,7 +54,7 @@
       <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
         <li [ngbNavItem]="1" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
         quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
-          <button ngbNavLink>Documents</button>
+          <button ngbNavLink>Documents & informations complémentaires</button>
           <ng-template ngbNavContent>
             <div class="quotation-container">
               <h6><i class="ai-circle-info me-2"></i>Information</h6>
@@ -136,7 +136,7 @@
           *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index">
           <li [ngbNavItem]="parseInt('2'+index)"
             *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT && provision.announcement">
-            <button ngbNavLink>Annonce légale {{ provision.order }}</button>
+            <button ngbNavLink>Annonce légale {{ provision.order && provision.order>1 ? provision.order : '' }}</button>
             <ng-template ngbNavContent>
               <div class="quotation-container">
                 <h6><i class="ai-circle-info me-2"></i>Information</h6>

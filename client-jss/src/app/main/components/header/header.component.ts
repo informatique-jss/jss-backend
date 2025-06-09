@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -61,7 +61,8 @@ export class HeaderComponent implements OnInit {
     private appService: AppService,
     private indexEntityService: IndexEntityService,
     private loginService: LoginService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private eRef: ElementRef,
   ) { }
 
   ngOnInit() {
@@ -86,6 +87,22 @@ export class HeaderComponent implements OnInit {
     this.dropdownOpen = !this.dropdownOpen;
   }
 
+  @HostListener('document:click', ['$event'])
+  handleClickOutside(event: MouseEvent): void {
+    this.attempToCloseNavbar(false, event);
+  }
+
+  attempToCloseNavbar(force: boolean = true, event: MouseEvent | any) {
+    if (force ||
+      this.dropdownOpen &&
+      !this.eRef.nativeElement.contains(event.target as HTMLElement)
+    ) {
+      this.dropdownOpen = false;
+    }
+  }
+
+
+
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
     this.showDepartments = false;
@@ -97,6 +114,10 @@ export class HeaderComponent implements OnInit {
 
   openMyJssRoute(item: MenuItem) {
     this.appService.openMyJssRoute(undefined, item.route, false);
+  }
+
+  disconnect() {
+    this.appService.openMyJssRoute(undefined, '/account/signout', false);
   }
 
   displaySearchModal(content: TemplateRef<any>) {

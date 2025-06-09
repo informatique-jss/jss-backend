@@ -941,9 +941,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         provision.setId(null);
                         if (provision.getAnnouncement() != null) {
                             provision.getAnnouncement().setId(null);
-                            if (provision.getAnnouncement().getDocuments() != null)
-                                for (Document document : provision.getAnnouncement().getDocuments())
-                                    document.setId(null);
                         }
                         if (provision.getFormalite() != null) {
                             provision.getFormalite().setId(null);
@@ -1505,9 +1502,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             provision.getAnnouncement().setId(null);
                             provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
                                     .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
-                            if (provision.getAnnouncement().getDocuments() != null)
-                                for (Document document : provision.getAnnouncement().getDocuments())
-                                    document.setId(null);
                         }
                         if (provision.getFormalite() != null) {
                             provision.getFormalite().setFormaliteStatus(

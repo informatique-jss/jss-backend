@@ -19,9 +19,9 @@ import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 public interface PostService {
         public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException;
 
-        public Post updateBookmarkPost(Post post);
+        public void updateBookmarkPost(Post post);
 
-        public Post deleteBookmarkPost(Post post);
+        public void deleteBookmarkPost(Post post);
 
         public Page<Post> getBookmarkPostsForCurrentUser(Pageable pageableRequest);
 
@@ -107,11 +107,9 @@ public interface PostService {
 
         public void reindexPosts() throws OsirisException;
 
-        public Page<Post> applyPremium(Page<Post> posts);
+        public Page<Post> applyPremiumAndBookmarks(Page<Post> posts);
 
-        public Post applyPremium(Post post, String token, String mail);
-
-        public Post applyPremium(Post post);
+        public Post applyPremiumAndBookmarks(Post post, String token, String mail, boolean byPassBookmarkComputation);
 
         public Post getNextPost(Post post);
 

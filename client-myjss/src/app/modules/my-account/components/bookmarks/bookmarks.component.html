@@ -28,8 +28,9 @@
                           class="badge text-nav fs-xs border mt-2 me-2">{{tag.slug}}</a>
                         <a class="cursor-pointer rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2  "
                           (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
-                          <i [ngClass]="{'ai-bookmark': !post.isBookmarked,
-                                'ai-bookmark-minus': post.isBookmarked }">
+                          <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}">
                           </i>
                         </a>
                       </div>

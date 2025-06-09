@@ -59,16 +59,6 @@
               [form]="optionForm" (onToggleChange)="provisionChangeFunction()" propertyName="isPublicationPaper">
             </generic-toggle>
           </td>
-          <td *ngIf="provision.isPublicationPaper">
-            <generic-input [(model)]="provision.publicationPaperClientNumber" label="Nombre d'exemplaires Client"
-              [form]="optionForm" propertyName="publicationPaperClientNumber" [isMandatory]="true"
-              (onInputChange)="provisionChangeFunction()" [isDisabled]="!editMode" type="number"></generic-input>
-          </td>
-          <td *ngIf="provision.isPublicationPaper">
-            <generic-input [(model)]="provision.publicationPaperAffaireNumber" label="Nombre d'exemplaires Affaire"
-              [form]="optionForm" propertyName="publicationPaperAffaireNumber" [isMandatory]="true"
-              (onInputChange)="provisionChangeFunction()" [isDisabled]="!editMode" type="number"></generic-input>
-          </td>
         </tr>
         <tr *ngIf="displayOption(billingTypePublicationFlag)  && provision.announcement && provision.announcement.confrere
       && provision.announcement.confrere.journalType.id==journalTypeSpel.id">

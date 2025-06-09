@@ -1,11 +1,10 @@
 import { Department } from "../../miscellaneous/model/Department";
-import { IDocument } from "../../miscellaneous/model/IDocument";
 import { AnnouncementStatus } from './AnnouncementStatus';
 import { Confrere } from "./Confrere";
 import { NoticeType } from "./NoticeType";
 import { NoticeTypeFamily } from "./NoticeTypeFamily";
 
-export interface Announcement extends IDocument {
+export interface Announcement {
   id: number;
   department: Department;
   publicationDate: Date;

@@ -222,7 +222,7 @@ export class MainComponent implements OnInit {
     }
   }
 
-  // Audio getters 
+  // Audio getters
   isPlayingPodcast(post: Post) {
     return this.audioService.isPlayingPost(post);
   }

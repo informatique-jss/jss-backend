@@ -73,6 +73,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
@@ -1123,18 +1124,6 @@ public class MyJssQuotationController {
 
 		Service serviceFetched = serviceService.getService(service.getId());
 
-		for (Provision provision : serviceFetched.getProvisions()) {
-			if (serviceFetched.getAssoAffaireOrder().getCustomerOrder() == null) {
-				quotationValidationHelper.validateProvisionTransactionnal(provision,
-						serviceFetched.getAssoAffaireOrder().getQuotation(), true);
-			} else {
-				quotationValidationHelper.validateProvisionTransactionnal(provision,
-						serviceFetched.getAssoAffaireOrder().getCustomerOrder(), true);
-			}
-
-			provision.setService(serviceFetched);
-		}
-
 		if (serviceFetched.getAssoAffaireOrder().getCustomerOrder() == null
 				&& serviceFetched.getAssoAffaireOrder().getQuotation() == null
 				|| !myJssQuotationValidationHelper
@@ -1143,6 +1132,7 @@ public class MyJssQuotationController {
 								: serviceFetched.getAssoAffaireOrder().getQuotation()))
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
+		boolean canUpdateProvision = false;
 		if (serviceFetched.getAssoAffaireOrder().getQuotation() != null) {
 			String quotationStatusCode = serviceFetched.getAssoAffaireOrder().getQuotation().getQuotationStatus()
 					.getCode();
@@ -1150,9 +1140,25 @@ public class MyJssQuotationController {
 					|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
 					|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
 				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+			if (quotationStatusCode.equals(QuotationStatus.DRAFT))
+				canUpdateProvision = true;
+		}
+
+		if (serviceFetched.getAssoAffaireOrder().getCustomerOrder() != null) {
+			String orderStatusCode = serviceFetched.getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus()
+					.getCode();
+			if (orderStatusCode.equals(CustomerOrderStatus.ABANDONED)
+					|| orderStatusCode.equals(CustomerOrderStatus.TO_BILLED)
+					|| orderStatusCode.equals(CustomerOrderStatus.BILLED))
+				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+			if (orderStatusCode.equals(CustomerOrderStatus.DRAFT))
+				canUpdateProvision = true;
 		}
 
 		for (AssoServiceFieldType assoServiceFieldTypeOld : serviceFetched.getAssoServiceFieldTypes()) {
+			assoServiceFieldTypeOld.setService(serviceFetched);
 			for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
 				if (assoServiceFieldType.getId().equals(assoServiceFieldTypeOld.getId())) {
 					if (assoServiceFieldType.getServiceFieldType().getDataType()
@@ -1197,9 +1203,35 @@ public class MyJssQuotationController {
 			}
 		}
 
+		if (canUpdateProvision) {
+			for (Provision provision : serviceFetched.getProvisions()) {
+				for (Provision provisionIn : service.getProvisions()) {
+					if (provision.getId().equals(provisionIn.getId())) {
+						if (provision.getAnnouncement() != null) {
+							provision.getAnnouncement().setNotice(provisionIn.getAnnouncement().getNotice());
+							provision.getAnnouncement().setDepartment(provisionIn.getAnnouncement().getDepartment());
+							provision.getAnnouncement().setNoticeTypes(provisionIn.getAnnouncement().getNoticeTypes());
+							provision.getAnnouncement()
+									.setPublicationDate(provisionIn.getAnnouncement().getPublicationDate());
+							provision.getAnnouncement()
+									.setNoticeTypeFamily(provisionIn.getAnnouncement().getNoticeTypeFamily());
+							provision.setIsRedactedByJss(provisionIn.getIsRedactedByJss());
+							provision.getAnnouncement()
+									.setIsProofReadingDocument(
+											provisionIn.getAnnouncement().getIsProofReadingDocument());
+						}
+						if (provision.getDomiciliation() != null) {
+							provision = provisionIn;
+						}
+					}
+				}
+			}
+		}
+
 		serviceService.addOrUpdateServiceFromUser(serviceFetched);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+
 	}
 
 	@GetMapping(inputEntryPoint + "/services")

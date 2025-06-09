@@ -27,6 +27,7 @@
             ],
             "styles": [
               "src/assets/css/styles.scss",
+              "src/assets/icons/bootstrap-icons.css",
               "src/assets/icons/around-icons.min.css",
               {
                 "input": "src/assets/css/swiper.min.css",

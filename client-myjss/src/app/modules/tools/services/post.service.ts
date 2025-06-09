@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from '../../main/services/appRest.service';
 import { Category } from '../model/Category';
 import { Media } from '../model/Media';
@@ -46,12 +47,12 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size), "post/bookmark/all");
   }
 
-  addAssoMailPost(post: Post) {
-    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/add");
+  addAssoMailPost(post: Post): Observable<boolean> {
+    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/add") as any as Observable<boolean>;
   }
 
   deleteAssoMailPost(post: Post) {
-    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/delete");
+    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/delete") as any as Observable<boolean>;
   }
 
   getFirstPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory | undefined) {
