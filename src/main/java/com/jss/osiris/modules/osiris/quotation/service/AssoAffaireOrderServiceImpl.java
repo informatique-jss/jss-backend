@@ -23,7 +23,6 @@ import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
@@ -412,10 +411,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
                         announcement.setAnnouncementStatus(announcementStatusService
                                 .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
-
-                    if (announcement.getDocuments() != null)
-                        for (Document document : announcement.getDocuments())
-                            document.setAnnouncement(announcement);
 
                     boolean publicationProofFound = false;
                     if (announcement != null) {

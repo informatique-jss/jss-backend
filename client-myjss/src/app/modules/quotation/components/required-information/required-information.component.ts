@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
-import { combineLatest } from 'rxjs';
+import { combineLatest, of, tap } from 'rxjs';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -161,18 +161,20 @@ export class RequiredInformationComponent implements OnInit {
 
   parseInt = parseInt;
 
-  ngOnInit() {
+  async ngOnInit() {
     this.mailRedirectionTypeOther = this.constantService.getMailRedirectionTypeOther();
     this.domiciliationContractTypeRouteEmailAndMail = this.constantService.getDomiciliationContractTypeRouteEmailAndMail();
     this.domiciliationContractTypeRouteMail = this.constantService.getDomiciliationContractTypeRouteMail();
 
     this.informationForm = this.formBuilder.group({});
 
-    this.loginService.getCurrentUser().subscribe(response => {
+    await this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
       this.initIQuotation();
     })
-    this.initIQuotation();
+
+    if (!this.currentUser)
+      this.initIQuotation();
     this.fetchAnnouncementReferentials();
   }
 
@@ -314,18 +316,21 @@ export class RequiredInformationComponent implements OnInit {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
       if (this.currentUser) {
         this.isSaving = true;
-        this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe(response => {
+        return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
           this.isSaving = false;
-        });
+        }));
 
       } else {
         if (this.quotation.isQuotation) {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
+          return of({} as Service);
         } else {
           this.orderService.setCurrentDraftOrder(this.quotation);
+          return of({} as Service);
         }
       }
     }
+    return of({} as Service);
   }
 
   moveToService(newServiceIndex: number, newAssoIndex: number) {
@@ -350,13 +355,15 @@ export class RequiredInformationComponent implements OnInit {
     }
 
     if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
-      this.saveFieldsValue();
-      this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-      this.appService.openRoute(undefined, "quotation/checkout", undefined);
+      this.saveFieldsValue().subscribe(response => {
+        let r = response;
+        this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+        this.appService.openRoute(undefined, "quotation/checkout", undefined);
+      });
       return;
     }
 
-    this.saveFieldsValue();
+    this.saveFieldsValue().subscribe();
     this.selectedAssoIndex = null;
     this.selectedServiceIndex = null;
 

@@ -224,7 +224,7 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/add")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Post> addAssoMailPost(@RequestParam Integer idPost,
+	public ResponseEntity<Boolean> addAssoMailPost(@RequestParam Integer idPost,
 			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
@@ -234,13 +234,14 @@ public class WordpressController {
 		if (post == null)
 			throw new OsirisValidationException("post");
 
-		return new ResponseEntity<Post>(postService.updateBookmarkPost(post),
-				HttpStatus.OK);
+		postService.updateBookmarkPost(post);
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/delete")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Post> deleteBookmarkPost(@RequestParam Integer idPost,
+	public ResponseEntity<Boolean> deleteBookmarkPost(@RequestParam Integer idPost,
 			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
@@ -250,8 +251,8 @@ public class WordpressController {
 		if (post == null)
 			throw new OsirisValidationException("post");
 
-		return new ResponseEntity<Post>(postService.deleteBookmarkPost(post),
-				HttpStatus.OK);
+		postService.deleteBookmarkPost(post);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/all")
@@ -527,7 +528,7 @@ public class WordpressController {
 		Post post = postService.getPostsBySlug(slug);
 		if (post != null && !isCrawler(request))
 			postViewService.incrementView(post);
-		return new ResponseEntity<Post>(postService.applyPremium(post), HttpStatus.OK);
+		return new ResponseEntity<Post>(postService.applyPremiumAndBookmarks(post, null, null, false), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/slug/token")
@@ -541,7 +542,8 @@ public class WordpressController {
 
 		if (subscription.getPost() != null && !isCrawler(request))
 			postViewService.incrementView(subscription.getPost());
-		return new ResponseEntity<Post>(postService.applyPremium(subscription.getPost(), validationToken, mail),
+		return new ResponseEntity<Post>(
+				postService.applyPremiumAndBookmarks(subscription.getPost(), validationToken, mail, false),
 				HttpStatus.OK);
 	}
 
@@ -927,7 +929,9 @@ public class WordpressController {
 		Post post = postService.getPost(idPost);
 		if (post == null)
 			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
-		return new ResponseEntity<Post>(postService.applyPremium(postService.getNextPost(post)), HttpStatus.OK);
+		return new ResponseEntity<Post>(
+				postService.applyPremiumAndBookmarks(postService.getNextPost(post), null, null, true),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/previous")
@@ -936,7 +940,9 @@ public class WordpressController {
 		Post post = postService.getPost(idPost);
 		if (post == null)
 			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
-		return new ResponseEntity<Post>(postService.applyPremium(postService.getPreviousPost(post)), HttpStatus.OK);
+		return new ResponseEntity<Post>(
+				postService.applyPremiumAndBookmarks(postService.getPreviousPost(post), null, null, true),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/get")
@@ -945,7 +951,9 @@ public class WordpressController {
 
 		if (postService.getPost(idPost) == null)
 			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
-		return new ResponseEntity<Post>(postService.applyPremium(postService.getPost(idPost)), HttpStatus.OK);
+		return new ResponseEntity<Post>(
+				postService.applyPremiumAndBookmarks(postService.getPost(idPost), null, null, false),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department")

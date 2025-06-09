@@ -20,6 +20,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
+import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
@@ -77,6 +78,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     PricingHelper pricingHelper;
+
+    @Autowired
+    AnnouncementStatusService announcementStatusService;
 
     @Override
     public Service getService(Integer id) {
@@ -306,10 +310,18 @@ public class ServiceServiceImpl implements ServiceService {
         List<Integer> noticeTypeFamilyIds = new ArrayList<>();
         List<Integer> noticeTemplateIds = new ArrayList<>();
 
+        Announcement announcement = new Announcement();
+        announcement.setIsHeader(false);
+        announcement.setIsHeaderFree(false);
+        announcement.setIsProofReadingDocument(false);
+        announcement.setAnnouncementStatus(
+                announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
+
         if (provision.getProvisionType().getProvisionScreenType().getId()
                 .equals(constantService.getProvisionScreenTypeAnnouncement().getId())) {
             if (provision.getAnnouncement() == null)
-                provision.setAnnouncement(new Announcement());
+                provision.setAnnouncement(announcement);
+
             for (AssoServiceProvisionType asso : assoAnnouncementMergeable) {
                 if (asso.getNoticeTypeFamily() != null
                         && !noticeTypeFamilyIds.contains(asso.getNoticeTypeFamily().getId())) {
