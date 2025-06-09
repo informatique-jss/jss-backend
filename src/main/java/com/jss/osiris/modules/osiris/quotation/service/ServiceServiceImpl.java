@@ -335,7 +335,8 @@ public class ServiceServiceImpl implements ServiceService {
                 provision.getAnnouncement().setNoticeTypes(noticeTypes);
             }
             provision.getAnnouncement().setNotice(noticeTemplate);
-            provision.getAnnouncement().setDepartment(affaire.getCity().getDepartment());
+            if (affaire.getCity() != null)
+                provision.getAnnouncement().setDepartment(affaire.getCity().getDepartment());
         }
         return provision;
     }
