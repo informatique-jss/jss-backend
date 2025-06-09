@@ -516,7 +516,7 @@ public class MailHelper {
         if (mail.getSubscription() != null) {
             ctx.setVariable("postLink", jssMediaEntryPoint + "/posts/" + mail.getSubscription().getValidationToken()
                     + "/" + mail.getSubscription().getSubscriptionOfferedMail());
-            ctx.setVariable("responsable", mail.getSubscription().getSubcriptionMail().getResponsable());
+            ctx.setVariable("responsable", mail.getSubscription().getSubcriptionMail().getResponsables().get(0));
         }
     }
 

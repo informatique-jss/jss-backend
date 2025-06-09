@@ -428,7 +428,7 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getJssCategoryPosts(pageable),
+				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(pageable)),
 				HttpStatus.OK);
 	}
 
@@ -1253,7 +1253,7 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/subscription/give-post")
 	public ResponseEntity<Subscription> givePost(@RequestParam Integer postId, @RequestParam String recipientMailString,
 			HttpServletRequest request)
-			throws OsirisValidationException {
+			throws OsirisException {
 
 		detectFlood(request);
 		if (!validationHelper.validateMail(recipientMailString))

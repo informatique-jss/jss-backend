@@ -120,7 +120,7 @@
           <div class="card mb-4">
             <h6 class="card-header"><i class="ai-note me-2"></i> Libellé de facturation et adressage</h6>
             <div class="card-body pt-2">
-              <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+              <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs">
                 <li [ngbNavItem]="indexDoc" *ngFor="let doc of quotation.documents;let indexDoc = index">
                   <button ngbNavLink>{{doc.documentType.label}}</button>
                   <ng-template ngbNavContent>
@@ -655,15 +655,11 @@
       </div>
       <div class="row gx-1 gy-3 justify-content-between">
         <div class="col-auto">
-          <button class="btn btn-md btn-outline-secondary" type="button" (click)="onValidateOrder(true)"><span
-              class="spinner-grow spinner-grow-sm me-2  text-body-secondary" role="status" aria-hidden="true"
-              *ngIf="isSavingQuotation|| isComputingPrice"></span>Enregistrer le
+          <button class="btn btn-md btn-outline-secondary" type="button" (click)="onValidateOrder(true)">Enregistrer le
             brouillon</button>
         </div>
         <div class="col-auto">
           <button class="btn btn-md btn-secondary" type="submit" (click)="onValidateOrder(false)">
-            <span class="spinner-grow spinner-grow-sm me-2  text-body-secondary" role="status" aria-hidden="true"
-              *ngIf="isSavingQuotation ||isComputingPrice"></span>
             {{quotation?.isQuotation ? 'Envoyer la demande de devis' : 'Valider la commande'}}</button>
         </div>
       </div>

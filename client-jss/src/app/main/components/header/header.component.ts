@@ -117,7 +117,10 @@ export class HeaderComponent implements OnInit {
   }
 
   disconnect() {
-    this.appService.openMyJssRoute(undefined, '/account/signout', false);
+    this.loginService.signOut().subscribe(response => {
+      this.currentUser = undefined;
+      this.appService.openRoute(undefined, '/', undefined);
+    })
   }
 
   displaySearchModal(content: TemplateRef<any>) {

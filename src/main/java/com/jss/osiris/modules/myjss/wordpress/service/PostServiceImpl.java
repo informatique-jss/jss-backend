@@ -471,7 +471,8 @@ public class PostServiceImpl implements PostService {
         return bookmarkedPosts;
     }
 
-    private Page<Post> computeBookmarkedPosts(Page<Post> posts) {
+    @Override
+    public Page<Post> computeBookmarkedPosts(Page<Post> posts) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         List<Post> bookmarkedPosts = null;
         Pageable pageableRequest = PageRequest.of(0, Integer.MAX_VALUE);

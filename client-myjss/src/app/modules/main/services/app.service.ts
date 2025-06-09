@@ -14,11 +14,21 @@ export class AppService {
 
   toasts: Toast[] = [];
   private toastSource = new BehaviorSubject<Toast[]>(this.toasts);
+  private loadingSpinner = new BehaviorSubject<boolean>(false);
+  readonly loadingSpinnerObservable = this.loadingSpinner.asObservable();
 
   constructor(
     private router: Router,
     private responsableService: ResponsableService,
   ) { }
+
+  showLoadingSpinner(): void {
+    this.loadingSpinner.next(true);
+  }
+
+  hideLoadingSpinner(): void {
+    this.loadingSpinner.next(false);
+  }
 
   displayToast(message: string, isError: boolean, title: string, delayInMili: number) {
     let newToast = { isError: isError, message: message, title: title } as Toast;

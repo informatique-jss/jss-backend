@@ -107,6 +107,8 @@ public interface PostService {
 
         public void reindexPosts() throws OsirisException;
 
+        public Page<Post> computeBookmarkedPosts(Page<Post> posts);
+
         public Page<Post> applyPremiumAndBookmarks(Page<Post> posts);
 
         public Post applyPremiumAndBookmarks(Post post, String token, String mail, boolean byPassBookmarkComputation);

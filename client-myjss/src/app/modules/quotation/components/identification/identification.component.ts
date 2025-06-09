@@ -56,7 +56,6 @@ export class IdentificationComponent implements OnInit {
   individual: AffaireType = individual;
 
   currentUser: Responsable | undefined;
-  isSavingQuotation: boolean = false;
 
   currentDraftStep: string | null = null;
 
@@ -224,13 +223,14 @@ export class IdentificationComponent implements OnInit {
   }
 
   startQuotation() {
-    this.isSavingQuotation = true;
+    this.appService.showLoadingSpinner();
     if (this.selectedQuotationType)
       if (this.currentUser) {
         if (this.selectedQuotationType.id == quotation.id) {
           this.quotation.isQuotation = true;
           this.quotationService.saveQuotation(this.quotation, false).subscribe(response => {
             this.quotation = response;
+            this.appService.hideLoadingSpinner();
             this.quotationService.setCurrentDraftQuotationId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
             this.appService.openRoute(undefined, "quotation/services-selection", undefined);
@@ -239,6 +239,7 @@ export class IdentificationComponent implements OnInit {
           this.quotation.isQuotation = false;
           this.orderService.saveOrder(this.quotation, false).subscribe(response => {
             this.quotation = response;
+            this.appService.hideLoadingSpinner();
             this.orderService.setCurrentDraftOrderId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
             this.appService.openRoute(undefined, "quotation/services-selection", undefined);
@@ -252,6 +253,7 @@ export class IdentificationComponent implements OnInit {
           this.quotation.isQuotation = false;
           this.orderService.setCurrentDraftOrder(this.quotation);
         }
+        this.appService.hideLoadingSpinner();
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
         this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       }

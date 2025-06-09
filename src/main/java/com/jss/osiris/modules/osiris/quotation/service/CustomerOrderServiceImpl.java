@@ -342,7 +342,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Generate first comment
         // TODO : generate it when go from draft to in progress
-        if (isFromUser && customerOrder.getResponsable() != null) {
+        if (isFromUser && customerOrder.getResponsable() != null && isNewCustomerOrder) {
             String comment = "";
             Tiers tiers = customerOrder.getResponsable().getTiers();
             if (tiers != null && (tiers.getInstructions() != null || tiers.getObservations() != null)) {

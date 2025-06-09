@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
@@ -15,7 +16,10 @@ import { QuotationService } from '../../../my-account/services/quotation.service
 export class QuotationComponent implements OnInit {
   myJssQuotationItems!: MenuItem[];
 
+  @ViewChild('cleanModal') cleanModalView!: TemplateRef<any>;
+
   selectedTab: MenuItem | null = null;
+  cleanModalInstance: any | undefined;
 
   maxAccessibleStepIndex: number | null = null;
 
@@ -24,6 +28,7 @@ export class QuotationComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router,
     private quotationService: QuotationService,
+    public modalService2: NgbModal
   ) { }
 
   ngOnInit() {
@@ -45,6 +50,29 @@ export class QuotationComponent implements OnInit {
         }
       });
     }
+  }
+
+  cleanStorageData() {
+    this.cleanModal(this.cleanModalView);
+  }
+
+  finalCleanStorageData() {
+    this.quotationService.cleanStorageData();
+    this.appService.openRoute(undefined, "quotation/identification", undefined);
+  }
+
+  cleanModal(content: TemplateRef<any>) {
+    if (this.cleanModalInstance) {
+      return;
+    }
+
+    this.cleanModalInstance = this.modalService2.open(content, {
+      backdrop: 'static',
+    });
+
+    this.cleanModalInstance.result.finally(() => {
+      this.cleanModalInstance = undefined;
+    });
   }
 
   private matchRoute(url: string): boolean {

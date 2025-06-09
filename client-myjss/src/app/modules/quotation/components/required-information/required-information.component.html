@@ -229,8 +229,7 @@
                   <div class="col-md-9">
                     <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
                     <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
-                      [data]="provision.announcement.notice &&provision.announcement.notice.length>0 ? provision.announcement.notice : announcementNoticeInit"
-                      (change)="onNoticeChange($event, provision)">
+                      (ready)="onEditorReady($event, provision)" (change)="onNoticeChange($event, provision)">
                     </ckeditor>
                   </div>
                 </div>
@@ -575,14 +574,12 @@
       (click)="moveToService((selectedServiceIndex-1), selectedAssoIndex)"
       *ngIf="selectedServiceIndex!=null && selectedAssoIndex!=null">
       <i class="ai-arrow-left"></i>
-      <span class="d-none d-sm-inline ms-2">Étape précédente <span class="spinner-grow spinner-grow-sm me-2"
-          *ngIf="isGoBack"></span></span>
+      <span class="d-none d-sm-inline ms-2">Étape précédente </span>
     </button>
 
     <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
       *ngIf="canSaveQuotation() && selectedServiceIndex!=null && selectedAssoIndex!=null"
-      (click)="moveToService((selectedServiceIndex+1), selectedAssoIndex)">
-      <span class="spinner-grow spinner-grow-sm me-2" *ngIf="isSaving"></span><span class="d-sm-inline me-2">Étape
+      (click)="moveToService((selectedServiceIndex+1), selectedAssoIndex)"> <span class="d-sm-inline me-2">Étape
         suivante</span>
       <i class="ai-arrow-right"></i>
     </button>
