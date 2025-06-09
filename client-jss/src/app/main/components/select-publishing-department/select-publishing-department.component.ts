@@ -23,11 +23,11 @@ export class SelectPublishingDepartmentComponent extends GenericSelectComponent<
 
   initTypes(): void {
     this.publishingDepartmentService.getAvailablePublishingDepartments().subscribe(response => {
-      this.types = response;
+      this.types = response.sort((a, b) => a.code.localeCompare(b.code));
     });
   }
 
   override displayLabel(object: any): string {
-    return object ? (object.name) : '';
+    return (object && object.code && object.code.trim().length > 0) ? (object.code + " - " + object.name) : (object) ? object.name : '';
   }
 }

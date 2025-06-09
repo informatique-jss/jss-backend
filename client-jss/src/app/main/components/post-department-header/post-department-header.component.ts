@@ -28,4 +28,8 @@ export class PostDepartmentHeaderComponent implements OnInit {
           this.selectedDepartment = response;
       });
   }
+
+  updateSelectedDepartment(department: PublishingDepartment) {
+    this.selectedDepartment = department;
+  }
 }
