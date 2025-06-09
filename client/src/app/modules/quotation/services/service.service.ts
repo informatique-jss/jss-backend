@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { City } from '../../miscellaneous/model/City';
 import { Service } from '../../quotation/model/Service';
 import { Affaire } from '../model/Affaire';
 import { ServiceType } from '../model/ServiceType';
@@ -30,9 +31,9 @@ export class ServiceService extends AppRestService<Service> {
     return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("idAffaire", affaire.id), "service-type/provision");
   }
 
-  getServiceForMultiServiceTypesAndAffaire(serviceTypes: ServiceType[], customLabel: string | undefined) {
+  getServiceForMultiServiceTypesAndAffaire(serviceTypes: ServiceType[], customLabel: string | undefined, affaireCity: City) {
     const ids = serviceTypes.map(st => st.id).join(',');
-    return this.getList(new HttpParams().set("customLabel", customLabel + "").set("serviceTypeIds", ids), "service-types/provisions");
+    return this.getList(new HttpParams().set("customLabel", customLabel + "").set("serviceTypeIds", ids).set("affaireCityId", affaireCity.id + ""), "service-types/provisions");
   }
 
   modifyServiceType(service: Service, serviceTypes: ServiceType[]) {

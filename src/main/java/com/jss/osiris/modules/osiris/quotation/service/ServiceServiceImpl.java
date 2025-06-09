@@ -20,6 +20,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
+import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
@@ -77,6 +78,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     PricingHelper pricingHelper;
+
+    @Autowired
+    AnnouncementStatusService announcementStatusService;
 
     @Override
     public Service getService(Integer id) {
@@ -333,6 +337,11 @@ public class ServiceServiceImpl implements ServiceService {
                 provision.getAnnouncement().setNoticeTypes(noticeTypes);
             }
             provision.getAnnouncement().setNotice(noticeTemplate);
+            provision.getAnnouncement().setIsHeader(false);
+            provision.getAnnouncement().setIsHeaderFree(false);
+            provision.getAnnouncement().setIsProofReadingDocument(false);
+            provision.getAnnouncement().setAnnouncementStatus(
+                    announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
             if (affaire != null && affaire.getCity() != null)
                 provision.getAnnouncement().setDepartment(affaire.getCity().getDepartment());
         }
@@ -699,8 +708,10 @@ public class ServiceServiceImpl implements ServiceService {
         String currentStatus = "";
         if (service.getProvisions() != null && service.getId() != null)
             for (Provision provision : service.getProvisions()) {
-                if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus()
-                        .getServicePriority() > currentPriority) {
+                if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus() != null
+                        && provision.getAnnouncement().getAnnouncementStatus().getServicePriority() != null
+                        && provision.getAnnouncement().getAnnouncementStatus()
+                                .getServicePriority() > currentPriority) {
                     currentPriority = provision.getAnnouncement().getAnnouncementStatus().getServicePriority();
                     currentStatus = provision.getAnnouncement().getAnnouncementStatus().getLabel();
                 } else if (provision.getSimpleProvision() != null && provision.getSimpleProvision()

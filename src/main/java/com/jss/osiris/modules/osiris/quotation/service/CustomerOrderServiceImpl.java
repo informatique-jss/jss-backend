@@ -234,6 +234,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     MyJssQuotationDelegate myJssQuotationDelegate;
 
+    @Autowired
+    AnnouncementService announcementService;
+
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
     }
@@ -418,17 +421,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return true;
     }
 
-    private boolean isOnlyJssAnnouncement(CustomerOrder customerOrder) throws OsirisException {
+    private boolean isOnlyJssAnnouncement(CustomerOrder customerOrder, Boolean checkIsRedactedAndNotice)
+            throws OsirisException {
         if (!isOnlyAnnouncement(customerOrder))
             return false;
 
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 for (Service service : asso.getServices())
-                    for (Provision provision : service.getProvisions())
+                    for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null && !provision.getAnnouncement().getConfrere().getId()
                                 .equals(constantService.getConfrereJssSpel().getId()))
                             return false;
+                        if (checkIsRedactedAndNotice && provision.getAnnouncement() != null
+                                && (!provision.getIsRedactedByJss() || provision.getAnnouncement().getNotice() == null
+                                        || provision.getAnnouncement().getNotice().length() == 0))
+                            return false;
+
+                    }
         return true;
     }
 
@@ -493,7 +503,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)) {
             // Auto billed for JSS Announcement only customer order
             if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
-                    && isOnlyJssAnnouncement(customerOrder)
+                    && isOnlyJssAnnouncement(customerOrder, false)
                     && getRemainingAmountToPayForCustomerOrder(customerOrder).compareTo(zeroValue) >= 0) {
                 targetStatusCode = CustomerOrderStatus.BILLED;
             }
@@ -512,6 +522,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     }
                 }
             }
+
+            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                    && isOnlyJssAnnouncement(customerOrder, true)) {
+                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
+                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                    for (Service service : assoAffaireOrder.getServices())
+                        for (Provision provision : service.getProvisions())
+                            if (provision.getAnnouncement() != null) {
+                                provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
+                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
+                                provisionService.addOrUpdateProvision(provision);
+                                announcementService.generateAndStorePublicationFlag(provision.getAnnouncement(),
+                                        provision);
+                                announcementService.generateAndStorePublicationReceipt(provision.getAnnouncement(),
+                                        provision);
+                            }
+            }
+
             // save once customer order to recompute invoice item before set it in stone...
             this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
 
