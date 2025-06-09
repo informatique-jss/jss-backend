@@ -113,13 +113,14 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean addOrUpdateServices(List<ServiceType> services, Integer assoAffaireOrderId,
-            String customLabel)
+            String customLabel, Affaire affaire)
             throws OsirisException {
 
         AssoAffaireOrder assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(assoAffaireOrderId);
 
         if (assoAffaireOrder != null) {
-            List<Service> servicesGenerated = generateServiceInstanceFromMultiServiceTypes(services, customLabel);
+            List<Service> servicesGenerated = generateServiceInstanceFromMultiServiceTypes(services, customLabel,
+                    affaire);
             for (Service service : servicesGenerated) {
                 service.setAssoAffaireOrder(assoAffaireOrder);
                 addOrUpdateServiceFromUser(service);
@@ -170,26 +171,26 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes,
-            String customLabel) throws OsirisException {
+            String customLabel, Affaire affaire) throws OsirisException {
 
         List<Service> services = new ArrayList<Service>();
 
         List<ServiceType> mergeableTypes = serviceTypes.stream().filter(s -> s.getIsMergeable()).toList();
         if (!mergeableTypes.isEmpty()) {
-            services.add(getServiceForMultiServiceTypesAndAffaire(mergeableTypes, customLabel));
+            services.add(getServiceForMultiServiceTypesAndAffaire(mergeableTypes, customLabel, affaire));
         }
 
         List<ServiceType> serviceTypeNonMergeables = serviceTypes.stream().filter(s -> !s.getIsMergeable())
                 .toList();
         for (ServiceType serviceType : serviceTypeNonMergeables)
             services.add(
-                    getServiceForMultiServiceTypesAndAffaire(Arrays.asList(serviceType), customLabel));
+                    getServiceForMultiServiceTypesAndAffaire(Arrays.asList(serviceType), customLabel, affaire));
 
         return services;
     }
 
     private Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes,
-            String customLabel)
+            String customLabel, Affaire affaire)
             throws OsirisException {
 
         ArrayList<AssoServiceDocument> assoServiceDocuments = new ArrayList<AssoServiceDocument>();
@@ -332,7 +333,7 @@ public class ServiceServiceImpl implements ServiceService {
                 provision.getAnnouncement().setNoticeTypes(noticeTypes);
             }
             provision.getAnnouncement().setNotice(noticeTemplate);
-            if (affaire.getCity() != null)
+            if (affaire != null && affaire.getCity() != null)
                 provision.getAnnouncement().setDepartment(affaire.getCity().getDepartment());
         }
         return provision;

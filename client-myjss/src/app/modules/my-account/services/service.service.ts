@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../main/services/appRest.service';
+import { City } from '../../profile/model/City';
 import { Service } from '../model/Service';
 import { ServiceType } from '../model/ServiceType';
 
@@ -22,8 +23,8 @@ export class ServiceService extends AppRestService<Service> {
     return this.getList(new HttpParams().set("affaireOrderId", affaireOrderId).set("serviceTypeIds", services.map(s => s.id).join(",")), "services");
   }
 
-  getServiceForServiceType(services: ServiceType[]) {
-    return this.getList(new HttpParams().set("serviceTypeIds", services.map(s => s.id).join(",")), "service-types/provisions");
+  getServiceForServiceType(services: ServiceType[], affaireCity: City) {
+    return this.getList(new HttpParams().set("serviceTypeIds", services.map(s => s.id).join(",")).set("affaireCityId", affaireCity.id + ""), "service-types/provisions");
   }
 
   deleteService(service: Service) {

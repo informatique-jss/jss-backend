@@ -158,7 +158,7 @@ export class ServicesSelectionComponent implements OnInit {
       if (!this.currentUser) {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          promises.push(this.serviceService.getServiceForServiceType(this.selectedServiceTypes[i]));
+          promises.push(this.serviceService.getServiceForServiceType(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].affaire.city));
         }
         combineLatest(promises).subscribe(response => {
           for (let i = 0; i < this.quotation!.assoAffaireOrders.length; i++) {
