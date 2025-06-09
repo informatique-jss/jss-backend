@@ -81,7 +81,8 @@
                 de France </a>
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item"
-                    (click)="openDepartment(department,$event)">{{department.code!="0" ?(department.code+ " - ")
+                    (click)="openDepartment(department,$event)">{{department.code.trim().length>0 &&
+                    department.code!="0" ?(department.code+ " - ")
                     :""}}{{department.name}}</a>
                 </li>
               </ul>
