@@ -120,28 +120,28 @@
           <div class="card mb-4">
             <h6 class="card-header"><i class="ai-note me-2"></i> Libellé de facturation et adressage</h6>
             <div class="card-body pt-2">
-              <ul class="nav nav-tabs mb-3" role="tablist">
-                <li class="nav-item" *ngFor="let doc of quotation.documents">
-                  <a class="nav-link" [ngClass]="{'active': doc===quotation.documents[0]}"
-                    [href]="'#' + doc.documentType.code" data-bs-toggle="tab" role="tab">{{doc.documentType.label}}</a>
+              <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+                <li [ngbNavItem]="indexDoc" *ngFor="let doc of quotation.documents;let indexDoc = index">
+                  <button ngbNavLink>{{doc.documentType.label}}</button>
+                  <ng-template ngbNavContent>
+                    <ng-container *ngFor="let document of quotation.documents; let docIndex = index">
+                      <ng-container *ngIf="document.documentType.code == documentTypeBilling.code ">
+                        <ng-container [ngTemplateOutlet]="billingDocumentForm"
+                          [ngTemplateOutletContext]="{document:document}"></ng-container>
+                      </ng-container>
+                      <ng-container *ngIf="document.documentType.code == documentTypeDigital.code ">
+                        <ng-container [ngTemplateOutlet]="digitalDocumentForm"
+                          [ngTemplateOutletContext]="{document:document}"></ng-container>
+                      </ng-container>
+                      <ng-container *ngIf="document.documentType.code == documentTypePaper.code ">
+                        <ng-container [ngTemplateOutlet]="paperDocumentForm"
+                          [ngTemplateOutletContext]="{document:document}"></ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-template>
                 </li>
               </ul>
-              <div class="tab-content">
-                <ng-container *ngFor="let document of quotation.documents; let docIndex = index">
-                  <ng-container *ngIf="document.documentType.code == documentTypeBilling.code ">
-                    <ng-container [ngTemplateOutlet]="billingDocumentForm"
-                      [ngTemplateOutletContext]="{document:document}"></ng-container>
-                  </ng-container>
-                  <ng-container *ngIf="document.documentType.code == documentTypeDigital.code ">
-                    <ng-container [ngTemplateOutlet]="digitalDocumentForm"
-                      [ngTemplateOutletContext]="{document:document}"></ng-container>
-                  </ng-container>
-                  <ng-container *ngIf="document.documentType.code == documentTypePaper.code ">
-                    <ng-container [ngTemplateOutlet]="paperDocumentForm"
-                      [ngTemplateOutletContext]="{document:document}"></ng-container>
-                  </ng-container>
-                </ng-container>
-              </div>
+              <div [ngbNavOutlet]="nav" class="mt-2"></div>
             </div>
           </div>
         </div>

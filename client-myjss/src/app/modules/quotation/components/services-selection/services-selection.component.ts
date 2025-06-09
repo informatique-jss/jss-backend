@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { combineLatest } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -19,7 +20,7 @@ import { ServiceFamilyService } from '../../services/service.family.service';
   templateUrl: './services-selection.component.html',
   styleUrls: ['./services-selection.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent]
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule]
 })
 export class ServicesSelectionComponent implements OnInit {
 

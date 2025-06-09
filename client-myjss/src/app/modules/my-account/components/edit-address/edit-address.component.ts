@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -20,7 +21,7 @@ import { DocumentService } from '../../services/document.service';
   templateUrl: './edit-address.component.html',
   styleUrls: ['./edit-address.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent]
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule]
 })
 export class EditAddressComponent implements OnInit {
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -21,7 +21,7 @@ import { getClassForCustomerOrderStatus, getCustomerOrderStatusLabel } from '../
   templateUrl: './affaires.component.html',
   styleUrls: ['./affaires.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, NgbDropdownModule]
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
 })
 export class AffairesComponent implements OnInit {
 
@@ -106,7 +106,8 @@ export class AffairesComponent implements OnInit {
     this.refreshAffaires();
   }
 
-  loadAffaireDetails(event: any, affaire: Affaire) {
+  loadAffaireDetails(affaire: Affaire) {
+    console.log("show");
     if (!this.ordersAffaire[affaire.id]) {
       this.customerOrderService.getCustomerOrdersForAffaireAndCurrentUser(affaire.id).subscribe(response => {
         this.ordersAffaire[affaire.id] = response;

@@ -2,6 +2,7 @@ package com.jss.osiris.libs;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
@@ -14,6 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SessionConfig {
+
+    @Value("${dev.mode}")
+    private Boolean devMode;
 
     @Bean
     public ForwardedHeaderFilter forwardedHeaderFilter() {
@@ -49,11 +53,8 @@ public class SessionConfig {
                 DefaultCookieSerializer serializer = new DefaultCookieSerializer();
                 serializer.setCookieName(cookieName);
 
-                // if ("jss".equalsIgnoreCase(domainHeader) ||
-                // "myjss".equalsIgnoreCase(domainHeader)) {
-                // serializer.setDomainName("jss.fr"); // .jss.fr = valable pour jss.fr et
-                // *.jss.fr
-                // }
+                if (!devMode)
+                    serializer.setDomainName("jss.fr");
 
                 CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
                 resolver.setCookieSerializer(serializer);
@@ -61,12 +62,16 @@ public class SessionConfig {
             }
 
             private String getCookieNameForHost(String host) {
+                String cookieName = "";
                 if (host != null) {
                     if (host.contains("osiris") || host.contains("4200")) {
-                        return "OSIRIS";
+                        cookieName = "OSIRIS";
                     } else if (host.contains("jss") || host.contains("4202")) {
-                        return "JSS";
+                        cookieName = "JSS";
                     }
+                    if (host.contains("_REC"))
+                        cookieName += "_REC";
+                    return cookieName;
                 }
                 return "DEFAULTSESSION";
             }

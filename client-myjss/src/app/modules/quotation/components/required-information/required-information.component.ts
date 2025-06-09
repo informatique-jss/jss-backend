@@ -1,7 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { combineLatest } from 'rxjs';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
@@ -79,7 +79,8 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectBuildingDomiciliationComponent,
     SelectCountryComponent,
     SelectCivilityComponent,
-    CKEditorModule
+    CKEditorModule,
+    NgbNavModule
   ]
 })
 export class RequiredInformationComponent implements OnInit {
@@ -157,6 +158,8 @@ export class RequiredInformationComponent implements OnInit {
 
 
   informationForm!: FormGroup;
+
+  parseInt = parseInt;
 
   ngOnInit() {
     this.mailRedirectionTypeOther = this.constantService.getMailRedirectionTypeOther();

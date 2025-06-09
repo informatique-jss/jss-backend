@@ -5,9 +5,8 @@
 
       <!-- Mobile menu toggler (Hamburger) -->
       <div class="col-4 d-flex justify-content-start">
-        <button class="navbar-toggler" id="navToggler" type="button" data-bs-toggle="collapse"
-          data-bs-target="#navbarCollapse" #navbarCollapseRef aria-controls="navbarNav" aria-expanded="false"
-          aria-label="Toggle navigation">
+        <button class="navbar-toggler" id="navToggler" type="button" aria-label="Toggle navigation"
+          (click)="isNavbarCollapsed = !isNavbarCollapsed">
           <span class="text-body h6"></span>
           <span class="navbar-toggler-icon" [ngClass]="{'navbar-toggler-icon-light': isForQuotationNavbar}"></span>
         </button>
@@ -41,8 +40,8 @@
         </div>
 
         <!-- Search button -->
-        <div class="me-3 me-lg-4 ms-auto" *ngIf="currentUser && actualUrl.includes('account')" data-bs-toggle="modal"
-          data-bs-target="#searchModal">
+        <div class="me-3 me-lg-4 ms-auto" *ngIf="currentUser && actualUrl.includes('account')"
+          (click)="displaySearchModal()">
           <a class="nav-link fs-4 p-2 mx-sm-1" style="cursor: pointer;" ngbTooltip="Rechercher" placement="right"
             aria-label="Search2">
             <i class="ai-search"></i>
@@ -54,7 +53,7 @@
             <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
             <div class="ps-2 d-none d-md-block">
               <div class="fs-xs lh-1 opacity-60">Bonjour,</div>
-              <div class="fs-sm dropdown-toggle">{{capitalizeName(currentUser.firstname + " "
+              <div class="fs-sm  ">{{capitalizeName(currentUser.firstname + " "
                 +currentUser.lastname)}}
               </div>
             </div>
@@ -89,31 +88,29 @@
 
     <!-- Navbar collapsed with all page presentation -->
     <div class="navbar align-items-start">
-      <nav class="collapse w-100" id="navbarCollapse" data-bs-parent="#navToggler"
-        (show.bs.collapse)="navbarCollapsed()" (hide.bs.collapse)="navbarUncollapsed()">
+      <div [ngbCollapse]="isNavbarCollapsed" class="collapse " id="navbarCollapse">
         <div class="d-flex flex-column w-100">
           <ul class="navbar-nav navbar-nav-scroll flex-column" style="--ar-scroll-height: 520px; overflow: hidden;">
-            <li class="nav-item dropdown d-block col col-md-auto">
-              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                aria-expanded="false">Services</a>
-              <ul class="dropdown-menu">
+            <li class="nav-item dropdown d-block col col-md-auto" ngbDropdown>
+              <a class="nav-link  " ngbDropdownToggle aria-expanded="false">Services</a>
+              <ul ngbDropdownMenu>
                 <li *ngFor="let service of services"><a class="dropdown-item" [routerLink]="service.route"
                     (click)="attempToCloseNavbar(true,null)">
                     {{service.label}}</a></li>
               </ul>
             </li>
-            <li class="nav-item dropdown col col-md-auto">
-              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">La
+            <li class="nav-item dropdown col col-md-auto" ngbDropdown>
+              <a class="nav-link  " ngbDropdownToggle>La
                 société</a>
-              <ul class="dropdown-menu">
+              <ul ngbDropdownMenu>
                 <li *ngFor="let item of companyItems"><a class="dropdown-item" [routerLink]="item.route"
                     (click)="attempToCloseNavbar(true,null)">
                     {{item.label}}</a></li>
               </ul>
             </li>
-            <li class="nav-item dropdown col col-md-auto">
-              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Outils</a>
-              <ul class="dropdown-menu">
+            <li class="nav-item dropdown col col-md-auto" ngbDropdown>
+              <a class="nav-link  " ngbDropdownToggle aria-expanded="false">Outils</a>
+              <ul ngbDropdownMenu>
                 <li *ngFor="let tool of tools"><a class="dropdown-item" [routerLink]="tool.route"
                     (click)="attempToCloseNavbar(true,null)">
                     {{tool.label}}</a></li>
@@ -139,7 +136,7 @@
           </ul>
         </div>
         <hr>
-      </nav>
+      </div>
     </div>
 
 
@@ -148,22 +145,21 @@
       <nav class="align-items-center navbar-expand" id="navbarNav">
         <ul class="navbar-nav navbar-nav-scroll justify-content-between" style="--ar-scroll-height: 520px;">
           <li class="nav-item dropdown d-block col col-md-auto">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside"
-              aria-expanded="false">Services</a>
+            <a class="nav-link dropdown-toggle" aria-expanded="false">Services</a>
             <ul class="dropdown-menu">
               <li *ngFor="let service of services"><a class="dropdown-item" [routerLink]="service.route">
                   {{service.label}}</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown col col-md-auto">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">La société</a>
+            <a class="nav-link dropdown-toggle" aria-expanded="false">La société</a>
             <ul class="dropdown-menu">
               <li *ngFor="let item of companyItems"><a class="dropdown-item" [routerLink]="item.route">
                   {{item.label}}</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown col col-md-auto">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Outils</a>
+            <a class="nav-link dropdown-toggle" aria-expanded="false">Outils</a>
             <ul class="dropdown-menu">
               <li *ngFor="let tool of tools"><a class="dropdown-item" [routerLink]="tool.route">
                   {{tool.label}}</a></li>
@@ -190,5 +186,3 @@
     </div>
   </div>
 </header>
-
-<search></search>

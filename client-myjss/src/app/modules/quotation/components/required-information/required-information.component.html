@@ -48,549 +48,525 @@
         {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceLabelToDisplay }}
       </a>
     </div>
-    <ul class="nav nav-tabs mb-0" role="tablist" *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex] &&
+
+    <ng-container *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex] &&
        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
-      <li class="nav-item" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+      <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+        <li [ngbNavItem]="1" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
         quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
-        <a class="nav-link  quotation-tabs" [ngClass]="{'active':currentTab=='documents'}"
-          (click)="currentTab='documents'" data-bs-toggle="tab" role="tab">
-          Documents
-        </a>
-      </li>
-      <ng-container
-        *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index">
-        <li class="nav-item"
-          *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
-          <a class="nav-link quotation-tabs" [ngClass]="{'active':currentTab=='announcement' + index}"
-            (click)="currentTab='announcement' + index" data-bs-toggle="tab" role="tab">
-            Annonce légale {{ provision.order }}
-          </a>
-        </li>
-        <li class="nav-item "
-          *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION ">
-          <a class="nav-link quotation-tabs" [ngClass]="{'active':currentTab=='domiciliation'}"
-            (click)="currentTab='domiciliation'" data-bs-toggle="tab" role="tab">
-            Domiciliation
-          </a>
-        </li>
-      </ng-container>
-    </ul>
+          <button ngbNavLink>Documents</button>
+          <ng-template ngbNavContent>
+            <div class="quotation-container">
+              <h6><i class="ai-circle-info me-2"></i>Information</h6>
+              <div class="pb-3">
+                <div class="row g-3 align-items-start">
+                  <span
+                    *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes.length ==0">Aucune
+                    information à remplir pour ce service, vous pouvez cliquer sur le bouton étape suivante.</span>
+                  <ng-container
+                    *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
 
-    <!-- Tabs content Documents -->
-    <div class="tab-content " *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
-      <div class="tab-pane fade show  " id="documents" role="tabpanel" [ngClass]="{'active':currentTab=='documents'}">
-        <div class="quotation-container">
-          <h6><i class="ai-circle-info me-2"></i>Information</h6>
-          <div class="pb-3">
-            <div class="row g-3 align-items-start">
-              <span
-                *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes.length ==0">Aucune
-                information à remplir pour ce service, vous pouvez cliquer sur le bouton étape suivante.</span>
-              <ng-container
-                *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
+                    <!-- TEXT -->
+                    <div class="col-12 col-md-6 col-lg-4"
+                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
+                      <generic-input [(model)]="assoServiceFieldType.stringValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                        [propertyName]="'stringFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory"
+                        [maxLength]="255">
+                      </generic-input>
+                    </div>
 
-                <!-- TEXT -->
-                <div class="col-12 col-md-6 col-lg-4"
-                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
-                  <generic-input [(model)]="assoServiceFieldType.stringValue"
-                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                    [propertyName]="'stringFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory"
-                    [maxLength]="255">
-                  </generic-input>
+                    <!-- TEXTAREA -->
+                    <div class="col-12 "
+                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
+                      <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm" [maxLength]="255"
+                        [propertyName]="'textAreaFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory">
+                      </generic-textarea>
+                    </div>
+
+                    <!-- DATE -->
+                    <div class="col-12 col-md-6 col-lg-4"
+                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE">
+                      <div class="form-group w-auto">
+                        <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
+                          [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                          [propertyName]="'dateFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory">
+                        </generic-date-picker>
+                      </div>
+                    </div>
+
+                    <!-- INTEGER -->
+                    <div class="col-12 col-md-6 col-lg-4"
+                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
+                      <generic-input [(model)]="assoServiceFieldType.integerValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                        [propertyName]="'integerFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory"
+                        type="number">
+                      </generic-input>
+                    </div>
+
+                    <!-- SELECT -->
+                    <div class="col-12 col-md-6 col-lg-4"
+                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT">
+                      <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
+                        [propertyName]="'selectFieldType'+i" [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+                        [isMandatory]="assoServiceFieldType.isMandatory">
+                      </select-value-service-field-type>
+                    </div>
+                  </ng-container>
                 </div>
-
-                <!-- TEXTAREA -->
-                <div class="col-12 col-lg-4"
-                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
-                  <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
-                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm" [maxLength]="255"
-                    [propertyName]="'textAreaFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory">
-                  </generic-textarea>
+              </div>
+            </div>
+            <div *ngIf="currentUser">
+              <div
+                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
+                <div *ngIf="assoServiceDocument.isMandatory" class="quotation-container mb-4">
+                  <quotation-file-uploader [entity]="assoServiceDocument"
+                    (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
+                    (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
                 </div>
+              </div>
+            </div>
+          </ng-template>
+        </li>
 
-                <!-- DATE -->
-                <div class="col-12 col-md-6 col-lg-2"
-                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE">
-                  <div class="form-group w-auto">
-                    <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
-                      [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                      [propertyName]="'dateFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory">
-                    </generic-date-picker>
+        <ng-container
+          *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index">
+          <li [ngbNavItem]="parseInt('2'+index)"
+            *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT && provision.announcement">
+            <button ngbNavLink>Annonce légale {{ provision.order }}</button>
+            <ng-template ngbNavContent>
+              <div class="quotation-container">
+                <h6><i class="ai-circle-info me-2"></i>Information</h6>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <div class="col-md-5">
+                    <label class="col-form-label" for="announcementPublicationDate">Publication souhaitée</label>
+                    <div class="col">
+                      <select-string [types]="selectionRedaction" label="Publier l'annonce au JSS ?"
+                        [isMandatory]="false" [form]="informationForm"
+                        [propertyName]="'selectionRedaction'+provision.order"
+                        [(model)]="selectedRedaction[selectedServiceIndex][index]"
+                        (selectionChange)="changeDoNotGenerateAnnouncement($event, provision)">
+                      </select-string>
+                    </div>
+                  </div>
+                  <div class="col-md-3" *ngIf="isDoNotGenerateAnnouncement">
+                    <label class="col col-form-label" for="announcementPublicationDate">Date de publication
+                      souhaitée*</label>
+                    <div class="col">
+                      <generic-date-picker [(model)]="provision.announcement.publicationDate"
+                        label="Date de publication souhaitée" [form]="informationForm"
+                        [propertyName]="'publicationDate'+provision.order" [isMandatory]="false" [isDisabled]="false"
+                        [minDate]="minDatePublication"></generic-date-picker>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- announcement form : Option -->
+              <div *ngIf="isDoNotGenerateAnnouncement" class="quotation-container mb-2">
+                <h6><i class="ai-grid me-2"></i>Option</h6>
+                <div class="d-flex flex-wrap gap-4 align-items-center">
+
+                  <div class="form-check form-switch d-flex m-0 pe-md-5 pe-2 right-border">
+                    <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
+                      [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order"
+                      [isDisabled]="false"></generic-toggle>
+                  </div>
+
+                  <div class="form-check form-switch d-flex ms-md-4 m-0" *ngIf="provision.isRedactedByJss">
+                    <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
+                      label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
+                      [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- announcement form : text area -->
+              <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss"
+                class="quotation-container mb-5">
+
+                <div class="row">
+                  <div class="col-md-3">
+
+                    <!-- Toggle relecture -->
+                    <div class="form-check  d-flex align-items-center mb-4" style="padding-left: 0px;">
+                      <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
+                        [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
+                        [isDisabled]="false"></generic-toggle>
+                    </div>
+
+                    <!-- Département -->
+                    <div class="mb-3" *ngIf="departments">
+                      <select-department [(model)]="provision.announcement.department"
+                        label="Département de publication" [form]="informationForm"
+                        [propertyName]="'department'+provision.order" [isMandatory]="false"
+                        [isDisabled]="false"></select-department>
+                    </div>
+
+                    <!-- Rubrique -->
+                    <div class="mb-3" *ngIf="noticeTypeFamilies">
+                      <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
+                        label="Rubrique de publication" [form]="informationForm"
+                        [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="false"
+                        [isDisabled]="false"></select-notice-type-family>
+                    </div>
+
+                    <!-- Sous-rubrique -->
+                    <!-- TODO : do not work -->
+                    <div class="mb-3" *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
+                      <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
+                        label="Sous-rubrique(s) de publication" [form]="informationForm"
+                        [noticeTypeFamily]="provision.announcement.noticeTypeFamily"
+                        [propertyName]="'noticeTypes'+provision.order" [isMandatory]="false"
+                        [isDisabled]="false"></select-multiple-notice-type>
+                    </div>
+                  </div>
+
+                  <div class="col-md-9">
+                    <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
+                    <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
+                      [data]="announcementNoticeInit" (change)="onNoticeChange($event, provision)">
+                    </ckeditor>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+
+          <li class="nav-item "
+            *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION && provision.domiciliation">
+            <button ngbNavLink>Domiciliation</button>
+            <ng-template ngbNavContent>
+              <div class="quotation-container">
+                <h6><i class="ai-home me-2"></i>Domiciliation</h6>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <div class="col-md-6">
+                    <select-contract-type [(model)]="provision.domiciliation.domiciliationContractType"
+                      label="Type de contrat" [form]="informationForm" propertyName="domiciliationContractType"
+                      [isMandatory]="false" [isDisabled]="false"></select-contract-type>
+                  </div>
+                  <div class="col-md-6">
+                    <select-language [(model)]="provision.domiciliation.language" [form]="informationForm"
+                      [isAutoSelectLanguageFrench]="true" [isDisabled]="false" propertyName="language"
+                      label="Langue de contrat"></select-language>
+                  </div>
+                </div>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <div class="col-md-6">
+                    <select-mail-redirection [(model)]="provision.domiciliation.mailRedirectionType"
+                      label="Adresse de redirection" [form]="informationForm" propertyName="mailRedirectionType"
+                      [isMandatory]="false" [isDisabled]="false"></select-mail-redirection>
+                  </div>
+                  <div class="col-md-6">
+                    <select-building-domiciliation [(model)]="provision.domiciliation.buildingDomiciliation"
+                      [isDisabled]="false" label="Adresse de domiciliation" [form]="informationForm"
+                      propertyName="buildingDomiciliation" [isMandatory]="false"></select-building-domiciliation>
+                  </div>
+                </div>
+                <!-- Describe adress -->
+                <div *ngIf="mustDecribeAdress(provision.domiciliation)">
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-6">
+                      <generic-input [(model)]="provision.domiciliation.address" label="Adresse"
+                        [form]="informationForm" propertyName="address" [isMandatory]="false" [isDisabled]="false"
+                        [maxLength]="60"></generic-input>
+                    </div>
+                    <div class="col-md-6">
+                      <generic-input [(model)]="provision.domiciliation.cedexComplement" label="Complément CEDEX"
+                        [form]="informationForm" propertyName="domCedexComplement" [isMandatory]="false"
+                        [isDisabled]="false" [maxLength]="60"></generic-input>
+                    </div>
+                  </div>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-2">
+                      <generic-input [(model)]="provision.domiciliation.postalCode" label="Code postal"
+                        [form]="informationForm" propertyName="domPostalCode" [isMandatory]="false"
+                        (onFormBlur)="findCityForDomiciliation(provision.domiciliation)" [isDisabled]="false"
+                        [maxLength]="10">
+                      </generic-input>
+                    </div>
+                    <div class="col-md-5">
+                      <autocomplete-city [(model)]="provision.domiciliation.city" [form]="informationForm"
+                        [modelCountry]="provision.domiciliation.country" [isMandatory]="false" label="Ville"
+                        propertyName="domAutocompleteCity"></autocomplete-city>
+                    </div>
+                    <div class="col-md-5">
+                      <select-country class="col-md-5" [(model)]="provision.domiciliation.country" label="Pays"
+                        [form]="informationForm" propertyName="domCountry" [isMandatory]="false" [isDisabled]="false">
+                      </select-country>
+                    </div>
+                  </div>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col">
+                      <generic-input class="col mt-3" [(model)]="newMailDomiciliation"
+                        label="Adresse(s) mail(s) (entrer pour valider)" [form]="informationForm"
+                        propertyName="newMailsDom" [isMandatory]="false" [isDisabled]="false" type="email"
+                        [icon]="'mail'" (onEnter)="addMailDomiciliation(provision.domiciliation)"></generic-input>
+                      <ul class="list-group mt-1">
+                        <li class="list-group-item py-0" *ngFor="let mail of provision.domiciliation.mails">
+                          <div class="d-flex flex-wrap w-100">
+                            <div>
+                              <a class="nav-link fs-xl p-2"
+                                (click)="deleteMailDomiciliation(mail, provision.domiciliation)">
+                                <i class="ai-trash"></i>
+                              </a>
+                            </div>
+                            <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-------------- Activité ---------------->
+              <div class="quotation-container">
+                <h6><i class="ai-briefcase me-2"></i>Activité</h6>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3"
+                  *ngIf="mustDecribeAdresse(provision.domiciliation)">
+                  <div class="col">
+                    <generic-textarea [(model)]="provision.domiciliation.activityDescription"
+                      label="Activité de la société" [form]="informationForm" propertyName="activityDescription"
+                      [isMandatory]="false" [isDisabled]="false">
+                    </generic-textarea>
+                  </div>
+                </div>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <div class="col">
+                    <generic-input [(model)]="provision.domiciliation.activityAddress" label="Adresse"
+                      [form]="informationForm" propertyName="activityAddress" [isMandatory]="false" [isDisabled]="false"
+                      [maxLength]="60">
+                    </generic-input>
+                  </div>
+                </div>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <div class="col-md-2">
+                    <generic-input [(model)]="provision.domiciliation.activityPostalCode" label="Code postal"
+                      [form]="informationForm" propertyName="domActivityPostalCode" [isMandatory]="false"
+                      (onFormBlur)="findCityForActivityDomiciliation(provision.domiciliation)" [isDisabled]="false"
+                      [maxLength]="10">
+                    </generic-input>
+                  </div>
+                  <div class="col-md-5">
+                    <autocomplete-city [(model)]="provision.domiciliation.activityCity" [form]="informationForm"
+                      [modelCountry]="provision.domiciliation.activityCountry" [isMandatory]="false" label="Ville"
+                      propertyName="domActivityAutocompleteCity"></autocomplete-city>
+                  </div>
+                  <div class="col-md-5">
+                    <select-country class="col-md-5" [(model)]="provision.domiciliation.activityCountry" label="Pays"
+                      [form]="informationForm" propertyName="domActivityCountry" [isMandatory]="false"
+                      [isDisabled]="false">
+                    </select-country>
+                  </div>
+                </div>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <div class="col">
+                    <generic-textarea [(model)]="provision.domiciliation.activityDescription"
+                      label="Rédiger toute les informations liées à votre activité" [form]="informationForm"
+                      propertyName="activityDescription" [isMandatory]="false" [isDisabled]="false">
+                    </generic-textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-------------- Adresse de conservation des documents comptables ---------------->
+              <div class="quotation-container">
+                <h6><i class="ai-briefcase me-2"></i>Adresse de conservation des documents comptables</h6>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <div class="col">
+                    <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationAddress"
+                      label="Adresse" [form]="informationForm" propertyName="accountingDocumentsConservationAddress"
+                      [isMandatory]="false" [isDisabled]="false" [maxLength]="60">
+                    </generic-input>
+                  </div>
+                </div>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <div class="col">
+                    <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationCedexComplement"
+                      label="Complément d'adresse (facultatif)" [form]="informationForm"
+                      propertyName="accountingDocumentsConservationCedexComplement" [isMandatory]="false"
+                      [isDisabled]="false" [maxLength]="60">
+                    </generic-input>
+                  </div>
+                </div>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <div class="col-md-2">
+                    <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationPostalCode"
+                      label="Code postal" [form]="informationForm"
+                      propertyName="accountingDocumentsConservationPostalCode" [isMandatory]="false"
+                      (onFormBlur)="findCityForAccountingDomiciliation(provision.domiciliation)" [isDisabled]="false"
+                      [maxLength]="10">
+                    </generic-input>
+                  </div>
+                  <div class="col-md-5">
+                    <autocomplete-city [(model)]="provision.domiciliation.accountingDocumentsConservationCity"
+                      [form]="informationForm"
+                      [modelCountry]="provision.domiciliation.accountingDocumentsConservationCountry"
+                      [isMandatory]="false" label="Ville"
+                      propertyName="accountingDocumentsConservationCity"></autocomplete-city>
+                  </div>
+                  <div class="col-md-5">
+                    <select-country class="col-md-5"
+                      [(model)]="provision.domiciliation.accountingDocumentsConservationCountry" label="Pays"
+                      [form]="informationForm" propertyName="accountingDocumentsConservationCountry"
+                      [isMandatory]="false" [isDisabled]="false">
+                    </select-country>
+                  </div>
+                </div>
+              </div>
+
+              <!-------------- Représentant légal ---------------->
+              <div class="quotation-container">
+                <h6 class="col"><i class="ai-user me-2"></i>Représentant légal</h6>
+                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                  <generic-toggle [(model)]="provision.domiciliation.isLegalPerson" label="Personne morale ?"
+                    [form]="informationForm" propertyName="isLegalPerson"></generic-toggle>
+                </div>
+                <!-- If not personne morale -->
+                <div *ngIf="!provision.domiciliation.isLegalPerson">
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-2">
+                      <select-civility [(model)]="provision.domiciliation.legalGardianCivility" label="Civilité"
+                        [form]="informationForm" propertyName="legalGardianCivility" [isMandatory]="false"
+                        [isDisabled]="false">
+                      </select-civility>
+                    </div>
+                    <div class="col-md-5">
+                      <generic-input [(model)]="provision.domiciliation.legalGardianLastname" label="Nom"
+                        [form]="informationForm" propertyName="legalGardianLastname" [isMandatory]="false"
+                        [isDisabled]="false" [maxLength]="20">
+                      </generic-input>
+                    </div>
+                    <div class="col-md-5">
+                      <generic-input [(model)]="provision.domiciliation.legalGardianFirstname" label="Prénom"
+                        [form]="informationForm" propertyName="legalGardianFirstname" [isMandatory]="false"
+                        [isDisabled]="false" [maxLength]="20">
+                      </generic-input>
+                    </div>
+                  </div>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col">
+                      <generic-input [(model)]="provision.domiciliation.legalGardianAddress" label="Adresse"
+                        [form]="informationForm" propertyName="legalGardianAddress" [isMandatory]="false"
+                        [isDisabled]="false" [maxLength]="60">
+                      </generic-input>
+                    </div>
+                  </div>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-2">
+                      <generic-input [(model)]="provision.domiciliation.legalGardianPostalCode" label="Code postal"
+                        [form]="informationForm" propertyName="legalGardianPostalCode" [isMandatory]="false"
+                        (onFormBlur)="findCityForLegalGardianDomiciliation(provision.domiciliation)"
+                        [isDisabled]="false" [maxLength]="10">
+                      </generic-input>
+                    </div>
+                    <div class="col-md-5">
+                      <autocomplete-city [(model)]="provision.domiciliation.legalGardianCity" [form]="informationForm"
+                        [modelCountry]="provision.domiciliation.legalGardianCountry" [isMandatory]="false" label="Ville"
+                        propertyName="legalGardianAutocompleteCity"></autocomplete-city>
+                    </div>
+                    <div class="col-md-5">
+                      <select-country class="col-md-5" [(model)]="provision.domiciliation.legalGardianCountry"
+                        label="Pays" [form]="informationForm" propertyName="legalGardianCountry" [isMandatory]="false"
+                        [isDisabled]="false">
+                      </select-country>
+                    </div>
+                  </div>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-6">
+                      <generic-input [(model)]="provision.domiciliation.legalGardianJob" label="Fonction"
+                        [form]="informationForm" propertyName="legalGardianJob" [isMandatory]="false"
+                        [isDisabled]="false" [maxLength]="20">
+                      </generic-input>
+                    </div>
+                    <div class="col-md-6">
+                      <generic-input class="col mt-3" [(model)]="newMailLegalGardian"
+                        label="Adresse(s) mail(s) (entrer pour valider)" [form]="informationForm"
+                        propertyName="newMailLegalGardian" [isMandatory]="false" [isDisabled]="false" type="email"
+                        [icon]="'mail'" (onEnter)="addLegalGardianMail(provision.domiciliation)"></generic-input>
+                      <ul class="list-group mt-1">
+                        <li class="list-group-item py-0" *ngFor="let mail of provision.domiciliation.legalGardianMails">
+                          <div class="d-flex flex-wrap w-100">
+                            <div>
+                              <a class="nav-link fs-xl p-2"
+                                (click)="deleteLegalGardianMail(mail, provision.domiciliation)">
+                                <i class="ai-trash"></i>
+                              </a>
+                            </div>
+                            <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-2">
+                      <generic-date-picker [(model)]="provision.domiciliation.legalGardianBirthdate"
+                        label="Date de naissance" [form]="informationForm" propertyName="legalGardianBirthdate"
+                        [isMandatory]="false" [isDisabled]="false" [maxDate]="getCurrentDate()">
+                      </generic-date-picker>
+                    </div>
+                    <div class="col-md-6">
+                      <generic-input [(model)]="provision.domiciliation.legalGardianPlaceOfBirth"
+                        label="Lieu de naissance" [form]="informationForm" propertyName="legalGardianPlaceOfBirth"
+                        [isMandatory]="false" [isDisabled]="false" [maxLength]="60">
+                      </generic-input>
+                    </div>
+                    <div class="col-md-4">
+                      <generic-input class="col-md-6 mt-0" [(model)]="newPhoneLegalGardian"
+                        label="Téléphone(s) (entrer pour valider)" [form]="informationForm"
+                        propertyName="newPhoneLegalGardian" [isMandatory]="false" [isDisabled]="false" [icon]="'phone'"
+                        [maxLength]="13" (onEnter)="addDomiciliationPhone(provision.domiciliation)">
+                      </generic-input>
+                      <ul class="list-group">
+                        <li class="list-group-item py-0"
+                          *ngFor="let phone of provision.domiciliation.legalGardianPhones">
+                          <div class="d-flex flex-wrap w-100">
+                            <div>
+                              <a class="nav-link fs-xl p-2"
+                                (click)="deletePhoneForDomiciliation(phone, provision.domiciliation)">
+                                <i class="ai-trash"></i>
+                              </a>
+                            </div>
+                            <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
 
-                <!-- INTEGER -->
-                <div class="col-12 col-md-6 col-lg-3"
-                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
-                  <generic-input [(model)]="assoServiceFieldType.integerValue"
-                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                    [propertyName]="'integerFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory"
-                    type="number">
-                  </generic-input>
-                </div>
-
-                <!-- SELECT -->
-                <div class="col-12 col-md-6 col-lg-2"
-                  *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT">
-                  <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
-                    [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                    [propertyName]="'selectFieldType'+i" [serviceFieldType]="assoServiceFieldType.serviceFieldType"
-                    [isMandatory]="assoServiceFieldType.isMandatory">
-                  </select-value-service-field-type>
-                </div>
-              </ng-container>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="currentUser">
-          <div
-            *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
-            <div *ngIf="assoServiceDocument.isMandatory" class="quotation-container mb-4">
-              <quotation-file-uploader [entity]="assoServiceDocument"
-                (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
-                (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabs content Annonce légale-->
-    <div class="tab-content" *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
-      <ng-container
-        *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index">
-        {{provision.provisionType.label}}
-        <div
-          *ngIf="provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT && provision.announcement"
-          [id]="'announcement' + index" class="tab-pane fade show"
-          [ngClass]="{'active':currentTab=='announcement' + index}" role="tabpanel">
-
-          <!-- announcement form : Information -->
-          <div class="quotation-container">
-            <h6><i class="ai-circle-info me-2"></i>Information</h6>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <div class="col-md-5">
-                <label class="col-form-label" for="announcementPublicationDate">Publication souhaitée</label>
-                <div class="col">
-                  <select-string [types]="selectionRedaction" label="Publier l'annonce au JSS ?" [isMandatory]="false"
-                    [form]="informationForm" [propertyName]="'selectionRedaction'+provision.order"
-                    [(model)]="selectedRedaction[selectedServiceIndex][index]"
-                    (selectionChange)="changeDoNotGenerateAnnouncement($event, provision)">
-                  </select-string>
+                <!-- If personne morale -->
+                <div *ngIf="provision.domiciliation.isLegalPerson">
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-6">
+                      <autocomplete-legal-form [(model)]="provision.domiciliation.legalGardianLegalForm"
+                        [form]="informationForm" label="Forme juridique" [isDisabled]="false"
+                        propertyName="legalGardianLegalForm" [isMandatory]="true">
+                      </autocomplete-legal-form>
+                    </div>
+                    <div class="col-md-6">
+                      <generic-input [(model)]="provision.domiciliation.legalGardianDenomination" label="Dénomination"
+                        [form]="informationForm" propertyName="legalGardianDenomination" [isMandatory]="false"
+                        [isDisabled]="false" [maxLength]="60">
+                      </generic-input>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-3" *ngIf="isDoNotGenerateAnnouncement">
-                <label class="col col-form-label" for="announcementPublicationDate">Date de publication
-                  souhaitée*</label>
-                <div class="col">
-                  <generic-date-picker [(model)]="provision.announcement.publicationDate"
-                    label="Date de publication souhaitée" [form]="informationForm"
-                    [propertyName]="'publicationDate'+provision.order" [isMandatory]="false" [isDisabled]="false"
-                    [minDate]="minDatePublication"></generic-date-picker>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- announcement form : Option -->
-          <div *ngIf="isDoNotGenerateAnnouncement" class="quotation-container mb-2">
-            <h6><i class="ai-grid me-2"></i>Option</h6>
-            <div class="d-flex flex-wrap gap-4 align-items-center">
-
-              <div class="form-check form-switch d-flex m-0 pe-md-5 pe-2 right-border">
-                <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
-                  [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order"
-                  [isDisabled]="false"></generic-toggle>
-              </div>
-
-              <div class="form-check form-switch d-flex ms-md-4 m-0" *ngIf="provision.isRedactedByJss">
-                <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
-                  label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
-                  [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
-              </div>
-            </div>
-          </div>
-
-
-          <!-- announcement form : text area -->
-          <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss"
-            class="quotation-container mb-5">
-
-            <div class="row">
-              <div class="col-md-3">
-
-                <!-- Toggle relecture -->
-                <div class="form-check  d-flex align-items-center mb-4" style="padding-left: 0px;">
-                  <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
-                    [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
-                    [isDisabled]="false"></generic-toggle>
-                </div>
-
-                <!-- Département -->
-                <div class="mb-3" *ngIf="departments">
-                  <select-department [(model)]="provision.announcement.department" label="Département de publication"
-                    [form]="informationForm" [propertyName]="'department'+provision.order" [isMandatory]="false"
-                    [isDisabled]="false"></select-department>
-                </div>
-
-                <!-- Rubrique -->
-                <div class="mb-3" *ngIf="noticeTypeFamilies">
-                  <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
-                    label="Rubrique de publication" [form]="informationForm"
-                    [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="false"
-                    [isDisabled]="false"></select-notice-type-family>
-                </div>
-
-                <!-- Sous-rubrique -->
-                <!-- TODO : do not work -->
-                <div class="mb-3" *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
-                  <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
-                    label="Sous-rubrique(s) de publication" [form]="informationForm"
-                    [noticeTypeFamily]="provision.announcement.noticeTypeFamily"
-                    [propertyName]="'noticeTypes'+provision.order" [isMandatory]="false"
-                    [isDisabled]="false"></select-multiple-notice-type>
-                </div>
-              </div>
-
-              <div class="col-md-9">
-                <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
-                <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
-                  [data]="announcementNoticeInit" (change)="onNoticeChange($event, provision)">
-                </ckeditor>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-    </div>
-
-    <!-- Tab domiciliation -->
-    <div class="tab-content" *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
-      <ng-container
-        *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index">
-        {{provision.provisionType.label}}
-        <div
-          *ngIf="provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_DOMICILIATION && provision.domiciliation"
-          [id]="'domiciliation' + index" class="tab-pane fade show" [ngClass]="{'active':currentTab=='domiciliation'}"
-          role="tabpanel">
-
-          <!------------------- Domiciliation ------------------>
-          <div class="quotation-container">
-            <h6><i class="ai-home me-2"></i>Domiciliation</h6>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <div class="col-md-6">
-                <select-contract-type [(model)]="provision.domiciliation.domiciliationContractType"
-                  label="Type de contrat" [form]="informationForm" propertyName="domiciliationContractType"
-                  [isMandatory]="false" [isDisabled]="false"></select-contract-type>
-              </div>
-              <div class="col-md-6">
-                <select-language [(model)]="provision.domiciliation.language" [form]="informationForm"
-                  [isAutoSelectLanguageFrench]="true" [isDisabled]="false" propertyName="language"
-                  label="Langue de contrat"></select-language>
-              </div>
-            </div>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <div class="col-md-6">
-                <select-mail-redirection [(model)]="provision.domiciliation.mailRedirectionType"
-                  label="Adresse de redirection" [form]="informationForm" propertyName="mailRedirectionType"
-                  [isMandatory]="false" [isDisabled]="false"></select-mail-redirection>
-              </div>
-              <div class="col-md-6">
-                <select-building-domiciliation [(model)]="provision.domiciliation.buildingDomiciliation"
-                  [isDisabled]="false" label="Adresse de domiciliation" [form]="informationForm"
-                  propertyName="buildingDomiciliation" [isMandatory]="false"></select-building-domiciliation>
-              </div>
-            </div>
-            <!-- Describe adress -->
-            <div *ngIf="mustDecribeAdress(provision.domiciliation)">
-              <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                <div class="col-md-6">
-                  <generic-input [(model)]="provision.domiciliation.address" label="Adresse" [form]="informationForm"
-                    propertyName="address" [isMandatory]="false" [isDisabled]="false" [maxLength]="60"></generic-input>
-                </div>
-                <div class="col-md-6">
-                  <generic-input [(model)]="provision.domiciliation.cedexComplement" label="Complément CEDEX"
-                    [form]="informationForm" propertyName="domCedexComplement" [isMandatory]="false"
-                    [isDisabled]="false" [maxLength]="60"></generic-input>
-                </div>
-              </div>
-              <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                <div class="col-md-2">
-                  <generic-input [(model)]="provision.domiciliation.postalCode" label="Code postal"
-                    [form]="informationForm" propertyName="domPostalCode" [isMandatory]="false"
-                    (onFormBlur)="findCityForDomiciliation(provision.domiciliation)" [isDisabled]="false"
-                    [maxLength]="10">
-                  </generic-input>
-                </div>
-                <div class="col-md-5">
-                  <autocomplete-city [(model)]="provision.domiciliation.city" [form]="informationForm"
-                    [modelCountry]="provision.domiciliation.country" [isMandatory]="false" label="Ville"
-                    propertyName="domAutocompleteCity"></autocomplete-city>
-                </div>
-                <div class="col-md-5">
-                  <select-country class="col-md-5" [(model)]="provision.domiciliation.country" label="Pays"
-                    [form]="informationForm" propertyName="domCountry" [isMandatory]="false" [isDisabled]="false">
-                  </select-country>
-                </div>
-              </div>
-              <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                <div class="col">
-                  <generic-input class="col mt-3" [(model)]="newMailDomiciliation"
-                    label="Adresse(s) mail(s) (entrer pour valider)" [form]="informationForm" propertyName="newMailsDom"
-                    [isMandatory]="false" [isDisabled]="false" type="email" [icon]="'mail'"
-                    (onEnter)="addMailDomiciliation(provision.domiciliation)"></generic-input>
-                  <ul class="list-group mt-1">
-                    <li class="list-group-item py-0" *ngFor="let mail of provision.domiciliation.mails">
-                      <div class="d-flex flex-wrap w-100">
-                        <div>
-                          <a class="nav-link fs-xl p-2"
-                            (click)="deleteMailDomiciliation(mail, provision.domiciliation)">
-                            <i class="ai-trash"></i>
-                          </a>
-                        </div>
-                        <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-------------- Activité ---------------->
-          <div class="quotation-container">
-            <h6><i class="ai-briefcase me-2"></i>Activité</h6>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3"
-              *ngIf="mustDecribeAdresse(provision.domiciliation)">
-              <div class="col">
-                <generic-textarea [(model)]="provision.domiciliation.activityDescription" label="Activité de la société"
-                  [form]="informationForm" propertyName="activityDescription" [isMandatory]="false"
-                  [isDisabled]="false">
-                </generic-textarea>
-              </div>
-            </div>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <div class="col">
-                <generic-input [(model)]="provision.domiciliation.activityAddress" label="Adresse"
-                  [form]="informationForm" propertyName="activityAddress" [isMandatory]="false" [isDisabled]="false"
-                  [maxLength]="60">
-                </generic-input>
-              </div>
-            </div>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <div class="col-md-2">
-                <generic-input [(model)]="provision.domiciliation.activityPostalCode" label="Code postal"
-                  [form]="informationForm" propertyName="domActivityPostalCode" [isMandatory]="false"
-                  (onFormBlur)="findCityForActivityDomiciliation(provision.domiciliation)" [isDisabled]="false"
-                  [maxLength]="10">
-                </generic-input>
-              </div>
-              <div class="col-md-5">
-                <autocomplete-city [(model)]="provision.domiciliation.activityCity" [form]="informationForm"
-                  [modelCountry]="provision.domiciliation.activityCountry" [isMandatory]="false" label="Ville"
-                  propertyName="domActivityAutocompleteCity"></autocomplete-city>
-              </div>
-              <div class="col-md-5">
-                <select-country class="col-md-5" [(model)]="provision.domiciliation.activityCountry" label="Pays"
-                  [form]="informationForm" propertyName="domActivityCountry" [isMandatory]="false" [isDisabled]="false">
-                </select-country>
-              </div>
-            </div>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <div class="col">
-                <generic-textarea [(model)]="provision.domiciliation.activityDescription"
-                  label="Rédiger toute les informations liées à votre activité" [form]="informationForm"
-                  propertyName="activityDescription" [isMandatory]="false" [isDisabled]="false">
-                </generic-textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-------------- Adresse de conservation des documents comptables ---------------->
-          <div class="quotation-container">
-            <h6><i class="ai-briefcase me-2"></i>Adresse de conservation des documents comptables</h6>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <div class="col">
-                <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationAddress"
-                  label="Adresse" [form]="informationForm" propertyName="accountingDocumentsConservationAddress"
-                  [isMandatory]="false" [isDisabled]="false" [maxLength]="60">
-                </generic-input>
-              </div>
-            </div>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <div class="col">
-                <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationCedexComplement"
-                  label="Complément d'adresse (facultatif)" [form]="informationForm"
-                  propertyName="accountingDocumentsConservationCedexComplement" [isMandatory]="false"
-                  [isDisabled]="false" [maxLength]="60">
-                </generic-input>
-              </div>
-            </div>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <div class="col-md-2">
-                <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationPostalCode"
-                  label="Code postal" [form]="informationForm" propertyName="accountingDocumentsConservationPostalCode"
-                  [isMandatory]="false" (onFormBlur)="findCityForAccountingDomiciliation(provision.domiciliation)"
-                  [isDisabled]="false" [maxLength]="10">
-                </generic-input>
-              </div>
-              <div class="col-md-5">
-                <autocomplete-city [(model)]="provision.domiciliation.accountingDocumentsConservationCity"
-                  [form]="informationForm"
-                  [modelCountry]="provision.domiciliation.accountingDocumentsConservationCountry" [isMandatory]="false"
-                  label="Ville" propertyName="accountingDocumentsConservationCity"></autocomplete-city>
-              </div>
-              <div class="col-md-5">
-                <select-country class="col-md-5"
-                  [(model)]="provision.domiciliation.accountingDocumentsConservationCountry" label="Pays"
-                  [form]="informationForm" propertyName="accountingDocumentsConservationCountry" [isMandatory]="false"
-                  [isDisabled]="false">
-                </select-country>
-              </div>
-            </div>
-          </div>
-
-          <!-------------- Représentant légal ---------------->
-          <div class="quotation-container">
-            <h6 class="col"><i class="ai-user me-2"></i>Représentant légal</h6>
-            <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-              <generic-toggle [(model)]="provision.domiciliation.isLegalPerson" label="Personne morale ?"
-                [form]="informationForm" propertyName="isLegalPerson"></generic-toggle>
-            </div>
-            <!-- If not personne morale -->
-            <div *ngIf="!provision.domiciliation.isLegalPerson">
-              <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                <div class="col-md-2">
-                  <select-civility [(model)]="provision.domiciliation.legalGardianCivility" label="Civilité"
-                    [form]="informationForm" propertyName="legalGardianCivility" [isMandatory]="false"
-                    [isDisabled]="false">
-                  </select-civility>
-                </div>
-                <div class="col-md-5">
-                  <generic-input [(model)]="provision.domiciliation.legalGardianLastname" label="Nom"
-                    [form]="informationForm" propertyName="legalGardianLastname" [isMandatory]="false"
-                    [isDisabled]="false" [maxLength]="20">
-                  </generic-input>
-                </div>
-                <div class="col-md-5">
-                  <generic-input [(model)]="provision.domiciliation.legalGardianFirstname" label="Prénom"
-                    [form]="informationForm" propertyName="legalGardianFirstname" [isMandatory]="false"
-                    [isDisabled]="false" [maxLength]="20">
-                  </generic-input>
-                </div>
-              </div>
-              <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                <div class="col">
-                  <generic-input [(model)]="provision.domiciliation.legalGardianAddress" label="Adresse"
-                    [form]="informationForm" propertyName="legalGardianAddress" [isMandatory]="false"
-                    [isDisabled]="false" [maxLength]="60">
-                  </generic-input>
-                </div>
-              </div>
-              <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                <div class="col-md-2">
-                  <generic-input [(model)]="provision.domiciliation.legalGardianPostalCode" label="Code postal"
-                    [form]="informationForm" propertyName="legalGardianPostalCode" [isMandatory]="false"
-                    (onFormBlur)="findCityForLegalGardianDomiciliation(provision.domiciliation)" [isDisabled]="false"
-                    [maxLength]="10">
-                  </generic-input>
-                </div>
-                <div class="col-md-5">
-                  <autocomplete-city [(model)]="provision.domiciliation.legalGardianCity" [form]="informationForm"
-                    [modelCountry]="provision.domiciliation.legalGardianCountry" [isMandatory]="false" label="Ville"
-                    propertyName="legalGardianAutocompleteCity"></autocomplete-city>
-                </div>
-                <div class="col-md-5">
-                  <select-country class="col-md-5" [(model)]="provision.domiciliation.legalGardianCountry" label="Pays"
-                    [form]="informationForm" propertyName="legalGardianCountry" [isMandatory]="false"
-                    [isDisabled]="false">
-                  </select-country>
-                </div>
-              </div>
-              <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                <div class="col-md-6">
-                  <generic-input [(model)]="provision.domiciliation.legalGardianJob" label="Fonction"
-                    [form]="informationForm" propertyName="legalGardianJob" [isMandatory]="false" [isDisabled]="false"
-                    [maxLength]="20">
-                  </generic-input>
-                </div>
-                <div class="col-md-6">
-                  <generic-input class="col mt-3" [(model)]="newMailLegalGardian"
-                    label="Adresse(s) mail(s) (entrer pour valider)" [form]="informationForm"
-                    propertyName="newMailLegalGardian" [isMandatory]="false" [isDisabled]="false" type="email"
-                    [icon]="'mail'" (onEnter)="addLegalGardianMail(provision.domiciliation)"></generic-input>
-                  <ul class="list-group mt-1">
-                    <li class="list-group-item py-0" *ngFor="let mail of provision.domiciliation.legalGardianMails">
-                      <div class="d-flex flex-wrap w-100">
-                        <div>
-                          <a class="nav-link fs-xl p-2" (click)="deleteLegalGardianMail(mail, provision.domiciliation)">
-                            <i class="ai-trash"></i>
-                          </a>
-                        </div>
-                        <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                <div class="col-md-2">
-                  <generic-date-picker [(model)]="provision.domiciliation.legalGardianBirthdate"
-                    label="Date de naissance" [form]="informationForm" propertyName="legalGardianBirthdate"
-                    [isMandatory]="false" [isDisabled]="false" [maxDate]="getCurrentDate()">
-                  </generic-date-picker>
-                </div>
-                <div class="col-md-6">
-                  <generic-input [(model)]="provision.domiciliation.legalGardianPlaceOfBirth" label="Lieu de naissance"
-                    [form]="informationForm" propertyName="legalGardianPlaceOfBirth" [isMandatory]="false"
-                    [isDisabled]="false" [maxLength]="60">
-                  </generic-input>
-                </div>
-                <div class="col-md-4">
-                  <generic-input class="col-md-6 mt-0" [(model)]="newPhoneLegalGardian"
-                    label="Téléphone(s) (entrer pour valider)" [form]="informationForm"
-                    propertyName="newPhoneLegalGardian" [isMandatory]="false" [isDisabled]="false" [icon]="'phone'"
-                    [maxLength]="13" (onEnter)="addDomiciliationPhone(provision.domiciliation)">
-                  </generic-input>
-                  <ul class="list-group">
-                    <li class="list-group-item py-0" *ngFor="let phone of provision.domiciliation.legalGardianPhones">
-                      <div class="d-flex flex-wrap w-100">
-                        <div>
-                          <a class="nav-link fs-xl p-2"
-                            (click)="deletePhoneForDomiciliation(phone, provision.domiciliation)">
-                            <i class="ai-trash"></i>
-                          </a>
-                        </div>
-                        <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!-- If personne morale -->
-            <div *ngIf="provision.domiciliation.isLegalPerson">
-              <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                <div class="col-md-6">
-                  <autocomplete-legal-form [(model)]="provision.domiciliation.legalGardianLegalForm"
-                    [form]="informationForm" label="Forme juridique" [isDisabled]="false"
-                    propertyName="legalGardianLegalForm" [isMandatory]="true">
-                  </autocomplete-legal-form>
-                </div>
-                <div class="col-md-6">
-                  <generic-input [(model)]="provision.domiciliation.legalGardianDenomination" label="Dénomination"
-                    [form]="informationForm" propertyName="legalGardianDenomination" [isMandatory]="false"
-                    [isDisabled]="false" [maxLength]="60">
-                  </generic-input>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-    </div>
+            </ng-template>
+          </li>
+        </ng-container>
+      </ul>
+      <div [ngbNavOutlet]="nav"></div>
+    </ng-container>
   </section>
+
 
   <div
     class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-3">
@@ -624,8 +600,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
-      <button type="button" class="btn btn-danger ms-2" (click)="confirmGoBack();modal.dismiss()"
-        data-bs-dismiss="modal">Confirmer</button>
+      <button type="button" class="btn btn-danger ms-2" (click)="confirmGoBack();modal.dismiss()">Confirmer</button>
     </div>
   </div>
 </ng-template>

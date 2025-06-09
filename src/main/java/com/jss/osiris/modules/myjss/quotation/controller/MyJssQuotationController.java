@@ -1204,15 +1204,11 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/services")
 	public ResponseEntity<Boolean> addOrUpdateServices(@RequestParam List<Integer> serviceTypeIds,
-			@RequestParam("affaireId") Integer affaireId, @RequestParam("affaireOrderId") Integer affaireOrderId)
+			@RequestParam("affaireOrderId") Integer affaireOrderId)
 			throws OsirisException {
 
 		Affaire affaire = null;
 		AssoAffaireOrder assoAffaireOrder = null;
-
-		if (affaireId != null) {
-			affaire = affaireService.getAffaire(affaireId);
-		}
 
 		if (affaireOrderId != null) {
 			assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(affaireOrderId);
@@ -1230,7 +1226,7 @@ public class MyJssQuotationController {
 			throw new OsirisValidationException("servicesTypeIds");
 		}
 
-		if (affaire != null && assoAffaireOrder != null) {
+		if (assoAffaireOrder != null) {
 			serviceService.addOrUpdateServices(serviceTypes, affaireOrderId, null);
 
 			return new ResponseEntity<>(true, HttpStatus.OK);

@@ -57,50 +57,50 @@
         <span class="placeholder placeholder-sm col-8"></span>
       </p>
     </div>
-    <ul *ngIf="serviceFamilies" class="nav nav-tabs" role="tablist">
-      <ng-container *ngFor="let serviceFamily of serviceFamilies">
-        <li class="nav-item "
-          *ngIf="quotation && selectedAssoIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret!=null || hasServiceForUnregisteredAffaire(serviceFamily) ">
-          <a class="nav-link quotation-tabs"
-            [ngClass]="{'active' : selectedServiceFamily && selectedServiceFamily.id == serviceFamily.id}"
-            data-bs-toggle="tab" role="tab" (click)="selecteServiceFamily(serviceFamily)">
-            <i class="{{serviceFamily.myJssIcon}} me-2"></i>
-            {{serviceFamily.customLabel}}
-          </a>
-        </li>
+
+    <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs ">
+      <ng-container *ngIf="serviceFamilies">
+        <ng-container *ngFor="let serviceFamily of serviceFamilies;let serviceFamilyIndex=index">
+          <li [ngbNavItem]="serviceFamilyIndex" class="nav-item "
+            *ngIf="quotation && selectedAssoIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret!=null || hasServiceForUnregisteredAffaire(serviceFamily) ">
+            <button class="nav-link quotation-tabs" ngbNavLink (click)="selecteServiceFamily(serviceFamily)"> <i
+                class="{{serviceFamily.myJssIcon}} me-2"></i>{{serviceFamily.customLabel}}</button>
+            <ng-template ngbNavContent *ngIf="selectedServiceFamily">
+              <div class="quotation-container">
+                <div class="pb-3">
+                  <generic-input [(model)]="searchtext" label="Rechercher" [form]="servicesForm"
+                    propertyName="servicesSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+                    [icon]="'search'"></generic-input>
+                </div>
+                <!-- Stacked checkboxes -->
+                <div class="d-flex flex-column flex-md-row flex-wrap">
+                  <ng-container *ngFor="let service of selectedServiceFamily.services ; let indexService  =index">
+                    <div class="form-check service-item m-1"
+                      *ngIf="service.customLabel.toLocaleLowerCase().indexOf(searchtext.toLocaleLowerCase())>=0 && selectedAssoIndex!=null
+              && (quotation && selectedAssoIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret || service.isRequiringNewUnregisteredAffaire)">
+                      <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
+                        (click)="removeServiceFromCurrentAffaire(service)"
+                        *ngIf="getServiceIndexInCurrentAffaire(service)>=0" checked>
+                      <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
+                        (click)="addServiceToCurrentAffaire(service)"
+                        *ngIf="getServiceIndexInCurrentAffaire(service)<0">
+                      <label class="form-check-label" [for]="'ex-check-'+indexService">{{service.customLabel }}</label>
+                    </div>
+                  </ng-container>
+                </div>
+                <div class="text-end">
+                  <button type="button" class="btn btn-outline-primary rounded-1 mt-5 ms-auto"
+                    [ngClass]="{'btn-secondary' : applyToAllAffaires}" (click)="applyToAllAffaires=!applyToAllAffaires"
+                    *ngIf="quotation && quotation.assoAffaireOrders.length>1"><i class="ai-check me-2"
+                      *ngIf="applyToAllAffaires"></i> Appliquer mes choix à toutes les affaires</button>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+        </ng-container>
       </ng-container>
     </ul>
-
-    <!-- Tabs content -->
-    <div class="tab-content quotation-container" *ngIf="selectedServiceFamily">
-      <div class="tab-pane fade show active" id="home" role="tabpanel">
-        <div class="pb-3">
-          <generic-input [(model)]="searchtext" label="Rechercher" [form]="servicesForm" propertyName="servicesSearched"
-            [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false" [icon]="'search'"></generic-input>
-        </div>
-        <!-- Stacked checkboxes -->
-        <div class="d-flex flex-column flex-md-row flex-wrap">
-          <ng-container *ngFor="let service of selectedServiceFamily.services ; let indexService  =index">
-            <div class="form-check service-item m-1"
-              *ngIf="service.customLabel.toLocaleLowerCase().indexOf(searchtext.toLocaleLowerCase())>=0 && selectedAssoIndex!=null
-              && (quotation && selectedAssoIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret || service.isRequiringNewUnregisteredAffaire)">
-              <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
-                (click)="removeServiceFromCurrentAffaire(service)" *ngIf="getServiceIndexInCurrentAffaire(service)>=0"
-                checked>
-              <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
-                (click)="addServiceToCurrentAffaire(service)" *ngIf="getServiceIndexInCurrentAffaire(service)<0">
-              <label class="form-check-label" [for]="'ex-check-'+indexService">{{service.customLabel }}</label>
-            </div>
-          </ng-container>
-        </div>
-      </div>
-      <div class="text-end">
-        <button type="button" class="btn btn-outline-primary rounded-1 mt-5 ms-auto"
-          [ngClass]="{'btn-secondary' : applyToAllAffaires}" (click)="applyToAllAffaires=!applyToAllAffaires"
-          *ngIf="quotation && quotation.assoAffaireOrders.length>1"><i class="ai-check me-2"
-            *ngIf="applyToAllAffaires"></i> Appliquer mes choix à toutes les affaires</button>
-      </div>
-    </div>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
   </section>
 
   <section class="py-4">

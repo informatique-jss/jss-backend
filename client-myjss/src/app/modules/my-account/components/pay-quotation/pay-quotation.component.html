@@ -18,68 +18,64 @@
         Paiement </h2>
     </div>
 
-    <ul class="nav nav-tabs" role="tablist">
-      <li class="nav-item">
-        <a href="#cb" class="nav-link rounded-pill active" data-bs-toggle="tab" role="tab">
-          Par carte bleue
-        </a>
+    <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <button ngbNavLink>Par carte bleue</button>
+        <ng-template ngbNavContent>
+          <div class="alert alert-info" role="alert">
+            Le paiement de ce devis vaudra validation et création de la commande correspondante.
+          </div>
+          <p>Pour payer par carte bleue un montant de <strong>{{invoiceSummary.remainingToPay | currency:'EUR'
+              }}</strong>, utilisez le
+            bouton ci-dessous ou flashez le QR code ci-dessous</p>
+          <div class="mt-3"><generic-input [(model)]="defaultMail" label="Mail de réception du reçu"
+              [form]="payOrderForm" propertyName="defaultMail" [isMandatory]="true" [isDisabled]="false"
+              [isDisplayLabel]="true" (onFormChange)="refreshQrCode()" [icon]="'mail'"></generic-input></div>
+          <div class="error color-red" *ngIf="!qrCodeRecourse">Le mail de réception du reçu est obligatoire</div>
+          <div class="picture d-flex justify-content-center" *ngIf="qrCodeRecourse">
+            <img id="img" [src]="qrCodeRecourse">
+          </div>
+          <div class="text-center pt-1 pt-sm-2">
+            <div class="btn-group   " role="group" aria-label="Outline button group">
+              <button type="button" class="btn btn-primary" (click)="payedCb()" *ngIf="qrCodeImage">Payer en
+                ligne</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="cancelPay()">Fermer</button>
+            </div>
+          </div>
+        </ng-template>
       </li>
-      <li class="nav-item">
-        <a href="#bankTransfert" class="nav-link rounded-pill" data-bs-toggle="tab" role="tab">
-          Par virement
-        </a>
+      <li [ngbNavItem]="2">
+        <button ngbNavLink>Par virement</button>
+        <ng-template ngbNavContent>
+          <div class="alert alert-info" role="alert">
+            Le paiement de ce devis vaudra validation et création de la commande correspondante.
+          </div>
+          <p>Pour payer par virement le montant de <strong>{{invoiceSummary.remainingToPay | currency:'EUR' }}</strong>,
+            utilisez les
+            informations suivantes :</p>
+          <p class="text-center"> {{JSS_IBAN}} <i style="cursor: pointer;" [copy-clipboard]="JSS_IBAN"
+              (copied)="notifyCopied( )" class="ai-copy" placement="right"
+              ngbTooltip="Copier dans le presse-papier"></i>
+          </p>
+          <p class="text-center"> {{JSS_BIC}} <i style="cursor: pointer;" [copy-clipboard]="JSS_BIC"
+              (copied)="notifyCopied( )" class="ai-copy" placement="right"
+              ngbTooltip="Copier dans le presse-papier"></i>
+          </p>
+          <div class="alert alert-danger" role="alert">
+            Veuillez indiquer absolument la référence <span class="color-red">{{idQuotation}}</span> <i
+              style="cursor: pointer;" [copy-clipboard]="JSS_BIC" (copied)="notifyCopied( )" class="ai-copy"
+              placement="right" ngbTooltip="Copier dans le presse-papier"></i> de la commande
+            dans le libellé de votre
+            virement
+          </div>
+          <div class="text-center pt-1 pt-sm-2">
+            <div class="btn-group   " role="group" aria-label="Outline button group">
+              <button type="button" class="btn btn-outline-secondary" (click)="cancelPay()">Fermer</button>
+            </div>
+          </div>
+        </ng-template>
       </li>
     </ul>
-
-    <div class="tab-content">
-      <div class="tab-pane fade show active" id="cb" role="tabpanel">
-        <div class="alert alert-info" role="alert">
-          Le paiement de ce devis vaudra validation et création de la commande correspondante.
-        </div>
-        <p>Pour payer par carte bleue un montant de <strong>{{invoiceSummary.remainingToPay | currency:'EUR'
-            }}</strong>, utilisez le
-          bouton ci-dessous ou flashez le QR code ci-dessous</p>
-        <div class="mt-3"><generic-input [(model)]="defaultMail" label="Mail de réception du reçu" [form]="payOrderForm"
-            propertyName="defaultMail" [isMandatory]="true" [isDisabled]="false" [isDisplayLabel]="true"
-            (onFormChange)="refreshQrCode()" [icon]="'mail'"></generic-input></div>
-        <div class="error color-red" *ngIf="!qrCodeRecourse">Le mail de réception du reçu est obligatoire</div>
-        <div class="picture d-flex justify-content-center" *ngIf="qrCodeRecourse">
-          <img id="img" [src]="qrCodeRecourse">
-        </div>
-        <div class="text-center pt-1 pt-sm-2">
-          <div class="btn-group   " role="group" aria-label="Outline button group">
-            <button type="button" class="btn btn-primary" (click)="payedCb()" *ngIf="qrCodeImage">Payer en
-              ligne</button>
-            <button type="button" class="btn btn-outline-secondary" (click)="cancelPay()">Fermer</button>
-          </div>
-        </div>
-      </div>
-      <div class="tab-pane fade show " id="bankTransfert" role="tabpanel">
-        <div class="alert alert-info" role="alert">
-          Le paiement de ce devis vaudra validation et création de la commande correspondante.
-        </div>
-        <p>Pour payer par virement le montant de <strong>{{invoiceSummary.remainingToPay | currency:'EUR' }}</strong>,
-          utilisez les
-          informations suivantes :</p>
-        <p class="text-center"> {{JSS_IBAN}} <i style="cursor: pointer;" [copy-clipboard]="JSS_IBAN"
-            (copied)="notifyCopied( )" class="ai-copy" placement="right" ngbTooltip="Copier dans le presse-papier"></i>
-        </p>
-        <p class="text-center"> {{JSS_BIC}} <i style="cursor: pointer;" [copy-clipboard]="JSS_BIC"
-            (copied)="notifyCopied( )" class="ai-copy" placement="right" ngbTooltip="Copier dans le presse-papier"></i>
-        </p>
-        <div class="alert alert-danger" role="alert">
-          Veuillez indiquer absolument la référence <span class="color-red">{{idQuotation}}</span> <i
-            style="cursor: pointer;" [copy-clipboard]="JSS_BIC" (copied)="notifyCopied( )" class="ai-copy"
-            placement="right" ngbTooltip="Copier dans le presse-papier"></i> de la commande
-          dans le libellé de votre
-          virement
-        </div>
-        <div class="text-center pt-1 pt-sm-2">
-          <div class="btn-group   " role="group" aria-label="Outline button group">
-            <button type="button" class="btn btn-outline-secondary" (click)="cancelPay()">Fermer</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
   </div>
 </section>

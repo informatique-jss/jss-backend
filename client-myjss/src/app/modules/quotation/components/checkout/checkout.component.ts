@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { getDocument } from '../../../../libs/DocumentHelper';
@@ -47,7 +47,8 @@ import { CityService } from '../../services/city.service';
     SelectCountryComponent,
     SelectCivilityComponent,
     SelectBillingLabelTypeComponent,
-    NgbDropdownModule
+    NgbDropdownModule,
+    NgbNavModule,
   ]
 })
 export class CheckoutComponent implements OnInit {
