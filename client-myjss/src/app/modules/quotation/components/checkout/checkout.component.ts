@@ -94,6 +94,11 @@ export class CheckoutComponent implements OnInit {
   quotationPriceObservableRef: Subscription | undefined;
 
   userScope: Responsable[] | undefined;
+
+  subscriptionType: string | undefined;
+  isPriceReductionForSubscription: boolean = false;
+  idArticle: number | undefined;
+
   capitalizeName = capitalizeName;
 
   constructor(

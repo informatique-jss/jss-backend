@@ -855,6 +855,26 @@ public class Constant implements Serializable, IId {
 	private ServiceType serviceTypeOther;
 
 	@ManyToOne
+	@JoinColumn(name = "id_service_type_annual_subscription")
+	private ServiceType serviceTypeAnnualSubscription;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_monthly_subscription")
+	private ServiceType serviceTypeMonthlySubscription;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_kiosk_newspaper_buy")
+	private ServiceType serviceTypeKioskNewspaperBuy;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_unique_article_buy")
+	private ServiceType serviceTypeUniqueArticleBuy;
+
+	@ManyToOne
+	@JoinColumn(name = "id_special_offer_jss_subscription_reduction")
+	private SpecialOffer specialOfferJssSubscriptionReduction;
+
+	@ManyToOne
 	@JoinColumn(name = "id_service_type_secondary_center_opening")
 	private ServiceType serviceTypeSecondaryCenterOpeningAlAndFormality;
 
@@ -2415,6 +2435,46 @@ public class Constant implements Serializable, IId {
 
 	public void setServiceTypeOther(ServiceType serviceTypeOther) {
 		this.serviceTypeOther = serviceTypeOther;
+	}
+
+	public ServiceType getServiceTypeAnnualSubscription() {
+		return serviceTypeAnnualSubscription;
+	}
+
+	public void setServiceTypeAnnualSubscription(ServiceType serviceTypeAnnualSubscription) {
+		this.serviceTypeAnnualSubscription = serviceTypeAnnualSubscription;
+	}
+
+	public ServiceType getServiceTypeMonthlySubscription() {
+		return serviceTypeMonthlySubscription;
+	}
+
+	public void setServiceTypeMonthlySubscription(ServiceType serviceTypeMonthlySubscription) {
+		this.serviceTypeMonthlySubscription = serviceTypeMonthlySubscription;
+	}
+
+	public ServiceType getServiceTypeKioskNewspaperBuy() {
+		return serviceTypeKioskNewspaperBuy;
+	}
+
+	public void setServiceTypeKioskNewspaperBuy(ServiceType serviceTypeKioskNewspaperBuy) {
+		this.serviceTypeKioskNewspaperBuy = serviceTypeKioskNewspaperBuy;
+	}
+
+	public ServiceType getServiceTypeUniqueArticleBuy() {
+		return serviceTypeUniqueArticleBuy;
+	}
+
+	public void setServiceTypeUniqueArticleBuy(ServiceType serviceTypeUniqueArticleBuy) {
+		this.serviceTypeUniqueArticleBuy = serviceTypeUniqueArticleBuy;
+	}
+
+	public SpecialOffer getSpecialOfferJssSubscriptionReduction() {
+		return specialOfferJssSubscriptionReduction;
+	}
+
+	public void setSpecialOfferJssSubscriptionReduction(SpecialOffer specialOfferJssSubscriptionReduction) {
+		this.specialOfferJssSubscriptionReduction = specialOfferJssSubscriptionReduction;
 	}
 
 	public ProvisionType getProvisionTypeBilanPublication() {

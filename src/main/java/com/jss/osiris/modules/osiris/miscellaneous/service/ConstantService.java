@@ -27,6 +27,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
@@ -466,6 +467,16 @@ public interface ConstantService {
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
 
     public ServiceType getServiceTypeOther() throws OsirisException;
+
+    public ServiceType getServiceTypeAnnualSubscription() throws OsirisException;
+
+    public ServiceType getServiceTypeMonthlySubscription() throws OsirisException;
+
+    public ServiceType getServiceTypeKioskNewspaperBuy() throws OsirisException;
+
+    public ServiceType getServiceTypeUniqueArticleBuy() throws OsirisException;
+
+    public SpecialOffer getSpecialOfferJssSubscriptionReduction() throws OsirisException;
 
     public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() throws OsirisException;
 

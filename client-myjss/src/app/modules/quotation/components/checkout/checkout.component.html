@@ -60,8 +60,9 @@
         </div>
 
         <!-- Quick message -->
-        <div class="row"
-          *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0]">
+        <div class="row" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services 
+          && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0] && 
+          quotation.assoAffaireOrders[0].services[0].provisions[0].provisionFamilyType.label != 'Abonnement'">
           <div class="card form-check form-switch mb-4 py-4 ">
             <h2 class="pb-3">Gagnez du temps dans vos démarches !</h2>
             <div>
@@ -585,7 +586,8 @@
                       <strong>{{service.assoServiceDocuments.length}}</strong>
                       documents nécessaires
                       <br>
-                      <strong> {{asso.affaire.denomination}} - {{asso.affaire.address}} -
+                      <strong *ngIf="asso.affaire && asso.affaire.denomination"> {{asso.affaire.denomination}} -
+                        {{asso.affaire.address}} -
                         {{asso.affaire.postalCode}}</strong>
                     </p>
 

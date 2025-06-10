@@ -28,9 +28,11 @@ import jakarta.persistence.Table;
         @Index(name = "idx_subscription_validation_token", columnList = "validationToken", unique = true) })
 public class Subscription implements IId, Serializable {
 
-    public static String ANNUAL_SUBSCRIPTION = "ANNUAL_SUBSCRIPTION";
-    public static String ONE_POST_SUBSCRIPTION = "ONE_POST_SUBSCRIPTION";
-    public static String SHARED_POST_SUBSCRIPTION = "SHARED_POST_SUBSCRIPTION";
+    public final static String ANNUAL_SUBSCRIPTION = "ANNUAL_SUBSCRIPTION";
+    public final static String MONTHLY_SUBSCRIPTION = "MONTHLY_SUBSCRIPTION";
+    public final static String ONE_POST_SUBSCRIPTION = "ONE_POST_SUBSCRIPTION";
+    public final static String SHARED_POST_SUBSCRIPTION = "SHARED_POST_SUBSCRIPTION";
+    public final static String NEWSPAPER_KIOSK_BUY = "NEWSPAPER_KIOSK_BUY";
 
     @Id
     @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)

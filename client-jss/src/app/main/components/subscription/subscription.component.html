@@ -1,3 +1,73 @@
-<p>
-  subscription works!
-</p>
+<div class="container">
+  <div class="bg-container">
+    <div class="w-100 justify-content-between">
+      <div class="container header-hub-bg d-flex align-items-center">
+        <div class="row w-100 text-center p-3 align-items-center justify-content-center d-flex">
+          <h2 class="col-12 fw-bold">Découvrez nos abonnements </h2>
+          <h2 class="col-12">au Journal Spécial des sociétés</h2>
+          <div class="row justify-content-center">
+            <div class="col-auto">Annuel</div>
+            <generic-toggle class="col-auto justify-content-center d-flex" [(model)]="isMonthlySubscription" label=""
+              [form]="subscriptionForm" propertyName="isMonthlySubscription" [isDisabled]="false"></generic-toggle>
+            <div class="col-auto">Mensuel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subscription cards ANNUAL -->
+    <div *ngIf="!isMonthlySubscription" class="row justify-content-center">
+      <div class="col-4">
+        <div class="card">
+          <div class="card-header">
+            Offre Universitaire annuelle
+          </div>
+          <div class="card-body">
+            <a class="btn btn-yellow btn-yellow-burger w-100"
+              (click)="subscribe($event, false, true, null)">S'abonner</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <div class="card-header ">
+            Offre Standard annuelle
+          </div>
+          <div class="card-body">
+            <a class="btn btn-yellow btn-yellow-burger w-100"
+              (click)="subscribe($event, false, false, null)">S'abonner</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subscription cards MONTHLY -->
+    <div *ngIf="isMonthlySubscription" class="row justify-content-center">
+      <div class="col-4">
+        <div class="card">
+          <div class="card-header">
+            Offre Universitaire mensuelle
+          </div>
+          <div class="card-body">
+            <a class="btn btn-yellow btn-yellow-burger w-100"
+              (click)="subscribe($event, true, true, null)">S'abonner</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <div class="card-header ">
+            Offre Standard mensuelle
+          </div>
+          <div class="card-body">
+            <a class="btn btn-yellow btn-yellow-burger w-100"
+              (click)="subscribe($event, true, false, null)">S'abonner</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="container">
+</div>

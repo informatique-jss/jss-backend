@@ -1570,6 +1570,42 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeAnnualSubscription" [form]="constantForm"
+                propertyName="serviceTypeAnnualSubscription" [isMandatory]="true"
+                label="Service - Achat abonnement annuel" [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeMonthlySubscription" [form]="constantForm"
+                propertyName="serviceTypeMonthlySubscription" [isMandatory]="true"
+                label="Service - Achat abonnemet mensuel" [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeKioskNewspaperBuy" [form]="constantForm"
+                propertyName="serviceTypeKioskNewspaperBuy" [isMandatory]="true"
+                label="Service - Achat d'un article du kiosque" [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeUniqueArticleBuy" [form]="constantForm"
+                propertyName="serviceTypeUniqueArticleBuy" [isMandatory]="true"
+                label="Service - Achat d'un article du JSS" [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.specialOfferJssSubscriptionReduction" [form]="constantForm"
+                propertyName="specialOfferJssSubscriptionReduction" [isMandatory]="true"
+                label="Offre spéciale - Abonnement JSS média" [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-service-field-type [(model)]="constant.furtherInformationServiceFieldType"
                 label="Type de champ du service - Informations complémentaires" [form]="constantForm"
                 propertyName="furtherInformationServiceFieldType" [isMandatory]="true"

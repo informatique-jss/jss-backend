@@ -826,6 +826,26 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.serviceTypeOther;
   }
 
+  getServiceTypeAnnualSubscription() {
+    return this.constant.serviceTypeAnnualSubscription;
+  }
+
+  getServiceTypeMonthlySubscription() {
+    return this.constant.serviceTypeMonthlySubscription;
+  }
+
+  getServiceTypeKioskNewspaperBuy() {
+    return this.constant.serviceTypeKioskNewspaperBuy;
+  }
+
+  getServiceTypeUniqueArticleBuy() {
+    return this.constant.serviceTypeUniqueArticleBuy;
+  }
+
+  getSpecialOfferJssSubscriptionReduction() {
+    return this.constant.specialOfferJssSubscriptionReduction;
+  }
+
   getDateAccountingClosureForAll() {
     return this.constant.dateAccountingClosureForAll;
   }
