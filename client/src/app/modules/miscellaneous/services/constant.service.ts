@@ -50,6 +50,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.accountingJournalSales;
   }
 
+  getAccountingJournalSituation() {
+    return this.constant.accountingJournalSituation;
+  }
+
   getAccountingJournalSalary() {
     return this.constant.accountingJournalSalary;
   }
@@ -528,6 +532,10 @@ export class ConstantService extends AppRestService<Constant> {
 
   getEmployeeBillingResponsible() {
     return this.constant.employeeBillingResponsible;
+  }
+
+  getEmployeeProductionDirector() {
+    return this.constant.employeeProductionDirector;
   }
 
   getEmployeeMailResponsible() {

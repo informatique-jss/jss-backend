@@ -394,8 +394,10 @@ public class VatServiceImpl implements VatService {
                 // Collected
                 if (invoiceItem.getVat().getRate().compareTo(constantService.getVatTwenty().getRate()) == 0)
                     invoiceItem.setVat(constantService.getVatTwenty());
-                if (invoiceItem.getVat().getRate().compareTo(constantService.getVatTwo().getRate()) == 0)
+                else if (invoiceItem.getVat().getRate().compareTo(constantService.getVatTwo().getRate()) == 0)
                     invoiceItem.setVat(constantService.getVatTwo());
+                else
+                    invoiceItem.setVat(null); // Not a common VAT, so use computation to find the right one
             }
     }
 }

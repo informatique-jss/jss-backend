@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
@@ -11,6 +12,7 @@ import { AppService } from 'src/app/services/app.service';
 import { AccountingJournal } from '../../model/AccountingJournal';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordService } from '../../services/accounting.record.service';
+import { CounterPartDialogComponent } from '../counter-part-dialog/counter-part-dialog.component';
 @Component({
   selector: 'add-accounting-record',
   templateUrl: './add-accounting-record.component.html',
@@ -30,6 +32,7 @@ export class AddAccountingRecordComponent implements OnInit {
     private constantService: ConstantService,
     private activatedRoute: ActivatedRoute,
     private location: Location,
+    public counterPartDialog: MatDialog,
   ) {
   }
 
@@ -40,15 +43,18 @@ export class AddAccountingRecordComponent implements OnInit {
   accountingJournalSales: AccountingJournal = this.constantService.getAccountingJournalSales();
   accountingJournalPurchases: AccountingJournal = this.constantService.getAccountingJournalPurchases();
   accountingJournalANouveau: AccountingJournal = this.constantService.getAccountingJournalANouveau();
+  accountingJournalSituation: AccountingJournal = this.constantService.getAccountingJournalSituation();
 
   saveObservableSubscription: Subscription = new Subscription;
 
   refreshTable: Subject<void> = new Subject<void>();
 
+  temporaryOperationId: number | undefined;
+
   ngOnInit() {
     this.addAccountingRecord();
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
-    let temporaryOperationId = this.activatedRoute.snapshot.params.temporaryOperationId;
+    this.temporaryOperationId = this.activatedRoute.snapshot.params.temporaryOperationId;
 
     this.setOperationDateInterval();
 
@@ -79,8 +85,8 @@ export class AddAccountingRecordComponent implements OnInit {
         this.saveOperations();
     });
 
-    if (url[1].path == "edit" && temporaryOperationId) {
-      this.accountingRecordService.getAccountingRecordsByTemporaryOperationId(temporaryOperationId).subscribe(response => {
+    if (url[1].path == "edit" && this.temporaryOperationId) {
+      this.accountingRecordService.getAccountingRecordsByTemporaryOperationId(this.temporaryOperationId).subscribe(response => {
         this.accountingRecords = response;
       });
     }
@@ -188,5 +194,17 @@ export class AddAccountingRecordComponent implements OnInit {
     this.minDate.setMonth(0);
     this.minDate.setDate(1);
     this.maxDate.setDate(this.maxDate.getDate() + 1);
+  }
+
+  counterPart() {
+    if (this.temporaryOperationId) {
+      let counterPartDialogRef = this.counterPartDialog.open(CounterPartDialogComponent, {
+      });
+      counterPartDialogRef.afterClosed().subscribe(response => {
+        this.accountingRecordService.counterPart(this.temporaryOperationId!, response).subscribe(response => {
+          this.location.back();
+        })
+      });
+    }
   }
 }

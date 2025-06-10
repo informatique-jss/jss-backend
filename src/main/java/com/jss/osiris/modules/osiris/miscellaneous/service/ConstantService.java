@@ -71,6 +71,8 @@ public interface ConstantService {
 
     public AccountingJournal getAccountingJournalSales() throws OsirisException;
 
+    public AccountingJournal getAccountingJournalSituation() throws OsirisException;
+
     public AccountingJournal getAccountingJournalSalary() throws OsirisException;
 
     public AccountingJournal getAccountingJournalPurchases() throws OsirisException;
@@ -314,6 +316,8 @@ public interface ConstantService {
     public AssignationType getAssignationTypeEmployee() throws OsirisException;
 
     public Employee getEmployeeBillingResponsible() throws OsirisException;
+
+    public Employee getEmployeeProductionDirector() throws OsirisException;
 
     public Employee getEmployeeMailResponsible() throws OsirisException;
 

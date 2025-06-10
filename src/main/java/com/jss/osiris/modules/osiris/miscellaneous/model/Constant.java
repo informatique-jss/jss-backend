@@ -83,6 +83,10 @@ public class Constant implements Serializable, IId {
 	private AccountingJournal accountingJournalSales;
 
 	@ManyToOne
+	@JoinColumn(name = "id_accounting_journal_situation")
+	private AccountingJournal accountingJournalSituation;
+
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_purchases")
 	private AccountingJournal accountingJournalPurchases;
 
@@ -544,6 +548,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_employee_billing_responsible")
 	private Employee employeeBillingResponsible;
+
+	@ManyToOne
+	@JoinColumn(name = "id_employee_production_director")
+	private Employee employeeProductionDirector;
 
 	@ManyToOne
 	@JoinColumn(name = "id_employee_mail_responsible")
@@ -2869,6 +2877,22 @@ public class Constant implements Serializable, IId {
 
 	public void setPublishingDepartmentIdf(PublishingDepartment publishingDepartmentIdf) {
 		this.publishingDepartmentIdf = publishingDepartmentIdf;
+	}
+
+	public Employee getEmployeeProductionDirector() {
+		return employeeProductionDirector;
+	}
+
+	public void setEmployeeProductionDirector(Employee employeeProductionDirector) {
+		this.employeeProductionDirector = employeeProductionDirector;
+	}
+
+	public AccountingJournal getAccountingJournalSituation() {
+		return accountingJournalSituation;
+	}
+
+	public void setAccountingJournalSituation(AccountingJournal accountingJournalSituation) {
+		this.accountingJournalSituation = accountingJournalSituation;
 	}
 
 }
