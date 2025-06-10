@@ -1,10 +1,9 @@
-<div class="form-group">
-  <label class="form-label" *ngIf="label && label.length > 0" for="{{propertyName}}">{{label}}</label>
-  <div class="position-relative">
-    <input type="date" id="{{propertyName}}" class="form-control date-picker pe-5" [placeholder]="label" [min]="minDate"
-      [required]="isMandatory" [max]="maxDate" (change)="dateChange()">
-    <small *ngIf="hint && hint.length > 0" class="form-text text-muted">
-      {{hint}}
-    </small>
+<div class="position-relative ">
+  <div [formGroup]="form!" class="needs-validation">
+    <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
+      class="form-label">{{label}}</label>
+    <input class="form-control form-control" [min]="minDateText" [max]="maxDate" [id]="'fl-text'+uniqueId"
+      (change)="dateChange()" [required]="isMandatory" [formControlName]="propertyName" [placeholder]="label"
+      (blur)="blurForm()" type="date">
   </div>
 </div>

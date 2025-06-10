@@ -131,6 +131,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     QuotationService quotationService;
 
+    @Autowired
+    ConfrereService confrereService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -423,6 +426,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     break;
                                 }
                     }
+                    if (announcement.getDepartment() != null)
+                        announcement.setConfrere(confrereService
+                                .searchConfrereFilteredByDepartmentAndName(announcement.getDepartment(), "")
+                                .get(0));
 
                     // Handle status change
                     if (announcement.getAnnouncementStatus() != null
@@ -469,7 +476,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                                 if (currentAnnouncement.getAnnouncementStatus().getId()
                                         .equals(announcement.getAnnouncementStatus().getId()))
-                                    generateWord = !currentAnnouncement.getNotice().equals(announcement.getNotice());
+                                    generateWord = !currentAnnouncement.getNotice()
+                                            .equals(announcement.getNotice());
                             }
 
                             if (generateWord)

@@ -345,11 +345,7 @@ public class ServiceServiceImpl implements ServiceService {
                 provision.getAnnouncement().setNoticeTypes(noticeTypes);
             }
             provision.getAnnouncement().setNotice(noticeTemplate);
-            provision.getAnnouncement().setIsHeader(false);
-            provision.getAnnouncement().setIsHeaderFree(false);
-            provision.getAnnouncement().setIsProofReadingDocument(false);
-            provision.getAnnouncement().setAnnouncementStatus(
-                    announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
+
             if (affaire != null && affaire.getCity() != null)
                 provision.getAnnouncement().setDepartment(affaire.getCity().getDepartment());
         }

@@ -421,7 +421,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return true;
     }
 
-    private boolean isOnlyJssAnnouncement(CustomerOrder customerOrder, Boolean checkIsRedactedAndNotice)
+    private boolean isOnlyJssAnnouncement(CustomerOrder customerOrder, Boolean isReadyForBilling)
             throws OsirisException {
         if (!isOnlyAnnouncement(customerOrder))
             return false;
@@ -433,11 +433,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         if (provision.getAnnouncement() != null && !provision.getAnnouncement().getConfrere().getId()
                                 .equals(constantService.getConfrereJssSpel().getId()))
                             return false;
-                        if (checkIsRedactedAndNotice && provision.getAnnouncement() != null
+                        if (isReadyForBilling && provision.getAnnouncement() != null
                                 && (!provision.getIsRedactedByJss() || provision.getAnnouncement().getNotice() == null
-                                        || provision.getAnnouncement().getNotice().length() == 0))
+                                        || provision.getAnnouncement().getNotice().length() == 0
+                                        || provision.getAnnouncement().getPublicationDate() == null))
                             return false;
-
                     }
         return true;
     }
@@ -497,6 +497,26 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
                 }
             }
+
+            if (isOnlyJssAnnouncement(customerOrder, true)) {
+                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
+                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                    for (Service service : assoAffaireOrder.getServices())
+                        for (Provision provision : service.getProvisions())
+                            if (provision.getAnnouncement() != null) {
+                                provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
+                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
+                                provisionService.addOrUpdateProvision(provision);
+                                announcementService.generateAndStorePublicationFlag(provision.getAnnouncement(),
+                                        provision);
+                                announcementService.generateAndStorePublicationReceipt(provision.getAnnouncement(),
+                                        provision);
+                            }
+                this.addOrUpdateCustomerOrder(customerOrder, true, true);
+            }
+
+            // save once customer order to recompute invoice item before set it in stone...
+            this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
         }
 
         // Target : TO BILLED => notify
@@ -521,23 +541,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 "Impossible de facturer la commande, des actions documentaires sont encore en cours");
                     }
                 }
-            }
-
-            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
-                    && isOnlyJssAnnouncement(customerOrder, true)) {
-                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
-                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                    for (Service service : assoAffaireOrder.getServices())
-                        for (Provision provision : service.getProvisions())
-                            if (provision.getAnnouncement() != null) {
-                                provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
-                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
-                                provisionService.addOrUpdateProvision(provision);
-                                announcementService.generateAndStorePublicationFlag(provision.getAnnouncement(),
-                                        provision);
-                                announcementService.generateAndStorePublicationReceipt(provision.getAnnouncement(),
-                                        provision);
-                            }
             }
 
             // save once customer order to recompute invoice item before set it in stone...

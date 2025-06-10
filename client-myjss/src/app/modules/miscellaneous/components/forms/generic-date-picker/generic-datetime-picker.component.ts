@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { formatDateIso } from '../../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { GenericFormComponent } from '../generic-form.components';
 
@@ -16,6 +17,7 @@ export class GenericDatePickerComponent extends GenericFormComponent implements 
    * Define a min date selection for user
    */
   @Input() minDate: Date | undefined;
+  minDateText: string | undefined;
   /**
    * Define a min date selection for user
    */
@@ -34,6 +36,8 @@ export class GenericDatePickerComponent extends GenericFormComponent implements 
   }
 
   callOnNgInit(): void {
+    if (this.minDate)
+      this.minDateText = formatDateIso(this.minDate);
   }
 
   clearField(): void {

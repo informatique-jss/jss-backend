@@ -71,6 +71,15 @@ export function formatDate(date: Date) {
   ].join('-');
 }
 
+export function formatDateIso(date: Date) {
+  date = new Date(date);
+  return [
+    date.getFullYear(),
+    padTo2Digits(date.getMonth() + 1),
+    padTo2Digits(date.getDate()),
+  ].join('-');
+}
+
 export function getTimeReading(html: string): string {
   return Math.ceil(html.replace(/<[^>]+>/g, '').split(' ').length / 220) + " min";
 }
