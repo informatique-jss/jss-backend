@@ -4,12 +4,13 @@ import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { ANNUAL_SUBSCRIPTION, MONTHLY_SUBSCRIPTION } from '../../model/Subscription';
 import { GenericToggleComponent } from '../generic-toggle/generic-toggle.component';
+import { NewsletterComponent } from "../newsletter/newsletter.component";
 
 @Component({
   selector: 'subscription',
   templateUrl: './subscription.component.html',
   styleUrls: ['./subscription.component.css'],
-  imports: [SHARED_IMPORTS, GenericToggleComponent],
+  imports: [SHARED_IMPORTS, GenericToggleComponent, NewsletterComponent],
   standalone: true
 })
 export class SubscriptionComponent implements OnInit {

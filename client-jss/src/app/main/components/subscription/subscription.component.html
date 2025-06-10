@@ -1,73 +1,184 @@
 <div class="container">
-  <div class="bg-container">
+  <div class="bg-container pb-1">
     <div class="w-100 justify-content-between">
       <div class="container header-hub-bg d-flex align-items-center">
         <div class="row w-100 text-center p-3 align-items-center justify-content-center d-flex">
           <h2 class="col-12 fw-bold">Découvrez nos abonnements </h2>
           <h2 class="col-12">au Journal Spécial des sociétés</h2>
           <div class="row justify-content-center">
-            <div class="col-auto">Annuel</div>
+            <div class="col-auto">
+              <p class="fw-bold text-secondary mb-0">Annuel</p>
+              <p class="fs-8 text-secondary"><span class="bg-yellow rounded-3 px-1">✓</span> Prix réduit</p>
+            </div>
             <generic-toggle class="col-auto justify-content-center d-flex" [(model)]="isMonthlySubscription" label=""
               [form]="subscriptionForm" propertyName="isMonthlySubscription" [isDisabled]="false"></generic-toggle>
-            <div class="col-auto">Mensuel</div>
+            <div class="col-auto fw-bold text-secondary">Mensuel</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Subscription cards ANNUAL -->
-    <div *ngIf="!isMonthlySubscription" class="row justify-content-center">
+    <div *ngIf="!isMonthlySubscription" class="row justify-content-center pt-4 g-4">
       <div class="col-4">
-        <div class="card">
-          <div class="card-header">
-            Offre Universitaire annuelle
+        <div class="card row">
+          <img src="assets/images/subscription-banner-monthly.svg" class="position-absolute px-0 w-50" />
+          <div class="col text-center p-4 text-uppercase d-flex align-items-center justify-content-center pb-2">
+            Offre universitaire <p class="badge tag-custom-dark ms-1 m-0 rounded-3 fw-normal">-25%</p>
           </div>
-          <div class="card-body">
-            <a class="btn btn-yellow btn-yellow-burger w-100"
+          <div class="col">
+            <div class="row justify-content-center align-items-end">
+              <p class=" col-auto text-decoration-line-through p-0 m-0 fw-light fs-2 me-2 lined-price">4€</p>
+              <p class="col-auto p-0 m-0 me-1 fs-1 fw-bolder price">3€</p>
+              <h4 class="col-auto p-0 m-0 fw-normal"> / par mois</h4>
+            </div>
+
+          </div>
+          <div class="col p-4 pt-3 card-body align-items-center">
+            <p class="text-center">Étudiants et enseignants</p>
+            <a class="btn btn-yellow btn-yellow-burger w-100 mb-2"
               (click)="subscribe($event, false, true, null)">S'abonner</a>
+            <ul class="list-unstyled p-2 ps-3 mb-0">
+              <li>
+                <span class="fw-bold">Un service client dédié </span>pour tout renseignement (hotline)
+              </li>
+              <li>
+                <span class="fw-bold">Notifications des articles</span> en temps réel (navigateur)
+              </li>
+              <li>
+                <span class="fw-bold">Archives du groupe </span>(depuis 2015)
+              </li>
+              <li>
+                <span class="fw-bold">Un espace “mon compte” adapté à vos besoins </span>
+                (wishlist d'articles, archivage d'articles, création d’alertes...)
+              </li>
+              <li>
+                <span class="fw-bold">1 articles/mois à offrir </span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
       <div class="col-4">
-        <div class="card">
-          <div class="card-header ">
-            Offre Standard annuelle
+        <div class="card row">
+          <img src="assets/images/subscription-banner-monthly.svg" class="position-absolute px-0 w-50" />
+          <div class="col text-center p-4 text-uppercase d-flex align-items-center justify-content-center pb-2">
+            Offre standard
           </div>
-          <div class="card-body">
-            <a class="btn btn-yellow btn-yellow-burger w-100"
+          <div class="col">
+            <div class="row justify-content-center align-items-end">
+              <p class="col-auto p-0 m-0 me-1 fs-1 fw-bolder price">4€</p>
+              <h4 class="col-auto p-0 m-0 fw-normal"> / par mois</h4>
+            </div>
+
+          </div>
+          <div class="col p-4 pt-3 card-body align-items-center">
+            <p class="text-center">Sans conditions</p>
+            <a class="btn btn-yellow btn-yellow-burger w-100 mb-2"
               (click)="subscribe($event, false, false, null)">S'abonner</a>
+            <ul class="list-unstyled p-2 ps-3 mb-0">
+              <li>
+                <span class="fw-bold">Un service client dédié </span>pour tout renseignement (hotline)
+              </li>
+              <li>
+                <span class="fw-bold">Notifications des articles</span> en temps réel (navigateur)
+              </li>
+              <li>
+                <span class="fw-bold">Archives du groupe </span>(depuis 2015)
+              </li>
+              <li>
+                <span class="fw-bold">Un espace “mon compte” adapté à vos besoins </span>
+                (wishlist d'articles, archivage d'articles, création d’alertes...)
+              </li>
+              <li>
+                <span class="fw-bold">1 articles/mois à offrir </span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Subscription cards MONTHLY -->
-    <div *ngIf="isMonthlySubscription" class="row justify-content-center">
+    <div *ngIf="isMonthlySubscription" class="row justify-content-center pt-4 g-4">
       <div class="col-4">
-        <div class="card">
-          <div class="card-header">
-            Offre Universitaire mensuelle
+        <div class="card row">
+          <img src="assets/images/subscription-banner-monthly.svg" class="position-absolute px-0 w-50" />
+          <div class="col text-center p-4 text-uppercase d-flex align-items-center justify-content-center pb-2">
+            Offre universitaire <p class="badge tag-custom-dark ms-1 m-0 rounded-3 fw-normal">-25%</p>
           </div>
-          <div class="card-body">
-            <a class="btn btn-yellow btn-yellow-burger w-100"
-              (click)="subscribe($event, true, true, null)">S'abonner</a>
+          <div class="col">
+            <div class="row justify-content-center align-items-end">
+              <p class=" col-auto text-decoration-line-through p-0 m-0 fw-light fs-2 me-2 lined-price">4€</p>
+              <p class="col-auto p-0 m-0 me-1 fs-1 fw-bolder price">3€</p>
+              <h4 class="col-auto p-0 m-0 fw-normal"> / par mois</h4>
+            </div>
+
+          </div>
+          <div class="col p-4 pt-3 card-body align-items-center">
+            <p class="text-center">Étudiants et enseignants</p>
+            <a class="btn btn-yellow btn-yellow-burger w-100 mb-2"
+              (click)="subscribe($event, false, true, null)">S'abonner</a>
+            <ul class="list-unstyled p-2 ps-3 mb-0">
+              <li>
+                <span class="fw-bold">Un service client dédié </span>pour tout renseignement (hotline)
+              </li>
+              <li>
+                <span class="fw-bold">Notifications des articles</span> en temps réel (navigateur)
+              </li>
+              <li>
+                <span class="fw-bold">Archives du groupe </span>(depuis 2015)
+              </li>
+              <li>
+                <span class="fw-bold">Un espace “mon compte” adapté à vos besoins </span>
+                (wishlist d'articles, archivage d'articles, création d’alertes...)
+              </li>
+              <li>
+                <span class="fw-bold">1 articles/mois à offrir </span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
       <div class="col-4">
-        <div class="card">
-          <div class="card-header ">
-            Offre Standard mensuelle
+        <div class="card row">
+          <img src="assets/images/subscription-banner-monthly.svg" class="position-absolute px-0 w-50" />
+          <div class="col text-center p-4 text-uppercase d-flex align-items-center justify-content-center pb-2">
+            Offre standard
           </div>
-          <div class="card-body">
-            <a class="btn btn-yellow btn-yellow-burger w-100"
-              (click)="subscribe($event, true, false, null)">S'abonner</a>
+          <div class="col">
+            <div class="row justify-content-center align-items-end">
+              <p class="col-auto p-0 m-0 me-1 fs-1 fw-bolder price">4€</p>
+              <h4 class="col-auto p-0 m-0 fw-normal"> / par mois</h4>
+            </div>
+
+          </div>
+          <div class="col p-4 pt-3 card-body align-items-center">
+            <p class="text-center">Sans conditions</p>
+            <a class="btn btn-yellow btn-yellow-burger w-100 mb-2"
+              (click)="subscribe($event, false, false, null)">S'abonner</a>
+            <ul class="list-unstyled p-2 ps-3 mb-0">
+              <li>
+                <span class="fw-bold">Un service client dédié </span>pour tout renseignement (hotline)
+              </li>
+              <li>
+                <span class="fw-bold">Notifications des articles</span> en temps réel (navigateur)
+              </li>
+              <li>
+                <span class="fw-bold">Archives du groupe </span>(depuis 2015)
+              </li>
+              <li>
+                <span class="fw-bold">Un espace “mon compte” adapté à vos besoins </span>
+                (wishlist d'articles, archivage d'articles, création d’alertes...)
+              </li>
+              <li>
+                <span class="fw-bold">1 articles/mois à offrir </span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
-
+    <newsletter></newsletter>
   </div>
-</div>
-<div class="container">
 </div>
