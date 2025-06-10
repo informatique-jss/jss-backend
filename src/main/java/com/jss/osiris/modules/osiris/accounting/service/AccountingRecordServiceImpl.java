@@ -120,6 +120,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void counterPartRecords(Integer temporaryOperationId, LocalDateTime counterPartDateTime)
+      throws OsirisException {
+    List<AccountingRecord> records = accountingRecordRepository.findByTemporaryOperationId(temporaryOperationId);
+    if (records != null) {
+      accountingRecordGenerationService.counterPartExistingManualRecords(records, counterPartDateTime);
+    }
+  }
+
+  @Override
   public Number getAccountingRecordBalanceByAccountingAccountId(Integer accountingAccountId,
       LocalDateTime accountingDate) {
     return accountingRecordRepository.getAccountingRecordBalanceByAccountingAccountId(accountingAccountId,
@@ -861,8 +871,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public List<FnpResult> getFnp(LocalDate accountingDate) throws OsirisException {
     return accountingRecordRepository.getFnp(accountingDate.atTime(23, 59, 59),
-        Arrays.asList(constantService.getInvoiceStatusPayed().getId(), constantService.getInvoiceStatusSend().getId()),
-        accountingDate.getYear() + "");
+        Arrays.asList(constantService.getInvoiceStatusPayed().getId(), constantService.getInvoiceStatusSend().getId()));
   }
 
   @Override

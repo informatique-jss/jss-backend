@@ -54,6 +54,7 @@ export interface Constant {
   billingLabelTypeOther: BillingLabelType;
   billingLabelTypeCustomer: BillingLabelType;
   accountingJournalSales: AccountingJournal;
+  accountingJournalSituation: AccountingJournal;
   accountingJournalPurchases: AccountingJournal;
   accountingJournalANouveau: AccountingJournal;
   accountingJournalBank: AccountingJournal;
@@ -174,6 +175,7 @@ export interface Constant {
   employeeMailResponsible: Employee;
   employeeInvoiceReminderResponsible: Employee;
   employeeSalesDirector: Employee;
+  employeeProductionDirector: Employee;
   transfertFundsTypePhysique: TransfertFundsType;
   transfertFundsTypeMoral: TransfertFundsType;
   transfertFundsTypeBail: TransfertFundsType;

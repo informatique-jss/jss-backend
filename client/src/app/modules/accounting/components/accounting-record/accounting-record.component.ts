@@ -134,7 +134,7 @@ export class AccountingRecordComponent implements OnInit {
           if (element.isManual) {
             this.appService.openRoute(event, '/accounting/edit/' + element.temporaryOperationId, undefined);
           } else {
-            this.appService.displaySnackBar("La modification n'est possible sur ces lignes", true, 10);
+            this.appService.displaySnackBar("La modification n'est pas possible sur ces lignes", true, 10);
           }
         }, display: true,
       } as SortTableAction<AccountingRecordSearchResult>);
