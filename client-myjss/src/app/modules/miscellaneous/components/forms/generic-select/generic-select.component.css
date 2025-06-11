@@ -15,3 +15,11 @@
   pointer-events: none;
   color: var(--ar-secondary);
 }
+
+.was-validated .form-control:valid, .form-control.is-valid {
+  background-position: right calc(0.35em + 1rem) center !important;
+}
+
+.was-validated .form-control:invalid, .form-control.is-invalid {
+  background-position: right calc(0.35em + 1rem) center !important;
+}

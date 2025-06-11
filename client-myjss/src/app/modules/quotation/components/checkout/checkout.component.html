@@ -60,8 +60,8 @@
         </div>
 
         <!-- Quick message -->
-        <div class="row" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services 
-          && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0] 
+        <div class="row" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services
+          && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0]
           && !isServiceJssSubscription(quotation.assoAffaireOrders[0].services[0].serviceTypes[0])">
           <div class="card form-check form-switch mb-4 py-4 ">
             <h2 class="pb-3">Gagnez du temps dans vos démarches !</h2>
@@ -74,90 +74,112 @@
           </div>
         </div>
         <!-- Votre entreprise -->
-        <div class="row" *ngIf="!currentUser">
+        <div *ngIf="!currentUser">
           <ng-container [ngTemplateOutlet]="tiersForm"></ng-container>
         </div>
 
         <!-- Donneur d'ordre -->
-        <div class="row" *ngIf="!currentUser">
+        <div *ngIf="!currentUser">
           <ng-container [ngTemplateOutlet]="responsableForm"></ng-container>
         </div>
 
         <!-- Renseignement administratif -->
-        <div class="row" *ngIf="quotation">
-          <div class="card mb-4">
-            <h6 class="card-header"><i class="ai-note me-2"></i>Renseignements administratifs</h6>
-            <div *ngFor="let doc of quotation.documents">
-              <div class="card-body pt-2" *ngIf="doc.documentType.code == documentTypeBilling.code">
-                <div class="mb-3">
-                  <generic-toggle [(model)]="doc.isCommandNumberMandatory" label="J'ai un numéro de commande"
-                    [form]="documentForm" propertyName="isCommandNumberMandatory" [isMandatory]="false">
-                  </generic-toggle>
+        <div ngbAccordion class="row" *ngIf="quotation ">
+          <div ngbAccordionItem class="card mb-4" [collapsed]="currentUser!=undefined">
+            <h6 ngbAccordionHeader>
+              <button ngbAccordionButton class="card-header"><i class="ai-note me-2"></i> Renseignements
+                administratifs</button>
+            </h6>
+            <div ngbAccordionCollapse>
+              <ng-container *ngFor="let doc of quotation.documents">
+                <div ngbAccordionBody class="card-body pt-2" *ngIf="doc.documentType.code == documentTypeBilling.code">
+                  <ng-template>
+                    <div class="card-body pt-2">
+                      <div class="mb-3">
+                        <generic-toggle [(model)]="doc.isCommandNumberMandatory" label="J'ai un numéro de commande"
+                          [form]="documentForm" propertyName="isCommandNumberMandatory" [isMandatory]="false">
+                        </generic-toggle>
+                      </div>
+                      <div class="mb-3">
+                        <generic-input (onFormChange)="saveDraftQuotation()" *ngIf="doc.isCommandNumberMandatory"
+                          [(model)]="doc.commandNumber" label="N° de commande" [form]="documentForm"
+                          propertyName="commandNumber" [isMandatory]="true" [isDisabled]="false" type="text">
+                        </generic-input>
+                      </div>
+                      <div class="mb-3">
+                        <generic-toggle [(model)]="isExtRefMandatory" label="J'ai un numéro de référence"
+                          [form]="documentForm" propertyName="isExtRefMandatory" [isMandatory]="false">
+                        </generic-toggle>
+                      </div>
+                      <div class="mb-3" *ngIf="isExtRefMandatory">
+                        <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="doc.externalReference"
+                          label="N° de référence" [form]="documentForm" propertyName="externalReference"
+                          [isMandatory]="true" [isDisabled]="false" type="text">
+                        </generic-input>
+                      </div>
+                    </div>
+                  </ng-template>
                 </div>
-                <div class="mb-3">
-                  <generic-input (onFormChange)="saveDraftQuotation()" *ngIf="doc.isCommandNumberMandatory"
-                    [(model)]="doc.commandNumber" label="N° de commande" [form]="documentForm"
-                    propertyName="commandNumber" [isMandatory]="true" [isDisabled]="false" type="text">
-                  </generic-input>
-                </div>
-                <div class="mb-3">
-                  <generic-toggle [(model)]="isExtRefMandatory" label="J'ai un numéro de référence"
-                    [form]="documentForm" propertyName="isExtRefMandatory" [isMandatory]="false">
-                  </generic-toggle>
-                </div>
-                <div class="mb-3" *ngIf="isExtRefMandatory">
-                  <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="doc.externalReference"
-                    label="N° de référence" [form]="documentForm" propertyName="externalReference" [isMandatory]="true"
-                    [isDisabled]="false" type="text">
-                  </generic-input>
-                </div>
-              </div>
+              </ng-container>
             </div>
           </div>
         </div>
 
         <!-- Libellé de facturation et adressage -->
-        <div class="row" *ngIf="quotation && quotation.responsable">
-          <div class="card mb-4">
-            <h6 class="card-header"><i class="ai-note me-2"></i> Libellé de facturation et adressage</h6>
-            <div class="card-body pt-2">
-              <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs">
-                <li [ngbNavItem]="indexDoc" *ngFor="let doc of quotation.documents;let indexDoc = index">
-                  <button ngbNavLink>{{doc.documentType.label}}</button>
-                  <ng-template ngbNavContent>
-                    <ng-container *ngFor="let document of quotation.documents; let docIndex = index">
-                      <ng-container
-                        *ngIf="doc.documentType.code == documentTypeBilling.code  && document.documentType.code == documentTypeBilling.code ">
-                        <ng-container [ngTemplateOutlet]="billingDocumentForm"
-                          [ngTemplateOutletContext]="{document:document}"></ng-container>
-                      </ng-container>
-                      <ng-container
-                        *ngIf="doc.documentType.code == documentTypeDigital.code  && document.documentType.code == documentTypeDigital.code ">
-                        <ng-container [ngTemplateOutlet]="digitalDocumentForm"
-                          [ngTemplateOutletContext]="{document:document}"></ng-container>
-                      </ng-container>
-                      <ng-container
-                        *ngIf="doc.documentType.code == documentTypePaper.code  && document.documentType.code == documentTypePaper.code ">
-                        <ng-container [ngTemplateOutlet]="paperDocumentForm"
-                          [ngTemplateOutletContext]="{document:document}"></ng-container>
-                      </ng-container>
-                    </ng-container>
-                  </ng-template>
-                </li>
-              </ul>
-              <div [ngbNavOutlet]="nav" class="mt-2"></div>
+        <div ngbAccordion class="row" *ngIf="quotation && quotation.responsable">
+          <div ngbAccordionItem class="card mb-4" [collapsed]="currentUser!=undefined">
+            <h6 ngbAccordionHeader>
+              <button ngbAccordionButton class="card-header"><i class="ai-note me-2"></i> Libellé de facturation et
+                adressage</button>
+            </h6>
+            <div ngbAccordionCollapse>
+              <div ngbAccordionBody class="card-body pt-2">
+                <ng-template>
+                  <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs">
+                    <li [ngbNavItem]="indexDoc" *ngFor="let doc of quotation.documents;let indexDoc = index">
+                      <button ngbNavLink>{{doc.documentType.label}}</button>
+                      <ng-template ngbNavContent>
+                        <ng-container *ngFor="let document of quotation.documents; let docIndex = index">
+                          <ng-container
+                            *ngIf="doc.documentType.code == documentTypeBilling.code  && document.documentType.code == documentTypeBilling.code ">
+                            <ng-container [ngTemplateOutlet]="billingDocumentForm"
+                              [ngTemplateOutletContext]="{document:document}"></ng-container>
+                          </ng-container>
+                          <ng-container
+                            *ngIf="doc.documentType.code == documentTypeDigital.code  && document.documentType.code == documentTypeDigital.code ">
+                            <ng-container [ngTemplateOutlet]="digitalDocumentForm"
+                              [ngTemplateOutletContext]="{document:document}"></ng-container>
+                          </ng-container>
+                          <ng-container
+                            *ngIf="doc.documentType.code == documentTypePaper.code  && document.documentType.code == documentTypePaper.code ">
+                            <ng-container [ngTemplateOutlet]="paperDocumentForm"
+                              [ngTemplateOutletContext]="{document:document}"></ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </ng-template>
+                    </li>
+                  </ul>
+                  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                </ng-template>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Commentaire -->
-        <div class="row" *ngIf="quotation">
-          <div class="card mb-4">
-            <h6 class="card-header"><i class="ai-edit-alt me-2"></i>Commentaires</h6>
-            <div class="card-body pt-2">
-              <generic-textarea [(model)]="quotation.description" label="Rédiger toute information utile au traitement de votre
+        <div ngbAccordion class="row" *ngIf="quotation ">
+          <div ngbAccordionItem class="card mb-4" [collapsed]="currentUser!=undefined">
+            <h6 ngbAccordionHeader>
+              <button ngbAccordionButton class="card-header"><i class="ai-edit-alt me-2"></i> Commentaires</button>
+            </h6>
+            <div ngbAccordionCollapse>
+              <div ngbAccordionBody class="card-body pt-2">
+                <ng-template>
+                  <generic-textarea [(model)]="quotation.description" label="Rédiger toute information utile au traitement de votre
               dossier (optionnel)" [form]="documentForm" propertyName="description" [isMandatory]="false"
-                [isDisabled]="false"></generic-textarea>
+                    [isDisabled]="false"></generic-textarea>
+                </ng-template>
+              </div>
             </div>
           </div>
         </div>
@@ -186,161 +208,182 @@
 
 <!-- Tiers form -->
 <ng-template #tiersForm>
-  <div class="card mb-4" *ngIf="quotation && quotation.responsable">
-    <h6 class="card-header"><i class="ai-briefcase me-2"></i>Votre entreprise</h6>
-    <div class="card-body pt-2">
-      <div class="mb-3">
-        <generic-toggle [(model)]="isNotIndividualTiers" label="Vous représentez une entreprise ?" [isMandatory]="false"
-          [form]="documentForm" propertyName="isIndividual" (onToggleChange)="toggleTiersIndividual()">
-        </generic-toggle>
-      </div>
-      <ng-container *ngIf="!quotation.responsable.tiers.isIndividual">
-        <div class="mb-3">
-          <!-- <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="quotation.responsable.tiers.firstname" label="R.C.S de /!\ TODO /!\"
+  <div class="row" ngbAccordion>
+    <div ngbAccordionItem [collapsed]="currentUser!=undefined" class="card mb-4"
+      *ngIf="quotation && quotation.responsable">
+      <h6 ngbAccordionHeader>
+        <button ngbAccordionButton class="card-header"><i class="ai-briefcase me-2"></i> Votre entreprise</button>
+      </h6>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody class="card-body pt-2">
+          <ng-template>
+            <div class="mb-3">
+              <generic-toggle [(model)]="isNotIndividualTiers" label="Vous représentez une entreprise ?"
+                [isMandatory]="false" [form]="documentForm" propertyName="isIndividual"
+                (onToggleChange)="toggleTiersIndividual()">
+              </generic-toggle>
+            </div>
+            <ng-container *ngIf="!quotation.responsable.tiers.isIndividual">
+              <div class="mb-3">
+                <!-- <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="quotation.responsable.tiers.firstname" label="R.C.S de /!\ TODO /!\"
             [form]="documentForm" propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false"
             type="text">
           </generic-input> -->
-        </div>
-        <div class="mb-3">
-          <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="quotation.responsable.tiers.denomination"
-            label="Dénomination" [form]="documentForm" propertyName="tiersFirstname" [isMandatory]="true"
-            [isDisabled]="false" type="text">
-          </generic-input>
-        </div>
-        <div class="row mt-3">
-          <generic-input (onFormChange)="saveDraftQuotation()" class="col"
-            [(model)]="quotation.responsable.tiers.address" label="Adresse" [form]="documentForm"
-            propertyName="tiersAdress" [isMandatory]="true" [isDisabled]="false" type="text">
-          </generic-input>
-        </div>
-        <div class="row g-3 mt-3">
-          <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
-            [(model)]="quotation.responsable.tiers.postalCode" label="Code postal" [form]="documentForm"
-            propertyName="tiersPostalCode" [isMandatory]="true" (onFormBlur)="findCityForTiers()" [isDisabled]="false"
-            [maxLength]="10" (change)="computeQuotationPrice(false)">
-          </generic-input>
-          <div>
-            <autocomplete-city [(model)]="quotation.responsable.tiers.city" [form]="documentForm"
-              [modelCountry]="quotation.responsable.tiers.country" [isMandatory]="true" label="Ville"
-              propertyName="autocompleteTiersCity" (onFormChange)="prepareForPricingAndCompute()"></autocomplete-city>
-          </div>
-          <select-country class="col-md-4" [(model)]="quotation.responsable.tiers.country" label="Pays"
-            [form]="documentForm" propertyName="tiersCountry" [isMandatory]="true" [isDisabled]="false"
-            (onFormChange)="prepareForPricingAndCompute()">
-          </select-country>
-        </div>
-        <div class="row g-3 mt-3">
-          <generic-input (onFormChange)="saveDraftQuotation()" class="col mt-0" [(model)]="newPhoneTiers"
-            label="Téléphone(s) (entrer pour valider)" [form]="documentForm" propertyName="newPhoneTiers"
-            [isMandatory]="false" [isDisabled]="false" [icon]="'phone'" [maxLength]="13"
-            (onEnter)="addPhone(quotation.responsable, true)">
-          </generic-input>
-          <ul class="list-group mt-1">
-            <li class="list-group-item py-0" *ngFor="let phone of quotation.responsable.tiers.phones">
-              <div class="d-flex flex-wrap w-100">
-                <div>
-                  <a class="nav-link fs-xl p-2" (click)="deletePhone(phone, quotation.responsable, true)">
-                    <i class="ai-trash"></i>
-                  </a>
-                </div>
-                <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
               </div>
-            </li>
-          </ul>
+              <div class="mb-3">
+                <generic-input (onFormChange)="saveDraftQuotation()"
+                  [(model)]="quotation.responsable.tiers.denomination" label="Dénomination" [form]="documentForm"
+                  propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false" type="text">
+                </generic-input>
+              </div>
+              <div class="row mt-3">
+                <generic-input (onFormChange)="saveDraftQuotation()" class="col"
+                  [(model)]="quotation.responsable.tiers.address" label="Adresse" [form]="documentForm"
+                  propertyName="tiersAdress" [isMandatory]="true" [isDisabled]="false" type="text">
+                </generic-input>
+              </div>
+              <div class="row g-3 mt-3">
+                <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
+                  [(model)]="quotation.responsable.tiers.postalCode" label="Code postal" [form]="documentForm"
+                  propertyName="tiersPostalCode" [isMandatory]="true" (onFormBlur)="findCityForTiers()"
+                  [isDisabled]="false" [maxLength]="10" (change)="computeQuotationPrice(false)">
+                </generic-input>
+                <div>
+                  <autocomplete-city [(model)]="quotation.responsable.tiers.city" [form]="documentForm"
+                    [modelCountry]="quotation.responsable.tiers.country" [isMandatory]="true" label="Ville"
+                    propertyName="autocompleteTiersCity"
+                    (onFormChange)="prepareForPricingAndCompute()"></autocomplete-city>
+                </div>
+                <select-country class="col-md-4" [(model)]="quotation.responsable.tiers.country" label="Pays"
+                  [form]="documentForm" propertyName="tiersCountry" [isMandatory]="true" [isDisabled]="false"
+                  (onFormChange)="prepareForPricingAndCompute()">
+                </select-country>
+              </div>
+              <div class="row g-3 mt-3">
+                <generic-input (onFormChange)="saveDraftQuotation()" class="col mt-0" [(model)]="newPhoneTiers"
+                  label="Téléphone(s) (entrer pour valider)" [form]="documentForm" propertyName="newPhoneTiers"
+                  [isMandatory]="false" [isDisabled]="false" [icon]="'phone'" [maxLength]="13"
+                  (onEnter)="addPhone(quotation.responsable, true)">
+                </generic-input>
+                <ul class="list-group mt-1">
+                  <li class="list-group-item py-0" *ngFor="let phone of quotation.responsable.tiers.phones">
+                    <div class="d-flex flex-wrap w-100">
+                      <div>
+                        <a class="nav-link fs-xl p-2" (click)="deletePhone(phone, quotation.responsable, true)">
+                          <i class="ai-trash"></i>
+                        </a>
+                      </div>
+                      <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
+                    </div>
+                  </li>
+                </ul>
 
-          <generic-input (onFormChange)="saveDraftQuotation()" class="col mt-3" [(model)]="newMailTiers"
-            label="Adresse(s) mail(s) (entrer pour valider)" [form]="documentForm" propertyName="newMailTiers"
-            [isMandatory]="false" [isDisabled]="false" type="email" [icon]="'mail'"
-            (onEnter)="addMailTiers(quotation.responsable.tiers)">
-          </generic-input>
-          <ul class="list-group mt-1">
-            <li class="list-group-item py-0" *ngFor="let mail of quotation.responsable.tiers.mails">
-              <div class="d-flex flex-wrap w-100">
-                <div>
-                  <a class="nav-link fs-xl p-2" (click)="deleteMailTiers(mail, quotation.responsable.tiers)">
-                    <i class="ai-trash"></i>
-                  </a>
-                </div>
-                <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                <generic-input (onFormChange)="saveDraftQuotation()" class="col mt-3" [(model)]="newMailTiers"
+                  label="Adresse(s) mail(s) (entrer pour valider)" [form]="documentForm" propertyName="newMailTiers"
+                  [isMandatory]="false" [isDisabled]="false" type="email" [icon]="'mail'"
+                  (onEnter)="addMailTiers(quotation.responsable.tiers)">
+                </generic-input>
+                <ul class="list-group mt-1">
+                  <li class="list-group-item py-0" *ngFor="let mail of quotation.responsable.tiers.mails">
+                    <div class="d-flex flex-wrap w-100">
+                      <div>
+                        <a class="nav-link fs-xl p-2" (click)="deleteMailTiers(mail, quotation.responsable.tiers)">
+                          <i class="ai-trash"></i>
+                        </a>
+                      </div>
+                      <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                    </div>
+                  </li>
+                </ul>
               </div>
-            </li>
-          </ul>
+            </ng-container>
+          </ng-template>
         </div>
-      </ng-container>
+      </div>
     </div>
   </div>
 </ng-template>
 
 <!-- Responsable form -->
 <ng-template #responsableForm>
-  <div class="card mb-4">
-    <h6 class="card-header"><i class="ai-user me-2"></i>Donneur d'ordre</h6>
-    <div class="card-body pt-2" *ngIf="quotation && quotation.responsable">
-      <div class="mb-3">
-        <select-civility [(model)]="quotation.responsable.civility" label="Civilité" [form]="documentForm"
-          propertyName="respCivilty" [isMandatory]="true" [isDisabled]="false">
-        </select-civility>
-      </div>
-      <div class="row g-3 mt-3">
-        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6"
-          [(model)]="quotation.responsable.firstname" label="Prénom" [form]="documentForm" propertyName="respFirstname"
-          [isMandatory]="true" [isDisabled]="false" type="text">
-        </generic-input>
-        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6" [(model)]="quotation.responsable.lastname"
-          label="Nom" [form]="documentForm" propertyName="respLastname" [isMandatory]="true" [isDisabled]="false"
-          type="text">
-        </generic-input>
-      </div>
-      <div class="row mt-3">
-        <generic-input (onFormChange)="saveDraftQuotation()" class="col" [(model)]="quotation.responsable.address"
-          label="Adresse" [form]="documentForm" propertyName="respAddress" [isMandatory]="true" [isDisabled]="false"
-          type="text">
-        </generic-input>
-      </div>
-      <div class="row mt-3">
-        <generic-input (onFormChange)="saveDraftQuotation()" class="col"
-          [(model)]="quotation.responsable.addressComplement" label="Complément d'adresse" [form]="documentForm"
-          propertyName="respAddressComplement" [isMandatory]="false" [isDisabled]="false" type="text">
-        </generic-input>
-      </div>
-      <div class="row g-3 mt-3">
-        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
-          [(model)]="quotation.responsable.postalCode" label="Code postal" [form]="documentForm"
-          (onFormBlur)="findCityForResponsable()" propertyName="respPostalCode" [isMandatory]="true"
-          [isDisabled]="false" [maxLength]="10" (change)="computeQuotationPrice(false)">
-        </generic-input>
-        <div>
-          <autocomplete-city [(model)]="quotation.responsable.city" [form]="documentForm"
-            [modelCountry]="quotation.responsable.country" [isMandatory]="true" label="Ville"
-            propertyName="autocompleteRespCity"></autocomplete-city>
-        </div>
-        <select-country class="col-md-4" [(model)]="quotation.responsable.country" label="Pays" [form]="documentForm"
-          propertyName="respCountry" [isMandatory]="true" [isDisabled]="false" (change)="prepareForPricingAndCompute()">
-        </select-country>
-      </div>
-      <div class="row g-3 mt-3">
-        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-0" [(model)]="newPhoneResponsable"
-          label="Téléphone(s) (entrer pour valider)" [form]="documentForm" propertyName="newPhoneResponsable"
-          [isMandatory]="false" [isDisabled]="false" [icon]="'phone'" [maxLength]="13"
-          (onEnter)="addPhone(quotation.responsable, false)">
-        </generic-input>
-        <ul class="list-group">
-          <li class="list-group-item py-0" *ngFor="let phone of quotation.responsable.phones">
-            <div class="d-flex flex-wrap w-100">
-              <div>
-                <a class="nav-link fs-xl p-2" (click)="deletePhone(phone, quotation.responsable, true)">
-                  <i class="ai-trash"></i>
-                </a>
-              </div>
-              <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
+  <div class="row" ngbAccordion>
+    <div ngbAccordionItem [collapsed]="currentUser!=undefined" class="card mb-4"
+      *ngIf="quotation && quotation.responsable">
+      <h6 ngbAccordionHeader>
+        <button ngbAccordionButton class="card-header"><i class="ai-user me-2"></i> Donneur d'ordre</button>
+      </h6>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody class="card-body pt-2" *ngIf="quotation && quotation.responsable">
+          <ng-template>
+            <div class="mb-3">
+              <select-civility [(model)]="quotation.responsable.civility" label="Civilité" [form]="documentForm"
+                propertyName="respCivilty" [isMandatory]="true" [isDisabled]="false">
+              </select-civility>
             </div>
-          </li>
-        </ul>
+            <div class="row g-3 mt-3">
+              <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6"
+                [(model)]="quotation.responsable.firstname" label="Prénom" [form]="documentForm"
+                propertyName="respFirstname" [isMandatory]="true" [isDisabled]="false" type="text">
+              </generic-input>
+              <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6"
+                [(model)]="quotation.responsable.lastname" label="Nom" [form]="documentForm" propertyName="respLastname"
+                [isMandatory]="true" [isDisabled]="false" type="text">
+              </generic-input>
+            </div>
+            <div class="row mt-3">
+              <generic-input (onFormChange)="saveDraftQuotation()" class="col" [(model)]="quotation.responsable.address"
+                label="Adresse" [form]="documentForm" propertyName="respAddress" [isMandatory]="true"
+                [isDisabled]="false" type="text">
+              </generic-input>
+            </div>
+            <div class="row mt-3">
+              <generic-input (onFormChange)="saveDraftQuotation()" class="col"
+                [(model)]="quotation.responsable.addressComplement" label="Complément d'adresse" [form]="documentForm"
+                propertyName="respAddressComplement" [isMandatory]="false" [isDisabled]="false" type="text">
+              </generic-input>
+            </div>
+            <div class="row g-3 mt-3">
+              <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
+                [(model)]="quotation.responsable.postalCode" label="Code postal" [form]="documentForm"
+                (onFormBlur)="findCityForResponsable()" propertyName="respPostalCode" [isMandatory]="true"
+                [isDisabled]="false" [maxLength]="10" (change)="computeQuotationPrice(false)">
+              </generic-input>
+              <div>
+                <autocomplete-city [(model)]="quotation.responsable.city" [form]="documentForm"
+                  [modelCountry]="quotation.responsable.country" [isMandatory]="true" label="Ville"
+                  propertyName="autocompleteRespCity"></autocomplete-city>
+              </div>
+              <select-country class="col-md-4" [(model)]="quotation.responsable.country" label="Pays"
+                [form]="documentForm" propertyName="respCountry" [isMandatory]="true" [isDisabled]="false"
+                (change)="prepareForPricingAndCompute()">
+              </select-country>
+            </div>
+            <div class="row g-3 mt-3">
+              <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-0" [(model)]="newPhoneResponsable"
+                label="Téléphone(s) (entrer pour valider)" [form]="documentForm" propertyName="newPhoneResponsable"
+                [isMandatory]="false" [isDisabled]="false" [icon]="'phone'" [maxLength]="13"
+                (onEnter)="addPhone(quotation.responsable, false)">
+              </generic-input>
+              <ul class="list-group">
+                <li class="list-group-item py-0" *ngFor="let phone of quotation.responsable.phones">
+                  <div class="d-flex flex-wrap w-100">
+                    <div>
+                      <a class="nav-link fs-xl p-2" (click)="deletePhone(phone, quotation.responsable, true)">
+                        <i class="ai-trash"></i>
+                      </a>
+                    </div>
+                    <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
+                  </div>
+                </li>
+              </ul>
 
-        <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-3"
-          [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail" [form]="documentForm"
-          propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="email" [icon]="'mail'">
-        </generic-input>
+              <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-3"
+                [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail" [form]="documentForm"
+                propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="email" [icon]="'mail'">
+              </generic-input>
+            </div>
+          </ng-template>
+        </div>
       </div>
     </div>
   </div>
@@ -416,12 +459,18 @@
     </div>
     <div class="form-check">
       <generic-toggle *ngIf="quotation!.assoAffaireOrders.length == 1" [(model)]="document.isRecipientAffaire"
-        label="L'envoyer à l'affaire" [form]="documentForm" propertyName="isRecipientAffaireBilling"
+        label="L'envoyer à mon client" [form]="documentForm" propertyName="isRecipientAffaireBilling"
         [isMandatory]="false">
       </generic-toggle>
+      <div class="mb-2">
+        <generic-input *ngIf="document.isRecipientAffaire"
+          [(model)]="quotation!.assoAffaireOrders[0].affaire.mails[0].mail" label="Mail de mon client"
+          [form]="documentForm" propertyName="affaireMail" [isMandatory]="true" [isDisabled]="false"
+          [maxLength]="250"></generic-input>
+      </div>
       <div class="row ps-4 pb-3">
         <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire" [(model)]="document.addToAffaireMailList"
-          label="Ajouter des adresses mails en copie de l'affaire" [form]="documentForm"
+          label="Ajouter des adresses mails en copie de mon client" [form]="documentForm"
           propertyName="addToAffaireMailListBilling" [isMandatory]="false">
         </generic-toggle>
 
@@ -451,8 +500,8 @@
       </generic-toggle>
       <div class="row ps-4 pb-3">
         <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
-          label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
-          propertyName="addToClientMailListBilling" [isMandatory]="false">
+          label="Ajouter des adresses mails en copie" [form]="documentForm" propertyName="addToClientMailListBilling"
+          [isMandatory]="false">
         </generic-toggle>
 
         <generic-input (onFormChange)="saveDraftQuotation()" class="pb-3 pt-2"
@@ -486,12 +535,19 @@
         numériques</h3>
     </div>
     <div class="form-check">
-      <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à l'affaire" [form]="documentForm"
-        propertyName="isRecipientAffaireDigital" [isMandatory]="false">
+      <generic-toggle *ngIf="quotation!.assoAffaireOrders.length == 1" [(model)]="document.isRecipientAffaire"
+        label="L'envoyer à mon client" [form]="documentForm" propertyName="isRecipientAffaireDigital"
+        [isMandatory]="false">
       </generic-toggle>
+      <div class="mb-2">
+        <generic-input *ngIf="document.isRecipientAffaire"
+          [(model)]="quotation!.assoAffaireOrders[0].affaire.mails[0].mail" label="Mail de mon client"
+          [form]="documentForm" propertyName="affaireMailDigital" [isMandatory]="true" [isDisabled]="false"
+          [maxLength]="250"></generic-input>
+      </div>
       <div class="row ps-4 pb-3">
         <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire" [(model)]="document.addToAffaireMailList"
-          [isMandatory]="false" label="Ajouter des adresses mails en copie de l'affaire" [form]="documentForm"
+          [isMandatory]="false" label="Ajouter des adresses mails en copie de mon client" [form]="documentForm"
           propertyName="addToAffaireMailListDigital">
         </generic-toggle>
 
@@ -556,7 +612,7 @@
       </h3>
     </div>
     <div class="form-check">
-      <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à l'affaire" [form]="documentForm"
+      <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à mon client" [form]="documentForm"
         propertyName="isRecipientAffairePaper" [isMandatory]="false">
       </generic-toggle>
       <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer" [form]="documentForm"

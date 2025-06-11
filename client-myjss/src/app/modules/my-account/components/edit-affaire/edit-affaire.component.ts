@@ -25,6 +25,9 @@ export class EditAffaireComponent implements OnInit {
   newMail: string = "";
   newPhone: string = "";
 
+  idOrder: number | undefined;
+  idQuotation: number | undefined;
+
   constructor(private activatedRoute: ActivatedRoute,
     private affaireService: AffaireService,
     private formBuilder: FormBuilder,
@@ -36,6 +39,9 @@ export class EditAffaireComponent implements OnInit {
   getListPhones = getListPhones;
 
   ngOnInit() {
+    this.idOrder = this.activatedRoute.snapshot.params['idOrder'];
+    this.idQuotation = this.activatedRoute.snapshot.params['idQuotation'];
+
     this.editAffaireForm = this.formBuilder.group({});
     this.affaireService.getAffaire(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.affaire = response;
@@ -77,12 +83,17 @@ export class EditAffaireComponent implements OnInit {
   saveAffaire() {
     if (this.affaire)
       this.affaireService.addOrUpdateAffaire(this.affaire).subscribe(response => {
-        this.appService.openRoute(null, "account/orders/details/" + this.activatedRoute.snapshot.params['idOrder'], undefined);
+        this.goBackAffaire();
       })
   }
 
-  cancelAffaire() {
-    this.appService.openRoute(null, "account/orders/details/" + this.activatedRoute.snapshot.params['idOrder'], undefined);
+  goBackAffaire() {
+    if (this.idOrder) {
+      this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
+    }
+    if (this.idQuotation) {
+      this.appService.openRoute(null, "account/quotations/details/" + this.idQuotation, undefined);
+    }
   }
 
 }
