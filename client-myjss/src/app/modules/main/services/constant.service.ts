@@ -160,6 +160,10 @@ export class ConstantService extends AppRestService<Constant> {
   getMailRedirectionTypeOther() {
     return this.constant.mailRedirectionTypeOther;
   }
+
+  getProvisionFamilyTypeAbonnement() {
+    return this.constant.provisionFamilyTypeAbonnement;
+  }
 }
 
 @Injectable({ providedIn: 'root' })

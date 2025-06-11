@@ -21,6 +21,7 @@ import { BillingLabelType } from '../../../my-account/model/BillingLabelType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
 import { DocumentType } from '../../../my-account/model/DocumentType';
+import { ProvisionFamilyType } from '../../../my-account/model/ProvisionFamilyType';
 import { Quotation } from '../../../my-account/model/Quotation';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { DocumentService } from '../../../my-account/services/document.service';
@@ -94,7 +95,15 @@ export class CheckoutComponent implements OnInit {
   quotationPriceObservableRef: Subscription | undefined;
 
   userScope: Responsable[] | undefined;
+
+  subscriptionType: string | undefined;
+  isPriceReductionForSubscription: boolean = false;
+  idArticle: number | undefined;
+
+
   capitalizeName = capitalizeName;
+
+  provisionFamilyTypeAbonnement!: ProvisionFamilyType;
 
   constructor(
     private loginService: LoginService,
@@ -110,6 +119,8 @@ export class CheckoutComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+    this.provisionFamilyTypeAbonnement = this.constantService.getProvisionFamilyTypeAbonnement();
     this.documentForm = this.formBuilder.group({});
 
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();

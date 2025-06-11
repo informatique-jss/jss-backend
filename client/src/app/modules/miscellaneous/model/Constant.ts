@@ -49,6 +49,7 @@ import { LegalForm } from "./LegalForm";
 import { MyJssCategory } from './MyJssCategory';
 import { PaymentType } from "./PaymentType";
 import { PublishingDepartment } from './PublishingDepartment';
+import { SpecialOffer } from './SpecialOffer';
 import { TiersFollowupType } from './TiersFollowupType';
 import { Vat } from "./Vat";
 
@@ -253,9 +254,16 @@ export interface Constant {
   rffFrequencyMonthly: RffFrequency;
   serviceTypeOther: ServiceType;
   serviceTypeSecondaryCenterOpeningAlAndFormality: ServiceType;
+  serviceTypeAnnualSubscription: ServiceType;
+  serviceTypeEnterpriseAnnualSubscription: ServiceType;
+  serviceTypeMonthlySubscription: ServiceType;
+  serviceTypeKioskNewspaperBuy: ServiceType;
+  serviceTypeUniqueArticleBuy: ServiceType;
+  specialOfferJssSubscriptionReduction: SpecialOffer;
   provisionTypeBilanPublication: ProvisionType;
   provisionTypeRegistrationAct: ProvisionType;
   provisionFamilyTypeDeposit: ProvisionFamilyType;
+  provisionFamilyTypeAbonnement: ProvisionFamilyType;
   provisionTypeRbe: ProvisionType;
   provisionTypeCharacterAnnouncement: ProvisionType;
   dateAccountingClosureForAll: Date;

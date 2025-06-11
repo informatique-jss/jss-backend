@@ -38,8 +38,10 @@ Primary use:  blog, news, magazine
   --bs-cyan: #0dcaf0;
   --bs-white: #fff;
   --bs-gray: #6c757d;
+  --bs-gray-100: #F6F9FC;
   --bs-gray-300: #E3E9EF;
   --bs-gray-400: #D7DDE2;
+  --bs-gray-500: #B4BBC3;
   --bs-gray-700: #576071;
   --bs-gray-dark: #343a40;
   --bs-blue-400: #CCE1FA;
@@ -8125,6 +8127,10 @@ fieldset:disabled .btn {
   padding: 2rem;
   margin-left: -2rem;
   margin-right: -2rem;
+}
+
+.bg-yellow {
+  background-color: var(--ar-tertiary-bg);
 }
 
 .text-wrap {

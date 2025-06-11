@@ -1258,8 +1258,7 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/subscription/give-post")
 	public ResponseEntity<Subscription> givePost(@RequestParam Integer postId, @RequestParam String recipientMailString,
-			HttpServletRequest request)
-			throws OsirisException {
+			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
 		if (!validationHelper.validateMail(recipientMailString))

@@ -180,4 +180,7 @@ public interface CustomerOrderService {
 
         public InvoicingStatistics getInvoicingStatistics() throws OsirisException;
 
+        public CustomerOrder getCustomerOrderForSubscription(String subscriptionType,
+                        Boolean isPriceReductionForSubscription, Integer idArticle) throws OsirisException;
+
 }
