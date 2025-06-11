@@ -69,7 +69,7 @@
                 </button>
                 <button type="button" class="btn btn-outline-dark"
                   (click)="isFollowedAuthor[author.id] ? unfollowAuthor(author) : followAuthor(author)">
-                  <i class="ai" [ngClass]="isFollowedAuthor[author.id] ? 'ai-check-lg' : 'ai-plus-lg'"></i>
+                  <i class="ai" [ngClass]="isFollowedAuthor[author.id] ? 'bi-check-lg' : 'bi-plus-lg'"></i>
                   {{ isFollowedAuthor[author.id] ? 'Suivi' : 'Suivre' }}
                 </button>
               </div>
