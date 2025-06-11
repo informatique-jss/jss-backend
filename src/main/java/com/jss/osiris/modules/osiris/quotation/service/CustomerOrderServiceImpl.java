@@ -1392,52 +1392,52 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 if (newChild != null) {
                     newChild.setCustomerOrderParentRecurring(customerOrder);
                     addOrUpdateCustomerOrder(newChild, false, false);
-                    updateSimpleProvisionStatus(newChild);
+                    addOrUpdateCustomerOrderStatus(newChild, CustomerOrderStatus.BEING_PROCESSED, false);
+                    if (newChild.getIsRecurringAutomaticallyBilled() != null
+                            && newChild.getIsRecurringAutomaticallyBilled()) {
+                        newChild = getCustomerOrder(newChild.getId());
+                        updateProvisionStatus(newChild);
+                    }
                 }
             }
         }
     }
 
     @Override
-    public void updateSimpleProvisionStatus(CustomerOrder recurringCustomerOrder)
+    public void updateProvisionStatus(CustomerOrder customerOrder)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
-        addOrUpdateCustomerOrderStatus(recurringCustomerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
-        if (recurringCustomerOrder.getIsRecurringAutomaticallyBilled() != null
-                && recurringCustomerOrder.getIsRecurringAutomaticallyBilled()) {
-            recurringCustomerOrder = getCustomerOrder(recurringCustomerOrder.getId());
-            if (recurringCustomerOrder.getCustomerOrderStatus() != null
-                    && recurringCustomerOrder.getCustomerOrderStatus().getCode()
-                            .equals(CustomerOrderStatus.BEING_PROCESSED)) {
-                if (recurringCustomerOrder.getAssoAffaireOrders() != null) {
-                    for (AssoAffaireOrder asso : recurringCustomerOrder.getAssoAffaireOrders()) {
-                        if (asso.getServices() != null) {
-                            for (Service service : asso.getServices()) {
-                                if (service.getProvisions() != null) {
-                                    for (Provision provision : service.getProvisions()) {
-                                        if (provision.getSimpleProvision() != null) {
-                                            SimpleProvision simpleProvision = provision
-                                                    .getSimpleProvision();
-                                            simpleProvision
-                                                    .setSimpleProvisionStatus(simpleProvisionStatusService
-                                                            .getSimpleProvisionStatusByCode(
-                                                                    SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
-                                            simpleProvisionService
-                                                    .addOrUpdateSimpleProvision(simpleProvision);
-                                        }
+        if (customerOrder.getCustomerOrderStatus() != null
+                && customerOrder.getCustomerOrderStatus().getCode()
+                        .equals(CustomerOrderStatus.BEING_PROCESSED)) {
+            if (customerOrder.getAssoAffaireOrders() != null) {
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                    if (asso.getServices() != null) {
+                        for (Service service : asso.getServices()) {
+                            if (service.getProvisions() != null) {
+                                for (Provision provision : service.getProvisions()) {
+                                    if (provision.getSimpleProvision() != null) {
+                                        SimpleProvision simpleProvision = provision
+                                                .getSimpleProvision();
+                                        simpleProvision
+                                                .setSimpleProvisionStatus(simpleProvisionStatusService
+                                                        .getSimpleProvisionStatusByCode(
+                                                                SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
+                                        simpleProvisionService
+                                                .addOrUpdateSimpleProvision(simpleProvision);
                                     }
                                 }
                             }
                         }
                     }
                 }
-                recurringCustomerOrder = getCustomerOrder(recurringCustomerOrder.getId());
-                try {
-                    addOrUpdateCustomerOrder(recurringCustomerOrder, false, true); // Put to billed if all ended
-                } catch (Exception e) {
-                    if (!(e instanceof OsirisClientMessageException
-                            || e instanceof OsirisValidationException))
-                        throw e;
-                }
+            }
+            customerOrder = getCustomerOrder(customerOrder.getId());
+            try {
+                addOrUpdateCustomerOrder(customerOrder, false, true); // Put to billed if all ended
+            } catch (Exception e) {
+                if (!(e instanceof OsirisClientMessageException
+                        || e instanceof OsirisValidationException))
+                    throw e;
             }
         }
     }

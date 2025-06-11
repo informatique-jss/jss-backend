@@ -3,8 +3,7 @@ package com.jss.osiris.libs.jackson;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -24,20 +23,9 @@ public class JacksonTimestampMillisecondDeserializer extends StdDeserializer<Loc
 
     @Override
     public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        String value = p.getText();
-
-        try {
-            // for timestamp string
-            long millis = Long.parseLong(value);
-            return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
-        } catch (NumberFormatException e) {
-            try {
-                // for date format ISO
-                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-                return LocalDateTime.parse(value, formatter);
-            } catch (Exception ex) {
-                throw new IOException("Unable to parse LocalDateTime from value: " + value, ex);
-            }
-        }
+        String date = p.getText();
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(date.substring(0,
+                date.length() - 3))),
+                TimeZone.getDefault().toZoneId());
     }
 }
