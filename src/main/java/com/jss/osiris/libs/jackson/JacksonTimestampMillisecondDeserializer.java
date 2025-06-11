@@ -24,8 +24,8 @@ public class JacksonTimestampMillisecondDeserializer extends StdDeserializer<Loc
     @Override
     public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String date = p.getText();
-        return LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(date.substring(0,
-                date.length() - 3))),
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(date.substring(0, date.length() - 3))),
                 TimeZone.getDefault().toZoneId());
     }
+
 }
