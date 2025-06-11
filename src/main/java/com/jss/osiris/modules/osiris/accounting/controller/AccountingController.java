@@ -260,6 +260,22 @@ public class AccountingController {
                 accountingRecordService.searchAccountingRecords(accountingRecordSearch, false), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/accounting-record/counter-part")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
+    public ResponseEntity<Boolean> counterPartRecords(
+            @RequestParam Integer temporaryOperationId,
+            @RequestParam("counterPartDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime counterPartDateTime)
+            throws OsirisException {
+        if (temporaryOperationId == null)
+            throw new OsirisValidationException("temporaryOperationId");
+        if (counterPartDateTime == null)
+            throw new OsirisValidationException("counterPartDateTime");
+
+        accountingRecordService.counterPartRecords(temporaryOperationId, counterPartDateTime);
+
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/accounting-record/temporary-operation-id")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<List<AccountingRecord>> getAccountingRecordsByOperationId(
@@ -416,7 +432,9 @@ public class AccountingController {
         if (!accountingRecord.getAccountingJournal().getId()
                 .equals(constantService.getAccountingJournalBilan().getId())
                 && !accountingRecord.getAccountingJournal().getId()
-                        .equals(constantService.getAccountingJournalSalary().getId())) {
+                        .equals(constantService.getAccountingJournalSalary().getId())
+                && !accountingRecord.getAccountingJournal().getId()
+                        .equals(constantService.getAccountingJournalSituation().getId())) {
             throw new OsirisValidationException("accountingRecord");
         }
 

@@ -97,8 +97,6 @@ export class RequiredInformationComponent implements OnInit {
 
   affaire: Affaire = { isIndividual: false } as Affaire;
 
-  announcementNoticeInit: string = "";
-
   noticeTypes: NoticeType[] | undefined;
   noticeTypeFamilies: NoticeTypeFamily[] | undefined;
   departments: Department[] | undefined;
@@ -109,8 +107,6 @@ export class RequiredInformationComponent implements OnInit {
   isDoNotGenerateAnnouncement: boolean = true;
   selectionRedaction: string[] = [this.CONFIER_ANNONCE_AU_JSS, "Je m'occupe de la publication de l'annonce légale"];
   selectedRedaction: string[][] = [];
-  isSaving: boolean = false;
-  isGoBack: boolean = false;
 
   checkedOnce = false;
   isBrowser = false;
@@ -276,8 +272,22 @@ export class RequiredInformationComponent implements OnInit {
           styles: true
         }
       ]
+    },
+    language: {
+      ui: 'fr',
+      content: 'fr'
     }
   } as any;
+
+
+  onEditorReady(editor: any, provision: Provision) {
+    if (!provision || !provision.announcement)
+      return;
+
+    const initialValue = provision.announcement.notice?.length > 0 ? provision.announcement.notice : "";
+
+    editor.setData(initialValue);
+  }
 
   onNoticeChange(event: ChangeEvent, provision: Provision) {
     if (provision && provision.announcement)
@@ -315,9 +325,9 @@ export class RequiredInformationComponent implements OnInit {
   saveFieldsValue() {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
       if (this.currentUser) {
-        this.isSaving = true;
+        this.appService.showLoadingSpinner();
         return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
-          this.isSaving = false;
+          this.appService.hideLoadingSpinner();
         }));
 
       } else {
@@ -389,7 +399,7 @@ export class RequiredInformationComponent implements OnInit {
 
   confirmGoBack() {
     if (this.currentUser) {
-      this.isGoBack = true;
+      this.appService.showLoadingSpinner();
       let promises = [];
       if (this.quotation && this.quotation.assoAffaireOrders)
         for (let asso of this.quotation.assoAffaireOrders)
@@ -397,7 +407,7 @@ export class RequiredInformationComponent implements OnInit {
             for (let service of asso.services)
               promises.push(this.serviceService.deleteService(service));
       combineLatest(promises).subscribe(response => {
-        this.isGoBack = false;
+        this.appService.hideLoadingSpinner();
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
         this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       })

@@ -61,7 +61,9 @@
 
         <!-- Quick message -->
         <div class="row"
-          *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0]">
+          *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services 
+          && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0] && 
+          quotation.assoAffaireOrders[0].services[0].provisions[0].provisionFamilyType.label != provisionFamilyTypeAbonnement.label">
           <div class="card form-check form-switch mb-4 py-4 ">
             <h2 class="pb-3">Gagnez du temps dans vos démarches !</h2>
             <div>
@@ -120,7 +122,7 @@
           <div class="card mb-4">
             <h6 class="card-header"><i class="ai-note me-2"></i> Libellé de facturation et adressage</h6>
             <div class="card-body pt-2">
-              <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+              <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs">
                 <li [ngbNavItem]="indexDoc" *ngFor="let doc of quotation.documents;let indexDoc = index">
                   <button ngbNavLink>{{doc.documentType.label}}</button>
                   <ng-template ngbNavContent>
@@ -585,7 +587,8 @@
                       <strong>{{service.assoServiceDocuments.length}}</strong>
                       documents nécessaires
                       <br>
-                      <strong> {{asso.affaire.denomination}} - {{asso.affaire.address}} -
+                      <strong *ngIf="asso.affaire && asso.affaire.denomination"> {{asso.affaire.denomination}} -
+                        {{asso.affaire.address}} -
                         {{asso.affaire.postalCode}}</strong>
                     </p>
 
@@ -655,15 +658,11 @@
       </div>
       <div class="row gx-1 gy-3 justify-content-between">
         <div class="col-auto">
-          <button class="btn btn-md btn-outline-secondary" type="button" (click)="onValidateOrder(true)"><span
-              class="spinner-grow spinner-grow-sm me-2  text-body-secondary" role="status" aria-hidden="true"
-              *ngIf="isSavingQuotation|| isComputingPrice"></span>Enregistrer le
+          <button class="btn btn-md btn-outline-secondary" type="button" (click)="onValidateOrder(true)">Enregistrer le
             brouillon</button>
         </div>
         <div class="col-auto">
           <button class="btn btn-md btn-secondary" type="submit" (click)="onValidateOrder(false)">
-            <span class="spinner-grow spinner-grow-sm me-2  text-body-secondary" role="status" aria-hidden="true"
-              *ngIf="isSavingQuotation ||isComputingPrice"></span>
             {{quotation?.isQuotation ? 'Envoyer la demande de devis' : 'Valider la commande'}}</button>
         </div>
       </div>

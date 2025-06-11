@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { toIsoString } from 'src/app/libs/FormatHelper';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { AccountingRecord } from '../../accounting/model/AccountingRecord';
 import { Responsable } from '../../tiers/model/Responsable';
@@ -50,6 +51,10 @@ export class AccountingRecordService extends AppRestService<AccountingRecord> {
 
   getAccountingRecordsByTemporaryOperationId(temporaryOperationId: number) {
     return this.getList(new HttpParams().set("temporaryOperationId", temporaryOperationId), "accounting-record/temporary-operation-id");
+  }
+
+  counterPart(temporaryOperationId: number, counterPartDateTime: Date) {
+    return this.getList(new HttpParams().set("temporaryOperationId", temporaryOperationId).set("counterPartDateTime", toIsoString(new Date(counterPartDateTime))), "accounting-record/counter-part", "Contre parties écrites avec succès");
   }
 
   letterRecordsForAs400(accountingRecords: AccountingRecordSearchResult[]) {

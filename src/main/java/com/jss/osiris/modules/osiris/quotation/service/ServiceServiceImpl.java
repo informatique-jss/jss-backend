@@ -272,14 +272,19 @@ public class ServiceServiceImpl implements ServiceService {
 
             if (provisionTypeMergeable != null && provisionTypeMergeable.size() > 0) {
                 if (!screenType.equals(ProvisionScreenType.ANNOUNCEMENT) || provisionTypeMergeable.size() == 1) {
-                    newProvisions.add(completeNoticesFromAnnouncementProvision(
+                    Provision announcementProvision = completeNoticesFromAnnouncementProvision(
                             generateProvisionFromProvisionType(provisionTypeMergeable.get(0).getProvisionType(),
                                     service),
-                            provisionTypeMergeable, affaire));
+                            provisionTypeMergeable, affaire);
+                    announcementProvision.setIsRedactedByJss(true);
+                    newProvisions.add(announcementProvision);
                 } else {
-                    newProvisions.add(completeNoticesFromAnnouncementProvision(generateProvisionFromProvisionType(
-                            this.constantService.getProvisionTypeCharacterAnnouncement(), service),
-                            provisionTypeMergeable, affaire));
+                    Provision announcementProvision = completeNoticesFromAnnouncementProvision(
+                            generateProvisionFromProvisionType(
+                                    this.constantService.getProvisionTypeCharacterAnnouncement(), service),
+                            provisionTypeMergeable, affaire);
+                    announcementProvision.setIsRedactedByJss(true);
+                    newProvisions.add(announcementProvision);
                 }
             }
 
@@ -291,10 +296,12 @@ public class ServiceServiceImpl implements ServiceService {
 
             for (AssoServiceProvisionType assoServiceProvisionType : provisionTypeNonMergeable) {
                 if (provisionTypeNonMergeable != null && provisionTypeNonMergeable.size() > 0) {
-                    newProvisions.add(completeNoticesFromAnnouncementProvision(
+                    Provision announcementProvision = completeNoticesFromAnnouncementProvision(
                             generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(),
                                     service),
-                            provisionTypeNonMergeable, affaire));
+                            provisionTypeNonMergeable, affaire);
+                    announcementProvision.setIsRedactedByJss(true);
+                    newProvisions.add(announcementProvision);
                 }
             }
 

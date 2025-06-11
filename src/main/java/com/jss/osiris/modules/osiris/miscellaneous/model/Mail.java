@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -13,7 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -33,17 +34,9 @@ public class Mail implements Serializable, IId {
 			JacksonViews.OsirisDetailedView.class })
 	private String mail;
 
-	@OneToOne(mappedBy = "mail")
+	@OneToMany(mappedBy = "mail")
 	@JsonIgnore
-	private Responsable responsable;
-
-	public Responsable getResponsable() {
-		return responsable;
-	}
-
-	public void setResponsable(Responsable responsable) {
-		this.responsable = responsable;
-	}
+	private List<Responsable> responsables;
 
 	public Mail() {
 	}
@@ -66,6 +59,14 @@ public class Mail implements Serializable, IId {
 
 	public void setMail(String mail) {
 		this.mail = mail;
+	}
+
+	public List<Responsable> getResponsables() {
+		return responsables;
+	}
+
+	public void setResponsables(List<Responsable> responsables) {
+		this.responsables = responsables;
 	}
 
 }

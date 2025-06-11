@@ -27,6 +27,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
@@ -70,6 +71,8 @@ public interface ConstantService {
     public BillingLabelType getBillingLabelTypeCustomer() throws OsirisException;
 
     public AccountingJournal getAccountingJournalSales() throws OsirisException;
+
+    public AccountingJournal getAccountingJournalSituation() throws OsirisException;
 
     public AccountingJournal getAccountingJournalSalary() throws OsirisException;
 
@@ -237,6 +240,8 @@ public interface ConstantService {
 
     public ProvisionFamilyType getProvisionFamilyTypeDeposit() throws OsirisException;
 
+    public ProvisionFamilyType getProvisionFamilyTypeAbonnement() throws OsirisException;
+
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
 
     public BillingType getBillingTypeEmolumentsDeGreffeDebour() throws OsirisException;
@@ -314,6 +319,8 @@ public interface ConstantService {
     public AssignationType getAssignationTypeEmployee() throws OsirisException;
 
     public Employee getEmployeeBillingResponsible() throws OsirisException;
+
+    public Employee getEmployeeProductionDirector() throws OsirisException;
 
     public Employee getEmployeeMailResponsible() throws OsirisException;
 
@@ -466,6 +473,18 @@ public interface ConstantService {
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
 
     public ServiceType getServiceTypeOther() throws OsirisException;
+
+    public ServiceType getServiceTypeAnnualSubscription() throws OsirisException;
+
+    public ServiceType getServiceTypeEnterpriseAnnualSubscription() throws OsirisException;
+
+    public ServiceType getServiceTypeMonthlySubscription() throws OsirisException;
+
+    public ServiceType getServiceTypeKioskNewspaperBuy() throws OsirisException;
+
+    public ServiceType getServiceTypeUniqueArticleBuy() throws OsirisException;
+
+    public SpecialOffer getSpecialOfferJssSubscriptionReduction() throws OsirisException;
 
     public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() throws OsirisException;
 

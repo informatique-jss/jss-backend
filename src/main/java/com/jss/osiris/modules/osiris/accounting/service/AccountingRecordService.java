@@ -136,4 +136,7 @@ public interface AccountingRecordService {
 
         public List<SuspiciousInvoiceResult> getSuspiciousInvoice(LocalDate accountingDate) throws OsirisException;
 
+        public void counterPartRecords(Integer temporaryOperationId,
+                        LocalDateTime counterPartDateTime) throws OsirisException;
+
 }

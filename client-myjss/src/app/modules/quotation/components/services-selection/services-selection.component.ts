@@ -32,7 +32,6 @@ export class ServicesSelectionComponent implements OnInit {
   quotation: IQuotation | undefined;
   currentUser: Responsable | undefined;
   applyToAllAffaires: boolean = false;
-  isSavingQuotation: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -154,7 +153,7 @@ export class ServicesSelectionComponent implements OnInit {
 
   saveQuotation() {
     if (this.quotation) {
-      this.isSavingQuotation = true;
+      this.appService.showLoadingSpinner();
       if (!this.currentUser) {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
@@ -172,7 +171,7 @@ export class ServicesSelectionComponent implements OnInit {
           }
 
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
-          this.isSavingQuotation = false;
+          this.appService.hideLoadingSpinner();
           this.appService.openRoute(undefined, "quotation/required-information", undefined);
         });
       } else {
@@ -182,7 +181,7 @@ export class ServicesSelectionComponent implements OnInit {
         }
         combineLatest(promises).subscribe(response => {
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
-          this.isSavingQuotation = false;
+          this.appService.hideLoadingSpinner();
           this.appService.openRoute(undefined, "quotation/required-information", undefined);
         });
       }

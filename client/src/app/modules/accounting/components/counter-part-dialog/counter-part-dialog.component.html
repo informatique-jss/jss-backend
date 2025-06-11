@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <p>{{label}}</p>
+  <generic-datetime-picker [(model)]="counterPartDateTime" label="Date de la contre passe" [form]="counterPartForm"
+    propertyName="counterPartDateTime" [isMandatory]="true" [isDisabled]="false"></generic-datetime-picker>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>

@@ -21,6 +21,7 @@ import { BillingLabelType } from '../../../my-account/model/BillingLabelType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
 import { DocumentType } from '../../../my-account/model/DocumentType';
+import { ProvisionFamilyType } from '../../../my-account/model/ProvisionFamilyType';
 import { Quotation } from '../../../my-account/model/Quotation';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { DocumentService } from '../../../my-account/services/document.service';
@@ -91,12 +92,18 @@ export class CheckoutComponent implements OnInit {
   acceptDocs: boolean = false;
   acceptTerms: boolean = false;
 
-  isSavingQuotation: boolean = false;
-
   quotationPriceObservableRef: Subscription | undefined;
 
   userScope: Responsable[] | undefined;
+
+  subscriptionType: string | undefined;
+  isPriceReductionForSubscription: boolean = false;
+  idArticle: number | undefined;
+
+
   capitalizeName = capitalizeName;
+
+  provisionFamilyTypeAbonnement!: ProvisionFamilyType;
 
   constructor(
     private loginService: LoginService,
@@ -112,6 +119,8 @@ export class CheckoutComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+    this.provisionFamilyTypeAbonnement = this.constantService.getProvisionFamilyTypeAbonnement();
     this.documentForm = this.formBuilder.group({});
 
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
@@ -181,7 +190,7 @@ export class CheckoutComponent implements OnInit {
     if (!this.quotation)
       return;
 
-    this.isSavingQuotation = true;
+    this.appService.showLoadingSpinner();
     if (!this.currentUser) {
       if (this.quotation) {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
@@ -199,13 +208,14 @@ export class CheckoutComponent implements OnInit {
               this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
             }
           });
-        this.isSavingQuotation = false;
+        this.appService.hideLoadingSpinner();
       }
     } else {
       if (this.quotation.isQuotation)
         this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
           if (response && response.id) {
             this.cleanStorageData();
+            this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
           }
         })
@@ -213,6 +223,7 @@ export class CheckoutComponent implements OnInit {
         this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
           if (response && response.id) {
             this.cleanStorageData();
+            this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
           }
         })
@@ -220,7 +231,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   cleanStorageData() {
-    this.quotationService.cleanStorageData;
+    this.quotationService.cleanStorageData();
   }
 
 

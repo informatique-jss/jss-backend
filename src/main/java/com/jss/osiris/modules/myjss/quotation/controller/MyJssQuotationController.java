@@ -40,6 +40,11 @@ import com.jss.osiris.modules.myjss.quotation.controller.model.DashboardUserStat
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
+import com.jss.osiris.modules.myjss.wordpress.model.Newspaper;
+import com.jss.osiris.modules.myjss.wordpress.model.Post;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
+import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
+import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -225,6 +230,12 @@ public class MyJssQuotationController {
 
 	@Autowired
 	LegalFormService legalFormService;
+
+	@Autowired
+	PostService postService;
+
+	@Autowired
+	NewspaperService newspaperService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1578,6 +1589,41 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<Page<LegalForm>>(
 				legalFormService.getLegalFormsByName(label, pageable),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/order/subscription")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<CustomerOrder> getCustomerOrderForSubscription(@RequestParam String subscriptionType,
+			@RequestParam Boolean isPriceReductionForSubscription, @RequestParam(required = false) Integer idArticle,
+			HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+
+		if (subscriptionType == null)
+			throw new OsirisValidationException("subscriptionType");
+
+		if ((subscriptionType.equals(Subscription.ONE_POST_SUBSCRIPTION)
+				|| subscriptionType.equals(Subscription.NEWSPAPER_KIOSK_BUY)) && idArticle == null) {
+			throw new OsirisValidationException("subscriptionType need an idArticle for doing the checkout");
+		}
+
+		if (subscriptionType.equals(Subscription.ONE_POST_SUBSCRIPTION) && idArticle != null) {
+			Post post = postService.getPost(idArticle);
+			if (post == null) {
+				throw new OsirisValidationException("Post does not exist");
+			}
+		}
+
+		if (subscriptionType.equals(Subscription.NEWSPAPER_KIOSK_BUY) && idArticle != null) {
+			Newspaper newspaper = newspaperService.getNewspaper(idArticle);
+			if (newspaper == null) {
+				throw new OsirisValidationException("Newspaper in kiosk does not exist");
+			}
+		}
+
+		return new ResponseEntity<CustomerOrder>(
+				customerOrderService.getCustomerOrderForSubscription(subscriptionType, isPriceReductionForSubscription,
+						idArticle),
 				HttpStatus.OK);
 	}
 }

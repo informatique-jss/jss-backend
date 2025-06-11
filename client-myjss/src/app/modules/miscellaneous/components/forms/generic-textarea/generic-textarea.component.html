@@ -1,9 +1,11 @@
 <div class="position-relative ">
-  <div [formGroup]="form!" class="needs-validation">
+  <div [formGroup]="form!" class="needs-validation" *ngIf="form">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
       class="form-label">{{label}}</label>
     <textarea (keyup)="onInputChange()" (keydown)="onInputChange()" (paste)="onInputChange()" [rows]="numberOfLines"
       matInput [formControlName]="propertyName" [placeholder]="label" [maxlength]="maxLength+''"
-      [required]="isMandatory" [minlength]="minLength+''" class="form-control"></textarea>
+      [required]="isMandatory" [minlength]="minLength+''" class="form-control"
+      [class.is-invalid]="form.get(propertyName)?.invalid && form.get(propertyName)?.touched"
+      [class.is-valid]="form.get(propertyName)?.valid && form.get(propertyName)?.touched"></textarea>
   </div>
 </div>

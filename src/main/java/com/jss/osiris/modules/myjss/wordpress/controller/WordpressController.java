@@ -428,7 +428,7 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getJssCategoryPosts(pageable),
+				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(pageable)),
 				HttpStatus.OK);
 	}
 
@@ -1229,10 +1229,16 @@ public class WordpressController {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
 			@RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
-			@RequestParam Integer postId)
+			@RequestParam Integer postId, HttpServletRequest request)
 			throws OsirisException {
 
+		detectFlood(request);
+
 		if (comment != null && postId != null && comment.getMail() != null) {
+
+			if (comment.getContent() == null || comment.getContent().trim() == "") {
+				throw new OsirisValidationException("Impossible d'enregistrer un mail sans contenu");
+			}
 
 			if (!validationHelper.validateMail(comment.getMail())) {
 				throw new OsirisValidationException("Le mail renseigné n'est pas valide !");

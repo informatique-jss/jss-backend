@@ -471,7 +471,8 @@ public class PostServiceImpl implements PostService {
         return bookmarkedPosts;
     }
 
-    private Page<Post> computeBookmarkedPosts(Page<Post> posts) {
+    @Override
+    public Page<Post> computeBookmarkedPosts(Page<Post> posts) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         List<Post> bookmarkedPosts = null;
         Pageable pageableRequest = PageRequest.of(0, Integer.MAX_VALUE);
@@ -795,7 +796,10 @@ public class PostServiceImpl implements PostService {
                             if (sub.getStartDate() != null && sub.getEndDate() != null
                                     && sub.getStartDate().isBefore(LocalDate.now())
                                     && LocalDate.now().isBefore(sub.getEndDate())
-                                    && sub.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)) {
+                                    && (sub.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)
+                                            || sub.getSubscriptionType().equals(Subscription.MONTHLY_SUBSCRIPTION)
+                                            || sub.getSubscriptionType()
+                                                    .equals(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION))) {
                                 return post;
 
                             } else if (sub.getPost().getId().equals(post.getId())

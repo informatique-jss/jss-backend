@@ -172,7 +172,6 @@ public class Responsable implements IAttachment, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
-
 	private Mail mail;
 
 	// TODO : remove after new webstie

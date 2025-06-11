@@ -36,7 +36,7 @@
                 </div>
 
                 <div *ngIf="postsByEntityType && postsByEntityType.length>0">
-                  <div *ngFor="let post of postsByEntityType.slice(0,6)">
+                  <div *ngFor="let post of postsByEntityType">
                     <div class="card border h-100 my-3" *ngIf="post && post.media">
                       <div class="row row-cols-md-auto m-2 d-flex align-items-center g-1 g-md-2">
                         <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4"

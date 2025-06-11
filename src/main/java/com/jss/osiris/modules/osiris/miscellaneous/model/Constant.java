@@ -83,6 +83,10 @@ public class Constant implements Serializable, IId {
 	private AccountingJournal accountingJournalSales;
 
 	@ManyToOne
+	@JoinColumn(name = "id_accounting_journal_situation")
+	private AccountingJournal accountingJournalSituation;
+
+	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_purchases")
 	private AccountingJournal accountingJournalPurchases;
 
@@ -546,6 +550,10 @@ public class Constant implements Serializable, IId {
 	private Employee employeeBillingResponsible;
 
 	@ManyToOne
+	@JoinColumn(name = "id_employee_production_director")
+	private Employee employeeProductionDirector;
+
+	@ManyToOne
 	@JoinColumn(name = "id_employee_mail_responsible")
 	private Employee employeeMailResponsible;
 
@@ -855,6 +863,30 @@ public class Constant implements Serializable, IId {
 	private ServiceType serviceTypeOther;
 
 	@ManyToOne
+	@JoinColumn(name = "id_service_type_annual_subscription")
+	private ServiceType serviceTypeAnnualSubscription;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_enterprise_annual_subscription")
+	private ServiceType serviceTypeEnterpriseAnnualSubscription;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_monthly_subscription")
+	private ServiceType serviceTypeMonthlySubscription;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_kiosk_newspaper_buy")
+	private ServiceType serviceTypeKioskNewspaperBuy;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_unique_article_buy")
+	private ServiceType serviceTypeUniqueArticleBuy;
+
+	@ManyToOne
+	@JoinColumn(name = "id_special_offer_jss_subscription_reduction")
+	private SpecialOffer specialOfferJssSubscriptionReduction;
+
+	@ManyToOne
 	@JoinColumn(name = "id_service_type_secondary_center_opening")
 	private ServiceType serviceTypeSecondaryCenterOpeningAlAndFormality;
 
@@ -877,6 +909,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_provision_family_type_deposit")
 	private ProvisionFamilyType provisionFamilyTypeDeposit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type_abonnement")
+	private ProvisionFamilyType provisionFamilyTypeAbonnement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_formalites")
@@ -2417,6 +2453,54 @@ public class Constant implements Serializable, IId {
 		this.serviceTypeOther = serviceTypeOther;
 	}
 
+	public ServiceType getServiceTypeAnnualSubscription() {
+		return serviceTypeAnnualSubscription;
+	}
+
+	public void setServiceTypeAnnualSubscription(ServiceType serviceTypeAnnualSubscription) {
+		this.serviceTypeAnnualSubscription = serviceTypeAnnualSubscription;
+	}
+
+	public ServiceType getServiceTypeEnterpriseAnnualSubscription() {
+		return serviceTypeEnterpriseAnnualSubscription;
+	}
+
+	public void setServiceTypeEnterpriseAnnualSubscription(ServiceType serviceTypeEnterpriseAnnualSubscription) {
+		this.serviceTypeEnterpriseAnnualSubscription = serviceTypeEnterpriseAnnualSubscription;
+	}
+
+	public ServiceType getServiceTypeMonthlySubscription() {
+		return serviceTypeMonthlySubscription;
+	}
+
+	public void setServiceTypeMonthlySubscription(ServiceType serviceTypeMonthlySubscription) {
+		this.serviceTypeMonthlySubscription = serviceTypeMonthlySubscription;
+	}
+
+	public ServiceType getServiceTypeKioskNewspaperBuy() {
+		return serviceTypeKioskNewspaperBuy;
+	}
+
+	public void setServiceTypeKioskNewspaperBuy(ServiceType serviceTypeKioskNewspaperBuy) {
+		this.serviceTypeKioskNewspaperBuy = serviceTypeKioskNewspaperBuy;
+	}
+
+	public ServiceType getServiceTypeUniqueArticleBuy() {
+		return serviceTypeUniqueArticleBuy;
+	}
+
+	public void setServiceTypeUniqueArticleBuy(ServiceType serviceTypeUniqueArticleBuy) {
+		this.serviceTypeUniqueArticleBuy = serviceTypeUniqueArticleBuy;
+	}
+
+	public SpecialOffer getSpecialOfferJssSubscriptionReduction() {
+		return specialOfferJssSubscriptionReduction;
+	}
+
+	public void setSpecialOfferJssSubscriptionReduction(SpecialOffer specialOfferJssSubscriptionReduction) {
+		this.specialOfferJssSubscriptionReduction = specialOfferJssSubscriptionReduction;
+	}
+
 	public ProvisionType getProvisionTypeBilanPublication() {
 		return provisionTypeBilanPublication;
 	}
@@ -2665,6 +2749,14 @@ public class Constant implements Serializable, IId {
 		this.provisionFamilyTypeDeposit = provisionFamilyTypeDeposit;
 	}
 
+	public ProvisionFamilyType getProvisionFamilyTypeAbonnement() {
+		return provisionFamilyTypeAbonnement;
+	}
+
+	public void setProvisionFamilyTypeAbonnement(ProvisionFamilyType provisionFamilyTypeAbonnement) {
+		this.provisionFamilyTypeAbonnement = provisionFamilyTypeAbonnement;
+	}
+
 	public AccountingJournal getAccountingJournalSalary() {
 		return accountingJournalSalary;
 	}
@@ -2869,6 +2961,22 @@ public class Constant implements Serializable, IId {
 
 	public void setPublishingDepartmentIdf(PublishingDepartment publishingDepartmentIdf) {
 		this.publishingDepartmentIdf = publishingDepartmentIdf;
+	}
+
+	public Employee getEmployeeProductionDirector() {
+		return employeeProductionDirector;
+	}
+
+	public void setEmployeeProductionDirector(Employee employeeProductionDirector) {
+		this.employeeProductionDirector = employeeProductionDirector;
+	}
+
+	public AccountingJournal getAccountingJournalSituation() {
+		return accountingJournalSituation;
+	}
+
+	public void setAccountingJournalSituation(AccountingJournal accountingJournalSituation) {
+		this.accountingJournalSituation = accountingJournalSituation;
 	}
 
 }

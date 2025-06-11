@@ -17,6 +17,7 @@ import { GenericTextareaComponent } from '../../../miscellaneous/components/form
 import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
 import { Pagination } from '../../../miscellaneous/model/Pagination';
 import { Responsable } from '../../../profile/model/Responsable';
+import { LoginService } from '../../../profile/services/login.service';
 import { Comment } from '../../model/Comment';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
@@ -38,6 +39,8 @@ import { PostService } from '../../services/post.service';
     NewsletterComponent]
 })
 export class PostComponent implements OnInit, AfterViewInit {
+
+  currentUser: Responsable | undefined;
 
   slug: string | undefined;
   post: Post | undefined;
@@ -70,7 +73,8 @@ export class PostComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private appService: AppService,
     private constantService: ConstantService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private loginService: LoginService
   ) { }
 
   getTimeReading = getTimeReading;
@@ -86,6 +90,7 @@ export class PostComponent implements OnInit, AfterViewInit {
 
     this.slug = this.activatedRoute.snapshot.params['slug'];
 
+    this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
     if (this.slug) {
       this.postService.getPostBySlug(this.slug).subscribe(post => {
         this.post = post;
@@ -214,6 +219,15 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   postComment() {
     if (this.post) {
+      if (this.currentUser) {
+        if (this.currentUser.firstname)
+          this.newComment.authorFirstName = this.currentUser.firstname;
+        if (this.currentUser.lastname)
+          this.newComment.authorLastName = this.currentUser.lastname;
+
+        this.newComment.mail = this.currentUser.mail;
+      }
+
       this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
         this.fetchComments(0);
       });
