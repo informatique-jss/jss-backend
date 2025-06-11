@@ -864,22 +864,27 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_service_type_annual_subscription")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ServiceType serviceTypeAnnualSubscription;
 
 	@ManyToOne
 	@JoinColumn(name = "id_service_type_enterprise_annual_subscription")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ServiceType serviceTypeEnterpriseAnnualSubscription;
 
 	@ManyToOne
 	@JoinColumn(name = "id_service_type_monthly_subscription")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ServiceType serviceTypeMonthlySubscription;
 
 	@ManyToOne
 	@JoinColumn(name = "id_service_type_kiosk_newspaper_buy")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ServiceType serviceTypeKioskNewspaperBuy;
 
 	@ManyToOne
 	@JoinColumn(name = "id_service_type_unique_article_buy")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ServiceType serviceTypeUniqueArticleBuy;
 
 	@ManyToOne

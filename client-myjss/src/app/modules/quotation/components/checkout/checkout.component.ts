@@ -21,8 +21,8 @@ import { BillingLabelType } from '../../../my-account/model/BillingLabelType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
 import { DocumentType } from '../../../my-account/model/DocumentType';
-import { ProvisionFamilyType } from '../../../my-account/model/ProvisionFamilyType';
 import { Quotation } from '../../../my-account/model/Quotation';
+import { ServiceType } from '../../../my-account/model/ServiceType';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { DocumentService } from '../../../my-account/services/document.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -103,7 +103,11 @@ export class CheckoutComponent implements OnInit {
 
   capitalizeName = capitalizeName;
 
-  provisionFamilyTypeAbonnement!: ProvisionFamilyType;
+  serviceTypeAnnualSubscription!: ServiceType;
+  serviceTypeEnterpriseAnnualSubscription!: ServiceType;
+  serviceTypeMonthlySubscription!: ServiceType;
+  serviceTypeUniqueArticleBuy!: ServiceType;
+  serviceTypeKioskNewspaperBuy!: ServiceType;
 
   constructor(
     private loginService: LoginService,
@@ -119,8 +123,12 @@ export class CheckoutComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.serviceTypeAnnualSubscription = this.constantService.getServiceTypeAnnualSubscription();
+    this.serviceTypeEnterpriseAnnualSubscription = this.constantService.getServiceTypeEnterpriseAnnualSubscription();
+    this.serviceTypeMonthlySubscription = this.constantService.getServiceTypeMonthlySubscription();
+    this.serviceTypeUniqueArticleBuy = this.constantService.getServiceTypeUniqueArticleBuy();
+    this.serviceTypeKioskNewspaperBuy = this.constantService.getServiceTypeKioskNewspaperBuy();
 
-    this.provisionFamilyTypeAbonnement = this.constantService.getProvisionFamilyTypeAbonnement();
     this.documentForm = this.formBuilder.group({});
 
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
@@ -634,6 +642,15 @@ export class CheckoutComponent implements OnInit {
           document.billingLabelCity = response[0];
       })
     }
+  }
+
+  isServiceJssSubscription(serviceType: ServiceType): boolean {
+    return serviceType.id === this.serviceTypeAnnualSubscription.id
+      || serviceType.id === this.serviceTypeMonthlySubscription.id
+      || serviceType.id === this.serviceTypeUniqueArticleBuy.id
+      //TODO : create constant
+      // || serviceType.id === this.serviceTypeEnterpriseAnnualSubscription.id
+      || serviceType.id === this.serviceTypeUniqueArticleBuy.id;
   }
 
   goBackQuotation() {
