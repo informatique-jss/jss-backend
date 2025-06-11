@@ -911,6 +911,10 @@ public class Constant implements Serializable, IId {
 	private ProvisionFamilyType provisionFamilyTypeDeposit;
 
 	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type_abonnement")
+	private ProvisionFamilyType provisionFamilyTypeAbonnement;
+
+	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_formalites")
 	private ActiveDirectoryGroup activeDirectoryGroupFormalites;
 
@@ -2743,6 +2747,14 @@ public class Constant implements Serializable, IId {
 
 	public void setProvisionFamilyTypeDeposit(ProvisionFamilyType provisionFamilyTypeDeposit) {
 		this.provisionFamilyTypeDeposit = provisionFamilyTypeDeposit;
+	}
+
+	public ProvisionFamilyType getProvisionFamilyTypeAbonnement() {
+		return provisionFamilyTypeAbonnement;
+	}
+
+	public void setProvisionFamilyTypeAbonnement(ProvisionFamilyType provisionFamilyTypeAbonnement) {
+		this.provisionFamilyTypeAbonnement = provisionFamilyTypeAbonnement;
 	}
 
 	public AccountingJournal getAccountingJournalSalary() {

@@ -26,8 +26,8 @@ import jakarta.persistence.Table;
 public class AssoProvisionPostNewspaper implements Serializable, IId {
 
         @Id
-        @SequenceGenerator(name = "asso_asso_provision_post_kiosk_sequence", sequenceName = "asso_provision_post_kiosk_sequence", allocationSize = 1)
-        @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_provision_post_kiosk_sequence")
+        @SequenceGenerator(name = "asso_asso_provision_post_newspaper_sequence", sequenceName = "asso_provision_post_newspaper_sequence", allocationSize = 1)
+        @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_provision_post_newspaper_sequence")
         @JsonView({ JacksonViews.MyJssDetailedView.class })
         private Integer id;
 
@@ -42,9 +42,9 @@ public class AssoProvisionPostNewspaper implements Serializable, IId {
         private Post post;
 
         @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "id_kiosk")
+        @JoinColumn(name = "id_newspaper")
         @IndexedField
-        private Newspaper kiosk;
+        private Newspaper newspaper;
 
         public Integer getId() {
                 return id;
@@ -70,11 +70,11 @@ public class AssoProvisionPostNewspaper implements Serializable, IId {
                 this.post = post;
         }
 
-        public Newspaper getKiosk() {
-                return kiosk;
+        public Newspaper getNewspaper() {
+                return newspaper;
         }
 
-        public void setKiosk(Newspaper kiosk) {
-                this.kiosk = kiosk;
+        public void setNewspaper(Newspaper newspaper) {
+                this.newspaper = newspaper;
         }
 }

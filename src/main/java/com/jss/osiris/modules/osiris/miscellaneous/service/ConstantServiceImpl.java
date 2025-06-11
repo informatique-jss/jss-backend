@@ -510,6 +510,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ProvisionFamilyType getProvisionFamilyTypeAbonnement() throws OsirisException {
+        return getConstants().getProvisionFamilyTypeAbonnement();
+    }
+
+    @Override
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException {
         return getConstants().getBillingTypeInfogreffeDebour();
     }

@@ -2,10 +2,9 @@ import { AttachmentType } from "../../my-account/model/AttachmentType";
 import { BillingLabelType } from "../../my-account/model/BillingLabelType";
 import { DocumentType } from "../../my-account/model/DocumentType";
 import { PaymentType } from "../../my-account/model/PaymentType";
-import { ServiceType } from "../../my-account/model/ServiceType";
+import { ProvisionFamilyType } from "../../my-account/model/ProvisionFamilyType";
 import { Country } from "../../profile/model/Country";
 import { Responsable } from "../../profile/model/Responsable";
-import { SpecialOffer } from "../../profile/model/SpecialOffer";
 import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
 import { Language } from "../../quotation/model/Language";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
@@ -41,10 +40,5 @@ export interface Constant {
   mailRedirectionTypeOther: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail: DomiciliationContractType;
   domiciliationContractTypeRouteMail: DomiciliationContractType;
-  serviceTypeAnnualSubscription: ServiceType;
-  serviceTypeEnterpriseAnnualSubscription: ServiceType;
-  serviceTypeMonthlySubscription: ServiceType;
-  serviceTypeKioskNewspaperBuy: ServiceType;
-  serviceTypeUniqueArticleBuy: ServiceType;
-  specialOfferJssSubscriptionReduction: SpecialOffer;
+  provisionFamilyTypeAbonnement: ProvisionFamilyType;
 }

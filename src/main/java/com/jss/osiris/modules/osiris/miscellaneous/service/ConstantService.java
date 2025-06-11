@@ -240,6 +240,8 @@ public interface ConstantService {
 
     public ProvisionFamilyType getProvisionFamilyTypeDeposit() throws OsirisException;
 
+    public ProvisionFamilyType getProvisionFamilyTypeAbonnement() throws OsirisException;
+
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
 
     public BillingType getBillingTypeEmolumentsDeGreffeDebour() throws OsirisException;

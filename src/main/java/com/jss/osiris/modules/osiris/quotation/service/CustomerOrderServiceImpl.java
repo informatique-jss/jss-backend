@@ -1969,7 +1969,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             case Subscription.NEWSPAPER_KIOSK_BUY:
                 serviceTypeSubscription = constantService.getServiceTypeKioskNewspaperBuy();
 
-                assoProvisionPostNewspaper.setKiosk(newspaperService.getNewspaper(idArticle));
+                assoProvisionPostNewspaper.setNewspaper(newspaperService.getNewspaper(idArticle));
                 break;
 
             default:
@@ -1980,6 +1980,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setIsRecurring(true);
             customerOrder.setRecurringStartDate(LocalDate.now());
             customerOrder.setRecurringEndDate(LocalDate.now().plusYears(200));
+            customerOrder.setIsRecurringAutomaticallyBilled(true);
         }
 
         Service serviceSubscription = serviceService
