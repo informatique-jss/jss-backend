@@ -183,4 +183,8 @@ public interface CustomerOrderService {
         public CustomerOrder getCustomerOrderForSubscription(String subscriptionType,
                         Boolean isPriceReductionForSubscription, Integer idArticle) throws OsirisException;
 
+        public void updateSimpleProvisionStatus(CustomerOrder recurringCustomerOrder)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
 }
