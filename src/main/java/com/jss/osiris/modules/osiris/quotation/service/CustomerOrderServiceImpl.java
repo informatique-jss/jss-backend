@@ -345,13 +345,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     private boolean isJssSubscriptionService(Service service) throws OsirisException {
-        String subscriptionType = service.getServiceTypes().get(0).getLabel();
+        Integer subscriptionType = service.getServiceTypes().get(0).getId();
 
-        return subscriptionType.equals(constantService.getServiceTypeAnnualSubscription().getLabel())
-                || subscriptionType.equals(constantService.getServiceTypeEnterpriseAnnualSubscription().getLabel())
-                || subscriptionType.equals(constantService.getServiceTypeMonthlySubscription().getLabel())
-                || subscriptionType.equals(constantService.getServiceTypeKioskNewspaperBuy().getLabel())
-                || subscriptionType.equals(constantService.getServiceTypeUniqueArticleBuy().getLabel());
+        return subscriptionType.equals(constantService.getServiceTypeAnnualSubscription().getId())
+                || subscriptionType.equals(constantService.getServiceTypeEnterpriseAnnualSubscription().getId())
+                || subscriptionType.equals(constantService.getServiceTypeMonthlySubscription().getId())
+                || subscriptionType.equals(constantService.getServiceTypeKioskNewspaperBuy().getId())
+                || subscriptionType.equals(constantService.getServiceTypeUniqueArticleBuy().getId());
     }
 
     @Override
