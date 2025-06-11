@@ -49,6 +49,10 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public void markCustomerOrderAsPayed(CustomerOrder customerOrder, boolean isPayed)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
         public void generateCreditNoteForCustomerOrderInvoice(CustomerOrder customerOrder, Invoice invoiceToRefund)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;

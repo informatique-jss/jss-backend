@@ -89,7 +89,7 @@
             </li>
 
             <!-- Categories -->
-            <li class="nav-item" *ngFor="let category of categories">
+            <li class="nav-item" *ngFor="let category of categoriesByOrder">
               <a class="nav-link"
                 [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
                 (click)="openCategoryPosts(category, $event)">
