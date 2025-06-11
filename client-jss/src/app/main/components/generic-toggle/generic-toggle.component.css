@@ -19,7 +19,6 @@
     width: 30px;
     height: 30px;
     background-color: #131c2b;
-    /* le rond noir */
     border-radius: 50%;
     transition: transform 0.3s ease;
 }
