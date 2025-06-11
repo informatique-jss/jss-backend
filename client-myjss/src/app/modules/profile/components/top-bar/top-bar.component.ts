@@ -131,4 +131,7 @@ export class TopBarComponent implements OnInit {
     });
   }
 
+  openJssRoute(event: any) {
+    this.appService.openJssRoute(event, "");
+  }
 }
