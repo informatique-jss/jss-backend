@@ -220,7 +220,7 @@ export class OrderDetailsComponent implements OnInit {
 
   editAffaireDetails(affaire: Affaire, event: any) {
     if (this.order)
-      this.appService.openRoute(event, "account/affaire/edit/" + affaire.id + "/" + this.order.id, undefined);
+      this.appService.openRoute(event, "account/affaire/edit/order/" + affaire.id + "/" + this.order.id, undefined);
   }
 
   editAddress(event: any) {

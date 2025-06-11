@@ -72,11 +72,6 @@ Primary use:  blog, news, magazine
   box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  :root {
-    scroll-behavior: smooth;
-  }
-}
 
 body {
   margin: 0;
@@ -11572,9 +11567,6 @@ fieldset:disabled .btn {
 /* ==============================================
   1. Normalize CSS
 ============================================== */
-html {
-  scroll-behavior: smooth;
-}
 
 
 .container-fluid,
