@@ -42,6 +42,7 @@ export interface Constant {
   domiciliationContractTypeRouteEmailAndMail: DomiciliationContractType;
   domiciliationContractTypeRouteMail: DomiciliationContractType;
   serviceTypeAnnualSubscription: ServiceType;
+  serviceTypeEnterpriseAnnualSubscription: ServiceType;
   serviceTypeMonthlySubscription: ServiceType;
   serviceTypeKioskNewspaperBuy: ServiceType;
   serviceTypeUniqueArticleBuy: ServiceType;

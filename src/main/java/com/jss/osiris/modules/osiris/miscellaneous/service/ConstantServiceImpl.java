@@ -1090,6 +1090,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ServiceType getServiceTypeEnterpriseAnnualSubscription() throws OsirisException {
+        return getConstants().getServiceTypeEnterpriseAnnualSubscription();
+    }
+
+    @Override
     public ServiceType getServiceTypeMonthlySubscription() throws OsirisException {
         return getConstants().getServiceTypeMonthlySubscription();
     }

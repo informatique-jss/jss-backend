@@ -253,6 +253,7 @@ export interface Constant {
   serviceTypeOther: ServiceType;
   serviceTypeSecondaryCenterOpeningAlAndFormality: ServiceType;
   serviceTypeAnnualSubscription: ServiceType;
+  serviceTypeEnterpriseAnnualSubscription: ServiceType;
   serviceTypeMonthlySubscription: ServiceType;
   serviceTypeKioskNewspaperBuy: ServiceType;
   serviceTypeUniqueArticleBuy: ServiceType;

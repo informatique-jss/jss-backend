@@ -470,6 +470,8 @@ public interface ConstantService {
 
     public ServiceType getServiceTypeAnnualSubscription() throws OsirisException;
 
+    public ServiceType getServiceTypeEnterpriseAnnualSubscription() throws OsirisException;
+
     public ServiceType getServiceTypeMonthlySubscription() throws OsirisException;
 
     public ServiceType getServiceTypeKioskNewspaperBuy() throws OsirisException;

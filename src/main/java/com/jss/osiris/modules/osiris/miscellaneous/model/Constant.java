@@ -859,6 +859,10 @@ public class Constant implements Serializable, IId {
 	private ServiceType serviceTypeAnnualSubscription;
 
 	@ManyToOne
+	@JoinColumn(name = "id_service_type_enterprise_annual_subscription")
+	private ServiceType serviceTypeEnterpriseAnnualSubscription;
+
+	@ManyToOne
 	@JoinColumn(name = "id_service_type_monthly_subscription")
 	private ServiceType serviceTypeMonthlySubscription;
 
@@ -2443,6 +2447,14 @@ public class Constant implements Serializable, IId {
 
 	public void setServiceTypeAnnualSubscription(ServiceType serviceTypeAnnualSubscription) {
 		this.serviceTypeAnnualSubscription = serviceTypeAnnualSubscription;
+	}
+
+	public ServiceType getServiceTypeEnterpriseAnnualSubscription() {
+		return serviceTypeEnterpriseAnnualSubscription;
+	}
+
+	public void setServiceTypeEnterpriseAnnualSubscription(ServiceType serviceTypeEnterpriseAnnualSubscription) {
+		this.serviceTypeEnterpriseAnnualSubscription = serviceTypeEnterpriseAnnualSubscription;
 	}
 
 	public ServiceType getServiceTypeMonthlySubscription() {

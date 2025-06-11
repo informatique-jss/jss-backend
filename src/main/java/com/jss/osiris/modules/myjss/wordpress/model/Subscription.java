@@ -29,6 +29,7 @@ import jakarta.persistence.Table;
 public class Subscription implements IId, Serializable {
 
     public final static String ANNUAL_SUBSCRIPTION = "ANNUAL_SUBSCRIPTION";
+    public final static String ENTERPRISE_ANNUAL_SUBSCRIPTION = "ENTERPRISE_ANNUAL_SUBSCRIPTION";
     public final static String MONTHLY_SUBSCRIPTION = "MONTHLY_SUBSCRIPTION";
     public final static String ONE_POST_SUBSCRIPTION = "ONE_POST_SUBSCRIPTION";
     public final static String SHARED_POST_SUBSCRIPTION = "SHARED_POST_SUBSCRIPTION";

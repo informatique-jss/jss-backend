@@ -830,6 +830,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.serviceTypeAnnualSubscription;
   }
 
+  getServiceTypeEnterpriseAnnualSubscription() {
+    return this.constant.serviceTypeEnterpriseAnnualSubscription;
+  }
+
   getServiceTypeMonthlySubscription() {
     return this.constant.serviceTypeMonthlySubscription;
   }

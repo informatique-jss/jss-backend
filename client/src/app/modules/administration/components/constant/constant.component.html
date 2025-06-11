@@ -1577,6 +1577,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeEnterpriseAnnualSubscription"
+                [form]="constantForm" propertyName="serviceTypeEnterpriseAnnualSubscription" [isMandatory]="true"
+                label="Service - Achat abonnement annuel entreprise"
+                [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-service-type [(model)]="constant.serviceTypeMonthlySubscription" [form]="constantForm"
                 propertyName="serviceTypeMonthlySubscription" [isMandatory]="true"
                 label="Service - Achat abonnemet mensuel" [isDisabled]="!editMode"></autocomplete-service-type>

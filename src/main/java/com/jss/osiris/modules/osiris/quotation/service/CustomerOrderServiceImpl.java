@@ -1950,6 +1950,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 isRecurring = true;
                 break;
 
+            case Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION:
+                serviceTypeSubscription = constantService.getServiceTypeEnterpriseAnnualSubscription();
+                isRecurring = true;
+                break;
+
             case Subscription.MONTHLY_SUBSCRIPTION:
                 serviceTypeSubscription = constantService.getServiceTypeMonthlySubscription();
                 isRecurring = true;

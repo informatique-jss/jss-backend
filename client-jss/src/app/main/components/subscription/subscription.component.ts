@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
-import { ANNUAL_SUBSCRIPTION, MONTHLY_SUBSCRIPTION } from '../../model/Subscription';
+import { ANNUAL_SUBSCRIPTION, ENTERPRISE_ANNUAL_SUBSCRIPTION, MONTHLY_SUBSCRIPTION } from '../../model/Subscription';
 import { GenericToggleComponent } from '../generic-toggle/generic-toggle.component';
 import { NewsletterComponent } from "../newsletter/newsletter.component";
 
@@ -29,12 +29,16 @@ export class SubscriptionComponent implements OnInit {
     this.subscriptionForm = this.formBuilder.group({});
   }
 
-  subscribe(event: any, isMonthly: boolean, isPriceReduction: boolean, idArticle: number | null) {
+  subscribe(event: any, isMonthly: boolean, isPriceReduction: boolean, isEnteprise: boolean, idArticle: number | null) {
     let subscriptionType: string = "";
     if (isMonthly) {
       subscriptionType = MONTHLY_SUBSCRIPTION;
     } else {
-      subscriptionType = ANNUAL_SUBSCRIPTION;
+      if (isEnteprise)
+        subscriptionType = ENTERPRISE_ANNUAL_SUBSCRIPTION;
+      else
+        subscriptionType = ANNUAL_SUBSCRIPTION;
+
     }
 
     this.appService.openMyJssRoute(event, "/quotation/" + subscriptionType + "/" + isPriceReduction + "/" + idArticle, true);
