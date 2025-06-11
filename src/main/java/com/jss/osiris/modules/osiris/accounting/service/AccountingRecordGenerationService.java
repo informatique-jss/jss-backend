@@ -6,6 +6,7 @@ import java.util.List;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.SageRecord;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -73,4 +74,7 @@ public interface AccountingRecordGenerationService {
 
         public void generateAccountingRecordOnOutgoingPaymentOnAccountingAccount(Payment payment)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
+
+        public void counterPartExistingManualRecords(List<AccountingRecord> records, LocalDateTime counterPartDateTime)
+                        throws OsirisException;
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
@@ -35,6 +36,9 @@ public class IncidentReportServiceImpl implements IncidentReportService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public List<IncidentReport> getIncidentReports() {
@@ -70,8 +74,8 @@ public class IncidentReportServiceImpl implements IncidentReportService {
         if (incidentReport.getInitiatedBy() == null)
             incidentReport.setInitiatedBy(employeeService.getCurrentEmployee());
 
-        if (incidentReport.getAssignedTo() == null && incidentReport.getProvision() != null) {
-            incidentReport.setAssignedTo(incidentReport.getProvision().getAssignedTo());
+        if (incidentReport.getAssignedTo() == null) {
+            incidentReport.setAssignedTo(constantService.getEmployeeProductionDirector());
         }
 
         boolean isToNotify = incidentReport.getId() == null;
