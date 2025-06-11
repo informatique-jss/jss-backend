@@ -75,8 +75,8 @@ export class HeaderComponent implements OnInit {
       this.departments = departments.sort((a: PublishingDepartment, b: PublishingDepartment) => parseInt(a.code) - parseInt(b.code));
     });
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
-      this.categories = categories
-      this.categoriesByOrder = this.categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
+      this.categories = categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
+      this.categoriesByOrder = this.categories.slice(0, 3);
     });
   }
 
