@@ -90,11 +90,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   newCommentForm!: FormGroup;
 
   ngOnInit() {
-    this.loginService.getCurrentUser().subscribe(res => {
-      if (res) {
-        this.currentUser = res;
-      }
-    });
+    this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
 
     this.newCommentForm = this.formBuilder.group({});
     this.giftForm = this.formBuilder.group({});
@@ -232,11 +228,21 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   postComment() {
-    if (this.post) {
+    if (this.post && this.newComment.content.trim()) {
+      if (this.currentUser) {
+        if (this.currentUser.firstname)
+          this.newComment.authorFirstName = this.currentUser.firstname;
+        if (this.currentUser.lastname)
+          this.newComment.authorLastName = this.currentUser.lastname;
+
+        this.newComment.mail = this.currentUser.mail;
+      }
+
       this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
         this.fetchComments(0);
       });
-    }
+    } else if (!this.newComment.content.trim())
+      this.appService.displayToast("Vous ne pouvez pas publier un commentaire sans contenu", true, "Contenu vide", 5000);
     this.cancelReply();
   }
 
