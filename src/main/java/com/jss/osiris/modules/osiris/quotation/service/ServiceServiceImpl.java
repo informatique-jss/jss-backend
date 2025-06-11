@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -345,7 +346,7 @@ public class ServiceServiceImpl implements ServiceService {
                 provision.getAnnouncement().setNoticeTypes(noticeTypes);
             }
             provision.getAnnouncement().setNotice(noticeTemplate);
-
+            provision.getAnnouncement().setPublicationDate(LocalDate.now());
             if (affaire != null && affaire.getCity() != null)
                 provision.getAnnouncement().setDepartment(affaire.getCity().getDepartment());
         }

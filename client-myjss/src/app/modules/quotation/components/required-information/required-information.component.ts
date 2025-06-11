@@ -214,8 +214,6 @@ export class RequiredInformationComponent implements OnInit {
               for (let provision of serv.provisions) {
                 if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
                   provision.order = ++i;
-                  if (provision.announcement)
-                    provision.announcement.publicationDate = this.minDatePublication;
                   if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
                     this.selectedRedaction[asso.services.indexOf(serv)] = [];
                   }
