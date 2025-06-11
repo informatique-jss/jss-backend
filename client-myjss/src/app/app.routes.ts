@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { RenderMode } from '@angular/ssr';
 import { ConstantsResolver } from './modules/main/services/constant.service';
 import { MyAccountComponent } from './modules/my-account/components/my-account/my-account.component';
 
@@ -60,12 +59,14 @@ const routesQuotation = [
       { path: 'services-selection', loadComponent: () => import('./modules/quotation/components/services-selection/services-selection.component').then(m => m.ServicesSelectionComponent) },
       {
         path: 'required-information',
-        renderMode: RenderMode.Client,
         loadComponent: () => import('./modules/quotation/components/required-information/required-information.component').then(m => m.RequiredInformationComponent),
       },
       { path: 'checkout', loadComponent: () => import('./modules/quotation/components/checkout/checkout.component').then(m => m.CheckoutComponent) },
     ]
-  },
+  }, {
+    path: 'quotation/:subscription-type/:is-price-reduction/:id-article',
+    loadComponent: () => import('./modules/quotation/components/quotation/quotation.component').then(m => m.QuotationComponent),
+  }
 ];
 
 const routesCompany = [

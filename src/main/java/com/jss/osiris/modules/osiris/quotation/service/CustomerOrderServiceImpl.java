@@ -51,6 +51,11 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoProvisionPostNewspaper;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
+import com.jss.osiris.modules.myjss.wordpress.service.AssoProvisionPostNewspaperService;
+import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
+import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
@@ -95,6 +100,7 @@ import com.jss.osiris.modules.osiris.quotation.model.PaperSet;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
@@ -227,6 +233,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     ProvisionService provisionService;
+
+    @Autowired
+    AssoProvisionPostNewspaperService assoProvisionPostNewspaperService;
+
+    @Autowired
+    PostService postService;
+
+    @Autowired
+    NewspaperService newspaperService;
 
     @Autowired
     QuotationValidationHelper quotationValidationHelper;
@@ -1604,19 +1619,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getAssoAffaireOrders() != null) {
             assoAffaireOrderService.populateTransientField(customerOrder.getAssoAffaireOrders());
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-                String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
-                if (affaireDenomination == null || affaireDenomination.length() == 0)
-                    affaireDenomination = assoAffaireOrder.getAffaire().getFirstname() + " "
-                            + assoAffaireOrder.getAffaire().getLastname();
-                if (affaireLabels.indexOf(affaireDenomination) < 0)
-                    affaireLabels.add(affaireDenomination);
+                if (assoAffaireOrder.getAffaire() != null) {
+                    String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
+                    if (affaireDenomination == null || affaireDenomination.length() == 0)
+                        affaireDenomination = assoAffaireOrder.getAffaire().getFirstname() + " "
+                                + assoAffaireOrder.getAffaire().getLastname();
+                    if (affaireLabels.indexOf(affaireDenomination) < 0)
+                        affaireLabels.add(affaireDenomination);
+                }
 
                 if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0)
                     for (Service service : assoAffaireOrder.getServices()) {
                         String serviceLabel = service.getServiceLabelToDisplay();
                         if (serviceLabels.indexOf(serviceLabel) < 0)
                             serviceLabels.add(serviceLabel);
-
                     }
 
                 if (assoAffaireOrder.getServices() != null)
@@ -1925,4 +1941,77 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
     }
 
+    @Override
+    public CustomerOrder getCustomerOrderForSubscription(String subscriptionType,
+            Boolean isPriceReductionForSubscription, Integer idArticle) throws OsirisException {
+
+        ServiceType serviceTypeSubscription = null;
+
+        CustomerOrder customerOrder = new CustomerOrder();
+        boolean isRecurring = false;
+        AssoProvisionPostNewspaper assoProvisionPostNewspaper = new AssoProvisionPostNewspaper();
+
+        switch (subscriptionType) {
+            case Subscription.ANNUAL_SUBSCRIPTION:
+                serviceTypeSubscription = constantService.getServiceTypeAnnualSubscription();
+                isRecurring = true;
+                break;
+
+            case Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION:
+                serviceTypeSubscription = constantService.getServiceTypeEnterpriseAnnualSubscription();
+                isRecurring = true;
+                break;
+
+            case Subscription.MONTHLY_SUBSCRIPTION:
+                serviceTypeSubscription = constantService.getServiceTypeMonthlySubscription();
+                isRecurring = true;
+                break;
+
+            case Subscription.ONE_POST_SUBSCRIPTION:
+                serviceTypeSubscription = constantService.getServiceTypeUniqueArticleBuy();
+
+                assoProvisionPostNewspaper.setPost(postService.getPost(idArticle));
+                break;
+
+            case Subscription.NEWSPAPER_KIOSK_BUY:
+                serviceTypeSubscription = constantService.getServiceTypeKioskNewspaperBuy();
+
+                assoProvisionPostNewspaper.setNewspaper(newspaperService.getNewspaper(idArticle));
+                break;
+
+            default:
+                return customerOrder;
+        }
+
+        if (isRecurring) {
+            customerOrder.setIsRecurring(true);
+            customerOrder.setRecurringStartDate(LocalDate.now());
+            customerOrder.setRecurringEndDate(LocalDate.now().plusYears(200));
+            customerOrder.setIsRecurringAutomaticallyBilled(true);
+        }
+
+        Service serviceSubscription = serviceService
+                .generateServiceInstanceFromMultiServiceTypes(Arrays.asList(serviceTypeSubscription), null, null)
+                .getFirst();
+
+        if (subscriptionType.equals(Subscription.NEWSPAPER_KIOSK_BUY)
+                || subscriptionType.equals(Subscription.ONE_POST_SUBSCRIPTION)) {
+            assoProvisionPostNewspaper.setProvision(serviceSubscription.getProvisions().get(0));
+            assoProvisionPostNewspaperService.addOrUpdateAssoMailPost(assoProvisionPostNewspaper);
+        }
+
+        customerOrder.setResponsable(constantService.getResponsableDummyCustomerFrance());
+
+        AssoAffaireOrder assoAffaireOrder = new AssoAffaireOrder();
+        assoAffaireOrder.setCustomerOrder(customerOrder);
+        assoAffaireOrder.setServices(Arrays.asList(serviceSubscription));
+
+        customerOrder.setAssoAffaireOrders(Arrays.asList(assoAffaireOrder));
+        customerOrder.setSpecialOffers(Arrays.asList());
+        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, false);
+
+        customerOrder.setResponsable(null);
+
+        return customerOrder;
+    }
 }

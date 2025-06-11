@@ -843,6 +843,9 @@ public class PricingHelper {
             quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0)
                     .setIsEmergency(isEmergency);
         }
-        return getAndSetInvoiceItemsForQuotation(quotation, false);
+        quotation = getAndSetInvoiceItemsForQuotation(quotation, false);
+
+        quotation.setResponsable(null);
+        return quotation;
     }
 }
