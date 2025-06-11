@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.myjss.wordpress.model.AssoProvisionPostNewspaper;
 import com.jss.osiris.modules.myjss.wordpress.repository.AssoProvisionPostNewspaperRepository;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
 
 @Service
 public class AssoProvisionPostNewspaperServiceImpl implements AssoProvisionPostNewspaperService {
@@ -15,6 +16,11 @@ public class AssoProvisionPostNewspaperServiceImpl implements AssoProvisionPostN
     @Override
     public AssoProvisionPostNewspaper addOrUpdateAssoMailPost(AssoProvisionPostNewspaper assoProvisionPostNewspaper) {
         return assoProvisionPostNewspaperRepository.save(assoProvisionPostNewspaper);
+    }
+
+    @Override
+    public AssoProvisionPostNewspaper getAssoProvisionPostNewspaperByProvision(Provision provision) {
+        return assoProvisionPostNewspaperRepository.findByProvision(provision);
     }
 
 }

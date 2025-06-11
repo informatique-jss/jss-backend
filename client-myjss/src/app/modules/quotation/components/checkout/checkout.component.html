@@ -61,7 +61,8 @@
 
         <!-- Quick message -->
         <div class="row" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services
-          && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0]  ">
+          && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0]
+          && !isServiceJssSubscription(quotation.assoAffaireOrders[0].services[0].serviceTypes[0])">
           <div class="card form-check form-switch mb-4 py-4 ">
             <h2 class="pb-3">Gagnez du temps dans vos démarches !</h2>
             <div>

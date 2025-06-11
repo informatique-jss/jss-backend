@@ -979,8 +979,4 @@ export class ConstantService extends AppRestService<Constant> {
   getPublishingDepartmentIdf() {
     return this.constant.publishingDepartmentIdf;
   }
-
-  getProvisionFamilyTypeAbonnement() {
-    return this.constant.provisionFamilyTypeAbonnement;
-  }
 }
