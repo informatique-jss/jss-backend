@@ -477,6 +477,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : TO BILLED => notify
         if (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)) {
+            if (customerOrder.getPrincingEffectiveDate() == null)
+                customerOrder.setPrincingEffectiveDate(LocalDate.now());
             // Auto billed for JSS Announcement only customer order
             if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     && isOnlyJssAnnouncement(customerOrder)
@@ -857,6 +859,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throw new OsirisException(e,
                     "Error when reading clone of quotation for quotation " + quotation.getId());
         }
+
+        customerOrder2.setPrincingEffectiveDate(quotation.getPrincingEffectiveDate());
 
         if (customerOrder2.getDocuments() != null) {
             ArrayList<Document> documents = new ArrayList<Document>();

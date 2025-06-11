@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -246,6 +247,7 @@ public class QuotationServiceImpl implements QuotationService {
             if (quotation.getCustomerOrders() == null)
                 quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
             quotation.getCustomerOrders().add(customerOrder);
+            quotation.setPrincingEffectiveDate(LocalDate.now());
             customerOrder.setQuotations(new ArrayList<Quotation>());
             customerOrder.getQuotations().add(quotation);
             mailHelper.sendCustomerOrderCreationConfirmationOnQuotationValidation(quotation, customerOrder);
