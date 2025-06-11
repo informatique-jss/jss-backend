@@ -15,6 +15,7 @@ import { NewsletterComponent } from "../newsletter/newsletter.component";
 })
 export class SubscriptionComponent implements OnInit {
 
+
   isMonthlySubscription: boolean = false;
 
   constructor(
@@ -37,5 +38,9 @@ export class SubscriptionComponent implements OnInit {
     }
 
     this.appService.openMyJssRoute(event, "/quotation/" + subscriptionType + "/" + isPriceReduction + "/" + idArticle, true);
+  }
+
+  openToast($event: MouseEvent) {
+    this.appService.displayToast("Ce type d'abonnement n'est malheureusement pas encore disponible, nous faisons notre maximum pour vous le proposer au plus vite. N'hésitez pas à contacter nos équipes si vous souhaitez souscrire à plusieurs abonnements à la fois.", true, "Type d'abonnement indisponible", 10000);
   }
 }
