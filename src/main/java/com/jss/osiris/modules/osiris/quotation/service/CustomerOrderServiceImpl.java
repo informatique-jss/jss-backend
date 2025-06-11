@@ -434,7 +434,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 .equals(constantService.getConfrereJssSpel().getId()))
                             return false;
                         if (isReadyForBilling && provision.getAnnouncement() != null
-                                && (!provision.getIsRedactedByJss() || provision.getAnnouncement().getNotice() == null
+                                && (provision.getIsRedactedByJss() || provision.getAnnouncement().getNotice() == null
                                         || provision.getAnnouncement().getNotice().length() == 0
                                         || provision.getAnnouncement().getPublicationDate() == null))
                             return false;
@@ -511,12 +511,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                         provision);
                                 announcementService.generateAndStorePublicationReceipt(provision.getAnnouncement(),
                                         provision);
-                            }
-                this.addOrUpdateCustomerOrder(customerOrder, true, true);
+                            } // TODO deleteand modify next call to true
+                // this.addOrUpdateCustomerOrder(customerOrder, true, true);
             }
 
             // save once customer order to recompute invoice item before set it in stone...
-            this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
+            this.addOrUpdateCustomerOrder(customerOrder, true, true);
         }
 
         // Target : TO BILLED => notify

@@ -1475,8 +1475,6 @@ public class MyJssQuotationController {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
 		}
-
-		quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
 		return new ResponseEntity<CustomerOrder>(
 				customerOrderService.saveCustomerOrderFromMyJss(order, isValidation, request),
 				HttpStatus.OK);
