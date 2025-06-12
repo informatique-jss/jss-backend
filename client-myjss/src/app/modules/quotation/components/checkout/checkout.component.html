@@ -377,9 +377,14 @@
                 </li>
               </ul>
 
+              <generic-input class="col-md-6 mt-3" [(model)]="mailToConfirm" label="Votre adresse mail"
+                [form]="documentForm" propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="email"
+                [icon]="'mail'">
+              </generic-input>
               <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-3"
-                [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail" [form]="documentForm"
-                propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="email" [icon]="'mail'">
+                [(model)]="quotation.responsable.mail.mail" label="Confirmez votre adresse mail" [form]="documentForm"
+                propertyName="confirmationRespMail" [isMandatory]="true" [isDisabled]="false" type="email"
+                [icon]="'mail'" [isAutocompleteAvailable]="false" [canPaste]="false">
               </generic-input>
             </div>
           </ng-template>
