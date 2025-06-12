@@ -20,4 +20,5 @@ export interface ResponsableSearchResult {
   turnoverAmountWithTax: number;
   turnoverAmountWithoutDebourWithoutTax: number;
   turnoverAmountWithoutDebourWithTax: number;
+  confrere: string;
 }

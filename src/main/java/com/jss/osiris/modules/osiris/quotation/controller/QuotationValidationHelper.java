@@ -39,6 +39,8 @@ import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
@@ -603,6 +605,20 @@ public class QuotationValidationHelper {
                         Formalite formalite = provision.getFormalite();
                         validationHelper.validateReferential(formalite.getWaitedCompetentAuthority(), false,
                                         "WaitedCompetentAuthority");
+
+                        boolean foundOne = false;
+                        if (formalite.getFormalitesGuichetUnique() != null) {
+                                for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
+                                                .getFormalitesGuichetUnique()) {
+                                        if (!formaliteGuichetUnique.getStatus().getCode()
+                                                        .equals(FormaliteGuichetUniqueStatus.REJECTED)) {
+                                                if (foundOne)
+                                                        throw new OsirisClientMessageException(
+                                                                        "Il n'est pas possible d'ajouter deux liasses GU sur la même prestation");
+                                                foundOne = true;
+                                        }
+                                }
+                        }
                 }
 
                 // Simple provision

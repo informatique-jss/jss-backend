@@ -42,6 +42,7 @@ import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
 import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
@@ -88,6 +89,9 @@ public class PricingHelper {
 
     @Autowired
     CustomerOrderService customerOrderService;
+
+    @Autowired
+    QuotationService quotationService;
 
     @Autowired
     ServiceService serviceService;
@@ -167,8 +171,17 @@ public class PricingHelper {
         LocalDate billingDate = null;
         // Use quotation date if customerOrder linked to customer validated one
         // Else use first TO_BILLED status to determine billing date
-        if (quotation != null && quotation.getId() != null)
-            billingDate = customerOrderService.getCustomerOrder(quotation.getId()).getPrincingEffectiveDate();
+        if (quotation != null && quotation.getId() != null) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
+            if (customerOrder != null) {
+                billingDate = customerOrder.getPrincingEffectiveDate();
+            } else {
+                Quotation quotationFetch = quotationService.getQuotation(quotation.getId());
+                if (quotation != null) {
+                    billingDate = quotationFetch.getPrincingEffectiveDate();
+                }
+            }
+        }
 
         if (billingDate == null)
             billingDate = LocalDate.now();

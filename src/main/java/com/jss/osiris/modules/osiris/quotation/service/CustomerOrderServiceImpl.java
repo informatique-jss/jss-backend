@@ -444,6 +444,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (!isDepositMandatory && !targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)
                     || remainingToPay.compareTo(zeroValue) <= 0 || isPaymentTypePrelevement) {
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
+                customerOrder.setProductionEffectiveDateTime(LocalDateTime.now());
                 mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
             } else {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
