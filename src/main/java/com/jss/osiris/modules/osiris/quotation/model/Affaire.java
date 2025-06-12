@@ -1,4 +1,5 @@
 package com.jss.osiris.modules.osiris.quotation.model;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -46,7 +47,7 @@ public class Affaire implements IId, IAttachment {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Civility civility;
 
 	@Column(length = 150)
@@ -60,7 +61,7 @@ public class Affaire implements IId, IAttachment {
 	private String acronym;
 
 	@Column(nullable = false)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Boolean isIndividual;
 
 	@Column(length = 50)
@@ -77,7 +78,7 @@ public class Affaire implements IId, IAttachment {
 
 	@Column(length = 9)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private String siren;
 
 	@Column(length = 14)
@@ -92,31 +93,31 @@ public class Affaire implements IId, IAttachment {
 
 	@Column(length = 10)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
-
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssListView.class })
 	private String postalCode;
 
 	@Column(length = 20)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private String cedexComplement;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_city")
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
-			JacksonViews.OsirisListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private City city;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Country country;
 
 	@Column(length = 100, nullable = false)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssListView.class })
 	private String address;
 
 	@ManyToMany

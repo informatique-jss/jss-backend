@@ -429,24 +429,45 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
-      } else if ((status.code == ANNOUNCEMENT_STATUS_DONE || status.code == ANNOUNCEMENT_PUBLISHED) && (provision.announcement.isPublicationFlagAlreadySent == null || provision.announcement.isPublicationFlagAlreadySent == undefined)) {
-        saveAsso = false;
-        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-          maxWidth: "400px",
-          data: {
-            title: "Envoyer le témoin de publication ?",
-            content: "Voulez vous envoyer le témoin de publication pour cette annonce une fois la date de publication atteinte ?",
-            closeActionText: "Envoyer",
-            validationActionText: "Ne pas envoyer"
-          }
-        });
+      } else if ((status.code == ANNOUNCEMENT_STATUS_DONE || status.code == ANNOUNCEMENT_PUBLISHED)) {
+        if (provision.announcement.isPublicationFlagAlreadySent == null || provision.announcement.isPublicationFlagAlreadySent == undefined) {
+          saveAsso = false;
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Envoyer le témoin de publication ?",
+              content: "Voulez vous envoyer le témoin de publication pour cette annonce une fois la date de publication atteinte ?",
+              closeActionText: "Envoyer",
+              validationActionText: "Ne pas envoyer"
+            }
+          });
 
-        dialogRef.afterClosed().subscribe(dialogResult => {
-          if (provision.announcement) {
-            provision.announcement.isPublicationFlagAlreadySent = dialogResult;
-          }
-          this.saveAsso();
-        });
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (provision.announcement) {
+              provision.announcement.isPublicationFlagAlreadySent = dialogResult;
+            }
+
+            if (!provision.isRedactedByJss) {
+              const dialogRef2 = this.confirmationDialog.open(ConfirmDialogComponent, {
+                maxWidth: "400px",
+                data: {
+                  title: "AL rédigée par le JSS ?",
+                  content: "Est-ce que cette annonce a été rédigée par le JSS ?",
+                  closeActionText: "Non",
+                  validationActionText: "Oui"
+                }
+              });
+
+              dialogRef2.afterClosed().subscribe(dialogResult2 => {
+                if (dialogResult2)
+                  provision!.isRedactedByJss = true;
+                this.saveAsso();
+              });
+            } else {
+              this.saveAsso();
+            }
+          });
+        }
       } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_CONFRERE && provision.announcement.confrere) {
         if (!provision.announcement.isAnnouncementAlreadySentToConfrere || !provision.announcement.firstConfrereSentMailDateTime) {
           saveAsso = false;

@@ -69,6 +69,8 @@ export class TiersListComponent implements OnInit {
       this.displayedColumnsResponsables.push({ id: "turnoverAmountWithoutDebourWithoutTax", fieldName: "turnoverAmountWithoutDebourWithoutTax", label: "CA HT hors débours", valueFonction: formatEurosForSortTable } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "turnoverAmountWithoutDebourWithTax", fieldName: "turnoverAmountWithoutDebourWithTax", label: "CA TTC hors débours", valueFonction: formatEurosForSortTable } as SortTableColumn<ResponsableSearchResult>);
 
+      this.displayedColumnsResponsables.push({ id: "confrere", fieldName: "confrere", label: "Confrere" } as SortTableColumn<ResponsableSearchResult>);
+
       this.tableActionResponsable.push({
         actionIcon: "visibility", actionName: "Voir le tiers", actionLinkFunction: (action: SortTableAction<ResponsableSearchResult>, element: ResponsableSearchResult) => {
           if (element)

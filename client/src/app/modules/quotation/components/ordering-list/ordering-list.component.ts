@@ -29,7 +29,7 @@ export class OrderingListComponent implements OnInit {
   @Input() isForPaymentAssocationIntegration: boolean = false;
   orders: OrderingSearchResult[] | undefined;
   availableColumns: SortTableColumn<OrderingSearchResult>[] = [];
-  columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "serviceTypeLabel", "createdDate", "lastStatusUpdate"];
+  columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "serviceTypeLabel", "productionEffectiveDate", "createdDate", "lastStatusUpdate"];
   displayedColumns: SortTableColumn<OrderingSearchResult>[] = [];
   tableAction: SortTableAction<OrderingSearchResult>[] = [];
   bookmark: OrderingSearch | undefined;
@@ -60,7 +60,7 @@ export class OrderingListComponent implements OnInit {
         this.appService.changeHeaderTitle("Commande")
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "customerOrderId", label: "N°" } as SortTableColumn<OrderingSearchResult>);
-      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Création", valueFonction: formatDateForSortTable } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "productionEffectiveDate", fieldName: "productionEffectiveDate", label: "Date production", valueFonction: formatDateForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "origin", fieldName: "customerOrderOriginLabel", label: "Origine" } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "serviceTypeLabel", fieldName: "serviceTypeLabel", label: "Service(s)", isShrinkColumn: true } as SortTableColumn<OrderingSearchResult>);
@@ -72,6 +72,7 @@ export class OrderingListComponent implements OnInit {
       this.availableColumns.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assignée à", displayAsEmployee: true } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Création", valueFonction: formatDateForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Mise à jour", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.setColumns();
 

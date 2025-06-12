@@ -50,7 +50,7 @@ public interface CustomerOrderRepository
                         + " co.recurring_start_date  as recurringStartDate, "
                         + " co.recurring_end_date  as recurringEndDate, "
                         + " co.is_recurring_automatically_billed  as isRecurringAutomaticallyBilled, "
-                        + " co.description as customerOrderDescription"
+                        + " co.description as customerOrderDescription,co.production_effective_date_time as productionEffectiveDate"
                         + " from customer_order co"
                         + " join customer_order_origin origin on origin.id = co.id_customer_order_origin"
                         + " join customer_order_status cos on cos.id = co.id_customer_order_status"
@@ -80,7 +80,7 @@ public interface CustomerOrderRepository
                         + " and ( COALESCE(:customerOrder)=0 or  r.id in (:customerOrder) or t2.id in (:customerOrder))"
                         + " and ( COALESCE(:affaire)=0 or af.id =:affaire )"
                         + " group by r.id, r.firstname,origin.label,  r.lastname,  t2.denomination, t2.firstname, t2.lastname, cos.label, "
-                        + " co.created_date, r.id_commercial, t2.id_commercial, co.id, r.id, t2.id,  co.description,co.id_assigned_to ")
+                        + " co.created_date, co.production_effective_date_time, r.id_commercial, t2.id_commercial, co.id, r.id, t2.id,  co.description,co.id_assigned_to ")
         List<OrderingSearchResult> findCustomerOrders(@Param("salesEmployee") List<Integer> salesEmployee,
                         @Param("assignedToEmployee") List<Integer> assignedToEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
@@ -117,7 +117,7 @@ public interface CustomerOrderRepository
                         + " co.recurring_start_date  as recurringStartDate, "
                         + " co.recurring_end_date  as recurringEndDate, "
                         + " co.is_recurring_automatically_billed  as isRecurringAutomaticallyBilled, "
-                        + " co.description as customerOrderDescription, "
+                        + " co.description as customerOrderDescription,co.production_effective_date_time as productionEffectiveDate,  "
                         + " STRING_AGG(DISTINCT grp.label, ', ') as activeDirectoryGroupLabel "
                         + " from customer_order co"
                         + " join customer_order_origin origin on origin.id = co.id_customer_order_origin"
@@ -146,7 +146,7 @@ public interface CustomerOrderRepository
                         + " where grp2.id =:activeDirectoryGroupId and asso_grp2.id_customer_order_comment = com.id) ) "
                         + " and ( :isDisplayOnlyUnread and COALESCE(com.is_read,false)=false or :isDisplayOnlyUnread=false) "
                         + " group by   r.id, r.firstname,origin.label,  r.lastname,  t2.denomination, t2.firstname, t2.lastname, cos.label, "
-                        + " co.created_date,  r.id_commercial,  t2.id_commercial, co.id, r.id,  t2.id,   co.description,co.id_assigned_to ")
+                        + " co.created_date,co.production_effective_date_time,  r.id_commercial,  t2.id_commercial, co.id, r.id,  t2.id,   co.description,co.id_assigned_to ")
         List<IOrderingSearchTaggedResult> findTaggedCustomerOrders(
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("salesEmployee") List<Integer> salesEmployee,

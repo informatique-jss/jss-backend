@@ -795,7 +795,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/siret")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Affaire>> getAffaireBySiret(@RequestParam String siret, HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
