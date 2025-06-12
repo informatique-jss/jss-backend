@@ -178,7 +178,7 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
     if (this.isFollowedJssCategory[jssCategory.id])
       this.assoMailJssCategoryService.unfollowJssCategory(jssCategory).subscribe(response => {
         if (response) {
-          this.isFollowedAuthor[jssCategory.id] = false;
+          this.isFollowedJssCategory[jssCategory.id] = false;
         }
       });
   }
