@@ -13,3 +13,27 @@ hr {
   padding-left: 0;
   padding-right: 0;
 }
+
+.btn-follow:hover {
+  color: var(--ar-heading-color) !important;
+  background-color: var(--ar-btn-hover-color) !important;
+  border-color: var(--ar-btn-hover-border-color) !important;
+}
+
+.btn-follow {
+  background-color: var(--ar-blue-dark-bg) !important;
+}
+
+.fixed-width-btn {
+  min-width: 120px;
+}
+
+.btn-icon-sm {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
