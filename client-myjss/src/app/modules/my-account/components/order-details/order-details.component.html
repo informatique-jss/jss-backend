@@ -269,7 +269,8 @@
                   </div>
                 </ng-template>
               </li>
-              <li [ngbNavItem]="3" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+              <li [ngbNavItem]="3"
+                *ngIf="serviceProvisionAttachments && serviceProvisionAttachments[service.id]  && serviceProvisionAttachments[service.id].length>0">
                 <button ngbNavLink>Documents disponibles <span class="badge bg-success"
                     style="margin-left: 10px;"></span></button>
                 <ng-template ngbNavContent>
