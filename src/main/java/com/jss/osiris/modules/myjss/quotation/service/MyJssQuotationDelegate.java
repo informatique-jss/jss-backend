@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.TiersValidationHelper;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
@@ -99,9 +102,12 @@ public class MyJssQuotationDelegate {
 
         // Save new affaire
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
-            if (asso.getAffaire() != null && asso.getAffaire().getId() == null
-                    && (asso.getAffaire().getDenomination() != null || asso.getAffaire().getLastname() != null)) {
-                asso.setAffaire(affaireService.addOrUpdateAffaire(asso.getAffaire()));
+            if (asso.getAffaire() != null) {
+                if (asso.getAffaire().getId() == null
+                        && (asso.getAffaire().getDenomination() != null || asso.getAffaire().getLastname() != null)) {
+                    asso.setAffaire(affaireService.addOrUpdateAffaire(asso.getAffaire()));
+                }
+                saveNewMailsOnAffaire(quotation);
             }
         }
 
@@ -133,6 +139,35 @@ public class MyJssQuotationDelegate {
         }
 
         return quotation;
+    }
+
+    public void saveNewMailsOnAffaire(IQuotation quotation) throws OsirisDuplicateException, OsirisException {
+        // Save new mails
+        for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
+            if (asso.getAffaire().getMails() != null) {
+                for (Mail mail : asso.getAffaire().getMails()) {
+                    Affaire originalAffaire = affaireService.getAffaire(asso.getAffaire().getId());
+                    boolean found = false;
+                    if (originalAffaire.getMails() != null) {
+                        for (Mail mailAffaire : originalAffaire.getMails()) {
+                            if (mailAffaire.getMail().equals(mail.getMail())) {
+                                found = true;
+                            }
+                        }
+                    }
+                    if (!found) {
+                        if (originalAffaire.getMails() == null) {
+                            originalAffaire.setMails(new ArrayList<Mail>());
+                        }
+                        Mail newMail = new Mail();
+                        newMail.setMail(mail.getMail());
+                        mailService.populateMailId(newMail);
+                        originalAffaire.getMails().add(newMail);
+                        affaireService.addOrUpdateAffaire(originalAffaire);
+                    }
+                }
+            }
+        }
     }
 
     private void populateTiersAndResponsable(IQuotation quotation) throws OsirisException {

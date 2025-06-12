@@ -37,7 +37,8 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " p.is_emergency as isEmergency," +
                         " p.id as provisionId, " +
                         " max(audit.datetime) as provisionStatusDatetime, " +
-                        " coalesce(min(audit2.created_date),c.created_date) as provisionCreatedDatetime, " +
+                        " c.production_effective_date_time as provisionCreatedDatetime,c.created_date as createdDate, "
+                        +
                         " sp_ca.label as waitedCompetentAuthorityLabel, " +
                         " ca.label as competentAuthorityLabel " +
                         " from asso_affaire_order asso " +
@@ -80,9 +81,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         "  or audit.entity_id=sp.id and audit.entity = 'SimpleProvision' and audit.field_name = 'simpleProvisionStatus' "
                         +
-                        " left join index_entity audit2 on " +
-                        "  audit2.entity_id=an.id and audit2.entity_type in ('Announcement','Formalite','Domiciliation','SimpleProvision')  "
-                        +
                         " where (COALESCE(:customerOrder)!=0 or cs.code not in (:excludedCustomerOrderStatusCode)) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"
                         + " and ( COALESCE(:customerOrder)=0 or r.id in (:customerOrder)  )"
                         +
@@ -102,7 +100,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " group by a.denomination, a.firstname , a.lastname,  " +
                         "  t2.denomination, t2.firstname , t2.lastname,  " +
                         "  r.firstname , r.lastname, asso.id, " +
-                        "  a.address ,a.postal_Code ,ci.label ,c.created_date,  " +
+                        "  a.address ,a.postal_Code ,ci.label ,c.created_date,c.production_effective_date_time,  " +
                         "  cf.label,e1.id,e2.id , pf.label ,pt.label,ans.label,fs.label,doms.label,  sps.label, "
                         +
                         " asso.id_customer_order,p.is_emergency,p.id  ,sp_ca.label,ca.label " +

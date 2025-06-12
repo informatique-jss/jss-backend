@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppService } from '../../modules/main/services/app.service';
 import { SHARED_IMPORTS } from '../SharedImports';
 import { Toast } from './Toast';
@@ -8,7 +9,7 @@ import { Toast } from './Toast';
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS]
+  imports: [SHARED_IMPORTS, NgbToastModule]
 })
 export class ToastComponent implements OnInit {
 
@@ -21,5 +22,7 @@ export class ToastComponent implements OnInit {
   ngOnInit() {
   }
 
-
+  remove(toastToRemove: Toast): void {
+    this.toasts = this.toasts.filter(t => t !== toastToRemove);
+  }
 }

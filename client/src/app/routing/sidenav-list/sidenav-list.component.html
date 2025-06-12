@@ -6,14 +6,6 @@
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/dashboard' )>=0}">
     <mat-icon>dashboard</mat-icon> <span>Tableau de bord</span>
   </a>
-  <a mat-list-item routerLink="/reporting/list" *ngIf="canViewReportingModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/reporting' )>=0}">
-    <mat-icon>trending_up</mat-icon> <span>Reporting</span>
-  </a>
-  <a mat-list-item routerLink="/indicator" *ngIf="canViewIndicatorModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/indicator' )>=0}">
-    <mat-icon>monitoring</mat-icon> <span>Indicateurs</span>
-  </a>
   <a mat-list-item routerLink="/tiers" *ngIf="canViewTiersModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/tiers' )>=0}">
     <mat-icon>group</mat-icon> <span>Tiers / Responsables</span>
@@ -65,6 +57,14 @@
   <a mat-list-item routerLink="/accounting" *ngIf="canViewAccountingModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/accounting' )>=0}">
     <mat-icon>account_balance</mat-icon> <span>Comptabilité</span>
+  </a>
+  <a mat-list-item routerLink="/reporting/list" *ngIf="canViewReportingModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/reporting' )>=0}">
+    <mat-icon>trending_up</mat-icon> <span>Reporting</span>
+  </a>
+  <a mat-list-item routerLink="/indicator" *ngIf="canViewIndicatorModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/indicator' )>=0}">
+    <mat-icon>monitoring</mat-icon> <span>Indicateurs</span>
   </a>
   <a mat-list-item routerLink="/administration" *ngIf="canViewAdministrationModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration' )>=0 && getCurrentRoute().indexOf('/administration/competent/authority' )<0 && getCurrentRoute().indexOf('/administration/provider' )<0}">

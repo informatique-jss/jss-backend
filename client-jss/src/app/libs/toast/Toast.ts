@@ -3,4 +3,5 @@ export interface Toast {
   title: string;
   isError: boolean;
   addedDateTime: Date;
+  delay: number;
 }

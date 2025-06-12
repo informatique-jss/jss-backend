@@ -285,6 +285,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private InvoicingBlockage invoicingBlockage;
 
 	private LocalDate princingEffectiveDate;
+	private LocalDateTime productionEffectiveDateTime;
 
 	public Integer getId() {
 		return id;
@@ -637,6 +638,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setPrincingEffectiveDate(LocalDate princingEffectiveDate) {
 		this.princingEffectiveDate = princingEffectiveDate;
+	}
+
+	public LocalDateTime getProductionEffectiveDateTime() {
+		return productionEffectiveDateTime;
+	}
+
+	public void setProductionEffectiveDateTime(LocalDateTime productionEffectiveDateTime) {
+		this.productionEffectiveDateTime = productionEffectiveDateTime;
 	}
 
 }

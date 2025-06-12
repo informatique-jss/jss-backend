@@ -13,6 +13,8 @@ public interface IResponsableSearchResult {
 
     String getResponsableLabel();
 
+    String getConfrere();
+
     String getResponsableCategory();
 
     String getSalesEmployeeLabel();

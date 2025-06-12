@@ -110,34 +110,34 @@
       (show)="loadServiceDetails(service,false)">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton class="border-top">
-          <div class="d-flex justify-content-between w-100">
-            <div class="ps-3 ps-sm-4">
+          <div class="row d-flex justify-content-between align-items-center w-100">
+            <div class="col-md-auto col-md-10 order-1">
               <h4 class="h6 mb-2">
                 <a>{{service.serviceLabelToDisplay}}</a>
               </h4>
-              <div class="text-body-secondary fs-sm me-3">
+              <div class="text-body-secondary fs-sm">
                 <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
               </div>
             </div>
-            <div class="me-3 me-sm-4" *ngIf="service.confrereLabel">
+            <div class="col-md-auto col order-md-2 order-2 " *ngIf="service.confrereLabel">
               <div class="fs-sm text-body-secondary">{{service.confrereLabel}}</div>
               <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
             </div>
-            <div class="me-3 me-sm-4"
+            <div class="col-md-auto col order-md-3 order-3 "
               *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
               <div class="fs-sm text-body-secondary">{{serviceProvisionAttachments[service.id].length}}
                 document{{serviceProvisionAttachments[service.id].length>1?'s':''}}
                 disponible{{serviceProvisionAttachments[service.id].length>1?'s':''}}</div>
             </div>
-            <div class="me-3 me-sm-4">
-              <div class="text-body-secondary fs-sm me-3 ">
+            <div class="col-md-auto col order-md-4 order-4 justify-content-end d-flex">
+              <div class="text-body-secondary fs-sm">
                 {{service.serviceTotalPrice | currency:'EUR' }}
               </div>
             </div>
-            <div class="me-3 me-sm-4">
+            <div *ngIf="service.hasMissingInformations" class="col-auto order-md-5 order-2 ">
               <div class="fs-sm fw-medium text-dark">
                 <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
-                  placement="right" *ngIf="service.hasMissingInformations"
+                  placement="right"
                   [ngbTooltip]="'Le '+getLastMissingAttachmentQueryDateLabel(service)+' : des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du service'"></i>
               </div>
             </div>
@@ -269,7 +269,8 @@
                   </div>
                 </ng-template>
               </li>
-              <li [ngbNavItem]="3" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+              <li [ngbNavItem]="3"
+                *ngIf="serviceProvisionAttachments && serviceProvisionAttachments[service.id]  && serviceProvisionAttachments[service.id].length>0">
                 <button ngbNavLink>Documents disponibles <span class="badge bg-success"
                     style="margin-left: 10px;"></span></button>
                 <ng-template ngbNavContent>
@@ -314,7 +315,7 @@
 
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
   <!-- Address -->
-  <section class="col">
+  <section class="col order-2 order-md-1">
     <div class="card h-100 border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
       <div class="card-body">
         <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
@@ -382,7 +383,7 @@
 
 
   <!-- Billing -->
-  <section class="col">
+  <section class="col order-1 order-md-2">
     <div class="card h-100 border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
       <div class="card-body">
         <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">

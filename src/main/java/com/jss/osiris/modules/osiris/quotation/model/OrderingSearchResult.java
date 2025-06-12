@@ -12,6 +12,8 @@ public interface OrderingSearchResult {
 
     public LocalDateTime getCreatedDate();
 
+    public LocalDateTime getProductionEffectiveDate();
+
     public Integer getSalesEmployeeId();
 
     public Integer getAssignedToEmployeeId();

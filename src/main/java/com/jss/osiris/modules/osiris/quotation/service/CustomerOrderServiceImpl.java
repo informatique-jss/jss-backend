@@ -559,6 +559,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (!isDepositMandatory && !targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)
                     || remainingToPay.compareTo(zeroValue) <= 0 || isPaymentTypePrelevement) {
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
+                customerOrder.setProductionEffectiveDateTime(LocalDateTime.now());
                 mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
             } else {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
@@ -1863,6 +1864,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
                 if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
                     affaireService.addOrUpdateAffaire(asso.getAffaire());
+
+        myJssQuotationDelegate.saveNewMailsOnAffaire(order);
 
         order.setResponsable(employeeService.getCurrentMyJssUser());
         order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
