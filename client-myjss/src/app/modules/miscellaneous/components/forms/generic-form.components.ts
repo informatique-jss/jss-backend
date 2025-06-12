@@ -84,8 +84,6 @@ export abstract class GenericFormComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.form != undefined)
-      this.form.removeControl(this.propertyName);
   }
 
   ngOnInit() {

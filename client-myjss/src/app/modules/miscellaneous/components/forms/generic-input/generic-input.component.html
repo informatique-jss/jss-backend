@@ -1,5 +1,5 @@
 <div class="position-relative ">
-  <div [formGroup]="form!" *ngIf="form" class="needs-validation">
+  <div [formGroup]="form!" *ngIf="form && form.get(propertyName)" class="needs-validation">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
       class="form-label">{{label}}</label>
     <i class="fs-lg position-absolute top-50 start-0 ms-3" *ngIf="icon"
