@@ -6,7 +6,7 @@ import { ServiceFamilyGroup } from "./ServiceFamilyGroup";
 export interface IQuotation extends IDocument {
   id: number;
   assoAffaireOrders: AssoAffaireOrder[];
-  serviceFamilyGroup: ServiceFamilyGroup;
+  serviceFamilyGroup: ServiceFamilyGroup | undefined;
   isQuotation: boolean;
   responsable: Responsable | undefined;
   description: string;

@@ -263,7 +263,6 @@ export interface Constant {
   provisionTypeBilanPublication: ProvisionType;
   provisionTypeRegistrationAct: ProvisionType;
   provisionFamilyTypeDeposit: ProvisionFamilyType;
-  provisionFamilyTypeAbonnement: ProvisionFamilyType;
   provisionTypeRbe: ProvisionType;
   provisionTypeCharacterAnnouncement: ProvisionType;
   dateAccountingClosureForAll: Date;

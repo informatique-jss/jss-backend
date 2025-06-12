@@ -2,7 +2,7 @@ import { AttachmentType } from "../../my-account/model/AttachmentType";
 import { BillingLabelType } from "../../my-account/model/BillingLabelType";
 import { DocumentType } from "../../my-account/model/DocumentType";
 import { PaymentType } from "../../my-account/model/PaymentType";
-import { ProvisionFamilyType } from "../../my-account/model/ProvisionFamilyType";
+import { ServiceType } from "../../my-account/model/ServiceType";
 import { Country } from "../../profile/model/Country";
 import { Responsable } from "../../profile/model/Responsable";
 import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
@@ -40,5 +40,10 @@ export interface Constant {
   mailRedirectionTypeOther: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail: DomiciliationContractType;
   domiciliationContractTypeRouteMail: DomiciliationContractType;
-  provisionFamilyTypeAbonnement: ProvisionFamilyType;
+  serviceTypeAnnualSubscription: ServiceType;
+  serviceTypeEnterpriseAnnualSubscription: ServiceType;
+  serviceTypeMonthlySubscription: ServiceType;
+  serviceTypeKioskNewspaperBuy: ServiceType;
+  serviceTypeUniqueArticleBuy: ServiceType;
+
 }

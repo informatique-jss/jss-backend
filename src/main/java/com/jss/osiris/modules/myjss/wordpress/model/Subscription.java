@@ -55,6 +55,10 @@ public class Subscription implements IId, Serializable {
     private Post post;
 
     @ManyToOne
+    @JoinColumn(name = "id_newspaper", nullable = true)
+    private Newspaper newspaper;
+
+    @ManyToOne
     @JoinColumn(name = "id_subscription_mail")
     private Mail subcriptionMail;
 
@@ -108,6 +112,14 @@ public class Subscription implements IId, Serializable {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public Newspaper getNewspaper() {
+        return newspaper;
+    }
+
+    public void setNewspaper(Newspaper newspaper) {
+        this.newspaper = newspaper;
     }
 
     public Mail getSubcriptionMail() {

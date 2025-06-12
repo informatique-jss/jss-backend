@@ -161,8 +161,24 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.mailRedirectionTypeOther;
   }
 
-  getProvisionFamilyTypeAbonnement() {
-    return this.constant.provisionFamilyTypeAbonnement;
+  getServiceTypeAnnualSubscription() {
+    return this.constant.serviceTypeAnnualSubscription;
+  }
+
+  getServiceTypeEnterpriseAnnualSubscription() {
+    return this.constant.serviceTypeEnterpriseAnnualSubscription;
+  }
+
+  getServiceTypeMonthlySubscription() {
+    return this.constant.serviceTypeMonthlySubscription;
+  }
+
+  getServiceTypeKioskNewspaperBuy() {
+    return this.constant.serviceTypeKioskNewspaperBuy;
+  }
+
+  getServiceTypeUniqueArticleBuy() {
+    return this.constant.serviceTypeUniqueArticleBuy;
   }
 }
 

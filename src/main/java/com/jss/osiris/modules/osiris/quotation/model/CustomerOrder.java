@@ -252,18 +252,18 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-	public String affairesList;
+	private String affairesList;
 
 	@Transient
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-	public String servicesList;
+	private String servicesList;
 
 	@Transient
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisDetailedView.class })
-	public Boolean hasMissingInformations;
+	private Boolean hasMissingInformations;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family_group")
@@ -272,17 +272,19 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@Transient
 	@JsonView({ JacksonViews.OsirisListView.class })
-	public Boolean isHasNotifications;
+	private Boolean isHasNotifications;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoicing_employee")
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
-	public Employee invoicingEmployee;
+	private Employee invoicingEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoicing_blockage")
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
-	public InvoicingBlockage invoicingBlockage;
+	private InvoicingBlockage invoicingBlockage;
+
+	private LocalDate princingEffectiveDate;
 
 	public Integer getId() {
 		return id;
@@ -627,6 +629,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setInvoicingBlockage(InvoicingBlockage invoicingBlockage) {
 		this.invoicingBlockage = invoicingBlockage;
+	}
+
+	public LocalDate getPrincingEffectiveDate() {
+		return princingEffectiveDate;
+	}
+
+	public void setPrincingEffectiveDate(LocalDate princingEffectiveDate) {
+		this.princingEffectiveDate = princingEffectiveDate;
 	}
 
 }

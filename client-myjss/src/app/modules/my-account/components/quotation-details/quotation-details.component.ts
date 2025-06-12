@@ -181,7 +181,7 @@ export class QuotationDetailsComponent implements OnInit {
 
   editAffaireDetails(affaire: Affaire, event: any) {
     if (this.quotation)
-      this.appService.openRoute(event, "account/affaire/edit/" + affaire.id + "/" + this.quotation.id, undefined);
+      this.appService.openRoute(event, "account/affaire/edit/quotation/" + affaire.id + "/" + this.quotation.id, undefined);
   }
 
   editAddress(event: any) {
