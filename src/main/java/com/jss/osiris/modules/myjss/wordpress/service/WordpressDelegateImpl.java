@@ -316,10 +316,9 @@ public class WordpressDelegateImpl implements WordpressDelegate {
                 postFetchedId.add(post.getId());
             }
 
-        // TODO : disabled for testing purpose, to activate for production !
-        // List<Post> postToCancel = postService.getPostExcludedId(postFetchedId);
-        // if (postToCancel != null)
-        // for (Post post : postToCancel)
-        // postService.cancelPost(post);
+        List<Post> postToCancel = postService.getPostExcludedId(postFetchedId);
+        if (postToCancel != null)
+            for (Post post : postToCancel)
+                postService.cancelPost(post);
     }
 }
